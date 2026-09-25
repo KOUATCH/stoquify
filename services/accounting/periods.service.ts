@@ -5,6 +5,7 @@ import {
   ReconciliationRunStatus,
   SuspenseStatus,
   Prisma,
+  type AccountingPeriod,
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
@@ -157,7 +158,18 @@ export async function getOpenPeriodForDate(
   entryDate: Date,
   tx: Prisma.TransactionClient | typeof db = db,
 ) {
-  const period = await tx.accountingPeriod.findFirst({
+  // Transactional writers hold a shared row lock until commit. Period close
+  // takes the conflicting lock before preflight, so neither side can rely on
+  // an open-state read made before the other transaction completed.
+  // Root-client calls are read-only checks; they cannot hold a transaction lock.
+  const period = !("$transaction" in tx)
+    ? (await tx.$queryRaw<AccountingPeriod[]>`
+        SELECT * FROM accounting_periods
+        WHERE "organizationId" = ${organizationId}
+          AND "startDate" <= ${entryDate} AND "endDate" >= ${entryDate}
+        ORDER BY "startDate" DESC LIMIT 1 FOR SHARE
+      `)[0]
+    : await tx.accountingPeriod.findFirst({
     where: {
       organizationId,
       startDate: { lte: entryDate },
@@ -341,6 +353,11 @@ export async function closeAccountingPeriod(
   control?: AccountingPeriodControlContext,
 ) {
   const result = await db.$transaction(async (tx) => {
+    await tx.$queryRaw`
+      SELECT id FROM accounting_periods
+      WHERE id = ${periodId} AND "organizationId" = ${organizationId}
+      FOR UPDATE
+    `
     const preflight = await getPeriodClosePreflight(organizationId, periodId, tx)
     const failures = getPeriodClosePreflightFailures(preflight)
 

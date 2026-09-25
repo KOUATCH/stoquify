@@ -1,0 +1,172 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\@playwright+test@1.62.1\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.modern-modules.config.ts",
+      "--project=mobile-fr",
+      "--grep=French tablet|service:"
+    ],
+    "configFile": "E:\\ohada saas\\Focused projects\\stoquify\\playwright.modern-modules.config.ts",
+    "rootDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/ohada saas/Focused projects/stoquify/what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop-en",
+        "name": "desktop-en",
+        "testDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/modern-modules\\.spec\\.ts$/"
+        ],
+        "timeout": 240000
+      },
+      {
+        "outputDir": "E:/ohada saas/Focused projects/stoquify/what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-fr",
+        "name": "mobile-fr",
+        "testDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/modern-modules\\.spec\\.ts$/"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "modern-modules.spec.ts",
+      "file": "modern-modules.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "service: native selection, dependencies, review, activation and durable recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 48720,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T12:03:22.026Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-64d9abf7869bb79fc581",
+          "file": "modern-modules.spec.ts",
+          "line": 131,
+          "column": 7
+        },
+        {
+          "title": "French tablet and narrow reflow keep configuration and review reachable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 42436,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T12:04:11.333Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-21409c66620579314920",
+          "file": "modern-modules.spec.ts",
+          "line": 199,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-05T12:03:18.974Z",
+    "duration": 100709.322,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -21,27 +21,27 @@ const data = {
   generatedAt: "2026-08-09T18:00:00.000Z",
   scope: "ALL_TIME" as const,
   totals: {
-    issuedLinks: 3,
+    preparedLinks: 3,
     clicks: 5,
-    conversions: 2,
-    inviteActivations: 1,
+    registrations: 2,
+    acceptedInvitations: 1,
   },
   rows: [
     {
       sourceType: "CUSTOMER_STATEMENT" as const,
       campaign: "customer_statement_share",
-      issuedLinks: 2,
+      preparedLinks: 2,
       clicks: 4,
-      conversions: 1,
-      inviteActivations: 0,
+      registrations: 1,
+      acceptedInvitations: 0,
     },
     {
       sourceType: "ACCOUNTANT_INVITE" as const,
       campaign: "accountant_client_invite",
-      issuedLinks: 1,
+      preparedLinks: 1,
       clicks: 1,
-      conversions: 1,
-      inviteActivations: 1,
+      registrations: 1,
+      acceptedInvitations: 1,
     },
   ],
   privacyBoundary: {
@@ -57,7 +57,7 @@ describe("ReferralFunnelDashboard", () => {
 
     expect(screen.getByRole("heading", { name: "Referral funnel", level: 1 })).toBeInTheDocument()
     expect(screen.getByRole("row", {
-      name: /Customer statement delivery customer_statement_share 2 4 1 0/i,
+      name: /Customer statement referral customer_statement_share 2 4 1 0/i,
     })).toBeInTheDocument()
     expect(screen.getByRole("row", {
       name: /Accountant-client invite accountant_client_invite 1 1 1 1/i,
@@ -71,4 +71,13 @@ describe("ReferralFunnelDashboard", () => {
     expect(screen.getByText(/Recipient contacts and raw IP or user-agent data/i)).toBeInTheDocument()
     expect(screen.queryByText(/subject hash|203\.0\.113|recipient@example/i)).not.toBeInTheDocument()
   })
+})
+
+it.each(["en", "fr"] as const)("explains evidence limits and provides a keyboard-reachable table in %s", locale => {
+  render(<ReferralFunnelDashboard data={data} locale={locale} />)
+  expect(screen.getByRole("region", { name: locale === "fr" ? "Parrainages enregistrés par source et campagne" : "Recorded referral counts by source and campaign" })).toHaveAttribute("tabindex", "0")
+  expect(screen.getByText(locale === "fr" ? /ne prouvent pas une livraison/ : /do not prove delivery/)).toBeVisible()
+  expect(screen.getByText(locale === "fr" ? /ne prouve pas un accès actuellement actif/ : /does not establish currently active access/)).toBeVisible()
+  expect(screen.getByText(/Read started \(UTC\)|Début de lecture \(UTC\)/)).toBeVisible()
+  expect(screen.queryByText(/Invite activations|Invitations activees|Issued links/)).not.toBeInTheDocument()
 })

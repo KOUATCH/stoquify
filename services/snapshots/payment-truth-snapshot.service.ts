@@ -10,6 +10,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { NotFoundError } from "@/services/_shared/action-errors"
 import type { EvidenceGrade } from "@/services/evidence/evidence-contracts"
 import type { PaymentTruthMetrics, SnapshotResult, SnapshotScopeInput } from "./snapshot-contracts"
 import {
@@ -66,7 +67,7 @@ export async function getPaymentTruthSnapshot(
         openExceptionCount: 0,
         criticalExceptionCount: 0,
         openSuspenseCount: 0,
-        openSuspenseAmount: 0,
+        openSuspenseAmount: null,
         pendingTransactionCount: 0,
       },
       blockers: [
@@ -102,8 +103,8 @@ export async function getPaymentTruthSnapshot(
     signedRunCount,
     openExceptionCount,
     criticalExceptionCount,
-    openSuspenseCount,
-    openSuspenseAmount,
+    suspenseGroups,
+    organization,
     pendingTransactionCount,
     latestProvider,
     latestRun,
@@ -155,19 +156,17 @@ export async function getPaymentTruthSnapshot(
         severity: ExceptionSeverity.CRITICAL,
       },
     }),
-    db.suspenseItem.count({
-      where: {
-        organizationId: scope.organizationId,
-        status: { in: OPEN_SUSPENSE_STATUSES },
-      },
-    }),
-    db.suspenseItem.aggregate({
+    db.suspenseItem.groupBy({
+      by: ["currencyCode"],
       where: {
         organizationId: scope.organizationId,
         status: { in: OPEN_SUSPENSE_STATUSES },
       },
       _sum: { amount: true },
+      _count: { _all: true },
+      orderBy: { currencyCode: "asc" },
     }),
+    db.organization.findFirst({ where: { id: scope.organizationId }, select: { currency: true } }),
     db.paymentTransaction.count({
       where: {
         organizationId: scope.organizationId,
@@ -202,6 +201,14 @@ export async function getPaymentTruthSnapshot(
     }),
   ])
 
+  if (!organization) throw new NotFoundError("Organization not found")
+  const openSuspenseByCurrency = suspenseGroups.map(group => ({
+    currencyCode: group.currencyCode,
+    amount: toNumber(group._sum.amount),
+    count: group._count._all,
+  }))
+  const currencyMismatch = openSuspenseByCurrency.some(group => group.currencyCode !== organization.currency)
+  const openSuspenseCount = openSuspenseByCurrency.reduce((total, group) => total + group.count, 0)
   const metrics: PaymentTruthMetrics = {
     providerAccountCount,
     activeProviderAccountCount,
@@ -211,11 +218,22 @@ export async function getPaymentTruthSnapshot(
     openExceptionCount,
     criticalExceptionCount,
     openSuspenseCount,
-    openSuspenseAmount: toNumber(openSuspenseAmount._sum.amount),
+    openSuspenseAmount: currencyMismatch ? null : openSuspenseByCurrency.reduce((total, group) => total + group.amount, 0),
+    suspenseCurrencyCode: organization.currency,
+    openSuspenseByCurrency,
     pendingTransactionCount,
   }
 
   const blockers = [
+    ...(currencyMismatch ? [blocker({
+      id: "payment-suspense-currency-mismatch",
+      severity: "high",
+      gate: "payment_truth",
+      title: "Suspense currencies cannot be combined",
+      detail: `Open suspense by currency: ${openSuspenseByCurrency.map(group => `${group.amount.toFixed(2)} ${group.currencyCode}`).join("; ")}. No conversion evidence establishes a total in ${organization.currency}.`,
+      sourceTables: ["suspense_items"],
+      nextAction: "Review suspense by currency in reconciliation; do not treat these amounts as one converted total.",
+    })] : []),
     ...(criticalExceptionCount > 0
       ? [
           blocker({
@@ -236,7 +254,9 @@ export async function getPaymentTruthSnapshot(
             severity: "high",
             gate: "payment_truth",
             title: "Payment suspense queue is not empty",
-            detail: `${openSuspenseCount} suspense item(s) remain open with ${metrics.openSuspenseAmount.toFixed(2)} in unresolved value.`,
+            detail: metrics.openSuspenseAmount === null
+              ? `${openSuspenseCount} suspense item(s) remain open; a combined currency total is unavailable.`
+              : `${openSuspenseCount} suspense item(s) remain open with ${metrics.openSuspenseAmount.toFixed(2)} ${organization.currency} in unresolved value.`,
             sourceTables: ["suspense_items"],
             nextAction: "Classify, match, post, or resolve suspense items.",
           }),

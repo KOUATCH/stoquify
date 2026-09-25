@@ -1,0 +1,30 @@
+{
+  "at": "2026-09-19T13:54:06.397Z",
+  "matrix": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d.json",
+  "sourceHashes": {
+    "services/daily-habit/daily-habit-digest.service.ts": "2055dbe37f000b82c42fd38614665eb39852c3484686d0b6bbf2725c1979422f",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "0cea03f6f05832e9023d62f9e1d624dab9c1d5f98d852cce707c624222c091a4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "435a2cba578216ee1d78564e391d7cf0ff3f00a52ba224d059f587a25c90e66a",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "0f2087bc7d7790a85dd7ba0e167e8c145acac587edfd564f4132ea2446657d6a"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"services/daily-habit/__tests__/purchasing-route-access.test.tsx\" \"actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts\" \"services/agents/__tests__/command-tool-adapters.test.ts\"",
+    "lint": "node node_modules/eslint/bin/eslint.js \"services/daily-habit/daily-habit-digest.service.ts\" \"services/daily-habit/daily-habit-digest-presentation.ts\" \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"services/daily-habit/__tests__/purchasing-route-access.test.tsx\" \"actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts\" \"actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts\" \"app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx\" \"app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "runtime": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-purchasing-access.cjs"
+  },
+  "results": {
+    "tests": "49db84: 133 passed in four suites",
+    "lint": "d8a5f9 passed",
+    "typecheck": "87eae4 passed",
+    "diff": "d8bc4c passed; existing line-ending warning retained",
+    "runtime": "23f997 passed"
+  },
+  "failedAttempts": [
+    "e49124: 107 passed, one observation fixture lacked explicit purchasing access; corrected the authorized fixture",
+    "ec38221d-8556-4f61-8bc8-b0f921f9b0cd: verifier expected internal signal-type serialization; actual projection uses localized detail; corrected assertion"
+  ],
+  "completeWorkflowVerified": false
+}

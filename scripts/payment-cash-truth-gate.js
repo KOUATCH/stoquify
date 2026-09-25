@@ -155,7 +155,11 @@ function buildPaymentCashTruthReadiness(root = process.cwd(), options = {}) {
         markersInOrder(run, [
           "const mismatchReasons = [",
           "if (mismatchReasons.length > 0)",
-          "type: PaymentExceptionType.AMOUNT_MISMATCH",
+          "const exceptionType =",
+          "PaymentExceptionType.AMOUNT_MISMATCH",
+          "await createExceptionAndSuspense(tx, {",
+          "type: exceptionType",
+          "continue",
           "if (event || line)",
           "status: MatchStatus.AUTO_MATCHED",
         ]),

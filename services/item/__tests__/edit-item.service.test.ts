@@ -9,6 +9,7 @@ jest.mock("@/prisma/db", () => ({
 }))
 
 const tx = {
+  pictureAsset: { updateMany: jest.fn().mockResolvedValue({count:1}) },
   item: {
     findFirst: jest.fn(),
     update: jest.fn(),
@@ -76,9 +77,9 @@ const validInput = {
   nameFr: null,
   descriptionEn: "Long grain",
   descriptionFr: null,
-  imageUrls: "/uploads/org-1/rice-new.png",
+  imageUrls: "/api/media/11111111-1111-4111-8111-111111111111",
   retainedImageUrls: ["/uploads/org-1/rice-detail.png"],
-  thumbnail: "/uploads/org-1/rice-new.png",
+  thumbnail: "/api/media/11111111-1111-4111-8111-111111111111",
   sku: "RICE-001",
   barcode: null,
   dimensions: "30 x 20 x 10 cm",
@@ -140,7 +141,7 @@ describe("updateItemFromForm", () => {
       where: { id: "item-1" },
       data: expect.objectContaining({
         nameEn: "Premium rice",
-        imageUrls: ["/uploads/org-1/rice-new.png", "/uploads/org-1/rice-detail.png"],
+        imageUrls: ["/api/media/11111111-1111-4111-8111-111111111111", "/uploads/org-1/rice-detail.png"],
         msrp: expect.any(Prisma.Decimal),
         reorderQuantity: expect.any(Prisma.Decimal),
       }),

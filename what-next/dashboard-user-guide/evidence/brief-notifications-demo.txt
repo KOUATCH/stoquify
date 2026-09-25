@@ -1,0 +1,12 @@
+
+ROUTE /en/dashboard/notifications-demo
+FILE app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx; components/notifications/EnhancedNotificationTest.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/notifications-demo/notifications-demo-route-access.tsx
+REDIRECTS []
+HEADINGS Notification System Demo
+PROPS 
+CONTROLS Success (Button, {"type":"\"button\"","onClick":"() => notifications.success(\"Success\", \"Notification system is ready.\")"}, components/notifications/EnhancedNotificationTest.tsx:11)
+Info (Button, {"type":"\"button\"","onClick":"() => notifications.info(\"Info\", \"Operational notification test.\")"}, components/notifications/EnhancedNotificationTest.tsx:14)
+Warning (Button, {"type":"\"button\"","onClick":"() => notifications.warning(\"Warning\", \"Review this notification.\")"}, components/notifications/EnhancedNotificationTest.tsx:17)
+Error (Button, {"type":"\"button\"","onClick":"() => notifications.error(\"Error\", \"Notification error test.\")"}, components/notifications/EnhancedNotificationTest.tsx:20)

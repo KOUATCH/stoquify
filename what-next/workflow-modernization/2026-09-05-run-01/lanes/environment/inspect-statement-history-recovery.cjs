@@ -1,0 +1,6 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const helper=require('./registration-local.cjs'),root=helper.root,target=helper.targetUrl();
+const data=JSON.parse(fs.readFileSync(path.join(root,'playwright/.auth/workflow-self-profile-v1.json'),'utf8'));
+assert.equal(data.database,helper.database);assert.equal(data.source,'owned-self-profile-verification');
+const {PrismaClient}=require('@prisma/client'),db=new PrismaClient({datasources:{db:{url:target.toString()}},log:[]});
+(async()=>{await helper.withClient(target,helper.assertOwned);const rows=[];for(const f of data.fixtures){const role=await db.role.findUniqueOrThrow({where:{id:f.reader.roleId},select:{organizationId:true,permissions:true}});assert.equal(role.organizationId,f.organizationId);rows.push({locale:f.locale,permissions:role.permissions,configurations:await db.tenantModuleConfiguration.count({where:{organizationId:f.organizationId}}),grants:await db.tenantModuleGrant.count({where:{organizationId:f.organizationId}})});}console.log(JSON.stringify({readOnly:true,rows}));})().catch(e=>{console.error(String(e.message).replace(/postgres(?:ql)?:\/\/\S+/gi,'[redacted]'));process.exitCode=1}).finally(()=>db.$disconnect());

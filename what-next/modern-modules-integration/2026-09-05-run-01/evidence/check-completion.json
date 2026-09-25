@@ -1,0 +1,62 @@
+{
+  "recordedAt": "2026-09-05T12:12:27.042Z",
+  "classification": "ISOLATED_APPLICATION_VERIFICATION",
+  "productionApproval": false,
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "exitCode": 0,
+    "output": "typecheck-final.txt"
+  },
+  "changedFileLint": {
+    "exitCode": 0,
+    "fileCount": 17,
+    "output": "changed-file-lint-final.txt"
+  },
+  "focusedJest": {
+    "passed": 110,
+    "failed": 1,
+    "total": 111,
+    "suites": 9,
+    "result": "final-tests.json",
+    "failure": "one unchanged 5000ms workbench test timeout"
+  },
+  "workbenchRetry": {
+    "passed": 13,
+    "failed": 0,
+    "result": "workbench-final-retry.json",
+    "assertionsAndTimeoutUnchanged": true
+  },
+  "browserFull": {
+    "stats": {
+      "startTime": "2026-09-05T11:53:20.309Z",
+      "duration": 222247.513,
+      "expected": 8,
+      "skipped": 2,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "result": "browser-attempt-02.json"
+  },
+  "browserFinalMobile": {
+    "stats": {
+      "startTime": "2026-09-05T12:03:18.974Z",
+      "duration": 100709.322,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "result": "browser-mobile-final.json"
+  },
+  "postgres": {
+    "passed": 13,
+    "failed": 0,
+    "result": "modern-modules-postgres-smoke-46729149d363.json",
+    "finalSourcesMatch": true
+  },
+  "privateFixtureEvidenceScan": {
+    "filesChecked": 75,
+    "matches": 0,
+    "rawCredentialsRecorded": false
+  }
+}

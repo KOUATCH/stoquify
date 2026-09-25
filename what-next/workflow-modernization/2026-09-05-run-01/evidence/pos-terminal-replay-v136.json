@@ -1,0 +1,69 @@
+{
+  "at": "2026-09-13T15:30:38.595Z",
+  "baseline": "evidence/source-baseline-v136.json",
+  "sources": {
+    "services/pos/offline-sync.service.ts": "2ee9aa1514cdaee94434bc1ffa92a3ba64fce79d5f24ef2fd699f31ef7fb5d55",
+    "services/pos/pos.service.ts": "eb7d15d8a778794327661430f54c33d67510e5e4b3ec81df795462b536dcf1b8"
+  },
+  "reproduction": {
+    "receipt": "c923a2",
+    "result": "Old terminal shortcut returned fabricated metadata as DUPLICATE_REPLAY"
+  },
+  "tests": {
+    "passed": 73,
+    "suites": 3,
+    "receipt": "e3798e",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/pos/__tests__/offline-sync.service.test.ts services/pos/__tests__/commit-recovery.service.test.ts services/pos/__tests__/pos.service.test.ts"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "e3798e",
+    "command": "node node_modules/eslint/bin/eslint.js services/pos/offline-sync.service.ts services/pos/__tests__/offline-sync.service.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "22eb36",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/terminal-replay-v136-1f9a519c-5010-4f0c-93b1-1771376e1a0f.json",
+    "receipt": "4bcb1f",
+    "at": "2026-09-13T15:28:41.794Z",
+    "checks": [
+      "Terminal duplicate verifies exact original request, replay event and posted entry without changing financial/event history",
+      "Different cashier cannot obtain terminal metadata as a successful replay",
+      "Altered stored terminal metadata is rejected and not auto-repaired or rewritten",
+      "Historical acknowledgement retained while current void status is returned without new effects"
+    ],
+    "scope": "Previously verified owned v135 replay fixtures; terminal evidence lookup only, with deliberate synthetic metadata corruption and real fixture void.",
+    "passed": true,
+    "sources": {
+      "services/pos/offline-sync.service.ts": "2ee9aa1514cdaee94434bc1ffa92a3ba64fce79d5f24ef2fd699f31ef7fb5d55",
+      "services/pos/pos.service.ts": "eb7d15d8a778794327661430f54c33d67510e5e4b3ec81df795462b536dcf1b8"
+    }
+  },
+  "browser": {
+    "rerun": false,
+    "reason": "Backend evidence-read change only; deployment remains test-gated, no surface changed"
+  },
+  "guide": "TERMINAL_REPLAY_V136.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2897,
+      "tests": 1030,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 175,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2519,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

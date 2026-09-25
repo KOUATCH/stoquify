@@ -1,0 +1,218 @@
+{
+  "at": "2026-09-08T17:18:38.358Z",
+  "sourceBaseline": "evidence/source-baseline-v81.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "components/purchasing/PaymentRequestWorkbench.tsx": "323fa761de0606c9554779e3ec9ed6e4485c43d6ca813acbdaa9ee38537bda0f",
+    "services/purchasing/payment-request-read.service.ts": "04c581eb4e62372b63bad1b2a359f272765eb664eaa3df8b54caafffa11cbfc2",
+    "services/purchasing/payment-request-contracts.ts": "4542c8b894bfb016e90c7ffb0fe4b8df791a6a4abc5e621e6dd99f29d8ae16a4",
+    "services/purchasing/payment-request.service.ts": "a990f4b39fb06fb98ea24bc72be4370beabfc31b0e2b9e704eb044a2c5e4987f",
+    "services/purchasing/payment-request-authority.ts": "b857f5fc4dc0270255df808acf682d9a29db48744c479c9181a7f0dabeb66bfe",
+    "services/purchasing/payment-request-evidence.ts": "c8d17217471e860a17175cc7fbbbb45f2009c8664a3c441cb80492c17f3f767b",
+    "actions/purchasing/payment-request.actions.ts": "5781766a150686ddda353f9efac90f1274c04cf28d7ca48a7e3c51856bd3ba8b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/request/page.tsx": "df54ade3181083871b534865c092651f4ed8f9588dc5040c756e9bbb8f0a0e7e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/approve/page.tsx": "b34e8c8e5a16c575b2e1ac2587573187cf1ffaa9c2b1f18c9f2b81f2d4691791",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "6be67aa573a806209ef2f6f13124125fe246161f768543a0b296a5680e0ef498",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "99aed7de47120dba42a9cc69ecd1d2916df4ade954d83cde2a014721957b9ff2",
+    "i18n/request.ts": "76b60eae3d037b7814c0c6e92aeaae10d0361a3ccb6a878bffb243593d947527",
+    "messages/payment-request/en.json": "7c7a4287197406dbd216d81cef66672774c6eb3c5dd585343f4b722d28e1d5e2",
+    "messages/payment-request/fr.json": "3b0d03f4f1e6a8ab90f9b54d50bde04bc0857cba2dd006d7c1f6fb8b09b9cc76",
+    "app/[locale]/layout.tsx": "96560ce5c2087b16d7c6c086d2f1a1078575372b525977d133ef3498bfed16bc",
+    "components/purchasing/__tests__/PaymentRequestWorkbench.test.tsx": "9f29bec0d3c6b51688aa855a5b2908ca258073d8f09031c8b2c26357760c4949",
+    "scripts/__tests__/module-purchases-route-evidence.test.js": "730bd1fdbad694cade7bcd70f9e6a99aef2c170cee38b892745dc8929e7f8d35",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+    "services/purchasing/__tests__/payment-request-read.service.test.ts": "bacb9b6b532301b1c3197f97796ef9441d2a1040cb4fce1db6ba38000ea2a0db",
+    "services/purchasing/__tests__/payment-request-evidence.test.ts": "f68442ff80469bcd5d85dc6570e057f0a7a881373d43191d944671f0678db16a",
+    "actions/purchasing/__tests__/payment-request.actions.test.ts": "0d1c459518598c6aa4fe73d8da22e20f86ef1a20b85bb7ea1b4ca09e15a8e451",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "76056311ea8f0f046c2d3f7ef73285a1cfe6f1079dfeafb54eeb3926bd79b4c0",
+    "services/purchasing/__tests__/payment-request-contracts.test.ts": "227d6d35d702ae250d87549315abf689a8d0cf85dab3f53f4f08316324feca65",
+    "services/purchasing/__tests__/supplier-payment-balance.test.ts": "e6ae42ac0f5733062bfa7c3643248111a9651bd50a25d9274698e60b1886d87b",
+    "services/purchasing/ap-control.service.ts": "bc9f48d0e61e84afb3f034d2c3190cf343de120f4276e3932ad757e7245352a6",
+    "services/purchasing/ap-control.schemas.ts": "3f726d590f0ebd9bf496010cdc1b82fd50b7c547987ed0af3238e604941070f6",
+    "services/purchasing/supplier-payment-balance.ts": "31619b663b4ec9a997524389d9d31cf445c881dd1f36e00341df06f98d6202de",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e"
+  },
+  "tests": {
+    "file": "evidence/payment-workspace-final-v81.json",
+    "passed": 130,
+    "suites": 9,
+    "session": 35879,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 30654,
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "eslint payment workspace component, read model, contracts, actions, tests, i18n providers and new/affected purchases routes",
+      "session": 27669,
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "eslint scripts/__tests__/module-purchases-route-evidence.test.js",
+      "session": 70063,
+      "exitCode": 0,
+      "status": "passed"
+    }
+  ],
+  "browser": {
+    "file": "lanes/environment/payment-workspace-browser-000c93fa-534.json",
+    "session": 84187,
+    "exitCode": 0,
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "stagesPerLocale": 5,
+    "screenshots": 18,
+    "originalUnchanged": true,
+    "sourceStable": true,
+    "pageErrors": [],
+    "releaseExecuted": false,
+    "approvedDestination": "explicit fixture prerequisite"
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-request-desktop-000c93fa-534.png",
+      "sha256": "344928d3d9e0c2fe0958bf1e7e7bc868ac992aea88804f827b1696f895cb4675"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-request-mobile-000c93fa-534.png",
+      "sha256": "cf440e282fa476e94f6cb2190d1ed6c8cce0d5af26486ae528bfd6dda0d98fae"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-request-review-000c93fa-534.png",
+      "sha256": "ac5e6aa5d896b331e100404ec0ae692dae9bd942d8070341c4e0bd72f81411a1"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-stale-draft-preserved-000c93fa-534.png",
+      "sha256": "ad15f7ca3eb432473d9e9985078879f6f4cee3c14f5a636b1786ad0702050499"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-request-recovered-000c93fa-534.png",
+      "sha256": "2311a117fce2e4128e68dd8872815bd3dbc12990b837500ced748ec9473fd9b7"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-independent-review-000c93fa-534.png",
+      "sha256": "7960e7e2bc9106bf7e6ae0834aa630e90c9bcf92b075b7b909f0e3771b8fb613"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-approved-desktop-000c93fa-534.png",
+      "sha256": "782943db9078ba53f90a82ec49b5efc06db6124e59ea4af76ef1f117a12b115d"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-approved-mobile-text200-000c93fa-534.png",
+      "sha256": "ac6c5661182bd846e22284d0862ada71a3141d08e32c96ae0652d83679675c30"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-workspace-v81/payment-workspace-en-denied-000c93fa-534.png",
+      "sha256": "0143f20a5c021db04aba89e2da4482dad276cddd57881d973c7e4a5c645f1007"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-request-desktop-000c93fa-534.png",
+      "sha256": "c9cb28f394af3ccd17f4c1eba932cbf7fe59f760fc336962e04aaaa5c4c7d012"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-request-mobile-000c93fa-534.png",
+      "sha256": "06353baeb2b85150c87c5fd6485e24a9e87c14db8f51029b9647b81f81cb8057"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-request-review-000c93fa-534.png",
+      "sha256": "9a1e4c5f66a3842fd1a5afb101483b5245de385dfebaa7cbc668a2447136499b"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-stale-draft-preserved-000c93fa-534.png",
+      "sha256": "8ea85c28aa879d6e1fcadfe10cd4895aec2265c3774d170414f15c65641b662f"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-request-recovered-000c93fa-534.png",
+      "sha256": "dffe13480d59737e66db753d2ddb17f93e4348e2ef45b124076bd6e827fc811a"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-independent-review-000c93fa-534.png",
+      "sha256": "f0c14b3386089bcdc5c79880dc6d902d504291fb008aa2809a03b6421b0ec4cd"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-approved-desktop-000c93fa-534.png",
+      "sha256": "664d1b9b42bddcc482fa2eb58e6c34f7f6386df499fe11e406e29a2c2157ec6c"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-approved-mobile-text200-000c93fa-534.png",
+      "sha256": "c5afb2452ebfbaa88e87e885591c2af3c840eed81c411be0d044690429bf2f36"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-workspace-v81/payment-workspace-fr-denied-000c93fa-534.png",
+      "sha256": "3736e105b1ad3476e2077820054291346f98bb3678999057ffa210e0a3d15196"
+    }
+  ],
+  "failedAttempts": [
+    {
+      "session": 39185,
+      "testsFailed": 8,
+      "testsPassed": 7,
+      "reason": "resetAllMocks erased the global browser observer implementation before UI execution"
+    },
+    {
+      "session": 63414,
+      "testsFailed": 8,
+      "testsPassed": 7,
+      "reason": "mock reset loop encountered the namespace default export; restrict reset to actual mock functions"
+    },
+    {
+      "session": 47589,
+      "receipt": "lanes/environment/payment-workspace-browser-dc9393e9-982.json",
+      "reason": "Client locale provider lacked paymentRequest namespace; added provider integration, then repeated both real journeys"
+    }
+  ],
+  "intermediate": {
+    "session": 37716,
+    "testsPassed": 22,
+    "suites": 3,
+    "exitCode": 0
+  },
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2742,
+      "tests": 965,
+      "pages": 157,
+      "routeHandlers": 18,
+      "actionSources": 167,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2322,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "fullBuild": "not run; real application routes compiled and executed, typecheck passed",
+  "next": "Authorized payment release/recovery UX and current-session/domain verification; unresolved wider workflow register remains active"
+}

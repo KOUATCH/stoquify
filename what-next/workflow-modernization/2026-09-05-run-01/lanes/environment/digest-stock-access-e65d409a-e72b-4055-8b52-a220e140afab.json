@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-19T13:20:30.057Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "dcdb2c9e9b980a6190d2ffbccb10ec16cf9a18fd08b4d8eb1fdd22842e1c90da",
+    "services/daily-habit/daily-habit-source-visibility.ts": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "dd65dcc8fa6df7b12a2dfc2d626d68709544068e081f7900a772bd11d6bebb46",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx": "b81d3a88f813696a7b8a93a264bf03e3669fc517cc31c8c0bf7375f509d81426",
+    "actions/itemsShow/getOrgItemsWithInventoryLevels.ts": "3db049c168d6577b437cfda8d85162d62e9d550e6903e0eb3fb317189382e267"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "summary": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-e65d409a-e72b-4055-8b52-a220e140afab-explicit-empty-en.png"
+        }
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Inventory is not available', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Inventory is not available', exact: true })\n",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "dcdb2c9e9b980a6190d2ffbccb10ec16cf9a18fd08b4d8eb1fdd22842e1c90da",
+    "services/daily-habit/daily-habit-source-visibility.ts": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "dd65dcc8fa6df7b12a2dfc2d626d68709544068e081f7900a772bd11d6bebb46",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx": "b81d3a88f813696a7b8a93a264bf03e3669fc517cc31c8c0bf7375f509d81426",
+    "actions/itemsShow/getOrgItemsWithInventoryLevels.ts": "3db049c168d6577b437cfda8d85162d62e9d550e6903e0eb3fb317189382e267"
+  },
+  "sourceStable": true
+}

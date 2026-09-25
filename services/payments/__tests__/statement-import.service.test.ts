@@ -1,4 +1,5 @@
 jest.mock("server-only", () => ({}))
+jest.mock("@/services/modules/module-admission.service", () => ({ assertModuleNewWorkInTx: jest.fn() }))
 
 import {
   ExceptionSeverity,
@@ -10,6 +11,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 
 import { MobileMoneyHmacAdapter, sha256 } from "../adapters/mobile-money-hmac.adapter"
 import { importProviderStatement } from "../statement-import.service"
@@ -17,11 +19,12 @@ import { importProviderStatement } from "../statement-import.service"
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
     providerAccount: { findFirst: jest.fn() },
     statementFile: { findFirst: jest.fn(), create: jest.fn() },
     statementLine: { findMany: jest.fn(), createMany: jest.fn() },
     paymentReconciliationInboxItem: { upsert: jest.fn() },
-    paymentException: { create: jest.fn() },
+    paymentException: { create: jest.fn(), findFirst: jest.fn() },
     closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     closePackExport: { findFirst: jest.fn(), update: jest.fn() },
     ledgerAuditEvent: { create: jest.fn() },
@@ -36,7 +39,7 @@ const mockedDb = db as unknown as {
   statementFile: { findFirst: jest.Mock; create: jest.Mock }
   statementLine: { findMany: jest.Mock; createMany: jest.Mock }
   paymentReconciliationInboxItem: { upsert: jest.Mock }
-  paymentException: { create: jest.Mock }
+  paymentException: { create: jest.Mock; findFirst: jest.Mock }
   closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
   closePackExport: { findFirst: jest.Mock; update: jest.Mock }
   ledgerAuditEvent: { create: jest.Mock }
@@ -68,6 +71,7 @@ function statementContent(overrides: Array<Record<string, unknown>> = []) {
 describe("statement import ingestion", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(assertModuleNewWorkInTx as jest.Mock).mockReset()
     mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
     mockedDb.providerAccount.findFirst.mockResolvedValue({
       id: "provider-account-1",
@@ -79,6 +83,7 @@ describe("statement import ingestion", () => {
     mockedDb.statementLine.createMany.mockResolvedValue({ count: 1 })
     mockedDb.paymentReconciliationInboxItem.upsert.mockResolvedValue({ id: "inbox-1" })
     mockedDb.paymentException.create.mockResolvedValue({ id: "exception-1" })
+    mockedDb.paymentException.findFirst.mockResolvedValue(null)
     mockedDb.closeRun.findMany.mockResolvedValue([])
     mockedDb.closeRun.findFirst.mockResolvedValue(null)
     mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
@@ -91,6 +96,29 @@ describe("statement import ingestion", () => {
       ...args.data,
       outboxMessages: args.data.outboxMessages.create,
     }))
+  })
+
+  it("reuses a retained duplicate case without creating another exception or importing", async () => {
+    mockedDb.paymentException.findFirst.mockResolvedValue({ id: "retained", evidence: { duplicateFingerprints: ["fingerprint"] } })
+    const result = await importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent: statementContent() })
+    expect(result).toMatchObject({ status: "DUPLICATE_LINE", exceptionId: "retained", duplicateLineCount: 1, importedLineCount: 0 })
+    expect(mockedDb.paymentException.create).not.toHaveBeenCalled()
+    expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
+    expect(assertModuleNewWorkInTx).not.toHaveBeenCalled()
+  })
+
+  it("rejects malformed retained evidence instead of treating it as a successful empty import", async () => {
+    mockedDb.paymentException.findFirst.mockResolvedValue({ id: "retained", evidence: null })
+    await expect(importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent: statementContent() })).rejects.toThrow(/requires review/)
+    expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
+  })
+
+  it("prevents new import effects when the capability has stopped accepting new work", async () => {
+    ;(assertModuleNewWorkInTx as jest.Mock).mockRejectedValue(new Error("New work stopped"))
+    await expect(importProviderStatement({ organizationId: "org-1", providerAccountId: "provider-account-1", adapter, rawContent: statementContent() })).rejects.toThrow("New work stopped")
+    expect(mockedDb.statementFile.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.create).not.toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
   })
 
   it("imports a provider statement file and fingerprints each line", async () => {

@@ -1,0 +1,17 @@
+{
+  "suites": 1,
+  "passedSuites": 0,
+  "failedSuites": 1,
+  "tests": 0,
+  "passedTests": 0,
+  "failedTests": 0,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "lib/security/__tests__/middleware-routing.test.ts",
+      "status": "failed",
+      "assertions": [],
+      "message": "  ● Test suite failed to run\n\n    The error below may be caused by using the wrong test environment, see https://jestjs.io/docs/configuration#testenvironment-string.\n    Consider using the \"jsdom\" test environment.\n\n    ReferenceError: window is not defined\n\n      110 |\n      111 | // Mock window.matchMedia\n    > 112 | Object.defineProperty(window, 'matchMedia', {\n          |                       ^\n      113 |   writable: true,\n      114 |   value: jest.fn().mockImplementation(query => ({\n      115 |     matches: false,\n\n      at Object.window (jest.setup.ts:112:23)\n"
+    }
+  ]
+}

@@ -1,0 +1,237 @@
+{
+  "at": "2026-09-19T15:52:13.228Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "d741e5ce50bff6e694c4497a99cf05a431711db1abd18d00b33439380a5688c6",
+    "messages/fr.json": "18108ce13ac0a3be91c662cc99e8f0e6af27e0bea44c1aa1bbf031e59071d6d7"
+  },
+  "managerBrowserOnly": true,
+  "checks": [
+    {
+      "name": "owner-label-only",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "administrator",
+      "owner": true,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "owner-authority-revoked",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-unassigned",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-assigned",
+      "owner": false,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assigned-en.png",
+          "destinationBeforeInspection": {
+            "headingBounds": {
+              "x": 333,
+              "y": 139,
+              "width": 698,
+              "height": 36
+            },
+            "viewport": {
+              "width": 1440,
+              "height": 1000
+            },
+            "scroll": {
+              "windowY": 0,
+              "containers": []
+            }
+          },
+          "destinationScreenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assigned-en-destination.png",
+          "keyboardHandoff": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assigned-fr.png",
+          "destinationBeforeInspection": {
+            "headingBounds": {
+              "x": 33,
+              "y": -1032,
+              "width": 254,
+              "height": 64
+            },
+            "viewport": {
+              "width": 320,
+              "height": 1000
+            },
+            "scroll": {
+              "windowY": 1193,
+              "containers": [
+                {
+                  "tag": "HTML",
+                  "id": "",
+                  "scrollTop": 1193
+                }
+              ]
+            }
+          },
+          "destinationScreenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assigned-fr-destination.png",
+          "keyboardHandoff": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "manager-inactive-site",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-deleted-site",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "foreign-site-only",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-assignment-revoked",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "cachedRevocation": true,
+          "denialScreenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assignment-revoked-en-denied.png",
+          "screenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assignment-revoked-en.png",
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "cachedRevocation": true,
+          "denialScreenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assignment-revoked-fr-denied.png",
+          "screenshot": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b-manager-assignment-revoked-fr.png",
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "manager-assignment-restored",
+      "owner": false,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "d741e5ce50bff6e694c4497a99cf05a431711db1abd18d00b33439380a5688c6",
+    "messages/fr.json": "18108ce13ac0a3be91c662cc99e8f0e6af27e0bea44c1aa1bbf031e59071d6d7"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,94 @@
+{
+  "mode": "browser",
+  "attempt": "af443af6-01c",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T04:59:47.273Z",
+  "sourcesBefore": {
+    "services/users/user-identity.service.ts": "edf8968a79c4af924b443facb6ba75c50e600ae8828a27854f67d2510ca96482",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "a5c4e1a47abce6aa6cc3d8cc48f771ae9e90c953dc18148519c7793bcaa5288d",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "fa1a196e582a751522b9d118416f84755f9026e48b811e0ef8d8d0f78e758514",
+    "messages/fr.json": "5b33f510d00ac8db436f17898dea62a116b44543ed2a8f0b482fcf1429b56436",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-invitation-ready-af443af6-01c.png",
+        "en-invitation-recovery-af443af6-01c.png",
+        "en-invitation-created-af443af6-01c.png",
+        "en-invitation-retained-link-af443af6-01c.png",
+        "en-invitation-expired-af443af6-01c.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 1242,
+      "credentialSignInPassed": true,
+      "abortedRequests": 1,
+      "scopeAndPasswordPreserved": true,
+      "keyboardSubmit": true,
+      "widthsChecked": [
+        390,
+        768,
+        1440
+      ],
+      "createdUserId": "cmtpcen68006pmamw381c58u1"
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-invitation-ready-af443af6-01c.png",
+        "fr-invitation-recovery-af443af6-01c.png",
+        "fr-invitation-created-af443af6-01c.png",
+        "fr-invitation-retained-link-af443af6-01c.png",
+        "fr-invitation-expired-af443af6-01c.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 951,
+      "credentialSignInPassed": true,
+      "abortedRequests": 1,
+      "scopeAndPasswordPreserved": true,
+      "keyboardSubmit": true,
+      "widthsChecked": [
+        390,
+        768,
+        1440
+      ],
+      "createdUserId": "cmtpcew3q0070mamwvqu6ngif"
+    }
+  ],
+  "blockedBrowserOrigins": [],
+  "limitations": [
+    "Owned synthetic invitation records are local preconditions; email issuance and real recipient delivery are not claimed.",
+    "Real application services, password policy, credential creation and sign-in; no success response body is mocked.",
+    "Browser external requests are blocked; server password-breach lookup uses the existing application configuration and is not measured by the browser interceptor."
+  ],
+  "originalAuthorityBefore": "d939aebee6d3cb67ff8a7c86cc55c819dbf31d6444510ac0e87f93c9091b0bec",
+  "originalAuthorityAfter": "d939aebee6d3cb67ff8a7c86cc55c819dbf31d6444510ac0e87f93c9091b0bec",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T05:00:05.662Z",
+  "sourcesAfter": {
+    "services/users/user-identity.service.ts": "edf8968a79c4af924b443facb6ba75c50e600ae8828a27854f67d2510ca96482",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "a5c4e1a47abce6aa6cc3d8cc48f771ae9e90c953dc18148519c7793bcaa5288d",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "fa1a196e582a751522b9d118416f84755f9026e48b811e0ef8d8d0f78e758514",
+    "messages/fr.json": "5b33f510d00ac8db436f17898dea62a116b44543ed2a8f0b482fcf1429b56436",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "f6e59dadcc3e6bdf750757caee57b5f451af75e45909c3ed90ef30796ad20501",
+  "passed": 2,
+  "failed": 0
+}

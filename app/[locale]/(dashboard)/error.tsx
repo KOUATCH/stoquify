@@ -24,7 +24,6 @@ export default function DashboardShellError({
     <DashboardErrorState
       error={error}
       reset={reset}
-      title="Dashboard shell could not load"
       dashboardHref={dashboardHrefFromParams(params)}
     />
   )

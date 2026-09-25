@@ -1,0 +1,940 @@
+{
+  "suites": 35,
+  "passedSuites": 35,
+  "failedSuites": 0,
+  "tests": 171,
+  "passedTests": 171,
+  "failedTests": 0,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "app/api/internal/agents/reconcile-abandoned/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "/api/internal/agents/reconcile-abandoned returns 503 when the server-side secret is missing",
+          "status": "passed"
+        },
+        {
+          "title": "/api/internal/agents/reconcile-abandoned returns 401 before scheduler parsing for an unauthorized request",
+          "status": "passed"
+        },
+        {
+          "title": "/api/internal/agents/reconcile-abandoned records a stable invocation around the complete reconciliation flow",
+          "status": "passed"
+        },
+        {
+          "title": "/api/internal/agents/reconcile-abandoned returns a completed replay without executing the reconciler twice",
+          "status": "passed"
+        },
+        {
+          "title": "/api/internal/agents/reconcile-abandoned returns 409 while the same invocation is still running",
+          "status": "passed"
+        },
+        {
+          "title": "/api/internal/agents/reconcile-abandoned exposes authenticated cadence readiness without secret material",
+          "status": "passed"
+        },
+        {
+          "title": "/api/internal/agents/reconcile-abandoned returns a sanitized 503 when readiness persistence is unavailable",
+          "status": "passed"
+        },
+        {
+          "title": "/api/internal/agents/reconcile-abandoned does not expose a secondary failure while recording execution failure",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/uploads/[...path] returns 401 before path, module, permission, or filesystem checks when RBAC context is missing",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] returns 403 for cross-organization asset paths before module or filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] requires dashboard module entitlement before RBAC permission or filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] requires dashboard.read before filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] blocks path traversal before filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] blocks unsupported file types before filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] serves same-organization supported image assets after guard checks pass",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/security/__tests__/step-up-auth.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "password session step-up verifies the credential and atomically updates only the exact current unexpired session",
+          "status": "passed"
+        },
+        {
+          "title": "password session step-up records an invalid password against only the current session",
+          "status": "passed"
+        },
+        {
+          "title": "password session step-up locks the current session when repeated failures reach the threshold",
+          "status": "passed"
+        },
+        {
+          "title": "password session step-up blocks an already locked session before password verification",
+          "status": "passed"
+        },
+        {
+          "title": "password session step-up fails closed when the exact session is no longer current",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "actions/storage/__tests__/photo-upload-actions.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "inventory photo action authorization authorizes, tenant-scopes, observes, and audits photo uploads before filesystem access",
+          "status": "passed"
+        },
+        {
+          "title": "inventory photo action authorization rejects cross-organization uploads before configuration or filesystem access",
+          "status": "passed"
+        },
+        {
+          "title": "inventory photo action authorization uses the same permission and tenant boundary before deleting local photos",
+          "status": "passed"
+        },
+        {
+          "title": "inventory photo action authorization fails closed before configuration and filesystem access when RBAC is denied",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/v1/organisations/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/v1/organisations returns 401 without module, permission, or data calls when RBAC context is missing",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations requires the settings module before checking system settings permission",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations requires MANAGE_SYSTEM_SETTINGS before returning organization metadata",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations returns only the server-resolved organization after tenant, module, and permission checks pass",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations returns an empty list when the server-resolved organization is missing",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations keeps POST closed",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "actions/storage/__tests__/storage-config-actions.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "storage configuration action authorization authorizes configuration reads and keeps them free of filesystem writes",
+          "status": "passed"
+        },
+        {
+          "title": "storage configuration action authorization requires fresh auth and canonical permission before updating storage configuration",
+          "status": "passed"
+        },
+        {
+          "title": "storage configuration action authorization requires the same fresh-auth write boundary before initialization",
+          "status": "passed"
+        },
+        {
+          "title": "storage configuration action authorization fails closed before tenant, module, or filesystem access when write permission is denied",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/v1/organisations/[id]/briefItems/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/v1/organisations/[id]/briefItems returns 401 without calling module, permission, or item services when the API session is missing",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/briefItems returns 403 without calling module, permission, or item services when tenant authorization fails",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/briefItems requires the inventory module before checking inventory.items.read",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/briefItems requires inventory.items.read before listing same-org brief items",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/briefItems lists brief items only after tenant, module, and permission checks pass",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/security/__tests__/public-identity-abuse.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "public identity abuse service uses stable HMAC hashes without retaining the raw public identifier",
+          "status": "passed"
+        },
+        {
+          "title": "public identity abuse service starts a new window and blocks the first request above the policy maximum",
+          "status": "passed"
+        },
+        {
+          "title": "public identity abuse service preserves an active block without extending it",
+          "status": "passed"
+        },
+        {
+          "title": "public identity abuse service persists only hashed subject and IP dimensions in serializable transactions",
+          "status": "passed"
+        },
+        {
+          "title": "public identity abuse service normalizes an exhausted serialization conflict without exposing Prisma details",
+          "status": "passed"
+        },
+        {
+          "title": "public identity abuse service fails closed with a non-exposing error when persistence is unavailable",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/customer-settlement-security.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "customer settlement collection security maps the canonical collection permission to the legacy customer-payment capability",
+          "status": "passed"
+        },
+        {
+          "title": "customer settlement collection security classifies collection as critical and denies implicit wildcard authority",
+          "status": "passed"
+        },
+        {
+          "title": "customer settlement collection security requires explicit permission and five-minute fresh authentication",
+          "status": "passed"
+        },
+        {
+          "title": "customer settlement reversal security requires an explicit critical permission without the collection alias",
+          "status": "passed"
+        },
+        {
+          "title": "customer settlement reversal security requires L1 freshness and independent approval",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/security/__tests__/moat-guard.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "Kontava moat guard service does not let wildcard RBAC bypass enforced module entitlement rules",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava moat guard service does not let wildcard RBAC bypass partner consent",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava moat guard service keeps maker-checker denial from sensitive actions inside the composite guard",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava moat guard service allows access with protected-field redaction instead of returning hidden raw values",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava moat guard service audits denied composite guard decisions without raw sensitive payloads",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "POST /api/customer-statements/[statementId]/actions submits a dispute with signed scope and hashed-metadata inputs",
+          "status": "passed"
+        },
+        {
+          "title": "POST /api/customer-statements/[statementId]/actions returns 200 for an exact idempotent replay",
+          "status": "passed"
+        },
+        {
+          "title": "POST /api/customer-statements/[statementId]/actions rejects missing tokens before parsing recipient evidence",
+          "status": "passed"
+        },
+        {
+          "title": "POST /api/customer-statements/[statementId]/actions rejects unsupported action types before service access",
+          "status": "passed"
+        },
+        {
+          "title": "POST /api/customer-statements/[statementId]/actions returns the safe error envelope when scoped action validation fails",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/server-authz.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "server authz module access helpers returns a safe unauthorized result when the current-org API session is missing",
+          "status": "passed"
+        },
+        {
+          "title": "server authz module access helpers returns the server-resolved organization for current-org API routes",
+          "status": "passed"
+        },
+        {
+          "title": "server authz module access helpers enforces API module access with actor permissions and audit metadata",
+          "status": "passed"
+        },
+        {
+          "title": "server authz module access helpers returns a safe forbidden result when module entitlement denies API access",
+          "status": "passed"
+        },
+        {
+          "title": "server authz module access helpers accepts any one of the approved API write permissions",
+          "status": "passed"
+        },
+        {
+          "title": "server authz module access helpers fails closed when none of the approved API write permissions are present",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/uploadthing/__tests__/core.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "requireUploadAuth throws AuthRequiredError when RBAC context is missing",
+          "status": "passed"
+        },
+        {
+          "title": "requireUploadAuth requires inventory module access before returning upload metadata",
+          "status": "passed"
+        },
+        {
+          "title": "requireUploadAuth requires inventory item create or update permission before returning upload metadata",
+          "status": "passed"
+        },
+        {
+          "title": "requireUploadAuth returns server-resolved tenant metadata after auth, module, and permission checks pass",
+          "status": "passed"
+        },
+        {
+          "title": "requireUploadAuth exposes only the repository-used item image upload endpoint",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/security/__tests__/redaction-policy.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "Kontava redaction policy service redacts payroll person-level amounts when the payroll module is not entitled even for wildcard RBAC",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava redaction policy service requires fresh auth before exposing supplier bank details",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava redaction policy service masks provider references instead of leaking raw identifiers without reconciliation authority",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava redaction policy service redacts raw fiscal authority payloads from default assurance projections",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava redaction policy service redacts payroll HR document evidence hashes from source-data readers without document authority",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/receipts/[receiptId]/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/receipts/[receiptId] passes signed receipt tokens to the public receipt service",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/receipts/[receiptId] rejects raw receipt-id lookup before public service access",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/receipts/[receiptId] rejects blank receipt tokens before public service access",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/receipts/[receiptId] returns the safe error envelope when token validation fails in the service",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/security/__tests__/role-grant-policy.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "role grant policy rejects actors without role-assignment authority",
+          "status": "passed"
+        },
+        {
+          "title": "role grant policy rejects target roles containing a wildcard",
+          "status": "passed"
+        },
+        {
+          "title": "role grant policy rejects target permissions above the actor's explicit grant ceiling",
+          "status": "passed"
+        },
+        {
+          "title": "role grant policy rejects a target role owned by another tenant",
+          "status": "passed"
+        },
+        {
+          "title": "role grant policy allows a same-tenant role within the actor's explicit grant ceiling",
+          "status": "passed"
+        },
+        {
+          "title": "role grant policy allows a new administrator template to grant a canonical non-wildcard role",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/customer-statements/[statementId] returns a non-cacheable redacted statement through the signed access service",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/customer-statements/[statementId] rejects missing tokens without looking up a statement",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/customer-statements/[statementId] uses the safe error envelope for invalid or revoked access",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/referrals/[referralCode]/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/referrals/[referralCode] records the click and redirects to non-cacheable attributed registration",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/referrals/[referralCode] forwards an accountant invite secret without putting it in logs",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/referrals/[referralCode] returns the safe not-found envelope for unknown attribution",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/security/__tests__/export-safety.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "Kontava export safety service requires fresh authentication before controlled accounting exports",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava export safety service requires a supplied watermark before releasing controlled exports",
+          "status": "passed"
+        },
+        {
+          "title": "Kontava export safety service allows and audits watermarked controlled exports",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/_shared/__tests__/action-errors.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "action error compatibility facade keeps domain error ergonomics while adding canonical metadata",
+          "status": "passed"
+        },
+        {
+          "title": "action error compatibility facade preserves not-found and conflict classes for service tests",
+          "status": "passed"
+        },
+        {
+          "title": "action error compatibility facade maps Prisma known errors through the canonical classifier",
+          "status": "passed"
+        },
+        {
+          "title": "action error compatibility facade does not leak unknown system errors",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/_shared/__tests__/resolve-action-organization.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "resolveActionOrganization uses the session organization when no explicit organization is supplied",
+          "status": "passed"
+        },
+        {
+          "title": "resolveActionOrganization uses the session organization when the explicit organization matches",
+          "status": "passed"
+        },
+        {
+          "title": "resolveActionOrganization denies cross-organization access without an explicit high-risk organization permission",
+          "status": "passed"
+        },
+        {
+          "title": "resolveActionOrganization denies cross-organization access with a raw wildcard before target organization lookup",
+          "status": "passed"
+        },
+        {
+          "title": "resolveActionOrganization denies cross-organization access with the explicit organization permission before target organization lookup",
+          "status": "passed"
+        },
+        {
+          "title": "resolveActionOrganization denies cross-organization access with the canonical organization management alias before target organization lookup",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/auth-credentials.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "auth credential helpers uses BetterAuth's credential account convention",
+          "status": "passed"
+        },
+        {
+          "title": "auth credential helpers syncs user password, credential account, history, and session revocation",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/me/permissions/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/me/permissions fails closed with empty permissions when RBAC context is unavailable",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/me/permissions returns only permission, organization, and role claims when RBAC context exists",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/rbac.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "rbac tenant isolation allows access to the active organization without auditing a denial",
+          "status": "passed"
+        },
+        {
+          "title": "rbac tenant isolation denies cross-organization access even for wildcard users",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/trusted-origins.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "trusted origin configuration normalizes configured HTTP origins and removes duplicates",
+          "status": "passed"
+        },
+        {
+          "title": "trusted origin configuration rejects invalid and non-HTTP origin configuration",
+          "status": "passed"
+        },
+        {
+          "title": "trusted origin configuration does not derive trust from spoofed request host headers",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/public-request-context.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "public identity request context normalizes the first trusted proxy address",
+          "status": "passed"
+        },
+        {
+          "title": "public identity request context supports bracketed IPv6 and IPv4 ports without retaining the port",
+          "status": "passed"
+        },
+        {
+          "title": "public identity request context rejects malformed or oversized public address values",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/security-txt/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/security-txt publishes a fresh security.txt policy with bounded cache headers",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/finance-rbac-permissions.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "finance dashboard RBAC compatibility keeps finance submenu grants compatible with guarded finance surfaces",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/_shared/__tests__/action-response.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "action-response helpers redacts unexpected internal errors in legacy action responses",
+          "status": "passed"
+        },
+        {
+          "title": "action-response helpers preserves typed domain messages in legacy action responses",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/credential-sign-in-outcome.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "credential sign-in outcome recognizes the Better Auth returned success payload",
+          "status": "passed"
+        },
+        {
+          "title": "credential sign-in outcome rejects the APIError stored by Better Auth for failed sign-in",
+          "status": "passed"
+        },
+        {
+          "title": "credential sign-in outcome fails closed when the hook result is missing",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/branch-daily-close-review-permission.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "branch daily-close review authority registers review as canonical high-risk authority",
+          "status": "passed"
+        },
+        {
+          "title": "branch daily-close review authority requires an explicit grant instead of accepting wildcard authority",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/_shared/__tests__/protect.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "protect passes input and RBAC context to the handler when authorized",
+          "status": "passed"
+        },
+        {
+          "title": "protect rejects caller-supplied organization scope that does not pass RBAC context checks",
+          "status": "passed"
+        },
+        {
+          "title": "protect checks nested data organization scope before calling the handler",
+          "status": "passed"
+        },
+        {
+          "title": "protect allows reviewed handler-derived tenant scope without trusting caller organization fields",
+          "status": "passed"
+        },
+        {
+          "title": "protect blocks a protected action when module entitlement enforcement denies access",
+          "status": "passed"
+        },
+        {
+          "title": "protect does not call the handler when module observation fails",
+          "status": "passed"
+        },
+        {
+          "title": "protect requires fresh authentication when configured",
+          "status": "passed"
+        },
+        {
+          "title": "protect returns a step-up response when fresh authentication is stale",
+          "status": "passed"
+        },
+        {
+          "title": "protect does not leak unexpected error messages",
+          "status": "passed"
+        },
+        {
+          "title": "protect returns forbidden when the RBAC check fails",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/auth-session.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "auth session assurance binds the exact session id, token, and user and reads assurance from the database row",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance rejects a revoked or mismatched session row",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance rejects an RBAC identity that differs from the bound session user",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance uses zero when assurance is missing instead of session createdAt or Date.now",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance fails closed for missing assurance evidence",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance fails closed for stale assurance evidence",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance fails closed for future-dated assurance evidence",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance fails closed for wrong-tenant assurance evidence",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance fails closed for below-level assurance evidence",
+          "status": "passed"
+        },
+        {
+          "title": "auth session assurance accepts recent tenant-bound password assurance at the required level",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "app/api/v1/organisations/[id]/items/__tests__/route.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "GET /api/v1/organisations/[id]/items returns 401 without calling module, permission, or item services when the API session is missing",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/items returns 403 without calling module, permission, or item services when tenant authorization fails",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/items requires the inventory module before checking inventory.items.read",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/items requires inventory.items.read before listing same-org items",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/v1/organisations/[id]/items lists items only after tenant, module, and permission checks pass",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "lib/security/__tests__/rbac-permissions.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "rbac permission compatibility allows old uppercase role permissions to satisfy canonical dot-style checks",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility allows canonical dot-style permissions to satisfy older uppercase checks",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility keeps customer order read permission compatible with legacy sales order grants",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility does not let wildcard grants bypass high-risk or critical permissions",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility registers branch daily-close sign-off as canonical critical authority",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility fails closed for unknown permission keys",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility expands stored permissions into effective permission candidates",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility keeps accounting permissions compatible with legacy finance grants",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility registers missing-proof requests as explicit high-risk accounting authority",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility does not let reconciliation run permission imply certified evidence powers",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility allows reconciliation read without granting elevated reconciliation operations",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility keeps AP controls compatible with legacy purchasing and supplier payment grants",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility recognizes enterprise sensitive workflow permissions through existing grants",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility requires the canonical purchase order receiving permission without aliases",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility keeps payroll controls compatible with legacy payroll and finance grants",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility keeps HRIS people permissions independent from payroll permissions",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility keeps legacy role templates aligned with the own-record permission catalog",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility classifies role mutation permissions as critical",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility classifies critical accounting and export permissions explicitly",
+          "status": "passed"
+        },
+        {
+          "title": "rbac permission compatibility requires explicit organization management authority for cross-org resolver permission",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    }
+  ]
+}

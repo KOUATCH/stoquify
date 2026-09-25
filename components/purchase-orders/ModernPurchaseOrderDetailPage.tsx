@@ -1,17 +1,17 @@
 "use client"
+import { PurchaseReceivingWorkbench } from "./PurchaseReceivingWorkbench"
+import { PurchaseOrderApprovalDialog } from "./PurchaseOrderApprovalDialog"
 
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
-import { formatCurrency as formatMoney } from "@/lib/i18n/formatters"
+import { formatPurchaseOrderMoney } from "./purchase-order-money"
 import { DEFAULT_LOCALE } from "@/types/bilingual"
 import { format, formatDate } from "date-fns"
 import {
@@ -42,22 +42,23 @@ import {
   XCircle,
   Zap
 } from "lucide-react"
+import { usePurchaseOrderClone } from "@/hooks/usePurchaseOrderClone"
+import { PurchaseOrderCloneNotice } from "./PurchaseOrderCloneNotice"
+import { PurchaseOrderDecisionHistory } from "./PurchaseOrderDecisionHistory"
+import { PurchaseOrderLifecycleDialog } from "./PurchaseOrderLifecycleDialog"
+import type { PurchaseLifecycleKind } from "@/services/purchase-order/purchase-order-lifecycle-contracts"
+import { useTranslations } from "next-intl"
 import { useSession } from "@/lib/auth-client"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { ModernStatusBadge } from "./ModernStatusBadge"
 import { resolveReceiveDeepLink } from "./purchase-order-deep-links"
 
 // Import real hooks
 import {
-  useApprovePurchaseOrder,
-  useCancelPurchaseOrder,
-  useClosePurchaseOrder,
-  useGoodsReceiptsForPurchaseOrder,
+
   usePurchaseOrderById,
-  useReceiveItems,
-  useSubmitPurchaseOrder
 } from "@/hooks/useRecentPurchaseOrderQueries"
 
 interface ModernPurchaseOrderDetailPageProps {
@@ -190,36 +191,24 @@ export default function ModernPurchaseOrderDetailPage({
   const localizedHref = useCallback((href: string) => localizePath(href, locale), [locale])
   const { data: session } = useSession()
   const currentUserId = session?.user?.id ?? ""
-  const { success, error: notifyError, info, warning } = useNotifications()
+  const { info } = useNotifications()
   const [activeTab, setActiveTab] = useState("overview")
   const [showApproveDialog, setShowApproveDialog] = useState(false)
-  const [showCancelDialog, setShowCancelDialog] = useState(false)
-  const [showSubmitDialog, setShowSubmitDialog] = useState(false)
   const [showReceiveDialog, setShowReceiveDialog] = useState(false)
-  const [showCompleteDialog, setShowCompleteDialog] = useState(false)
-  const [cancelReason, setCancelReason] = useState("")
-  const [receiveItems, setReceiveItems] = useState<Record<string, ReceiveItemDraft>>({})
-  const [inspectionOutcome, setInspectionOutcome] = useState<"PASSED" | "FAILED" | "INCOMPLETE" | "">("")
-  const [inspectionReason, setInspectionReason] = useState("")
-  const [inspectionEvidenceNotes, setInspectionEvidenceNotes] = useState("")
-  const receiveIdempotencyKeyRef = useRef<string | null>(null)
-
   // Hooks for data and mutations
   const { data: purchaseOrder, isLoading, error, refetch } = usePurchaseOrderById(id, organizationId)
-  const { data: goodsReceipts, isLoading: receiptsLoading } = useGoodsReceiptsForPurchaseOrder(id, organizationId)
-  const approveMutation = useApprovePurchaseOrder()
-  const cancelMutation = useCancelPurchaseOrder()
-  const submitMutation = useSubmitPurchaseOrder()
-  const receiveItemsMutation = useReceiveItems()
-  const completeMutation = useClosePurchaseOrder()
+  const [lifecycleKind, setLifecycleKind] = useState<PurchaseLifecycleKind | null>(null)
+  const lifecycleText = useTranslations("purchaseOrderLifecycle")
+  const approvalText = useTranslations("purchaseOrderApproval")
+  const cloneText = useTranslations("purchaseOrderClone")
+  const receivingText = useTranslations("purchaseReceiving")
+  const cloneController = usePurchaseOrderClone({ id, organizationId: organizationId ?? "", locale, allowed: Boolean(purchaseOrder?.capabilities.clone.allowed && organizationId) })
+
   const receiveDeepLinkHandledRef = useRef(false)
   const receiveDeepLink = purchaseOrder
     ? resolveReceiveDeepLink(requestedAction, purchaseOrder.capabilities.receive)
     : null
 
-  useEffect(() => {
-    receiveIdempotencyKeyRef.current = null
-  }, [inspectionEvidenceNotes, inspectionOutcome, inspectionReason, receiveItems])
 
   useEffect(() => {
     if (!receiveDeepLink || receiveDeepLinkHandledRef.current) return
@@ -229,58 +218,10 @@ export default function ModernPurchaseOrderDetailPage({
 
   const formatCurrency = useCallback((amount: number) => {
     if (!purchaseOrder?.currency) return "—"
-    return formatMoney(amount, locale, purchaseOrder.currency)
+    return formatPurchaseOrderMoney(amount, locale, purchaseOrder.currency)
   }, [locale, purchaseOrder?.currency])
 
   // Action handlers
-  const handleApprove = useCallback(async () => {
-    if (!purchaseOrder || !organizationId) return
-
-    try {
-      await approveMutation.mutateAsync({
-        id: purchaseOrder.id,
-        organizationId,
-      })
-      setShowApproveDialog(false)
-      success(
-        "Order Approved",
-        `Purchase order ${purchaseOrder.orderNumber} has been approved successfully`,
-        { duration: 4000, sound: true }
-      )
-    } catch (error) {
-      notifyError(
-        "Approval Failed",
-        "Failed to approve purchase order. Please try again.",
-        { duration: 6000, sound: true }
-      )
-    }
-  }, [approveMutation, notifyError, organizationId, purchaseOrder, success])
-
-  const handleCancel = useCallback(async () => {
-    if (!purchaseOrder || !organizationId) return
-
-    try {
-      await cancelMutation.mutateAsync({
-        id: purchaseOrder.id,
-        organizationId,
-        reason: cancelReason || 'Cancelled by user'
-      })
-      setShowCancelDialog(false)
-      setCancelReason("")
-      warning(
-        "Order Cancelled",
-        `Purchase order ${purchaseOrder.orderNumber} has been cancelled`,
-        { duration: 4000, sound: true }
-      )
-    } catch (error) {
-      notifyError(
-        "Cancellation Failed",
-        "Failed to cancel purchase order. Please try again.",
-        { duration: 6000, sound: true }
-      )
-    }
-  }, [cancelMutation, cancelReason, notifyError, organizationId, purchaseOrder, warning])
-
   const handleDownloadPDF = useCallback(() => {
     if (!purchaseOrder) return
     window.print()
@@ -290,147 +231,6 @@ export default function ModernPurchaseOrderDetailPage({
       { duration: 3000, sound: false }
     )
   }, [info, purchaseOrder])
-
-  const handleSubmit = useCallback(async () => {
-    if (!purchaseOrder || !organizationId) return
-
-    try {
-      await submitMutation.mutateAsync({
-        id: purchaseOrder.id,
-        organizationId
-      })
-      setShowSubmitDialog(false)
-      success(
-        "Order Submitted",
-        `Purchase order ${purchaseOrder.orderNumber} has been submitted for approval`,
-        { duration: 4000, sound: true }
-      )
-    } catch (error) {
-      notifyError(
-        "Submission Failed",
-        "Failed to submit purchase order. Please check your data and try again.",
-        { duration: 6000, sound: true }
-      )
-    }
-  }, [notifyError, organizationId, purchaseOrder, submitMutation, success])
-
-  // Calculate receiving totals
-  const receivingTotals = useMemo(() => {
-    const totalUnits = Object.values(receiveItems).reduce((sum, item) => sum + item.received, 0)
-    const totalValue = Object.entries(receiveItems).reduce((sum, [lineId, data]) => {
-      const line = purchaseOrder?.lines?.find(l => l.id === lineId)
-      return sum + toNumber(line?.unitCost) * data.received
-    }, 0)
-    const linesWithItems = Object.values(receiveItems).filter(item => item.received > 0).length
-
-    return {
-      totalUnits,
-      totalValue,
-      linesWithItems
-    }
-  }, [receiveItems, purchaseOrder?.lines])
-
-  const handleReceive = useCallback(async () => {
-    if (!purchaseOrder || !organizationId) return
-
-    try {
-      const itemsToReceive = Object.entries(receiveItems)
-        .filter(([, data]) => data.received > 0)
-        .map(([lineId, data]) => ({
-          lineId,
-          receivedQuantity: data.received,
-          batchNumber: data.batchNumber?.trim() || undefined,
-          expiryDate: data.expiryDate || undefined,
-        }))
-
-      if (!itemsToReceive.length) {
-        warning("No Quantities Entered", "Enter at least one received quantity before submitting.", {
-          duration: 4000,
-          sound: false,
-        })
-        return
-      }
-
-      if (!inspectionOutcome) {
-        warning("Inspection Required", "Record the receiving inspection outcome before submitting.", {
-          duration: 4000,
-          sound: false,
-        })
-        return
-      }
-      if (inspectionOutcome !== "PASSED" && !inspectionReason.trim()) {
-        warning("Inspection Reason Required", "Explain why the inspection failed or remains incomplete.", {
-          duration: 4000,
-          sound: false,
-        })
-        return
-      }
-
-      const idempotencyKey = receiveIdempotencyKeyRef.current ?? `receipt:${crypto.randomUUID()}`
-      receiveIdempotencyKeyRef.current = idempotencyKey
-      await receiveItemsMutation.mutateAsync({
-        id: purchaseOrder.id,
-        organizationId,
-        receivedBy: currentUserId,
-        idempotencyKey,
-        notes: 'Items received via workflow',
-        inspectionOutcome,
-        inspectionReason: inspectionReason.trim() || undefined,
-        inspectionEvidenceNotes: inspectionEvidenceNotes.trim() || undefined,
-        items: itemsToReceive
-      })
-      setShowReceiveDialog(false)
-      setReceiveItems({})
-      setInspectionOutcome("")
-      setInspectionReason("")
-      setInspectionEvidenceNotes("")
-      receiveIdempotencyKeyRef.current = null
-      success(
-        "Items Received",
-        `Items for purchase order ${purchaseOrder.orderNumber} have been received successfully`,
-        { duration: 4000, sound: true }
-      )
-    } catch (error) {
-      notifyError(
-        "Receiving Failed",
-        error instanceof Error ? error.message : "Failed to receive items. Please verify quantities and try again.",
-        { duration: 6000, sound: true }
-      )
-    }
-  }, [currentUserId, inspectionEvidenceNotes, inspectionOutcome, inspectionReason, notifyError, organizationId, purchaseOrder, receiveItems, receiveItemsMutation, success, warning])
-
-  const handleComplete = useCallback(async () => {
-    if (!purchaseOrder || !organizationId) return
-
-    try {
-      await completeMutation.mutateAsync({
-        id: purchaseOrder.id,
-        organizationId
-      })
-      setShowCompleteDialog(false)
-      success(
-        "Order Completed",
-        `Purchase order ${purchaseOrder.orderNumber} has been marked as completed`,
-        { duration: 4000, sound: true }
-      )
-    } catch (error) {
-      notifyError(
-        "Completion Failed",
-        "Failed to complete purchase order. Please try again.",
-        { duration: 6000, sound: true }
-      )
-    }
-  }, [completeMutation, notifyError, organizationId, purchaseOrder, success])
-
-  const handleClone = useCallback(() => {
-    if (!purchaseOrder) return
-    router.push(localizedHref(`/dashboard/purchase-orders/new?clone=${purchaseOrder.id}`))
-    info(
-      "Cloning Order",
-      "Redirecting to create a new order based on this one",
-      { duration: 3000, sound: false }
-    )
-  }, [info, localizedHref, purchaseOrder, router])
 
   if (isLoading) {
     return <LoadingSkeleton />
@@ -466,6 +266,7 @@ export default function ModernPurchaseOrderDetailPage({
   return (
     <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[88rem] space-y-6 px-4 py-6 text-[var(--dash-text)] sm:px-6 sm:py-8">
+        {purchaseOrder.capabilities.clone.allowed || cloneController.failure ? <PurchaseOrderCloneNotice pending={cloneController.pending} failure={cloneController.failure} ordersHref={localizedHref("/dashboard/purchase-orders")} /> : null}
         <div className="dashboard-glass-panel mb-6 rounded-lg p-5 sm:mb-8 sm:p-6">
           <div className="flex items-center justify-between flex-wrap gap-4 w-full">
             <div className="flex items-center gap-4">
@@ -517,11 +318,12 @@ export default function ModernPurchaseOrderDetailPage({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={handleClone}
+                  onClick={() => { void cloneController.clone() }}
+                  disabled={cloneController.pending || cloneController.retryBlocked}
                   className="dashboard-button-secondary rounded-lg"
                 >
                   <Copy className="w-4 h-4 mr-2" />
-                  Clone
+                  {cloneController.pending ? cloneText("pending") : cloneText("button")}
                 </Button>
               ) : null}
 
@@ -550,493 +352,17 @@ export default function ModernPurchaseOrderDetailPage({
                 </Link>
               )}
 
-              {purchaseOrder.capabilities.approve.allowed && (
-                <Dialog open={showApproveDialog} onOpenChange={setShowApproveDialog}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      className="dashboard-button-primary rounded-lg"
-                    >
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      Approve
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="dashboard-glass-panel rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-                    <DialogHeader>
-                      <DialogTitle>Approve Purchase Order</DialogTitle>
-                      <DialogDescription>
-                        Are you sure you want to approve purchase order {purchaseOrder.orderNumber}?
-                        This action will move the order to approved status.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex justify-end gap-2 mt-4">
-                      <Button variant="outline" onClick={() => setShowApproveDialog(false)} className="dashboard-button-secondary rounded-lg">
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={handleApprove}
-                        disabled={approveMutation.isPending}
-                        className="dashboard-button-primary rounded-lg"
-                      >
-                        {approveMutation.isPending ? "Approving..." : "Approve"}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
+              {purchaseOrder.capabilities.approve.allowed && <Button size="sm" className="dashboard-button-primary rounded-lg" onClick={() => setShowApproveDialog(true)}>{approvalText("open")}</Button>}
+              {organizationId && currentUserId && <PurchaseOrderLifecycleDialog orderId={lifecycleKind ? id : null} kind={lifecycleKind ?? "submit"} organizationId={organizationId} actorId={currentUserId} onClose={() => setLifecycleKind(null)} onConfirmed={() => { void refetch() }} />}
+      {organizationId && currentUserId && <PurchaseOrderApprovalDialog orderId={showApproveDialog ? purchaseOrder.id : null} organizationId={organizationId} actorId={currentUserId} onClose={() => setShowApproveDialog(false)} onConfirmed={() => { void refetch() }} />}
 
               {/* Submit Button - Only for DRAFT status */}
               {purchaseOrder.capabilities.submit.allowed && (
-                <Dialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      className="dashboard-button-primary rounded-lg"
-                    >
-                      <Send className="w-4 h-4 mr-2" />
-                      Submit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="dashboard-glass-panel rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-                    <DialogHeader>
-                      <DialogTitle>Submit Purchase Order</DialogTitle>
-                      <DialogDescription>
-                        Are you sure you want to submit purchase order {purchaseOrder.orderNumber}?
-                        This will send the order for approval.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex justify-end gap-2 mt-4">
-                      <Button variant="outline" onClick={() => setShowSubmitDialog(false)} className="dashboard-button-secondary rounded-lg">
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={handleSubmit}
-                        disabled={submitMutation.isPending}
-                        className="dashboard-button-primary rounded-lg"
-                      >
-                        {submitMutation.isPending ? "Submitting..." : "Submit Order"}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <Button size="sm" className="dashboard-button-primary" onClick={() => setLifecycleKind("submit")}>{lifecycleText("confirm.submit")}</Button>
               )}
 
               {/* Receive Items Button - For APPROVED and PARTIALLY_RECEIVED status */}
-              {purchaseOrder.capabilities.receive.allowed && (
-                <Dialog open={showReceiveDialog} onOpenChange={setShowReceiveDialog}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      className="dashboard-button-primary rounded-lg"
-                    >
-                      <Package className="w-4 h-4 mr-2" />
-                      Receive Items
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="dashboard-glass-panel max-h-[82vh] max-w-5xl overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-                    <DialogHeader>
-                      <DialogTitle className="text-[var(--dash-text)]">Receive Items - {purchaseOrder.orderNumber}</DialogTitle>
-                      <DialogDescription className="text-[var(--dash-text-soft)]">
-                        Enter the quantity received for each item. You can receive items partially.
-                      </DialogDescription>
-                      {/* Bulk Actions */}
-                      <div className="flex gap-2 pt-2">
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={() => {
-                            const newReceiveItems: Record<string, ReceiveItemDraft> = {}
-                            purchaseOrder.lines?.forEach(line => {
-                              const orderedQuantity = toNumber(line.orderedQuantity)
-                              const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)
-                              if (maxAllowed > 0) {
-                                newReceiveItems[line.id] = {
-                                  ...receiveItems[line.id],
-                                  quantity: orderedQuantity,
-                                  received: maxAllowed
-                                }
-                              }
-                            })
-                            setReceiveItems(newReceiveItems)
-                            success(
-                              "All Items Selected",
-                              "All available quantities have been set for receiving",
-                              { duration: 3000, sound: false }
-                            )
-                          }}
-                          className="dashboard-button-primary h-9 rounded-lg"
-                        >
-                          Receive All Available
-                        </Button>
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => {
-                            setReceiveItems({})
-                            info(
-                              "Quantities Cleared",
-                              "All receive quantities have been reset to zero",
-                              { duration: 3000, sound: false }
-                            )
-                          }}
-                          className="dashboard-button-secondary h-9 rounded-lg"
-                        >
-                          Clear All
-                        </Button>
-                      </div>
-                    </DialogHeader>
-                    <div className="space-y-4 mt-4">
-                      {purchaseOrder.lines && purchaseOrder.lines.length > 0 ? (
-                        <>
-                          {/* Items Table */}
-                          <div className="dashboard-table-shell dashboard-data-table overflow-x-auto rounded-lg">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Item</TableHead>
-                                <TableHead>Ordered Qty</TableHead>
-                                <TableHead>Already Received</TableHead>
-                                <TableHead>Receiving Now</TableHead>
-                                <TableHead>Unit Cost</TableHead>
-                                <TableHead>Line Total</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {purchaseOrder.lines.map((line) => (
-                                <TableRow key={line.id}>
-                                  <TableCell>
-                                    <div className="font-medium">
-                                      {line.item?.name || `Item ${line.itemId}`}
-                                    </div>
-                                    {line.item?.sku && (
-                                      <div className="text-sm text-muted-foreground">
-                                        SKU: {line.item.sku}
-                                      </div>
-                                    )}
-                                  </TableCell>
-                                  <TableCell className="font-medium">{toNumber(line.orderedQuantity)}</TableCell>
-                                  <TableCell className="text-muted-foreground">{toNumber(line.receivedQuantity)}</TableCell>
-                                  <TableCell>
-                                    <div className="space-y-1">
-                                      <div className="relative">
-                                        <input
-                                          type="number"
-                                          min="0"
-                                          max={toNumber(line.orderedQuantity) - toNumber(line.receivedQuantity)}
-                                          className={`dashboard-control h-9 w-20 rounded-lg px-2 py-1 text-center ${receiveItems[line.id]?.received > (toNumber(line.orderedQuantity) - toNumber(line.receivedQuantity))
-                                              ? 'border-[var(--dash-danger)]'
-                                              : ''
-                                            }`}
-                                          value={receiveItems[line.id]?.received || 0}
-                                          onChange={(e) => {
-                                            const inputValue = parseInt(e.target.value) || 0
-                                            const orderedQuantity = toNumber(line.orderedQuantity)
-                                            const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)
-
-                                            // Hard limit enforcement
-                                            const finalValue = Math.min(Math.max(0, inputValue), maxAllowed)
-
-                                            // Show notification if user tried to exceed limit
-                                            if (inputValue > maxAllowed && inputValue > 0) {
-                                              warning(
-                                                "Quantity Limited",
-                                                `Maximum ${maxAllowed} units can be received for ${line.item?.name || 'this item'}. Input automatically adjusted.`,
-                                                { duration: 5000, sound: true }
-                                              )
-                                            }
-
-                                            setReceiveItems(prev => ({
-                                              ...prev,
-                                              [line.id]: {
-                                                ...prev[line.id],
-                                                quantity: orderedQuantity,
-                                                received: finalValue
-                                              }
-                                            }))
-                                          }}
-                                          onKeyDown={(e) => {
-                                            // Allow: backspace, delete, tab, escape, enter
-                                            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||
-                                              // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-                                              (e.keyCode === 65 && e.ctrlKey === true) ||
-                                              (e.keyCode === 67 && e.ctrlKey === true) ||
-                                              (e.keyCode === 86 && e.ctrlKey === true) ||
-                                              (e.keyCode === 88 && e.ctrlKey === true) ||
-                                              // Allow: home, end, left, right
-                                              (e.keyCode >= 35 && e.keyCode <= 39)) {
-                                              return
-                                            }
-                                            // Ensure that it is a number and stop the keypress
-                                            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                                              e.preventDefault()
-                                              info(
-                                                "Numbers Only",
-                                                "Please enter numeric values only",
-                                                { duration: 2000, sound: false }
-                                              )
-                                            }
-                                          }}
-                                          onBlur={(e) => {
-                                            // Additional validation on blur to ensure clean state
-                                            const inputValue = parseInt(e.target.value) || 0
-                                            const orderedQuantity = toNumber(line.orderedQuantity)
-                                            const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)
-                                            const finalValue = Math.min(Math.max(0, inputValue), maxAllowed)
-
-                                            if (inputValue !== finalValue) {
-                                              setReceiveItems(prev => ({
-                                                ...prev,
-                                                [line.id]: {
-                                                  ...prev[line.id],
-                                                  quantity: orderedQuantity,
-                                                  received: finalValue
-                                                }
-                                              }))
-                                            }
-                                          }}
-                                        />
-                                        {/* Max quantity indicator */}
-                                        <div className="absolute -right-16 top-1 text-xs text-[var(--dash-text-faint)] whitespace-nowrap">
-                                          max: {toNumber(line.orderedQuantity) - toNumber(line.receivedQuantity)}
-                                        </div>
-                                      </div>
-                                      {/* Quick action buttons */}
-                                      <div className="flex gap-1 mt-1">
-                                        <Button
-                                          type="button"
-                                          size="sm"
-                                          variant="outline"
-                                          onClick={() => {
-                                            const orderedQuantity = toNumber(line.orderedQuantity)
-                                            const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)
-                                            setReceiveItems(prev => ({
-                                              ...prev,
-                                              [line.id]: {
-                                                ...prev[line.id],
-                                                quantity: orderedQuantity,
-                                                received: maxAllowed
-                                              }
-                                            }))
-                                          }}
-                                          className="dashboard-button-secondary h-7 rounded-md px-2 text-xs"
-                                          disabled={(toNumber(line.orderedQuantity) - toNumber(line.receivedQuantity)) === 0}
-                                        >
-                                          All
-                                        </Button>
-                                        <Button
-                                          type="button"
-                                          size="sm"
-                                          variant="outline"
-                                          onClick={() => {
-                                            setReceiveItems(prev => ({
-                                              ...prev,
-                                              [line.id]: {
-                                                ...prev[line.id],
-                                                quantity: toNumber(line.orderedQuantity),
-                                                received: 0
-                                              }
-                                            }))
-                                          }}
-                                          className="dashboard-button-secondary h-7 rounded-md px-2 text-xs"
-                                        >
-                                          Clear
-                                        </Button>
-                                      </div>
-                                      {/* Validation message */}
-                                      {receiveItems[line.id]?.received > (toNumber(line.orderedQuantity) - toNumber(line.receivedQuantity)) && (
-                                        <div className="text-xs text-[var(--dash-danger)]">
-                                          Exceeds maximum ({toNumber(line.orderedQuantity) - toNumber(line.receivedQuantity)})
-                                        </div>
-                                      )}
-                                      {(line.item?.trackBatches || line.item?.trackExpiry || line.item?.trackSerialNumbers) && (
-                                        <div className="mt-3 space-y-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)] p-3">
-                                          {line.item?.trackBatches && (
-                                            <label className="block text-xs font-medium text-[var(--dash-text-soft)]">
-                                              Supplier batch / lot (optional)
-                                              <input
-                                                type="text"
-                                                value={receiveItems[line.id]?.batchNumber || ""}
-                                                onChange={(event) =>
-                                                  setReceiveItems((prev) => ({
-                                                    ...prev,
-                                                    [line.id]: {
-                                                      ...prev[line.id],
-                                                      quantity: toNumber(line.orderedQuantity),
-                                                      received: prev[line.id]?.received || 0,
-                                                      batchNumber: event.target.value,
-                                                    },
-                                                  }))
-                                                }
-                                                className="dashboard-control mt-1 w-full rounded-lg px-2 py-1 text-xs"
-                                                placeholder="Auto-generated from receipt if blank"
-                                              />
-                                              <span className="mt-1 block text-[0.68rem] font-normal text-[var(--dash-text-faint)]">
-                                                Leave blank when the supplier did not provide a lot number.
-                                              </span>
-                                            </label>
-                                          )}
-                                          {line.item?.trackExpiry && (
-                                            <label className="block text-xs font-medium text-[var(--dash-text-soft)]">
-                                              Expiry date
-                                              <input
-                                                type="date"
-                                                value={receiveItems[line.id]?.expiryDate || ""}
-                                                onChange={(event) =>
-                                                  setReceiveItems((prev) => ({
-                                                    ...prev,
-                                                    [line.id]: {
-                                                      ...prev[line.id],
-                                                      quantity: toNumber(line.orderedQuantity),
-                                                      received: prev[line.id]?.received || 0,
-                                                      expiryDate: event.target.value,
-                                                    },
-                                                  }))
-                                                }
-                                                className="dashboard-control mt-1 w-full rounded-lg px-2 py-1 text-xs"
-                                              />
-                                            </label>
-                                          )}
-                                          {line.item?.trackSerialNumbers && (
-                                            <div className="rounded-md border border-[var(--dash-info)]/30 bg-[var(--dash-info-soft)] px-3 py-2 text-xs text-[var(--dash-text-muted)]">
-                                              Serial-tracked item. Serial numbers will be generated automatically for the received quantity.
-                                            </div>
-                                          )}
-                                        </div>
-                                      )}
-                                    </div>
-                                  </TableCell>
-                                  <TableCell>
-                                    <div className="font-medium text-green-600">
-                                      {formatCurrency(toNumber(line.unitCost))}
-                                    </div>
-                                  </TableCell>
-                                  <TableCell>
-                                    <div className="font-semibold">
-                                      {formatCurrency(toNumber(line.lineTotal) || (toNumber(line.unitCost) * toNumber(line.orderedQuantity)))}
-                                    </div>
-                                    {receiveItems[line.id]?.received > 0 && (
-                                      <div className="text-sm text-muted-foreground">
-                                        Receiving: {formatCurrency(toNumber(line.unitCost) * (receiveItems[line.id]?.received || 0))}
-                                      </div>
-                                    )}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                          </div>
-
-                          <div className="space-y-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)] p-4">
-                            <label className="block text-sm font-medium text-[var(--dash-text-soft)]">
-                              Receiving inspection outcome
-                              <select
-                                value={inspectionOutcome}
-                                onChange={(event) => setInspectionOutcome(event.target.value as typeof inspectionOutcome)}
-                                className="dashboard-control mt-1 w-full rounded-lg px-3 py-2"
-                                required
-                              >
-                                <option value="">Select an inspection outcome</option>
-                                <option value="PASSED">Passed — release to available inventory</option>
-                                <option value="FAILED">Failed — hold inventory</option>
-                                <option value="INCOMPLETE">Incomplete — hold pending resolution</option>
-                              </select>
-                            </label>
-                            {inspectionOutcome && inspectionOutcome !== "PASSED" ? (
-                              <label className="block text-sm font-medium text-[var(--dash-text-soft)]">
-                                Hold reason
-                                <Textarea
-                                  value={inspectionReason}
-                                  onChange={(event) => setInspectionReason(event.target.value)}
-                                  placeholder="Describe the failed check, damage, or missing inspection evidence"
-                                  className="dashboard-control mt-1 min-h-20 rounded-lg"
-                                  required
-                                />
-                              </label>
-                            ) : null}
-                            <label className="block text-sm font-medium text-[var(--dash-text-soft)]">
-                              Inspection evidence notes (optional)
-                              <Textarea
-                                value={inspectionEvidenceNotes}
-                                onChange={(event) => setInspectionEvidenceNotes(event.target.value)}
-                                placeholder="Record packaging, count, condition, lot, or supporting evidence notes"
-                                className="dashboard-control mt-1 min-h-20 rounded-lg"
-                              />
-                            </label>
-                            {inspectionOutcome && inspectionOutcome !== "PASSED" ? (
-                              <p className="text-xs text-[var(--dash-warning)]">
-                                This receipt will remain held. Inventory and supplier-invoice matching stay blocked until an authorized resolution is recorded.
-                              </p>
-                            ) : null}
-                          </div>
-
-                          {/* Summary Section */}
-                          <div className="mt-6 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)] p-4">
-                            <h4 className="font-semibold mb-3">Receiving Summary</h4>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <div className="flex justify-between">
-                                  <span>Total Order Value:</span>
-                                  <span className="font-medium">{formatCurrency(toNumber(purchaseOrder.total))}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Items to Receive:</span>
-                                  <span className="font-medium">
-                                    {receivingTotals.totalUnits} units
-                                  </span>
-                                </div>
-                              </div>
-                              <div>
-                                <div className="flex justify-between">
-                                  <span>Value Receiving:</span>
-                                  <span className="font-semibold text-[var(--dash-warning)]">
-                                    {formatCurrency(receivingTotals.totalValue)}
-                                  </span>
-                                </div>
-                                <div className="flex justify-between">
-                                  <span>Lines with Items:</span>
-                                  <span className="font-medium">
-                                    {receivingTotals.linesWithItems} of {purchaseOrder.lines?.length || 0}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="text-center py-8 text-muted-foreground">
-                          <Package className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                          <p>No items found in this purchase order</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-2 mt-4">
-                      {Object.values(receiveItems).every(item => item.received === 0) && (
-                        <p className="text-center text-sm text-[var(--dash-text-soft)]">
-                          Enter quantities above to enable receiving
-                        </p>
-                      )}
-                      <div className="flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => setShowReceiveDialog(false)} className="dashboard-button-secondary rounded-lg">
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={handleReceive}
-                          disabled={
-                            receiveItemsMutation.isPending ||
-                            Object.values(receiveItems).every(item => item.received === 0) ||
-                            !inspectionOutcome ||
-                            (inspectionOutcome !== "PASSED" && !inspectionReason.trim())
-                          }
-                          className="dashboard-button-primary rounded-lg disabled:opacity-50"
-                        >
-                          {receiveItemsMutation.isPending ? "Receiving..." : "Receive Items"}
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
+              {purchaseOrder.capabilities.receive.allowed && <Button size="sm" className="dashboard-button-primary rounded-lg" onClick={() => setShowReceiveDialog(true)}><Truck aria-hidden className="mr-2 h-4 w-4"/>{receivingText("open")}</Button>}
 
               {/* Short-close is intentionally unavailable until its control contract exists. */}
               {purchaseOrder.status === 'PARTIALLY_RECEIVED' && (
@@ -1050,85 +376,11 @@ export default function ModernPurchaseOrderDetailPage({
 
               {/* Complete Order Button - Only for RECEIVED status */}
               {purchaseOrder.capabilities.complete.allowed && (
-                <Dialog open={showCompleteDialog} onOpenChange={setShowCompleteDialog}>
-                  <DialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      className="dashboard-button-primary rounded-lg"
-                    >
-                      <CheckCircle className="w-4 h-4 mr-2" />
-                      Complete Order
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="dashboard-glass-panel rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-                    <DialogHeader>
-                      <DialogTitle>Complete Purchase Order</DialogTitle>
-                      <DialogDescription>
-                        Are you sure you want to mark purchase order {purchaseOrder.orderNumber} as completed?
-                        This will finalize the order and close it.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="flex justify-end gap-2 mt-4">
-                      <Button variant="outline" onClick={() => setShowCompleteDialog(false)} className="dashboard-button-secondary rounded-lg">
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={handleComplete}
-                        disabled={completeMutation.isPending}
-                        className="dashboard-button-primary rounded-lg"
-                      >
-                        {completeMutation.isPending ? "Completing..." : "Complete Order"}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <Button size="sm" className="dashboard-button-primary" onClick={() => setLifecycleKind("complete")}>{lifecycleText("confirm.complete")}</Button>
               )}
 
               {purchaseOrder.capabilities.cancel.allowed && (
-                <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="dashboard-button-secondary rounded-lg text-[var(--dash-danger)]"
-                    >
-                      <XCircle className="w-4 h-4 mr-2" />
-                      Cancel
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="dashboard-glass-panel rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-                    <DialogHeader>
-                      <DialogTitle>Cancel Purchase Order</DialogTitle>
-                      <DialogDescription>
-                        Are you sure you want to cancel purchase order {purchaseOrder.orderNumber}?
-                        This action cannot be undone.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4 mt-4">
-                      <div>
-                        <label className="text-sm font-medium text-[var(--dash-text-muted)]">Reason for cancellation (optional)</label>
-                        <Textarea
-                          value={cancelReason}
-                          onChange={(e) => setCancelReason(e.target.value)}
-                          placeholder="Enter reason for cancellation..."
-                          className="dashboard-control mt-1 min-h-24 rounded-lg"
-                        />
-                      </div>
-                      <div className="flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => setShowCancelDialog(false)} className="dashboard-button-secondary rounded-lg">
-                          Keep Order
-                        </Button>
-                        <Button
-                          onClick={handleCancel}
-                          disabled={cancelMutation.isPending}
-                          className="rounded-lg bg-[var(--dash-danger)] text-white hover:bg-[var(--dash-danger)]/90"
-                        >
-                          {cancelMutation.isPending ? "Cancelling..." : "Cancel Order"}
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <Button size="sm" className="dashboard-button-secondary text-[var(--dash-danger)]" onClick={() => setLifecycleKind("cancel")}>{lifecycleText("confirm.cancel")}</Button>
               )}
             </div>
           </div>
@@ -1282,7 +534,7 @@ export default function ModernPurchaseOrderDetailPage({
                   className="rounded-lg px-4 py-2 data-[state=active]:bg-[var(--dash-brand-soft)] data-[state=active]:text-[var(--dash-brand-strong)]"
                 >
                   <Receipt className="w-4 h-4 mr-2" />
-                  Receipts
+                  {receivingText("history")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="inventory"
@@ -1296,7 +548,7 @@ export default function ModernPurchaseOrderDetailPage({
                   className="rounded-lg px-4 py-2 data-[state=active]:bg-[var(--dash-brand-soft)] data-[state=active]:text-[var(--dash-brand-strong)]"
                 >
                   <History className="w-4 h-4 mr-2" />
-                  History
+                  {lifecycleText("history.title")}
                 </TabsTrigger>
               </TabsList>
           </div>
@@ -1451,14 +703,17 @@ export default function ModernPurchaseOrderDetailPage({
                             <Printer className="w-4 h-4 mr-2" />
                             Print Order
                           </Button>
+                          {purchaseOrder.capabilities.clone.allowed ? (
                           <Button
                             variant="outline"
                             className="w-full justify-start"
-                            onClick={handleClone}
+                            onClick={() => { void cloneController.clone() }}
+                            disabled={cloneController.pending || cloneController.retryBlocked}
                           >
                             <Copy className="w-4 h-4 mr-2" />
-                            Clone Order
+                            {cloneController.pending ? cloneText("pending") : cloneText("button")}
                           </Button>
+                          ) : null}
                           <Button
                             variant="outline"
                             className="w-full justify-start"
@@ -1528,76 +783,9 @@ export default function ModernPurchaseOrderDetailPage({
                 </Card>
               </TabsContent>
 
-              {/* Receipts Tab */}
-              <TabsContent value="receipts" className="mt-0">
-                <Card className="dashboard-glass-panel rounded-lg text-[var(--dash-text)]">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Receipt className="w-5 h-5" />
-                      Goods Receipts
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {receiptsLoading ? (
-                      <div className="space-y-4">
-                        {[...Array(3)].map((_, i) => (
-                          <Skeleton key={i} className="h-16" />
-                        ))}
-                      </div>
-                    ) : goodsReceipts && goodsReceipts.length > 0 ? (
-                      <div className="space-y-4">
-                        {goodsReceipts.map((receipt) => (
-                          <div key={receipt.id} className="border rounded-lg p-4 bg-white/30">
-                            <div className="flex justify-between items-start mb-3">
-                              <div>
-                                <h4 className="font-semibold">Receipt #{receipt.receiptNumber || receipt.id}</h4>
-                                <p className="text-sm text-muted-foreground">
-                                  Received on {formatDate(new Date(receipt.createdAt), 'PPP')} at {format(new Date(receipt.createdAt), 'p')}
-                                </p>
-                                {receipt.receivedBy && (
-                                  <p className="text-sm text-muted-foreground">
-                                    Received by: {receipt.receivedBy.name || receipt.receivedBy.email}
-                                  </p>
-                                )}
-                              </div>
-                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                                <CheckCircle className="w-3 h-3 mr-1" />
-                                Received
-                              </Badge>
-                            </div>
-                            {receipt.notes && (
-                              <p className="text-sm text-muted-foreground mb-3">
-                                <strong>Notes:</strong> {receipt.notes}
-                              </p>
-                            )}
-                            <div className="space-y-2">
-                              <h5 className="font-medium text-sm">Items Received:</h5>
-                              {receipt.lines?.map((line) => (
-                                <div key={line.id} className="flex justify-between items-center py-1 px-3 bg-slate-50 rounded text-sm">
-                                  <span className="font-medium">{line.item?.name || `Item ${line.itemId}`}</span>
-                                  <span className="text-muted-foreground">
-                                    Qty: {toNumber(line.receivedQuantity)}
-                                    {toNumber(line.unitCost) > 0 && (
-                                      <span className="ml-2">
-                                        @ {formatCurrency(toNumber(line.unitCost))} = {formatCurrency(toNumber(line.unitCost) * toNumber(line.receivedQuantity))}
-                                      </span>
-                                    )}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-                        <Receipt className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                        <p>No goods receipts found</p>
-                        <p className="text-sm">Receipts will appear here when items are received</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+              {/* Keep the receiving controller mounted so pending requests survive tab changes. */}
+              <TabsContent value="receipts" forceMount className={activeTab === "receipts" ? "mt-0" : "hidden"}>
+                {organizationId && currentUserId && <PurchaseReceivingWorkbench orderId={id} organizationId={organizationId} actorId={currentUserId} open={showReceiveDialog} onOpenChange={setShowReceiveDialog} onChanged={() => { void refetch() }} />}
               </TabsContent>
 
               {/* Inventory Tab */}
@@ -1651,7 +839,7 @@ export default function ModernPurchaseOrderDetailPage({
                           {toNumber(line.receivedQuantity) > 0 && (
                             <div className="mt-3 pt-3 border-t">
                               <p className="text-xs text-muted-foreground">
-                                <strong>Inventory Updated:</strong> Added {toNumber(line.receivedQuantity)} units to inventory at {formatCurrency(toNumber(line.unitCost))} each
+                                {receivingText("inventoryEvidence")}
                               </p>
                             </div>
                           )}
@@ -1697,42 +885,7 @@ export default function ModernPurchaseOrderDetailPage({
 
               {/* History Tab */}
               <TabsContent value="history" className="mt-0">
-                <Card className="dashboard-glass-panel rounded-lg text-[var(--dash-text)]">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <History className="w-5 h-5" />
-                      Status History
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
-                        <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                          <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-medium">Order Created</div>
-                          <div className="text-sm text-slate-600 dark:text-slate-400">
-                            {purchaseOrder?.createdAt
-                              ? format(new Date(purchaseOrder.createdAt), 'MMM dd, yyyy at h:mm a')
-                              : 'Date not available'}
-                          </div>
-                        </div>
-                      </div>
-                      {purchaseOrder.status !== 'DRAFT' && (
-                        <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
-                          <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                            <Send className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium">Status: {statusConfig.label}</div>
-                            <div className="text-sm text-slate-600 dark:text-slate-400">Current status</div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <Card className="dashboard-glass-panel rounded-lg text-[var(--dash-text)]"><CardHeader><CardTitle>{lifecycleText("history.title")}</CardTitle></CardHeader><CardContent>{organizationId && currentUserId && activeTab === "history" && <PurchaseOrderDecisionHistory orderId={id} organizationId={organizationId} actorId={currentUserId} />}</CardContent></Card>
               </TabsContent>
             </div>
             </Tabs>

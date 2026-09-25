@@ -1,0 +1,11 @@
+flowchart LR
+  HR[Approved employee and contract version] --> Snapshot[Payroll input snapshot]
+  Time[Approved time inputs when applicable] --> Snapshot
+  Pack[Reviewed effective country rules] --> Snapshot
+  Snapshot --> Run[Calculation and independent review where required]
+  Run --> Payment[Authorized instruction and provider evidence]
+  Run --> Journal[Idempotent source-linked journal]
+  Payment --> Recon[Settlement reconciliation]
+  Journal --> Close[Close readiness and evidence]
+  Recon --> Close
+  Run --> Slip[Private employee-scoped payslip]

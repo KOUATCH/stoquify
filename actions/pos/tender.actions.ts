@@ -1,7 +1,8 @@
 "use server"
 
-import { revalidateTag } from "next/cache"
-import { logger } from "@/lib/logger"
+import { revalidatePOSAfterCommit } from "./cache-revalidation"
+import { preparePOSCheckout } from "@/services/pos/checkout.service"
+import { checkoutLeaseSchema } from "@/services/pos/pos.schemas"
 import { protect } from "@/services/_shared/protect"
 import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
 import {
@@ -28,16 +29,7 @@ function revalidatePOSSaleTags(input: { locationId: string; terminalId: string }
     "customer-ar",
   ]
 
-  for (const tag of tags) {
-    try {
-      revalidateTag(tag)
-    } catch (error) {
-      logger.warn("POS sale cache revalidation failed after a committed operation", {
-        tag,
-        error: error instanceof Error ? error.message : "unknown",
-      })
-    }
-  }
+  revalidatePOSAfterCommit({ tags })
 }
 
 export const commitPOSSaleAction = protect(
@@ -51,7 +43,8 @@ export const commitPOSSaleAction = protect(
     },
   },
   async (input: unknown, ctx) => {
-    const parsed = commitSaleSchema.parse(input)
+    const parsed = commitSaleSchema.merge(checkoutLeaseSchema).parse(input)
+    await preparePOSCheckout({ ...parsed, organizationId: ctx.orgId, userId: ctx.userId })
     const sale = await commitPOSSale({
       ...parsed,
       organizationId: ctx.orgId,

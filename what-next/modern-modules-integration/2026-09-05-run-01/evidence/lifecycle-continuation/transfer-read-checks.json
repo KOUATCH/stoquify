@@ -1,0 +1,150 @@
+[
+  {
+    "name": "transfer-read-tests",
+    "startedAt": "2026-09-05T13:54:17.855Z",
+    "finishedAt": "2026-09-05T13:54:50.210Z",
+    "command": [
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "lib/security/__tests__/rbac-permissions.test.ts",
+      "--json",
+      "--outputFile=what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-tests.json"
+    ],
+    "exitCode": 0,
+    "sourcesBefore": [
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+      },
+      {
+        "path": "lib/security/__tests__/rbac-permissions.test.ts",
+        "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+      },
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "sha256": "6bf73bf3980a41602c5d9f77895b10fb01c735d5075a3a0282503cac1395f698"
+      },
+      {
+        "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+        "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+      }
+    ],
+    "sourcesAfter": [
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+      },
+      {
+        "path": "lib/security/__tests__/rbac-permissions.test.ts",
+        "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+      },
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "sha256": "6bf73bf3980a41602c5d9f77895b10fb01c735d5075a3a0282503cac1395f698"
+      },
+      {
+        "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+        "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+      }
+    ],
+    "sourceStable": true
+  },
+  {
+    "name": "transfer-read-lint",
+    "startedAt": "2026-09-05T13:54:50.217Z",
+    "finishedAt": "2026-09-05T13:55:10.704Z",
+    "command": [
+      "node_modules/eslint/bin/eslint.js",
+      "lib/security/rbac-permissions.ts",
+      "lib/security/__tests__/rbac-permissions.test.ts"
+    ],
+    "exitCode": 0,
+    "sourcesBefore": [
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+      },
+      {
+        "path": "lib/security/__tests__/rbac-permissions.test.ts",
+        "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+      },
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "sha256": "6bf73bf3980a41602c5d9f77895b10fb01c735d5075a3a0282503cac1395f698"
+      },
+      {
+        "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+        "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+      }
+    ],
+    "sourcesAfter": [
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+      },
+      {
+        "path": "lib/security/__tests__/rbac-permissions.test.ts",
+        "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+      },
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "sha256": "6bf73bf3980a41602c5d9f77895b10fb01c735d5075a3a0282503cac1395f698"
+      },
+      {
+        "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+        "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+      }
+    ],
+    "sourceStable": true
+  },
+  {
+    "name": "transfer-read-typecheck",
+    "startedAt": "2026-09-05T13:55:10.714Z",
+    "finishedAt": "2026-09-05T13:59:30.192Z",
+    "command": [
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "exitCode": 0,
+    "sourcesBefore": [
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+      },
+      {
+        "path": "lib/security/__tests__/rbac-permissions.test.ts",
+        "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+      },
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "sha256": "6bf73bf3980a41602c5d9f77895b10fb01c735d5075a3a0282503cac1395f698"
+      },
+      {
+        "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+        "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+      }
+    ],
+    "sourcesAfter": [
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+      },
+      {
+        "path": "lib/security/__tests__/rbac-permissions.test.ts",
+        "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+      },
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "sha256": "6bf73bf3980a41602c5d9f77895b10fb01c735d5075a3a0282503cac1395f698"
+      },
+      {
+        "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+        "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+      }
+    ],
+    "sourceStable": true
+  }
+]

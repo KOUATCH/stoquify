@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache"
 
 import { requirePermission } from "@/lib/security/rbac"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   archiveItem,
   listItemsWithInventoryLevels,
@@ -21,7 +22,10 @@ jest.mock("@/lib/error-handling", () => ({
 
 jest.mock("@/lib/security/rbac", () => ({
   requirePermission: jest.fn(),
+  RbacError: class extends Error {},
 }))
+
+jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn() }))
 
 jest.mock("@/services/item/item.service", () => ({
   archiveItem: jest.fn(),
@@ -38,7 +42,8 @@ const mockRevalidatePath = revalidatePath as jest.Mock
 describe("itemsShow service-boundary actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockRequirePermission.mockResolvedValue({ userId: "user-1", orgId: "org-1" })
+    mockRequirePermission.mockResolvedValue({ userId: "user-1", orgId: "org-1", permissions: ["inventory.items.read"] })
+    ;(observeModuleAccess as jest.Mock).mockResolvedValue({ allowed: true })
   })
 
   it("derives tenant scope for item inventory reads", async () => {
@@ -52,6 +57,19 @@ describe("itemsShow service-boundary actions", () => {
       auditAllowed: false,
     })
     expect(mockListItemsWithInventoryLevels).toHaveBeenCalledWith("org-1")
+    expect(observeModuleAccess).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", userId: "user-1", actorPermissions: ["inventory.items.read"], moduleSlug: "inventory", mode: "enforce", accessIntent: "read" }))
+  })
+
+  it("does not read item records when the current inventory module denies access", async () => {
+    ;(observeModuleAccess as jest.Mock).mockResolvedValueOnce({ allowed: false })
+    await expect(getOrgItemsWithInventoryLevels("client-org")).rejects.toThrow("module")
+    expect(mockListItemsWithInventoryLevels).not.toHaveBeenCalled()
+  })
+
+  it("propagates entitlement query failure without reading item records", async () => {
+    ;(observeModuleAccess as jest.Mock).mockRejectedValueOnce(new Error("Inventory access unavailable"))
+    await expect(getOrgItemsWithInventoryLevels("client-org")).rejects.toThrow("Inventory access unavailable")
+    expect(mockListItemsWithInventoryLevels).not.toHaveBeenCalled()
   })
 
   it("delegates basic item updates to the item service with trusted org scope", async () => {

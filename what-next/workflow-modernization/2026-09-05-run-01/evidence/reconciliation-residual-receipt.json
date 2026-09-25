@@ -1,0 +1,164 @@
+{
+  "recordedAt": "2026-09-06T04:03:22.652Z",
+  "sourceBaseline": "evidence/source-baseline-v9.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "dirtyWorkingTreePreserved": true,
+  "wholeWorkflowComplete": false,
+  "sourceHashes": {
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "e5bb212aba42fcabbd5a29c55b94ecbef4c8f47bf828cee09de5127ccf6c8a71",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "8b0531b55303406bf0ebc0709ae4c59b1ee58d928f17ee9b5fd447bcea812592",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-reconciliation-obligations.service.ts": "59590b0ee05101c1723c933e9a742b264419ce067f2ce40db3f3285238c37fb5",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/reconciliation/manual-match-evidence.ts": "75e1e5506547d7beae92e365f340a42ae12df934de9ff4651417fb4f032697a1",
+    "services/reconciliation/payment-reconciliation-manual-candidates.service.ts": "992b23f8fa26666fc95bf6b0246268a97ea06a9ca315236a342f2cf0583cdbe4",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d2912b8af4a584a6c1b19a8c0aca5808b2c4077621463be9f068f26a63b2ea5d",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "945f52356a85512f80d7d790240a2e846cd066487aa06b721b9e2198fedc4a30",
+    "actions/payments/reconciliation.actions.ts": "1d1253a4321bbdcdecd30ed2eb9de5c7ad15510f18ab4d9002adcd375ebfc97e",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "0948c975013b25e2ed1a944d102ab3c078614813069856cb4a09e14a3f2f00e9",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "4ffff0ca2bf75aca40979a115328bd2060caa8c2ee0c7c4f7bc6bf63bc26b38c",
+    "messages/en.json": "bb322c093c22e101ea5c51d453b8d82d72de47f9825bdf5fceef9617952659d6",
+    "messages/fr.json": "5e5c40b14ad7aa001900020282e598e1db3b79a0f3518cc1bfaf1a8a2194be7c",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "d59bf7c6590b6962ba485200ecb656b86905b6767575304889527cd98ba1122c",
+    "services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts": "e0f80ceb280dc22447c532da626ba0a8cf12f1e08cb9cb64bb1368dcb711b59e",
+    "hooks/__tests__/useManualMatchWorkflow.test.tsx": "8a54b15d2270c4643c21657939ade12beaaaa3e3dd298703b7571e4edb6b6679",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "d9fea431225331ad6442c71e12d208a89eb5bb0ff597ec8ea5e0a9945bdac826",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts": "ea5f299ed09a4c0dafd4f3ecc435eac23008c1aab0c2df147eddff6fc1ca1823",
+    "services/modules/__tests__/module-access-regressions.test.ts": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b",
+    "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts": "759ea25c4b6197cc3bb59c293659c7d9e448568e1104371da5075f55e776308b",
+    "services/reconciliation/__tests__/payment-reconciliation-manual-candidates.test.ts": "51101dd63c712bd3a18c753bec7f5914cecaa2777bcae0670a9197e849922248",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "cb00e984bdafc3d1f8e16a271db9bb203c61f92a85efb1266a21c9dc24c154bf",
+    "services/modules/__tests__/module-entitlement.service.test.ts": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc",
+    "services/modules/__tests__/module-reconciliation-obligations.service.test.ts": "1d9862e6dca138a3b326014acc2e234227a11535ec7611db86ee010685817a9a"
+  },
+  "tests": {
+    "passed": 205,
+    "suites": 11,
+    "failed": 0,
+    "receipt": "evidence/reconciliation-residual-final.json",
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+      "services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts",
+      "hooks/__tests__/useManualMatchWorkflow.test.tsx",
+      "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "services/modules/__tests__/module-access-regressions.test.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-manual-candidates.test.ts",
+      "actions/payments/__tests__/reconciliation.actions.test.ts",
+      "services/modules/__tests__/module-entitlement.service.test.ts",
+      "services/modules/__tests__/module-reconciliation-obligations.service.test.ts",
+      "--json",
+      "--outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/reconciliation-residual-final.json"
+    ],
+    "exitCode": 0,
+    "session": 39183,
+    "chunk": "e47d16"
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "session": 32991,
+    "chunk": "93b4b0"
+  },
+  "lint": {
+    "command": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "services/reconciliation/manual-match-evidence.ts",
+      "services/reconciliation/payment-reconciliation-manual-candidates.service.ts",
+      "services/reconciliation/payment-reconciliation-manual-match.service.ts",
+      "services/reconciliation/payment-reconciliation-manual-read.service.ts",
+      "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-manual-candidates.test.ts",
+      "components/finance/PaymentReconciliationWorkbench.tsx",
+      "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx"
+    ],
+    "exitCode": 0,
+    "chunk": "e4109c"
+  },
+  "whitespace": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "services/reconciliation/manual-match-evidence.ts",
+      "services/reconciliation/payment-reconciliation-manual-candidates.service.ts",
+      "services/reconciliation/payment-reconciliation-manual-match.service.ts",
+      "services/reconciliation/payment-reconciliation-manual-read.service.ts",
+      "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-manual-candidates.test.ts",
+      "components/finance/PaymentReconciliationWorkbench.tsx",
+      "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+      "messages/en.json",
+      "messages/fr.json"
+    ],
+    "exitCode": 0,
+    "chunk": "967603"
+  },
+  "postgres": {
+    "file": "lanes/environment/reconciliation-manual-run-e14aac7c1857.json",
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-reconciliation-manual.cjs run",
+    "passed": 13,
+    "failed": 0,
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/manual-browser-residual-347868e0.json",
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-manual-browser.cjs residual",
+    "passed": 2,
+    "failed": 0,
+    "sourceStable": true,
+    "existingAuthorityUnchanged": true,
+    "fixtureApprovedTotalPerLocale": "90.00",
+    "externalRemaining": "0.00",
+    "internalRemaining": "10.00",
+    "originalRunUnresolved": true
+  },
+  "screenshots": [
+    {
+      "file": "evidence/reconciliation-residual/en-manual-residual-limit-347868e0.png",
+      "sha256": "4932c280fa582c8a1fafa0d8ec25905722e158cc3031784a5e0961be1c8370ac",
+      "original": "lanes/environment/en-manual-residual-limit-347868e0.png"
+    },
+    {
+      "file": "evidence/reconciliation-residual/en-manual-residual-reader-347868e0.png",
+      "sha256": "d261c1ef3a92dbab168531b2d94c55771d7887fbb6c570f823b2e5dd4d0a46d7",
+      "original": "lanes/environment/en-manual-residual-reader-347868e0.png"
+    },
+    {
+      "file": "evidence/reconciliation-residual/en-manual-residual-complete-347868e0.png",
+      "sha256": "c7cd73a3cf2653ff3cb608469ea9d003fe5aac79186c046a697b6535c8a5184e",
+      "original": "lanes/environment/en-manual-residual-complete-347868e0.png"
+    },
+    {
+      "file": "evidence/reconciliation-residual/fr-manual-residual-limit-347868e0.png",
+      "sha256": "dc1b8049c33fdc4f5c8df745488676ca9669846f13a0adc266dc71a7c9d6ba7c",
+      "original": "lanes/environment/fr-manual-residual-limit-347868e0.png"
+    },
+    {
+      "file": "evidence/reconciliation-residual/fr-manual-residual-reader-347868e0.png",
+      "sha256": "0da5a474758e44025cba1c82f855cded3824f7093698f06b54afbef7d8129090",
+      "original": "lanes/environment/fr-manual-residual-reader-347868e0.png"
+    },
+    {
+      "file": "evidence/reconciliation-residual/fr-manual-residual-complete-347868e0.png",
+      "sha256": "06af725024a96d6936e19e1ac371dbcc951c012e0515a593d7d8223c9e380518",
+      "original": "lanes/environment/fr-manual-residual-complete-347868e0.png"
+    }
+  ],
+  "limitations": "Paging/full history, controlled rejection/correction, ambiguous dual-source selection, cross-session draft/request persistence, distinct duplicate intent, complete run/suspense/accounting handoff, aggregate/currency/date truth, statement-side and all restricted-grant browser states, native zoom/contrast/screen-reader checks and full build remain open. Continue every other workflow family and the217 unmapped entry sources."
+}

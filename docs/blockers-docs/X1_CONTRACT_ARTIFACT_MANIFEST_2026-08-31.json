@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "stoquify-x1-table-finance-contract-bundle-v1",
+  "artifactUri": "repository://stoquify/docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+  "scope": "X1 finance/accounting table contract and approval/evidence binding",
+  "hashAlgorithm": "SHA-256",
+  "source": "repository truth",
+  "approvalStatus": "not-approved",
+  "approvalSystemRecordId": null,
+  "files": [
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/table-system-contract.ts",
+      "path": "components/DataTableComponents/table-system-contract.ts",
+      "purpose": "Canonical shared table contract, URL/query, selection, preferences, saved-view and export semantics.",
+      "sha256": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2"
+    },
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/finance-accounting-contracts.ts",
+      "path": "components/DataTableComponents/finance-accounting-contracts.ts",
+      "purpose": "Finance X1 archetype contracts, statement behavior, context and export-job contract.",
+      "sha256": "15f33ee14c2039e2c924707d1fbf053e5d0400a88f742e5d08d9741f8cc44f9b"
+    },
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/next-phase-contracts.ts",
+      "path": "components/DataTableComponents/next-phase-contracts.ts",
+      "purpose": "Module-normalization and scale/performance contract definitions.",
+      "sha256": "825bee313616523f0b96992d1fd8c85d9619e149a4eaeb9e686fd3d9a7d2f633"
+    },
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/finance-x1-evidence-binding.ts",
+      "path": "components/DataTableComponents/finance-x1-evidence-binding.ts",
+      "purpose": "X1 approval, persona, route, locale, viewport and authenticated-evidence binding schema version 1.",
+      "sha256": "3114dec10ee0fbcd84af7e217434b48d16ad4ae86fa3901eebb4fc993eb94d40"
+    }
+  ],
+  "notes": [
+    "This manifest is a technical content inventory, not an approval.",
+    "For formal approval, bind this manifest hash to an exact repository commit or immutable artifact-store version.",
+    "The manifest's own SHA-256 is stored in the policy documents and policy hash manifest, not inside this self-referential file."
+  ]
+}

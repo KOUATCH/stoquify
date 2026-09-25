@@ -9,6 +9,7 @@ jest.mock("@/prisma/db", () => ({
 import { db } from "@/prisma/db"
 
 const mockTx = {
+  $queryRaw: jest.fn(),
   journal: {
     findFirst: jest.fn(),
   },
@@ -63,6 +64,7 @@ const postableAccounts = [
 describe("manual journal service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockTx.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: [], newWorkStoppedAt: {} }])
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     mockTx.journal.findFirst.mockResolvedValue({
       id: "journal-1",
@@ -83,6 +85,12 @@ describe("manual journal service", () => {
     mockTx.ledgerAuditEvent.create.mockResolvedValue({ id: "audit-1" })
   })
 
+  it("rejects a new manual journal after an explicit stop without creating a ledger effect", async () => {
+    mockTx.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["accounting"], newWorkStoppedAt: { accounting: "2026-09-05T12:00:00.000Z" } }])
+    await expect(createManualJournalEntry("org-1", { journalId: "journal-1", entryDate: "2026-06-09", lines: [] }, "actor-1")).rejects.toMatchObject({ code: "FORBIDDEN", metadata: { reason: "MODULE_NEW_WORK_STOPPED" } })
+    expect(mockTx.journalEntry.create).not.toHaveBeenCalled()
+    expect(mockTx.ledgerAuditEvent.create).not.toHaveBeenCalled()
+  })
   it("rejects unbalanced manual journal drafts", async () => {
     await expect(
       createManualJournalEntry(

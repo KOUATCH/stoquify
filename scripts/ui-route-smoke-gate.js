@@ -5,6 +5,20 @@ const path = require("path")
 
 const DEFAULT_ROUTES = [
   {
+    id: "workflows",
+    path: "/en/workflows",
+    surface: "Public workflow guide",
+    requiresAuth: false,
+    viewports: ["mobile", "desktop"],
+  },
+  {
+    id: "workflows-fr",
+    path: "/fr/workflows",
+    surface: "Guide public des parcours",
+    requiresAuth: false,
+    viewports: ["mobile", "desktop"],
+  },
+  {
     id: "public-home",
     path: "/en",
     surface: "Public first impression",

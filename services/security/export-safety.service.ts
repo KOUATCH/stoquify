@@ -149,9 +149,11 @@ export function evaluateExportSafety(input: ExportSafetyInput): ExportSafetyDeci
 export async function auditExportSafetyDecision(
   tx: Prisma.TransactionClient,
   decision: ExportSafetyDecision,
+  recordId?: string,
 ) {
   return tx.auditLog.create({
     data: {
+      ...(recordId ? { id: recordId } : {}),
       entityType: decision.resourceType,
       entityId: decision.resourceId,
       action: decision.allowed ? "CONTROLLED_EXPORT_ALLOWED" : "CONTROLLED_EXPORT_DENIED",

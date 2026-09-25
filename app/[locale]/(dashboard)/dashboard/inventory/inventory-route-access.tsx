@@ -93,8 +93,13 @@ async function evaluateInventoryRouteAccess(
         node: (
           <DashboardRouteState
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
-            message={noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE}
+            title={locale === "fr"
+              ? (noActiveOrg ? "Une organisation active est requise" : "Accès à l’inventaire refusé")
+              : (noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`)}
+            message={locale === "fr"
+              ? (noActiveOrg ? "Actualisez votre session depuis le tableau de bord pour accéder aux données de votre organisation." : "Votre rôle ne dispose pas des autorisations nécessaires pour accéder à cette page.")
+              : (noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE)}
+            primaryLabel={locale === "fr" ? "Retour au tableau de bord" : "Back to dashboard"}
             primaryHref={localizePath("/dashboard", locale)}
           />
         ),
@@ -125,8 +130,13 @@ async function evaluateInventoryRouteAccess(
         node: (
           <DashboardRouteState
             kind="locked_module"
-            title={moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`}
-            message={moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE}
+            title={surface.key === "inventory-items"
+              ? (locale === "fr" ? "L’inventaire est indisponible" : "Inventory is not available")
+              : (moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`)}
+            message={surface.key === "inventory-items"
+              ? (locale === "fr" ? "L’accès actuel de votre organisation ne permet pas de consulter les articles. Demandez à votre administrateur de vérifier la configuration." : "Your organization’s current access does not allow item reads. Ask your administrator to review the configuration.")
+              : (moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE)}
+            primaryLabel={locale === "fr" ? "Retour au tableau de bord" : "Back to dashboard"}
             primaryHref={localizePath("/dashboard", locale)}
           />
         ),

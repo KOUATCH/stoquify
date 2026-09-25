@@ -252,7 +252,7 @@ describe("SupplierManagementDashboard route-first presentation", () => {
   })
 
   it("keeps the direct create form mounted while routing to the saved supplier", async () => {
-    const createdSupplier = { ...supplier, id: "supplier-created", name: "Created Supplier" }
+    const createdSupplier = { id: "supplier-created", organizationId: "org-1", name: "Created Supplier", code: "SUP-1", cacheStatus: "deferred" }
     const mutateAsync = jest.fn().mockResolvedValue(createdSupplier)
     mockUseCreateManagedSupplier.mockReturnValue({
       isPending: false,
@@ -285,6 +285,22 @@ describe("SupplierManagementDashboard route-first presentation", () => {
       ),
     )
     expect(form).toBeVisible()
+  })
+
+  it.each(["en", "fr"] as const)("retains supplier creation fields after a real rejection in %s", async locale => {
+    const mutateAsync = jest.fn().mockRejectedValue(new Error("Existing permission denied"))
+    mockUseCreateManagedSupplier.mockReturnValue({ isPending: false, mutateAsync })
+    render(<SupplierManagementDashboard organizationId="org-1" locale={locale} basePath={`/${locale}/dashboard/purchases/suppliers`} initialAction="create" />)
+    const name = screen.getByLabelText(locale === "fr" ? /Nom fournisseur/ : /Supplier name/)
+    const email = screen.getByLabelText("Email")
+    fireEvent.change(name, { target: { value: "Preserved supplier" } })
+    fireEvent.change(email, { target: { value: "draft@example.test" } })
+    fireEvent.submit(name.closest("form")!)
+    await screen.findByText("Existing permission denied")
+    expect(name).toHaveValue("Preserved supplier")
+    expect(email).toHaveValue("draft@example.test")
+    expect(mockReplace).not.toHaveBeenCalled()
+    expect(mutateAsync).toHaveBeenCalledTimes(1)
   })
 
   it("renders a direct edit route with supplier context and stable back navigation", async () => {

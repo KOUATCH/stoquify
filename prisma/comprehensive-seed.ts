@@ -1,5 +1,6 @@
 import argon2 from "argon2";
 import { faker } from "@faker-js/faker";
+import { createHash } from "crypto";
 import { existsSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
@@ -14,6 +15,7 @@ import {
   CashDrawerTransactionType,
   ChartAccountNormalBalance,
   ChartAccountType,
+  CustomerReceivableDocumentStatus,
   FiscalYearStatus,
   GoodsReceiptStatus,
   InviteStatus,
@@ -113,6 +115,8 @@ type OrgSeedContext = {
 };
 
 const pad = (value: number) => value.toString().padStart(3, "0");
+const seedHash = (value: unknown) =>
+  createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const orgIdFor = (value: number) => `${ORGANIZATION_ID_PREFIX}${pad(value)}`;
 const orgCodeFor = (value: number) => `rds-org${pad(value)}`;
 const createOrgContext = (orgIndex: number): OrgSeedContext => {
@@ -200,6 +204,14 @@ const PRODUCT_DEFINITIONS = [
   { nameEn: "Toothpaste 125 ml", nameFr: "Dentifrice 125 ml", category: 5, unit: 5, brand: 5, cost: 750, price: 1_100, weight: 0.125 },
   { nameEn: "A4 printer paper, 500 sheets", nameFr: "Papier A4, 500 feuilles", category: 6, unit: 2, brand: 6, cost: 3_200, price: 4_500, weight: 2.5 },
   { nameEn: "Portable Bluetooth speaker", nameFr: "Enceinte Bluetooth portable", category: 7, unit: 1, brand: 7, cost: 8_500, price: 12_000, weight: 0.45 },
+  { nameEn: "Mango nectar 1 L", nameFr: "Nectar de mangue 1 L", category: 1, unit: 7, brand: 1, cost: 950, price: 1_350, weight: 1 },
+  { nameEn: "Mineral water, 6-bottle pack", nameFr: "Eau minerale, pack de 6 bouteilles", category: 1, unit: 2, brand: 1, cost: 1_650, price: 2_200, weight: 9 },
+  { nameEn: "Yellow maize flour", nameFr: "Farine de mais jaune", category: 2, unit: 6, brand: 2, cost: 600, price: 825, weight: 1 },
+  { nameEn: "Red kidney beans", nameFr: "Haricots rouges", category: 2, unit: 6, brand: 2, cost: 1_050, price: 1_450, weight: 1 },
+  { nameEn: "Canned mackerel 155 g", nameFr: "Maquereau en conserve 155 g", category: 3, unit: 4, brand: 3, cost: 700, price: 975, weight: 0.155 },
+  { nameEn: "Multipurpose cleaner 1 L", nameFr: "Nettoyant multi-usage 1 L", category: 4, unit: 3, brand: 4, cost: 1_100, price: 1_550, weight: 1 },
+  { nameEn: "Body lotion 400 ml", nameFr: "Lait corporel 400 ml", category: 5, unit: 3, brand: 5, cost: 1_450, price: 2_100, weight: 0.4 },
+  { nameEn: "USB-C charging cable", nameFr: "Cable de charge USB-C", category: 7, unit: 1, brand: 7, cost: 1_800, price: 2_750, weight: 0.08 },
 ] as const;
 
 const EXPENSE_CATEGORY_DEFINITIONS = [
@@ -807,6 +819,8 @@ const deleteOrder: Array<[string, SeedDelegate]> = [
   ["PaymentRefund", prisma.paymentRefund],
   ["CashDrawerTransaction", prisma.cashDrawerTransaction],
   ["Payment", prisma.payment],
+  ["CustomerReceivableDocumentState", prisma.customerReceivableDocumentState],
+  ["CustomerReceivableDocument", prisma.customerReceivableDocument],
   ["DailySalesReportCashEvent", prisma.dailySalesReportCashEvent],
   ["DailySalesReportItem", prisma.dailySalesReportItem],
   ["DailySalesReport", prisma.dailySalesReport],
@@ -1077,16 +1091,23 @@ async function seedAccountingControlPlane() {
   ];
 
   await prisma.accountingPeriod.createMany({
-    data: monthNames.map((name, monthIndex) => ({
-      id: id("accounting_period", monthIndex + 1),
-      organizationId: orgId(),
-      fiscalYearId: fiscalYear.id,
-      periodNumber: monthIndex + 1,
-      name: `${name} 2026`,
-      startDate: new Date(Date.UTC(2026, monthIndex, 1, 0, 0, 0, 0)),
-      endDate: new Date(Date.UTC(2026, monthIndex + 1, 0, 23, 59, 59, 999)),
-      status: AccountingPeriodStatus.OPEN,
-    })),
+    data: monthNames.map((name, monthIndex) => {
+      const closed = monthIndex === 0;
+      const endDate = new Date(Date.UTC(2026, monthIndex + 1, 0, 23, 59, 59, 999));
+      return {
+        id: id("accounting_period", monthIndex + 1),
+        organizationId: orgId(),
+        fiscalYearId: fiscalYear.id,
+        periodNumber: monthIndex + 1,
+        name: `${name} 2026`,
+        startDate: new Date(Date.UTC(2026, monthIndex, 1, 0, 0, 0, 0)),
+        endDate,
+        status: closed ? AccountingPeriodStatus.CLOSED : AccountingPeriodStatus.OPEN,
+        lockedAt: closed ? endDate : null,
+        closedAt: closed ? endDate : null,
+        closedById: closed ? id("user", 8) : null,
+      };
+    }),
   });
 
   const accounts = [
@@ -1280,6 +1301,30 @@ async function seedAccountingControlPlane() {
       mappingKey: "INVENTORY_VARIANCE",
       syscohadaClass: "6",
       syscohadaReference: "659",
+      isControlAccount: false,
+    },
+    {
+      id: id("chart_account", 17),
+      code: "101",
+      nameEn: "Owner capital",
+      nameFr: "Capital social",
+      type: ChartAccountType.EQUITY,
+      normalBalance: ChartAccountNormalBalance.CREDIT,
+      mappingKey: "OWNER_CAPITAL",
+      syscohadaClass: "1",
+      syscohadaReference: "101",
+      isControlAccount: true,
+    },
+    {
+      id: id("chart_account", 18),
+      code: "6324",
+      nameEn: "Professional services",
+      nameFr: "Honoraires et services professionnels",
+      type: ChartAccountType.EXPENSE,
+      normalBalance: ChartAccountNormalBalance.DEBIT,
+      mappingKey: "PROFESSIONAL_SERVICES",
+      syscohadaClass: "6",
+      syscohadaReference: "6324",
       isControlAccount: false,
     },
   ];
@@ -2387,6 +2432,126 @@ async function seedAccountingEntries() {
   });
 }
 
+async function seedAccountingScenarioCoverage() {
+  const accountantUserId = id("user", 8);
+  const draftEntryId = id("journal_scenario_draft", 1);
+  const reversedEntryId = id("journal_scenario_reversed", 1);
+  const reversalEntryId = id("journal_scenario_reversal", 1);
+  const voidedEntryId = id("journal_scenario_voided", 1);
+
+  await prisma.journalEntry.createMany({
+    data: [
+      {
+        id: draftEntryId,
+        organizationId: orgId(),
+        journalId: id("journal", 1),
+        periodId: id("accounting_period", 2),
+        entryNumber: orgScopedNumber("JE-DRAFT-USD", 1),
+        entryDate: new Date("2026-02-12T09:00:00.000Z"),
+        status: JournalEntryStatus.DRAFT,
+        currency: "USD",
+        memo: "Synthetic unposted foreign-currency professional-services journal",
+        reference: orgScopedNumber("MANUAL-USD", 1),
+        createdById: accountantUserId,
+      },
+      {
+        id: reversedEntryId,
+        organizationId: orgId(),
+        journalId: id("journal", 8),
+        periodId: id("accounting_period", 3),
+        entryNumber: orgScopedNumber("JE-REVERSED-EUR", 1),
+        entryDate: new Date("2026-03-10T09:00:00.000Z"),
+        status: JournalEntryStatus.REVERSED,
+        currency: "EUR",
+        memo: "Synthetic foreign-currency accrual reversed through a linked entry",
+        reference: orgScopedNumber("ACCRUAL-EUR", 1),
+        postedAt: new Date("2026-03-10T10:00:00.000Z"),
+        postedById: accountantUserId,
+        reversedAt: new Date("2026-03-11T10:00:00.000Z"),
+        reversedById: accountantUserId,
+        createdById: accountantUserId,
+      },
+      {
+        id: voidedEntryId,
+        organizationId: orgId(),
+        journalId: id("journal", 1),
+        periodId: id("accounting_period", 4),
+        entryNumber: orgScopedNumber("JE-VOID", 1),
+        entryDate: new Date("2026-04-08T09:00:00.000Z"),
+        status: JournalEntryStatus.VOIDED,
+        currency: currentOrg().currency,
+        memo: "Synthetic voided manual journal with no accounting effect",
+        reference: orgScopedNumber("VOID", 1),
+        createdById: accountantUserId,
+      },
+    ],
+  });
+
+  await prisma.journalEntry.create({
+    data: {
+      id: reversalEntryId,
+      organizationId: orgId(),
+      journalId: id("journal", 8),
+      periodId: id("accounting_period", 3),
+      entryNumber: orgScopedNumber("JE-REVERSAL-EUR", 1),
+      entryDate: new Date("2026-03-11T09:00:00.000Z"),
+      status: JournalEntryStatus.POSTED,
+      currency: "EUR",
+      memo: "Synthetic linked reversal for foreign-currency accrual",
+      reference: orgScopedNumber("ACCRUAL-EUR-REV", 1),
+      reversalOfEntryId: reversedEntryId,
+      postedAt: new Date("2026-03-11T10:00:00.000Z"),
+      postedById: accountantUserId,
+      createdById: accountantUserId,
+    },
+  });
+
+  const usdAmount = 100;
+  const usdRate = 600;
+  const eurAmount = 200;
+  const eurRate = 655.957;
+  await prisma.journalEntryLine.createMany({
+    data: [
+      {
+        id: id("journal_scenario_line", 1), organizationId: orgId(), journalEntryId: draftEntryId,
+        accountId: id("chart_account", 18), lineNumber: 1, description: "Draft professional-services expense",
+        debit: usdAmount, credit: 0, currency: "USD", exchangeRate: usdRate,
+        baseDebit: money(usdAmount * usdRate), baseCredit: 0,
+      },
+      {
+        id: id("journal_scenario_line", 2), organizationId: orgId(), journalEntryId: draftEntryId,
+        accountId: id("chart_account", 2), lineNumber: 2, description: "Draft foreign-currency bank settlement",
+        debit: 0, credit: usdAmount, currency: "USD", exchangeRate: usdRate,
+        baseDebit: 0, baseCredit: money(usdAmount * usdRate),
+      },
+      {
+        id: id("journal_scenario_line", 3), organizationId: orgId(), journalEntryId: reversedEntryId,
+        accountId: id("chart_account", 18), lineNumber: 1, description: "Reversed EUR accrual expense",
+        debit: eurAmount, credit: 0, currency: "EUR", exchangeRate: eurRate,
+        baseDebit: money(eurAmount * eurRate), baseCredit: 0,
+      },
+      {
+        id: id("journal_scenario_line", 4), organizationId: orgId(), journalEntryId: reversedEntryId,
+        accountId: id("chart_account", 7), lineNumber: 2, description: "Reversed EUR supplier accrual",
+        debit: 0, credit: eurAmount, currency: "EUR", exchangeRate: eurRate,
+        baseDebit: 0, baseCredit: money(eurAmount * eurRate),
+      },
+      {
+        id: id("journal_scenario_line", 5), organizationId: orgId(), journalEntryId: reversalEntryId,
+        accountId: id("chart_account", 7), lineNumber: 1, description: "EUR accrual reversal debit",
+        debit: eurAmount, credit: 0, currency: "EUR", exchangeRate: eurRate,
+        baseDebit: money(eurAmount * eurRate), baseCredit: 0,
+      },
+      {
+        id: id("journal_scenario_line", 6), organizationId: orgId(), journalEntryId: reversalEntryId,
+        accountId: id("chart_account", 18), lineNumber: 2, description: "EUR accrual reversal credit",
+        debit: 0, credit: eurAmount, currency: "EUR", exchangeRate: eurRate,
+        baseDebit: 0, baseCredit: money(eurAmount * eurRate),
+      },
+    ],
+  });
+}
+
 async function seedFinanceAndLedgers() {
   await prisma.expense.createMany({
     data: seedIndexes.map((index) => ({
@@ -2433,6 +2598,86 @@ async function seedFinanceAndLedgers() {
       organizationId: orgId(),
       createdAt: day(index),
     })),
+  });
+
+  const receivableDocuments = seedIndexes.map((index) => {
+    const subtotal = money(50_000 + index * 3_000);
+    const taxAmount = money(subtotal * CAMEROON_STANDARD_VAT_RATE_MULTIPLIER);
+    const discountAmount = money(index * 75);
+    const totalAmount = money(subtotal + taxAmount - discountAmount);
+    const initialPaidAmount = index % 4 === 0 ? money(totalAmount * 0.25) : totalAmount;
+    const initialUnpaidAmount = money(totalAmount - initialPaidAmount);
+    const documentNumber = orgScopedNumber("AR", index);
+    const sourceSnapshot = {
+      salesOrderId: id("sales_order", index),
+      orderNumber: orgScopedNumber("SO", index),
+      totalAmount,
+    };
+    const metadata = { fixture: "realistic-development", ageingBucket: index % 4 === 0 ? "overdue" : "settled" };
+    const sourceEvidenceHash = seedHash(sourceSnapshot);
+    const metadataHash = seedHash(metadata);
+    const documentHash = seedHash({ documentNumber, sourceSnapshot, metadataHash });
+
+    return {
+      id: id("customer_receivable_document", index),
+      organizationId: orgId(),
+      customerId: id("customer", index),
+      sourceSalesOrderId: id("sales_order", index),
+      documentNumber,
+      version: 1,
+      sourceVersion: 1,
+      issuedAt: day(index),
+      invoiceDate: day(index),
+      dueDate: day(index + 30),
+      paymentTermsDays: 30,
+      currency: currentOrg().currency,
+      currencyPrecision: 2,
+      subtotal,
+      taxAmount,
+      shippingAmount: 0,
+      discountAmount,
+      totalAmount,
+      initialPaidAmount,
+      initialUnpaidAmount,
+      organizationSnapshot: { id: orgId(), currency: currentOrg().currency, country: currentOrg().country },
+      customerSnapshot: { id: id("customer", index), reference: orgScopedNumber("CUS", index) },
+      sourceSnapshot,
+      metadata,
+      documentHash,
+      sourceEvidenceHash,
+      metadataHash,
+      issuedById: id("user", index),
+      createdAt: day(index),
+    };
+  });
+
+  await prisma.customerReceivableDocument.createMany({ data: receivableDocuments });
+  await prisma.customerReceivableDocumentState.createMany({
+    data: receivableDocuments.map((document, offset) => {
+      const index = offset + 1;
+      const status = document.initialUnpaidAmount > 0
+        ? CustomerReceivableDocumentStatus.PARTIALLY_PAID
+        : CustomerReceivableDocumentStatus.PAID;
+      return {
+        id: id("customer_receivable_document_state", index),
+        organizationId: orgId(),
+        documentId: document.id,
+        version: 1,
+        status,
+        paidAmount: document.initialPaidAmount,
+        unpaidAmount: document.initialUnpaidAmount,
+        effectiveAt: document.issuedAt,
+        actorId: document.issuedById,
+        sourceType: "SALES_ORDER",
+        sourceId: document.sourceSalesOrderId,
+        previousStateHash: null,
+        stateHash: seedHash({ documentId: document.id, status, version: 1 }),
+        businessEventId: null,
+        evidenceHash: document.sourceEvidenceHash,
+        metadata: { fixture: "realistic-development", documentHash: document.documentHash },
+        createdAt: document.createdAt,
+      };
+    }),
   });
 
   await prisma.supplierLedgerEntry.createMany({
@@ -2668,7 +2913,7 @@ async function seedStockMovement() {
       transferId: id("stock_transfer", index),
       itemId: id("item", index),
       requestedQuantity: qty(5 + index),
-      shippedQuantity: qty(4 + index),
+      shippedQuantity: qty(index % 4 === 2 || index % 4 === 3 ? 4 + index : 0),
       receivedQuantity: qty(index % 4 === 3 ? 4 + index : 0),
       unitCost: money(1_000 + index * 175),
       notes: `Transfer line ${pad(index)}`,
@@ -2768,6 +3013,7 @@ async function seedOrgDataset(context: OrgSeedContext) {
     await seedSalesAndPayments();
     await seedInventoryTransactions();
     await seedAccountingEntries();
+    await seedAccountingScenarioCoverage();
     await seedFinanceAndLedgers();
     await seedReportingAndCash();
     await seedStockMovement();
@@ -2893,9 +3139,9 @@ async function verifySemanticSeedQuality(): Promise<SeedQualitySummary> {
         `Seed semantic audit failed for ${context.organizationId}: unusedCategories=${unusedCategories.length}, unusedUnits=${unusedUnits.length}, invalidLabels=${invalidLabels.length}, incompleteItems=${incompleteItems.length}.`,
       );
     }
-    if (!terminal || minimumPosReadyItemCount < 10) {
+    if (!terminal || minimumPosReadyItemCount < 20) {
       throw new Error(
-        `POS seed readiness failed for ${context.organizationId}: terminal=${Boolean(terminal)}, locations=${activeLocations.length}, minimumPosReadyItems=${minimumPosReadyItemCount}/10.`,
+        `POS seed readiness failed for ${context.organizationId}: terminal=${Boolean(terminal)}, locations=${activeLocations.length}, minimumPosReadyItems=${minimumPosReadyItemCount}/20.`,
       );
     }
 
@@ -2952,7 +3198,7 @@ async function verifyCounts() {
     {
       model: "ChartOfAccount",
       delegate: prisma.chartOfAccount,
-      minimum: ORG_COUNT * 14,
+      minimum: ORG_COUNT * 18,
     },
     { model: "Journal", delegate: prisma.journal, minimum: ORG_COUNT * 8 },
     {
@@ -3064,7 +3310,7 @@ async function verifyCounts() {
       distribution.purchases < COUNT ||
       distribution.sales < COUNT ||
       distribution.payments < COUNT ||
-      distribution.chartAccounts < 14 ||
+      distribution.chartAccounts < 18 ||
       distribution.postingRules < DEFAULT_POSTING_RULES.length ||
       distribution.journalEntries < COUNT,
   );

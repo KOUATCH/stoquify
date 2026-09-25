@@ -15,6 +15,7 @@ import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 
 import type { ParsedStatementLine, PaymentProviderAdapter } from "./payment-ingestion.types"
 import { PaymentIngestionError } from "./payment-ingestion.types"
@@ -115,6 +116,8 @@ export async function importProviderStatement(
   const duplicateInFile = duplicateFingerprints(preparedLines)
 
   return db.$transaction(async (tx) => {
+    // Read provider status after acquiring the lock, including when another import held it.
+    await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "provider_accounts" WHERE "id" = ${input.providerAccountId} AND "organizationId" = ${input.organizationId} FOR UPDATE`)
     const providerAccount = await tx.providerAccount.findFirst({
       where: {
         id: input.providerAccountId,
@@ -136,6 +139,17 @@ export async function importProviderStatement(
       })
     }
 
+    // Serialize imports for this provider, including rejected duplicate files, so retries cannot create duplicate cases.
+    const priorDuplicate = await tx.paymentException.findFirst({ where: { organizationId: input.organizationId, providerAccountId: providerAccount.id,
+      type: PaymentExceptionType.DUPLICATE_PROVIDER_REFERENCE, sourceType: { in: ["StatementFile", "StatementLine"] }, evidence: { path: ["fileHash"], equals: fileHash } },
+      select: { id: true, evidence: true }, orderBy: [{ createdAt: "asc" }, { id: "asc" }] })
+    if (priorDuplicate) {
+      const evidence = priorDuplicate.evidence as { duplicateFingerprints?: unknown }
+      if (!Array.isArray(evidence?.duplicateFingerprints) || !evidence.duplicateFingerprints.length || evidence.duplicateFingerprints.some(value => typeof value !== "string"))
+        throw new PaymentIngestionError("INVALID_PAYLOAD", "Retained duplicate statement evidence requires review.")
+      return { status: "DUPLICATE_LINE", importedLineCount: 0, duplicateLineCount: evidence.duplicateFingerprints.length,
+        fileHash, exceptionId: priorDuplicate.id, correlationId }
+    }
     const existingFile = await tx.statementFile.findFirst({
       where: {
         organizationId: input.organizationId,
@@ -196,6 +210,7 @@ export async function importProviderStatement(
       }
     }
 
+    await assertModuleNewWorkInTx(tx, { organizationId: input.organizationId, moduleSlug: "payment_reconciliation", operation: "payment.statement.import" })
     if (duplicateInFile.size > 0) {
       const exception = await tx.paymentException.create({
         data: {

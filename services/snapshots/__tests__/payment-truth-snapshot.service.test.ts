@@ -10,10 +10,11 @@ import {
 
 jest.mock("@/prisma/db", () => ({
   db: {
+    organization: { findFirst: jest.fn() },
     providerAccount: { count: jest.fn(), findFirst: jest.fn() },
     reconciliationRun: { count: jest.fn(), findFirst: jest.fn() },
     paymentException: { count: jest.fn(), findFirst: jest.fn() },
-    suspenseItem: { count: jest.fn(), aggregate: jest.fn(), findFirst: jest.fn() },
+    suspenseItem: { count: jest.fn(), groupBy: jest.fn(), findFirst: jest.fn() },
     paymentTransaction: { count: jest.fn(), findFirst: jest.fn() },
   },
 }))
@@ -23,10 +24,11 @@ import { db } from "@/prisma/db"
 import { getPaymentTruthSnapshot } from "../payment-truth-snapshot.service"
 
 const mockDb = db as unknown as {
+  organization: { findFirst: jest.Mock }
   providerAccount: { count: jest.Mock; findFirst: jest.Mock }
   reconciliationRun: { count: jest.Mock; findFirst: jest.Mock }
   paymentException: { count: jest.Mock; findFirst: jest.Mock }
-  suspenseItem: { count: jest.Mock; aggregate: jest.Mock; findFirst: jest.Mock }
+  suspenseItem: { count: jest.Mock; groupBy: jest.Mock; findFirst: jest.Mock }
   paymentTransaction: { count: jest.Mock; findFirst: jest.Mock }
 }
 
@@ -72,7 +74,8 @@ function setupPaymentTruthMocks(input: {
     where.severity === ExceptionSeverity.CRITICAL ? values.criticalExceptionCount : values.openExceptionCount,
   )
   mockDb.suspenseItem.count.mockResolvedValue(values.openSuspenseCount)
-  mockDb.suspenseItem.aggregate.mockResolvedValue({ _sum: { amount: amount(values.openSuspenseAmount) } })
+  mockDb.organization.findFirst.mockResolvedValue({ currency: "XAF" })
+  mockDb.suspenseItem.groupBy.mockResolvedValue(values.openSuspenseCount ? [{ currencyCode: "XAF", _sum: { amount: amount(values.openSuspenseAmount) }, _count: { _all: values.openSuspenseCount } }] : [])
   mockDb.paymentTransaction.count.mockResolvedValue(values.pendingTransactionCount)
 
   mockDb.providerAccount.findFirst.mockResolvedValue({ updatedAt: latest })
@@ -123,7 +126,7 @@ describe("payment truth snapshot service", () => {
         openExceptionCount: 0,
         criticalExceptionCount: 0,
         openSuspenseCount: 0,
-        openSuspenseAmount: 0,
+        openSuspenseAmount: null,
         pendingTransactionCount: 0,
       },
       blockers: [
@@ -173,7 +176,7 @@ describe("payment truth snapshot service", () => {
         }),
       }),
     )
-    expect(mockDb.suspenseItem.count).toHaveBeenCalledWith(
+    expect(mockDb.suspenseItem.groupBy).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
@@ -215,5 +218,23 @@ describe("payment truth snapshot service", () => {
     expect(first.sourceHash).toBe(second.sourceHash)
     expect(first.status).toBe("fresh")
     expect(second.status).toBe("stale")
+  })
+
+  it("retains currency breakdown and withholds a fabricated converted total", async () => {
+    setupPaymentTruthMocks({})
+    mockDb.suspenseItem.groupBy.mockResolvedValue([
+      { currencyCode: "USD", _sum: { amount: amount(20) }, _count: { _all: 1 } },
+      { currencyCode: "XAF", _sum: { amount: amount(100) }, _count: { _all: 1 } },
+    ])
+    const result = await getPaymentTruthSnapshot({ organizationId: "org-1" })
+    expect(result.metrics).toMatchObject({ openSuspenseAmount: null, openSuspenseCount: 2, suspenseCurrencyCode: "XAF", openSuspenseByCurrency: [{ currencyCode: "USD", amount: 20, count: 1 }, { currencyCode: "XAF", amount: 100, count: 1 }] })
+    expect(result.blockers).toContainEqual(expect.objectContaining({ id: "payment-suspense-currency-mismatch", detail: expect.stringContaining("20.00 USD; 100.00 XAF") }))
+    expect(result.evidenceGrade).toBe("blocked")
+  })
+
+  it("does not convert a failed suspense query to zero", async () => {
+    setupPaymentTruthMocks({})
+    mockDb.suspenseItem.groupBy.mockRejectedValueOnce(new Error("Source unavailable"))
+    await expect(getPaymentTruthSnapshot({ organizationId: "org-1" })).rejects.toThrow("Source unavailable")
   })
 })

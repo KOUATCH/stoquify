@@ -113,7 +113,7 @@ export async function GET(
       headers: {
         "Content-Type": contentType,
         "X-Content-Type-Options": "nosniff",
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": "private, no-store",
         "Content-Length": fileBuffer.length.toString(),
       },
     })

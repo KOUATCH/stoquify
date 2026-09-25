@@ -2,7 +2,7 @@
 
 import { getCashDrawerDashboardAction } from "@/actions/pos/drawer-dashboard.actions"
 import type { DrawerDashboardInput } from "@/services/pos/drawer-dashboard.schemas"
-import { useQuery } from "@tanstack/react-query"
+import { usePOSReadQuery } from "./usePOSReadQuery"
 
 export const drawerDashboardKeys = {
   all: ["pos-drawer-dashboard"] as const,
@@ -17,10 +17,10 @@ export const drawerDashboardKeys = {
 }
 
 export function useCashDrawerDashboard(params: DrawerDashboardInput) {
-  return useQuery({
+  return usePOSReadQuery({
+    permission: ["finance.cash-drawer.read", "finance.read"],
     queryKey: drawerDashboardKeys.dashboard(params),
     queryFn: () => getCashDrawerDashboardAction(params),
     refetchInterval: 30000,
-    staleTime: 15000,
   })
 }

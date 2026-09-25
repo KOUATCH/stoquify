@@ -1,0 +1,183 @@
+{
+  "run": "cd85bb5f-fb4",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T10:47:24.712Z",
+  "sourcesBefore": {
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "services/roles/role-write.service.ts": "a29671a8071bdcb11de871c96ba89c22d911e065f78fc941792a148b9a04931c",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/roles/role-permission-policy.ts": "6032136d22d3e512a3ba40e8b9ce2e916c62fa018de052d489014d44908a5b01",
+    "services/roles/role-editor.service.ts": "c0a99246cd0d31209e1d1e167a78ce4bd4ce12200388f9e613a104015846fe52",
+    "actions/roles/createRole.ts": "975bda73763e8ed1635a6b792afe60a3b5176f937387a3833aabc78ca9c2e6c5",
+    "actions/roles/updateRole.ts": "b117ab151a5048a5d19fa73c279c1db84f98625ea0b05ce6e449534cc4e77b36",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "en create and exact retry commit one role and one audit",
+      "passed": true,
+      "newRoles": 1,
+      "newAudits": 1,
+      "duplicateRequest": true,
+      "durationMs": 279
+    },
+    {
+      "name": "fr create and exact retry commit one role and one audit",
+      "passed": true,
+      "newRoles": 1,
+      "newAudits": 1,
+      "duplicateRequest": true,
+      "durationMs": 161
+    },
+    {
+      "name": "renaming preserves canonical code, clears description and retains historical grants",
+      "passed": true,
+      "canonicalCodePreserved": true,
+      "historicalGrantRetained": true,
+      "durationMs": 124
+    },
+    {
+      "name": "two concurrent reviewed edits commit one result and one audit",
+      "passed": true,
+      "commits": 1,
+      "conflicts": 1,
+      "durationMs": 131
+    },
+    {
+      "name": "audit failure rolls back role mutation and exact retry succeeds",
+      "passed": true,
+      "rollback": true,
+      "retry": true,
+      "durationMs": 174
+    },
+    {
+      "name": "update replay is idempotent and changed request reuse is rejected",
+      "passed": true,
+      "audits": 1,
+      "durationMs": 143
+    },
+    {
+      "name": "tenant, role and session substitution cannot mutate records",
+      "passed": true,
+      "bothOrganizationsUnchanged": true,
+      "durationMs": 209
+    },
+    {
+      "name": "distinct removal authority and grant ceiling prevent alias escalation",
+      "passed": true,
+      "deniedCases": 3,
+      "durationMs": 131
+    },
+    {
+      "name": "explicit legacy removal authority remains usable",
+      "passed": true,
+      "removed": true,
+      "durationMs": 105
+    },
+    {
+      "name": "wildcard cannot grant critical accounting authority",
+      "passed": true,
+      "unchanged": true,
+      "durationMs": 100
+    },
+    {
+      "name": "last active role custodian cannot be removed",
+      "passed": true,
+      "administratorPreserved": true,
+      "durationMs": 110
+    },
+    {
+      "name": "missing password assurance rejects changes",
+      "passed": true,
+      "unchanged": true,
+      "durationMs": 59
+    },
+    {
+      "name": "actor revocation before final lock rejects without a role write",
+      "passed": true,
+      "targetUnchanged": true,
+      "durationMs": 100
+    },
+    {
+      "name": "role revocation before final lock rejects without a role write",
+      "passed": true,
+      "targetUnchanged": true,
+      "durationMs": 98
+    },
+    {
+      "name": "membership revocation before final lock rejects without a role write",
+      "passed": true,
+      "targetUnchanged": true,
+      "durationMs": 111
+    },
+    {
+      "name": "session revocation before final lock rejects without a role write",
+      "passed": true,
+      "targetUnchanged": true,
+      "durationMs": 111
+    },
+    {
+      "name": "organization revocation before final lock rejects without a role write",
+      "passed": true,
+      "targetUnchanged": true,
+      "durationMs": 120
+    },
+    {
+      "name": "actor mutation waits for audited role commit",
+      "passed": true,
+      "authorityLockedUntilCommit": true,
+      "durationMs": 308
+    },
+    {
+      "name": "role mutation waits for audited role commit",
+      "passed": true,
+      "authorityLockedUntilCommit": true,
+      "durationMs": 372
+    },
+    {
+      "name": "membership mutation waits for audited role commit",
+      "passed": true,
+      "authorityLockedUntilCommit": true,
+      "durationMs": 283
+    },
+    {
+      "name": "session mutation waits for audited role commit",
+      "passed": true,
+      "authorityLockedUntilCommit": true,
+      "durationMs": 349
+    },
+    {
+      "name": "organization mutation waits for audited role commit",
+      "passed": true,
+      "authorityLockedUntilCommit": true,
+      "durationMs": 299
+    }
+  ],
+  "limitations": [
+    "All mutations belong to newly created synthetic organizations. No migrations, existing authority resets, live delivery or provider requests.",
+    "Real password hashing and step-up establish assurance. No seeded assurance.",
+    "Role-change custodian protection does not certify member-deactivation or other role-assignment paths, which still need review."
+  ],
+  "originalAuthorityBefore": "2fe977d23d7a878e355edf1710bdd5b49fe5e18df87c1522fb98ed1f72020182",
+  "originalAuthorityAfter": "2fe977d23d7a878e355edf1710bdd5b49fe5e18df87c1522fb98ed1f72020182",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T10:47:28.975Z",
+  "sourcesAfter": {
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "services/roles/role-write.service.ts": "a29671a8071bdcb11de871c96ba89c22d911e065f78fc941792a148b9a04931c",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/roles/role-permission-policy.ts": "6032136d22d3e512a3ba40e8b9ce2e916c62fa018de052d489014d44908a5b01",
+    "services/roles/role-editor.service.ts": "c0a99246cd0d31209e1d1e167a78ce4bd4ce12200388f9e613a104015846fe52",
+    "actions/roles/createRole.ts": "975bda73763e8ed1635a6b792afe60a3b5176f937387a3833aabc78ca9c2e6c5",
+    "actions/roles/updateRole.ts": "b117ab151a5048a5d19fa73c279c1db84f98625ea0b05ce6e449534cc4e77b36",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "0ead3765311a3043dfbb28fe8178a5227bf6fdf3e0d22cadd20aadfd5a4ca884",
+  "passed": 22,
+  "failed": 0
+}

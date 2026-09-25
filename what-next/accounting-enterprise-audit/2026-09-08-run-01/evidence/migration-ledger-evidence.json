@@ -1,0 +1,178 @@
+{
+  "recordedAt": "2026-09-08T12:10:26.606Z",
+  "filesScanned": 84,
+  "pattern": "journal_entries|journal_entry_lines|ledger_audit_events",
+  "matches": [
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 233,
+      "text": "CREATE TABLE \"journal_entries\" ("
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 257,
+      "text": "    CONSTRAINT \"journal_entries_pkey\" PRIMARY KEY (\"id\")"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 261,
+      "text": "CREATE TABLE \"journal_entry_lines\" ("
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 282,
+      "text": "    CONSTRAINT \"journal_entry_lines_pkey\" PRIMARY KEY (\"id\")"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 364,
+      "text": "CREATE TABLE \"ledger_audit_events\" ("
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 379,
+      "text": "    CONSTRAINT \"ledger_audit_events_pkey\" PRIMARY KEY (\"id\")"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 425,
+      "text": "CREATE INDEX \"journal_entries_organizationId_status_entryDate_idx\" ON \"journal_entries\"(\"organizationId\", \"status\", \"entryDate\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 428,
+      "text": "CREATE INDEX \"journal_entries_journalId_entryDate_idx\" ON \"journal_entries\"(\"journalId\", \"entryDate\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 431,
+      "text": "CREATE INDEX \"journal_entries_periodId_status_idx\" ON \"journal_entries\"(\"periodId\", \"status\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 434,
+      "text": "CREATE INDEX \"journal_entries_postingBatchId_idx\" ON \"journal_entries\"(\"postingBatchId\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 437,
+      "text": "CREATE INDEX \"journal_entries_sourceType_sourceId_idx\" ON \"journal_entries\"(\"sourceType\", \"sourceId\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 440,
+      "text": "CREATE UNIQUE INDEX \"journal_entries_organizationId_entryNumber_key\" ON \"journal_entries\"(\"organizationId\", \"entryNumber\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 443,
+      "text": "CREATE INDEX \"journal_entry_lines_organizationId_accountId_idx\" ON \"journal_entry_lines\"(\"organizationId\", \"accountId\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 446,
+      "text": "CREATE INDEX \"journal_entry_lines_organizationId_currency_idx\" ON \"journal_entry_lines\"(\"organizationId\", \"currency\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 449,
+      "text": "CREATE INDEX \"journal_entry_lines_accountId_createdAt_idx\" ON \"journal_entry_lines\"(\"accountId\", \"createdAt\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 452,
+      "text": "CREATE UNIQUE INDEX \"journal_entry_lines_journalEntryId_lineNumber_key\" ON \"journal_entry_lines\"(\"journalEntryId\", \"lineNumber\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 491,
+      "text": "CREATE INDEX \"ledger_audit_events_organizationId_createdAt_idx\" ON \"ledger_audit_events\"(\"organizationId\", \"createdAt\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 494,
+      "text": "CREATE INDEX \"ledger_audit_events_postingBatchId_idx\" ON \"ledger_audit_events\"(\"postingBatchId\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 497,
+      "text": "CREATE INDEX \"ledger_audit_events_journalEntryId_idx\" ON \"ledger_audit_events\"(\"journalEntryId\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 500,
+      "text": "CREATE INDEX \"ledger_audit_events_resourceType_resourceId_idx\" ON \"ledger_audit_events\"(\"resourceType\", \"resourceId\");"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 533,
+      "text": "ALTER TABLE \"journal_entries\" ADD CONSTRAINT \"journal_entries_organizationId_fkey\" FOREIGN KEY (\"organizationId\") REFERENCES \"organizations\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 536,
+      "text": "ALTER TABLE \"journal_entries\" ADD CONSTRAINT \"journal_entries_journalId_fkey\" FOREIGN KEY (\"journalId\") REFERENCES \"journals\"(\"id\") ON DELETE RESTRICT ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 539,
+      "text": "ALTER TABLE \"journal_entries\" ADD CONSTRAINT \"journal_entries_periodId_fkey\" FOREIGN KEY (\"periodId\") REFERENCES \"accounting_periods\"(\"id\") ON DELETE RESTRICT ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 542,
+      "text": "ALTER TABLE \"journal_entries\" ADD CONSTRAINT \"journal_entries_postingBatchId_fkey\" FOREIGN KEY (\"postingBatchId\") REFERENCES \"ledger_posting_batches\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 545,
+      "text": "ALTER TABLE \"journal_entries\" ADD CONSTRAINT \"journal_entries_reversalOfEntryId_fkey\" FOREIGN KEY (\"reversalOfEntryId\") REFERENCES \"journal_entries\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 548,
+      "text": "ALTER TABLE \"journal_entry_lines\" ADD CONSTRAINT \"journal_entry_lines_organizationId_fkey\" FOREIGN KEY (\"organizationId\") REFERENCES \"organizations\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 551,
+      "text": "ALTER TABLE \"journal_entry_lines\" ADD CONSTRAINT \"journal_entry_lines_journalEntryId_fkey\" FOREIGN KEY (\"journalEntryId\") REFERENCES \"journal_entries\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 554,
+      "text": "ALTER TABLE \"journal_entry_lines\" ADD CONSTRAINT \"journal_entry_lines_accountId_fkey\" FOREIGN KEY (\"accountId\") REFERENCES \"chart_of_accounts\"(\"id\") ON DELETE RESTRICT ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 569,
+      "text": "ALTER TABLE \"accounting_source_links\" ADD CONSTRAINT \"accounting_source_links_journalEntryId_fkey\" FOREIGN KEY (\"journalEntryId\") REFERENCES \"journal_entries\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 584,
+      "text": "ALTER TABLE \"ledger_audit_events\" ADD CONSTRAINT \"ledger_audit_events_organizationId_fkey\" FOREIGN KEY (\"organizationId\") REFERENCES \"organizations\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 587,
+      "text": "ALTER TABLE \"ledger_audit_events\" ADD CONSTRAINT \"ledger_audit_events_postingBatchId_fkey\" FOREIGN KEY (\"postingBatchId\") REFERENCES \"ledger_posting_batches\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260611130000_accounting_auth_baseline_bridge/migration.sql",
+      "line": 590,
+      "text": "ALTER TABLE \"ledger_audit_events\" ADD CONSTRAINT \"ledger_audit_events_journalEntryId_fkey\" FOREIGN KEY (\"journalEntryId\") REFERENCES \"journal_entries\"(\"id\") ON DELETE SET NULL ON UPDATE CASCADE;"
+    },
+    {
+      "file": "prisma/migrations/20260618154500_repair_accounting_source_links/migration.sql",
+      "line": 72,
+      "text": "      FOREIGN KEY (\"journalEntryId\") REFERENCES \"journal_entries\"(\"id\")"
+    },
+    {
+      "file": "prisma/migrations/20260727143000_country_adapter_pilot_foundation/migration.sql",
+      "line": 333,
+      "text": "ALTER TABLE \"fiscal_documents\" ADD CONSTRAINT \"fiscal_documents_journalEntryId_fkey\" FOREIGN KEY (\"journalEntryId\") REFERENCES \"journal_entries\"(\"id\") ON DELETE RESTRICT ON UPDATE CASCADE;"
+    }
+  ],
+  "note": "Repository SQL declarations only. Dynamic SQL and deployed role/trigger/constraint state require independent DB inspection."
+}

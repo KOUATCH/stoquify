@@ -1,3 +1,5 @@
+import { assertPaymentRequestApprovalTerms, readVerifiedPaymentApproval } from "./payment-request-evidence"
+import { lockSupplierPaymentSources, readSupplierPaymentBalances } from "./supplier-payment-balance"
 import { createHash } from "crypto"
 import {
   AccountingPostingPurpose,
@@ -26,6 +28,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { invoicePreparationSourceHash } from "./invoice-source-evidence"
 import { recordPostedJournalCloseInvalidationInTx } from "@/services/accounting/journal-close-invalidation.service"
 import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
@@ -71,6 +74,7 @@ type DbClient = typeof db | Prisma.TransactionClient
 export const EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION = "EXACT_THREE_WAY_MATCH_EXCEPTION_V1"
 
 type InvoiceLinePlan = {
+  availableQuantity: Prisma.Decimal
   purchaseOrderLineId: string
   goodsReceiptLineId: string
   goodsReceiptId: string
@@ -428,7 +432,7 @@ function maskSecret(value?: string | null) {
   return `${"*".repeat(Math.max(4, normalized.length - 4))}${normalized.slice(-4)}`
 }
 
-function duplicateFingerprint(input: {
+export function duplicateFingerprint(input: {
   organizationId: string
   supplierId: string
   invoiceNumber: string
@@ -474,6 +478,7 @@ async function createLedgerBlocker(tx: Prisma.TransactionClient, input: LedgerBl
       metadata: {
         blockerCode: input.blockerCode,
         documentHash: input.documentHash ?? null,
+        apPostingRequestHash: metadataString(input.metadata, "apPostingRequestHash"),
         details: input.metadata ?? null,
       },
     },
@@ -501,7 +506,7 @@ async function createLedgerBlocker(tx: Prisma.TransactionClient, input: LedgerBl
   return blocked
 }
 
-async function resolveAPCountryPackStatus(
+export async function resolveAPCountryPackStatus(
   tx: Prisma.TransactionClient,
   input: {
     organizationId: string
@@ -596,7 +601,87 @@ async function resolveAPCountryPackStatus(
   }
 }
 
-export async function createAPLedgerPosting(
+type APLedgerPostingInput = Parameters<typeof writeAPLedgerPosting>[1]
+
+function apPostingRequestHash(input: APLedgerPostingInput) {
+  return prefixedHash({
+    organizationId: input.organizationId, periodId: input.periodId,
+    sourceType: input.sourceType, sourceId: input.sourceId, sourceNumber: input.sourceNumber,
+    sourceDate: input.sourceDate.toISOString(), postingPurpose: input.postingPurpose,
+    journalType: input.journalType, supplierId: input.supplierId, currency: input.currency,
+    documentHash: input.documentHash ?? null,
+    amounts: Object.fromEntries(Object.entries(input.amounts).sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => [key, new Prisma.Decimal(value).toString()])),
+    conditionContext: input.conditionContext ?? {},
+  })
+}
+
+export function apJournalEvidenceHash(entry: Prisma.JournalEntryGetPayload<{ include: { lines: true } }>) {
+  return prefixedHash({
+    id: entry.id, organizationId: entry.organizationId, postingBatchId: entry.postingBatchId,
+    journalId: entry.journalId, periodId: entry.periodId, entryNumber: entry.entryNumber,
+    entryDate: entry.entryDate.toISOString(), currency: entry.currency, reference: entry.reference,
+    sourceType: entry.sourceType, sourceId: entry.sourceId, postingPurpose: entry.postingPurpose,
+    postedAt: entry.postedAt?.toISOString(), postedById: entry.postedById,
+    lines: [...entry.lines].sort((a, b) => a.lineNumber - b.lineNumber).map(line => ({
+      id: line.id, organizationId: line.organizationId, accountId: line.accountId,
+      lineNumber: line.lineNumber, debit: line.debit.toString(), credit: line.credit.toString(),
+      currency: line.currency, exchangeRate: line.exchangeRate.toString(),
+      baseDebit: line.baseDebit?.toString(), baseCredit: line.baseCredit?.toString(), supplierId: line.supplierId,
+    })),
+  })
+}
+
+// Internal domain kernel: callers remain responsible for current authority and
+// approved source evidence. All effects must run in the caller's transaction.
+export async function createAPLedgerPosting(tx: Prisma.TransactionClient, input: APLedgerPostingInput): Promise<APPostingStatus> {
+  const lockKey = JSON.stringify(["ap-posting", input.organizationId, input.sourceType, input.sourceId, input.postingPurpose])
+  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))::text`
+  await tx.$queryRaw`SELECT id FROM ledger_posting_batches WHERE "organizationId" = ${input.organizationId} AND "sourceType"::text = ${input.sourceType} AND "sourceId" = ${input.sourceId} AND "postingPurpose"::text = ${input.postingPurpose} FOR UPDATE`
+  const source = { sourceType: input.sourceType, sourceId: input.sourceId, postingPurpose: input.postingPurpose }
+  const batches = await tx.ledgerPostingBatch.findMany({
+    where: { organizationId: input.organizationId, OR: [source, { idempotencyKey: { in: [
+      `${input.sourceType}:${input.sourceId}:${input.postingPurpose}:blocked`,
+      `${input.sourceType}:${input.sourceId}:${input.postingPurpose}:posted`,
+    ] } }] }, include: { sourceLinks: true },
+  })
+  const batch = batches[0]
+  if (batches.length > 1 || (batch && (batch.sourceType !== input.sourceType || batch.sourceId !== input.sourceId || batch.postingPurpose !== input.postingPurpose || (batch.periodId && batch.periodId !== input.periodId)))) {
+    throw new ConflictError("AP posting batch evidence conflicts with this source. Accounting review is required.")
+  }
+  const entries = await tx.journalEntry.findMany({
+    where: { organizationId: input.organizationId, OR: [source, ...(batch ? [{ postingBatchId: batch.id }] : [])] },
+    include: { lines: true },
+  })
+  const requestHash = apPostingRequestHash(input)
+  if (batch?.status === LedgerPostingBatchStatus.POSTED) {
+    const entry = entries[0], link = batch.sourceLinks[0]
+    if (metadataString(batch.metadata, "apPostingRequestHash") !== requestHash || entries.length !== 1 ||
+      !entry || entry.status !== JournalEntryStatus.POSTED || entry.postingBatchId !== batch.id ||
+      entry.sourceType !== input.sourceType || entry.sourceId !== input.sourceId || entry.postingPurpose !== input.postingPurpose ||
+      !batch.postedAt || !entry.postedAt || entry.reversedAt || entry.reversalOfEntryId ||
+      metadataString(batch.metadata, "apJournalEvidenceHash") !== apJournalEvidenceHash(entry) ||
+      batch.sourceLinks.length !== 1 || !link || link.organizationId !== input.organizationId ||
+      link.journalEntryId !== entry.id || link.sourceType !== input.sourceType || link.sourceId !== input.sourceId ||
+      link.sourceNumber !== input.sourceNumber || link.sourceDate?.getTime() !== input.sourceDate.getTime() ||
+      metadataString(link.metadata, "documentHash") !== (input.documentHash ?? null)) {
+      throw new ConflictError("AP posting evidence is incomplete or changed. Review the existing journal before retrying.")
+    }
+    return { ledgerBatch: batch, ledgerStatus: "POSTED", journalEntryId: entry.id, accountingSourceLinkId: link.id }
+  }
+  if (entries.length || (batch && (batch.sourceLinks.length || batch.postedAt || batch.reversedAt || batch.status !== LedgerPostingBatchStatus.FAILED))) {
+    throw new ConflictError("AP posting has unresolved or reversed effects. Accounting review is required before recovery.")
+  }
+  const previousHash = batch && metadataString(batch.metadata, "apPostingRequestHash")
+  if (batch && ((previousHash && previousHash !== requestHash) || metadataString(batch.metadata, "documentHash") !== (input.documentHash ?? null))) {
+    throw new ConflictError("The blocked AP source evidence changed. Review it before recovery.")
+  }
+  await tx.$queryRaw`SELECT id FROM accounting_periods WHERE id = ${input.periodId} AND "organizationId" = ${input.organizationId} FOR SHARE`
+  const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)
+  if (period.id !== input.periodId) throw new ConflictError("AP posting period does not match the effective source date.")
+  return writeAPLedgerPosting(tx, { ...input, metadata: { ...input.metadata, apPostingRequestHash: requestHash } })
+}
+
+async function writeAPLedgerPosting(
   tx: Prisma.TransactionClient,
   input: {
     organizationId: string
@@ -815,6 +900,7 @@ export async function createAPLedgerPosting(
   })
 
   const journalEntry = await tx.journalEntry.create({
+    include: { lines: true },
     data: {
       organizationId: input.organizationId,
       journalId: journal.id,
@@ -875,6 +961,11 @@ export async function createAPLedgerPosting(
     tx,
   )
 
+  const verifiedBatch = await tx.ledgerPostingBatch.update({
+    where: { id: postedBatch.id },
+    data: { metadata: safeJson({ ...asRecord(postedBatch.metadata), apPostingRequestHash: input.metadata?.apPostingRequestHash, apJournalEvidenceHash: apJournalEvidenceHash(journalEntry) }) },
+  })
+
   await tx.ledgerAuditEvent.create({
     data: {
       organizationId: input.organizationId,
@@ -915,7 +1006,7 @@ export async function createAPLedgerPosting(
   )
 
   return {
-    ledgerBatch: postedBatch,
+    ledgerBatch: verifiedBatch,
     ledgerStatus: "POSTED",
     journalEntryId: journalEntry.id,
     accountingSourceLinkId: sourceLink.id,
@@ -1138,6 +1229,8 @@ async function nextAPJournalEntryNumber(
   prefix: "APINV" | "APPAY" | "APRET" | "APCR",
 ) {
   const datedPrefix = `${prefix}-${compactDate(entryDate)}`
+  const lockKey = JSON.stringify(["ap-journal-number", organizationId, datedPrefix])
+  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))::text`
   const count = await tx.journalEntry.count({
     where: {
       organizationId,
@@ -1169,12 +1262,14 @@ async function assertSupplier(tx: Prisma.TransactionClient, organizationId: stri
   return supplier
 }
 
-async function buildInvoiceLinePlans(
+export async function buildInvoiceLinePlans(
   tx: Prisma.TransactionClient,
   input: {
     organizationId: string
     supplierId: string
     purchaseOrderId?: string
+    // Revalidation counts other invoices, then reserves this invoice's lines once.
+    excludeSupplierInvoiceId?: string
     lines: Array<{
       purchaseOrderLineId?: string
       goodsReceiptLineId: string
@@ -1188,6 +1283,7 @@ async function buildInvoiceLinePlans(
   },
 ) {
   const plans: InvoiceLinePlan[] = []
+  const reservedByReceipt = new Map<string, Prisma.Decimal>()
 
   for (const line of input.lines) {
     const quantity = decimal3(line.quantity)
@@ -1211,6 +1307,7 @@ async function buildInvoiceLinePlans(
           purchaseOrder: {
             organizationId: input.organizationId,
             supplierId: input.supplierId,
+            deletedAt: null,
             ...(input.purchaseOrderId ? { id: input.purchaseOrderId } : {}),
             status: {
               in: [
@@ -1218,6 +1315,8 @@ async function buildInvoiceLinePlans(
                 PurchaseOrderStatus.PARTIALLY_RECEIVED,
                 PurchaseOrderStatus.RECEIVED,
                 PurchaseOrderStatus.COMPLETED,
+                // Cancellation stops the remainder, not payment obligations for received goods.
+                PurchaseOrderStatus.CANCELLED,
               ],
             },
           },
@@ -1247,6 +1346,9 @@ async function buildInvoiceLinePlans(
     if (!receiptLine) {
       throw new BusinessRuleError("Supplier invoice line requires received goods evidence for this supplier.")
     }
+    if (receiptLine.goodsReceipt.purchaseOrderId !== receiptLine.purchaseOrderLine.purchaseOrderId || receiptLine.itemId !== receiptLine.purchaseOrderLine.itemId) {
+      throw new BusinessRuleError("Supplier invoice receipt and purchase order evidence are inconsistent.")
+    }
 
     if (line.purchaseOrderLineId && line.purchaseOrderLineId !== receiptLine.purchaseOrderLineId) {
       throw new BusinessRuleError(
@@ -1262,6 +1364,7 @@ async function buildInvoiceLinePlans(
       _sum: { quantity: true },
       where: {
         goodsReceiptLineId: receiptLine.id,
+        ...(input.excludeSupplierInvoiceId ? { supplierInvoiceId: { not: input.excludeSupplierInvoiceId } } : {}),
         supplierInvoice: {
           organizationId: input.organizationId,
           deletedAt: null,
@@ -1272,9 +1375,11 @@ async function buildInvoiceLinePlans(
 
     const previouslyInvoiced = decimal3(alreadyInvoiced._sum.quantity)
     const remainingReceived = decimal3(receiptLine.receivedQuantity).minus(previouslyInvoiced).toDecimalPlaces(3)
-    if (quantity.gt(remainingReceived)) {
+    const reservedQuantity = (reservedByReceipt.get(receiptLine.id) ?? new Prisma.Decimal(0)).plus(quantity)
+    if (reservedQuantity.gt(remainingReceived)) {
       throw new BusinessRuleError("Supplier invoice quantity exceeds received and uninvoiced goods.")
     }
+    reservedByReceipt.set(receiptLine.id, reservedQuantity)
 
     const priceVariance = unitCost.minus(decimal2(receiptLine.unitCost)).times(quantity).toDecimalPlaces(2)
 
@@ -1283,6 +1388,7 @@ async function buildInvoiceLinePlans(
     const lineTotal = lineSubtotal.plus(taxAmount).toDecimalPlaces(2)
 
     plans.push({
+      availableQuantity: remainingReceived,
       purchaseOrderLineId: receiptLine.purchaseOrderLineId,
       goodsReceiptLineId: receiptLine.id,
       goodsReceiptId: receiptLine.goodsReceiptId,
@@ -1638,6 +1744,9 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
     : null
 
   return inTransaction(client, async (tx) => {
+    // Serialize preparation before replay/quantity reads, including invoices without a PO ID.
+    // The next waiter observes committed reservations and can replay the completed invoice.
+    await tx.$queryRaw`SELECT id FROM suppliers WHERE id = ${parsed.supplierId} AND "organizationId" = ${parsed.organizationId} FOR UPDATE`
     const supplier = await assertSupplier(tx, parsed.organizationId, parsed.supplierId)
 
     if (parsed.idempotencyKey) {
@@ -1664,6 +1773,7 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
     }
 
     if (parsed.purchaseOrderId) {
+      await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${parsed.purchaseOrderId} AND "organizationId" = ${parsed.organizationId} FOR UPDATE`
       const purchaseOrder = await tx.purchaseOrder.findFirst({
         where: {
           id: parsed.purchaseOrderId,
@@ -1677,7 +1787,7 @@ export async function postSupplierInvoice(input: PostSupplierInvoiceInput, clien
       if (!purchaseOrder) throw new NotFoundError("Purchase order not found for this supplier.")
       if (
         purchaseOrder.status === PurchaseOrderStatus.DRAFT ||
-        purchaseOrder.status === PurchaseOrderStatus.CANCELLED
+        purchaseOrder.status === PurchaseOrderStatus.SUBMITTED
       ) {
         throw new BusinessRuleError(
           "Supplier invoices can only be posted against approved or received purchase orders.",
@@ -2050,6 +2160,33 @@ export async function prepareSupplierInvoice(input: PostSupplierInvoiceInput, cl
   return postSupplierInvoice({ ...input, approvedById: undefined }, client)
 }
 
+export async function expireMatchExceptionInTx(tx: Prisma.TransactionClient, exception: Prisma.SupplierInvoiceMatchExceptionGetPayload<{}>, actorId: string, observedAt: Date) {
+  if ((exception.status !== "OPEN" && exception.status !== "APPROVED") || exception.expiresAt > observedAt) throw new ConflictError("Match exception is not eligible for expiry.")
+  const claim = await tx.supplierInvoiceMatchException.updateMany({
+    where: { id: exception.id, organizationId: exception.organizationId, status: exception.status, expiresAt: { lte: observedAt } },
+    data: { status: SupplierInvoiceMatchExceptionStatus.EXPIRED },
+  })
+  if (claim.count !== 1) throw new ConflictError("Match exception changed before expiry was recorded.")
+  const recorded = await recordBusinessEventInTx(tx, {
+    organizationId: exception.organizationId, eventType: "purchase.supplier_invoice.match_exception.expired", eventSource: "INTERNAL", schemaVersion: 1,
+    idempotencyKey: `supplier-invoice-match-exception:${exception.id}:expired`, actorId,
+    sourceType: AccountingSourceType.SUPPLIER_INVOICE, sourceId: exception.supplierInvoiceId, occurredAt: observedAt,
+    payload: { matchExceptionId: exception.id, supplierInvoiceId: exception.supplierInvoiceId, previousStatus: exception.status, status: "EXPIRED", effectiveAt: exception.expiresAt.toISOString(), observedAt: observedAt.toISOString(), policyVersion: exception.policyVersion },
+    outboxMessages: [{ channel: "NOTIFICATION", eventName: "supplier_invoice.match_exception.expired", destination: "accounting", payload: { severity: "warning", matchExceptionId: exception.id, supplierInvoiceId: exception.supplierInvoiceId, expiresAt: exception.expiresAt.toISOString() } }],
+  })
+  await markBusinessEventAppliedInTx(tx, exception.organizationId, recorded.event.id)
+  await writeAudit(tx, { organizationId: exception.organizationId, entityType: "SupplierInvoiceMatchException", entityId: exception.id, action: "SUPPLIER_INVOICE_MATCH_EXCEPTION_EXPIRED", actorId, changes: { before: { status: exception.status }, after: { status: "EXPIRED", effectiveAt: exception.expiresAt.toISOString(), observedAt: observedAt.toISOString(), businessEventId: recorded.event.id } } })
+}
+
+export async function lockMatchExceptionInvoice(tx: Prisma.TransactionClient, organizationId: string, invoiceId: string) {
+  // Use the invoice-posting lock order so approval cannot cross an exception decision.
+  await tx.$queryRaw`SELECT s.id FROM suppliers s JOIN supplier_invoices i ON i."supplierId" = s.id WHERE i.id = ${invoiceId} AND i."organizationId" = ${organizationId} AND s."organizationId" = ${organizationId} FOR UPDATE OF s`
+  await tx.$queryRaw`SELECT id FROM supplier_invoices WHERE id = ${invoiceId} AND "organizationId" = ${organizationId} FOR UPDATE`
+  await tx.$queryRaw`SELECT id FROM supplier_invoice_lines WHERE "supplierInvoiceId" = ${invoiceId} AND "organizationId" = ${organizationId} FOR SHARE`
+  await tx.$queryRaw`SELECT id FROM three_way_matches WHERE "supplierInvoiceId" = ${invoiceId} AND "organizationId" = ${organizationId} ORDER BY id FOR SHARE`
+  await tx.$queryRaw`SELECT r.id FROM supplier_invoice_lines l JOIN goods_receipt_lines rl ON rl.id = l."goodsReceiptLineId" JOIN goods_receipts r ON r.id = rl."goodsReceiptId" JOIN purchase_order_lines pl ON pl.id = rl."purchaseOrderLineId" JOIN purchase_orders p ON p.id = pl."purchaseOrderId" WHERE l."supplierInvoiceId" = ${invoiceId} AND l."organizationId" = ${organizationId} AND r."organizationId" = ${organizationId} AND p."organizationId" = ${organizationId} ORDER BY r.id, rl.id FOR SHARE OF r, rl, pl, p`
+}
+
 export async function requestSupplierInvoiceMatchException(
   input: RequestSupplierInvoiceMatchExceptionInput,
   client: DbClient = db,
@@ -2063,31 +2200,19 @@ export async function requestSupplierInvoiceMatchException(
 
   try {
     return await inTransaction(client, async (tx) => {
-      await tx.supplierInvoiceMatchException.updateMany({
-        where: {
-          organizationId: parsed.organizationId,
-          supplierInvoiceId: parsed.supplierInvoiceId,
-          status: {
-            in: [
-              SupplierInvoiceMatchExceptionStatus.OPEN,
-              SupplierInvoiceMatchExceptionStatus.APPROVED,
-            ],
-          },
-          expiresAt: { lte: now },
-        },
-        data: { status: SupplierInvoiceMatchExceptionStatus.EXPIRED },
-      })
-
+      await lockMatchExceptionInvoice(tx, parsed.organizationId, parsed.supplierInvoiceId)
+      const now = new Date()
+      if (expiresAt <= now) throw new BusinessRuleError("Supplier invoice match exception expiry must be in the future.")
       const invoice = await tx.supplierInvoice.findFirst({
         where: {
           id: parsed.supplierInvoiceId,
           organizationId: parsed.organizationId,
           deletedAt: null,
         },
-        include: { threeWayMatches: true },
+        include: { lines: true, threeWayMatches: true, supplier: true },
       })
       if (!invoice) throw new NotFoundError("Supplier invoice not found for this organization.")
-      if (invoice.createdById && invoice.createdById !== parsed.requestedById) {
+      if (!invoice.createdById || invoice.createdById !== parsed.requestedById) {
         throw new BusinessRuleError("Only the supplier invoice maker can request its match exception.")
       }
       if (invoice.status !== SupplierInvoiceStatus.DISPUTED) {
@@ -2117,6 +2242,13 @@ export async function requestSupplierInvoiceMatchException(
       })
       if (duplicate) {
         throw new ConflictError("An active match exception already exists for this supplier invoice match.")
+      }
+
+      await validateInvoiceApprovalSource(tx, invoice, parsed.organizationId)
+
+      const priorRequests = await tx.supplierInvoiceMatchException.findMany({ where: { organizationId: parsed.organizationId, supplierInvoiceId: invoice.id }, orderBy: { id: "asc" } })
+      for (const prior of priorRequests) {
+        if ((prior.status === "OPEN" || prior.status === "APPROVED") && prior.expiresAt <= now) await expireMatchExceptionInTx(tx, prior, parsed.requestedById, now)
       }
 
       const matchException = await tx.supplierInvoiceMatchException.create({
@@ -2152,6 +2284,11 @@ export async function requestSupplierInvoiceMatchException(
           threeWayMatchId: match.id,
           policyVersion: EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION,
           varianceAmount: decimal2(match.varianceAmount).toFixed(2),
+          priceVariance: decimal2(match.priceVariance).toFixed(2),
+          sourceHash: invoicePreparationSourceHash(invoice),
+          priorRequestIds: priorRequests.map(prior => prior.id),
+          reason: parsed.reason,
+          evidenceReference: parsed.evidenceReference,
           requesterId: parsed.requestedById,
           expiresAt: expiresAt.toISOString(),
         },
@@ -2204,6 +2341,9 @@ export async function requestSupplierInvoiceMatchException(
     })
   } catch (error) {
     if (error instanceof ApplicationError) throw error
+    // The reviewed service owns serializable retry. Preserve database aborts so
+    // it can restart the whole transaction with the same command.
+    if (error instanceof Prisma.PrismaClientKnownRequestError && (error.code === "P2034" || error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code)))) throw error
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       throw new ConflictError("An active match exception already exists for this supplier invoice match.")
     }
@@ -2216,20 +2356,37 @@ export async function requestSupplierInvoiceMatchException(
   }
 }
 
+export async function validateMatchExceptionReviewSource(tx: Prisma.TransactionClient, matchException: Prisma.SupplierInvoiceMatchExceptionGetPayload<{}>, organizationId: string) {
+  const invoice = await tx.supplierInvoice.findFirst({ where: { id: matchException.supplierInvoiceId, organizationId: organizationId, deletedAt: null }, include: { lines: true, threeWayMatches: true, supplier: true } })
+  if (!invoice) throw new NotFoundError("Supplier invoice not found for this organization.")
+  const source = await validateInvoiceApprovalSource(tx, invoice, organizationId)
+  const request = await tx.businessEvent.findFirst({ where: { organizationId: organizationId, eventSource: "INTERNAL", idempotencyKey: `supplier-invoice-match-exception:${matchException.id}:requested` } })
+  const proof = request?.payload && typeof request.payload === "object" && !Array.isArray(request.payload) ? request.payload : {}
+  if (!source.requiresMatchException || !invoice.createdById || matchException.requestedById !== invoice.createdById || matchException.threeWayMatchId !== source.match.id || matchException.policyVersion !== EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION || !matchException.varianceAmount.eq(source.variance) || !matchException.priceVariance.eq(source.priceVariance) || !request || request.eventType !== "purchase.supplier_invoice.match_exception.requested" || request.schemaVersion !== 1 || request.status !== "APPLIED" || !request.processedAt || request.actorId !== invoice.createdById || request.sourceType !== "SUPPLIER_INVOICE" || request.sourceId !== invoice.id || request.payloadHash !== hashBusinessPayload(request.payload) || proof.matchExceptionId !== matchException.id || proof.supplierInvoiceId !== invoice.id || proof.threeWayMatchId !== source.match.id || proof.policyVersion !== matchException.policyVersion || proof.requesterId !== invoice.createdById || proof.expiresAt !== matchException.expiresAt.toISOString() || proof.varianceAmount !== source.variance.toFixed(2) || proof.priceVariance !== source.priceVariance.toFixed(2) || proof.reason !== matchException.reason || proof.evidenceReference !== matchException.evidenceReference || proof.sourceHash !== invoicePreparationSourceHash(invoice)) {
+    throw new BusinessRuleError("Match exception source evidence changed or is incomplete; reconcile the request before review.", "INVOICE_EVIDENCE_REQUIRED")
+  }
+
+  return { request, sourceHash: proof.sourceHash }
+}
+
 export async function reviewSupplierInvoiceMatchException(
   input: ReviewSupplierInvoiceMatchExceptionInput,
   client: DbClient = db,
 ) {
   const parsed = reviewSupplierInvoiceMatchExceptionInputSchema.parse(input)
-  const now = new Date()
   const outcome = await inTransaction(client, async (tx) => {
-    const matchException = await tx.supplierInvoiceMatchException.findFirst({
+    let matchException = await tx.supplierInvoiceMatchException.findFirst({
       where: {
         id: parsed.matchExceptionId,
         organizationId: parsed.organizationId,
       },
     })
     if (!matchException) throw new NotFoundError("Supplier invoice match exception not found for this organization.")
+    await lockMatchExceptionInvoice(tx, parsed.organizationId, matchException.supplierInvoiceId)
+    await tx.$queryRaw`SELECT id FROM supplier_invoice_match_exceptions WHERE id = ${parsed.matchExceptionId} AND "organizationId" = ${parsed.organizationId} FOR UPDATE`
+    matchException = await tx.supplierInvoiceMatchException.findFirst({ where: { id: parsed.matchExceptionId, organizationId: parsed.organizationId } })
+    if (!matchException) throw new NotFoundError("Supplier invoice match exception not found for this organization.")
+    const now = new Date()
     if (matchException.requestedById === parsed.reviewedById) {
       throw new BusinessRuleError("Supplier invoice match exceptions require an independent approver.")
     }
@@ -2238,18 +2395,18 @@ export async function reviewSupplierInvoiceMatchException(
     }
 
     if (matchException.expiresAt <= now) {
-      await tx.supplierInvoiceMatchException.updateMany({
-        where: {
-          id: matchException.id,
-          organizationId: parsed.organizationId,
-          status: SupplierInvoiceMatchExceptionStatus.OPEN,
-        },
-        data: { status: SupplierInvoiceMatchExceptionStatus.EXPIRED },
-      })
+      await expireMatchExceptionInTx(tx, matchException, parsed.reviewedById, now)
       return { kind: "expired" as const }
     }
 
     const approved = parsed.decision === "APPROVE"
+    // Refusal closes a request; it does not authorize its underlying variance.
+    // Preserve invalid historical proof and record that it could not be verified.
+    let proof: Awaited<ReturnType<typeof validateMatchExceptionReviewSource>> | null = null
+    try { proof = await validateMatchExceptionReviewSource(tx, matchException, parsed.organizationId) }
+    catch (error) {
+      if (approved || (!(error instanceof BusinessRuleError) && !(error instanceof NotFoundError))) throw error
+    }
     const status = approved
       ? SupplierInvoiceMatchExceptionStatus.APPROVED
       : SupplierInvoiceMatchExceptionStatus.REJECTED
@@ -2297,6 +2454,9 @@ export async function reviewSupplierInvoiceMatchException(
         requesterId: matchException.requestedById,
         reviewerId: parsed.reviewedById,
         decision: parsed.decision,
+        requestEventId: proof?.request.id ?? null,
+        sourceHash: proof?.sourceHash ?? null,
+        sourceVerification: proof ? "VERIFIED" : "UNVERIFIED",
         expiresAt: matchException.expiresAt.toISOString(),
       },
       occurredAt: now,
@@ -2356,11 +2516,67 @@ export async function reviewSupplierInvoiceMatchException(
   return outcome
 }
 
+type InvoiceApprovalSource = Prisma.SupplierInvoiceGetPayload<{ include: { lines: true; threeWayMatches: true; supplier: { select: { id: true; name: true; currentBalance: true; isActive: true; organizationId: true } } } }>
+
+export async function validateInvoiceApprovalSource(tx: Prisma.TransactionClient, invoice: InvoiceApprovalSource, organizationId: string) {
+  if (
+    invoice.status !== SupplierInvoiceStatus.MATCHED &&
+    invoice.status !== SupplierInvoiceStatus.DISPUTED
+  ) {
+    throw new BusinessRuleError("Only matched or exception-approved supplier invoices can be posted.")
+  }
+  const requiresMatchException = invoice.status === SupplierInvoiceStatus.DISPUTED
+  const match = invoice.threeWayMatches.find((candidate) =>
+    requiresMatchException
+      ? candidate.status === ThreeWayMatchStatus.EXCEPTION
+      : candidate.status === ThreeWayMatchStatus.MATCHED,
+  )
+  if (!match) {
+    throw new BusinessRuleError(
+      requiresMatchException
+        ? "Supplier invoice requires unresolved exception evidence before posting."
+        : "Supplier invoice requires matched three-way evidence before posting.",
+    )
+  }
+
+  // A saved MATCHED label is not proof that the underlying amounts and receipts
+  // still agree. Recompute before claiming approval or creating a liability.
+  if (invoice.supplier.organizationId !== organizationId || invoice.threeWayMatches.length !== 1 || match.organizationId !== organizationId || match.supplierInvoiceId !== invoice.id || match.purchaseOrderId !== invoice.purchaseOrderId || invoice.lines.length === 0 || invoice.lines.some(line => line.organizationId !== organizationId || line.supplierInvoiceId !== invoice.id || !line.goodsReceiptLineId)) {
+    throw new BusinessRuleError("Supplier invoice source evidence is missing, ambiguous or outside this organization.", "INVOICE_EVIDENCE_REQUIRED")
+  }
+  if (invoice.approvedById || invoice.postedAt || invoice.postedBusinessEventId || invoice.ledgerPostingBatchId || !invoice.amountPaid.eq(0) || !invoice.discount.eq(0)) {
+    throw new BusinessRuleError("Supplier invoice has existing effects or unsupported adjustments; reconcile it before approval.", "INVOICE_EVIDENCE_REQUIRED")
+  }
+  const existingLiability = await tx.supplierLedgerEntry.findFirst({ where: { organizationId: organizationId, referenceType: "SUPPLIER_INVOICE", referenceId: invoice.id }, select: { id: true } })
+  if (existingLiability) throw new BusinessRuleError("Supplier invoice already has liability evidence; reconcile it before approval.", "INVOICE_EVIDENCE_REQUIRED")
+  const existingBatches = await tx.ledgerPostingBatch.findMany({ where: { organizationId: organizationId, sourceType: AccountingSourceType.SUPPLIER_INVOICE, sourceId: invoice.id }, select: { id: true }, take: 1 })
+  if (existingBatches.length > 0) throw new BusinessRuleError("Supplier invoice already has posting evidence; reconcile it before approval.", "INVOICE_EVIDENCE_REQUIRED")
+  const linePlans = await buildInvoiceLinePlans(tx, {
+    organizationId: organizationId, supplierId: invoice.supplierId,
+    purchaseOrderId: invoice.purchaseOrderId ?? undefined, excludeSupplierInvoiceId: invoice.id,
+    lines: invoice.lines.map(line => ({ goodsReceiptLineId: line.goodsReceiptLineId!, purchaseOrderLineId: line.purchaseOrderLineId ?? undefined, itemId: line.itemId ?? undefined, description: line.description, quantity: line.quantity.toString(), unitCost: line.unitCost.toString(), taxRate: line.taxRate.toString() })),
+  })
+  const sum = (value: (line: InvoiceLinePlan) => Prisma.Decimal) => linePlans.reduce((total, line) => total.plus(value(line)), new Prisma.Decimal(0)).toDecimalPlaces(2)
+  const subtotal = sum(line => line.lineSubtotal), tax = sum(line => line.taxAmount), variance = sum(line => line.priceVariance.abs()), priceVariance = sum(line => line.priceVariance)
+  if (!invoice.subtotal.eq(subtotal) || !invoice.taxAmount.eq(tax) || !invoice.total.eq(subtotal.plus(tax)) || invoice.total.lte(0) || linePlans.some((plan, index) => !invoice.lines[index].taxAmount.eq(plan.taxAmount) || !invoice.lines[index].lineTotal.eq(plan.lineTotal) || invoice.lines[index].matchStatus !== (plan.priceVariance.eq(0) ? ThreeWayMatchStatus.MATCHED : ThreeWayMatchStatus.EXCEPTION)) || !match.varianceAmount.eq(variance) || !match.priceVariance.eq(priceVariance) || !match.quantityVariance.eq(0) || !match.toleranceAmount.eq(0) || requiresMatchException !== variance.gt(0)) {
+    throw new BusinessRuleError("Supplier invoice totals or match variance changed; reconcile the source before approval.", "INVOICE_EVIDENCE_REQUIRED")
+  }
+
+  return { requiresMatchException, match, variance, priceVariance }
+}
+
 export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput, client: DbClient = db) {
   const parsed = approveSupplierInvoiceInputSchema.parse(input)
-  const approvalAt = new Date()
 
   const outcome = await inTransaction(client, async (tx) => {
+    // Match preparation's supplier-first lock order. Different invoices for one
+    // supplier must not calculate liability balances from the same old snapshot.
+    await tx.$queryRaw`SELECT s.id FROM suppliers s JOIN supplier_invoices i ON i."supplierId" = s.id WHERE i.id = ${parsed.supplierInvoiceId} AND i."organizationId" = ${parsed.organizationId} AND s."organizationId" = ${parsed.organizationId} FOR UPDATE OF s`
+    await tx.$queryRaw`SELECT id FROM supplier_invoices WHERE id = ${parsed.supplierInvoiceId} AND "organizationId" = ${parsed.organizationId} FOR UPDATE`
+    await tx.$queryRaw`SELECT id FROM supplier_invoice_lines WHERE "supplierInvoiceId" = ${parsed.supplierInvoiceId} AND "organizationId" = ${parsed.organizationId} ORDER BY id FOR SHARE`
+    await tx.$queryRaw`SELECT id FROM three_way_matches WHERE "supplierInvoiceId" = ${parsed.supplierInvoiceId} AND "organizationId" = ${parsed.organizationId} ORDER BY id FOR SHARE`
+    await tx.$queryRaw`SELECT r.id FROM supplier_invoice_lines l JOIN goods_receipt_lines rl ON rl.id = l."goodsReceiptLineId" JOIN goods_receipts r ON r.id = rl."goodsReceiptId" JOIN purchase_order_lines pl ON pl.id = rl."purchaseOrderLineId" JOIN purchase_orders p ON p.id = pl."purchaseOrderId" WHERE l."supplierInvoiceId" = ${parsed.supplierInvoiceId} AND l."organizationId" = ${parsed.organizationId} AND r."organizationId" = ${parsed.organizationId} AND p."organizationId" = ${parsed.organizationId} ORDER BY r.id, rl.id FOR SHARE OF r, rl, pl, p`
+    const approvalAt = new Date()
     const invoice = await tx.supplierInvoice.findFirst({
       where: {
         id: parsed.supplierInvoiceId,
@@ -2376,6 +2592,7 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
             name: true,
             currentBalance: true,
             isActive: true,
+            organizationId: true,
           },
         },
       },
@@ -2402,34 +2619,16 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
           threeWayMatch: invoice.threeWayMatches[0] ?? null,
           postingBatchId: invoice.ledgerPostingBatchId,
           businessEventId: invoice.postedBusinessEventId,
-          ledgerStatus: metadataString(invoice.metadata, "ledgerStatus") ?? "POSTED",
+          ledgerStatus: metadataString(invoice.metadata, "ledgerStatus") ?? "UNVERIFIED",
         },
       }
     }
 
-    if (
-      invoice.status !== SupplierInvoiceStatus.MATCHED &&
-      invoice.status !== SupplierInvoiceStatus.DISPUTED
-    ) {
-      throw new BusinessRuleError("Only matched or exception-approved supplier invoices can be posted.")
-    }
-    const requiresMatchException = invoice.status === SupplierInvoiceStatus.DISPUTED
-    const match = invoice.threeWayMatches.find((candidate) =>
-      requiresMatchException
-        ? candidate.status === ThreeWayMatchStatus.EXCEPTION
-        : candidate.status === ThreeWayMatchStatus.MATCHED,
-    )
-    if (!match) {
-      throw new BusinessRuleError(
-        requiresMatchException
-          ? "Supplier invoice requires unresolved exception evidence before posting."
-          : "Supplier invoice requires matched three-way evidence before posting.",
-      )
-    }
+    const { requiresMatchException, match, variance, priceVariance } = await validateInvoiceApprovalSource(tx, invoice, parsed.organizationId)
 
     let activeMatchException: { id: string; expiresAt: Date } | null = null
     if (requiresMatchException) {
-      activeMatchException = await tx.supplierInvoiceMatchException.findFirst({
+      const exception = await tx.supplierInvoiceMatchException.findFirst({
         where: {
           organizationId: parsed.organizationId,
           supplierInvoiceId: invoice.id,
@@ -2438,21 +2637,18 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
         },
         orderBy: { decidedAt: "desc" },
       })
-      if (!activeMatchException) {
+      if (!exception) {
         throw new BusinessRuleError(
           "Supplier invoice posting is blocked until its exact-match variance has an approved active exception.",
         )
       }
+      activeMatchException = exception
       if (activeMatchException.expiresAt <= approvalAt) {
-        await tx.supplierInvoiceMatchException.updateMany({
-          where: {
-            id: activeMatchException.id,
-            organizationId: parsed.organizationId,
-            status: SupplierInvoiceMatchExceptionStatus.APPROVED,
-          },
-          data: { status: SupplierInvoiceMatchExceptionStatus.EXPIRED },
-        })
+        await expireMatchExceptionInTx(tx, exception, parsed.approvedById, approvalAt)
         return { kind: "expired" as const }
+      }
+      if (exception.policyVersion !== EXACT_THREE_WAY_MATCH_EXCEPTION_POLICY_VERSION || exception.requestedById !== invoice.createdById || !exception.approvedById || exception.approvedById === exception.requestedById || !exception.decidedAt || exception.decidedAt > approvalAt || !exception.varianceAmount.eq(variance) || !exception.priceVariance.eq(priceVariance)) {
+        throw new BusinessRuleError("Approved match exception does not cover the current invoice variance.", "INVOICE_EVIDENCE_REQUIRED")
       }
     }
     if (!invoice.supplier.isActive) throw new BusinessRuleError("Supplier is inactive.")
@@ -2468,7 +2664,7 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
       data: {
         status: SupplierInvoiceStatus.POSTED,
         approvedById: parsed.approvedById,
-        postedAt: invoice.invoiceDate,
+        postedAt: approvalAt,
       },
     })
     if (claim.count !== 1) {
@@ -2604,7 +2800,7 @@ export async function approveSupplierInvoice(input: ApproveSupplierInvoiceInput,
           ? ThreeWayMatchStatus.APPROVED_EXCEPTION
           : ThreeWayMatchStatus.MATCHED,
       },
-      occurredAt: invoice.invoiceDate,
+      occurredAt: approvalAt,
       actorId: parsed.approvedById,
       sourceType: AccountingSourceType.SUPPLIER_INVOICE,
       sourceId: invoice.id,
@@ -2956,6 +3152,7 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
   const idempotencyPayloadHash = parsed.idempotencyKey
     ? prefixedHash({
         operation: "approveSupplierPayment",
+        supplierPaymentRequestId: parsed.supplierPaymentRequestId,
         supplierId: parsed.supplierId,
         bankAccountId: parsed.bankAccountId,
         method,
@@ -2972,6 +3169,9 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
     : null
 
   return inTransaction(client, async (tx) => {
+    if (parsed.supplierPaymentRequestId) await tx.$queryRaw`SELECT id FROM supplier_payments WHERE id = ${parsed.supplierPaymentRequestId} AND "organizationId" = ${parsed.organizationId} FOR UPDATE`
+    const request = parsed.supplierPaymentRequestId ? await assertPaymentRequestApprovalTerms(tx, parsed) : null
+    await lockSupplierPaymentSources(tx, parsed.organizationId, parsed.supplierId, parsed.allocations.map(allocation => allocation.supplierInvoiceId))
     const supplier = await assertSupplier(tx, parsed.organizationId, parsed.supplierId)
 
     if (parsed.requestedById === parsed.approvedById) {
@@ -2988,6 +3188,7 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
         include: { allocations: true },
       })
       if (existing) {
+        if (request && existing.id !== request.payment.id) throw new ConflictError("This approval reference belongs to another payment request.")
         assertIdempotencyPayloadMatches(
           existing.metadata,
           idempotencyPayloadHash,
@@ -3002,6 +3203,7 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
       }
     }
 
+    if (request && request.payment.status !== "DRAFT") throw new ConflictError("Payment request is no longer awaiting approval.")
     const bankAccount = await tx.supplierBankAccount.findFirst({
       where: {
         id: parsed.bankAccountId,
@@ -3047,6 +3249,7 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
       throw new BusinessRuleError("Supplier payment can only apply to posted unpaid supplier invoices.")
     }
 
+    const balances = await readSupplierPaymentBalances(tx, parsed.organizationId, invoices, normalizeCurrency(invoices[0]?.currency))
     const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))
     let totalPayment = new Prisma.Decimal(0)
     const allocationPlans = parsed.allocations.map((allocation) => {
@@ -3054,7 +3257,7 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
       if (!invoice) throw new BusinessRuleError("Supplier payment allocation invoice is not payable.")
       const amount = decimal2(allocation.amount)
       if (amount.lte(0)) throw new BusinessRuleError("Supplier payment allocation amount must be greater than zero.")
-      const outstanding = decimal2(invoice.total).minus(decimal2(invoice.amountPaid)).toDecimalPlaces(2)
+      const outstanding = balances.get(invoice.id)!
       if (amount.gt(outstanding)) {
         throw new BusinessRuleError("Supplier payment allocation exceeds outstanding supplier invoice balance.")
       }
@@ -3085,7 +3288,7 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
     const documentHash = parsed.documentHash ?? prefixedHash(evidencePayload)
     const evidenceHash = parsed.evidenceHash ?? prefixedHash({ ...evidencePayload, status: "APPROVED" })
 
-    const payment = await tx.supplierPayment.create({
+    const paymentWrite = {
       data: {
         organizationId: parsed.organizationId,
         supplierId: supplier.id,
@@ -3106,6 +3309,7 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
         releasedAt: null,
         notes: parsed.notes ?? null,
         metadata: safeJson({
+          ...asRecord(request?.payment.metadata),
           gate: "011-purchasing-ap-controls",
           approvalStatus: "APPROVED",
           bankDestinationEvidence: "approved",
@@ -3130,7 +3334,9 @@ export async function approveSupplierPayment(input: ApproveSupplierPaymentInput,
         },
       },
       include: { allocations: true },
-    })
+    } satisfies Prisma.SupplierPaymentCreateArgs
+    const { allocations: _allocations, ...paymentData } = paymentWrite.data
+    const payment = request ? await tx.supplierPayment.update({ where: { id: request.payment.id }, data: paymentData, include: { allocations: true } }) : await tx.supplierPayment.create(paymentWrite)
 
     const eventResult = await recordBusinessEventInTx(tx, {
       organizationId: parsed.organizationId,
@@ -3223,6 +3429,7 @@ export async function approveSupplierPaymentWithControls(
 
   await auditDeniedSensitiveAction(client, controlInput)
   return inTransaction(client, async (tx) => {
+    await assertPaymentRequestApprovalTerms(tx, parsed)
     await auditAllowedSensitiveAction(tx, controlInput)
     return approveSupplierPayment(parsed, tx)
   })
@@ -3232,6 +3439,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
   const parsed = releaseSupplierPaymentInputSchema.parse(input)
 
   return inTransaction(client, async (tx) => {
+    await tx.$queryRaw`SELECT id FROM supplier_payments WHERE "organizationId" = ${parsed.organizationId} AND id = ${parsed.supplierPaymentId} FOR UPDATE`
     const approvedPayment = await tx.supplierPayment.findFirst({
       where: {
         id: parsed.supplierPaymentId,
@@ -3330,6 +3538,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       }
     }
 
+    await lockSupplierPaymentSources(tx, parsed.organizationId, approvedPayment.supplierId, approvedPayment.allocations.map(allocation => allocation.supplierInvoiceId))
     const supplier = await assertSupplier(tx, parsed.organizationId, approvedPayment.supplierId)
 
     const bankAccount = await tx.supplierBankAccount.findFirst({
@@ -3380,6 +3589,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       throw new BusinessRuleError("Supplier payment can only apply to posted unpaid supplier invoices.")
     }
 
+    const balances = await readSupplierPaymentBalances(tx, parsed.organizationId, invoices, normalizeCurrency(approvedPayment.currency))
     const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))
     let totalPayment = new Prisma.Decimal(0)
     const allocationPlans = approvedPayment.allocations.map((allocation) => {
@@ -3387,7 +3597,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
       if (!invoice) throw new BusinessRuleError("Supplier payment allocation invoice is not payable.")
       const amount = decimal2(allocation.amount)
       if (amount.lte(0)) throw new BusinessRuleError("Supplier payment allocation amount must be greater than zero.")
-      const outstanding = decimal2(invoice.total).minus(decimal2(invoice.amountPaid)).toDecimalPlaces(2)
+      const outstanding = balances.get(invoice.id)!
       if (amount.gt(outstanding)) {
         throw new BusinessRuleError("Supplier payment allocation exceeds outstanding supplier invoice balance.")
       }
@@ -3425,7 +3635,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
         status: SupplierPaymentStatus.RELEASED,
         paymentDate,
         releasedById,
-        releasedAt: paymentDate,
+        releasedAt: new Date(),
         evidenceHash,
         documentHash,
         notes: parsed.notes ?? approvedPayment.notes,
@@ -3453,7 +3663,7 @@ export async function releaseSupplierPayment(input: ReleaseSupplierPaymentInput,
 
     for (const allocation of allocationPlans) {
       const nextPaid = decimal2(allocation.invoice.amountPaid).plus(allocation.amount).toDecimalPlaces(2)
-      const nextStatus = nextPaid.gte(decimal2(allocation.invoice.total))
+      const nextStatus = allocation.outstanding.minus(allocation.amount).lte(0)
         ? SupplierInvoiceStatus.PAID
         : SupplierInvoiceStatus.PAYMENT_PENDING
       await tx.supplierInvoice.update({
@@ -3708,6 +3918,9 @@ export async function releaseSupplierPaymentWithControls(
 
   await auditDeniedSensitiveAction(client, controlInput)
   return inTransaction(client, async (tx) => {
+    const request = await readVerifiedPaymentApproval(tx, parsed.organizationId, parsed.supplierPaymentId)
+    if (parsed.paymentDate && new Date(parsed.paymentDate).toISOString().slice(0, 10) !== request.draft.paymentDate) throw new BusinessRuleError("Changed payment dates require a new reviewed request.", "REVIEW_REQUIRED")
+    if ((parsed.notes !== undefined && parsed.notes !== request.payment.notes) || (parsed.documentHash !== undefined && parsed.documentHash !== request.payment.documentHash) || (parsed.evidenceHash !== undefined && parsed.evidenceHash !== request.payment.evidenceHash)) throw new BusinessRuleError("Changed payment evidence or notes require a new reviewed request.", "REVIEW_REQUIRED")
     await auditAllowedSensitiveAction(tx, controlInput)
     return releaseSupplierPayment(
       {

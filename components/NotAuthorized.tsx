@@ -1,9 +1,17 @@
 // components/NotAuthorized.tsx
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, Home, LayoutDashboard, LockKeyhole, ShieldCheck } from "lucide-react";
+import { Home, LayoutDashboard, LockKeyhole, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SessionRecoverySignOutButton } from "@/components/dashboard/SessionRecoverySignOutButton";
+import { selfSignOutCopy } from "@/lib/security/self-sign-out-copy";
 
-export default function NotAuthorized() {
+const copy = {
+  en: { eyebrow: "Protected workspace", title: "Access Not Available", message: "This page requires permissions that are not available in your current session.", next: "Permission required", help: "Ask your workspace administrator to review the permissions needed for this task. Your existing work has not been changed.", dashboard: "Dashboard", home: "Home" },
+  fr: { eyebrow: "Espace protégé", title: "Accès indisponible", message: "Cette page nécessite des autorisations qui ne sont pas disponibles dans votre session actuelle.", next: "Autorisation requise", help: "Demandez à l’administrateur de votre espace de vérifier les droits nécessaires pour cette tâche. Votre travail existant n’a pas été modifié.", dashboard: "Tableau de bord", home: "Accueil" },
+} as const;
+
+export default function NotAuthorized({ locale = "en" }: { locale?: "en" | "fr" }) {
+  const t = copy[locale];
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#dfe8eb] px-4 py-10 text-[#132028] dark:bg-[#0b1116] dark:text-white">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(47,125,246,0.075)_1px,transparent_1px),linear-gradient(90deg,rgba(45,212,191,0.07)_1px,transparent_1px)] bg-[size:44px_44px] dark:opacity-35" />
@@ -12,22 +20,22 @@ export default function NotAuthorized() {
           <LockKeyhole className="h-6 w-6" />
         </div>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#58707a] dark:text-[#8fa4ab]">
-          Protected workspace
+          {t.eyebrow}
         </p>
         <h1 className="mt-2 text-3xl font-black tracking-normal text-[#10181d] dark:text-white">
-          Access Not Available
+          {t.title}
         </h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">
-          Your account is signed in, but this area requires a role permission that is not active for your organization profile.
+          {t.message}
         </p>
 
-        <div className="mt-6 rounded-xl border border-[#2dd4bf]/25 bg-[rgba(45,212,191,0.10)] p-4 text-left dark:border-[#2dd4bf]/20 dark:bg-[rgba(45,212,191,0.07)]">
+        <div className="mt-6 rounded-xl border border-[#f0c54d]/25 bg-[rgba(240,197,77,0.10)] p-4 text-left">
           <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#2ec98a]" />
+            <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#9a6b16] dark:text-[#f0c54d]" aria-hidden />
             <div>
-              <p className="text-sm font-black text-[#132028] dark:text-white">Permission check complete</p>
+              <p className="text-sm font-black text-[#132028] dark:text-white">{t.next}</p>
               <p className="mt-1 text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">
-                This decision came from the server-side RBAC policy, not from a hidden menu or client setting.
+                {t.help}
               </p>
             </div>
           </div>
@@ -37,22 +45,19 @@ export default function NotAuthorized() {
           <Button asChild className="h-11 rounded-xl font-black">
             <Link href="/dashboard">
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              Dashboard
+              {t.dashboard}
             </Link>
           </Button>
           <Button asChild variant="outline" className="h-11 rounded-xl">
             <Link href="/">
               <Home className="mr-2 h-4 w-4" />
-              Home
+              {t.home}
             </Link>
           </Button>
         </div>
-          <Button asChild variant="ghost" className="mt-3 h-10 rounded-xl text-[#8b4a2f] hover:bg-[#f0c54d]/15 hover:text-[#6f3926] dark:text-[#f6d574] dark:hover:bg-[#bf7145]/20 dark:hover:text-[#fff8e6]">
-          <Link href="/dashboard/settings/users">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Team access
-          </Link>
-        </Button>
+        <div className="mt-4">
+          <SessionRecoverySignOutButton locale={locale} label={selfSignOutCopy[locale].label} />
+        </div>
       </div>
     </div>
   );

@@ -1,68 +1,37 @@
 import { Link } from "@/i18n/navigation"
-import { ArrowRight, Boxes, Landmark, PlayCircle, ShieldCheck } from "lucide-react"
-import { useTranslations } from "next-intl"
-
-import { HeroDashboard } from "./hero-dashboard"
+import { ArrowRight } from "lucide-react"
+import { useLocale } from "next-intl"
+import { landingMessageCopy } from "./landing-message-copy"
+import { productCommunicationCopy } from "./public-product-copy"
 
 export function LandingHero() {
-  const t = useTranslations("landing.hero")
-  const metrics = [
-    { key: "branches", value: t("metrics.branches.value"), label: t("metrics.branches.label"), Icon: ShieldCheck },
-    { key: "accuracy", value: t("metrics.accuracy.value"), label: t("metrics.accuracy.label"), Icon: Boxes },
-    { key: "close", value: t("metrics.close.value"), label: t("metrics.close.label"), Icon: Landmark },
-  ]
-  const proofKeys = ["sample", "evidence", "rollout"] as const
-
+  const copy = landingMessageCopy[useLocale() === "fr" ? "fr" : "en"]
+  const productCopy = productCommunicationCopy[useLocale() === "fr" ? "fr" : "en"]
   return (
-    <section id="overview" className="landing-hero relative isolate overflow-hidden bg-[var(--color-canvas)] px-4 pb-10 pt-8 text-[var(--color-text-primary)] sm:px-6 sm:pb-12 sm:pt-10 lg:min-h-[calc(100vh-4rem)] lg:px-8 lg:pb-10 lg:pt-12">
-      <div className="landing-grid-bg absolute inset-0" />
-      <div className="landing-grain" />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-spruce)] to-[var(--color-brand)] opacity-[0.45]" />
-      <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
-        <div className="min-w-0">
-          <div className="mb-5 inline-flex items-center gap-3 rounded-lg border border-[var(--color-border-subtle)] bg-white/[0.045] px-4 py-2 data-text text-xs text-[var(--color-text-secondary)]">
-            <span className="size-2 rounded-full bg-[var(--color-spruce)]" aria-hidden="true" />
-            {t("badge")}
+    <section id="overview" className="landing-hero px-6 py-12 text-[var(--color-text-primary)] sm:py-16 lg:px-8 lg:py-20">
+      <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
+        <div>
+          <p className="body-text max-w-lg text-sm font-semibold leading-6 text-[var(--color-spruce)]">{copy.audience}</p>
+          <h1 className="display mt-5 max-w-2xl text-5xl sm:text-6xl lg:text-7xl">{copy.title} <span className="display-italic text-[var(--color-editorial)]">{copy.emphasis}</span>.</h1>
+          <p className="body-text mt-6 max-w-2xl text-base leading-8 text-[var(--color-text-secondary)] sm:text-lg">{copy.intro}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/register" className="body-text inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--color-brand-hover)]">{copy.create}<ArrowRight className="size-4" aria-hidden="true" /></Link>
+            <Link href="/#workflow" className="body-text inline-flex min-h-12 items-center justify-center rounded-lg border border-[var(--color-border-muted)] px-5 py-3 text-sm font-semibold transition hover:bg-white/5">{copy.seeWorkflow}</Link>
           </div>
-          <h1 className="display max-w-full text-4xl sm:text-5xl lg:text-6xl">
-            {t("titleStart")} <span className="display-italic text-[var(--color-editorial)]">{t("titleEmphasis")}</span>.
-          </h1>
-          <p className="body-text mt-5 max-w-2xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
-            {t("description")}
-          </p>
-          <div className="mt-7 grid max-w-2xl gap-3 sm:grid-cols-3">
-            {metrics.map(({ key, value, label, Icon }) => (
-              <div key={key} className="metric-card rounded-lg border border-[var(--color-border-subtle)] bg-white/[0.052] p-3 sm:p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="data-text text-xl font-semibold text-[var(--color-text-primary)] sm:text-2xl">{value}</div>
-                  <Icon className="size-4 shrink-0 text-[var(--color-spruce)]" aria-hidden="true" />
-                </div>
-                <div className="mt-2 body-text text-[0.68rem] leading-5 text-[var(--color-text-tertiary)] sm:text-xs">{label}</div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link href="/#pricing" className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-5 py-3 body-text text-sm font-semibold text-white shadow-lg shadow-[var(--color-brand-glow)] transition hover:bg-[var(--color-brand-hover)]">
-              {t("primaryCta")}
-              <ArrowRight className="size-4" aria-hidden="true" />
-            </Link>
-            <Link href="/#product" className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-muted)] px-5 py-3 body-text text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-border-strong)] hover:bg-white/5">
-              <PlayCircle className="size-4" aria-hidden="true" />
-              {t("secondaryCta")}
-            </Link>
-          </div>
-          <ul className="mt-5 flex max-w-2xl flex-wrap gap-2" aria-label={t("proof.label")}>
-            {proofKeys.map((key) => (
-              <li key={key} className="inline-flex items-center gap-2 rounded-lg border border-[var(--color-border-subtle)] bg-black/[0.13] px-3 py-2 data-text text-[0.68rem] text-[var(--color-text-tertiary)]">
-                <ShieldCheck className="size-3.5 shrink-0 text-[var(--color-spruce)]" aria-hidden="true" />
-                {t(`proof.items.${key}`)}
-              </li>
-            ))}
-          </ul>
+          <p className="body-text mt-4 max-w-xl text-sm leading-6 text-[var(--color-text-tertiary)]">{copy.accountNote}</p>
+          <Link href="/#modules" className="body-text mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--color-spruce)] underline underline-offset-4">{productCopy.eyebrow}<ArrowRight className="size-4" aria-hidden="true" /></Link>
         </div>
-        <div className="min-w-0 lg:-mr-2">
-          <HeroDashboard />
-        </div>
+        <figure data-visual-classification="sample" className="min-w-0 rounded-xl border border-[var(--color-border-muted)] bg-[var(--color-surface-panel)] p-5 shadow-xl shadow-black/15 sm:p-7">
+          <figcaption className="body-text text-xs leading-5 text-[var(--color-text-tertiary)]">{copy.sample}</figcaption>
+          <h2 className="body-text mt-3 text-xl font-semibold leading-7">{copy.sampleTitle}</h2>
+          <ol className="mt-6 divide-y divide-[var(--color-border-subtle)]">
+            {copy.sampleRows.map(([title, detail], index) => <li key={title} className="flex gap-4 py-5">
+              <span className="data-text grid size-8 shrink-0 place-items-center rounded-full bg-[var(--color-brand-soft)] text-sm text-[var(--accent-hi)]">{index + 1}</span>
+              <div><p className="body-text font-semibold">{title}</p><p className="body-text mt-1 text-sm leading-6 text-[var(--color-text-secondary)]">{detail}</p></div>
+            </li>)}
+          </ol>
+          <p className="body-text mt-3 border-t border-[var(--color-border-subtle)] pt-4 text-xs leading-5 text-[var(--color-text-tertiary)]">{copy.sampleNote}</p>
+        </figure>
       </div>
     </section>
   )

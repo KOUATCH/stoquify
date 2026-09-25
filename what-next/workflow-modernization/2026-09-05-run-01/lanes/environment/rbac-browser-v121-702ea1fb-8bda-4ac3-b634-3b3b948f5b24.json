@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-13T12:04:17.574Z",
+  "sourcesBefore": {
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "app/api/me/permissions/route.ts": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [
+        "rbac-browser-v121-en-702ea1fb-8bda-4ac3-b634-3b3b948f5b24.png"
+      ],
+      "readyMs": 13673
+    },
+    {
+      "locale": "fr",
+      "pageErrors": [],
+      "screenshots": [
+        "rbac-browser-v121-fr-702ea1fb-8bda-4ac3-b634-3b3b948f5b24.png"
+      ],
+      "readyMs": 12826
+    }
+  ],
+  "checks": [
+    "Real session keeps immutable identity after email update",
+    "Real existing session is denied after owned subject deactivation"
+  ],
+  "scope": "Owned PostgreSQL fixture and real local credential login/current permission endpoint. No synthetic session in this browser test; no financial operations.",
+  "passed": true,
+  "sourcesAfter": {
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "app/api/me/permissions/route.ts": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f"
+  },
+  "sourceStable": true
+}

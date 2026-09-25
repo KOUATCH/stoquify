@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache"
 
-import { protect } from "@/services/_shared/protect"
+import { RbacError } from "@/lib/security/rbac"
+import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 import {
   issueSupplierPoInviteInputSchema,
   reviewSupplierPoProposalInputSchema,
@@ -12,7 +13,14 @@ import {
   issueSupplierPoInvite,
   reviewSupplierPoProposal,
   revokeSupplierPoInvite,
+  getSupplierPoAcknowledgementWorkbench,
 } from "@/services/purchase-order/supplier-po-acknowledgement.service"
+import { supplierPoWorkbenchInputSchema } from "@/services/purchase-order/supplier-po-buyer-contracts"
+
+function currentSession(ctx: ProtectedActionContext) {
+  if (!ctx.freshAuth || ctx.freshAuth.claims.userId !== ctx.userId || ctx.freshAuth.claims.tenantId !== ctx.orgId) throw new RbacError("Current buyer authentication is required", "FORBIDDEN", 403)
+  return ctx.freshAuth.claims.sessionId
+}
 
 function inviteUrl(input: {
   envelopeId: string
@@ -39,6 +47,8 @@ const issueInvite = protect<unknown, {
   expiresAt: string
   inviteUrl: string
   replayed: boolean
+  requestReference: string
+  correlationReference: string
 }>(
   {
     permission: "purchases.orders.update",
@@ -61,6 +71,7 @@ const issueInvite = protect<unknown, {
       ...parsed,
       organizationId: ctx.orgId,
       issuedById: ctx.userId,
+      sessionId: currentSession(ctx),
     })
     revalidatePath(
       "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
@@ -73,6 +84,8 @@ const issueInvite = protect<unknown, {
       expiresAt: result.expiresAt,
       inviteUrl: inviteUrl(result),
       replayed: result.replayed,
+      requestReference: result.requestReference,
+      correlationReference: result.correlationReference,
     }
   },
 )
@@ -81,11 +94,7 @@ export async function issueSupplierPoInviteAction(input: unknown) {
   return issueInvite(input)
 }
 
-const revokeInvite = protect<unknown, {
-  tokenId: string
-  status: string
-  replayed: boolean
-}>(
+const revokeInvite = protect<unknown, Awaited<ReturnType<typeof revokeSupplierPoInvite>>>(
   {
     permission: "purchases.orders.update",
     auditResource: "SupplierPoAccessToken",
@@ -104,10 +113,10 @@ const revokeInvite = protect<unknown, {
   async (input, ctx) => {
     const parsed = revokeSupplierPoInviteInputSchema.parse(input)
     const result = await revokeSupplierPoInvite({
+      ...parsed,
       organizationId: ctx.orgId,
-      tokenId: parsed.tokenId,
       revokedById: ctx.userId,
-      reason: parsed.reason,
+      sessionId: currentSession(ctx),
     })
     revalidatePath(
       "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
@@ -145,6 +154,7 @@ const reviewProposal = protect<unknown, Awaited<
       ...parsed,
       organizationId: ctx.orgId,
       reviewedById: ctx.userId,
+      sessionId: currentSession(ctx),
     })
     revalidatePath(
       "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
@@ -157,3 +167,10 @@ const reviewProposal = protect<unknown, Awaited<
 export async function reviewSupplierPoProposalAction(input: unknown) {
   return reviewProposal(input)
 }
+
+const readWorkbench = protect<unknown, Awaited<ReturnType<typeof getSupplierPoAcknowledgementWorkbench>>>({
+  permission: "purchases.orders.read", auditResource: "SupplierPoEnvelope", auditAllowed: true,
+  module: { moduleSlug: "purchasing", surface: "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts:read", surfaceType: "action", accessIntent: "read", mode: "enforce", audit: true },
+}, async (input, ctx) => getSupplierPoAcknowledgementWorkbench({ ...supplierPoWorkbenchInputSchema.parse(input), organizationId: ctx.orgId, actorId: ctx.userId }))
+
+export async function getSupplierPoAcknowledgementWorkbenchAction(input: unknown) { return readWorkbench(input) }

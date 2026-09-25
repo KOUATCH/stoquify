@@ -1,0 +1,726 @@
+
+ROUTE /en/dashboard/settings/appearance
+FILE app/[locale]/(dashboard)/dashboard/settings/appearance/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/appearance/page.tsx; app/[locale]/(dashboard)/dashboard/settings/appearance/AppearanceSettingsClient.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx
+REDIRECTS []
+HEADINGS Appearance | Active
+PROPS Resolved theme | Provider | Class strategy | System preference | Stored preference
+CONTROLS Light / Dark / System (Button, {"type":"\"button\"","onClick":"() => setTheme(mode.value)"}, app/[locale]/(dashboard)/dashboard/settings/appearance/AppearanceSettingsClient.tsx:107)
+
+ROUTE /en/dashboard/settings/company
+FILE app/[locale]/(dashboard)/dashboard/settings/company/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/company/page.tsx; components/settings/OrganizationManagementTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/settings/OrganizationSetupHandoff.tsx; components/settings/OrganizationDirectoryExport.tsx; components/settings/OrganizationSettingsForm.tsx
+DEPENDENCIES config/useAuth.ts; lib/auth-server.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/organization/organization-settings-actions.ts; hooks/useOrganizationSettings.ts; services/organization/organization-directory-input.ts; actions/security/step-up-auth.actions.ts; hooks/useOrganizationDirectoryExport.ts; services/organization/organization-directory-export.service.ts; hooks/organization-directory-recovery.ts; lib/auth-client.ts
+REDIRECTS [{"name":"redirect","line":25,"args":"localizePath(\"/login\", locale)"},{"name":"redirect","line":29,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Loading organization table | Organization table unavailable | Organization management table | Set up another organization | Review company directory export | Your password | Profile | Connected setup | Company DNA | Current password
+PROPS Currency | Language | Timezone | Users | Items | Locations | Partners | SO | PO | Pay | Total records | Active records | Users | Gross paid payment total | Search organization, region, currency, timezone... | Status | Items | Locations | Partners | Filtered view | Locations | Users | Roles | Business identity | Organization name | Acme Retail Group | Industry | Select an industry | Business address | Street, city, postal code | Regional defaults | Country | Cameroon | State or province | Centre | Default currency | Default language | Timezone | Operating calendar | Fiscal year start | Inventory start date | Review record | Identity | Region | Finance | Calendar
+CONTROLS Actions (Button, {}, components/settings/OrganizationManagementTable.tsx:545)
+Edit profile (DropdownMenuItem, {"onClick":"focusProfile"}, components/settings/OrganizationManagementTable.tsx:554)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyOrganizationId(organization)"}, components/settings/OrganizationManagementTable.tsx:559)
+Open users (DropdownMenuItem, {}, components/settings/OrganizationManagementTable.tsx:566)
+Open users (Link, {"href":"dashboardPath(\"settings\", \"users\")"}, components/settings/OrganizationManagementTable.tsx:567)
+Open locations (DropdownMenuItem, {}, components/settings/OrganizationManagementTable.tsx:573)
+Open locations (Link, {"href":"dashboardPath(\"settings\", \"locations\")"}, components/settings/OrganizationManagementTable.tsx:574)
+Open roles (DropdownMenuItem, {}, components/settings/OrganizationManagementTable.tsx:580)
+Open roles (Link, {"href":"dashboardPath(\"settings\", \"roles\")"}, components/settings/OrganizationManagementTable.tsx:581)
+Open items (DropdownMenuItem, {}, components/settings/OrganizationManagementTable.tsx:587)
+Open items (Link, {"href":"dashboardPath(\"inventory\", \"items\")"}, components/settings/OrganizationManagementTable.tsx:588)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/settings/OrganizationManagementTable.tsx:648)
+Search organization, region, currency, timezone... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/settings/OrganizationManagementTable.tsx:700)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/settings/OrganizationManagementTable.tsx:707)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"event => { setupTrigger.current = event.currentTarget; setCreateOpen(true) }"}, components/settings/OrganizationManagementTable.tsx:720)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/settings/OrganizationManagementTable.tsx:728)
+Columns (Button, {"type":"\"button\""}, components/settings/OrganizationManagementTable.tsx:741)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/settings/OrganizationManagementTable.tsx:754)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"event => { setupTrigger.current = event.currentTarget; setCreateOpen(true) }"}, components/settings/OrganizationManagementTable.tsx:812)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/settings/OrganizationManagementTable.tsx:845)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+Open owner registration ( opens in a new tab ) (Button, {}, components/settings/OrganizationSetupHandoff.tsx:40)
+Open owner registration ( opens in a new tab ) (Link, {"href":"\"/register-v2\""}, components/settings/OrganizationSetupHandoff.tsx:40)
+Sign in to an existing organization ( opens in a new tab ) (Button, {}, components/settings/OrganizationSetupHandoff.tsx:41)
+Sign in to an existing organization ( opens in a new tab ) (Link, {"href":"\"/login-v2\""}, components/settings/OrganizationSetupHandoff.tsx:41)
+Back to this organization (Button, {"type":"\"button\"","onClick":"() => onOpenChange(false)"}, components/settings/OrganizationSetupHandoff.tsx:42)
+Export (Button, {"type":"\"button\"","disabled":"true"}, components/settings/OrganizationDirectoryExport.tsx:23)
+Export (Button, {"type":"\"button\"","disabled":"!canExport || !available"}, components/settings/OrganizationDirectoryExport.tsx:68)
+Preparing… / Retry same export request / Prepare reviewed CSV (Button, {"type":"\"button\"","disabled":"busy || (!pending && !preview.rowCount) || code === \"FRESH_AUTH_REQUIRED\" || code === \"CONFLICT\" || code === \"IDEMPOTENCY_CONFLICT\" || code === \"FORBIDDEN\" || code === \"VALIDATION_ERROR\" || (!pending && query.isFetching)","onClick":"prepare"}, components/settings/OrganizationDirectoryExport.tsx:77)
+Your password Confirm identity (Input, {"type":"\"password\"","onChange":"event => setPassword(event.target.value)","disabled":"busy"}, components/settings/OrganizationDirectoryExport.tsx:80)
+Confirm identity (Button, {"type":"\"submit\"","disabled":"busy || !password"}, components/settings/OrganizationDirectoryExport.tsx:80)
+Download prepared file again (Button, {"type":"\"button\"","onClick":"() => download(prepared)","disabled":"busy"}, components/settings/OrganizationDirectoryExport.tsx:81)
+Reload and review current data (Button, {"type":"\"button\"","onClick":"reload","disabled":"busy || query.isFetching || unknown"}, components/settings/OrganizationDirectoryExport.tsx:82)
+Try loading again (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/settings/OrganizationSettingsForm.tsx:479)
+[dynamic or icon-only label] (button, {"type":"\"button\"","disabled":"pending","onClick":"() => setActiveStep(step.id)"}, components/settings/OrganizationSettingsForm.tsx:516)
+Load latest for comparison (Button, {"type":"\"button\"","onClick":"loadLatest","disabled":"pending || isFetching"}, components/settings/OrganizationSettingsForm.tsx:595)
+Keep my edits and review (Button, {"type":"\"button\"","onClick":"() => resolveComparison(true)","disabled":"pending || !canUpdate"}, components/settings/OrganizationSettingsForm.tsx:605)
+Use the saved version (Button, {"type":"\"button\"","onClick":"() => resolveComparison(false)","disabled":"pending"}, components/settings/OrganizationSettingsForm.tsx:606)
+Current password Confirm identity (Input, {"type":"\"password\"","disabled":"pending","onChange":"event => setPassword(event.target.value)","onKeyDown":"event => { if (event.key === \"Enter\") { event.preventDefault(); void confirmIdentity() } }"}, components/settings/OrganizationSettingsForm.tsx:611)
+Confirm identity (Button, {"type":"\"button\"","disabled":"pending || !password","onClick":"confirmIdentity"}, components/settings/OrganizationSettingsForm.tsx:612)
+Acme Retail Group (Input, {"required":"true","onChange":"(event) => updateField(\"name\", event.target.value)"}, components/settings/OrganizationSettingsForm.tsx:620)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateField(\"industry\", value)"}, components/settings/OrganizationSettingsForm.tsx:631)
+Street, city, postal code (Textarea, {"onChange":"(event) => updateField(\"address\", event.target.value)"}, components/settings/OrganizationSettingsForm.tsx:650)
+Cameroon (Input, {"onChange":"(event) => updateField(\"country\", event.target.value)"}, components/settings/OrganizationSettingsForm.tsx:667)
+Centre (Input, {"onChange":"(event) => updateField(\"state\", event.target.value)"}, components/settings/OrganizationSettingsForm.tsx:677)
+Currency was set when this organization was created. Changing it requires a controlled currency migration to protect existing amounts and records. (Input, {}, components/settings/OrganizationSettingsForm.tsx:687)
+English Français (Select, {"onValueChange":"(value) => updateField(\"defaultLocale\", value as Locale)"}, components/settings/OrganizationSettingsForm.tsx:691)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateField(\"timezone\", value)"}, components/settings/OrganizationSettingsForm.tsx:702)
+Not set (Select, {"onValueChange":"(value) => updateField(\"fiscalYearStart\", value === \"not-set\" ? \"\" : value)"}, components/settings/OrganizationSettingsForm.tsx:725)
+[dynamic or icon-only label] (Input, {"type":"\"date\"","onChange":"(event) => updateField(\"inventoryStartDate\", event.target.value)"}, components/settings/OrganizationSettingsForm.tsx:741)
+Previous (Button, {"type":"\"button\"","onClick":"goBack","disabled":"activeIndex === 0 || pending"}, components/settings/OrganizationSettingsForm.tsx:782)
+Next (Button, {"type":"\"button\"","onClick":"goNext","disabled":"pending"}, components/settings/OrganizationSettingsForm.tsx:795)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"submit","disabled":"pending || !dirty || stale || isError || !!comparison || needsVerification || failureCode === \"UNCERTAIN\" || failureCode === \"CONFLICT\""}, components/settings/OrganizationSettingsForm.tsx:805)
+[dynamic or icon-only label] (Button, {}, components/settings/OrganizationSettingsForm.tsx:915)
+[dynamic or icon-only label] (Link, {"href":"href"}, components/settings/OrganizationSettingsForm.tsx:916)
+
+ROUTE /en/dashboard/settings/data-onboarding
+FILE app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx; components/onboarding/MasterDataOnboardingWorkbench.tsx; components/dashboard/DashboardRouteState.tsx
+DEPENDENCIES config/master-data-onboarding.ts; lib/security/rbac.ts; services/onboarding/master-data-import.service.ts; services/onboarding/master-data-csv.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; actions/onboarding/master-data-onboarding.actions.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS Master-data import readiness | Some targets are read-only | 1. Template and dry run | 2. Controls, approval, and commit | Separate approver required | Required-field controls | Pre/post record controls | Safe row issues | No batch selected | Focused adoption evidence | Exact control boundary | Included | Excluded
+PROPS No onboarding target is available | This role cannot read customer, supplier, or item master data. Ask an administrator for the required access.
+CONTROLS master-data-target (select, {"onChange":"(event) => {\n                  setTarget(event.target.value as MasterDataImportTarget)\n                  setBatch(null)\n                  setFile(null)\n                  setApprovalChecked(false)\n                }"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:241)
+CSV file Choose a CSV file of up to 5 MB and 1,000 rows. (input, {"type":"\"file\"","onChange":"(event) => setFile(event.target.files?.[0] ?? null)"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:257)
+Download template (Button, {"type":"\"button\"","disabled":"busy","onClick":"handleTemplate"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:267)
+Working… / Run dry validation (Button, {"type":"\"submit\"","disabled":"busy || !file || !canWrite"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:268)
+I approve this exact source hash, mapping version, risk decision, record count, required-field totals, and zero-error dry run. (input, {"type":"\"checkbox\"","disabled":"!canApprove","onChange":"(event) => setApprovalChecked(event.target.checked)"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:364)
+Record explicit approval (Button, {"disabled":"busy || !approvalChecked || !canApprove","onClick":"handleApprove"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:377)
+Commit through domain owners (Button, {"disabled":"busy","onClick":"handleCommit"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:378)
+Export evidence manifest (Button, {"type":"\"button\"","disabled":"busy","onClick":"handleEvidence"}, components/onboarding/MasterDataOnboardingWorkbench.tsx:379)
+[dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+
+ROUTE /en/dashboard/settings/locations/create
+FILE app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx; components/locations/LocationsManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/locations/location-management-actions.ts; hooks/useLocationManagement.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Loading locations | Locations unavailable | Locations dashboard | Location registry | Edit location / Create location | Archive location
+PROPS Approval | Negative stock | Available | Reserved | POS | Cash drawers | Active sessions | Inventory Tx | SO | PO | In | Out | Search name, code, manager, address, email... | Type | Status | Policy | Location name | Central Warehouse | Code | CENTRAL-WH | Type | Manager | Phone | +237 600 000 000 | Email | warehouse@company.com | Address | Street, city, postal code | Active | Default receiving location | Allow negative stock | Requires approval
+CONTROLS Select all locations (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/locations/LocationsManagementDashboard.tsx:880)
+Select location (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)","onClick":"(event) => event.stopPropagation()"}, components/locations/LocationsManagementDashboard.tsx:887)
+Actions (Button, {}, components/locations/LocationsManagementDashboard.tsx:1075)
+View details (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1083)
+View details (Link, {"href":"dashboardPath(\"settings\", \"locations\", location.id)"}, components/locations/LocationsManagementDashboard.tsx:1084)
+Edit location (DropdownMenuItem, {"onClick":"() => openEdit(location)"}, components/locations/LocationsManagementDashboard.tsx:1090)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyLocationId(location)"}, components/locations/LocationsManagementDashboard.tsx:1094)
+Inventory (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1099)
+Inventory (Link, {"href":"dashboardPath(\"inventory\", \"items\")"}, components/locations/LocationsManagementDashboard.tsx:1100)
+Movements (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1106)
+Movements (Link, {"href":"dashboardPath(\"inventory\", \"movements\")"}, components/locations/LocationsManagementDashboard.tsx:1107)
+Transfers (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1113)
+Transfers (Link, {"href":"dashboardPath(\"inventory\", \"transfers\")"}, components/locations/LocationsManagementDashboard.tsx:1114)
+POS (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1120)
+POS (Link, {"href":"dashboardPath(\"pos\")"}, components/locations/LocationsManagementDashboard.tsx:1121)
+Cash drawer (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1127)
+Cash drawer (Link, {"href":"dashboardPath(\"cashDrawer\")"}, components/locations/LocationsManagementDashboard.tsx:1128)
+Archive (DropdownMenuItem, {"onClick":"() => setArchiveTarget(location)"}, components/locations/LocationsManagementDashboard.tsx:1135)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/locations/LocationsManagementDashboard.tsx:1200)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/locations/LocationsManagementDashboard.tsx:1239)
+Export selected / Export (Button, {"type":"\"button\"","onClick":"() => exportRows(selectedRows.length ? selectedRows : tableRows)","disabled":"!tableRows.length"}, components/locations/LocationsManagementDashboard.tsx:1250)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1261)
+Search name, code, manager, address, email... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1311)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as LocationType | \"all\")"}, components/locations/LocationsManagementDashboard.tsx:1318)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/locations/LocationsManagementDashboard.tsx:1329)
+All Default Approval Negative stock (Select, {"onValueChange":"(value) => setPolicyFilter(value as PolicyFilter)"}, components/locations/LocationsManagementDashboard.tsx:1339)
+Comfortable Compact (Select, {"onValueChange":"(value) => setDensity(value as Density)"}, components/locations/LocationsManagementDashboard.tsx:1350)
+Columns (Button, {"type":"\"button\""}, components/locations/LocationsManagementDashboard.tsx:1362)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/locations/LocationsManagementDashboard.tsx:1375)
+Clear (Button, {"type":"\"button\"","onClick":"clearFilters"}, components/locations/LocationsManagementDashboard.tsx:1415)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1503)
+Central Warehouse (Input, {"onChange":"(event) => updateFormField(\"name\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1550)
+CENTRAL-WH (Input, {"onChange":"(event) => updateFormField(\"code\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1558)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as LocationType)"}, components/locations/LocationsManagementDashboard.tsx:1566)
+No manager (Select, {"onValueChange":"(value) => updateFormField(\"managerId\", value)"}, components/locations/LocationsManagementDashboard.tsx:1578)
++237 600 000 000 (Input, {"onChange":"(event) => updateFormField(\"phone\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1593)
+warehouse@company.com (Input, {"type":"\"email\"","onChange":"(event) => updateFormField(\"email\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1602)
+Street, city, postal code (Textarea, {"onChange":"(event) => updateFormField(\"address\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1614)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1653)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1662)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/locations/LocationsManagementDashboard.tsx:1718)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"onCheckedChange"}, components/locations/LocationsManagementDashboard.tsx:1760)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/locations/new
+FILE app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx; components/locations/LocationsManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/locations/location-management-actions.ts; hooks/useLocationManagement.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Loading locations | Locations unavailable | Locations dashboard | Location registry | Edit location / Create location | Archive location
+PROPS Approval | Negative stock | Available | Reserved | POS | Cash drawers | Active sessions | Inventory Tx | SO | PO | In | Out | Search name, code, manager, address, email... | Type | Status | Policy | Location name | Central Warehouse | Code | CENTRAL-WH | Type | Manager | Phone | +237 600 000 000 | Email | warehouse@company.com | Address | Street, city, postal code | Active | Default receiving location | Allow negative stock | Requires approval
+CONTROLS Select all locations (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/locations/LocationsManagementDashboard.tsx:880)
+Select location (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)","onClick":"(event) => event.stopPropagation()"}, components/locations/LocationsManagementDashboard.tsx:887)
+Actions (Button, {}, components/locations/LocationsManagementDashboard.tsx:1075)
+View details (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1083)
+View details (Link, {"href":"dashboardPath(\"settings\", \"locations\", location.id)"}, components/locations/LocationsManagementDashboard.tsx:1084)
+Edit location (DropdownMenuItem, {"onClick":"() => openEdit(location)"}, components/locations/LocationsManagementDashboard.tsx:1090)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyLocationId(location)"}, components/locations/LocationsManagementDashboard.tsx:1094)
+Inventory (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1099)
+Inventory (Link, {"href":"dashboardPath(\"inventory\", \"items\")"}, components/locations/LocationsManagementDashboard.tsx:1100)
+Movements (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1106)
+Movements (Link, {"href":"dashboardPath(\"inventory\", \"movements\")"}, components/locations/LocationsManagementDashboard.tsx:1107)
+Transfers (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1113)
+Transfers (Link, {"href":"dashboardPath(\"inventory\", \"transfers\")"}, components/locations/LocationsManagementDashboard.tsx:1114)
+POS (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1120)
+POS (Link, {"href":"dashboardPath(\"pos\")"}, components/locations/LocationsManagementDashboard.tsx:1121)
+Cash drawer (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1127)
+Cash drawer (Link, {"href":"dashboardPath(\"cashDrawer\")"}, components/locations/LocationsManagementDashboard.tsx:1128)
+Archive (DropdownMenuItem, {"onClick":"() => setArchiveTarget(location)"}, components/locations/LocationsManagementDashboard.tsx:1135)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/locations/LocationsManagementDashboard.tsx:1200)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/locations/LocationsManagementDashboard.tsx:1239)
+Export selected / Export (Button, {"type":"\"button\"","onClick":"() => exportRows(selectedRows.length ? selectedRows : tableRows)","disabled":"!tableRows.length"}, components/locations/LocationsManagementDashboard.tsx:1250)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1261)
+Search name, code, manager, address, email... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1311)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as LocationType | \"all\")"}, components/locations/LocationsManagementDashboard.tsx:1318)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/locations/LocationsManagementDashboard.tsx:1329)
+All Default Approval Negative stock (Select, {"onValueChange":"(value) => setPolicyFilter(value as PolicyFilter)"}, components/locations/LocationsManagementDashboard.tsx:1339)
+Comfortable Compact (Select, {"onValueChange":"(value) => setDensity(value as Density)"}, components/locations/LocationsManagementDashboard.tsx:1350)
+Columns (Button, {"type":"\"button\""}, components/locations/LocationsManagementDashboard.tsx:1362)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/locations/LocationsManagementDashboard.tsx:1375)
+Clear (Button, {"type":"\"button\"","onClick":"clearFilters"}, components/locations/LocationsManagementDashboard.tsx:1415)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1503)
+Central Warehouse (Input, {"onChange":"(event) => updateFormField(\"name\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1550)
+CENTRAL-WH (Input, {"onChange":"(event) => updateFormField(\"code\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1558)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as LocationType)"}, components/locations/LocationsManagementDashboard.tsx:1566)
+No manager (Select, {"onValueChange":"(value) => updateFormField(\"managerId\", value)"}, components/locations/LocationsManagementDashboard.tsx:1578)
++237 600 000 000 (Input, {"onChange":"(event) => updateFormField(\"phone\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1593)
+warehouse@company.com (Input, {"type":"\"email\"","onChange":"(event) => updateFormField(\"email\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1602)
+Street, city, postal code (Textarea, {"onChange":"(event) => updateFormField(\"address\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1614)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1653)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1662)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/locations/LocationsManagementDashboard.tsx:1718)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"onCheckedChange"}, components/locations/LocationsManagementDashboard.tsx:1760)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/locations
+FILE app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx; components/locations/LocationsManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/locations/location-management-actions.ts; hooks/useLocationManagement.ts
+REDIRECTS [{"name":"redirect","line":24,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Loading locations | Locations unavailable | Locations dashboard | Location registry | Edit location / Create location | Archive location
+PROPS Approval | Negative stock | Available | Reserved | POS | Cash drawers | Active sessions | Inventory Tx | SO | PO | In | Out | Search name, code, manager, address, email... | Type | Status | Policy | Location name | Central Warehouse | Code | CENTRAL-WH | Type | Manager | Phone | +237 600 000 000 | Email | warehouse@company.com | Address | Street, city, postal code | Active | Default receiving location | Allow negative stock | Requires approval
+CONTROLS Select all locations (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/locations/LocationsManagementDashboard.tsx:880)
+Select location (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)","onClick":"(event) => event.stopPropagation()"}, components/locations/LocationsManagementDashboard.tsx:887)
+Actions (Button, {}, components/locations/LocationsManagementDashboard.tsx:1075)
+View details (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1083)
+View details (Link, {"href":"dashboardPath(\"settings\", \"locations\", location.id)"}, components/locations/LocationsManagementDashboard.tsx:1084)
+Edit location (DropdownMenuItem, {"onClick":"() => openEdit(location)"}, components/locations/LocationsManagementDashboard.tsx:1090)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyLocationId(location)"}, components/locations/LocationsManagementDashboard.tsx:1094)
+Inventory (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1099)
+Inventory (Link, {"href":"dashboardPath(\"inventory\", \"items\")"}, components/locations/LocationsManagementDashboard.tsx:1100)
+Movements (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1106)
+Movements (Link, {"href":"dashboardPath(\"inventory\", \"movements\")"}, components/locations/LocationsManagementDashboard.tsx:1107)
+Transfers (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1113)
+Transfers (Link, {"href":"dashboardPath(\"inventory\", \"transfers\")"}, components/locations/LocationsManagementDashboard.tsx:1114)
+POS (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1120)
+POS (Link, {"href":"dashboardPath(\"pos\")"}, components/locations/LocationsManagementDashboard.tsx:1121)
+Cash drawer (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1127)
+Cash drawer (Link, {"href":"dashboardPath(\"cashDrawer\")"}, components/locations/LocationsManagementDashboard.tsx:1128)
+Archive (DropdownMenuItem, {"onClick":"() => setArchiveTarget(location)"}, components/locations/LocationsManagementDashboard.tsx:1135)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/locations/LocationsManagementDashboard.tsx:1200)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/locations/LocationsManagementDashboard.tsx:1239)
+Export selected / Export (Button, {"type":"\"button\"","onClick":"() => exportRows(selectedRows.length ? selectedRows : tableRows)","disabled":"!tableRows.length"}, components/locations/LocationsManagementDashboard.tsx:1250)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1261)
+Search name, code, manager, address, email... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1311)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as LocationType | \"all\")"}, components/locations/LocationsManagementDashboard.tsx:1318)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/locations/LocationsManagementDashboard.tsx:1329)
+All Default Approval Negative stock (Select, {"onValueChange":"(value) => setPolicyFilter(value as PolicyFilter)"}, components/locations/LocationsManagementDashboard.tsx:1339)
+Comfortable Compact (Select, {"onValueChange":"(value) => setDensity(value as Density)"}, components/locations/LocationsManagementDashboard.tsx:1350)
+Columns (Button, {"type":"\"button\""}, components/locations/LocationsManagementDashboard.tsx:1362)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/locations/LocationsManagementDashboard.tsx:1375)
+Clear (Button, {"type":"\"button\"","onClick":"clearFilters"}, components/locations/LocationsManagementDashboard.tsx:1415)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1503)
+Central Warehouse (Input, {"onChange":"(event) => updateFormField(\"name\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1550)
+CENTRAL-WH (Input, {"onChange":"(event) => updateFormField(\"code\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1558)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as LocationType)"}, components/locations/LocationsManagementDashboard.tsx:1566)
+No manager (Select, {"onValueChange":"(value) => updateFormField(\"managerId\", value)"}, components/locations/LocationsManagementDashboard.tsx:1578)
++237 600 000 000 (Input, {"onChange":"(event) => updateFormField(\"phone\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1593)
+warehouse@company.com (Input, {"type":"\"email\"","onChange":"(event) => updateFormField(\"email\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1602)
+Street, city, postal code (Textarea, {"onChange":"(event) => updateFormField(\"address\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1614)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1653)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1662)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/locations/LocationsManagementDashboard.tsx:1718)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"onCheckedChange"}, components/locations/LocationsManagementDashboard.tsx:1760)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/locations/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx; components/locations/LocationsManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/locations/location-management-actions.ts; hooks/useLocationManagement.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Loading locations | Locations unavailable | Locations dashboard | Location registry | Edit location / Create location | Archive location
+PROPS Approval | Negative stock | Available | Reserved | POS | Cash drawers | Active sessions | Inventory Tx | SO | PO | In | Out | Search name, code, manager, address, email... | Type | Status | Policy | Location name | Central Warehouse | Code | CENTRAL-WH | Type | Manager | Phone | +237 600 000 000 | Email | warehouse@company.com | Address | Street, city, postal code | Active | Default receiving location | Allow negative stock | Requires approval
+CONTROLS Select all locations (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/locations/LocationsManagementDashboard.tsx:880)
+Select location (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)","onClick":"(event) => event.stopPropagation()"}, components/locations/LocationsManagementDashboard.tsx:887)
+Actions (Button, {}, components/locations/LocationsManagementDashboard.tsx:1075)
+View details (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1083)
+View details (Link, {"href":"dashboardPath(\"settings\", \"locations\", location.id)"}, components/locations/LocationsManagementDashboard.tsx:1084)
+Edit location (DropdownMenuItem, {"onClick":"() => openEdit(location)"}, components/locations/LocationsManagementDashboard.tsx:1090)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyLocationId(location)"}, components/locations/LocationsManagementDashboard.tsx:1094)
+Inventory (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1099)
+Inventory (Link, {"href":"dashboardPath(\"inventory\", \"items\")"}, components/locations/LocationsManagementDashboard.tsx:1100)
+Movements (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1106)
+Movements (Link, {"href":"dashboardPath(\"inventory\", \"movements\")"}, components/locations/LocationsManagementDashboard.tsx:1107)
+Transfers (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1113)
+Transfers (Link, {"href":"dashboardPath(\"inventory\", \"transfers\")"}, components/locations/LocationsManagementDashboard.tsx:1114)
+POS (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1120)
+POS (Link, {"href":"dashboardPath(\"pos\")"}, components/locations/LocationsManagementDashboard.tsx:1121)
+Cash drawer (DropdownMenuItem, {}, components/locations/LocationsManagementDashboard.tsx:1127)
+Cash drawer (Link, {"href":"dashboardPath(\"cashDrawer\")"}, components/locations/LocationsManagementDashboard.tsx:1128)
+Archive (DropdownMenuItem, {"onClick":"() => setArchiveTarget(location)"}, components/locations/LocationsManagementDashboard.tsx:1135)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/locations/LocationsManagementDashboard.tsx:1200)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/locations/LocationsManagementDashboard.tsx:1239)
+Export selected / Export (Button, {"type":"\"button\"","onClick":"() => exportRows(selectedRows.length ? selectedRows : tableRows)","disabled":"!tableRows.length"}, components/locations/LocationsManagementDashboard.tsx:1250)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1261)
+Search name, code, manager, address, email... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1311)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as LocationType | \"all\")"}, components/locations/LocationsManagementDashboard.tsx:1318)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/locations/LocationsManagementDashboard.tsx:1329)
+All Default Approval Negative stock (Select, {"onValueChange":"(value) => setPolicyFilter(value as PolicyFilter)"}, components/locations/LocationsManagementDashboard.tsx:1339)
+Comfortable Compact (Select, {"onValueChange":"(value) => setDensity(value as Density)"}, components/locations/LocationsManagementDashboard.tsx:1350)
+Columns (Button, {"type":"\"button\""}, components/locations/LocationsManagementDashboard.tsx:1362)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/locations/LocationsManagementDashboard.tsx:1375)
+Clear (Button, {"type":"\"button\"","onClick":"clearFilters"}, components/locations/LocationsManagementDashboard.tsx:1415)
+Create location (Button, {"type":"\"button\"","onClick":"openCreate"}, components/locations/LocationsManagementDashboard.tsx:1503)
+Central Warehouse (Input, {"onChange":"(event) => updateFormField(\"name\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1550)
+CENTRAL-WH (Input, {"onChange":"(event) => updateFormField(\"code\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1558)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as LocationType)"}, components/locations/LocationsManagementDashboard.tsx:1566)
+No manager (Select, {"onValueChange":"(value) => updateFormField(\"managerId\", value)"}, components/locations/LocationsManagementDashboard.tsx:1578)
++237 600 000 000 (Input, {"onChange":"(event) => updateFormField(\"phone\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1593)
+warehouse@company.com (Input, {"type":"\"email\"","onChange":"(event) => updateFormField(\"email\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1602)
+Street, city, postal code (Textarea, {"onChange":"(event) => updateFormField(\"address\", event.target.value)"}, components/locations/LocationsManagementDashboard.tsx:1614)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1653)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/locations/LocationsManagementDashboard.tsx:1662)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/locations/LocationsManagementDashboard.tsx:1718)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"onCheckedChange"}, components/locations/LocationsManagementDashboard.tsx:1760)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/modules
+FILE app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx; components/modules/ModuleCompositionWorkbench.tsx
+DEPENDENCIES services/modules/module-composition.service.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; actions/modules/module-composition.actions.ts; actions/security/step-up-auth.actions.ts; lib/utils.ts; services/modules/module-control-contracts.ts; services/modules/module-composition-contracts.ts
+REDIRECTS []
+HEADINGS Configuration preparation | Start with how you work | Choose the setup scope | Choose your capabilities | Your draft | Shared foundations | Required connections | Your working space | Stopped capabilities and historical records | A traceable configuration history | Consequences for business operations | New operations stopped | Existing work permitted to continue | Dependent capabilities affected | Proposed return to new work | Setup scope included in this review | Payroll period to verify | Authority connection to verify | Conditions to resolve | Preparation and required inputs
+PROPS Build your workspace | Search names or business outcomes | No matching capabilities | Try another name or show all capabilities. | No permitted workspace destinations | Your saved configuration has no destination available to your current role. Review your configuration or ask your administrator about access. | No saved configuration changes yet | Your first saved draft or applied configuration will appear here. | The configuration or its evidence changed. Refresh current state and review your draft again. | A draft is a selection, not an activation or approval. | password
+CONTROLS Open setup (Link, {"href":"href(issue.href)"}, components/modules/ModuleCompositionWorkbench.tsx:404)
+Open setup (Link, {"href":"href(step.href)"}, components/modules/ModuleCompositionWorkbench.tsx:416)
+Recorded step evidence (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:418)
+Verified steps ({count}) (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:426)
+Refresh current state (Button, {"type":"\"button\"","disabled":"busy","onClick":"() => { if (inDialog) setReviewOpen(false); void refresh() }"}, components/modules/ModuleCompositionWorkbench.tsx:434)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy","onClick":"() => void resumePreparation()"}, components/modules/ModuleCompositionWorkbench.tsx:448)
+Record (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:449)
+Configure (TabsTrigger, {"disabled":"busy"}, components/modules/ModuleCompositionWorkbench.tsx:453)
+My workspace (TabsTrigger, {"disabled":"busy"}, components/modules/ModuleCompositionWorkbench.tsx:454)
+Change history (TabsTrigger, {"disabled":"busy"}, components/modules/ModuleCompositionWorkbench.tsx:455)
+[dynamic or icon-only label] (button, {"type":"\"button\"","disabled":"busy","onClick":"() => editSelection(selection)"}, components/modules/ModuleCompositionWorkbench.tsx:465)
+Control new business operations (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:470)
+Stop new work in {module} (Checkbox, {"disabled":"busy || (!option?.supported && !chosen)","onCheckedChange":"value => editStopped(value === true ? [...stopped, item.slug] : stopped.filter(slug => slug !== item.slug))"}, components/modules/ModuleCompositionWorkbench.tsx:476)
+Choose an existing payroll period (select, {"disabled":"busy","onChange":"event => editSetup({ ...setupInputs, payrollPeriodId: event.target.value || undefined })"}, components/modules/ModuleCompositionWorkbench.tsx:481)
+Open payroll setup (Link, {"href":"href(\"/dashboard/payroll\")"}, components/modules/ModuleCompositionWorkbench.tsx:481)
+Choose an existing authority connection (select, {"disabled":"busy","onChange":"event => editSetup({ ...setupInputs, complianceAdapterId: event.target.value || undefined })"}, components/modules/ModuleCompositionWorkbench.tsx:482)
+Open compliance setup (Link, {"href":"href(\"/dashboard/compliance\")"}, components/modules/ModuleCompositionWorkbench.tsx:482)
+Search names or business outcomes (Input, {"disabled":"!draftReady","onChange":"event => setQuery(event.target.value)"}, components/modules/ModuleCompositionWorkbench.tsx:489)
+module-category (select, {"disabled":"!draftReady","onChange":"event => setCategory(event.target.value as Category)"}, components/modules/ModuleCompositionWorkbench.tsx:490)
+[dynamic or icon-only label] (Checkbox, {"disabled":"busy || required || (unavailable && !explicit)","onCheckedChange":"value => editSelection(value === true ? [...selected, item.slug] : selected.filter(slug => slug !== item.slug))"}, components/modules/ModuleCompositionWorkbench.tsx:501)
+Open setup (Link, {"href":"href(step.href)"}, components/modules/ModuleCompositionWorkbench.tsx:508)
+Planned architecture (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:513)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy","onClick":"() => void review()"}, components/modules/ModuleCompositionWorkbench.tsx:520)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy","onClick":"event => { draftOrigin.current = event.currentTarget; void saveDraft() }"}, components/modules/ModuleCompositionWorkbench.tsx:521)
+Open {module} (Link, {"href":"href(destination.href)"}, components/modules/ModuleCompositionWorkbench.tsx:532)
+Open authorized {module} records (Link, {"href":"href(destination.href)"}, components/modules/ModuleCompositionWorkbench.tsx:534)
+Prepare reactivation of {module} (Button, {"type":"\"button\"","disabled":"busy","onClick":"() => { setStopped(stopped.filter(item => item !== slug)); editSelection([...new Set([...selected, slug])]); setTab(\"build\"); setNotice({ key: \"stop.reactivationDraft\", kind: \"info\" }) }"}, components/modules/ModuleCompositionWorkbench.tsx:534)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy","onClick":"event => { draftOrigin.current = event.currentTarget; void reopen(entry) }"}, components/modules/ModuleCompositionWorkbench.tsx:541)
+Record (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:544)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy","onClick":"() => void loadOlderHistory()"}, components/modules/ModuleCompositionWorkbench.tsx:548)
+Current boundaries (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:552)
+Established access kept ( ) (summary, {}, components/modules/ModuleCompositionWorkbench.tsx:562)
+Current password (Input, {"name":"\"password\"","type":"\"password\"","required":"true","disabled":"busy"}, components/modules/ModuleCompositionWorkbench.tsx:583)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"busy || (!draftChallenge && (resumeAuth ? !data.lifecycle?.canResume : !preview?.canApply || !preview.stopImpact.canStop))"}, components/modules/ModuleCompositionWorkbench.tsx:583)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy","onClick":"() => setReviewOpen(false)"}, components/modules/ModuleCompositionWorkbench.tsx:584)
+Retry the recorded draft request (Button, {"type":"\"button\"","disabled":"busy","onClick":"() => void retryDraftChallenge(draftChallenge)"}, components/modules/ModuleCompositionWorkbench.tsx:584)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy || !preview.canApply || !preview.stopImpact.canStop","onClick":"() => void applyReviewed()"}, components/modules/ModuleCompositionWorkbench.tsx:584)
+
+ROUTE /en/dashboard/settings/notifications
+FILE app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx; app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx
+REDIRECTS []
+HEADINGS Notifications | Channels
+PROPS Queue | Unread | High priority | Delivered | In-app provider | Storage
+CONTROLS Sound On / Off (Switch, {"onCheckedChange":"() => notifications.toggleSound()"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:276)
+Send test (Button, {"type":"\"button\"","onClick":"() =>\n              notifications.info(t.testTitle, t.testMessage, {\n                category: \"system\",\n                priority: \"normal\",\n                source: { type: \"provider\", label: t.provider },\n              })"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:285)
+Security alert (Button, {"type":"\"button\"","onClick":"() =>\n              notifications.warning(t.securityTitle, t.securityMessage, {\n                category: \"security\",\n                priority: \"high\",\n                severity: \"critical\",\n                duration: 10000,\n                source: { type: \"security\", label: t.security },\n              })"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:299)
+Payment update (Button, {"type":"\"button\"","onClick":"() =>\n              notifications.success(t.paymentTitle, t.paymentMessage, {\n                category: \"payment\",\n                priority: \"normal\",\n                source: { type: \"payment\", label: t.finance },\n              })"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:316)
+Mark all read (Button, {"type":"\"button\"","disabled":"notifications.unreadCount === 0","onClick":"notifications.markAllAsRead"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:331)
+Clear queue (Button, {"type":"\"button\"","disabled":"notifications.notifications.length === 0","onClick":"notifications.clearAll"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:341)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => setActiveFilter(key)"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:360)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onMarkRead(notification.id)"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:485)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onDismiss(notification.id)"}, app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:496)
+
+ROUTE /en/dashboard/settings/organization
+FILE app/[locale]/(dashboard)/dashboard/settings/organization/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/organization/page.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx
+REDIRECTS [{"name":"redirect","line":17,"args":"localizePath(companySettingsPath, locale)"}]
+HEADINGS 
+PROPS 
+CONTROLS 
+
+ROUTE /en/dashboard/settings/roles/new
+FILE app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx; components/Forms/RoleForm.tsx; components/Forms/RoleHistory.tsx
+DEPENDENCIES lib/security/rbac.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; actions/security/step-up-auth.actions.ts; hooks/useRoleEditor.ts; services/roles/role-command.ts
+REDIRECTS []
+HEADINGS · : | :
+PROPS 
+CONTROLS [dynamic or icon-only label] (input, {"type":"\"checkbox\"","disabled":"!allowed || pending || uncertain || !!savedId && !editingId","onChange":"event => { setValue(\"permissions\", event.target.checked ? [...values.permissions, permission] : values.permissions.filter(value => value !== permission), { shouldDirty: true }); setReviewed(null) }"}, components/Forms/RoleForm.tsx:98)
+[dynamic or icon-only label] (Link, {"href":"\"/\" + locale + \"/dashboard/settings/roles\""}, components/Forms/RoleForm.tsx:103)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => query.refetch()"}, components/Forms/RoleForm.tsx:106)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => query.refetch()"}, components/Forms/RoleForm.tsx:109)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending || query.isError","onClick":"() => reconcileDraft(true)"}, components/Forms/RoleForm.tsx:109)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending || query.isError","onClick":"() => reconcileDraft(false)"}, components/Forms/RoleForm.tsx:109)
+[dynamic or icon-only label] (Input, {"type":"\"password\"","disabled":"pending","onChange":"event => setPassword(event.target.value)","onKeyDown":"event => { if (event.key === \"Enter\") { event.preventDefault(); void verify() } }"}, components/Forms/RoleForm.tsx:110)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"verify","disabled":"pending || !password"}, components/Forms/RoleForm.tsx:110)
+[dynamic or icon-only label] (Input, {"required":"true"}, components/Forms/RoleForm.tsx:113)
+[dynamic or icon-only label] (Input, {}, components/Forms/RoleForm.tsx:114)
+[dynamic or icon-only label] (Textarea, {}, components/Forms/RoleForm.tsx:115)
+· : (Input, {"onChange":"event => setSearch(event.target.value)"}, components/Forms/RoleForm.tsx:119)
+· (summary, {}, components/Forms/RoleForm.tsx:121)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => submit(pendingCommand.current!.data)"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"pending || fresh || stale || query.isError || !dirty"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => setReviewed(null)"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending || stale || query.isError || !dirty || !!savedId && !editingId","onClick":"handleSubmit(data => { setReviewed(signature(data)); setCode(null); setNotice(null) })"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Link, {"href":"\"/\" + locale + \"/dashboard/settings/roles/update/\" + savedId"}, components/Forms/RoleForm.tsx:128)
+· (summary, {}, components/Forms/RoleHistory.tsx:12)
+
+ROUTE /en/dashboard/settings/roles
+FILE app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx; components/dashboard/DashboardRouteState.tsx; app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx; components/DataTableColumns/SortableColumn.tsx
+DEPENDENCIES actions/roles/getOrgRoles.ts; config/useAuth.ts; lib/security/rbac.ts; lib/security/rbac-permissions.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; lib/dateFilters.ts
+REDIRECTS []
+HEADINGS Role Management | Role catalog
+PROPS Role catalogue could not load | The role query failed. No role count or empty result can be confirmed. Refresh to try again. | Total roles | Roles with descriptions | Roles without descriptions | Role title | Description | search
+CONTROLS Settings (Button, {}, app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx:133)
+Settings (Link, {"href":"localizePath(\"/dashboard/settings\", locale)"}, app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx:134)
+Add Role (Button, {}, app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx:148)
+Add Role (Link, {"href":"localizePath(\"/dashboard/settings/roles/new\", locale)"}, app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx:153)
+[dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+Open actions for role (Button, {}, app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx:23)
+Edit role (DropdownMenuItem, {}, app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx:28)
+Edit role (Link, {"href":"\"/\" + locale + \"/dashboard/settings/roles/update/\" + role.id"}, app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx:28)
+Select all roles on this page (Checkbox, {"onCheckedChange":"value => table.toggleAllPageRowsSelected(!!value)"}, app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx:39)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"value => row.toggleSelected(!!value)"}, app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx:40)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)
+[dynamic or icon-only label] (Button, {"onClick":"() => column.toggleSorting(column.getIsSorted() === \"asc\")"}, components/DataTableColumns/SortableColumn.tsx:12)
+
+ROUTE /en/dashboard/settings/roles/update/[id]
+FILE app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx; components/Forms/RoleForm.tsx; components/Forms/RoleHistory.tsx
+DEPENDENCIES lib/security/rbac.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; actions/security/step-up-auth.actions.ts; hooks/useRoleEditor.ts; services/roles/role-command.ts
+REDIRECTS []
+HEADINGS · : | :
+PROPS 
+CONTROLS [dynamic or icon-only label] (input, {"type":"\"checkbox\"","disabled":"!allowed || pending || uncertain || !!savedId && !editingId","onChange":"event => { setValue(\"permissions\", event.target.checked ? [...values.permissions, permission] : values.permissions.filter(value => value !== permission), { shouldDirty: true }); setReviewed(null) }"}, components/Forms/RoleForm.tsx:98)
+[dynamic or icon-only label] (Link, {"href":"\"/\" + locale + \"/dashboard/settings/roles\""}, components/Forms/RoleForm.tsx:103)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => query.refetch()"}, components/Forms/RoleForm.tsx:106)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => query.refetch()"}, components/Forms/RoleForm.tsx:109)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending || query.isError","onClick":"() => reconcileDraft(true)"}, components/Forms/RoleForm.tsx:109)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending || query.isError","onClick":"() => reconcileDraft(false)"}, components/Forms/RoleForm.tsx:109)
+[dynamic or icon-only label] (Input, {"type":"\"password\"","disabled":"pending","onChange":"event => setPassword(event.target.value)","onKeyDown":"event => { if (event.key === \"Enter\") { event.preventDefault(); void verify() } }"}, components/Forms/RoleForm.tsx:110)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"verify","disabled":"pending || !password"}, components/Forms/RoleForm.tsx:110)
+[dynamic or icon-only label] (Input, {"required":"true"}, components/Forms/RoleForm.tsx:113)
+[dynamic or icon-only label] (Input, {}, components/Forms/RoleForm.tsx:114)
+[dynamic or icon-only label] (Textarea, {}, components/Forms/RoleForm.tsx:115)
+· : (Input, {"onChange":"event => setSearch(event.target.value)"}, components/Forms/RoleForm.tsx:119)
+· (summary, {}, components/Forms/RoleForm.tsx:121)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => submit(pendingCommand.current!.data)"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"pending || fresh || stale || query.isError || !dirty"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => setReviewed(null)"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"pending || stale || query.isError || !dirty || !!savedId && !editingId","onClick":"handleSubmit(data => { setReviewed(signature(data)); setCode(null); setNotice(null) })"}, components/Forms/RoleForm.tsx:127)
+[dynamic or icon-only label] (Link, {"href":"\"/\" + locale + \"/dashboard/settings/roles/update/\" + savedId"}, components/Forms/RoleForm.tsx:128)
+· (summary, {}, components/Forms/RoleHistory.tsx:12)
+
+ROUTE /en/dashboard/settings/security
+FILE app/[locale]/(dashboard)/dashboard/settings/security/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/security/page.tsx
+DEPENDENCIES lib/security/rbac.ts; lib/security/auth-session.ts; lib/security/rbac-permissions.ts; services/security/security-settings.service.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx
+REDIRECTS [{"name":"redirect","line":167,"args":"localizePath(\"/login\", locale)"},{"name":"redirect","line":210,"args":"localizePath(`/dashboard/settings/security?revoked=${revoked}`, locale)"}]
+HEADINGS 
+PROPS locale
+CONTROLS [dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/settings/security/page.tsx:291)
+[dynamic or icon-only label] (Link, {"href":"localizePath(\"/dashboard/change-password\", locale)"}, app/[locale]/(dashboard)/dashboard/settings/security/page.tsx:292)
+locale (input, {"type":"\"hidden\"","name":"\"locale\""}, app/[locale]/(dashboard)/dashboard/settings/security/page.tsx:321)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"state.otherSessionCount === 0"}, app/[locale]/(dashboard)/dashboard/settings/security/page.tsx:322)
+
+ROUTE /en/dashboard/settings/tax-rates/create
+FILE app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx; components/tax-rates/TaxRatesManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/taxRate/tax-rate-management-actions.ts; hooks/useTaxRateManagement.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Tax rates dashboard | Edit tax rate / Create tax rate | Active | Remove tax rate
+PROPS Items | Active | Total rates | Active | Used by items | Average rate | Search name, French name, type, rate... | Type | Rate band | Status | English name | Statutory output tax | French name | Taxe collectee statutaire | Rate | 0.00 | Type
+CONTROLS Actions (Button, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:687)
+View details (DropdownMenuItem, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:695)
+View details (Link, {"href":"dashboardPath(\"settings\", \"tax-rates\", taxRate.id)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:696)
+Edit tax rate (DropdownMenuItem, {"onClick":"() => openEdit(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:701)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyTaxRateId(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:705)
+Remove (DropdownMenuItem, {"onClick":"() => setRemoveTarget(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:710)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/tax-rates/TaxRatesManagementDashboard.tsx:759)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/tax-rates/TaxRatesManagementDashboard.tsx:786)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:796)
+Search name, French name, type, rate... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:815)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as TaxType | \"all\")"}, components/tax-rates/TaxRatesManagementDashboard.tsx:822)
+All Zero Reduced Standard High (Select, {"onValueChange":"(value) => setRateFilter(value as RateFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:833)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:845)
+Export (Button, {"type":"\"button\"","onClick":"exportTaxRates"}, components/tax-rates/TaxRatesManagementDashboard.tsx:855)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:912)
+Statutory output tax (Input, {"onChange":"(event) => updateFormField(\"nameEn\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:960)
+Taxe collectee statutaire (Input, {"onChange":"(event) => updateFormField(\"nameFr\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:968)
+0.00 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"rate\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:976)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as TaxType)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:988)
+Active (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1003)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1013)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1022)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1082)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/tax-rates
+FILE app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx; components/tax-rates/TaxRatesManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/taxRate/tax-rate-management-actions.ts; hooks/useTaxRateManagement.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Tax rates dashboard | Edit tax rate / Create tax rate | Active | Remove tax rate
+PROPS Items | Active | Total rates | Active | Used by items | Average rate | Search name, French name, type, rate... | Type | Rate band | Status | English name | Statutory output tax | French name | Taxe collectee statutaire | Rate | 0.00 | Type
+CONTROLS Actions (Button, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:687)
+View details (DropdownMenuItem, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:695)
+View details (Link, {"href":"dashboardPath(\"settings\", \"tax-rates\", taxRate.id)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:696)
+Edit tax rate (DropdownMenuItem, {"onClick":"() => openEdit(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:701)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyTaxRateId(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:705)
+Remove (DropdownMenuItem, {"onClick":"() => setRemoveTarget(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:710)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/tax-rates/TaxRatesManagementDashboard.tsx:759)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/tax-rates/TaxRatesManagementDashboard.tsx:786)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:796)
+Search name, French name, type, rate... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:815)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as TaxType | \"all\")"}, components/tax-rates/TaxRatesManagementDashboard.tsx:822)
+All Zero Reduced Standard High (Select, {"onValueChange":"(value) => setRateFilter(value as RateFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:833)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:845)
+Export (Button, {"type":"\"button\"","onClick":"exportTaxRates"}, components/tax-rates/TaxRatesManagementDashboard.tsx:855)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:912)
+Statutory output tax (Input, {"onChange":"(event) => updateFormField(\"nameEn\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:960)
+Taxe collectee statutaire (Input, {"onChange":"(event) => updateFormField(\"nameFr\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:968)
+0.00 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"rate\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:976)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as TaxType)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:988)
+Active (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1003)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1013)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1022)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1082)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/tax-rates/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx; components/tax-rates/TaxRatesManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/taxRate/tax-rate-management-actions.ts; hooks/useTaxRateManagement.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Tax rates dashboard | Edit tax rate / Create tax rate | Active | Remove tax rate
+PROPS Items | Active | Total rates | Active | Used by items | Average rate | Search name, French name, type, rate... | Type | Rate band | Status | English name | Statutory output tax | French name | Taxe collectee statutaire | Rate | 0.00 | Type
+CONTROLS Actions (Button, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:687)
+View details (DropdownMenuItem, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:695)
+View details (Link, {"href":"dashboardPath(\"settings\", \"tax-rates\", taxRate.id)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:696)
+Edit tax rate (DropdownMenuItem, {"onClick":"() => openEdit(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:701)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyTaxRateId(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:705)
+Remove (DropdownMenuItem, {"onClick":"() => setRemoveTarget(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:710)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/tax-rates/TaxRatesManagementDashboard.tsx:759)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/tax-rates/TaxRatesManagementDashboard.tsx:786)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:796)
+Search name, French name, type, rate... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:815)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as TaxType | \"all\")"}, components/tax-rates/TaxRatesManagementDashboard.tsx:822)
+All Zero Reduced Standard High (Select, {"onValueChange":"(value) => setRateFilter(value as RateFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:833)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:845)
+Export (Button, {"type":"\"button\"","onClick":"exportTaxRates"}, components/tax-rates/TaxRatesManagementDashboard.tsx:855)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:912)
+Statutory output tax (Input, {"onChange":"(event) => updateFormField(\"nameEn\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:960)
+Taxe collectee statutaire (Input, {"onChange":"(event) => updateFormField(\"nameFr\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:968)
+0.00 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"rate\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:976)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as TaxType)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:988)
+Active (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1003)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1013)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1022)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1082)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/terminals
+FILE app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx; components/pos/TerminalManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; lib/utils.ts; actions/pos/terminal-management.actions.ts; hooks/posHooks/useTerminalManagement.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Terminal management | Edit terminal / Create terminal | Deactivate terminal
+PROPS Cash drawers | Open drawers | Session sales | Transactions | Sessions | Sales | Drawers | Total terminals | Active | Active sessions | Cash drawers | Open drawers | Transactions | Search terminal, number, location, cashier... | Status | Drawer | Location | Terminal name | Front Counter 01 | Terminal number | Auto-generated when empty | Location | Active for POS selection | Cash drawer attached
+CONTROLS Select all terminals (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/pos/TerminalManagementDashboard.tsx:481)
+Select terminal (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)"}, components/pos/TerminalManagementDashboard.tsx:488)
+[dynamic or icon-only label] (Button, {}, components/pos/TerminalManagementDashboard.tsx:651)
+Edit terminal (DropdownMenuItem, {"onClick":"() => openEdit(terminal)"}, components/pos/TerminalManagementDashboard.tsx:658)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyTerminalId(terminal)"}, components/pos/TerminalManagementDashboard.tsx:662)
+Open POS (DropdownMenuItem, {}, components/pos/TerminalManagementDashboard.tsx:666)
+Open POS (Link, {"href":"\"/dashboard/pos\""}, components/pos/TerminalManagementDashboard.tsx:667)
+Cash drawer (DropdownMenuItem, {}, components/pos/TerminalManagementDashboard.tsx:673)
+Cash drawer (Link, {"href":"\"/dashboard/cashDrawer\""}, components/pos/TerminalManagementDashboard.tsx:674)
+Deactivate (DropdownMenuItem, {"disabled":"!terminal.isActive || !!terminal.currentSession","onClick":"() => setArchiveTarget(terminal)"}, components/pos/TerminalManagementDashboard.tsx:681)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/pos/TerminalManagementDashboard.tsx:738)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/pos/TerminalManagementDashboard.tsx:763)
+Columns (Button, {"type":"\"button\""}, components/pos/TerminalManagementDashboard.tsx:769)
+[dynamic or icon-only label] (DropdownMenuItem, {"onSelect":"(event) => event.preventDefault()"}, components/pos/TerminalManagementDashboard.tsx:776)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/pos/TerminalManagementDashboard.tsx:777)
+Create terminal (Button, {"type":"\"button\"","onClick":"openCreate","disabled":"!locations.length"}, components/pos/TerminalManagementDashboard.tsx:787)
+Search terminal, number, location, cashier... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/pos/TerminalManagementDashboard.tsx:809)
+All Active Inactive In session Idle (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/pos/TerminalManagementDashboard.tsx:816)
+All Cash drawer No drawer Open drawer (Select, {"onValueChange":"(value) => setDrawerFilter(value as DrawerFilter)"}, components/pos/TerminalManagementDashboard.tsx:828)
+All (Select, {"onValueChange":"setLocationFilter"}, components/pos/TerminalManagementDashboard.tsx:839)
+Comfort Compact (Select, {"onValueChange":"(value) => setDensity(value as Density)"}, components/pos/TerminalManagementDashboard.tsx:850)
+Create terminal (Button, {"type":"\"button\"","onClick":"openCreate","disabled":"!locations.length"}, components/pos/TerminalManagementDashboard.tsx:901)
+Front Counter 01 (Input, {"onChange":"(event) => updateFormField(\"name\", event.target.value)"}, components/pos/TerminalManagementDashboard.tsx:948)
+Auto-generated when empty (Input, {"onChange":"(event) => updateFormField(\"terminalNumber\", event.target.value)"}, components/pos/TerminalManagementDashboard.tsx:956)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"locationId\", value)"}, components/pos/TerminalManagementDashboard.tsx:966)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/pos/TerminalManagementDashboard.tsx:1000)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving || !locations.length"}, components/pos/TerminalManagementDashboard.tsx:1009)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/pos/TerminalManagementDashboard.tsx:1065)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"onCheckedChange"}, components/pos/TerminalManagementDashboard.tsx:1107)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+
+ROUTE /en/dashboard/settings/users
+FILE app/[locale]/(dashboard)/dashboard/settings/users/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/users/page.tsx; components/Forms/users/userInvitationForm.tsx; components/dashboard/DashboardRouteState.tsx; app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx; components/dashboard/Tables/Invites.tsx; components/Forms/users/InvitationHistory.tsx; components/settings/UserDeactivation.tsx
+DEPENDENCIES actions/_shared/safe-action-responses.ts; services/users/user-invitation-options.service.ts; actions/users/getOrgInvites.ts; actions/users/getOrgUsers.ts; config/useAuth.ts; lib/security/rbac.ts; lib/security/rbac-permissions.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; actions/users/sendInvite.ts; actions/users/cancelInvite.ts; actions/security/step-up-auth.actions.ts; lib/utils.ts; services/users/invitation-input.ts; lib/dateFilters.ts; actions/users/getInvitationHistory.ts; services/users/user-invitation-history.service.ts; actions/users/deleteUser.ts; services/users/user-deactivation-input.ts
+REDIRECTS []
+HEADINGS Email address | Role | Reason for this change | Your current password | Search invitations by email | Invitation history
+PROPS search
+CONTROLS [dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/settings/users/page.tsx:91)
+[dynamic or icon-only label] (Link, {"href":"`/${locale}/dashboard/settings`"}, app/[locale]/(dashboard)/dashboard/settings/users/page.tsx:92)
+Refresh role choices (Button, {"type":"\"button\"","onClick":"() => router.refresh()"}, components/Forms/users/userInvitationForm.tsx:95)
+Invite user (Button, {"disabled":"cannotManage"}, components/Forms/users/userInvitationForm.tsx:105)
+Close invitation (Button, {"disabled":"pending","onClick":"() => setOpen(false)"}, components/Forms/users/userInvitationForm.tsx:118)
+Invite another colleague (Button, {"disabled":"pending","onClick":"() => { request.current = null; setCreated(false); setError(null); setEmail(\"\") }"}, components/Forms/users/userInvitationForm.tsx:118)
+Email address (Input, {"type":"\"email\"","required":"true","disabled":"pending || Boolean(management)","onChange":"event => setEmail(event.target.value)"}, components/Forms/users/userInvitationForm.tsx:122)
+Choose a role (select, {"onChange":"event => setRoleId(event.target.value)","disabled":"pending || !roles.length || management?.mode === \"cancel\"","required":"true"}, components/Forms/users/userInvitationForm.tsx:125)
+Reason for this change (Input, {"onChange":"event => setReason(event.target.value)","disabled":"pending","required":"true"}, components/Forms/users/userInvitationForm.tsx:129)
+Discard this review and refresh the register (Button, {"type":"\"button\"","onClick":"() => { reviewed.current = null; request.current = null; setStale(false); setError(null); setOpen(false); router.refresh() }"}, components/Forms/users/userInvitationForm.tsx:131)
+Your current password Confirm my identity (Input, {"type":"\"password\"","disabled":"pending","onChange":"event => setPassword(event.target.value)","onKeyDown":"event => { if (event.key === \"Enter\") { event.preventDefault(); void confirmIdentity() } }"}, components/Forms/users/userInvitationForm.tsx:134)
+Confirm my identity (Button, {"type":"\"button\"","disabled":"pending || !password","onClick":"confirmIdentity"}, components/Forms/users/userInvitationForm.tsx:135)
+Submitting invitation… (Button, {"type":"\"submit\"","disabled":"pending || !selectedRole || needsVerification || cannotManage || stale"}, components/Forms/users/userInvitationForm.tsx:139)
+[dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+[dynamic or icon-only label] (Button, {"onClick":"() => router.refresh()"}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:249)
+[dynamic or icon-only label] (Button, {"onClick":"() => downloadCsv(visibleUsers, locale)"}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:258)
+[dynamic or icon-only label] (TabsTrigger, {}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:270)
+Invitations (TabsTrigger, {}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:276)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => {\n                      setStatusFilter(\"all\")\n                      setVerificationFilter(\"all\")\n                    }"}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:291)
+[dynamic or icon-only label] (Select, {"onValueChange":"setStatusFilter"}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:317)
+[dynamic or icon-only label] (Select, {"onValueChange":"setVerificationFilter"}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:327)
+Refreshing invitations… / Refresh invitations (Button, {"type":"\"button\"","disabled":"refreshing","onClick":"refreshInvites"}, app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:344)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)
+Search invitations by email (Input, {"type":"\"search\"","onChange":"event => setSearch(event.target.value)"}, components/dashboard/Tables/Invites.tsx:27)
+View history (Button, {"type":"\"button\""}, components/Forms/users/InvitationHistory.tsx:33)
+Refresh history (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => void load()"}, components/Forms/users/InvitationHistory.tsx:37)
+Record reference (summary, {}, components/Forms/users/InvitationHistory.tsx:57)
+Load older decisions (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => void load(data.nextCursor!)"}, components/Forms/users/InvitationHistory.tsx:59)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/settings/UserDeactivation.tsx:58)
+[dynamic or icon-only label] (Textarea, {"disabled":"busy || uncertain","onChange":"event => { setReason(event.target.value); command.current = null }"}, components/settings/UserDeactivation.tsx:66)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"reload","disabled":"busy"}, components/settings/UserDeactivation.tsx:67)
+[dynamic or icon-only label] (Input, {"type":"\"password\"","disabled":"busy","onChange":"event => setPassword(event.target.value)"}, components/settings/UserDeactivation.tsx:68)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"verify","disabled":"busy || !password"}, components/settings/UserDeactivation.tsx:68)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy","onClick":"close"}, components/settings/UserDeactivation.tsx:70)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy || !baseline.isActive || stale || reason.trim().length < 3 || code === \"FRESH_AUTH_REQUIRED\"","onClick":"submit"}, components/settings/UserDeactivation.tsx:70)
+
+ROUTE /en/dashboard/settings/users/update/[id]
+FILE app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx; components/settings/MemberAccessEditor.tsx; components/settings/MemberAccessHistory.tsx
+DEPENDENCIES lib/security/rbac.ts; app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx; actions/security/step-up-auth.actions.ts; hooks/useMemberAccess.ts; services/users/member-access-read.service.ts; services/users/member-access-input.ts; hooks/member-access-draft.ts; hooks/useMemberHistory.ts; services/users/member-history-input.ts; services/users/member-history.service.ts
+REDIRECTS []
+HEADINGS 
+PROPS 
+CONTROLS [dynamic or icon-only label] (Link, {"href":"`/${props.locale}/dashboard/settings/users`"}, components/settings/MemberAccessEditor.tsx:21)
+[dynamic or icon-only label] (Button, {"onClick":"() => void access.query.refetch()"}, components/settings/MemberAccessEditor.tsx:23)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"reload","disabled":"busy"}, components/settings/MemberAccessEditor.tsx:100)
+[dynamic or icon-only label] (input, {"type":"\"checkbox\"","disabled":"unavailable","onChange":"event => { setSelected(values => event.target.checked ? [...values, role.id] : values.filter(value => value !== role.id)); command.current = null }"}, components/settings/MemberAccessEditor.tsx:106)
+[dynamic or icon-only label] (Textarea, {"onChange":"event => { setReason(event.target.value); command.current = null }"}, components/settings/MemberAccessEditor.tsx:110)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"!canSubmit || busy || !!receipt","onClick":"() => { setOpen(true); setNotice(null) }"}, components/settings/MemberAccessEditor.tsx:114)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"reload","disabled":"busy"}, components/settings/MemberAccessEditor.tsx:122)
+[dynamic or icon-only label] (Input, {"type":"\"password\"","onChange":"event => setPassword(event.target.value)","disabled":"busy"}, components/settings/MemberAccessEditor.tsx:123)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"verify","disabled":"busy || !password"}, components/settings/MemberAccessEditor.tsx:123)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"close","disabled":"busy || uncertain"}, components/settings/MemberAccessEditor.tsx:125)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"submit","disabled":"busy || stale || code === \"FRESH_AUTH_REQUIRED\" || !canSubmit"}, components/settings/MemberAccessEditor.tsx:125)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy || query.isFetching || pages.length < 2","onClick":"() => navigate(pages.slice(0, -1))"}, components/settings/MemberAccessHistory.tsx:40)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy || query.isFetching || !data.pageInfo.nextCursor","onClick":"() => navigate([...pages, { beforeId: data.pageInfo.nextCursor!, throughId: data.pageInfo.throughId! }])"}, components/settings/MemberAccessHistory.tsx:40)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy || query.isFetching || !data.entries.length || code === \"FRESH_AUTH_REQUIRED\" || code === \"CONFLICT\"","onClick":"exportPage"}, components/settings/MemberAccessHistory.tsx:42)
+[dynamic or icon-only label] (Input, {"type":"\"password\"","disabled":"busy","onChange":"event => setPassword(event.target.value)"}, components/settings/MemberAccessHistory.tsx:44)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy || !password","onClick":"verify"}, components/settings/MemberAccessHistory.tsx:44)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => download(prepared)","disabled":"busy"}, components/settings/MemberAccessHistory.tsx:45)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"busy || query.isFetching","onClick":"() => { navigate([{}]); void query.refetch() }"}, components/settings/MemberAccessHistory.tsx:47)

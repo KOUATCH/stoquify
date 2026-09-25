@@ -1,0 +1,191 @@
+{
+  "at": "2026-09-13T18:45:03.011Z",
+  "baseline": "evidence/source-baseline-v145.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/analytics/sales-analytics.service.ts": "8c1b9cd624bfd9eb8034b388ee53f1cb262c5340b87dfd8c87fb5c66795928c1",
+    "services/analytics/business-pulse-snapshot.ts": "211173b8c8b8db76837b7b7e03d58d8c8b8fd7c36d538e269298e9af1f2f093b",
+    "services/analytics/business-pulse-links.ts": "36e7f4ec89112539d8af3497ca3d49d7e3431d80ce76cfd495f92d3d9dd8b726",
+    "app/[locale]/(dashboard)/dashboard/analytics/page.tsx": "829e1719d1f1fae8f365bf0609c0ad57ac8814007be8f9781e262125b3f8cdd9",
+    "components/bi/BICommandBriefHeader.tsx": "3d1351fcd43aae93796dffa7394bf3f94006feaec045c711517e745d8ad92789"
+  },
+  "tests": {
+    "passed": 44,
+    "suites": 6,
+    "receipt": "999143",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/analytics/__tests__/business-pulse-snapshot.test.ts services/analytics/__tests__/business-pulse.service.test.ts services/analytics/__tests__/business-pulse-links.test.ts components/bi/__tests__/bi-command-primitives.test.tsx services/analytics/__tests__/legacy-sales-analytics.test.ts actions/analytics/__tests__/sales-analytics.authorization.test.ts"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "7356d4",
+    "command": "node node_modules/eslint/bin/eslint.js services/analytics/sales-analytics.service.ts services/analytics/business-pulse-snapshot.ts services/analytics/business-pulse-links.ts services/analytics/__tests__/business-pulse-snapshot.test.ts services/analytics/__tests__/business-pulse-links.test.ts services/analytics/__tests__/legacy-sales-analytics.test.ts app/[locale]/(dashboard)/dashboard/analytics/page.tsx components/bi/BICommandBriefHeader.tsx components/bi/__tests__/bi-command-primitives.test.tsx"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "92e755",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/pulse-actions-v145-b8bda6cb-1857-4db5-98d3-ca4775d9fef0.json",
+    "receipt": "570b2e",
+    "at": "2026-09-13T18:42:19.567Z",
+    "sourceBefore": {
+      "services/analytics/sales-analytics.service.ts": "8c1b9cd624bfd9eb8034b388ee53f1cb262c5340b87dfd8c87fb5c66795928c1",
+      "services/analytics/business-pulse-snapshot.ts": "211173b8c8b8db76837b7b7e03d58d8c8b8fd7c36d538e269298e9af1f2f093b",
+      "services/analytics/business-pulse-links.ts": "36e7f4ec89112539d8af3497ca3d49d7e3431d80ce76cfd495f92d3d9dd8b726",
+      "app/[locale]/(dashboard)/dashboard/analytics/page.tsx": "829e1719d1f1fae8f365bf0609c0ad57ac8814007be8f9781e262125b3f8cdd9",
+      "components/bi/BICommandBriefHeader.tsx": "3d1351fcd43aae93796dffa7394bf3f94006feaec045c711517e745d8ad92789"
+    },
+    "checks": [
+      {
+        "onHand": 8,
+        "available": 8,
+        "reorder": 2,
+        "expected": 0,
+        "observed": 0
+      },
+      {
+        "onHand": 20,
+        "available": 12,
+        "reorder": 15,
+        "expected": 1,
+        "observed": 1
+      },
+      {
+        "onHand": 0,
+        "available": 0,
+        "reorder": 0,
+        "expected": 1,
+        "observed": 1
+      },
+      {
+        "onHand": 1,
+        "available": 0.301,
+        "reorder": 0.3,
+        "expected": 0,
+        "observed": 0
+      },
+      {
+        "distinctAcrossSites": true
+      },
+      {
+        "inactiveAndForeignLocationsExcluded": true
+      }
+    ],
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "pulse-actions-v145-en-1440-b8bda6cb-1857-4db5-98d3-ca4775d9fef0.png",
+          "pulse-actions-v145-en-768-b8bda6cb-1857-4db5-98d3-ca4775d9fef0.png",
+          "pulse-actions-v145-en-320-b8bda6cb-1857-4db5-98d3-ca4775d9fef0.png"
+        ],
+        "pageErrors": [],
+        "deniedActionsExplained": true,
+        "readyMs": 5104,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "keyboardReportNavigation": true,
+        "reportAlerts": [
+          "",
+          "Analytics Reports | Stoquify"
+        ],
+        "scopedEmptyReportVerified": true,
+        "itemNavigation": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "pulse-actions-v145-fr-1440-b8bda6cb-1857-4db5-98d3-ca4775d9fef0.png",
+          "pulse-actions-v145-fr-768-b8bda6cb-1857-4db5-98d3-ca4775d9fef0.png",
+          "pulse-actions-v145-fr-320-b8bda6cb-1857-4db5-98d3-ca4775d9fef0.png"
+        ],
+        "pageErrors": [],
+        "deniedActionsExplained": true,
+        "readyMs": 2585,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "keyboardReportNavigation": true,
+        "reportAlerts": [
+          "",
+          "Analytics Reports | Stoquify"
+        ],
+        "scopedEmptyReportVerified": true,
+        "itemNavigation": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "services/analytics/sales-analytics.service.ts": "8c1b9cd624bfd9eb8034b388ee53f1cb262c5340b87dfd8c87fb5c66795928c1",
+      "services/analytics/business-pulse-snapshot.ts": "211173b8c8b8db76837b7b7e03d58d8c8b8fd7c36d538e269298e9af1f2f093b",
+      "services/analytics/business-pulse-links.ts": "36e7f4ec89112539d8af3497ca3d49d7e3431d80ce76cfd495f92d3d9dd8b726",
+      "app/[locale]/(dashboard)/dashboard/analytics/page.tsx": "829e1719d1f1fae8f365bf0609c0ad57ac8814007be8f9781e262125b3f8cdd9",
+      "components/bi/BICommandBriefHeader.tsx": "3d1351fcd43aae93796dffa7394bf3f94006feaec045c711517e745d8ad92789"
+    },
+    "sourceStable": true
+  },
+  "attempts": [
+    {
+      "receipt": "f517a5",
+      "result": "New next-intl routing import was incompatible with Jest CJS. Removed unnecessary runtime import; no test exemptions added."
+    },
+    {
+      "receipt": "0371d0",
+      "result": "Two failures: old stock mock lacked inventoryLevel delegate; new test incorrectly assumed inventory.read did not expand to item read. Corrected fixture and preserved existing RBAC expansion."
+    },
+    {
+      "receipt": "bdb100",
+      "result": "Database checks passed; sandbox EPERM prevented screenshot and receipt writes. Narrow approved execution subsequently saved evidence."
+    },
+    {
+      "file": "lanes/environment/pulse-actions-v145-ea89faa5-de19-4479-961d-c3c01bfd03da.json",
+      "result": "Incorrect global zero-alert assertion included Next page-announcement regions. Later run confirmed scoped empty report."
+    },
+    {
+      "file": "lanes/environment/pulse-actions-v145-082bb0e5-8a66-4ee7-90a0-c1a26fb630e9.json",
+      "result": "Scoped report passed; one pointer navigation did not leave pulse. Final explicit focus/Enter navigation passed both locales. Pointer stability remains unverified."
+    }
+  ],
+  "visualReview": {
+    "inspected": "Final French mobile screenshot",
+    "screenshots": 6,
+    "limits": [
+      "Other generated BI strings remain mixed language.",
+      "No screen-reader/zoom certification.",
+      "Screenshots show the actual development application, including its development issue indicator."
+    ]
+  },
+  "performance": {
+    "enMs": 5104,
+    "frMs": 2585,
+    "context": "Local development route-ready observations, not a comparable production benchmark."
+  },
+  "guide": "BUSINESS_PULSE_ACTIONS_V145.md",
+  "coverage": {
+    "discoveredWorkflows": 256,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2921,
+      "tests": 1042,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 196,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "migrations": false,
+  "build": {
+    "run": false,
+    "reason": "Actual current isolated application exercised; migration-bearing default build not invoked."
+  }
+}

@@ -1,0 +1,204 @@
+
+ROUTE /en/dashboard/purchase-orders/analytics
+FILE app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/page.tsx; components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/purchase-orders/PurchaseOrderAnalyticsTable.tsx
+DEPENDENCIES services/purchase-order/purchase-order.service.ts; app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS 
+PROPS Purchase order analytics | Custom date range | Purchase order analytics | Custom date range | Ordered value | Open goods commitment | Average order value | Receipt progress | On-time delivery | Overdue exposure | Average approval cycle | Completion rate | Spend and order movement | Ordered value | Orders | Lifecycle mix | Supplier concentration | Ordered value | Open-order aging | Open commitment | Data trust signals | Supplier performance | Location performance | Top purchased items | Procurement exception watchlist
+CONTROLS [dynamic or icon-only label] (Link, {"href":"`/dashboard/purchase-orders/${item.id}`"}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:402)
+[dynamic or icon-only label] (Button, {}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:449)
+[dynamic or icon-only label] (Link, {"href":"`/dashboard/purchase-orders/analytics?range=${option}`"}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:450)
+Apply range (Button, {"type":"\"submit\""}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:469)
+Reset (Button, {"type":"\"button\""}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:470)
+Reset (Link, {"href":"\"/dashboard/purchase-orders/analytics?range=90d\""}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:471)
+[dynamic or icon-only label] (Button, {}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:504)
+[dynamic or icon-only label] (Link, {"href":"`/dashboard/purchase-orders/analytics?range=${option}`"}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:505)
+Apply range (Button, {"type":"\"submit\""}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:524)
+Reset (Button, {"type":"\"button\""}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:525)
+Reset (Link, {"href":"\"/dashboard/purchase-orders/analytics?range=90d\""}, components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx:526)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Input, {"onChange":"event => setQuery(event.target.value)"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:189)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => setQuery(\"\")"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:197)
+[dynamic or icon-only label] (Select, {"onValueChange":"value => setFacetValues(current => ({ ...current, [facet.id]: value }))"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:209)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearFilters"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:235)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"exportRows","disabled":"!processedRows.length"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:239)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => toggleSort(column)"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:261)
+[dynamic or icon-only label] (Select, {"onValueChange":"value => setPageSize(Number(value))"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:301)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => setPageIndex(0)","disabled":"safePageIndex === 0"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:310)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => setPageIndex(index => Math.max(0, index - 1))","disabled":"safePageIndex === 0"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:313)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => setPageIndex(index => Math.min(pageCount - 1, index + 1))","disabled":"safePageIndex >= pageCount - 1"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:316)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => setPageIndex(pageCount - 1)","disabled":"safePageIndex >= pageCount - 1"}, components/purchase-orders/PurchaseOrderAnalyticsTable.tsx:319)
+
+ROUTE /en/dashboard/purchase-orders/new
+FILE app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx; components/purchase-orders/ModernCreatePurchaseOrderForm.tsx
+DEPENDENCIES actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts; lib/modules/module-operation-error.ts; config/useAuth.ts; services/purchase-order/purchase-order.service.ts; app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx; lib/formatCurrency.ts; lib/generatePONumber.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS Create Purchase Order | Order Information | PO Number | Order Date | Expected Delivery | Parties | Supplier | Delivery Location | Order Items | No items added | Item | Qty | Unit Price | Tax % | Discount | Total | Actions | Terms & Conditions | Payment Terms | Shipping Cost | Additional Notes | Order Summary | Add Items | Create Purchase Order
+PROPS poNumber | PO-2024-001 | date | expectedDeliveryDate | supplierId | Select a supplier | locationId | Select delivery location | paymentTerms | Net 30 days | shippingCost | 0.00 | notes | Any special instructions or notes for this order... | Search items by name or SKU...
+CONTROLS Back (Button, {"onClick":"() => router.back()"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:453)
+[dynamic or icon-only label] (button, {"onClick":"() => handleStepClick(step.id)","disabled":"!isAccessible && !isCompleted"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:484)
+PO-2024-001 (Input, {}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:554)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleGeneratePONumber"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:556)
+[dynamic or icon-only label] (Button, {}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:586)
+[dynamic or icon-only label] (Button, {}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:634)
+[dynamic or icon-only label] (Select, {"onValueChange":"field.onChange"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:695)
+[dynamic or icon-only label] (Select, {"onValueChange":"field.onChange"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:738)
+Add Item (Button, {"type":"\"button\"","onClick":"() => setShowItemSearch(true)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:785)
+Add First Item (Button, {"type":"\"button\"","onClick":"() => setShowItemSearch(true)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:804)
+[dynamic or icon-only label] (Input, {"type":"\"number\"","onChange":"(e) =>\n                                            updateOrderLine(line.id, \"quantity\", parseInt(e.target.value) || 1)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:846)
+[dynamic or icon-only label] (Input, {"type":"\"number\"","onChange":"(e) =>\n                                            updateOrderLine(line.id, \"unitPrice\", parseFloat(e.target.value) || 0)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:857)
+[dynamic or icon-only label] (Input, {"type":"\"number\"","onChange":"(e) =>\n                                            updateOrderLine(line.id, \"taxRate\", parseFloat(e.target.value) || 0)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:869)
+[dynamic or icon-only label] (Input, {"type":"\"number\"","onChange":"(e) =>\n                                            updateOrderLine(line.id, \"discount\", parseFloat(e.target.value) || 0)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:882)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => removeOrderLine(line.id)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:897)
+Net 30 days (Input, {}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:943)
+0.00 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(parseFloat(e.target.value) || 0)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:963)
+Any special instructions or notes for this order... (Textarea, {}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:991)
+Previous (Button, {"type":"\"button\"","onClick":"handlePrevious"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:1077)
+Next (Button, {"type":"\"button\"","onClick":"handleNext"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:1087)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isSaving || !isFormReadyToSubmit()","onClick":"handleCreateClick"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:1096)
+Search items by name or SKU... (Input, {"onChange":"(e) => setItemSearchTerm(e.target.value)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:1138)
+Add (Button, {"onClick":"() => addOrderLine(item)"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:1185)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setShowConfirmDialog(false)","disabled":"isSaving"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:1241)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleConfirmedSubmit","disabled":"isSaving"}, components/purchase-orders/ModernCreatePurchaseOrderForm.tsx:1250)
+
+ROUTE /en/dashboard/purchase-orders
+FILE app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx; components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx; components/DataTableComponents/index.ts; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/purchase-orders/ModernStatusBadge.tsx; components/DataTableColumns/SortableColumn.tsx
+DEPENDENCIES lib/i18n/formatters.ts; services/purchase-order/purchase-order.service.ts; services/purchase-order/purchase-order-capabilities.ts; app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx; lib/notifications/notify.ts; hooks/useRecentPurchaseOrderQueries.ts; lib/utils.ts; services/purchase-order/purchase-order.schemas.ts
+REDIRECTS []
+HEADINGS Purchase orders | Purchase order register
+PROPS Total orders | Total value | Draft orders | Received | Overdue | Loading purchase orders | Purchase orders | Order Number | Order Date | Expected Delivery | Total | View purchase order | Edit purchase order | Search purchase orders... | Order date range
+CONTROLS Payables dashboard (Button, {}, app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx:151)
+Payables dashboard (Link, {"href":"\"/dashboard/purchase-orders/analytics\""}, app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx:152)
+New purchase order (Button, {}, app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx:158)
+New purchase order (Link, {"href":"\"/dashboard/purchase-orders/new\""}, app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx:159)
+Select all (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:214)
+Select row (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:221)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(`/dashboard/purchase-orders/${po.id}`)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:352)
+View purchase order (Button, {"onClick":"() => handleViewClick(po)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:353)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(`/dashboard/purchase-orders/${po.id}/edit`)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:364)
+Edit purchase order (Button, {"onClick":"() => handleEditClick(po)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:365)
+Open menu (Button, {}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:379)
+Approve Order (DropdownMenuItem, {"onClick":"() => handleApproveClick(po)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:390)
+Receive Items (DropdownMenuItem, {"onClick":"() => handleReceiveClick(po)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:401)
+Cancel Order (DropdownMenuItem, {"onClick":"() => handleCancelClick(po)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:412)
+Archive Order (DropdownMenuItem, {"onClick":"() => handleDeleteClick(po)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:422)
+Print Order (DropdownMenuItem, {"onClick":"() => handleDownloadPDF(po)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:432)
+Refresh (Button, {"onClick":"onRefresh"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:584)
+Export (Button, {"onClick":"() => onExport(table.getFilteredRowModel().rows.map(row => row.original))"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:593)
+Create PO (Link, {"href":"localizedHref(\"/dashboard/purchase-orders/new\")"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:603)
+Create PO (Button, {}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:604)
+Search purchase orders... (Input, {"onChange":"(event) => {\n              setGlobalFilter(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:620)
+View (Button, {}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:647)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:661)
+Clear filters (Button, {"type":"\"button\"","onClick":"clearTableState","disabled":"!hasActiveTableState"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:673)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setConfirmationDialog(prev => ({ ...prev, isOpen: false }))","disabled":"deleteMutation.isPending || cancelMutation.isPending || approveMutation.isPending"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:1129)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleConfirmAction","disabled":"deleteMutation.isPending || cancelMutation.isPending || approveMutation.isPending"}, components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx:1137)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Button, {"onClick":"() => column.toggleSorting(column.getIsSorted() === \"asc\")"}, components/DataTableColumns/SortableColumn.tsx:12)
+
+ROUTE /en/dashboard/purchase-orders/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx; components/purchase-orders/ModernEditPurchaseOrderForm.tsx
+DEPENDENCIES services/_shared/action-errors.ts; services/purchase-order/purchase-order.service.ts; app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx; hooks/useRecentPurchaseOrderQueries.ts; lib/notifications/notify.ts
+REDIRECTS []
+HEADINGS Estimated amounts | Edit purchase order | Expected delivery date | Supplier | Delivery location | Item | Line notes | Discard unsaved changes?
+PROPS expectedDeliveryDate | supplierId | Choose a supplier | locationId | Choose a location | Choose an item
+CONTROLS [dynamic or icon-only label] (Input, {"type":"\"number\"","name":"field.name","onBlur":"field.onBlur","onChange":"(event) => field.onChange(event.target.value === \"\" ? Number.NaN : Number(event.target.value))"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:139)
+[dynamic or icon-only label] (Textarea, {}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:149)
+[dynamic or icon-only label] (Input, {}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:150)
+Back to purchase order (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => form.formState.isDirty ? setShowLeave(true) : router.push(savedHref)"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:168)
+[dynamic or icon-only label] (Input, {"type":"\"date\""}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:201)
+[dynamic or icon-only label] (Select, {"onValueChange":"field.onChange","disabled":"busy || locked"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:208)
+[dynamic or icon-only label] (Select, {"onValueChange":"field.onChange","disabled":"busy || locked"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:212)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n                    field.onChange(value)\n                    // Preserve an existing quoted cost. A newly added line can use the current cost suggestion.\n                    if (!line.itemId) form.setValue(`lines.${index}.unitPrice`, items.find((item) => item.id === value)?.costPrice ?? 0, { shouldDirty: true })\n                  }","disabled":"busy || locked"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:222)
+[dynamic or icon-only label] (Textarea, {}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:235)
+Remove item {number} (Button, {"type":"\"button\"","disabled":"locked || lines.fields.length === 1","onClick":"() => lines.remove(index)"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:238)
+Add item (Button, {"type":"\"button\"","disabled":"locked || !items.length","onClick":"() => lines.append({ itemId: \"\", quantity: 1, unitPrice: 0, taxRate: 0, discount: 0, notes: \"\" })"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:242)
+Previous (Button, {"type":"\"button\"","disabled":"step === 0","onClick":"() => moveStep(step - 1)"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:254)
+Continue (Button, {"type":"\"button\"","onClick":"(event) => { event.preventDefault(); void continueStep() }"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:256)
+Saving changes… / Save changes (Button, {"type":"\"submit\"","disabled":"locked"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:257)
+Open saved order in a new tab (a, {"href":"savedHref"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:265)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => setShowLeave(false)"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:271)
+Discard changes (Button, {"type":"\"button\"","onClick":"() => { form.reset(); router.push(savedHref) }"}, components/purchase-orders/ModernEditPurchaseOrderForm.tsx:271)
+
+ROUTE /en/dashboard/purchase-orders/[id]
+FILE app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx; components/purchase-orders/ModernPurchaseOrderDetailPage.tsx; components/purchase-orders/PurchaseOrderCloneNotice.tsx; components/purchase-orders/ModernStatusBadge.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx; hooks/usePurchaseOrderClone.ts; lib/auth-client.ts; hooks/useRecentPurchaseOrderQueries.ts; lib/utils.ts; services/purchase-order/purchase-order.schemas.ts
+REDIRECTS []
+HEADINGS Purchase Order Not Found | Approve Purchase Order | Submit Purchase Order | Receive Items - | Item | Ordered Qty | Already Received | Receiving Now | Unit Cost | Line Total | Receiving Summary | Complete Purchase Order | Cancel Purchase Order | Purchase Order Details | Supplier & Delivery Details | Supplier | Delivery Location | Order Information | Financial Summary | Quick Actions | Order Line Items | Item | Ordered | Received | Unit Cost | Tax | Line Total | Goods Receipts | Receipt # | Items Received: | Inventory Impact | Status History
+PROPS Auto-generated from receipt if blank | Describe the failed check, damage, or missing inspection evidence | Record packaging, count, condition, lot, or supporting evidence notes | Enter reason for cancellation...
+CONTROLS Go Back (Button, {"onClick":"() => router.back()"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:446)
+Back (Button, {"onClick":"() => router.back()"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:468)
+Print (Button, {"onClick":"handleDownloadPDF"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:502)
+[dynamic or icon-only label] (Button, {"onClick":"() => { void cloneController.clone() }","disabled":"cloneController.pending || cloneController.retryBlocked"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:513)
+Supplier acknowledgement (Link, {"href":"localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}/supplier-acknowledgement`)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:526)
+Supplier acknowledgement (Button, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:527)
+Edit (Link, {"href":"localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}/edit`)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:539)
+Edit (Button, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:540)
+Approve (Button, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:553)
+Cancel (Button, {"onClick":"() => setShowApproveDialog(false)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:570)
+Approving... / Approve (Button, {"onClick":"handleApprove","disabled":"approveMutation.isPending"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:573)
+Submit (Button, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:589)
+Cancel (Button, {"onClick":"() => setShowSubmitDialog(false)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:606)
+Submitting... / Submit Order (Button, {"onClick":"handleSubmit","disabled":"submitMutation.isPending"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:609)
+Receive Items (Button, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:625)
+Receive All Available (Button, {"type":"\"button\"","onClick":"() => {\n                            const newReceiveItems: Record<string, ReceiveItemDraft> = {}\n                            purchaseOrder.lines?.forEach(line => {\n                              const orderedQuantity = toNumber(line.orderedQuantity)\n                              const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)\n                              if (maxAllowed > 0) {\n                                newReceiveItems[line.id] = {\n                                  ...receiveItems[line.id],\n                                  quantity: orderedQuantity,\n                                  received: maxAllowed\n                                }\n                              }\n                            })\n                            setReceiveItems(newReceiveItems)\n                            success(\n                              \"All Items Selected\",\n                              \"All available quantities have been set for receiving\",\n                              { duration: 3000, sound: false }\n                            )\n                          }"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:641)
+Clear All (Button, {"type":"\"button\"","onClick":"() => {\n                            setReceiveItems({})\n                            info(\n                              \"Quantities Cleared\",\n                              \"All receive quantities have been reset to zero\",\n                              { duration: 3000, sound: false }\n                            )\n                          }"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:668)
+max: (input, {"type":"\"number\"","onChange":"(e) => {\n                                            const inputValue = parseInt(e.target.value) || 0\n                                            const orderedQuantity = toNumber(line.orderedQuantity)\n                                            const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)\n\n                                            // Hard limit enforcement\n                                            const finalValue = Math.min(Math.max(0, inputValue), maxAllowed)\n\n                                            // Show notification if user tried to exceed limit\n                                            if (inputValue > maxAllowed && inputValue > 0) {\n                                              warning(\n                                                \"Quantity Limited\",\n                                                `Maximum ${maxAllowed} units can be received for ${line.item?.name || 'this item'}. Input automatically adjusted.`,\n                                                { duration: 5000, sound: true }\n                                              )\n                                            }\n\n                                            setReceiveItems(prev => ({\n                                              ...prev,\n                                              [line.id]: {\n                                                ...prev[line.id],\n                                                quantity: orderedQuantity,\n                                                received: finalValue\n                                              }\n                                            }))\n                                          }","onKeyDown":"(e) => {\n                                            // Allow: backspace, delete, tab, escape, enter\n                                            if ([8, 9, 27, 13, 46].indexOf(e.keyCode) !== -1 ||\n                                              // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X\n                                              (e.keyCode === 65 && e.ctrlKey === true) ||\n                                              (e.keyCode === 67 && e.ctrlKey === true) ||\n                                              (e.keyCode === 86 && e.ctrlKey === true) ||\n                                              (e.keyCode === 88 && e.ctrlKey === true) ||\n                                              // Allow: home, end, left, right\n                                              (e.keyCode >= 35 && e.keyCode <= 39)) {\n                                              return\n                                            }\n                                            // Ensure that it is a number and stop the keypress\n                                            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {\n                                              e.preventDefault()\n                                              info(\n                                                \"Numbers Only\",\n                                                \"Please enter numeric values only\",\n                                                { duration: 2000, sound: false }\n                                              )\n                                            }\n                                          }","onBlur":"(e) => {\n                                            // Additional validation on blur to ensure clean state\n                                            const inputValue = parseInt(e.target.value) || 0\n                                            const orderedQuantity = toNumber(line.orderedQuantity)\n                                            const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)\n                                            const finalValue = Math.min(Math.max(0, inputValue), maxAllowed)\n\n                                            if (inputValue !== finalValue) {\n                                              setReceiveItems(prev => ({\n                                                ...prev,\n                                                [line.id]: {\n                                                  ...prev[line.id],\n                                                  quantity: orderedQuantity,\n                                                  received: finalValue\n                                                }\n                                              }))\n                                            }\n                                          }"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:720)
+All (Button, {"type":"\"button\"","onClick":"() => {\n                                            const orderedQuantity = toNumber(line.orderedQuantity)\n                                            const maxAllowed = orderedQuantity - toNumber(line.receivedQuantity)\n                                            setReceiveItems(prev => ({\n                                              ...prev,\n                                              [line.id]: {\n                                                ...prev[line.id],\n                                                quantity: orderedQuantity,\n                                                received: maxAllowed\n                                              }\n                                            }))\n                                          }","disabled":"(toNumber(line.orderedQuantity) - toNumber(line.receivedQuantity)) === 0"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:803)
+Clear (Button, {"type":"\"button\"","onClick":"() => {\n                                            setReceiveItems(prev => ({\n                                              ...prev,\n                                              [line.id]: {\n                                                ...prev[line.id],\n                                                quantity: toNumber(line.orderedQuantity),\n                                                received: 0\n                                              }\n                                            }))\n                                          }"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:824)
+Supplier batch / lot (optional) Leave blank when the supplier did not provide a lot number. (input, {"type":"\"text\"","onChange":"(event) =>\n                                                  setReceiveItems((prev) => ({\n                                                    ...prev,\n                                                    [line.id]: {\n                                                      ...prev[line.id],\n                                                      quantity: toNumber(line.orderedQuantity),\n                                                      received: prev[line.id]?.received || 0,\n                                                      batchNumber: event.target.value,\n                                                    },\n                                                  }))"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:854)
+Expiry date (input, {"type":"\"date\"","onChange":"(event) =>\n                                                  setReceiveItems((prev) => ({\n                                                    ...prev,\n                                                    [line.id]: {\n                                                      ...prev[line.id],\n                                                      quantity: toNumber(line.orderedQuantity),\n                                                      received: prev[line.id]?.received || 0,\n                                                      expiryDate: event.target.value,\n                                                    },\n                                                  }))"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:879)
+Select an inspection outcome Passed — release to available inventory Failed — hold inventory Incomplete — hold pending resolution (select, {"onChange":"(event) => setInspectionOutcome(event.target.value as typeof inspectionOutcome)","required":"true"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:930)
+Hold reason (Textarea, {"onChange":"(event) => setInspectionReason(event.target.value)","required":"true"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:945)
+Inspection evidence notes (optional) (Textarea, {"onChange":"(event) => setInspectionEvidenceNotes(event.target.value)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:956)
+Cancel (Button, {"onClick":"() => setShowReceiveDialog(false)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1017)
+Receiving... / Receive Items (Button, {"onClick":"handleReceive","disabled":"receiveItemsMutation.isPending ||\n                            Object.values(receiveItems).every(item => item.received === 0) ||\n                            !inspectionOutcome ||\n                            (inspectionOutcome !== \"PASSED\" && !inspectionReason.trim())"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1020)
+Complete Order (Button, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1052)
+Cancel (Button, {"onClick":"() => setShowCompleteDialog(false)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1069)
+Completing... / Complete Order (Button, {"onClick":"handleComplete","disabled":"completeMutation.isPending"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1072)
+Cancel (Button, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1087)
+Reason for cancellation (optional) (Textarea, {"onChange":"(e) => setCancelReason(e.target.value)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1107)
+Keep Order (Button, {"onClick":"() => setShowCancelDialog(false)"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1115)
+Cancelling... / Cancel Order (Button, {"onClick":"handleCancel","disabled":"cancelMutation.isPending"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1118)
+Overview (TabsTrigger, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1263)
+Line Items (TabsTrigger, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1270)
+Receipts (TabsTrigger, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1277)
+Inventory (TabsTrigger, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1284)
+History (TabsTrigger, {}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1291)
+Print Order (Button, {"onClick":"handleDownloadPDF"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1443)
+[dynamic or icon-only label] (Button, {"onClick":"() => { void cloneController.clone() }","disabled":"cloneController.pending || cloneController.retryBlocked"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1452)
+Refresh Data (Button, {"onClick":"() => refetch()"}, components/purchase-orders/ModernPurchaseOrderDetailPage.tsx:1462)
+Open purchase orders in a new tab (Link, {"href":"ordersHref"}, components/purchase-orders/PurchaseOrderCloneNotice.tsx:25)
+
+ROUTE /en/dashboard/purchase-orders/[id]/supplier-acknowledgement
+FILE app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx; components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx
+DEPENDENCIES services/purchase-order/supplier-po-acknowledgement.service.ts; app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx; actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts
+REDIRECTS []
+HEADINGS · :
+PROPS 
+CONTROLS [dynamic or icon-only label] (Link, {"href":"localizePath(`/dashboard/purchase-orders/${initialData.purchaseOrder.id}`, locale)"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:204)
+recipient-reference (Input, {"onChange":"(event) => setRecipientReference(event.target.value)"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:229)
+[dynamic or icon-only label] (Button, {"disabled":"issuing || initialData.purchaseOrder.status !== \"APPROVED\"","onClick":"issueInvite"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:231)
+[dynamic or icon-only label] (Input, {}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:239)
+[dynamic or icon-only label] (Button, {"onClick":"copyInvite","type":"\"button\""}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:240)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setReason(event.target.value)"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:310)
+[dynamic or icon-only label] (Button, {"disabled":"busy || reason.trim().length < 3","onClick":"() => onRevoke(token.id, reason)"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:311)
+[dynamic or icon-only label] (Textarea, {"onChange":"(event) => setReason(event.target.value)"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:347)
+[dynamic or icon-only label] (Button, {"disabled":"busy || reason.trim().length < 3","onClick":"() => onReview(proposal.proposalId, \"ACCEPT\", reason)"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:349)
+[dynamic or icon-only label] (Button, {"disabled":"busy || reason.trim().length < 3","onClick":"() => onReview(proposal.proposalId, \"REJECT\", reason)"}, components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx:350)

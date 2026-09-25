@@ -1,0 +1,101 @@
+{
+  "run": "514f3ecb-b34",
+  "startedAt": "2026-09-07T10:30:31.261Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "42678408c331cf7fa5e2b8fa0056aa1ca6ddf52034868dd34f9878611398bb72",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ee6b2572a82e40e614ec8349ca740004574658eb2572eb2c2c9cf62f09f5be89",
+    "messages/fr.json": "ef5f3e3c40c9a3f18ec61b8463975ecc4ca4f2b9b1a5ea71aea4b4a8ab7d40ed",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "aca9f6d1798b5f92cda6bf330d05d594d3b195de0ded8b7f8d7b68d216917d7b",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "0eedac7592adf8a3ea1244a62a4d3681c0cd648f63f3ddf1b1a9d22a48769a0a",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+  },
+  "checks": [
+    {
+      "name": "ACCEPT, REJECT and REQUEST_CHANGE persist exact evidence and replay once",
+      "status": "passed"
+    },
+    {
+      "name": "Invalid precision, date, duplicate or foreign lines leave no proposal effects",
+      "status": "passed"
+    },
+    {
+      "name": "Current view-only registry hides response permission and rejects writes",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign envelope, missing token and expired signed scope are denied",
+      "status": "passed"
+    },
+    {
+      "name": "Mandatory audit failure rolls back response, event, state and access increment",
+      "status": "passed"
+    },
+    {
+      "name": "Concurrent identical submissions converge on one response after exact retry",
+      "status": "passed"
+    },
+    {
+      "name": "Revocation after token read prevents in-flight response effects and later retry",
+      "status": "passed"
+    },
+    {
+      "name": "Purchase-order quantities, totals, approvals and source lines remain unchanged",
+      "status": "passed"
+    }
+  ],
+  "fixtureLimit": "Synthetic approved orders; direct service calls. Restrictive registry permissions are fixture-only creation. Not buyer authorization evidence.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "concurrentResults": [
+    "committed",
+    "committed"
+  ],
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "42678408c331cf7fa5e2b8fa0056aa1ca6ddf52034868dd34f9878611398bb72",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ee6b2572a82e40e614ec8349ca740004574658eb2572eb2c2c9cf62f09f5be89",
+    "messages/fr.json": "ef5f3e3c40c9a3f18ec61b8463975ecc4ca4f2b9b1a5ea71aea4b4a8ab7d40ed",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "aca9f6d1798b5f92cda6bf330d05d594d3b195de0ded8b7f8d7b68d216917d7b",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "0eedac7592adf8a3ea1244a62a4d3681c0cd648f63f3ddf1b1a9d22a48769a0a",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+  },
+  "sourceStable": true,
+  "completedAt": "2026-09-07T10:30:34.687Z"
+}

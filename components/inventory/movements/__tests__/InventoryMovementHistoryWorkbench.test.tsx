@@ -8,6 +8,7 @@ jest.mock("next-intl", () => ({
     const copy: Record<string, string> = {
       eyebrow: "Inventory history", title: "Inventory movement history", summary: "Server-owned complete history", scopeLabel: "Complete server history",
       "filters.title": "History filters", "filters.detail": "Server filters", "filters.searchPlaceholder": "Search", "filters.searchLabel": "Search history", "filters.type": "Type", "filters.allTypes": "All types", "filters.dateFrom": "From", "filters.dateTo": "To", "filters.pageSize": "Page size", "filters.reset": "Reset",
+      "toolbar.filter": "Filter movements", "toolbar.clearFilters": "Clear filters", "toolbar.liveData": "Live data", "toolbar.refresh": "Refresh", "toolbar.refreshing": "Refreshing", "toolbar.viewColumns": "View", "toolbar.selectAllRows": "Select all movement rows", "toolbar.firstPage": "Go to first page", "toolbar.previousPage": "Go to previous page",
       "states.retry": "Retry", "states.loadingTitle": "Loading", "states.loadingMessage": "Loading", "states.emptyTitle": "Empty", "states.emptyMessage": "No movement", "states.emptyFilteredTitle": "No matches", "states.emptyFilteredMessage": "Reset filters", "states.errorTitle": "Failed", "states.partialTitle": "Partial source data", "states.partialMessage": "Partial warning", "states.permissionTitle": "Permission required", "states.permissionMessage": "Denied", "states.noOrgTitle": "Organization required", "states.noOrgMessage": "Choose org",
       "actions.export": "Export server history", "actions.exporting": "Exporting", "actions.partialSourceTitle": "Partial source coverage", "actions.partialSourceSummary": "Partial source", "actions.partialSource": "Source",
       "kpis.transactionCount": "Transactions", "kpis.transactionCountDetail": "Count", "kpis.netMovement": "Net movement", "kpis.netMovementDetail": "Net", "kpis.valueChange": "Value change", "kpis.valueChangeDetail": "Value", "kpis.completeness": "Completeness", "kpis.completenessDetail": "Sources", "completeness.complete": "Complete", "completeness.partial": "Partial",
@@ -17,6 +18,9 @@ jest.mock("next-intl", () => ({
       "types.WRITE_OFF": "Write-off",
     }
     if (key === "table.resultCount") return `${values?.count} visible rows`
+    if (key === "toolbar.selectRow") return `Select ${values?.title}`
+    if (key === "toolbar.selectedRows") return `${values?.selected} of ${values?.total} row(s) selected.`
+    if (key === "toolbar.page") return `Page ${values?.page}`
     if (key === "actions.exportReady") return `Export ready: ${values?.fileName} / ${values?.rowCount} rows`
     return copy[key] ?? key
   },
@@ -46,7 +50,9 @@ describe("InventoryMovementHistoryWorkbench", () => {
     expect(screen.getByRole("heading", { name: "Inventory movement history" })).toBeInTheDocument()
     expect(screen.getAllByText("Write-off").length).toBeGreaterThan(0)
     expect(screen.getByText("Africa/Douala")).toBeInTheDocument()
-    expect(screen.getAllByText(/does not yet authorize an inventory movement proof badge/).length).toBeGreaterThan(0)
+    expect(screen.queryByText(/does not yet authorize an inventory movement proof badge/)).not.toBeInTheDocument()
+    expect(screen.queryByRole("checkbox")).not.toBeInTheDocument()
+    expect(document.querySelector('[data-table-id="inventory.movements"]')).toBeInTheDocument()
   })
 })
 

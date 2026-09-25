@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-08T19:11:11.917Z",
+  "run": "379364fa-e68",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "7f02856ee6ef4b1a500fb5efaf2a052105cb62c6a914525c70458a54e7617a61",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264"
+  },
+  "checks": [],
+  "scope": "Owned localhost receiving, invoice approval, payment request/approval/execution and supplier credit/reversal services. Return/credit service actor arguments are trusted fixture scope, not proof of their public-action authority. Accounting rules and external bank evidence synthetic; no external payment or notification delivery.",
+  "originalBefore": "1458ce2121d8dd8ab6d172e50d7230590872a05b75f6b800ea54f68a4e130fa4",
+  "error": "Source supplier invoice was not found for the return tenant and purchase order.",
+  "errorTail": "Source supplier invoice was not found for the return tenant and purchase order.",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "7f02856ee6ef4b1a500fb5efaf2a052105cb62c6a914525c70458a54e7617a61",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264"
+  },
+  "sourceStable": true
+}

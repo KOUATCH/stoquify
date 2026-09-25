@@ -1,0 +1,124 @@
+{
+  "at": "2026-09-15T11:27:03.281Z",
+  "baseline": "evidence/source-baseline-v152.json",
+  "baselineReceipt": "98469e",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/ai/copilot-proposal.service.ts": "7c1c873d976c11a6455979eddb8bb28e7800abee35a14035d46b2018c1962f38",
+    "services/ai/copilot-proposal.schemas.ts": "ea12abbb09e7a605f811876b82e9a31ad34aa51ab92137db9ae4212b620b2a9e",
+    "components/copilot/CopilotProposalControls.tsx": "173098359ae1c965fc8e85be328bbaac3dca00dc0981049a3d0538167ec8d22f",
+    "actions/ai/copilot-proposal.actions.ts": "66baa4a61a599a917992485bc371af1f2540749ec430b17fc28f769ba8b21c9d",
+    "services/ai/copilot-proposal-release.service.ts": "8ed472e3b680cf7e5a2e66fd06aa5965b7eef34c905f582f9382ce8166fcfc35"
+  },
+  "tests": {
+    "passed": 55,
+    "suites": 5,
+    "receipt": "365b7e",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/ai/__tests__/copilot-proposal.service.test.ts services/ai/__tests__/copilot-proposal-release.service.test.ts actions/ai/__tests__/copilot-proposal.actions.test.ts components/copilot/__tests__/CopilotProposalControls.test.tsx components/agents/__tests__/AgentCommandPanel.test.tsx"
+  },
+  "lint": {
+    "passed": true,
+    "files": 4,
+    "receipt": "e76ea1",
+    "command": "node node_modules/eslint/bin/eslint.js services/ai/copilot-proposal.service.ts services/ai/__tests__/copilot-proposal.service.test.ts components/copilot/CopilotProposalControls.tsx components/copilot/__tests__/CopilotProposalControls.test.tsx"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "4eea68",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/proposal-evidence-v152-036abd66-57c2-4387-b3f6-646a7800046d.json",
+    "receipt": "06102b",
+    "at": "2026-09-15T11:23:47.749Z",
+    "sourceBefore": {
+      "services/ai/copilot-proposal.service.ts": "7c1c873d976c11a6455979eddb8bb28e7800abee35a14035d46b2018c1962f38",
+      "services/ai/copilot-proposal.schemas.ts": "ea12abbb09e7a605f811876b82e9a31ad34aa51ab92137db9ae4212b620b2a9e",
+      "components/copilot/CopilotProposalControls.tsx": "173098359ae1c965fc8e85be328bbaac3dca00dc0981049a3d0538167ec8d22f",
+      "actions/ai/copilot-proposal.actions.ts": "66baa4a61a599a917992485bc371af1f2540749ec430b17fc28f769ba8b21c9d",
+      "services/ai/copilot-proposal-release.service.ts": "8ed472e3b680cf7e5a2e66fd06aa5965b7eef34c905f582f9382ce8166fcfc35"
+    },
+    "checks": {
+      "creationRejectsMisrepresentation": [
+        "blocked",
+        "failed",
+        "stale",
+        "raw",
+        "unavailable",
+        "certification-inflation"
+      ],
+      "downgradedEvidenceBlocksAcceptanceButAllowsRejection": true,
+      "honestStalePreserved": true,
+      "validAcceptanceDifferentReviewerAndTenantPermissionDenials": true,
+      "changedRunBlocksAcceptanceAllowsRejection": true,
+      "concurrentCreateAndRetry": {
+        "outcomes": [
+          "created_or_replayed",
+          "created_or_replayed"
+        ],
+        "singleProposalEventAuditOutbox": true
+      },
+      "concurrentDecisionSingleWinner": true,
+      "noFinancialExecution": true
+    },
+    "scope": "Owned local database; direct domain services with synthetic agent evidence. No approval package created, release bypass, external dispatch or provider execution.",
+    "passed": true,
+    "sourceAfter": {
+      "services/ai/copilot-proposal.service.ts": "7c1c873d976c11a6455979eddb8bb28e7800abee35a14035d46b2018c1962f38",
+      "services/ai/copilot-proposal.schemas.ts": "ea12abbb09e7a605f811876b82e9a31ad34aa51ab92137db9ae4212b620b2a9e",
+      "components/copilot/CopilotProposalControls.tsx": "173098359ae1c965fc8e85be328bbaac3dca00dc0981049a3d0538167ec8d22f",
+      "actions/ai/copilot-proposal.actions.ts": "66baa4a61a599a917992485bc371af1f2540749ec430b17fc28f769ba8b21c9d",
+      "services/ai/copilot-proposal-release.service.ts": "8ed472e3b680cf7e5a2e66fd06aa5965b7eef34c905f582f9382ce8166fcfc35"
+    },
+    "sourceStable": true
+  },
+  "release": {
+    "file": "lanes/environment/proposal-release-gate-v152.json",
+    "receipt": "c988d6",
+    "at": "2026-09-15T11:25:15.607Z",
+    "scope": "Read-only owned database; no activation package or governance evidence written.",
+    "activationPackages": 0,
+    "releaseGateDenied": true,
+    "passed": true
+  },
+  "attempts": [
+    {
+      "receipt": "b6ea16",
+      "result": "Four before-correction tests reproduced acceptance of misrepresented evidence; 13 existing tests passed."
+    },
+    {
+      "receipt": "b77de8",
+      "result": "Service tests could not initialize due to a hoisted mock reference; 21 tests in three other suites passed. Fixture wiring corrected."
+    },
+    {
+      "receipt": "b48adb",
+      "result": "Intermediate 46 tests passed before duplicate citation, typed conflict and EN/FR recovery checks were added."
+    }
+  ],
+  "browser": {
+    "run": false,
+    "reason": "Production caller leaves proposal controls disabled and the owned tenant lacks a governed release. Component tests are not browser evidence."
+  },
+  "migrations": false,
+  "wholeWorkflowComplete": false,
+  "guide": "PROPOSAL_EVIDENCE_V152.md",
+  "coverage": {
+    "discoveredWorkflows": 269,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2926,
+      "tests": 1044,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 191,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

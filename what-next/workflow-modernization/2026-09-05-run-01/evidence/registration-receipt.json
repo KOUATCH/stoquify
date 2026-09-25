@@ -1,0 +1,133 @@
+{
+  "recordedAt": "2026-09-06T09:41:26.878Z",
+  "baseline": "evidence/source-baseline-v21.json",
+  "sources": {
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "services/referrals/referral-attribution.service.ts": "50bf6b94547b11f290bd2c41d2aa941f78ab9ac11bf027434d52c10eab9ff3fd",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "tests": {
+    "file": "evidence/registration-final-regression-02.json",
+    "passed": 201,
+    "failed": 0,
+    "suites": 14,
+    "exitCode": 0,
+    "chunk": "9c686c"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "ab4882"
+  },
+  "lint": {
+    "files": 14,
+    "exitCode": 0,
+    "chunk": "34c5e2"
+  },
+  "diffCheck": {
+    "exitCode": 0,
+    "chunk": "269eca"
+  },
+  "serviceBoundary": {
+    "file": "evidence/registration-boundaries.json",
+    "activeViolations": 0,
+    "exitCode": 0,
+    "chunk": "269eca"
+  },
+  "postgres": {
+    "file": "lanes/environment/registration-postgres-9822b38e-ca2.json",
+    "passed": 15,
+    "failed": 0
+  },
+  "browser": {
+    "file": "lanes/environment/registration-browser-302d184a-2c6.json",
+    "passed": 4,
+    "failed": 0,
+    "scope": "EN/FR recovery on both forms; no premature guided submission; actual French cooldown"
+  },
+  "screenshots": [
+    {
+      "file": "evidence/registration/register-v2-en-entry-302d184a-2c6.png",
+      "sha256": "e97075190baaabc93cacbdc6cad3214f8e16067c1f9ae79395f0d33b6f43cde7"
+    },
+    {
+      "file": "evidence/registration/register-v2-en-ready-302d184a-2c6.png",
+      "sha256": "c3c56733bab5c91ba68ae6ae98a4b449606bb2788aae9baa8de118fda0447614"
+    },
+    {
+      "file": "evidence/registration/register-v2-en-recovery-302d184a-2c6.png",
+      "sha256": "4820b91817f0962f53a57793ea316a17668835e4640e42ef6face5a24cde7bda"
+    },
+    {
+      "file": "evidence/registration/register-v2-fr-entry-302d184a-2c6.png",
+      "sha256": "7e271d34a05000289d561095ab4829c68a17ca32ba77622643170e938f16c7a1"
+    },
+    {
+      "file": "evidence/registration/register-v2-fr-ready-302d184a-2c6.png",
+      "sha256": "f0a2fa012dc9f636a977837ad258a7b8975140cb0643cc87fef7d482c830d7d7"
+    },
+    {
+      "file": "evidence/registration/register-v2-fr-recovery-302d184a-2c6.png",
+      "sha256": "c961cabe2ba0b575f86481ac41f49f001e9d88f887ae54cf6bc723f36ad44da2"
+    },
+    {
+      "file": "evidence/registration/register-en-entry-302d184a-2c6.png",
+      "sha256": "9461080e3186562896e67e92f93ad19c83c36ac7222d82009b1c789fb4ffa7a9"
+    },
+    {
+      "file": "evidence/registration/register-en-required-302d184a-2c6.png",
+      "sha256": "09cfcf9f1365b7cabceef817443c842c22da6046021c7184f6ec4f6da1e9615a"
+    },
+    {
+      "file": "evidence/registration/register-en-company-302d184a-2c6.png",
+      "sha256": "498b8b61d1c7e1b64f05ded2a62b17c4dddc06320873dfd94b8d1a32f06e29ad"
+    },
+    {
+      "file": "evidence/registration/register-en-ready-302d184a-2c6.png",
+      "sha256": "834bd912d12353020faf6513fc890606d31ce706bdf189c962f91c431409e8fa"
+    },
+    {
+      "file": "evidence/registration/register-en-recovery-302d184a-2c6.png",
+      "sha256": "8e8118c98e460acdfc789f239125f9c4f057935090342e38f13af81b87eb6321"
+    },
+    {
+      "file": "evidence/registration/register-fr-entry-302d184a-2c6.png",
+      "sha256": "0d4e7be761558c7ee6098e60524cf2bc79753ff43c5d979b483541a2ffbbad1e"
+    },
+    {
+      "file": "evidence/registration/register-fr-required-302d184a-2c6.png",
+      "sha256": "6c77519c636078aa8174652ecfa22c47ce53cdc783627df407102c1e015257c6"
+    },
+    {
+      "file": "evidence/registration/register-fr-company-302d184a-2c6.png",
+      "sha256": "cd785a2c02f3ee57397d5c9888e0e0ed7792c0dd785554353347ff4d51bd6b0a"
+    },
+    {
+      "file": "evidence/registration/register-fr-ready-302d184a-2c6.png",
+      "sha256": "9e80e28e8fe17e1312f855cc536f9db4633cf080cfc543c4db215a11db252688"
+    },
+    {
+      "file": "evidence/registration/register-fr-recovery-302d184a-2c6.png",
+      "sha256": "62e2518d3ffd3e4fe4c2637bbeac47433b4bd285119d4eda014a7303bd143f83"
+    },
+    {
+      "file": "evidence/registration/register-fr-cooldown-302d184a-2c6.png",
+      "sha256": "fdb0c32685a40062382dcd012ea8b26e6f55551d809a838f495789372f7c5bac"
+    }
+  ],
+  "historicalBrowser": "lanes/environment/registration-browser-ecabe11e-67c.json",
+  "pending": "Guided final explicit-submit success after review-button fix; real IP retryAt 2026-09-06T10:25:18.544Z",
+  "liveEmailsSent": 0,
+  "productionMutations": 0,
+  "completeWorkflowVerified": false
+}

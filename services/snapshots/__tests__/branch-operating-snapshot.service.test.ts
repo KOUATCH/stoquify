@@ -49,6 +49,20 @@ const mockDb = db as unknown as {
 };
 
 describe("branch operating snapshot payroll allocation proof", () => {
+  it("does not establish an overdue count for an unavailable tenant location", async () => {
+    mockDb.location.findFirst.mockResolvedValue(null)
+    const result = await getBranchOperatingSnapshot({ organizationId: "org-1", locationId: "foreign-location" })
+    expect(result.status).toBe("blocked")
+    expect(result.metrics.overduePurchaseOrderCount).toBeNull()
+    expect(result.blockers).toEqual(expect.arrayContaining([expect.objectContaining({ gate: "tenant_isolation" })]))
+  })
+  it("counts overdue orders only inside the requested tenant and branch", async () => {
+    mockDb.purchaseOrder.count.mockImplementation(({ where }) => Promise.resolve(where.expectedDeliveryDate ? 1 : 4))
+    const now = new Date("2026-06-30T12:00:00.000Z")
+    const result = await getBranchOperatingSnapshot({ organizationId: "org-1", locationId: "loc-1", now })
+    expect(mockDb.purchaseOrder.count).toHaveBeenCalledWith({ where: { organizationId: "org-1", locationId: "loc-1", deletedAt: null, status: { in: ["SUBMITTED", "APPROVED", "PARTIALLY_RECEIVED"] }, expectedDeliveryDate: { lt: now } } })
+    expect(result.metrics).toMatchObject({ pendingPurchaseOrderCount: 4, overduePurchaseOrderCount: 1 })
+  })
   beforeEach(() => {
     jest.clearAllMocks();
     setupBranchData();

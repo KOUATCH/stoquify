@@ -1,4 +1,5 @@
 import { createHash } from "crypto";
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service";
 import {
   AccountingPostingPurpose,
   AccountingSourceType,
@@ -5093,6 +5094,8 @@ export async function createPayrollPeriod(
     });
     if (existing) return { payrollPeriod: existing, created: false };
 
+    await assertModuleNewWorkInTx(tx, { organizationId: parsed.organizationId, moduleSlug: "payroll", operation: "payroll.period.create" });
+
     const countryPack = await resolvePayrollCountryPackStatus(tx, {
       organizationId: parsed.organizationId,
       countryCode: parsed.countryCode,
@@ -5397,6 +5400,9 @@ export async function calculatePayrollRun(
     }
 
     const isCorrectionRun = parsed.runType === PayrollRunType.CORRECTION;
+    if (!isCorrectionRun) {
+      await assertModuleNewWorkInTx(tx, { organizationId: parsed.organizationId, moduleSlug: "payroll", operation: "payroll.run.calculate" });
+    }
     if (isCorrectionRun && !parsed.originalRunId) {
       throw new BusinessRuleError(
         "Payroll correction runs require an original payroll run.",

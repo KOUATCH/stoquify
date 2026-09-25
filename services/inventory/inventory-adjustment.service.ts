@@ -11,6 +11,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { assertStockAdjustmentAdmissionInTx } from "@/services/modules/module-inventory-continuation.service"
 import { createLedgerPostingBatch } from "@/services/accounting/posting.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
@@ -885,6 +886,7 @@ export async function createStockAdjustment(
 ) {
   const parsed = createStockAdjustmentInputSchema.parse(input)
   const run = async (tx: Prisma.TransactionClient) => {
+    await assertStockAdjustmentAdmissionInTx(tx, parsed)
     const adjustmentDate = parsed.adjustmentDate ?? new Date()
     const location = await tx.location.findFirst({
       where: {

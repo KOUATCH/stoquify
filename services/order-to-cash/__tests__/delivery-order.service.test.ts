@@ -2,6 +2,8 @@ jest.mock("@/prisma/db", () => ({
   db: { $transaction: jest.fn() },
 }))
 
+jest.mock("@/services/modules/module-admission.service", () => ({ assertModuleNewWorkInTx: jest.fn() }))
+
 jest.mock("@/services/events/business-event.service", () => ({
   hashBusinessPayload: jest.fn((value: unknown) => `hash:${JSON.stringify(value)}`),
   recordBusinessEventInTx: jest.fn(),
@@ -37,6 +39,7 @@ jest.mock("@/services/compliance/country-pack-hooks", () => ({
 
 import { Prisma, SalesOrderStatus } from "@prisma/client"
 import { db } from "@/prisma/db"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
 import { ensurePostedCustomerReceivableDocumentInTx } from "@/services/accounting/customer-receivable-document.service"
 import {
@@ -54,6 +57,7 @@ import {
 } from "@/services/inventory/inventory-stock-event.service"
 import {
   confirmDeliveryOrder,
+  createDeliveryOrder,
   createDeliveryBillingOutcome,
   postDeliveryGoodsIssue,
 } from "../delivery-order.service"
@@ -71,7 +75,7 @@ const mockCreateLedgerEntry = createCustomerLedgerEntry as jest.Mock
 
 const mockTx = {
   businessEvent: { findUnique: jest.fn() },
-  salesOrder: { findFirst: jest.fn(), updateMany: jest.fn() },
+  salesOrder: { findFirst: jest.fn(), create: jest.fn(), updateMany: jest.fn() },
   salesOrderLine: { update: jest.fn() },
   deliveryReservation: { create: jest.fn(), update: jest.fn() },
   deliveryReservationLine: { update: jest.fn() },
@@ -139,6 +143,7 @@ function order(status: SalesOrderStatus, version: number) {
 describe("governed delivery order service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(assertModuleNewWorkInTx as jest.Mock).mockReset().mockResolvedValue(undefined)
     mockDb.$transaction.mockImplementation(async (callback: (tx: typeof mockTx) => unknown) => callback(mockTx))
     mockTx.businessEvent.findUnique.mockResolvedValue(null)
     mockTx.auditLog.create.mockResolvedValue({ id: "audit-1" })
@@ -148,6 +153,35 @@ describe("governed delivery order service", () => {
     mockTx.deliveryGoodsIssueLine.updateMany.mockResolvedValue({ count: 1 })
     mockRecordEvent.mockResolvedValue({ event: { id: "event-1" }, created: true })
     mockMarkEvent.mockResolvedValue({})
+  })
+
+  it("stops a new delivery order before creating or reserving anything", async () => {
+    ;(assertModuleNewWorkInTx as jest.Mock).mockRejectedValueOnce(new Error("New work stopped"))
+    await expect(createDeliveryOrder({
+      organizationId: "org-1", actorId: "actor-1", commandId: "create-1",
+      customerId: "customer-1", locationId: "loc-1", lines: [{ itemId: "item-1", quantity: "2" }],
+    })).rejects.toThrow("New work stopped")
+    expect(assertModuleNewWorkInTx).toHaveBeenCalledWith(mockTx, {
+      organizationId: "org-1", moduleSlug: "sales", operation: "sales.delivery-order.create",
+    })
+    expect(mockTx.salesOrder.create).not.toHaveBeenCalled()
+    expect(mockReserveStock).not.toHaveBeenCalled()
+  })
+
+  it("returns an existing creation command before considering a new-work stop", async () => {
+    const input = {
+      organizationId: "org-1", actorId: "actor-1", commandId: "create-1",
+      customerId: "customer-1", locationId: "loc-1", lines: [{ itemId: "item-1", quantity: "2" }],
+    }
+    mockTx.businessEvent.findUnique.mockResolvedValue({
+      id: "event-existing", eventType: "delivery.order.created", status: "APPLIED", sourceId: "order-1",
+      payloadHash: mockHash({ commandType: "CREATE_DELIVERY_ORDER", schemaVersion: 1, commandId: "create-1",
+        customerId: "customer-1", locationId: "loc-1", dueDate: null, deliveryAddress: null, notes: null, lines: input.lines }),
+    })
+    mockTx.salesOrder.findFirst.mockResolvedValue(order(SalesOrderStatus.DRAFT, 0))
+    await expect(createDeliveryOrder(input)).resolves.toMatchObject({ replayed: true, order: { id: "order-1" } })
+    expect(assertModuleNewWorkInTx).not.toHaveBeenCalled()
+    expect(mockTx.salesOrder.create).not.toHaveBeenCalled()
   })
 
   it("returns the original tenant-scoped result for an identical duplicate command", async () => {

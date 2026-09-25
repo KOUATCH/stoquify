@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-09T09:36:21.784Z",
+  "run": "4fa477da-1c4",
+  "checks": [
+    "Actual initial posting and independently reviewed approval retained",
+    "Durable proposal retries preserve one record; changed payload under the same key conflicts",
+    "Self-approval, stale authentication and missing reversal permission produce no financial effects",
+    "Foreign scope and stale independent review are refused without mutation",
+    "Rejection and retry retain the original posting and immutable decision",
+    "Injected late audit failure rolls back journals, batches, source changes, receipt and notifications together"
+  ],
+  "sourcesBefore": {
+    "services/reconciliation/payment-suspense-correction.service.ts": "ccb1195f046afa8430960b77dbebf8777e8fbf83f879a7382ecac3f1295e5ed1",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "e7ca33a4772e4bc820d32e93a6b65947a3869e73b8f015a5f4e0783238cef8be",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "0eea59f8ac2d246b043e895cc7ef4be1d2cdb020c45655d716599d23bcdb3869",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "2124a02b9147e1dbfcea3c38ea9c7aa525ad6e8fcf9cddb340d92ee0b5632492",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "329d8eebe7bbfb6e2d8b55ccd5303e75076664e1a8e4d6e5c217365e17060139",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "9ed6f44807e2efb76ca0555a086cd4589ca41c7c1bc7a31c97edbbb4497303e8",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+  },
+  "scope": "Owned synthetic source correction, original/counter-journal/reposting, transaction rollback and retained evidence. No live operation or professional approval.",
+  "originalBefore": "f97ff143dde76ea9642c35700110c21d9ffc98691fcc6a60b69164d4c0172f8b",
+  "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'P2010'\n- 'CONFLICT'\n",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-suspense-correction.service.ts": "ccb1195f046afa8430960b77dbebf8777e8fbf83f879a7382ecac3f1295e5ed1",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "e7ca33a4772e4bc820d32e93a6b65947a3869e73b8f015a5f4e0783238cef8be",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "0eea59f8ac2d246b043e895cc7ef4be1d2cdb020c45655d716599d23bcdb3869",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "2124a02b9147e1dbfcea3c38ea9c7aa525ad6e8fcf9cddb340d92ee0b5632492",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "329d8eebe7bbfb6e2d8b55ccd5303e75076664e1a8e4d6e5c217365e17060139",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "9ed6f44807e2efb76ca0555a086cd4589ca41c7c1bc7a31c97edbbb4497303e8",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+  },
+  "sourceStable": true
+}

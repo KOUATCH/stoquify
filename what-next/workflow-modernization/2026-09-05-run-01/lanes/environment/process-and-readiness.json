@@ -1,0 +1,44 @@
+{
+  "observedAt": "2026-09-05T16:51:08.0977320Z",
+  "sessionId": 87013,
+  "listener": {
+    "address": "127.0.0.1",
+    "port": 3107
+  },
+  "processes": [
+    {
+      "pid": 14224,
+      "parentPid": 15800,
+      "name": "node.exe",
+      "command": "\"C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe\" scripts/modern-modules-local-verification.js start"
+    },
+    {
+      "pid": 26804,
+      "parentPid": 14224,
+      "name": "node.exe",
+      "command": "\"C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe\" \"E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\next\\dist\\bin\\next\" dev -H 127.0.0.1 -p 3107"
+    },
+    {
+      "pid": 30240,
+      "parentPid": 26804,
+      "name": "node.exe",
+      "command": "\"C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe\" \"E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12\\node_modules\\next\\dist\\server\\lib\\start-server.js\""
+    }
+  ],
+  "readOnlyGuardStatus": {
+    "database": "stoquify_local_modern_modules_20260905_01",
+    "migrationReady": true,
+    "completedMigrations": [
+      "20260905170000_add_tenant_module_composition",
+      "20260905173000_protect_module_configuration_authority",
+      "20260905200000_add_module_lifecycle_command_state",
+      "20260905200100_add_module_lifecycle"
+    ],
+    "fixtureCount": 5,
+    "exclusivelyOwned": true,
+    "baseURL": "http://127.0.0.1:3107"
+  },
+  "restarted": false,
+  "otherPortsTargeted": false,
+  "meaning": "Revalidated existing owned development environment. No migrations, seeding, fixture changes or other process operations."
+}

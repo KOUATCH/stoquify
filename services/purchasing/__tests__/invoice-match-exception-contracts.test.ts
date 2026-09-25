@@ -1,0 +1,12 @@
+import { invoiceMatchExceptionCommandSchema, invoiceMatchExceptionDraftSchema, invoiceMatchExceptionDecisionSchema } from "../invoice-match-exception-contracts"
+const request = { kind: "request" as const, invoiceId: "invoice", reason: "Supplier price correction", evidenceReference: "https://example.invalid/proof", expiresAt: "2026-10-01T10:00:00+02:00" }
+test("accepts a bounded request with explicit timezone", () => { expect(invoiceMatchExceptionDraftSchema.parse(request)).toEqual(request) })
+test.each(["organizationId", "actorId", "approvedById"])("rejects client authority field %s", field => { expect(invoiceMatchExceptionDraftSchema.safeParse({ ...request, [field]: "forged" }).success).toBe(false) })
+test("requires a rejection reason", () => { expect(invoiceMatchExceptionDraftSchema.safeParse({kind:"review",invoiceId:"invoice",exceptionId:"exception",decision:"REJECT"}).success).toBe(false) })
+test.each(["APPROVED", "REJECTED"])("unverified evidence may only support refusal: %s", status => {
+  const result={organizationId:"org",actorId:"reviewer",invoiceId:"invoice",invoiceNumber:"INV",exceptionId:"exception",kind:"review",status,requestReference:"request-1",reviewedRevision:"a".repeat(64),recordedAt:"2026-09-08T10:00:00Z",sourceEventId:"event",sourceVerification:"UNVERIFIED",expiresAt:"2026-10-01T10:00:00Z",variance:"200.00",currency:"XAF"}
+  expect(invoiceMatchExceptionDecisionSchema.safeParse(result).success).toBe(status === "REJECTED")
+})
+test("does not accept a timezone-free expiry", () => { expect(invoiceMatchExceptionDraftSchema.safeParse({...request,expiresAt:"2026-10-01T10:00:00"}).success).toBe(false) })
+test("binds a command to a source revision and exact request", () => { expect(invoiceMatchExceptionCommandSchema.safeParse({draft:request,expectedRevision:"a".repeat(64),idempotencyKey:"request-1"}).success).toBe(true); expect(invoiceMatchExceptionCommandSchema.safeParse({draft:request,idempotencyKey:"request-1"}).success).toBe(false) })
+test("rejects a request reported as approved", () => { expect(invoiceMatchExceptionDecisionSchema.safeParse({organizationId:"org",actorId:"maker",invoiceId:"invoice",invoiceNumber:"INV",exceptionId:"exception",kind:"request",status:"APPROVED",requestReference:"request-1",reviewedRevision:"a".repeat(64),recordedAt:"2026-09-08T10:00:00Z",sourceEventId:"event",expiresAt:"2026-10-01T10:00:00Z",variance:"200.00",currency:"XAF"}).success).toBe(false) })

@@ -1,5 +1,7 @@
 "use client"
 
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+
 import { useMemo, useState, useTransition } from "react"
 import {
   AlertTriangle,
@@ -151,7 +153,7 @@ export function CashCommandDashboard({ data, locale, title, subtitle }: CashComm
 
   return (
     <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 text-[var(--dash-text)] sm:px-6 sm:py-6">
         <BICommandBriefHeader
           brief={data.commandBrief}
           mode={commandMode}
@@ -184,7 +186,14 @@ export function CashCommandDashboard({ data, locale, title, subtitle }: CashComm
           </div>
         </section>
 
+        <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
+          { id: "cash-signals", label: t.trustBanner },
+          { id: "cash-actions", label: t.actionToday },
+          { id: "cash-risks", label: t.cashRisks },
+        ]} />
+        <div id="cash-signals" className="scroll-mt-24">
         <CashTrustBanner signals={data.trustSignals} title={t.trustBanner} detail={t.trustBannerDetail} />
+        </div>
 
         <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {data.cards.map((card) => (
@@ -192,7 +201,7 @@ export function CashCommandDashboard({ data, locale, title, subtitle }: CashComm
           ))}
         </section>
 
-        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.85fr)]">
+        <section id="cash-actions" className="grid min-w-0 scroll-mt-24 gap-4 2xl:grid-cols-2">
           <BIWhatChangedStrip
             changes={data.changes}
             title={t.whatChanged}
@@ -216,7 +225,7 @@ export function CashCommandDashboard({ data, locale, title, subtitle }: CashComm
           </section>
         ) : null}
 
-        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(340px,0.75fr)]">
+        <section id="cash-risks" className="grid min-w-0 scroll-mt-24 gap-4 2xl:grid-cols-2">
           <BIRiskOpportunityRadar
             risks={data.risks}
             title={t.cashRisks}

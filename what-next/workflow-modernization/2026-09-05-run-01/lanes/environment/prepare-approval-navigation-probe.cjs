@@ -1,0 +1,8 @@
+const fs=require('fs'),path=require('path');
+let code=fs.readFileSync(path.join(__dirname,'verify-purchase-approval-browser.cjs'),'utf8');
+const detail=code.indexOf('  const start=Date.now();'),register=code.indexOf('  const original=await order',detail);if(detail<0||register<0)throw Error('Missing detail anchors');code=code.slice(0,detail)+code.slice(register);
+const submit=code.indexOf('  await db.role.update',code.indexOf("await shot('register-review')")),end=code.indexOf('\n }catch(e)',submit);if(submit<0||end<0)throw Error('Missing register anchors');
+code=code.slice(0,submit)+"  await new Promise(resolve=>setTimeout(resolve,2500));result.dialogStillOpen=await dialog().isVisible();result.history=await page.evaluate(()=>window.__ownedHistory);result.currentPath=new URL(page.url()).pathname;await shot('after-navigation');result.passed=result.dialogStillOpen;"+code.slice(end);
+code=code.replace("page.on('pageerror',e=>result.pageErrors.push(f.safe(e,secrets)));", "page.on('pageerror',e=>result.pageErrors.push(f.safe(e,secrets)));await page.addInitScript(()=>{window.__ownedHistory=[];for(const name of ['pushState','replaceState']){const original=history[name];history[name]=function(...args){const url=new URL(args[2]||location.href,location.href);window.__ownedHistory.push({at:Date.now(),name,path:url.pathname,search:url.search,stack:new Error().stack});return original.apply(this,args)}}});");
+code=code.replace("file='purchase-approval-browser-'", "file='purchase-approval-navigation-probe-'");
+fs.writeFileSync(path.join(__dirname,'verify-purchase-approval-navigation.cjs'),code,{flag:'wx'});console.log('Prepared purchase-route navigation diagnosis.');

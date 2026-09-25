@@ -711,7 +711,7 @@ describe("payroll declaration lifecycle service", () => {
       tx,
       expect.objectContaining({
         eventType: "payroll.declaration.submitted",
-        sourceType: "PAYROLL_DECLARATION",
+        sourceEntityType: "PAYROLL_DECLARATION",
         documentHash: expect.stringMatching(/^sha256:/),
         payload: expect.objectContaining({
           countryPackRegisterProofHash: "sha256:country-pack-register-proof",

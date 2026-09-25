@@ -715,6 +715,8 @@ export type DetailDrawerProps = {
   description?: string
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  onCloseAutoFocus?: (event: Event) => void
+  closeLabel?: string
   trigger?: ReactNode
   metadata?: CommandMetadataItem[]
   actions?: CommandCenterAction[]
@@ -727,6 +729,8 @@ export function DetailDrawer({
   description,
   open,
   onOpenChange,
+  onCloseAutoFocus,
+  closeLabel,
   trigger,
   metadata = [],
   actions = [],
@@ -738,6 +742,8 @@ export function DetailDrawer({
       {trigger ? <SheetTrigger asChild>{trigger}</SheetTrigger> : null}
       <SheetContent
         side="right"
+        onCloseAutoFocus={onCloseAutoFocus}
+        closeLabel={closeLabel}
         className={cn(
           "enterprise-floating-surface flex h-full w-[min(92vw,42rem)] flex-col overflow-y-auto border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-5 text-[var(--dash-text)] sm:max-w-xl",
           className,

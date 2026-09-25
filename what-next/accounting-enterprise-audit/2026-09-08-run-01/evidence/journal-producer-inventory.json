@@ -1,0 +1,118 @@
+{
+  "recordedAt": "2026-09-08T12:10:27.199Z",
+  "filesScanned": 499,
+  "pattern": "journalEntry(Line)?.(create|update|delete)",
+  "matches": [
+    {
+      "file": "services/accounting/customer-settlement-reversal.service.ts",
+      "line": 711,
+      "text": "  const reversal = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/accounting/customer-settlement-reversal.service.ts",
+      "line": 761,
+      "text": "  const originalClaim = await tx.journalEntry.updateMany({"
+    },
+    {
+      "file": "services/accounting/customer-settlement.service.ts",
+      "line": 602,
+      "text": "  const journalEntry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/accounting/journals.service.ts",
+      "line": 319,
+      "text": "    const entry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/accounting/journals.service.ts",
+      "line": 361,
+      "text": "    const saved = await tx.journalEntry.update({"
+    },
+    {
+      "file": "services/accounting/posting.service.ts",
+      "line": 300,
+      "text": "    const posted = await tx.journalEntry.update({"
+    },
+    {
+      "file": "services/accounting/posting.service.ts",
+      "line": 449,
+      "text": "    const reversal = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/accounting/posting.service.ts",
+      "line": 497,
+      "text": "    await tx.journalEntry.update({"
+    },
+    {
+      "file": "services/accounting/postings/pos-reversal-helpers.ts",
+      "line": 489,
+      "text": "  const entry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/accounting/postings/post-delivery-order.ts",
+      "line": 235,
+      "text": "  const journalEntry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/accounting/postings/post-payment.ts",
+      "line": 612,
+      "text": "  const entry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/accounting/postings/post-sale.ts",
+      "line": 549,
+      "text": "  const entry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/inventory/inventory-adjustment-reversal.service.ts",
+      "line": 620,
+      "text": "    const reversalJournal = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/inventory/inventory-adjustment-reversal.service.ts",
+      "line": 664,
+      "text": "    await tx.journalEntry.update({"
+    },
+    {
+      "file": "services/inventory/inventory-adjustment.service.ts",
+      "line": 800,
+      "text": "    const journalEntry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 4345,
+      "text": "  const journalEntry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 4824,
+      "text": "  const journalEntry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/payroll/payroll-employee-balance.service.ts",
+      "line": 566,
+      "text": "  const journalEntry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 900,
+      "text": "  const journalEntry = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/purchasing/purchase-correction-ledger.service.ts",
+      "line": 115,
+      "text": "  const reversal = await tx.journalEntry.create({"
+    },
+    {
+      "file": "services/purchasing/purchase-correction-ledger.service.ts",
+      "line": 157,
+      "text": "  await tx.journalEntry.update({"
+    },
+    {
+      "file": "services/reconciliation/payment-suspense-ledger.service.ts",
+      "line": 504,
+      "text": "  const entry = await tx.journalEntry.create({"
+    }
+  ],
+  "note": "Literal Prisma writer inventory, not proof that aliases or raw SQL cannot exist."
+}

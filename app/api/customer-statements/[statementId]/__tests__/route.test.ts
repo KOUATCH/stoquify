@@ -66,6 +66,8 @@ describe("GET /api/customer-statements/[statementId]", () => {
     const response = await GET(request("http://localhost/api/customer-statements/statement-1"), params())
 
     expect(response.status).toBe(404)
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store, max-age=0")
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer")
     expect(mockGetPublicCustomerStatement).not.toHaveBeenCalled()
     expect(mockJsonErrorEnvelopeResponse.mock.calls[0][0]).toBeInstanceOf(NotFoundError)
   })

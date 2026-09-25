@@ -1,0 +1,100 @@
+{
+  "at": "2026-09-09T15:29:44.722Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v108.json",
+  "changed": [
+    "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts",
+    "services/reconciliation/payment-reconciliation-run.service.ts",
+    "services/reconciliation/payment-suspense-workflow.service.ts"
+  ],
+  "sources": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "e8c1ca1f576e8c6558d15c56ff4d4fa4ee8e09fac9d08262d4e5fbbe42b1d95e",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "c76eb0b30ca1f36873f8441c5d23d822f9c39d7935cf174472cdc59cf41651ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "282e5f3c51bc78751cc041d535e576c10e0afe2e1fee362ce47c0639b06fcef5",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "components/finance/PaymentSuspenseQueue.tsx": "60ea5deb3dca35ccb53ab15223ac48f9b9cc0588b9553dd82a20aa483abb137b",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "messages/en.json": "ac33ea9b16ba905ca9e8fe1e1636976ccdcee03d80332a1c9e02db4b5e0383d5",
+    "messages/fr.json": "41fd32d42c023559dc68537877ff33160bddd9bfcc82f4c70f72d669a7155866",
+    "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts": "9b28da1e6749129ca94e0b42aaaf67d5d3df1efc46a02656504403536e8cb7c7",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts": "2bbab49bbda9c7f125a457950d78b94314be56b925fba0e44d16afd82f8dab1d",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "317a0b178e9d8ac3ee52ebdae8b9dbf26d04c3d7f6c01724da83d04060a4ba5c"
+  },
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat",
+  "tests": {
+    "file": "evidence/reconciliation-exception-link-v108-final-tests.json",
+    "passed": 67,
+    "suites": 4,
+    "receipt": "ac1467"
+  },
+  "typecheck": {
+    "receipt": "15041f",
+    "exitCode": 0
+  },
+  "lint": {
+    "receipt": "8cbe58",
+    "files": 5,
+    "exitCode": 0
+  },
+  "runtime": {
+    "file": "lanes/environment/reconciliation-exception-link-v108-7614fbba-e73.json",
+    "checkGroups": 6,
+    "genuineTwoClientRaceVerified": false,
+    "originalUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/reconciliation-exception-link-v108-browser-597c6c56-277.json",
+    "artifacts": "evidence/reconciliation-exception-link-v108-files",
+    "screenshots": 4,
+    "financialUnchanged": true,
+    "journeys": [
+      {
+        "locale": "en",
+        "passed": true,
+        "pageErrors": [],
+        "consoleIssues": [],
+        "routeLoadMs": [
+          21485,
+          12990
+        ]
+      },
+      {
+        "locale": "fr",
+        "passed": true,
+        "pageErrors": [],
+        "consoleIssues": [
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1788967518050 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1788967529444 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1788967532089 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+        ],
+        "routeLoadMs": [
+          11778,
+          10121
+        ]
+      }
+    ]
+  },
+  "coverage": {
+    "discoveredWorkflows": 233,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2825,
+      "tests": 997,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 169,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2435,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "nextAction": "Controlled historical-link repair and genuine exception-review/ready/sign/export/reopening handoff; continue the full platform register."
+}

@@ -16,7 +16,7 @@ export default function DashboardNotFound() {
       primaryHref={`/${resolvedLocale}/dashboard`}
       primaryLabel={resolvedLocale === "fr" ? "Retour au tableau de bord" : "Back to dashboard"}
       secondaryHref={`/${resolvedLocale}/dashboard/owner-war-room`}
-      secondaryLabel={resolvedLocale === "fr" ? "Ouvrir war room" : "Open owner war room"}
+      secondaryLabel={resolvedLocale === "fr" ? "Ouvrir le pilotage de la direction" : "Open owner war room"}
     />
   )
 }

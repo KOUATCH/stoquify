@@ -1,7 +1,11 @@
 "use client"
 
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useLocale, useTranslations } from "next-intl"
+import { localizePath, pickLocale } from "@/i18n/routing"
 import type { CSSProperties } from "react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { format } from "date-fns"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -18,6 +22,9 @@ import {
   XCircle,
 } from "lucide-react"
 
+import { getCoreRowModel, useReactTable, type PaginationState } from "@tanstack/react-table"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -31,8 +38,7 @@ import { useClientAuth } from "@/hooks/useClientAuth"
 import { useTransfers } from "@/hooks/useTransferQueries"
 import type { TransferPriority, TransferStatus } from "@/types/inventoryMovementTypes"
 
-import { CreateTransferModal } from "./CreateTransferModal"
-import { TransferDetailsModal } from "./TransferDetailsModal"
+
 
 type StatusConfig = {
   Icon: LucideIcon
@@ -137,21 +143,46 @@ export function TransferDashboard() {
   const [selectedFromLocation, setSelectedFromLocation] = useState("all")
   const [selectedToLocation, setSelectedToLocation] = useState("all")
   const [searchQuery, setSearchQuery] = useState("")
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [selectedTransfer, setSelectedTransfer] = useState<string | null>(null)
+  const locale = pickLocale(useLocale())
+  const copy = useTranslations("inventoryTransferCreate")
+  const router = useRouter()
+  const workflowCopy = useTranslations("inventoryTransferLifecycle")
+  const [awaitingReceipt, setAwaitingReceipt] = useState(false)
+  const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
+  useEffect(() => { setPagination(current => ({ ...current, pageIndex: 0 })) }, [orgId, searchQuery, selectedStatus, selectedFromLocation, selectedToLocation, awaitingReceipt])
+  const openTransfer = (id: string) => router.push(localizePath(`/dashboard/inventory/transfers/${id}`, locale))
 
-  const { data: transfersResponse, isLoading: transfersLoading } = useTransfers(orgId, {
+  const { data: transfersResponse, isLoading: transfersLoading, isError, error, refetch, isFetching, isPlaceholderData, pagination: serverPagination } = useTransfers(orgId, {
     search: searchQuery || undefined,
     status: selectedStatus === "all" ? undefined : selectedStatus,
     fromLocationId: selectedFromLocation === "all" ? undefined : selectedFromLocation,
     toLocationId: selectedToLocation === "all" ? undefined : selectedToLocation,
-    page: 1,
-    limit: 50,
+    awaitingReceipt,
+    page: pagination.pageIndex + 1,
+    limit: pagination.pageSize,
   })
 
   const { data: locationsResponse } = useOrgLocationsNew(orgId, { enabled: !!orgId })
 
   const transfers = useMemo(() => transfersResponse ?? [], [transfersResponse])
+  const pageCount = Math.max(1, serverPagination?.totalPages ?? 1)
+  const table = useReactTable({
+    data: transfers,
+    columns: [],
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    pageCount,
+    state: { pagination },
+    onPaginationChange: updater => setPagination(current => {
+      const next = typeof updater === "function" ? updater(current) : updater
+      return next.pageSize !== current.pageSize ? { ...next, pageIndex: 0 } : next
+    }),
+  })
+  useEffect(() => {
+    if (!isFetching && !isPlaceholderData && !isError && serverPagination && pagination.pageIndex >= pageCount) {
+      setPagination(current => ({ ...current, pageIndex: pageCount - 1 }))
+    }
+  }, [isFetching, isPlaceholderData, isError, serverPagination, pagination.pageIndex, pageCount])
   const locations = useMemo(() => locationsResponse?.data ?? [], [locationsResponse?.data])
   const isLoading = auth.isLoading || transfersLoading
   const hasFilters =
@@ -232,8 +263,13 @@ export function TransferDashboard() {
   ]
 
   return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+    <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto flex w-full max-w-[88rem] min-w-0 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
+        {isError && <div role="alert" className="rounded-xl border border-[var(--dash-danger)] p-4 text-[var(--dash-danger)]"><p>{error.message}</p><Button variant="outline" onClick={() => refetch()}>{workflowCopy("retry")}</Button></div>}
+        <div className="flex flex-wrap gap-2" aria-label={workflowCopy("allTransfers")}>
+          <Button variant={awaitingReceipt ? "outline" : "default"} onClick={() => setAwaitingReceipt(false)}>{workflowCopy("allTransfers")}</Button>
+          <Button variant={awaitingReceipt ? "default" : "outline"} onClick={() => { setAwaitingReceipt(true); setSelectedStatus("all") }}>{workflowCopy("awaitingReception")}</Button>
+        </div>
         <section className="flex min-w-0 flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
           <div className="min-w-0 max-w-3xl">
             <div className="dashboard-eyebrow mb-4">
@@ -255,12 +291,10 @@ export function TransferDashboard() {
             </div>
           </div>
           <Button
-            type="button"
-            onClick={() => setShowCreateModal(true)}
+            asChild
             className="dashboard-button-create h-10 w-full rounded-lg px-4 sm:w-auto"
           >
-            <Plus className="h-4 w-4" />
-            Create Transfer
+            <Link href={localizePath("/dashboard/inventory/transfers/create", locale)}><Plus className="h-4 w-4" />{copy("create")}</Link>
           </Button>
         </section>
 
@@ -306,7 +340,7 @@ export function TransferDashboard() {
 
           <TabsContent value="transfers" className="space-y-5">
             <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
-              <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.58)] px-5 py-4 sm:px-6">
+              <CardHeader className="border-b border-[var(--dash-border-subtle)] bg-[var(--dash-canvas)] px-5 py-4 sm:px-6">
                 <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <div className="min-w-0">
                     <CardTitle className="flex items-center gap-2 text-lg font-semibold text-[var(--dash-text)]">
@@ -341,7 +375,7 @@ export function TransferDashboard() {
                     />
                   </div>
 
-                  <Select value={selectedStatus} onValueChange={(value) => setSelectedStatus(value as TransferStatus | "all")}>
+                  <Select value={selectedStatus} onValueChange={(value) => { setSelectedStatus(value as TransferStatus | "all"); setAwaitingReceipt(false) }}>
                     <SelectTrigger className="dashboard-control h-11 rounded-lg">
                       <SelectValue placeholder="All Statuses" />
                     </SelectTrigger>
@@ -431,10 +465,10 @@ export function TransferDashboard() {
                             <TableRow
                               key={transfer.id}
                               className="cursor-pointer border-[var(--dash-border-subtle)] transition-colors hover:bg-[var(--dash-brand-soft)]"
-                              onClick={() => setSelectedTransfer(transfer.id)}
+                              onClick={() => openTransfer(transfer.id)}
                             >
                               <TableCell>
-                                <div className="font-semibold text-[var(--dash-text)]">{transfer.transferNumber}</div>
+                                <Link href={localizePath(`/dashboard/inventory/transfers/${transfer.id}`, locale)} className="font-semibold text-[var(--dash-text)]">{transfer.transferNumber}</Link>
                               </TableCell>
                               <TableCell>
                                 <div className="flex min-w-[260px] items-center gap-2 text-sm text-[var(--dash-text-muted)]">
@@ -485,7 +519,7 @@ export function TransferDashboard() {
                                   size="sm"
                                   onClick={(event) => {
                                     event.stopPropagation()
-                                    setSelectedTransfer(transfer.id)
+                                    openTransfer(transfer.id)
                                   }}
                                   className="h-8 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]"
                                 >
@@ -499,6 +533,9 @@ export function TransferDashboard() {
                     </TableBody>
                   </Table>
                 </div>
+                <fieldset disabled={isFetching || isError} className="flex min-w-0 justify-end border-0 p-0 pt-4">
+                  <DataTablePagination table={table} variant="landing" locale={locale} showSelectionCount={false} />
+                </fieldset>
               </CardContent>
             </Card>
           </TabsContent>
@@ -524,7 +561,7 @@ export function TransferDashboard() {
                       const Icon = entry.Icon
 
                       return (
-                        <div key={entry.status} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.48)] p-3">
+                        <div key={entry.status} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-3">
                           <div className="mb-2 flex items-center justify-between gap-3 text-sm">
                             <span className="flex items-center gap-2 font-medium text-[var(--dash-text)]">
                               <Icon className="h-4 w-4" style={{ color: entry.accent }} />
@@ -563,16 +600,6 @@ export function TransferDashboard() {
           </TabsContent>
         </Tabs>
 
-        <CreateTransferModal open={showCreateModal} onOpenChange={setShowCreateModal} organizationId={orgId} />
-
-        {selectedTransfer ? (
-          <TransferDetailsModal
-            transferId={selectedTransfer}
-            open={Boolean(selectedTransfer)}
-            onOpenChange={(open) => !open && setSelectedTransfer(null)}
-            organizationId={orgId}
-          />
-        ) : null}
       </div>
     </div>
   )
@@ -580,7 +607,7 @@ export function TransferDashboard() {
 
 function TransferDashboardSkeleton() {
   return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+    <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto flex w-full max-w-[88rem] flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8">
         <div className="space-y-3">
           <Skeleton className="h-8 w-48 bg-[rgba(37,57,67,0.7)]" />
@@ -599,7 +626,7 @@ function TransferDashboardSkeleton() {
 
 function TransferDashboardEmptyState() {
   return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+    <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[88rem] px-4 py-8 sm:px-6">
         <div className="dashboard-glass-panel mx-auto max-w-md rounded-lg px-6 py-14 text-center">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-danger-soft)]">
@@ -631,7 +658,7 @@ function MetricTile({
   const selectedTone = tones[tone]
 
   return (
-    <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.48)] p-4">
+    <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-4">
       <div className="mb-3 h-1 w-12 rounded-full" style={{ background: selectedTone.accent }} />
       <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--dash-text-faint)]">{label}</p>
       <p className="mt-2 text-2xl font-semibold text-[var(--dash-text)]">{value}</p>

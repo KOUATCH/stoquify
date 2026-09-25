@@ -65,6 +65,7 @@ import { resolveRegulatoryParameter } from "@/services/regulatory/country-packs/
 import {
   approveAndPostPayrollRun,
   calculatePayrollRun,
+  createPayrollPeriod,
   freezeAttendanceSnapshot,
   preparePayrollDeclarations,
 } from "../payroll-control.service";
@@ -82,6 +83,7 @@ const mockedResolveRegulatoryParameter =
 
 function buildTx() {
   return {
+    $queryRaw: jest.fn().mockImplementation(async (query: Prisma.Sql) => query.sql.includes('FROM "organizations"') ? [{ id: "org-1" }] : []),
     organization: {
       findFirst: jest.fn(),
     },
@@ -1086,6 +1088,51 @@ describe("payroll control service", () => {
     });
     mockedGetActivePostingRule.mockResolvedValue(payrollPostingRule());
     mockCountryPack();
+  });
+
+  it("blocks new payroll periods before country setup or writes when admission is stopped", async () => {
+    const tx = buildTx();
+    tx.payrollPeriod.findFirst.mockResolvedValue(null);
+    tx.$queryRaw.mockImplementation(async (query: Prisma.Sql) => query.sql.includes('FROM "organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["payroll"], newWorkStoppedAt: { payroll: "2026-09-05T10:00:00Z" } }]);
+    await expect(createPayrollPeriod({ organizationId: "org-1", name: "September", periodStart: "2026-09-01", periodEnd: "2026-09-30", payDate: "2026-09-30", countryCode: "CM" }, tx as never)).rejects.toMatchObject({ name: "ModuleNewWorkStoppedError" });
+    expect(tx.payrollPeriod.create).not.toHaveBeenCalled();
+    expect(tx.organization.findFirst).not.toHaveBeenCalled();
+    expect(tx.$queryRaw.mock.calls.every(([query]) => query.values.includes("org-1"))).toBe(true);
+  });
+
+  it("returns an existing payroll period without readmitting new work", async () => {
+    const tx = buildTx();
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    const result = await createPayrollPeriod({ organizationId: "org-1", name: "Existing period", periodStart: "2026-06-01", periodEnd: "2026-06-30", payDate: "2026-06-30", countryCode: "CM" }, tx as never);
+    expect(result.created).toBe(false);
+    expect(result.payrollPeriod.id).toBe(payrollPeriod.id);
+    expect(tx.$queryRaw).not.toHaveBeenCalled();
+    expect(tx.payrollPeriod.create).not.toHaveBeenCalled();
+  });
+
+  it("blocks a new ordinary payroll calculation before employee reads and financial effects", async () => {
+    const tx = buildTx();
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    tx.$queryRaw.mockImplementation(async (query: Prisma.Sql) => query.sql.includes('FROM "organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["payroll"], newWorkStoppedAt: { payroll: "2026-09-05T10:00:00Z" } }]);
+    await expect(calculatePayrollRun({ organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "new-stopped-run", runDate: "2026-06-30" }, tx as never)).rejects.toMatchObject({ name: "ModuleNewWorkStoppedError" });
+    expect(tx.payrollEmployee.findMany).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled();
+  });
+
+  it("replays an existing calculation before admission while preserving correction proof checks", async () => {
+    const tx = buildTx();
+    const request = { organizationId: "org-1", payrollPeriodId: "period-1", preparedById: "preparer-1", idempotencyKey: "existing-stopped-run", runDate: "2026-06-30" };
+    tx.payrollRun.findFirst.mockResolvedValue({ id: "run-existing", postedBusinessEventId: null, metadata: { idempotencyPayloadHash: `sha256:${hashBusinessPayload({ operation: "calculatePayrollRun", payrollPeriodId: "period-1", runType: PayrollRunType.ORDINARY, originalRunId: null, employeeIds: [] })}` }, lines: [] });
+    const result = await calculatePayrollRun(request, tx as never);
+    expect(result.created).toBe(false);
+    expect(tx.$queryRaw).not.toHaveBeenCalled();
+    tx.payrollRun.findFirst.mockResolvedValue(null);
+    tx.payrollPeriod.findFirst.mockResolvedValue(payrollPeriod);
+    await expect(calculatePayrollRun({ ...request, idempotencyKey: "correction-stopped-run", runType: PayrollRunType.CORRECTION, employeeIds: ["employee-1"] }, tx as never)).rejects.toThrow("Payroll correction runs require an original payroll run.");
+    expect(tx.$queryRaw).not.toHaveBeenCalled();
+    expect(tx.payrollRun.create).not.toHaveBeenCalled();
   });
 
   it("freezes attendance with source-hash evidence and an audit trail", async () => {

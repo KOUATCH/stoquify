@@ -1,0 +1,371 @@
+{
+  "at": "2026-09-13T14:57:35.273Z",
+  "baseline": "evidence/source-baseline-v132.json",
+  "sources": {
+    "services/pos/pos.service.ts": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+    "actions/pos/commit-recovery.actions.ts": "8b1b6f844a55e0244993a60f83167b4183eb8b7afef80a2c313d501f246353b5",
+    "lib/pos/pending-sale.ts": "ebc667ca7fef0297c633734076d8d44666d7420d0a64f22709500ea5e4cc2dfd",
+    "components/pos/ProfessionalPOSSystem.tsx": "2eda131e117ee71b0aa0e8420e47cc65db4c65eb3957aff471816c94a1c030f0",
+    "hooks/posHooks/usePosOperations.ts": "17a42f3d7056e6bbfae569e907ef96dceb54e1a36694d759901b3db7341fea67",
+    "messages/en.json": "e24d7fef8ee72007c4319145f73a0b6492fc0d97bd607b1ef88a56be7b9ada77",
+    "messages/fr.json": "afad6e998005d23abd81b014b1a90644fa470dbaf79a6cd730a7cdbf95c61def"
+  },
+  "policy": "evidence/pos-commit-recovery-policy-v132.json",
+  "tests": {
+    "passed": 116,
+    "suites": 11,
+    "receipt": "9ce4c3"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "a43382"
+  },
+  "lint": {
+    "passed": true,
+    "files": 10,
+    "receipt": "f4764b"
+  },
+  "database": {
+    "file": "lanes/environment/commit-recovery-v132-21499472-8888-4a54-8800-c0adb78a8c21.json",
+    "receipt": "4783d7",
+    "at": "2026-09-13T14:36:20.702Z",
+    "sourceBefore": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+    "checks": [
+      "Missing exact result is explicit and creates no sale",
+      "Own recorded sale readable under read-only grant without effects",
+      "Cross-scope reads reveal no result; altered original request rejected",
+      "Current refunded status distinguished from original committed response",
+      "Database refuses modification of completed result evidence; no trigger disabled"
+    ],
+    "scope": "Owned PostgreSQL with actual cash posting and refund. Synthetic result-lifecycle/corruption fixtures; no external payment, receipt delivery or live approval.",
+    "passed": true,
+    "sourceAfter": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/commit-recovery-browser-v132-3075f75d-dc9a-4459-9d52-edf7bee91b74.json",
+    "at": "2026-09-13T14:51:36.886Z",
+    "sourcesBefore": {
+      "services/pos/pos.service.ts": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+      "actions/pos/commit-recovery.actions.ts": "8b1b6f844a55e0244993a60f83167b4183eb8b7afef80a2c313d501f246353b5",
+      "lib/pos/pending-sale.ts": "ebc667ca7fef0297c633734076d8d44666d7420d0a64f22709500ea5e4cc2dfd",
+      "components/pos/ProfessionalPOSSystem.tsx": "2eda131e117ee71b0aa0e8420e47cc65db4c65eb3957aff471816c94a1c030f0",
+      "hooks/posHooks/usePosOperations.ts": "17a42f3d7056e6bbfae569e907ef96dceb54e1a36694d759901b3db7341fea67",
+      "messages/en.json": "e24d7fef8ee72007c4319145f73a0b6492fc0d97bd607b1ef88a56be7b9ada77",
+      "messages/fr.json": "afad6e998005d23abd81b014b1a90644fa470dbaf79a6cd730a7cdbf95c61def"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "dropPoint": "after",
+        "pageErrors": [],
+        "screenshots": [
+          "commit-recovery-v132-en-after-1440-3075f75d-dc9a-4459-9d52-edf7bee91b74.png",
+          "commit-recovery-v132-en-after-768-3075f75d-dc9a-4459-9d52-edf7bee91b74.png",
+          "commit-recovery-v132-en-after-320-3075f75d-dc9a-4459-9d52-edf7bee91b74.png"
+        ],
+        "actionResponses": [
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          },
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          },
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          }
+        ],
+        "readyMs": 11178,
+        "originalRequestRetainedBeforeLostResponse": true,
+        "reloadPreservesOriginalRequest": true,
+        "failedReadDoesNotBecomeNotFound": true,
+        "ownResultRecoveredUnderReadOnlyWithoutEffects": true,
+        "currentStatus": "COMPLETED",
+        "currentReadPermissionRechecked": true,
+        "viewports": [
+          {
+            "width": 1440,
+            "heading": {
+              "x": 313,
+              "y": 209,
+              "width": 1094,
+              "height": 24
+            },
+            "header": {
+              "x": 280,
+              "y": 107,
+              "width": 1160,
+              "height": 73
+            },
+            "scroll": {
+              "margin": "192px",
+              "scrollY": 29,
+              "panelY": 192
+            }
+          },
+          {
+            "width": 768,
+            "heading": {
+              "x": 253,
+              "y": 209,
+              "width": 482,
+              "height": 24
+            },
+            "header": {
+              "x": 220,
+              "y": 5,
+              "width": 548,
+              "height": 171
+            },
+            "scroll": {
+              "margin": "192px",
+              "scrollY": 126,
+              "panelY": 192
+            }
+          },
+          {
+            "width": 320,
+            "heading": {
+              "x": 33,
+              "y": 305,
+              "width": 254,
+              "height": 24
+            },
+            "header": {
+              "x": 0,
+              "y": 85,
+              "width": 320,
+              "height": 187
+            },
+            "scroll": {
+              "margin": "288px",
+              "scrollY": 43,
+              "panelY": 288
+            }
+          }
+        ],
+        "headingClearOfStickyHeader": true,
+        "acknowledgementOnlyClearsLocalRecovery": true
+      },
+      {
+        "locale": "fr",
+        "dropPoint": "after",
+        "pageErrors": [],
+        "screenshots": [
+          "commit-recovery-v132-fr-after-1440-3075f75d-dc9a-4459-9d52-edf7bee91b74.png",
+          "commit-recovery-v132-fr-after-768-3075f75d-dc9a-4459-9d52-edf7bee91b74.png",
+          "commit-recovery-v132-fr-after-320-3075f75d-dc9a-4459-9d52-edf7bee91b74.png"
+        ],
+        "actionResponses": [
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          },
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          },
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          }
+        ],
+        "readyMs": 6908,
+        "originalRequestRetainedBeforeLostResponse": true,
+        "reloadPreservesOriginalRequest": true,
+        "failedReadDoesNotBecomeNotFound": true,
+        "ownResultRecoveredUnderReadOnlyWithoutEffects": true,
+        "currentStatus": "CANCELLED",
+        "currentReadPermissionRechecked": true,
+        "viewports": [
+          {
+            "width": 1440,
+            "heading": {
+              "x": 313,
+              "y": 209,
+              "width": 1094,
+              "height": 24
+            },
+            "header": {
+              "x": 280,
+              "y": 107,
+              "width": 1160,
+              "height": 73
+            },
+            "scroll": {
+              "margin": "192px",
+              "scrollY": 29,
+              "panelY": 192
+            }
+          },
+          {
+            "width": 768,
+            "heading": {
+              "x": 253,
+              "y": 209,
+              "width": 482,
+              "height": 24
+            },
+            "header": {
+              "x": 220,
+              "y": 5,
+              "width": 548,
+              "height": 171
+            },
+            "scroll": {
+              "margin": "192px",
+              "scrollY": 126,
+              "panelY": 192
+            }
+          },
+          {
+            "width": 320,
+            "heading": {
+              "x": 33,
+              "y": 305,
+              "width": 254,
+              "height": 48
+            },
+            "header": {
+              "x": 0,
+              "y": 69,
+              "width": 320,
+              "height": 203
+            },
+            "scroll": {
+              "margin": "288px",
+              "scrollY": 59,
+              "panelY": 288
+            }
+          }
+        ],
+        "headingClearOfStickyHeader": true,
+        "acknowledgementOnlyClearsLocalRecovery": true
+      },
+      {
+        "locale": "en",
+        "dropPoint": "before",
+        "pageErrors": [],
+        "screenshots": [
+          "commit-recovery-v132-en-before-1440-3075f75d-dc9a-4459-9d52-edf7bee91b74.png",
+          "commit-recovery-v132-en-before-768-3075f75d-dc9a-4459-9d52-edf7bee91b74.png",
+          "commit-recovery-v132-en-before-320-3075f75d-dc9a-4459-9d52-edf7bee91b74.png"
+        ],
+        "actionResponses": [
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          },
+          {
+            "status": 200,
+            "body": "Response body unavailable"
+          }
+        ],
+        "readyMs": 9282,
+        "originalRequestRetainedBeforeLostResponse": true,
+        "reloadPreservesOriginalRequest": true,
+        "failedReadDoesNotBecomeNotFound": true,
+        "missingResultExplicit": true,
+        "viewports": [
+          {
+            "width": 1440,
+            "heading": {
+              "x": 313,
+              "y": 209,
+              "width": 1094,
+              "height": 24
+            },
+            "header": {
+              "x": 280,
+              "y": 107,
+              "width": 1160,
+              "height": 73
+            },
+            "scroll": {
+              "margin": "192px",
+              "scrollY": 29,
+              "panelY": 192
+            }
+          },
+          {
+            "width": 768,
+            "heading": {
+              "x": 253,
+              "y": 209,
+              "width": 482,
+              "height": 24
+            },
+            "header": {
+              "x": 220,
+              "y": 5,
+              "width": 548,
+              "height": 171
+            },
+            "scroll": {
+              "margin": "192px",
+              "scrollY": 126,
+              "panelY": 192
+            }
+          },
+          {
+            "width": 320,
+            "heading": {
+              "x": 33,
+              "y": 305,
+              "width": 254,
+              "height": 24
+            },
+            "header": {
+              "x": 0,
+              "y": 85,
+              "width": 320,
+              "height": 187
+            },
+            "scroll": {
+              "margin": "288px",
+              "scrollY": 43,
+              "panelY": 288
+            }
+          }
+        ],
+        "headingClearOfStickyHeader": true,
+        "explicitOriginalRetryCommitsOnce": true
+      }
+    ],
+    "scope": "Actual cashier requests and controlled lost responses on owned local PostgreSQL. FR void is a service fixture; no external payment/delivery or live approval.",
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/pos.service.ts": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+      "actions/pos/commit-recovery.actions.ts": "8b1b6f844a55e0244993a60f83167b4183eb8b7afef80a2c313d501f246353b5",
+      "lib/pos/pending-sale.ts": "ebc667ca7fef0297c633734076d8d44666d7420d0a64f22709500ea5e4cc2dfd",
+      "components/pos/ProfessionalPOSSystem.tsx": "2eda131e117ee71b0aa0e8420e47cc65db4c65eb3957aff471816c94a1c030f0",
+      "hooks/posHooks/usePosOperations.ts": "17a42f3d7056e6bbfae569e907ef96dceb54e1a36694d759901b3db7341fea67",
+      "messages/en.json": "e24d7fef8ee72007c4319145f73a0b6492fc0d97bd607b1ef88a56be7b9ada77",
+      "messages/fr.json": "afad6e998005d23abd81b014b1a90644fa470dbaf79a6cd730a7cdbf95c61def"
+    },
+    "sourceStable": true
+  },
+  "verificationDetails": "COMMIT_RECOVERY_V132.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2895,
+      "tests": 1029,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 175,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2517,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

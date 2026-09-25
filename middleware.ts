@@ -6,6 +6,7 @@ import {
   stripLocale,
 } from "@/i18n/routing";
 import { NextRequest, NextResponse } from "next/server";
+import { DASHBOARD_REQUEST_PATH_HEADER } from "@/lib/security/dashboard-session-recovery";
 
 const scriptSrc =
   process.env.NODE_ENV === "production"
@@ -38,10 +39,19 @@ const securityHeaders = {
     .trim(),
 }
 
-function applySecurityHeaders(response: NextResponse): NextResponse {
+function applySecurityHeaders(response: NextResponse, pathname = ""): NextResponse {
   Object.entries(securityHeaders).forEach(([key, value]) => {
     if (value) response.headers.set(key, value)
   })
+  // Signed statement, supplier and receipt URLs carry bearer evidence. Preserve the private route
+  // policy through middleware responses, including rate-limit denials.
+  if (/^\/(?:customer-statement|digital-receipt|api\/receipts|api\/customer-statements|api\/supplier-po-envelopes)(?:\/|$)/.test(pathname) || /^\/(?:en|fr)\/supplier-purchase-order(?:\/|$)/.test(pathname)) {
+    response.headers.set("Referrer-Policy", "no-referrer")
+    response.headers.set("Cache-Control", "private, no-store, max-age=0")
+  }
+  if (/^\/(?:digital-receipt|api\/receipts)(?:\/|$)/.test(pathname)) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive")
+  }
   return response
 }
 
@@ -72,6 +82,12 @@ function getClientIP(request: NextRequest): string {
 function getLocaleRequestHeaders(req: NextRequest, locale: string): Headers {
   const headers = new Headers(req.headers)
   headers.set("X-NEXT-INTL-LOCALE", locale)
+  // Overwrite incoming values: server layouts need the actual requested page
+  // when an existing session cookie turns out to be expired or revoked.
+  headers.delete(DASHBOARD_REQUEST_PATH_HEADER)
+  if (/^\/(?:en|fr)\/dashboard(?:\/|$)/.test(req.nextUrl.pathname)) {
+    headers.set(DASHBOARD_REQUEST_PATH_HEADER, req.nextUrl.pathname + req.nextUrl.search)
+  }
   return headers
 }
 
@@ -83,7 +99,7 @@ function nextWithLocale(req: NextRequest, locale: string): NextResponse {
     maxAge: 60 * 60 * 24 * 365,
     path: "/",
   })
-  return applySecurityHeaders(response)
+  return applySecurityHeaders(response, req.nextUrl.pathname)
 }
 
 function redirectWithLocaleCookie(
@@ -96,12 +112,12 @@ function redirectWithLocaleCookie(
     maxAge: 60 * 60 * 24 * 365,
     path: "/",
   })
-  return applySecurityHeaders(response)
+  return applySecurityHeaders(response, req.nextUrl.pathname)
 }
 
-// BetterAuth stores its session in a cookie named "better-auth.session_token"
+// Optimistic routing only; server authorization validates the session. HTTPS uses the secure prefix.
 function isAuthenticated(req: NextRequest): boolean {
-  return !!req.cookies.get("better-auth.session_token")?.value
+  return !!(req.cookies.get("__Secure-better-auth.session_token")?.value || req.cookies.get("better-auth.session_token")?.value)
 }
 
 export default function middleware(req: NextRequest) {
@@ -146,7 +162,7 @@ export default function middleware(req: NextRequest) {
       JSON.stringify({ error: "Too many requests" }),
       { status: 429, headers: { "content-type": "application/json" } }
     )
-    return applySecurityHeaders(response)
+    return applySecurityHeaders(response, pathname)
   }
 
   if (isHomeRoute) {

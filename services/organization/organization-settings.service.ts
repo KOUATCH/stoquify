@@ -1,13 +1,12 @@
 import "server-only"
 
-import { randomUUID } from "crypto"
 
-import { adminPermissions } from "@/config/permissions"
-import { generateSlug } from "@/lib/generateSlug"
 import { hasAnyRbacPermission, hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
-import { Locale as PrismaLocale, PaymentStatus } from "@prisma/client"
+import { organizationProfileSelect, updateOrganizationSettingsForOrg, type OrganizationProfileChangeContext } from "./organization-profile-update.service"
+export { updateOrganizationSettingsForOrg } from "./organization-profile-update.service"
+import { PaymentStatus, Prisma } from "@prisma/client"
 
 export type OrganizationLocale = "EN" | "FR"
 
@@ -67,21 +66,8 @@ export type OrganizationManagementRow = OrganizationSettingsRecord & {
   purchaseOrdersCount: number
   salesOrdersCount: number
   paymentsCount: number
-  paidRevenue: number
-}
-
-function cleanText(value?: string | null) {
-  const trimmed = value?.trim()
-  return trimmed ? trimmed : null
-}
-
-function toPrismaLocale(value?: string | null) {
-  return value === "fr" ? PrismaLocale.FR : PrismaLocale.EN
-}
-
-function normalizeSlug(value: string) {
-  const slug = generateSlug(value).replace(/^-+|-+$/g, "")
-  return slug || `organization-${randomUUID().slice(0, 8)}`
+  paidPaymentsAmount: string
+  canExport: boolean
 }
 
 export function canReadOrganizations(actor: OrganizationSettingsActor) {
@@ -96,53 +82,18 @@ export function canReadOrganizations(actor: OrganizationSettingsActor) {
   )
 }
 
-export function canCreateOrganizations(actor: OrganizationSettingsActor) {
-  const permissions = actor.permissions || []
-
-  return (
-    hasRbacPermission(permissions, "system.organization.update") ||
-    permissions.includes("organizations.create") ||
-    permissions.includes("organizations.manage") ||
-    permissions.includes("settings.organization.manage")
-  )
+export function canCreateOrganizations(_actor: OrganizationSettingsActor) {
+  // A settings update permission does not create a usable owner account.
+  return false
 }
 
-async function resolveUniqueOrganizationSlug(value: string) {
-  const baseSlug = normalizeSlug(value)
-  let slug = baseSlug
-  let index = 1
-
-  while (await db.organization.findUnique({ where: { slug }, select: { id: true } })) {
-    slug = `${baseSlug}-${index}`
-    index += 1
-  }
-
-  return slug
-}
-
-const organizationSettingsSelect = {
-  id: true,
-  name: true,
-  slug: true,
-  industry: true,
-  country: true,
-  state: true,
-  address: true,
-  currency: true,
-  timezone: true,
-  defaultLocale: true,
-  inventoryStartDate: true,
-  fiscalYearStart: true,
-  isActive: true,
-  createdAt: true,
-  updatedAt: true,
-} as const
+const organizationSettingsSelect = organizationProfileSelect
 
 export async function getOrganizationSettingsForOrg(
   organizationId: string,
 ): Promise<OrganizationSettingsRecord | null> {
-  return db.organization.findUnique({
-    where: { id: organizationId },
+  return db.organization.findFirst({
+    where: { id: organizationId, isActive: true, deletedAt: null },
     select: organizationSettingsSelect,
   })
 }
@@ -150,11 +101,9 @@ export async function getOrganizationSettingsForOrg(
 export async function getOrganizationManagementRowsForActor(input: {
   organizationId: string
   actor: OrganizationSettingsActor
-}): Promise<OrganizationManagementRow[]> {
-  const organizations = await db.organization.findMany({
-    where: canReadOrganizations(input.actor)
-      ? { deletedAt: null }
-      : { id: input.organizationId, deletedAt: null },
+}, client: Pick<Prisma.TransactionClient, "organization" | "payment"> = db): Promise<OrganizationManagementRow[]> {
+  const organizations = await client.organization.findMany({
+    where: { id: input.organizationId, deletedAt: null },
     orderBy: { name: "asc" },
     select: {
       ...organizationSettingsSelect,
@@ -175,7 +124,7 @@ export async function getOrganizationManagementRowsForActor(input: {
 
   const organizationIds = organizations.map((organization) => organization.id)
   const paymentSummaries = organizationIds.length
-    ? await db.payment.groupBy({
+    ? await client.payment.groupBy({
         by: ["organizationId"],
         where: {
           organizationId: { in: organizationIds },
@@ -187,8 +136,8 @@ export async function getOrganizationManagementRowsForActor(input: {
         },
       })
     : []
-  const paidRevenueByOrganizationId = new Map(
-    paymentSummaries.map((summary) => [summary.organizationId, Number(summary._sum.amount ?? 0)]),
+  const paidAmountByOrganizationId = new Map(
+    paymentSummaries.map((summary) => [summary.organizationId, new Prisma.Decimal(summary._sum.amount ?? 0).toFixed(2)]),
   )
 
   return organizations.map((organization) => ({
@@ -215,150 +164,30 @@ export async function getOrganizationManagementRowsForActor(input: {
     purchaseOrdersCount: organization._count.purchaseOrders,
     salesOrdersCount: organization._count.salesOrders,
     paymentsCount: organization._count.payments,
-    paidRevenue: paidRevenueByOrganizationId.get(organization.id) ?? 0,
+    paidPaymentsAmount: paidAmountByOrganizationId.get(organization.id) ?? "0.00",
+    canExport: hasRbacPermission(input.actor.permissions ?? [], "reports.export"),
   }))
 }
 
 export async function createOrganizationForSettings(
-  data: CreateOrganizationSettingsInput,
+  _data: CreateOrganizationSettingsInput,
 ): Promise<OrganizationManagementRow> {
-  const name = data.name.trim()
-
-  if (!name) {
-    throw new BusinessRuleError("Organization name is required")
-  }
-
-  const now = new Date()
-  const slug = await resolveUniqueOrganizationSlug(data.slug || name)
-
-  const organization = await db.$transaction(async (tx) => {
-    const createdOrganization = await tx.organization.create({
-      data: {
-        id: randomUUID(),
-        name,
-        slug,
-        industry: cleanText(data.industry),
-        country: cleanText(data.country),
-        state: cleanText(data.state),
-        address: cleanText(data.address),
-        currency: data.currency || "XAF",
-        timezone: data.timezone || "Africa/Douala",
-        defaultLocale: toPrismaLocale(data.defaultLocale),
-        isActive: true,
-        updatedAt: now,
-      },
-    })
-
-    await tx.role.create({
-      data: {
-        id: randomUUID(),
-        nameEn: "Administrator",
-        nameFr: "Administrateur",
-        code: "administrator",
-        description: "Organization administrator with full access",
-        permissions: ["*", ...adminPermissions],
-        organizationId: createdOrganization.id,
-        updatedAt: now,
-      },
-    })
-
-    return createdOrganization
-  })
-
-  return {
-    id: organization.id,
-    name: organization.name,
-    slug: organization.slug,
-    industry: organization.industry,
-    country: organization.country,
-    state: organization.state,
-    address: organization.address,
-    currency: organization.currency,
-    timezone: organization.timezone,
-    defaultLocale: organization.defaultLocale,
-    inventoryStartDate: organization.inventoryStartDate,
-    fiscalYearStart: organization.fiscalYearStart,
-    isActive: organization.isActive,
-    createdAt: organization.createdAt,
-    updatedAt: organization.updatedAt,
-    usersCount: 0,
-    itemsCount: 0,
-    locationsCount: 0,
-    suppliersCount: 0,
-    customersCount: 0,
-    purchaseOrdersCount: 0,
-    salesOrdersCount: 0,
-    paymentsCount: 0,
-    paidRevenue: 0,
-  }
+  // Retain the legacy boundary for old callers, without creating ownerless tenants.
+  throw new BusinessRuleError("Create the owner account and organization together through owner registration.", "INVALID_TRANSITION")
 }
 
-export async function updateOrganizationSettingsForOrg(
-  organizationId: string,
-  data: OrganizationSettingsInput,
-) {
-  const cleanData = {
-    ...(data.name !== undefined ? { name: data.name.trim() } : {}),
-    ...(data.industry !== undefined ? { industry: cleanText(data.industry) } : {}),
-    ...(data.country !== undefined ? { country: cleanText(data.country) } : {}),
-    ...(data.state !== undefined ? { state: cleanText(data.state) } : {}),
-    ...(data.address !== undefined ? { address: cleanText(data.address) } : {}),
-    ...(data.currency !== undefined ? { currency: data.currency } : {}),
-    ...(data.timezone !== undefined ? { timezone: data.timezone } : {}),
-    ...(data.defaultLocale !== undefined ? { defaultLocale: toPrismaLocale(data.defaultLocale) } : {}),
-    ...(data.inventoryStartDate !== undefined ? { inventoryStartDate: data.inventoryStartDate } : {}),
-    ...(data.fiscalYearStart !== undefined ? { fiscalYearStart: cleanText(data.fiscalYearStart) } : {}),
-  }
-
-  if (!cleanData.name && data.name !== undefined) {
-    throw new BusinessRuleError("Organization name is required")
-  }
-
-  return db.organization.update({
-    where: { id: organizationId },
-    data: {
-      ...cleanData,
-      updatedAt: new Date(),
-    },
-  })
+export async function updateOrganizationCurrencyForOrg(organizationId: string, currency: string, context?: OrganizationProfileChangeContext) {
+  return updateOrganizationSettingsForOrg(organizationId, { currency }, context)
 }
 
-export async function updateOrganizationCurrencyForOrg(organizationId: string, currency: string) {
-  return db.organization.update({
-    where: { id: organizationId },
-    data: {
-      currency,
-      updatedAt: new Date(),
-    },
-  })
+export async function updateOrganizationTimezoneForOrg(organizationId: string, timezone: string, context?: OrganizationProfileChangeContext) {
+  return updateOrganizationSettingsForOrg(organizationId, { timezone }, context)
 }
 
-export async function updateOrganizationTimezoneForOrg(organizationId: string, timezone: string) {
-  return db.organization.update({
-    where: { id: organizationId },
-    data: {
-      timezone,
-      updatedAt: new Date(),
-    },
-  })
+export async function updateInventoryStartDateForOrg(organizationId: string, inventoryStartDate: Date, context?: OrganizationProfileChangeContext) {
+  return updateOrganizationSettingsForOrg(organizationId, { inventoryStartDate }, context)
 }
 
-export async function updateInventoryStartDateForOrg(organizationId: string, inventoryStartDate: Date) {
-  return db.organization.update({
-    where: { id: organizationId },
-    data: {
-      inventoryStartDate,
-      updatedAt: new Date(),
-    },
-  })
-}
-
-export async function updateFiscalYearStartForOrg(organizationId: string, fiscalYearStart: string) {
-  return db.organization.update({
-    where: { id: organizationId },
-    data: {
-      fiscalYearStart,
-      updatedAt: new Date(),
-    },
-  })
+export async function updateFiscalYearStartForOrg(organizationId: string, fiscalYearStart: string, context?: OrganizationProfileChangeContext) {
+  return updateOrganizationSettingsForOrg(organizationId, { fiscalYearStart }, context)
 }

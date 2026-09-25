@@ -1,0 +1,1818 @@
+{
+  "schemaVersion": 1,
+  "lane": "customer-supplier",
+  "evidenceDate": "2026-09-07T17:28:58.312Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 32,
+    "runtimeVisited": 4,
+    "completeWorkflowVerified": 0,
+    "retryDefectsCorrected": 2,
+    "denominatorStatus": "initial_explicit_lane_discovery; grows with full tracing; not platform coverage",
+    "postCreateOutcomeDefectsCorrected": 1,
+    "accessMetadataDefectsCorrected": 1,
+    "isolatedPostgresServicePathsVerified": 1,
+    "legacyRetentionDefectsCorrected": 1,
+    "senderResponseReview": "11 PostgreSQL scenarios, two actual EN/FR browser journeys; partial lifecycle evidence, not full certification",
+    "supplierResponseVerification": {
+      "workflows": 4,
+      "postgresGroups": 8,
+      "browserLocales": 2,
+      "responseTypes": 3,
+      "screenshots": 24,
+      "fullLifecycleVerified": false
+    },
+    "supplierBuyerVerification": {
+      "workflows": 4,
+      "newlyDiscoveredHistory": 1,
+      "tests": 102,
+      "suites": 14,
+      "postgresGroups": 9,
+      "browserLocales": 2,
+      "screenshots": 24,
+      "fullLifecycleVerified": false
+    },
+    "supplierEvidenceVerification": {
+      "tests": 75,
+      "suites": 7,
+      "integrityGroups": 18,
+      "buyerRegressionGroups": 9,
+      "browserJourneys": 4,
+      "screenshots": 34,
+      "fullLifecycleVerified": false
+    }
+  },
+  "workflows": [
+    {
+      "id": "CS-CUSTOMER-LIST",
+      "name": "Customer discovery and filtering",
+      "purpose": "Locate customers and interpret customer/order/receivable summaries.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "loading",
+        "loaded/filter/search/sort",
+        "error/retry"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-CUSTOMER-CREATE",
+      "name": "Customer creation",
+      "purpose": "Create a usable tenant customer and refresh dependent sales views.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/new",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "draft",
+        "validate current authority and input",
+        "create",
+        "committed identity receipt",
+        "cache invalidated or refresh deferred",
+        "navigate/close after known success; retain draft after actual rejection"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "post_create_outcome_corrected_focused_tests_passed_runtime_pending",
+      "reviewStatus": "create_service_action_hook_and_consumers_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "CREATE_OUTCOME_REMEDIATION.md",
+        "evidence/CREATE_OUTCOME_VERIFICATION.json"
+      ],
+      "remaining": [
+        "CS-F04: verify automatic-code collision and concurrency recovery.",
+        "Run authorized/denied and cross-tenant create journeys; EN/FR/mobile/keyboard.",
+        "Verify real persisted create and cache-failure recovery in isolated runtime.",
+        "Network-unknown create outcomes and analogous update/reload ambiguity remain unresolved."
+      ]
+    },
+    {
+      "id": "CS-CUSTOMER-UPDATE",
+      "name": "Customer revision",
+      "purpose": "Revise master data without losing retained customer history.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/[id]/edit",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "load",
+        "edit",
+        "validate",
+        "save",
+        "refresh or failure with draft"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-CUSTOMER-ARCHIVE",
+      "name": "Customer deactivation/archive",
+      "purpose": "Remove unused master data while preserving access needed for existing records.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "current authority and tenant-scoped customer lookup",
+        "observe existing history",
+        "deactivate and retain historical reads or archive unused customer",
+        "return actual mode with invalidated/deferred cache status",
+        "reject actual failure; keep known successful result across refresh failure"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "shared_retention_policy_mode_and_error_propagation_corrected_focused_tests_passed",
+      "reviewStatus": "management_legacy_direct_removal_action_and_hook_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "LEGACY_RETENTION_REMEDIATION.md",
+        "RETENTION_REMAINING_BOUNDARIES.md",
+        "evidence/LEGACY_RETENTION_VERIFICATION.json"
+      ],
+      "remaining": [
+        "Verify retention and concurrent incoming obligation behavior.",
+        "Resolve and exercise concurrent first-history creation versus archive; current count/write policy has no shared serialization.",
+        "Review inactive-customer settlement continuation against existing receivables and domain controls.",
+        "Exercise actual authorized/denied EN/FR browser and isolated PostgreSQL removal outcomes."
+      ]
+    },
+    {
+      "id": "CS-CUSTOMER-DETAIL",
+      "name": "Customer detail and analytics",
+      "purpose": "Inspect a customer profile with sales, ledger and payment history.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/[id]",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "load",
+        "view analytics",
+        "navigate connected work",
+        "error/retry"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-CUSTOMER-ORDERS",
+      "name": "Customer order history",
+      "purpose": "Find the scoped customer orders and payment information.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/[id]/orders",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "load",
+        "filter",
+        "open order",
+        "export request"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-CUSTOMER-EXPORT",
+      "name": "Controlled customer export",
+      "purpose": "Download authorized customer/profile/order data with export evidence.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts",
+        "services/customer/customer-export.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "select scope",
+        "fresh authority/export safety",
+        "generate",
+        "download or error"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "entry_points_discovered_full_service_trace_pending",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-CUSTOMER-CONTACT",
+      "name": "Customer contact shortcuts",
+      "purpose": "Open a selected customer contact destination.",
+      "personas": [
+        "customer administrator",
+        "sales operator"
+      ],
+      "authority": {
+        "permissions": "customers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, customer object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/[id]",
+        "actions/customers/customer-management-actions.ts",
+        "hooks/useCustomerManagement.ts",
+        "actions/customers/customerAction2.ts"
+      ],
+      "services": [
+        "services/customer/customer.service.ts"
+      ],
+      "records": [
+        "Customer",
+        "SalesOrder",
+        "CustomerLedgerEntry",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "select shortcut",
+        "browser contact handler or unavailable"
+      ],
+      "sideEffects": [
+        "Customer create/update/deactivate/archive where applicable; query invalidation; exports only on authorized action"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "entry_points_discovered_full_trace_pending",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Inspect each quick-action destination and role-dependent affordance.",
+        "No external contact/send authorized by this review."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-LIST",
+      "name": "Supplier discovery and filtering",
+      "purpose": "Locate suppliers and understand purchasing summaries.",
+      "personas": [
+        "purchasing operator",
+        "supplier administrator"
+      ],
+      "authority": {
+        "permissions": "purchases.suppliers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, supplier object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/suppliersSystem",
+        "/[locale]/dashboard/purchases/suppliers",
+        "actions/suppliers/supplier-management-actions.ts",
+        "hooks/useSupplierManagement.ts"
+      ],
+      "services": [
+        "services/supplier/supplier.service.ts"
+      ],
+      "records": [
+        "Supplier",
+        "PurchaseOrder",
+        "SupplierLedgerEntry",
+        "ItemSupplier"
+      ],
+      "transitions": [
+        "loading",
+        "loaded/filter/search/sort",
+        "error/retry"
+      ],
+      "sideEffects": [
+        "Supplier mutation where applicable; supplier/item query invalidation; controlled export"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-CREATE",
+      "name": "Supplier creation",
+      "purpose": "Create a supplier used by item, purchasing and payable workflows.",
+      "personas": [
+        "purchasing operator",
+        "supplier administrator"
+      ],
+      "authority": {
+        "permissions": "purchases.suppliers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, supplier object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/suppliersSystem/new",
+        "/[locale]/dashboard/purchases/suppliers",
+        "actions/suppliers/supplier-management-actions.ts",
+        "hooks/useSupplierManagement.ts"
+      ],
+      "services": [
+        "services/supplier/supplier.service.ts"
+      ],
+      "records": [
+        "Supplier",
+        "PurchaseOrder",
+        "SupplierLedgerEntry",
+        "ItemSupplier"
+      ],
+      "transitions": [
+        "draft",
+        "validate current authority and input",
+        "create",
+        "committed identity receipt",
+        "cache invalidated or refresh deferred",
+        "navigate/close after known success; retain draft after actual rejection"
+      ],
+      "sideEffects": [
+        "Supplier mutation where applicable; supplier/item query invalidation; controlled export"
+      ],
+      "implementationStatus": "post_create_outcome_corrected_focused_tests_passed_runtime_pending",
+      "reviewStatus": "create_service_action_hook_and_consumers_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "CREATE_OUTCOME_REMEDIATION.md",
+        "evidence/CREATE_OUTCOME_VERIFICATION.json"
+      ],
+      "remaining": [
+        "CS-F04: verify automatic-code allocation collision/concurrency.",
+        "Exercise supplier create routes under both aliases and denied scope.",
+        "Verify real persisted create and cache-failure recovery in isolated runtime.",
+        "Network-unknown create outcomes and analogous update/reload ambiguity remain unresolved."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-UPDATE",
+      "name": "Supplier revision",
+      "purpose": "Revise supplier details while retaining purchasing evidence.",
+      "personas": [
+        "purchasing operator",
+        "supplier administrator"
+      ],
+      "authority": {
+        "permissions": "purchases.suppliers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, supplier object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/suppliersSystem/[id]/edit",
+        "/[locale]/dashboard/purchases/suppliers",
+        "actions/suppliers/supplier-management-actions.ts",
+        "hooks/useSupplierManagement.ts"
+      ],
+      "services": [
+        "services/supplier/supplier.service.ts"
+      ],
+      "records": [
+        "Supplier",
+        "PurchaseOrder",
+        "SupplierLedgerEntry",
+        "ItemSupplier"
+      ],
+      "transitions": [
+        "load",
+        "edit",
+        "validate",
+        "save",
+        "refresh or recoverable failure"
+      ],
+      "sideEffects": [
+        "Supplier mutation where applicable; supplier/item query invalidation; controlled export"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-ARCHIVE",
+      "name": "Supplier deactivation/archive",
+      "purpose": "Stop active master-data use while preserving dependent history.",
+      "personas": [
+        "purchasing operator",
+        "supplier administrator"
+      ],
+      "authority": {
+        "permissions": "purchases.suppliers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, supplier object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/suppliersSystem",
+        "/[locale]/dashboard/purchases/suppliers",
+        "actions/suppliers/supplier-management-actions.ts",
+        "hooks/useSupplierManagement.ts"
+      ],
+      "services": [
+        "services/supplier/supplier.service.ts"
+      ],
+      "records": [
+        "Supplier",
+        "PurchaseOrder",
+        "SupplierLedgerEntry",
+        "ItemSupplier"
+      ],
+      "transitions": [
+        "confirmation",
+        "history assessment",
+        "deactivation or archive",
+        "refresh"
+      ],
+      "sideEffects": [
+        "Supplier mutation where applicable; supplier/item query invalidation; controlled export"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Compare all removal adapters and AP obligations, including concurrent creation.",
+        "Exercise existing-history and unused-supplier cases."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-DETAIL",
+      "name": "Supplier analytics and payable history",
+      "purpose": "Inspect supplier and connected purchasing/AP evidence.",
+      "personas": [
+        "purchasing operator",
+        "supplier administrator"
+      ],
+      "authority": {
+        "permissions": "purchases.suppliers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, supplier object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/suppliersSystem/[id]",
+        "/[locale]/dashboard/purchases/suppliers",
+        "actions/suppliers/supplier-management-actions.ts",
+        "hooks/useSupplierManagement.ts"
+      ],
+      "services": [
+        "services/supplier/supplier.service.ts"
+      ],
+      "records": [
+        "Supplier",
+        "PurchaseOrder",
+        "SupplierLedgerEntry",
+        "ItemSupplier"
+      ],
+      "transitions": [
+        "load",
+        "analytics/AP history",
+        "navigate record",
+        "error/retry"
+      ],
+      "sideEffects": [
+        "Supplier mutation where applicable; supplier/item query invalidation; controlled export"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-EXPORT",
+      "name": "Supplier export and clipboard",
+      "purpose": "Produce the permitted visible supplier export while omitting sensitive fields by default.",
+      "personas": [
+        "purchasing operator",
+        "supplier administrator"
+      ],
+      "authority": {
+        "permissions": "purchases.suppliers.read/create/update/delete by action; current tenant identity",
+        "scope": "server-derived organization, supplier object scoped by service"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/suppliersSystem",
+        "/[locale]/dashboard/purchases/suppliers",
+        "actions/suppliers/supplier-management-actions.ts",
+        "hooks/useSupplierManagement.ts"
+      ],
+      "services": [
+        "services/supplier/supplier.service.ts",
+        "services/supplier/supplier-export.service.ts"
+      ],
+      "records": [
+        "Supplier",
+        "PurchaseOrder",
+        "SupplierLedgerEntry",
+        "ItemSupplier"
+      ],
+      "transitions": [
+        "choose export",
+        "prepare policy/audit",
+        "CSV/clipboard or error"
+      ],
+      "sideEffects": [
+        "Supplier mutation where applicable; supplier/item query invalidation; controlled export"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "selected_UI_action_paths_traced_export_owner_review_pending",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-ITEM-LINKS",
+      "name": "Item supplier association lifecycle",
+      "purpose": "Associate, revise and remove an item supplier with scoped item/supplier checks.",
+      "personas": [
+        "inventory/purchasing operator"
+      ],
+      "authority": {
+        "permissions": "Exact action-specific item/supplier permissions pending full boundary reconciliation",
+        "scope": "service validates both item and supplier organization"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/inventory/items/[id]/suppliers",
+        "actions/item-suppliers/",
+        "hooks/useItemSupplierQueries.ts",
+        "hooks/useAllItemSuppliers.ts"
+      ],
+      "services": [
+        "services/supplier/supplier.service.ts"
+      ],
+      "records": [
+        "ItemSupplier",
+        "Item",
+        "Supplier"
+      ],
+      "transitions": [
+        "load",
+        "choose supplier",
+        "create/update relation",
+        "remove relation",
+        "refresh"
+      ],
+      "sideEffects": [
+        "ItemSupplier create/update/delete; downstream purchasing use"
+      ],
+      "implementationStatus": "existing_source_not_runtime_verified",
+      "reviewStatus": "service_entry_points_discovered_full_branch_trace_pending",
+      "runtimeStatus": "not_visited",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md"
+      ],
+      "remaining": [
+        "Complete branch-by-branch source review and authorized isolated runtime verification.",
+        "Verify EN/FR, keyboard, responsive and recovery behavior where applicable."
+      ]
+    },
+    {
+      "id": "CS-STATEMENT-SNAPSHOT",
+      "name": "Immutable customer statement generation",
+      "purpose": "Freeze a bounded source statement and evidence hash.",
+      "personas": [
+        "accounting export operator"
+      ],
+      "authority": {
+        "permissions": "accounting.exports.create; fresh authentication within 300 seconds; enforced accounting entitlement",
+        "scope": "server-derived organization and source customer/statement"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/[id]/statement",
+        "actions/accounting/customer-statement.actions.ts:createCustomerStatementAction",
+        "components/customers/CustomerStatementWorkflow.tsx"
+      ],
+      "services": [
+        "services/accounting/customer-statement.service.ts",
+        "hooks/customer-statement-request.ts"
+      ],
+      "records": [
+        "CustomerStatementSnapshot",
+        "CustomerReceivableDocument"
+      ],
+      "transitions": [
+        "select period",
+        "validate sources",
+        "freeze snapshot",
+        "display immutable version"
+      ],
+      "sideEffects": [
+        "Snapshot/evidence creation"
+      ],
+      "implementationStatus": "exact_command_tab_recovery_submit_lock_and_explicit_new_request_implemented",
+      "reviewStatus": "bounded_sender_recovery_reviewed_full_lifecycle_open",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "../../evidence/statement-recovery-receipt.json",
+        "STATEMENT_SENDER_RECOVERY.md",
+        "../../evidence/statement-history-receipt.json"
+      ],
+      "remaining": [
+        "Unreadable local command metadata can be inspected alongside history but still needs a controlled resolution workflow before another request is enabled in that tab.",
+        "Empty-source snapshots and recorded zero balances were exercised; populated receivable/ledger calculations and the complete financial lifecycle remain unverified by this batch.",
+        "Provider worker processing, unknown provider outcomes, public recipient revocation races and complete retained-obligation lifecycle remain open workflows.",
+        "Native screen readers, native browser zoom and full contrast/accessibility audit remain open; sixteen CSS text-enlargement cases are bounded layout evidence.",
+        "The existing foreign-object not-found heading remains English in the French route; broader not-found localization remains an engineering issue.",
+        "No full build, production performance acceptance, deployment, external message, X1 approval/clearance or professional certification."
+      ]
+    },
+    {
+      "id": "CS-STATEMENT-DELIVERY-QUEUE",
+      "name": "Statement access and delivery request",
+      "purpose": "Issue bounded access and durably request statement delivery.",
+      "personas": [
+        "accounting export operator"
+      ],
+      "authority": {
+        "permissions": "accounting.exports.create; fresh authentication within 300 seconds; enforced accounting entitlement",
+        "scope": "server-derived organization and source customer/statement"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/[id]/statement",
+        "actions/accounting/customer-statement.actions.ts:queueCustomerStatementDeliveryAction",
+        "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+        "components/customers/CustomerStatementHistory.tsx"
+      ],
+      "services": [
+        "services/accounting/customer-statement-delivery.service.ts",
+        "services/accounting/customer-statement-access.service.ts",
+        "hooks/customer-statement-request.ts"
+      ],
+      "records": [
+        "CustomerStatementAccessToken",
+        "CustomerStatementDelivery",
+        "BusinessEventOutbox"
+      ],
+      "transitions": [
+        "consent/recipient selection",
+        "fresh auth",
+        "queue",
+        "operator observes pending"
+      ],
+      "sideEffects": [
+        "Token registry and delivery/outbox evidence; actual provider send belongs to worker"
+      ],
+      "implementationStatus": "explicit_historical_copy_and_lost_ack_reload_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "ACCESS_METADATA_REMEDIATION.md",
+        "../environment/postgres-statement-dd56bf1aa069.json",
+        "../../evidence/statement-recovery-receipt.json",
+        "STATEMENT_SENDER_RECOVERY.md",
+        "STATEMENT_HISTORY_AND_LINK_ACCESS.md",
+        "../../evidence/statement-history-receipt.json"
+      ],
+      "remaining": [
+        "Unreadable local command metadata can be inspected alongside history but still needs a controlled resolution workflow before another request is enabled in that tab.",
+        "Empty-source snapshots and recorded zero balances were exercised; populated receivable/ledger calculations and the complete financial lifecycle remain unverified by this batch.",
+        "Provider worker processing, unknown provider outcomes, public recipient revocation races and complete retained-obligation lifecycle remain open workflows.",
+        "Native screen readers, native browser zoom and full contrast/accessibility audit remain open; sixteen CSS text-enlargement cases are bounded layout evidence.",
+        "The existing foreign-object not-found heading remains English in the French route; broader not-found localization remains an engineering issue.",
+        "No full build, production performance acceptance, deployment, external message, X1 approval/clearance or professional certification."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-STATEMENT-DELIVERY-WORKER",
+      "name": "Statement delivery processing and recovery",
+      "purpose": "Claim queued delivery, persist provider outcome and expose retry/dead-letter status.",
+      "personas": [
+        "delivery worker",
+        "operations owner"
+      ],
+      "authority": {
+        "permissions": "Worker/provider configuration and lease authority; exact scheduler deployment pending",
+        "scope": "organization-scoped outbox/statement delivery"
+      },
+      "entryPoints": [
+        "services/communication/customer-statement-delivery-worker.service.ts:runCustomerStatementDeliveryWorker"
+      ],
+      "services": [
+        "services/communication/customer-statement-delivery-worker.service.ts",
+        "services/communication/customer-statement-delivery.provider.ts"
+      ],
+      "records": [
+        "CustomerStatementDelivery",
+        "BusinessEventOutbox",
+        "delivery status evidence"
+      ],
+      "transitions": [
+        "PENDING/FAILED",
+        "LOCKED lease",
+        "SENT or DEFERRED or FAILED/DEAD_LETTER",
+        "bounded retry/lease recovery"
+      ],
+      "sideEffects": [
+        "Provider delivery if configured; durable attempt/state/outbox updates"
+      ],
+      "implementationStatus": "known_unsent_retry_with_current_authority_revision_and_retained_command_implemented",
+      "reviewStatus": "bounded_current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "../../evidence/statement-worker-receipt.json",
+        "../../evidence/statement-retry-receipt.json"
+      ],
+      "remaining": [
+        "Only the known-not-sent statement setup branch has controlled retry. Unknown outcomes, exhausted/invalid records and other communication workers still need operator recovery/reconciliation work.",
+        "Provider configuration is rechecked by the worker. This form does not validate credentials, enable sending or authorize a live provider. No external message was sent.",
+        "Corrupt local command resolution, populated receivable/ledger lifecycle and full communication lifecycle remain open.",
+        "French text wraps heavily at 320px with 200% CSS text; compact layout improvement, native zoom, actual screen readers and comprehensive contrast remain open.",
+        "No full build, production performance acceptance, deployment, migration, X1 clearance or professional certification."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-STATEMENT-PUBLIC-VIEW",
+      "name": "Public customer statement view",
+      "purpose": "View the authorized redacted immutable statement.",
+      "personas": [
+        "customer statement recipient"
+      ],
+      "authority": {
+        "permissions": "Signed statement token plus current live registry and action permission",
+        "scope": "token organization + statement snapshot ID/content hash; no browser-supplied tenant authority"
+      },
+      "entryPoints": [
+        "/customer-statement/[statementId]",
+        "GET /api/customer-statements/[statementId]"
+      ],
+      "services": [
+        "services/accounting/customer-statement-access.service.ts",
+        "services/accounting/customer-statement-token.ts"
+      ],
+      "records": [
+        "CustomerStatementSnapshot",
+        "CustomerStatementAccessToken",
+        "CustomerStatementAccessLog"
+      ],
+      "transitions": [
+        "valid link",
+        "live registry/hash validation",
+        "view",
+        "expired/revoked/invalid denial",
+        "Retain draft → explicit confirmation → exact stored request → current server validation → durable OPEN receipt",
+        "Lost response/reload → locked exact retry → original receipt without another action",
+        "Current revocation/expiry/foreign scope → denial; retained reference does not authorize access"
+      ],
+      "sideEffects": [
+        "Access log and optional referral impression; no financial mutation"
+      ],
+      "implementationStatus": "recipient_en_fr_recovery_private_transport_and_strict_input_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "evidence/RETRY_VERIFICATION.json",
+        "../../evidence/statement-recipient-receipt.json",
+        "STATEMENT_RECIPIENT_RESPONSES.md"
+      ],
+      "remaining": [
+        "Recipient view/OPEN response/replay/revocation paths are verified in the owned app and database. Sender acknowledgement, dispute resolution, settlement and the complete downstream accounting lifecycle remain engineering review/implementation work.",
+        "Fixtures start with synthetic sales sources followed by actual posted-receivable and statement services. No complete real order-to-cash, allocation, reversal or journal-posting lifecycle is claimed.",
+        "Corrupt/unavailable browser recovery storage safely prevents new submission but still needs operator-assisted reconciliation. Recovery does not transfer automatically to another browser session or newly issued link.",
+        "Native zoom, actual screen readers and comprehensive contrast remain unverified. Native date formatting follows the browser/platform. Public API expired/foreign denial is covered at service/database level; the final browser journey covers valid/view-only/revoked links.",
+        "Sender history narrow enlarged French wrapping, unknown delivery outcomes, other communication workers and the remaining workflow register remain open.",
+        "No full application build, production performance acceptance, live send, deployment, migration, X1 clearance or professional certification."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-STATEMENT-DISPUTE",
+      "name": "Customer statement dispute",
+      "purpose": "Record a bounded recipient response without posting a payment or changing authoritative balances.",
+      "personas": [
+        "customer statement recipient"
+      ],
+      "authority": {
+        "permissions": "Signed statement token plus current live registry and action permission",
+        "scope": "token organization + statement snapshot ID/content hash; no browser-supplied tenant authority"
+      },
+      "entryPoints": [
+        "/customer-statement/[statementId]",
+        "POST /api/customer-statements/[statementId]/actions"
+      ],
+      "services": [
+        "services/accounting/customer-statement-recipient-action.service.ts",
+        "services/accounting/customer-statement-access.service.ts"
+      ],
+      "records": [
+        "CustomerStatementRecipientAction",
+        "CustomerStatementRecipientActionState",
+        "BusinessEvent",
+        "CustomerStatementAccessLog"
+      ],
+      "transitions": [
+        "DISPUTE",
+        "scope/amount/date validation",
+        "OPEN evidence",
+        "exact replay or conflicting identity",
+        "Retain draft → explicit confirmation → exact stored request → current server validation → durable OPEN receipt",
+        "Lost response/reload → locked exact retry → original receipt without another action",
+        "Current revocation/expiry/foreign scope → denial; retained reference does not authorize access"
+      ],
+      "sideEffects": [
+        "Immutable recipient/state/event evidence; access audit; no payment/ledger write"
+      ],
+      "implementationStatus": "recipient_en_fr_recovery_private_transport_and_strict_input_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "evidence/RETRY_VERIFICATION.json",
+        "../../evidence/statement-recipient-receipt.json",
+        "STATEMENT_RECIPIENT_RESPONSES.md",
+        "../../evidence/statement-response-review-receipt.json",
+        "STATEMENT_RESPONSE_REVIEW.md"
+      ],
+      "remaining": [
+        "Fixtures start with synthetic sales sources followed by actual posted-receivable and statement services. No complete real order-to-cash, allocation, reversal or journal-posting lifecycle is claimed.",
+        "Corrupt/unavailable browser recovery storage safely prevents new submission but still needs operator-assisted reconciliation. Recovery does not transfer automatically to another browser session or newly issued link.",
+        "Native zoom, actual screen readers and comprehensive contrast remain unverified. Native date formatting follows the browser/platform. Public API expired/foreign denial is covered at service/database level; the final browser journey covers valid/view-only/revoked links.",
+        "Sender history narrow enlarged French wrapping, unknown delivery outcomes, other communication workers and the remaining workflow register remain open.",
+        "No full application build, production performance acceptance, live send, deployment, migration, X1 clearance or professional certification.",
+        "Sender inspection/review/reopening is verified by the source-v45 checkpoint; financial settlement, account correction and complete connected lifecycles remain unverified."
+      ],
+      "completeWorkflowVerified": false,
+      "crossDomainHandoff": "CS-STATEMENT-RESPONSE-REVIEW implements sender inspection/review/reopening with retained state/event/audit. This advances the formerly missing handoff; downstream financial settlement and full lifecycle verification remain open."
+    },
+    {
+      "id": "CS-STATEMENT-PROMISE",
+      "name": "Customer promise to pay",
+      "purpose": "Record a bounded recipient response without posting a payment or changing authoritative balances.",
+      "personas": [
+        "customer statement recipient"
+      ],
+      "authority": {
+        "permissions": "Signed statement token plus current live registry and action permission",
+        "scope": "token organization + statement snapshot ID/content hash; no browser-supplied tenant authority"
+      },
+      "entryPoints": [
+        "/customer-statement/[statementId]",
+        "POST /api/customer-statements/[statementId]/actions"
+      ],
+      "services": [
+        "services/accounting/customer-statement-recipient-action.service.ts",
+        "services/accounting/customer-statement-access.service.ts"
+      ],
+      "records": [
+        "CustomerStatementRecipientAction",
+        "CustomerStatementRecipientActionState",
+        "BusinessEvent",
+        "CustomerStatementAccessLog"
+      ],
+      "transitions": [
+        "PROMISE_TO_PAY",
+        "scope/amount/date validation",
+        "OPEN evidence",
+        "exact replay or conflicting identity",
+        "Retain draft → explicit confirmation → exact stored request → current server validation → durable OPEN receipt",
+        "Lost response/reload → locked exact retry → original receipt without another action",
+        "Current revocation/expiry/foreign scope → denial; retained reference does not authorize access"
+      ],
+      "sideEffects": [
+        "Immutable recipient/state/event evidence; access audit; no payment/ledger write"
+      ],
+      "implementationStatus": "recipient_en_fr_recovery_private_transport_and_strict_input_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "evidence/RETRY_VERIFICATION.json",
+        "ACCESS_METADATA_REMEDIATION.md",
+        "../environment/postgres-statement-dd56bf1aa069.json",
+        "../../evidence/statement-recipient-receipt.json",
+        "STATEMENT_RECIPIENT_RESPONSES.md",
+        "../../evidence/statement-response-review-receipt.json",
+        "STATEMENT_RESPONSE_REVIEW.md"
+      ],
+      "remaining": [
+        "Fixtures start with synthetic sales sources followed by actual posted-receivable and statement services. No complete real order-to-cash, allocation, reversal or journal-posting lifecycle is claimed.",
+        "Corrupt/unavailable browser recovery storage safely prevents new submission but still needs operator-assisted reconciliation. Recovery does not transfer automatically to another browser session or newly issued link.",
+        "Native zoom, actual screen readers and comprehensive contrast remain unverified. Native date formatting follows the browser/platform. Public API expired/foreign denial is covered at service/database level; the final browser journey covers valid/view-only/revoked links.",
+        "Sender history narrow enlarged French wrapping, unknown delivery outcomes, other communication workers and the remaining workflow register remain open.",
+        "No full application build, production performance acceptance, live send, deployment, migration, X1 clearance or professional certification.",
+        "Sender inspection/review/reopening is verified by the source-v45 checkpoint; financial settlement, account correction and complete connected lifecycles remain unverified."
+      ],
+      "completeWorkflowVerified": false,
+      "crossDomainHandoff": "CS-STATEMENT-RESPONSE-REVIEW implements sender inspection/review/reopening with retained state/event/audit. This advances the formerly missing handoff; downstream financial settlement and full lifecycle verification remain open."
+    },
+    {
+      "id": "CS-STATEMENT-REVOKE",
+      "name": "Statement link revocation",
+      "purpose": "Revoke previously issued statement access under current authority.",
+      "personas": [
+        "accounting export operator"
+      ],
+      "authority": {
+        "permissions": "accounting.exports.create; fresh authentication within 300 seconds; enforced accounting entitlement",
+        "scope": "server-derived organization and source customer/statement"
+      },
+      "entryPoints": [
+        "actions/accounting/customer-statement.actions.ts:revokeCustomerStatementAccessAction",
+        "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+        "components/customers/CustomerStatementHistory.tsx"
+      ],
+      "services": [
+        "services/accounting/customer-statement-access.service.ts"
+      ],
+      "records": [
+        "CustomerStatementAccessToken",
+        "AuditLog"
+      ],
+      "transitions": [
+        "ACTIVE",
+        "fresh authorized revocation",
+        "REVOKED",
+        "subsequent access denied"
+      ],
+      "sideEffects": [
+        "Conditional token registry update and revocation audit"
+      ],
+      "implementationStatus": "discoverable_fresh_auth_reason_confirmation_and_idempotent_retry_implemented",
+      "reviewStatus": "bounded_current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "evidence/RETRY_VERIFICATION.json",
+        "STATEMENT_HISTORY_AND_LINK_ACCESS.md",
+        "../../evidence/statement-history-receipt.json"
+      ],
+      "remaining": [
+        "Unreadable local command metadata can be inspected alongside history but still needs a controlled resolution workflow before another request is enabled in that tab.",
+        "Empty-source snapshots and recorded zero balances were exercised; populated receivable/ledger calculations and the complete financial lifecycle remain unverified by this batch.",
+        "Provider worker processing, unknown provider outcomes, public recipient revocation races and complete retained-obligation lifecycle remain open workflows.",
+        "Native screen readers, native browser zoom and full contrast/accessibility audit remain open; sixteen CSS text-enlargement cases are bounded layout evidence.",
+        "The existing foreign-object not-found heading remains English in the French route; broader not-found localization remains an engineering issue.",
+        "No full build, production performance acceptance, deployment, external message, X1 approval/clearance or professional certification."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-SUPPLIER-INVITE",
+      "name": "Supplier purchase-order invitation",
+      "purpose": "Freeze a redacted order envelope and issue a bounded public link.",
+      "personas": [
+        "buyer"
+      ],
+      "authority": {
+        "permissions": "purchases.orders.read + purchases.orders.update; fresh current password for writes/replays",
+        "scope": "Server-derived organization/actor/session, scoped order and envelope/proposal/token; current purchasing eligibility"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts:issueSupplierPoInviteAction"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-access-token.ts",
+        "services/purchase-order/supplier-po-buyer-authority.ts",
+        "services/purchase-order/supplier-po-buyer-contracts.ts",
+        "hooks/supplier-po-buyer-request.ts",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts"
+      ],
+      "records": [
+        "SupplierPoEnvelope",
+        "SupplierPoAccessToken",
+        "BusinessEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "existing order",
+        "source snapshot",
+        "issue signed live-registry token",
+        "show link"
+      ],
+      "sideEffects": [
+        "Immutable envelope and token registry; no external send in this review"
+      ],
+      "implementationStatus": "current_buyer_authority_exact_request_preview_recovery_and_bounded_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "../../evidence/supplier-buyer-receipt.json",
+        "SUPPLIER_BUYER_REVIEW.md",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Historical invitation/review requests from older versions lack the new request and preview binding. Operators must reconcile them from retained records; no fabricated success or legacy authority fallback is supplied.",
+        "Browser recovery is tab-local. Lost/corrupt storage, mismatched request identity or missing evidence requires authorized operator reconciliation. Final buyer decisions cannot be reopened in the current two-state proposal model.",
+        "Actual browser verification covers buyer acceptance of a supplier change request, invitation and revocation, with loss of the review result and exact retry. Buyer rejection and obsolete-order decisions have PostgreSQL and component coverage, not a separate browser journey in this checkpoint. Older public ACCEPT/REJECT browser evidence is historical.",
+        "Existing Serializable conflicts may be wrapped by the shared event service as INTERNAL_ERROR. The workbench retains the exact request and safely recovers on retry. No global event-error refactor is included.",
+        "No deployment, migration, live customer activation, external message, payment, X1 clearance or professional certification. Full platform workflow discovery and remediation remain open.",
+        "Native screen-reader operation, native zoom, comprehensive contrast, full production build and production latency remain unverified; some inherited French-shell labels remain English. Six-envelope history and proposal content/event verification are covered by the v48 checkpoint."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-SUPPLIER-PUBLIC-VIEW",
+      "name": "Public supplier purchase-order view",
+      "purpose": "View the redacted order and previously submitted proposal.",
+      "personas": [
+        "supplier recipient"
+      ],
+      "authority": {
+        "permissions": "Valid signed view scope intersected with active, unexpired, unrevoked stored invitation permissions",
+        "scope": "token organization + envelope + purchase-order binding and content integrity"
+      },
+      "entryPoints": [
+        "/[locale]/supplier-purchase-order/[envelopeId]",
+        "GET /api/supplier-po-envelopes/[envelopeId]"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-response-contracts.ts",
+        "services/purchase-order/supplier-po-http.ts",
+        "hooks/supplier-po-response-request.ts",
+        "services/purchase-order/supplier-po-proposal-evidence.ts"
+      ],
+      "records": [
+        "SupplierPoEnvelope",
+        "SupplierPoAccessToken",
+        "SupplierPoAccessLog",
+        "SupplierPoProposal"
+      ],
+      "transitions": [
+        "valid link",
+        "verify envelope/live token",
+        "view",
+        "unavailable denial",
+        "Retain draft → explicit confirmation → persist exact request → submit once → match saved receipt",
+        "Lost acknowledgement → exact retry or current record refresh → original receipt, without duplicate response",
+        "Current view-only/revoked/expired authority → explicit denial; preserve pending reference; no unauthorized effects"
+      ],
+      "sideEffects": [
+        "Access log; no authoritative purchase-order or financial mutation"
+      ],
+      "implementationStatus": "event_backed_proposal_integrity_and_stable_scoped_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "SUPPLIER_RESPONSE_RECOVERY.md",
+        "../../evidence/supplier-buyer-receipt.json",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "SUPPLIER_PROPOSAL_EVIDENCE.md",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders start synthetically APPROVED. Actual normal approval, receiving, AP, payment, ledger and complete purchasing lifecycle are not established by these checks. Proposals leave order/financial records unchanged.",
+        "Native assistive technology, native browser zoom, comprehensive contrast, full production build and production latency remain unverified. Ten EN/FR width/text cases include 320px with 200% CSS root text, not native zoom certification.",
+        "Session storage is tab-local. Unavailable/corrupt storage fails closed for new writes; lost local storage or a mismatched response requires authorized operator reconciliation. No cross-browser recovery or supplier response reopening is implemented.",
+        "No live communication, live customer activation, payment, migration, deployment, X1 clearance or professional certification. The whole-platform workflow register remains incomplete.",
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Reviewed order decisions and accepted-proposal amendment have bounded v51–v54 evidence. Three-decimal quantity contracts now agree. Complete receiving/AP/payment/ledger and supplier-notification handoffs remain open.",
+        "Current order update/approval/transition source reads state before writes; shipping-only update retains the existing total. Reproduce and correct these operational paths in the next owned-fixture batch.",
+        "Native assistive technology, native zoom, comprehensive contrast, full production build and production latency remain unverified. Some inherited shell labels remain English and the Next development issue indicator is visible in screenshots.",
+        "Earlier English browser submission timed out without a proven cause. Sanitized HTTP observation and subsequent complete EN/FR runs passed; the failed receipt remains for investigation if it recurs.",
+        "No schema migration, deployment, external communication, live customer activation, payment or X1 clearance. Whole-platform workflow discovery, remediation and verification remain unfinished."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-SUPPLIER-ACCEPT",
+      "name": "Supplier order acceptance",
+      "purpose": "Record a supplier proposal for buyer review; retain authoritative order, stock, AP and ledger ownership.",
+      "personas": [
+        "supplier recipient"
+      ],
+      "authority": {
+        "permissions": "Signed supplier envelope token plus active live registry, not revoked/expired; respond permission",
+        "scope": "token organization + envelope + purchase-order binding and content integrity"
+      },
+      "entryPoints": [
+        "/[locale]/supplier-purchase-order/[envelopeId]",
+        "POST /api/supplier-po-envelopes/[envelopeId]/proposals"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-response-contracts.ts",
+        "services/purchase-order/supplier-po-http.ts",
+        "hooks/supplier-po-response-request.ts",
+        "services/purchase-order/supplier-po-proposal-evidence.ts"
+      ],
+      "records": [
+        "SupplierPoProposal",
+        "SupplierPoProposalLine",
+        "SupplierPoProposalState",
+        "BusinessEvent",
+        "SupplierPoAccessLog"
+      ],
+      "transitions": [
+        "ACCEPT",
+        "validate envelope lines/date/note",
+        "SUBMITTED",
+        "exact replay or conflict",
+        "buyer review",
+        "Retain draft → explicit confirmation → persist exact request → submit once → match saved receipt",
+        "Lost acknowledgement → exact retry or current record refresh → original receipt, without duplicate response",
+        "Current view-only/revoked/expired authority → explicit denial; preserve pending reference; no unauthorized effects"
+      ],
+      "sideEffects": [
+        "Immutable proposal/state/event; access audit; no order/inventory/AP/ledger mutation"
+      ],
+      "implementationStatus": "event_backed_proposal_integrity_and_stable_scoped_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "evidence/RETRY_VERIFICATION.json",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "SUPPLIER_RESPONSE_RECOVERY.md",
+        "../../evidence/supplier-buyer-receipt.json",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "SUPPLIER_PROPOSAL_EVIDENCE.md",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders start synthetically APPROVED. Actual normal approval, receiving, AP, payment, ledger and complete purchasing lifecycle are not established by these checks. Proposals leave order/financial records unchanged.",
+        "Native assistive technology, native browser zoom, comprehensive contrast, full production build and production latency remain unverified. Ten EN/FR width/text cases include 320px with 200% CSS root text, not native zoom certification.",
+        "Session storage is tab-local. Unavailable/corrupt storage fails closed for new writes; lost local storage or a mismatched response requires authorized operator reconciliation. No cross-browser recovery or supplier response reopening is implemented.",
+        "No live communication, live customer activation, payment, migration, deployment, X1 clearance or professional certification. The whole-platform workflow register remains incomplete.",
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Reviewed order decisions and accepted-proposal amendment have bounded v51–v54 evidence. Three-decimal quantity contracts now agree. Complete receiving/AP/payment/ledger and supplier-notification handoffs remain open.",
+        "Current order update/approval/transition source reads state before writes; shipping-only update retains the existing total. Reproduce and correct these operational paths in the next owned-fixture batch.",
+        "Native assistive technology, native zoom, comprehensive contrast, full production build and production latency remain unverified. Some inherited shell labels remain English and the Next development issue indicator is visible in screenshots.",
+        "Earlier English browser submission timed out without a proven cause. Sanitized HTTP observation and subsequent complete EN/FR runs passed; the failed receipt remains for investigation if it recurs.",
+        "No schema migration, deployment, external communication, live customer activation, payment or X1 clearance. Whole-platform workflow discovery, remediation and verification remain unfinished."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-SUPPLIER-REJECT",
+      "name": "Supplier order rejection",
+      "purpose": "Record a supplier proposal for buyer review; retain authoritative order, stock, AP and ledger ownership.",
+      "personas": [
+        "supplier recipient"
+      ],
+      "authority": {
+        "permissions": "Signed supplier envelope token plus active live registry, not revoked/expired; respond permission",
+        "scope": "token organization + envelope + purchase-order binding and content integrity"
+      },
+      "entryPoints": [
+        "/[locale]/supplier-purchase-order/[envelopeId]",
+        "POST /api/supplier-po-envelopes/[envelopeId]/proposals"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-response-contracts.ts",
+        "services/purchase-order/supplier-po-http.ts",
+        "hooks/supplier-po-response-request.ts",
+        "services/purchase-order/supplier-po-proposal-evidence.ts"
+      ],
+      "records": [
+        "SupplierPoProposal",
+        "SupplierPoProposalLine",
+        "SupplierPoProposalState",
+        "BusinessEvent",
+        "SupplierPoAccessLog"
+      ],
+      "transitions": [
+        "REJECT",
+        "validate envelope lines/date/note",
+        "SUBMITTED",
+        "exact replay or conflict",
+        "buyer review",
+        "Retain draft → explicit confirmation → persist exact request → submit once → match saved receipt",
+        "Lost acknowledgement → exact retry or current record refresh → original receipt, without duplicate response",
+        "Current view-only/revoked/expired authority → explicit denial; preserve pending reference; no unauthorized effects"
+      ],
+      "sideEffects": [
+        "Immutable proposal/state/event; access audit; no order/inventory/AP/ledger mutation"
+      ],
+      "implementationStatus": "event_backed_proposal_integrity_and_stable_scoped_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "evidence/RETRY_VERIFICATION.json",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "SUPPLIER_RESPONSE_RECOVERY.md",
+        "../../evidence/supplier-buyer-receipt.json",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "SUPPLIER_PROPOSAL_EVIDENCE.md",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders start synthetically APPROVED. Actual normal approval, receiving, AP, payment, ledger and complete purchasing lifecycle are not established by these checks. Proposals leave order/financial records unchanged.",
+        "Native assistive technology, native browser zoom, comprehensive contrast, full production build and production latency remain unverified. Ten EN/FR width/text cases include 320px with 200% CSS root text, not native zoom certification.",
+        "Session storage is tab-local. Unavailable/corrupt storage fails closed for new writes; lost local storage or a mismatched response requires authorized operator reconciliation. No cross-browser recovery or supplier response reopening is implemented.",
+        "No live communication, live customer activation, payment, migration, deployment, X1 clearance or professional certification. The whole-platform workflow register remains incomplete.",
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Reviewed order decisions and accepted-proposal amendment have bounded v51–v54 evidence. Three-decimal quantity contracts now agree. Complete receiving/AP/payment/ledger and supplier-notification handoffs remain open.",
+        "Current order update/approval/transition source reads state before writes; shipping-only update retains the existing total. Reproduce and correct these operational paths in the next owned-fixture batch.",
+        "Native assistive technology, native zoom, comprehensive contrast, full production build and production latency remain unverified. Some inherited shell labels remain English and the Next development issue indicator is visible in screenshots.",
+        "Earlier English browser submission timed out without a proven cause. Sanitized HTTP observation and subsequent complete EN/FR runs passed; the failed receipt remains for investigation if it recurs.",
+        "No schema migration, deployment, external communication, live customer activation, payment or X1 clearance. Whole-platform workflow discovery, remediation and verification remain unfinished."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-SUPPLIER-CHANGE",
+      "name": "Supplier date/quantity change request",
+      "purpose": "Record a supplier proposal for buyer review; retain authoritative order, stock, AP and ledger ownership.",
+      "personas": [
+        "supplier recipient"
+      ],
+      "authority": {
+        "permissions": "Signed supplier envelope token plus active live registry, not revoked/expired; respond permission",
+        "scope": "token organization + envelope + purchase-order binding and content integrity"
+      },
+      "entryPoints": [
+        "/[locale]/supplier-purchase-order/[envelopeId]",
+        "POST /api/supplier-po-envelopes/[envelopeId]/proposals"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-response-contracts.ts",
+        "services/purchase-order/supplier-po-http.ts",
+        "hooks/supplier-po-response-request.ts",
+        "services/purchase-order/supplier-po-proposal-evidence.ts"
+      ],
+      "records": [
+        "SupplierPoProposal",
+        "SupplierPoProposalLine",
+        "SupplierPoProposalState",
+        "BusinessEvent",
+        "SupplierPoAccessLog"
+      ],
+      "transitions": [
+        "REQUEST_CHANGE",
+        "validate envelope lines/date/note",
+        "SUBMITTED",
+        "exact replay or conflict",
+        "buyer review",
+        "Retain draft → explicit confirmation → persist exact request → submit once → match saved receipt",
+        "Lost acknowledgement → exact retry or current record refresh → original receipt, without duplicate response",
+        "Current view-only/revoked/expired authority → explicit denial; preserve pending reference; no unauthorized effects"
+      ],
+      "sideEffects": [
+        "Immutable proposal/state/event; access audit; no order/inventory/AP/ledger mutation"
+      ],
+      "implementationStatus": "event_backed_proposal_integrity_and_stable_scoped_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "evidence/RETRY_VERIFICATION.json",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "SUPPLIER_RESPONSE_RECOVERY.md",
+        "../../evidence/supplier-buyer-receipt.json",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "SUPPLIER_PROPOSAL_EVIDENCE.md",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders start synthetically APPROVED. Actual normal approval, receiving, AP, payment, ledger and complete purchasing lifecycle are not established by these checks. Proposals leave order/financial records unchanged.",
+        "Native assistive technology, native browser zoom, comprehensive contrast, full production build and production latency remain unverified. Ten EN/FR width/text cases include 320px with 200% CSS root text, not native zoom certification.",
+        "Session storage is tab-local. Unavailable/corrupt storage fails closed for new writes; lost local storage or a mismatched response requires authorized operator reconciliation. No cross-browser recovery or supplier response reopening is implemented.",
+        "No live communication, live customer activation, payment, migration, deployment, X1 clearance or professional certification. The whole-platform workflow register remains incomplete.",
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Reviewed order decisions and accepted-proposal amendment have bounded v51–v54 evidence. Three-decimal quantity contracts now agree. Complete receiving/AP/payment/ledger and supplier-notification handoffs remain open.",
+        "Current order update/approval/transition source reads state before writes; shipping-only update retains the existing total. Reproduce and correct these operational paths in the next owned-fixture batch.",
+        "Native assistive technology, native zoom, comprehensive contrast, full production build and production latency remain unverified. Some inherited shell labels remain English and the Next development issue indicator is visible in screenshots.",
+        "Earlier English browser submission timed out without a proven cause. Sanitized HTTP observation and subsequent complete EN/FR runs passed; the failed receipt remains for investigation if it recurs.",
+        "No schema migration, deployment, external communication, live customer activation, payment or X1 clearance. Whole-platform workflow discovery, remediation and verification remain unfinished."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-SUPPLIER-BUYER-REVIEW",
+      "name": "Buyer review of supplier response",
+      "purpose": "Accept or reject a supplier proposal with retained decision evidence.",
+      "personas": [
+        "buyer reviewer"
+      ],
+      "authority": {
+        "permissions": "purchases.orders.read + purchases.orders.update; fresh current password for writes/replays",
+        "scope": "Server-derived organization/actor/session, scoped order and envelope/proposal/token; current purchasing eligibility"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts:reviewSupplierPoProposalAction"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-buyer-authority.ts",
+        "services/purchase-order/supplier-po-buyer-contracts.ts",
+        "hooks/supplier-po-buyer-request.ts",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts",
+        "services/purchase-order/supplier-po-proposal-evidence.ts"
+      ],
+      "records": [
+        "SupplierPoProposalState",
+        "BusinessEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "SUBMITTED",
+        "BUYER_ACCEPTED or BUYER_REJECTED",
+        "same decision replay or conflict",
+        "Hand off accepted changes to PA-032 and display its verified amendment receipt under current read authority"
+      ],
+      "sideEffects": [
+        "Decision state/event/audit; authoritativeMutation false"
+      ],
+      "implementationStatus": "event_backed_proposal_integrity_and_stable_scoped_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "../../evidence/supplier-buyer-receipt.json",
+        "SUPPLIER_BUYER_REVIEW.md",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "SUPPLIER_PROPOSAL_EVIDENCE.md",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Historical invitation/review requests from older versions lack the new request and preview binding. Operators must reconcile them from retained records; no fabricated success or legacy authority fallback is supplied.",
+        "Browser recovery is tab-local. Lost/corrupt storage, mismatched request identity or missing evidence requires authorized operator reconciliation. Final buyer decisions cannot be reopened in the current two-state proposal model.",
+        "Actual browser verification covers buyer acceptance of a supplier change request, invitation and revocation, with loss of the review result and exact retry. Buyer rejection and obsolete-order decisions have PostgreSQL and component coverage, not a separate browser journey in this checkpoint. Older public ACCEPT/REJECT browser evidence is historical.",
+        "Existing Serializable conflicts may be wrapped by the shared event service as INTERNAL_ERROR. The workbench retains the exact request and safely recovers on retry. No global event-error refactor is included.",
+        "No deployment, migration, live customer activation, external message, payment, X1 clearance or professional certification. Full platform workflow discovery and remediation remain open.",
+        "Reviewed order decisions and accepted-proposal amendment have bounded v51–v54 evidence. Three-decimal quantity contracts now agree. Complete receiving/AP/payment/ledger and supplier-notification handoffs remain open.",
+        "Current order update/approval/transition source reads state before writes; shipping-only update retains the existing total. Reproduce and correct these operational paths in the next owned-fixture batch.",
+        "Native assistive technology, native zoom, comprehensive contrast, full production build and production latency remain unverified. Some inherited shell labels remain English and the Next development issue indicator is visible in screenshots.",
+        "Earlier English browser submission timed out without a proven cause. Sanitized HTTP observation and subsequent complete EN/FR runs passed; the failed receipt remains for investigation if it recurs.",
+        "No schema migration, deployment, external communication, live customer activation, payment or X1 clearance. Whole-platform workflow discovery, remediation and verification remain unfinished."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-SUPPLIER-REVOKE",
+      "name": "Supplier invitation revocation",
+      "purpose": "Revoke the invitation and deny subsequent public use.",
+      "personas": [
+        "buyer"
+      ],
+      "authority": {
+        "permissions": "purchases.orders.read + purchases.orders.update; fresh current password for writes/replays",
+        "scope": "Server-derived organization/actor/session, scoped order and envelope/proposal/token; current purchasing eligibility"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts:revokeSupplierPoInviteAction"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-buyer-authority.ts",
+        "services/purchase-order/supplier-po-buyer-contracts.ts",
+        "hooks/supplier-po-buyer-request.ts",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts"
+      ],
+      "records": [
+        "SupplierPoAccessToken",
+        "AuditLog"
+      ],
+      "transitions": [
+        "ACTIVE",
+        "conditional revoke",
+        "REVOKED",
+        "subsequent access denied"
+      ],
+      "sideEffects": [
+        "Token registry revocation and audit"
+      ],
+      "implementationStatus": "current_buyer_authority_exact_request_preview_recovery_and_bounded_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "../../evidence/supplier-buyer-receipt.json",
+        "SUPPLIER_BUYER_REVIEW.md",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Historical invitation/review requests from older versions lack the new request and preview binding. Operators must reconcile them from retained records; no fabricated success or legacy authority fallback is supplied.",
+        "Browser recovery is tab-local. Lost/corrupt storage, mismatched request identity or missing evidence requires authorized operator reconciliation. Final buyer decisions cannot be reopened in the current two-state proposal model.",
+        "Actual browser verification covers buyer acceptance of a supplier change request, invitation and revocation, with loss of the review result and exact retry. Buyer rejection and obsolete-order decisions have PostgreSQL and component coverage, not a separate browser journey in this checkpoint. Older public ACCEPT/REJECT browser evidence is historical.",
+        "Existing Serializable conflicts may be wrapped by the shared event service as INTERNAL_ERROR. The workbench retains the exact request and safely recovers on retry. No global event-error refactor is included.",
+        "No deployment, migration, live customer activation, external message, payment, X1 clearance or professional certification. Full platform workflow discovery and remediation remain open.",
+        "Native screen-reader operation, native zoom, comprehensive contrast, full production build and production latency remain unverified; some inherited French-shell labels remain English. Six-envelope history and proposal content/event verification are covered by the v48 checkpoint."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "CS-STATEMENT-HISTORY",
+      "name": "Retained customer statement and delivery history",
+      "purpose": "Inspect saved statements, deliveries and link access before resuming a request or explicitly preparing another copy.",
+      "personas": [
+        "accounting export operator with customer read access"
+      ],
+      "authority": {
+        "permissions": "customers.read and accounting.exports.create; enforced Accounting read for history; existing export/fresh-auth controls for new work",
+        "scope": "server-derived organization and scoped customer/statement/cursor"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+        "components/customers/CustomerStatementHistory.tsx",
+        "actions/accounting/customer-statement-history.actions.ts"
+      ],
+      "services": [
+        "services/accounting/customer-statement-history.service.ts",
+        "hooks/customer-statement-request.ts"
+      ],
+      "records": [
+        "CustomerStatementSnapshot",
+        "CustomerStatementDelivery",
+        "CustomerStatementDeliveryState",
+        "CustomerStatementAccessToken",
+        "BusinessEventOutbox"
+      ],
+      "transitions": [
+        "open customer",
+        "load bounded scoped history",
+        "inspect recorded balance and checked time",
+        "review delivery/queue/link state",
+        "explicitly open saved statement",
+        "resume exact retained request or review a new copy",
+        "refresh/paginate or preserve stale evidence with new work disabled"
+      ],
+      "sideEffects": [
+        "Audited history reads; opening a record creates no statement or delivery. Separate explicit mutations use existing guarded services."
+      ],
+      "implementationStatus": "known_unsent_retry_with_current_authority_revision_and_retained_command_implemented",
+      "reviewStatus": "bounded_current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "STATEMENT_HISTORY_AND_LINK_ACCESS.md",
+        "../../evidence/statement-history-receipt.json",
+        "../../evidence/statement-worker-receipt.json",
+        "../../evidence/statement-retry-receipt.json",
+        "../../evidence/statement-response-review-receipt.json",
+        "STATEMENT_RESPONSE_REVIEW.md"
+      ],
+      "remaining": [
+        "Only the known-not-sent statement setup branch has controlled retry. Unknown outcomes, exhausted/invalid records and other communication workers still need operator recovery/reconciliation work.",
+        "Provider configuration is rechecked by the worker. This form does not validate credentials, enable sending or authorize a live provider. No external message was sent.",
+        "Corrupt local command resolution, populated receivable/ledger lifecycle and full communication lifecycle remain open.",
+        "French text wraps heavily at 320px with 200% CSS text; compact layout improvement, native zoom, actual screen readers and comprehensive contrast remain open.",
+        "No full build, production performance acceptance, deployment, migration, X1 clearance or professional certification.",
+        "Sender inspection/review/reopening is verified by the source-v45 checkpoint; financial settlement, account correction and complete connected lifecycles remain unverified."
+      ],
+      "crossDomainHandoff": "CS-STATEMENT-RESPONSE-REVIEW implements sender inspection/review/reopening with retained state/event/audit. This advances the formerly missing handoff; downstream financial settlement and full lifecycle verification remain open."
+    },
+    {
+      "id": "CS-STATEMENT-RESPONSE-REVIEW",
+      "name": "Review customer statement responses",
+      "purpose": "Inspect recipient disputes/payment promises, record an internal review outcome and reopen corrections with durable history while preserving financial obligations.",
+      "personas": [
+        "Authorized customer/finance reviewer",
+        "Read-only statement operator"
+      ],
+      "authority": {
+        "permissions": "customers.read + accounting.exports.create for inspection; customers.update and fresh password assurance for decisions",
+        "scope": "Current server-derived tenant/actor/session; exact customer and response; current Accounting read/write availability"
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+        "components/customers/CustomerStatementWorkflow.tsx",
+        "components/customers/CustomerStatementResponses.tsx",
+        "actions/accounting/customer-statement-response.actions.ts"
+      ],
+      "services": [
+        "services/accounting/customer-statement-response.service.ts",
+        "services/accounting/customer-statement-response.schemas.ts",
+        "hooks/customer-statement-review-request.ts"
+      ],
+      "records": [
+        "CustomerStatementRecipientAction (retained unchanged)",
+        "CustomerStatementRecipientActionState",
+        "BusinessEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Discover saved recipient response → current scoped list/reference lookup → inspect source and current state",
+        "Prepare reason/outcome → retain draft → refresh current evidence after reload",
+        "Confirm password and exact decision → persist request identity → serialize current authority and revision → append state/event/audit → matching receipt",
+        "Uncertain acknowledgement → reload → exact retry → original receipt; no duplicate state",
+        "Completed/declined/closed → explicit reopening with reason → re-review current evidence → next outcome",
+        "Inspect paginated append-only history; retain original response and existing financial obligations"
+      ],
+      "sideEffects": [
+        "Append one internal review state, applied event and mandatory audit; no payment, journal, debt cancellation, external message or automatic approval"
+      ],
+      "implementationStatus": "sender_read_review_reopen_history_and_en_fr_recovery_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../evidence/statement-response-review-receipt.json",
+        "STATEMENT_RESPONSE_REVIEW.md",
+        "../../lanes/environment/statement-review-before-33b3f4a2-5db.json"
+      ],
+      "remaining": [
+        "Sender response inspection, review, reopening and exact retry are verified in an owned isolated application/database. This does not complete the entire customer statement, receivable settlement or order-to-cash lifecycle.",
+        "Fixtures start from synthetic sales sources followed by actual posted-receivable, snapshot, token and recipient services. No payment, balance adjustment, journal, debt cancellation or statutory approval is caused by a review decision.",
+        "Native screen readers, native browser zoom, comprehensive contrast and broader financial accessibility remain unverified. Responsive checks cover 320/390/768/1440 widths plus 320px with 200% CSS root text in EN/FR, not native zoom certification.",
+        "Corrupt/unavailable recovery storage, lost browser sessions and inaccessible accounts require authorized operator reconciliation of saved response/review references. There is no automatic cross-browser recovery or new review inbox/assignment/SLA workflow.",
+        "Read history is tenant/customer scoped and paginated. Source notes and reviewer reasons are retained as entered; the review does not upload or authenticate supporting documents, establish signer authority or clear X1.",
+        "No full production build, deployment, live delivery, payment, provider integration, migration or professional certification occurred. Unknown delivery outcomes, narrow enlarged sender-delivery history, other workers and the remaining workflow register remain open."
+      ]
+    },
+    {
+      "id": "CS-SUPPLIER-HISTORY",
+      "name": "Buyer supplier-communication history",
+      "purpose": "Read current scoped invitations, supplier proposals and decision history with bounded paging and explicit failure states.",
+      "personas": [
+        "Buyer",
+        "Authorized purchase-order reader"
+      ],
+      "authority": {
+        "permissions": "purchases.orders.read",
+        "scope": "Server-derived organization/actor/session, scoped order and envelope/proposal/token; current purchasing eligibility"
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts:reviewSupplierPoProposalAction"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/supplier-po-buyer-authority.ts",
+        "services/purchase-order/supplier-po-buyer-contracts.ts",
+        "hooks/supplier-po-buyer-request.ts",
+        "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts",
+        "services/purchase-order/supplier-po-proposal-evidence.ts"
+      ],
+      "records": [
+        "SupplierPoEnvelope",
+        "SupplierPoAccessToken",
+        "SupplierPoProposal",
+        "SupplierPoProposalState"
+      ],
+      "transitions": [
+        "Current buyer/organization/order authorization",
+        "Load a bounded page with current order revision",
+        "Inspect recorded state and preserved history",
+        "Load older scoped invitation/proposal pages",
+        "Access or read failure → protected state, never successful empty data",
+        "Hand off accepted changes to PA-032 and display its verified amendment receipt under current read authority"
+      ],
+      "sideEffects": [
+        "Read current records; authorization audit at action boundary"
+      ],
+      "implementationStatus": "event_backed_proposal_integrity_and_stable_scoped_history_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "FINDINGS_AND_REMEDIATION.md",
+        "../../evidence/supplier-acknowledgement-receipt.json",
+        "../../evidence/supplier-buyer-receipt.json",
+        "SUPPLIER_BUYER_REVIEW.md",
+        "../../evidence/supplier-proposal-evidence-receipt.json",
+        "SUPPLIER_PROPOSAL_EVIDENCE.md",
+        "../../evidence/purchase-amendment-receipt.json",
+        "../purchasing-ap/PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Fixture orders begin synthetically APPROVED. PA-032 now verifies the accepted-proposal amendment. Full initial procurement, supplier identity proof, receiving/AP/payment/ledger handoffs remain open; buyer acceptance itself never mutates the order.",
+        "Historical invitation/review requests from older versions lack the new request and preview binding. Operators must reconcile them from retained records; no fabricated success or legacy authority fallback is supplied.",
+        "Browser recovery is tab-local. Lost/corrupt storage, mismatched request identity or missing evidence requires authorized operator reconciliation. Final buyer decisions cannot be reopened in the current two-state proposal model.",
+        "Actual browser verification covers buyer acceptance of a supplier change request, invitation and revocation, with loss of the review result and exact retry. Buyer rejection and obsolete-order decisions have PostgreSQL and component coverage, not a separate browser journey in this checkpoint. Older public ACCEPT/REJECT browser evidence is historical.",
+        "Existing Serializable conflicts may be wrapped by the shared event service as INTERNAL_ERROR. The workbench retains the exact request and safely recovers on retry. No global event-error refactor is included.",
+        "No deployment, migration, live customer activation, external message, payment, X1 clearance or professional certification. Full platform workflow discovery and remediation remain open.",
+        "Reviewed order decisions and accepted-proposal amendment have bounded v51–v54 evidence. Three-decimal quantity contracts now agree. Complete receiving/AP/payment/ledger and supplier-notification handoffs remain open.",
+        "Current order update/approval/transition source reads state before writes; shipping-only update retains the existing total. Reproduce and correct these operational paths in the next owned-fixture batch.",
+        "Native assistive technology, native zoom, comprehensive contrast, full production build and production latency remain unverified. Some inherited shell labels remain English and the Next development issue indicator is visible in screenshots.",
+        "Earlier English browser submission timed out without a proven cause. Sanitized HTTP observation and subsequent complete EN/FR runs passed; the failed receipt remains for investigation if it recurs.",
+        "No schema migration, deployment, external communication, live customer activation, payment or X1 clearance. Whole-platform workflow discovery, remediation and verification remain unfinished."
+      ],
+      "completeWorkflowVerified": false
+    }
+  ],
+  "excludedSourceArtifacts": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx.orig",
+      "reason": "Historical non-executable copy; current page retained in inventory."
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx.orig",
+      "reason": "Historical non-executable copy; current edit workflow retained."
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx.orig",
+      "reason": "Historical non-executable copy; current creation workflow retained."
+    }
+  ],
+  "sourceBaseline": "../../evidence/source-baseline-v54.json"
+}

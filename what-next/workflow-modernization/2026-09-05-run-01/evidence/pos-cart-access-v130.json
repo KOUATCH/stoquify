@@ -1,0 +1,181 @@
+{
+  "at": "2026-09-13T14:13:55.096Z",
+  "baseline": "evidence/source-baseline-v130.json",
+  "sources": {
+    "services/pos/pos.service.ts": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+    "services/pos/cart-write-access.ts": "2f6b1811df12075a8dbb298987af100b3d8335db2d66ed7fa7cef65edd7899e8",
+    "actions/pos/cart.actions.ts": "633e5b46565667c1563e807184a9ef402281f8ae8dffadad265de1be4c1ca6d0",
+    "hooks/posHooks/usePosOperations.ts": "249e0e0700945c542a70d9fef7bc6c593dc36a2bd7234638d0806f1f12590f7d",
+    "components/pos/ProfessionalPOSSystem.tsx": "9136cbbda32a210d35974668da522efe4cf9f3b3d86cc0e24b8f205f81b2f2b2",
+    "messages/en.json": "a6b9dd5f889045bde14173c961620bc5b4bc2d95e51c8067196d4c67d9281076",
+    "messages/fr.json": "f199962bc6f77bb711f5e8b46abb9392c351edb6232646a06da0bc8c859c26a8"
+  },
+  "policy": "evidence/pos-cart-access-policy-v130.json",
+  "tests": {
+    "passed": 65,
+    "suites": 5,
+    "receipt": "2d0be3"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "e32580"
+  },
+  "lint": {
+    "passed": true,
+    "files": 8,
+    "receipt": "7f8d26"
+  },
+  "database": {
+    "file": "lanes/environment/cart-access-v130-after-d95718cd-5592-4139-b722-450a357c8fb6.json",
+    "at": "2026-09-13T14:00:02.031Z",
+    "phase": "after",
+    "sourceBefore": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+    "cases": [
+      {
+        "scenario": "legacy",
+        "cartWrites": "all_admitted",
+        "retainedRead": true,
+        "retainedClosure": true
+      },
+      {
+        "scenario": "active",
+        "cartWrites": "all_admitted",
+        "retainedRead": true,
+        "retainedClosure": true
+      },
+      {
+        "scenario": "empty",
+        "cartWrites": "all_denied_and_cart_unchanged",
+        "retainedRead": true,
+        "retainedClosure": true
+      },
+      {
+        "scenario": "read-only",
+        "cartWrites": "all_denied_and_cart_unchanged",
+        "retainedRead": true,
+        "retainedClosure": true
+      },
+      {
+        "scenario": "expired",
+        "cartWrites": "all_denied_and_cart_unchanged",
+        "retainedRead": true,
+        "retainedClosure": true
+      },
+      {
+        "scenario": "suspended-dependency",
+        "cartWrites": "all_denied_and_cart_unchanged",
+        "retainedRead": true,
+        "retainedClosure": true
+      }
+    ],
+    "scope": "Owned local PostgreSQL; actual shift/cart services and synthetic commercial grants. No checkout/payment/provider operation.",
+    "passed": true,
+    "sourceAfter": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+    "sourceStable": true
+  },
+  "concurrency": {
+    "file": "lanes/environment/pos-cart-v130-concurrency-after-7453946f-e08e-4a3b-aff3-85939c8f73c9.json",
+    "at": "2026-09-13T14:07:23.933Z",
+    "phase": "after",
+    "sourceBefore": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+    "checks": [
+      {
+        "name": "insufficient stock rejects without altering cart",
+        "passed": true
+      },
+      {
+        "name": "closed shift denies cart edit",
+        "passed": true
+      },
+      {
+        "name": "concurrent additions both retained after aborted transaction retry",
+        "quantity": "3",
+        "passed": true
+      }
+    ],
+    "scope": "Real cart services on owned local PostgreSQL. Synthetic fixtures and controlled read barrier; no payment, posting or external operation.",
+    "passed": true,
+    "sourceAfter": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/cart-access-browser-v130-291b8d6b-6ef3-4908-a407-a3e423c639ef.json",
+    "at": "2026-09-13T14:06:07.066Z",
+    "sourcesBefore": {
+      "services/pos/pos.service.ts": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+      "services/pos/cart-write-access.ts": "2f6b1811df12075a8dbb298987af100b3d8335db2d66ed7fa7cef65edd7899e8",
+      "actions/pos/cart.actions.ts": "633e5b46565667c1563e807184a9ef402281f8ae8dffadad265de1be4c1ca6d0",
+      "hooks/posHooks/usePosOperations.ts": "249e0e0700945c542a70d9fef7bc6c593dc36a2bd7234638d0806f1f12590f7d",
+      "components/pos/ProfessionalPOSSystem.tsx": "9136cbbda32a210d35974668da522efe4cf9f3b3d86cc0e24b8f205f81b2f2b2",
+      "messages/en.json": "a6b9dd5f889045bde14173c961620bc5b4bc2d95e51c8067196d4c67d9281076",
+      "messages/fr.json": "f199962bc6f77bb711f5e8b46abb9392c351edb6232646a06da0bc8c859c26a8"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "pageErrors": [],
+        "screenshots": [
+          "cart-access-v130-en-1440-291b8d6b-6ef3-4908-a407-a3e423c639ef.png",
+          "cart-access-v130-en-768-291b8d6b-6ef3-4908-a407-a3e423c639ef.png",
+          "cart-access-v130-en-320-291b8d6b-6ef3-4908-a407-a3e423c639ef.png"
+        ],
+        "readyMs": 10087,
+        "onHandDoesNotSubtractUncommittedCart": true,
+        "addUpdateRemoveDeniedDraftRetained": true,
+        "grantChangeDoesNotSubmit": true,
+        "explicitKeyboardCorrectionSaved": true,
+        "stockStillMatchesDatabaseAfterCartEdit": true,
+        "retainedClosureVerifiedByService": true
+      },
+      {
+        "locale": "fr",
+        "pageErrors": [],
+        "screenshots": [
+          "cart-access-v130-fr-1440-291b8d6b-6ef3-4908-a407-a3e423c639ef.png",
+          "cart-access-v130-fr-768-291b8d6b-6ef3-4908-a407-a3e423c639ef.png",
+          "cart-access-v130-fr-320-291b8d6b-6ef3-4908-a407-a3e423c639ef.png"
+        ],
+        "readyMs": 11329,
+        "onHandDoesNotSubtractUncommittedCart": true,
+        "addUpdateRemoveDeniedDraftRetained": true,
+        "grantChangeDoesNotSubmit": true,
+        "explicitKeyboardCorrectionSaved": true,
+        "stockStillMatchesDatabaseAfterCartEdit": true,
+        "retainedClosureVerifiedByService": true
+      }
+    ],
+    "scope": "Owned local credentials and real cart actions. Commercial grant changes are synthetic fixtures, not live activation. No checkout, payment or external operation.",
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/pos.service.ts": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+      "services/pos/cart-write-access.ts": "2f6b1811df12075a8dbb298987af100b3d8335db2d66ed7fa7cef65edd7899e8",
+      "actions/pos/cart.actions.ts": "633e5b46565667c1563e807184a9ef402281f8ae8dffadad265de1be4c1ca6d0",
+      "hooks/posHooks/usePosOperations.ts": "249e0e0700945c542a70d9fef7bc6c593dc36a2bd7234638d0806f1f12590f7d",
+      "components/pos/ProfessionalPOSSystem.tsx": "9136cbbda32a210d35974668da522efe4cf9f3b3d86cc0e24b8f205f81b2f2b2",
+      "messages/en.json": "a6b9dd5f889045bde14173c961620bc5b4bc2d95e51c8067196d4c67d9281076",
+      "messages/fr.json": "f199962bc6f77bb711f5e8b46abb9392c351edb6232646a06da0bc8c859c26a8"
+    },
+    "sourceStable": true
+  },
+  "recoveredRuntimeReportReceipt": "695d67",
+  "verificationDetails": "CART_ACCESS_V130.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2888,
+      "tests": 1025,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 174,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2514,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-09T11:40:38.012Z",
+  "run": "a28f8962-306",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "98f7e381ffce294c901eab54cd1ec928bc65c22c1d171c5505a509c0c313d50f",
+    "actions/payments/reconciliation.actions.ts": "0d9787cce983bed5168f18d5d075808ca1445d1906d798c78be652c09fdf0fd2"
+  },
+  "checks": [
+    "Actual captured provider evidence and automatic match produce READY_FOR_SIGNOFF; independent sign service issues a certificate",
+    "Two actual downloads reuse one receipt but change bytes, retained hash and processed timestamp"
+  ],
+  "scope": "Owned synthetic provider setup and internal payment; real HMAC capture, matching, sign-off and export. No external provider or statutory approval.",
+  "originalBefore": "eb55b181fa62d69d98e674c9d72c9fa9061549115df54657493d9c10c6cad23a",
+  "beforeDefectReproduced": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "98f7e381ffce294c901eab54cd1ec928bc65c22c1d171c5505a509c0c313d50f",
+    "actions/payments/reconciliation.actions.ts": "0d9787cce983bed5168f18d5d075808ca1445d1906d798c78be652c09fdf0fd2"
+  },
+  "sourceStable": true
+}

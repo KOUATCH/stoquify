@@ -1,0 +1,75 @@
+{
+  "at": "2026-09-13T16:13:24.866Z",
+  "baseline": "evidence/source-baseline-v138.json",
+  "sources": {
+    "services/pos/offline-sync.service.ts": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+    "services/pos/pos.service.ts": "eb7d15d8a778794327661430f54c33d67510e5e4b3ec81df795462b536dcf1b8"
+  },
+  "reproductions": [
+    {
+      "receipt": "668833",
+      "result": "Three regressions: missing posting and stale success/failure were accepted"
+    },
+    {
+      "receipt": "c4fdb1",
+      "result": "Same-timestamp metadata change evaded timestamp-only predicate",
+      "file": "lanes/environment/replay-transition-v138-a00fd01f-5c00-456b-90eb-7f1b5ca8dbea.json"
+    }
+  ],
+  "tests": {
+    "passed": 84,
+    "suites": 4,
+    "receipt": "466bb6",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/pos/__tests__/offline-sync.service.test.ts services/pos/__tests__/commit-recovery.service.test.ts services/pos/__tests__/pos.service.test.ts actions/pos/__tests__/sync.actions.test.ts"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "360ba7",
+    "command": "node node_modules/eslint/bin/eslint.js services/pos/offline-sync.service.ts services/pos/__tests__/offline-sync.service.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "6be12d",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/replay-transition-v138-ecadce74-dfe4-4c63-848c-215d8a8aeb3c.json",
+    "receipt": "f028a5",
+    "at": "2026-09-13T16:11:01.799Z",
+    "checks": [
+      "Overlapping successful acknowledgements yield one winner, one typed conflict, one event/audit/outbox and unchanged financial records; retry is read-only",
+      "Overlapping failures retain one conflict/audit/business event; losing transaction leaves no orphan conflict or financial effects",
+      "Evidence updated after initial read survives a stale acknowledgement attempt unchanged"
+    ],
+    "scope": "Owned synthetic offline events and real POS cash postings; not device signature/ingestion certification.",
+    "passed": true,
+    "sources": {
+      "services/pos/offline-sync.service.ts": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "services/pos/pos.service.ts": "eb7d15d8a778794327661430f54c33d67510e5e4b3ec81df795462b536dcf1b8"
+    }
+  },
+  "browser": {
+    "rerun": false,
+    "reason": "No interface changed; replay deployment remains test-only. v137 review UI evidence is historical at its bindings."
+  },
+  "guide": "REPLAY_TRANSITION_V138.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2903,
+      "tests": 1033,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2526,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

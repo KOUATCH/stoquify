@@ -1,0 +1,25 @@
+{
+  "run": "769560c6-a9b",
+  "mode": "after",
+  "at": "2026-09-07T12:21:51.328Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "555ea79be576e837167d7e0c481411385df50555aeab215c1eab2e533bff332b",
+    "services/purchase-order/purchase-order.schemas.ts": "66665cbe749324de4775a5e062e65ed5db34701aab91d71cde09dd5457488b9b",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "afb08213aa5a8f56165f1cd3331aba221ac733689462da543d299b3369b05631",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "A second stale draft cannot overwrite a first editor save",
+      "status": "failed",
+      "error": "Business event could not be recorded."
+    }
+  ],
+  "scope": "Owned local synthetic draft orders and authority changes. No external messages, migrations or financial postings.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "databaseFailure": {
+    "name": "PrismaClientValidationError",
+    "message": "            outboxMessages: true\n          }\n        })\n\nInvalid value for argument `sourceType`. Expected AccountingSourceType."
+  },
+  "error": "Business event could not be recorded."
+}

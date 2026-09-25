@@ -125,7 +125,7 @@ describe("accountant access service", () => {
     )
     expect(mockDb.businessEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ eventType: "ACCOUNTANT_ACCESS_GRANTED" }),
+        data: expect.objectContaining({ eventType: "ACCOUNTANT_ACCESS_GRANTED", sourceType: undefined, metadata: { sourceEntityType: "AccountantAccessGrant" }, sourceId: "grant-1" }),
       }),
     )
   })
@@ -574,7 +574,7 @@ describe("accountant access service", () => {
     )
     expect(mockDb.businessEvent.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ eventType: "ACCOUNTANT_ACCESS_REVOKED" }),
+        data: expect.objectContaining({ eventType: "ACCOUNTANT_ACCESS_REVOKED", sourceType: undefined, metadata: { sourceEntityType: "AccountantAccessGrant" }, sourceId: "grant-1" }),
       }),
     )
   })

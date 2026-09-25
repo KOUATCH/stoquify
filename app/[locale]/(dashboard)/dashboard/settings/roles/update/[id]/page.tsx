@@ -1,7 +1,5 @@
-import { getRoleById } from "@/actions/roles/getRoleById";
-import NotFound from "@/app/not-found";
 import RoleForm from "@/components/Forms/RoleForm";
-import { checkPermission } from "@/config/useAuth";
+import { requirePermission } from "@/lib/security/rbac";
 import { routeByKey, withSettingsSurfaceAccess } from "../../../settings-route-access"
 
 async function pageImpl({
@@ -9,14 +7,10 @@ async function pageImpl({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await checkPermission("roles.update");
+  const ctx = await requirePermission("roles.update");
 
   const id = (await params).id;
-  const { data } = await getRoleById(id);
-  if (!id || !data) {
-    return NotFound();
-  }
-  return <RoleForm editingId={id} initialData={data} />;
+  return <div className="dashboard-landing-theme min-h-screen overflow-x-hidden"><RoleForm editingId={id} organizationId={ctx.orgId} actorId={ctx.userId} /></div>;
 }
 
 

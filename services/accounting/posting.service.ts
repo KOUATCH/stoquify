@@ -7,7 +7,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -20,7 +20,6 @@ import {
 } from "./journal-close-invalidation.service"
 import {
   assertBalancedJournalEntry,
-  assertOpenPeriod,
   assertSameOrganizationAccounts,
   buildPostingIdempotencyKey,
 } from "./invariants"
@@ -169,6 +168,10 @@ export async function createLedgerPostingBatch(
   input: LedgerPostingBatchInput,
   tx: Prisma.TransactionClient | typeof db = db,
 ) {
+  const version = input.sourceVersion ?? 1
+  if (!Number.isSafeInteger(version) || version < 1 || version > 2_147_483_647) {
+    throw new BusinessRuleError("Posting source version must be a positive database integer.")
+  }
   const idempotencyKey =
     input.idempotencyKey ||
     buildPostingIdempotencyKey({
@@ -179,21 +182,33 @@ export async function createLedgerPostingBatch(
       sourceVersion: input.sourceVersion,
     })
 
-  const existing = await tx.ledgerPostingBatch.findFirst({
+  // Check the key first: a combined OR can return the source match and conceal
+  // that the submitted key already belongs to a different financial operation.
+  const byKey = await tx.ledgerPostingBatch.findFirst({
+    where: { organizationId: input.organizationId, idempotencyKey },
+  })
+  const existing = byKey ?? await tx.ledgerPostingBatch.findFirst({
     where: {
       organizationId: input.organizationId,
-      OR: [
-        { idempotencyKey },
-        {
-          sourceType: input.sourceType,
-          sourceId: input.sourceId,
-          postingPurpose: input.postingPurpose,
-        },
-      ],
+      sourceType: input.sourceType,
+      sourceId: input.sourceId,
+      postingPurpose: input.postingPurpose,
+      postingCycle: 1,
     },
   })
 
-  if (existing) return existing
+  if (existing) {
+    if (existing.organizationId !== input.organizationId || existing.sourceType !== input.sourceType
+      || existing.sourceId !== input.sourceId || existing.postingPurpose !== input.postingPurpose
+      || (existing.sourceVersion ?? 1) !== version || (existing.postingCycle ?? 1) !== 1
+      || (input.periodId != null && existing.periodId != null && existing.periodId !== input.periodId)) {
+      throw new IdempotencyConflictError("The retained posting batch belongs to different source, version or period evidence. Review the original posting before retrying.")
+    }
+    // Historical null versions mean v1. Preserve canonical source deduplication,
+    // including a caller retrying that source with a different request key.
+    // This is identity validation; domain services must still verify payload and ledger truth.
+    return existing
+  }
 
   return tx.ledgerPostingBatch.create({
     data: {
@@ -249,7 +264,8 @@ export async function postJournalEntry(
       throw new BusinessRuleError("Only draft journal entries can be posted")
     }
 
-    assertOpenPeriod(entry.period, entry.entryDate, organizationId)
+    const period = await getOpenPeriodForDate(organizationId, entry.entryDate, tx)
+    if (period.id !== entry.periodId) throw new BusinessRuleError("Journal accounting period changed. Review the entry before posting.")
     assertBalancedJournalEntry(entry.lines)
     await assertEntryAccountsPostable(
       organizationId,
@@ -364,6 +380,9 @@ export async function reverseJournalEntry(
   control?: AccountingControlContext,
 ) {
   const result = await db.$transaction(async (tx) => {
+    // Resolution takes the same row lock before reserving a clearing journal.
+    // A reversal and final resolution cannot commit against opposite snapshots.
+    await tx.$queryRaw`SELECT id FROM journal_entries WHERE id = ${journalEntryId} AND "organizationId" = ${organizationId} FOR UPDATE`
     const original = await tx.journalEntry.findFirst({
       where: { id: journalEntryId, organizationId },
       include: {
@@ -371,6 +390,7 @@ export async function reverseJournalEntry(
         period: true,
         lines: { include: { account: true }, orderBy: { lineNumber: "asc" } },
         reversedByEntries: { select: { id: true } },
+        postingBatch: true,
       },
     })
 
@@ -397,7 +417,7 @@ export async function reverseJournalEntry(
     await auditSensitiveActionDecision(tx, controlDecision)
     if (!controlDecision.allowed) return { denied: controlDecision }
 
-    if (original.sourceType === AccountingSourceType.CUSTOMER_SETTLEMENT) {
+    if (original.sourceType === AccountingSourceType.CUSTOMER_SETTLEMENT || original.sourceType === AccountingSourceType.PAYMENT_SUSPENSE) {
       await tx.auditLog.create({
         data: {
           organizationId,
@@ -413,7 +433,14 @@ export async function reverseJournalEntry(
           },
         },
       })
-      return { sourceOwnedBlocked: true as const }
+      return { sourceOwnedBlocked: original.sourceType }
+    }
+    const resolution = await tx.paymentReconciliationInboxItem.findFirst({ where: { organizationId, source: "SUSPENSE_POST",
+      idempotencyKey: `suspense-resolution-clearing:${original.id}` }, select: { id: true } })
+    if (resolution) throw new BusinessRuleError("This journal clears a resolved suspense item. Reopening that resolution requires source-owned recovery; generic reversal is not available.")
+    const recoveryMetadata = original.postingBatch?.metadata
+    if (recoveryMetadata && typeof recoveryMetadata === "object" && !Array.isArray(recoveryMetadata) && recoveryMetadata.resolutionRecoveryReceiptId) {
+      throw new BusinessRuleError("This journal preserves a suspense recovery. Use the source workflow for further corrections; generic reversal is not available.")
     }
     if (original.status !== JournalEntryStatus.POSTED) {
       throw new BusinessRuleError("Only posted journal entries can be reversed")
@@ -544,7 +571,9 @@ export async function reverseJournalEntry(
 
   if ("sourceOwnedBlocked" in result && result.sourceOwnedBlocked) {
     throw new BusinessRuleError(
-      "Customer settlement journals must be reversed through the customer settlement source command",
+      result.sourceOwnedBlocked === AccountingSourceType.PAYMENT_SUSPENSE
+        ? "Payment suspense correction requires a linked source workflow, which is not yet available. No journal was reversed."
+        : "Customer settlement journals must be reversed through the customer settlement source command",
     )
   }
 

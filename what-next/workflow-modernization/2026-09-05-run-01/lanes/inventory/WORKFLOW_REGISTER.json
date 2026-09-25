@@ -1,0 +1,1077 @@
+{
+  "schemaVersion": 1,
+  "lane": "inventory",
+  "evidenceDate": "2026-09-05T18:30:27.369Z",
+  "scope": "Read-only discovery; 17 candidate workflows, not a release-certified total. PA/MD/OTC/close owner workflows are linked rather than recounted.",
+  "runtimeStatement": "No application/test/database writes or heavy checks were run for this lane discovery. Existing test files and historical browser evidence are not represented as current passes.",
+  "crossReferences": [
+    {
+      "owner": "PA",
+      "ids": [
+        "PA-010",
+        "PA-011",
+        "PA-012",
+        "PA-014",
+        "PA-024",
+        "PA-025"
+      ],
+      "scope": "Accepted/held receiving, inspection resolution, receipt evidence, purchase returns/reversals own the business workflow; inventory stock kernel is an effect."
+    },
+    {
+      "owner": "MD",
+      "ids": "pending parent MD stable IDs",
+      "scope": "Items/brands/categories/units/locations and supplier relationships; IN-007 links only the stock adjustment effect of item stock editing."
+    },
+    {
+      "owner": "OTC",
+      "ids": "pending parent OTC stable IDs",
+      "scope": "Delivery-order reservation/goods issue, sale/refund/void and billing belong to sales/order-to-cash; stock kernel effects are cross-boundary dependencies."
+    },
+    {
+      "owner": "modules",
+      "ids": "existing module lifecycle",
+      "scope": "Stopping new work and retained obligations are configuration lifecycle; IN-012 notes pre-admitted count continuation."
+    },
+    {
+      "owner": "accounting-close",
+      "ids": "pending parent accounting IDs",
+      "scope": "Close review/pack use IN-017 as inventory evidence; do not count a second close workflow."
+    }
+  ],
+  "graphHints": [
+    {
+      "file": "graphify-out/graph_components.json",
+      "node": "inventory_loss_inventorylossworkbench_tsx",
+      "community": 222
+    },
+    {
+      "file": "graphify-out/graph_hooks.json",
+      "node": "useinventorylossworkbench_ts",
+      "community": 8
+    },
+    {
+      "file": "graphify-out/graph_hooks.json",
+      "node": "useinventorymovementhistoryworkbench_ts",
+      "community": 9
+    },
+    {
+      "file": "graphify-out/graph_actions.json",
+      "node": "inventory_inventorymovementactions_ts",
+      "community": 93
+    },
+    {
+      "file": "graphify-out/graph_actions.json",
+      "node": "inventory_inventorylosscontrolactions_ts",
+      "community": 33
+    },
+    {
+      "file": "graphify-out/graph_app.json",
+      "node": "locale_dashboard_dashboard_inventory_transfers_page_tsx",
+      "community": 119
+    }
+  ],
+  "workflows": [
+    {
+      "id": "IN-001",
+      "name": "Investigate movement history",
+      "purpose": "Trace effective and recorded stock movements, their source and available proof.",
+      "personas": [
+        "Stock controller",
+        "Auditor"
+      ],
+      "authority": [
+        "inventory.levels.read",
+        "Server-derived tenant; history actions enforce inventory read access"
+      ],
+      "entryPoints": [
+        "/dashboard/inventory/movements",
+        "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+        "hooks/useInventoryMovementHistoryWorkbench.ts"
+      ],
+      "services": [
+        "services/inventory/inventory-read.service.ts#readInventoryMovementHistory",
+        "actions/inventory/inventoryMovementHistoryActions.ts#getInventoryMovementHistoryAction"
+      ],
+      "records": [
+        "InventoryTransaction",
+        "BusinessEvent",
+        "InventoryLevel",
+        "signed snapshot cursor"
+      ],
+      "transitions": [
+        "filters → snapshot page → next page / record details / refresh"
+      ],
+      "sideEffects": [
+        "Read-only operational data; access auditing"
+      ],
+      "implementationStatus": "interactive_read",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+        "hooks/useInventoryMovementHistoryWorkbench.ts",
+        "services/inventory/inventory-read.service.ts#readInventoryMovementHistory",
+        "actions/inventory/inventoryMovementHistoryActions.ts#getInventoryMovementHistoryAction"
+      ],
+      "remaining": [
+        "Search is retained in URL/client state but omitted from server action filters; verify visible page-search scope and export scope wording.",
+        "Recheck current EN/FR, keyboard, stale cursor, empty and query failure behavior in actual application."
+      ]
+    },
+    {
+      "id": "IN-002",
+      "name": "Export movement history interactively",
+      "purpose": "Obtain an auditable bounded movement-history artifact.",
+      "personas": [
+        "Stock controller",
+        "Auditor"
+      ],
+      "authority": [
+        "reports.export",
+        "inventory.levels.read",
+        "Fresh authentication maxAge300 and sensitive export policy"
+      ],
+      "entryPoints": [
+        "Movement history Export button",
+        "hooks/useInventoryMovementHistoryWorkbench.ts#exportMutation"
+      ],
+      "services": [
+        "actions/inventory/inventoryMovementHistoryActions.ts#exportInventoryMovementHistoryAction",
+        "services/inventory/inventory-history-export.service.ts#exportInventoryMovementHistory"
+      ],
+      "records": [
+        "JSON artifact",
+        "export manifest",
+        "AuditLog"
+      ],
+      "transitions": [
+        "fresh snapshot → export up to10000 rows → returned content and manifest"
+      ],
+      "sideEffects": [
+        "Audits access/manifest; returns operational history content"
+      ],
+      "implementationStatus": "partial_interactive",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "hooks/useInventoryMovementHistoryWorkbench.ts#exportMutation",
+        "actions/inventory/inventoryMovementHistoryActions.ts#exportInventoryMovementHistoryAction",
+        "services/inventory/inventory-history-export.service.ts#exportInventoryMovementHistory"
+      ],
+      "remaining": [
+        "Hook onSuccess only stores filename/count; no Blob, download link or returned-content consumer was found in the connected workbench.",
+        "No inline fresh-auth challenge traced here; expired assurance must have a reachable retry path.",
+        "Export excludes cursor and local text search; user-facing scope needs explicit verification."
+      ]
+    },
+    {
+      "id": "IN-003",
+      "name": "Prepare, retrieve and expire large history exports",
+      "purpose": "Generate large bounded history artifacts through a durable worker and controlled download.",
+      "personas": [
+        "Auditor",
+        "Operations worker"
+      ],
+      "authority": [
+        "reports.export and inventory.levels.read",
+        "Enqueue/download grant require fresh authentication",
+        "Download token bound to tenant, actor, expiry and content hash; worker rechecks authority"
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+        "scripts/inventory-history-export-worker.ts"
+      ],
+      "services": [
+        "services/inventory/inventory-history-background-export.service.ts#enqueueInventoryHistoryBackgroundExport",
+        "services/inventory/inventory-history-background-export.service.ts#processNextInventoryHistoryBackgroundExportJob",
+        "services/inventory/inventory-history-background-export.service.ts#streamInventoryHistoryExportDownload",
+        "services/inventory/inventory-history-background-export.service.ts#expireInventoryHistoryBackgroundExports",
+        "services/inventory/inventory-history-export-artifact-store.ts"
+      ],
+      "records": [
+        "Outbox-style durable job",
+        "chunk evidence",
+        "encrypted artifact",
+        "manifest",
+        "short-lived download grant",
+        "AuditLog"
+      ],
+      "transitions": [
+        "enqueue → worker claim/chunks → SENT ready or failure/retry → authorized grant/download → expiry"
+      ],
+      "sideEffects": [
+        "Encrypted artifact writes/deletes, bounded250000-row export, job/audit evidence"
+      ],
+      "implementationStatus": "backend_and_worker_only",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+        "scripts/inventory-history-export-worker.ts",
+        "services/inventory/inventory-history-background-export.service.ts#enqueueInventoryHistoryBackgroundExport",
+        "services/inventory/inventory-history-background-export.service.ts#processNextInventoryHistoryBackgroundExportJob",
+        "services/inventory/inventory-history-background-export.service.ts#streamInventoryHistoryExportDownload",
+        "services/inventory/inventory-history-background-export.service.ts#expireInventoryHistoryBackgroundExports",
+        "services/inventory/inventory-history-export-artifact-store.ts"
+      ],
+      "remaining": [
+        "No production UI caller of enqueue/status/grant actions found.",
+        "No HTTP adapter calling streamInventoryHistoryExportDownload found in current app/actions/hooks search.",
+        "Worker deployment/schedule, artifact credentials, cleanup and retry runtime remain unverified; no worker executed."
+      ]
+    },
+    {
+      "id": "IN-004",
+      "name": "Create a stock transfer draft",
+      "purpose": "Request a quantity move between two existing locations.",
+      "personas": [
+        "Stock operator"
+      ],
+      "authority": [
+        "inventory.stock.transfer",
+        "Server actor/org; new-work admission inventory.transfer.create",
+        "Current active tenant-owned source/destination/items; inventory-tracked item and available stock"
+      ],
+      "entryPoints": [
+        "/dashboard/inventory/transfers",
+        "components/inventory/transfers/CreateTransferModal.tsx",
+        "hooks/useTransferQueries.ts#useCreateTransfer"
+      ],
+      "services": [
+        "actions/inventory/inventoryMovementActions.ts#createLocationTransfer",
+        "services/inventory/inventory-transfer.service.ts#createStockTransfer"
+      ],
+      "records": [
+        "StockTransfer DRAFT",
+        "StockTransferLine",
+        "AuditLog"
+      ],
+      "transitions": [
+        "form → validation → DRAFT; denied/failure stays separate from created"
+      ],
+      "sideEffects": [
+        "Allocate transfer number and persist draft/audit; no stock movement at creation"
+      ],
+      "implementationStatus": "interactive_write",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "components/inventory/transfers/CreateTransferModal.tsx",
+        "hooks/useTransferQueries.ts#useCreateTransfer",
+        "actions/inventory/inventoryMovementActions.ts#createLocationTransfer",
+        "services/inventory/inventory-transfer.service.ts#createStockTransfer"
+      ],
+      "remaining": [
+        "Create draft is not an idempotent command: generated number collision returns conflict, no caller request key.",
+        "Duplicate item lines are aggregated for availability checks but persisted separately; verify posting behavior before claiming duplicates supported.",
+        "New-work stopped FR denial was browser-tested in prior module run, not rerun in this discovery."
+      ]
+    },
+    {
+      "id": "IN-005",
+      "name": "Approve and complete a stock transfer",
+      "purpose": "Post both sides of a location transfer using current stock values.",
+      "personas": [
+        "Approver",
+        "Stock operator"
+      ],
+      "authority": [
+        "inventory.stock.transfer",
+        "DRAFT; active tenant-owned locations/items; sufficient current stock; open accounting period",
+        "Separate approver required by service only if either location requiresApproval; UI always excludes creator"
+      ],
+      "entryPoints": [
+        "components/inventory/transfers/TransferDetailsModal.tsx#handleApprove",
+        "hooks/useTransferQueries.ts#useApproveTransfer"
+      ],
+      "services": [
+        "actions/inventory/inventoryMovementActions.ts#approveTransfer",
+        "services/inventory/inventory-transfer.service.ts#postStockTransfer"
+      ],
+      "records": [
+        "InventoryLevel versions",
+        "paired InventoryTransaction rows",
+        "StockTransfer COMPLETED",
+        "BusinessEvent",
+        "outbox",
+        "AuditLog"
+      ],
+      "transitions": [
+        "DRAFT → approval command → COMPLETED and moved stock; canonical replay returns recorded event"
+      ],
+      "sideEffects": [
+        "Paired quantity/value movement in one transaction, optimistic version guards, event/outbox/audit and close invalidation"
+      ],
+      "implementationStatus": "interactive_write",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "components/inventory/transfers/TransferDetailsModal.tsx#handleApprove",
+        "hooks/useTransferQueries.ts#useApproveTransfer",
+        "actions/inventory/inventoryMovementActions.ts#approveTransfer",
+        "services/inventory/inventory-transfer.service.ts#postStockTransfer"
+      ],
+      "remaining": [
+        "Button says Approve Transfer while action immediately completes stock movement; no separately traced dispatch/transit/receipt workflow.",
+        "UI eligibility checks creator/status, not explicit permission, while server still enforces permission.",
+        "Displayed transfer value uses current item.costPrice; verify whether it is labeled as estimate versus actual posting valuation.",
+        "Reproduce duplicate-line, concurrent post, insufficient stock and replay actor cases; tests exist but were not run."
+      ]
+    },
+    {
+      "id": "IN-006",
+      "name": "Review transfer status and evidence",
+      "purpose": "Inspect draft/completed transfer details and responsible actors.",
+      "personas": [
+        "Stock controller"
+      ],
+      "authority": [
+        "Route TRANSFERS_READ (existing canonical alias must remain effective)",
+        "Read service/action current tenant and inventory read permissions"
+      ],
+      "entryPoints": [
+        "/dashboard/inventory/transfers",
+        "components/inventory/transfers/TransferDashboard.tsx",
+        "components/inventory/transfers/TransferDetailsModal.tsx"
+      ],
+      "services": [
+        "actions/inventory/inventoryMovementActions.ts#getTransfers",
+        "services/inventory/inventory-read.service.ts#listStockTransfers"
+      ],
+      "records": [
+        "StockTransfer",
+        "StockTransferLine",
+        "locations and actor projections"
+      ],
+      "transitions": [
+        "list/filter → details → authorized posting in IN-005"
+      ],
+      "sideEffects": [
+        "Read-only; no separate cancellation/edit/rejection command traced from this screen"
+      ],
+      "implementationStatus": "interactive_read",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "components/inventory/transfers/TransferDashboard.tsx",
+        "components/inventory/transfers/TransferDetailsModal.tsx",
+        "actions/inventory/inventoryMovementActions.ts#getStockTransfers",
+        "services/inventory/inventory-read.service.ts"
+      ],
+      "remaining": [
+        "Legacy English labels and portal token scope require actual EN/FR/mobile review.",
+        "No connected cancel, reject, dispatch or receive-transfer recovery control found; do not infer those workflows from enum labels."
+      ]
+    },
+    {
+      "id": "IN-007",
+      "name": "Request a manual stock adjustment",
+      "purpose": "Record a proposed stock correction without directly overwriting on-hand stock.",
+      "personas": [
+        "Stock operator"
+      ],
+      "authority": [
+        "inventory.levels.adjust or inventory.stock.adjust according to action",
+        "Server-derived actor/tenant; inventory.adjustment.create admission"
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryActions.ts#updateInventoryLevel",
+        "actions/inventory/inventoryActions.ts#createStockAdjustment",
+        "actions/itemsShow/updateItemStockById.ts (cross-reference MD item surface)"
+      ],
+      "services": [
+        "services/inventory/inventory-adjustment.service.ts#createStockAdjustment",
+        "services/inventory/inventory-adjustment.service.ts#requestManualItemStockAdjustment"
+      ],
+      "records": [
+        "StockAdjustment",
+        "StockAdjustmentLine",
+        "AuditLog"
+      ],
+      "transitions": [
+        "manual delta/absolute request → DRAFT or manual request SUBMITTED"
+      ],
+      "sideEffects": [
+        "Captures current quantities/cost and reason; stock posting remains IN-008"
+      ],
+      "implementationStatus": "backend_with_item_entry_reference",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryActions.ts#updateInventoryLevel",
+        "actions/inventory/inventoryActions.ts#createStockAdjustment",
+        "actions/itemsShow/updateItemStockById.ts (cross-reference MD item surface)",
+        "services/inventory/inventory-adjustment.service.ts#createStockAdjustment",
+        "services/inventory/inventory-adjustment.service.ts#requestManualItemStockAdjustment"
+      ],
+      "remaining": [
+        "Item master editing belongs to MD; this row owns only adjustment request semantics, not another item-create workflow.",
+        "No dedicated adjustment creation/review form found in loss-control; exact item caller full journey remains MD/IN joint verification.",
+        "Current signed quantity, cost, evidence and actor rules need focused mutation proof."
+      ]
+    },
+    {
+      "id": "IN-008",
+      "name": "Approve and post a stock adjustment",
+      "purpose": "Apply an independently reviewed stock correction and expose ledger outcome honestly.",
+      "personas": [
+        "Independent stock approver",
+        "Accountant"
+      ],
+      "authority": [
+        "inventory.stock.adjust; enforced inventory write module",
+        "Allowed submitted/approved state, evidence and separate approver; open period",
+        "Version/quantity guards; frozen count comparisons when count sourced"
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryLossControlActions.ts#postStockAdjustmentAction"
+      ],
+      "services": [
+        "services/inventory/inventory-adjustment.service.ts#postStockAdjustment"
+      ],
+      "records": [
+        "StockAdjustment COMPLETED",
+        "InventoryLevel",
+        "InventoryTransaction",
+        "BusinessEvent",
+        "LedgerPostingBatch",
+        "JournalEntry or explicit blocker",
+        "outbox",
+        "AuditLog"
+      ],
+      "transitions": [
+        "eligible adjustment → stock applied + ledger POSTED or BLOCKED → immutable event/replay"
+      ],
+      "sideEffects": [
+        "Quantity/value update, ledger posting or durable blocker, alert outbox and close invalidation"
+      ],
+      "implementationStatus": "backend_only",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryLossControlActions.ts#postStockAdjustmentAction",
+        "services/inventory/inventory-adjustment.service.ts#postStockAdjustment"
+      ],
+      "remaining": [
+        "No production app/component/hook caller of postStockAdjustmentAction found.",
+        "Replay currently returns ledger.status BLOCKED unconditionally at service1174–1178, even when adjustment has a posting batch; needs reproduced correction.",
+        "COMPLETED stock state must not imply ledger success. No connected blocked-ledger remediation/retry action traced."
+      ]
+    },
+    {
+      "id": "IN-009",
+      "name": "Reverse a posted adjustment",
+      "purpose": "Create a compensating stock and ledger correction while retaining original evidence.",
+      "personas": [
+        "Correction requester",
+        "Independent approver"
+      ],
+      "authority": [
+        "Service input requires distinct requester/approver; no authenticated action boundary found",
+        "Original tenant-owned COMPLETED adjustment with exactly one fully posted balanced linked journal",
+        "No previous reversal/correction-chain reversal; open period and current stock CAS"
+      ],
+      "entryPoints": [
+        "services/inventory/inventory-adjustment-reversal.service.ts#reverseStockAdjustment"
+      ],
+      "services": [
+        "services/inventory/inventory-adjustment-reversal.schemas.ts",
+        "services/inventory/inventory-adjustment-reversal.service.ts"
+      ],
+      "records": [
+        "Correction StockAdjustment",
+        "reversal-linked InventoryTransaction",
+        "reversal JournalEntry",
+        "BusinessEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "original posted adjustment → authorized compensating command → immutable reversal; same-key replay"
+      ],
+      "sideEffects": [
+        "Reverses quantities/value and original journal; preserves originals"
+      ],
+      "implementationStatus": "service_only",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "services/inventory/inventory-adjustment-reversal.service.ts#reverseStockAdjustment",
+        "services/inventory/inventory-adjustment-reversal.schemas.ts",
+        "services/inventory/inventory-adjustment-reversal.service.ts"
+      ],
+      "remaining": [
+        "No current server action or UI caller found.",
+        "Distinct caller-supplied actor IDs alone do not establish authenticated approval; a future action must bind identities to real request/review evidence.",
+        "Reversal cannot repair a stock-completed/ledger-blocked adjustment; blocked-ledger recovery remains separate."
+      ]
+    },
+    {
+      "id": "IN-010",
+      "name": "Freeze a stock-count session",
+      "purpose": "Capture the inventory baseline to be physically counted.",
+      "personas": [
+        "Stock counter"
+      ],
+      "authority": [
+        "inventory.stock.adjust; current tenant/actor; enforced inventory write",
+        "inventory.count.create admission; active scoped location/items"
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryLossControlActions.ts#createStockCountSessionAction"
+      ],
+      "services": [
+        "services/inventory/inventory-count.service.ts#createStockCountSession"
+      ],
+      "records": [
+        "StockCountSession FROZEN",
+        "StockCountLine frozen levels/value/version",
+        "snapshotHash",
+        "AuditLog"
+      ],
+      "transitions": [
+        "scope selection → nonempty snapshot → FROZEN"
+      ],
+      "sideEffects": [
+        "Freezes count evidence; no stock movement"
+      ],
+      "implementationStatus": "backend_only",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryLossControlActions.ts#createStockCountSessionAction",
+        "services/inventory/inventory-count.service.ts#createStockCountSession"
+      ],
+      "remaining": [
+        "No production UI caller found; loss-control screen is read-only.",
+        "No reachable empty-location/item-selection, count-sheet preparation or freeze-again recovery form traced."
+      ]
+    },
+    {
+      "id": "IN-011",
+      "name": "Submit physical count results",
+      "purpose": "Attach each counted quantity to its frozen baseline and count-sheet evidence.",
+      "personas": [
+        "Stock counter"
+      ],
+      "authority": [
+        "inventory.stock.adjust; server actor/tenant; enforced inventory write",
+        "DRAFT/FROZEN session; every frozen line included; countSheetHash"
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryLossControlActions.ts#submitStockCountSessionAction"
+      ],
+      "services": [
+        "services/inventory/inventory-count.service.ts#submitStockCountSession"
+      ],
+      "records": [
+        "StockCountSession SUBMITTED",
+        "StockCountLine counted/variance quantities",
+        "countSheetHash",
+        "AuditLog"
+      ],
+      "transitions": [
+        "FROZEN → submit full counted lines/evidence → SUBMITTED"
+      ],
+      "sideEffects": [
+        "Persists count evidence and variance; no direct stock posting"
+      ],
+      "implementationStatus": "backend_only",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryLossControlActions.ts#submitStockCountSessionAction",
+        "services/inventory/inventory-count.service.ts#submitStockCountSession"
+      ],
+      "remaining": [
+        "No production UI caller found.",
+        "Concurrent submissions and authority binding of evidence need focused verification. Hash confirms content identity, not independent approval."
+      ]
+    },
+    {
+      "id": "IN-012",
+      "name": "Review and post a count variance",
+      "purpose": "Apply authorized count differences through the adjustment kernel.",
+      "personas": [
+        "Independent stock approver",
+        "Accountant"
+      ],
+      "authority": [
+        "inventory.stock.adjust; enforced inventory write",
+        "SUBMITTED/APPROVED count; approver distinct from creator and submitter; countSheetHash",
+        "Snapshot quantity/version integrity; existing admitted count continuation rules after new-work stop"
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryLossControlActions.ts#postStockCountAction"
+      ],
+      "services": [
+        "services/inventory/inventory-count.service.ts#postStockCount",
+        "services/modules/module-inventory-continuation.service.ts",
+        "services/inventory/inventory-adjustment.service.ts#postStockAdjustment"
+      ],
+      "records": [
+        "StockCountSession POSTED",
+        "optional generated adjustment",
+        "stock/ledger/event/outbox/audit evidence"
+      ],
+      "transitions": [
+        "submitted count → validated variances → optional adjustment → POSTED; canonical replay"
+      ],
+      "sideEffects": [
+        "Nonzero variance posts inventory and ledger or explicit blocker; zero-variance count still retains evidence"
+      ],
+      "implementationStatus": "backend_only",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryLossControlActions.ts#postStockCountAction",
+        "services/inventory/inventory-count.service.ts#postStockCount",
+        "services/modules/module-inventory-continuation.service.ts",
+        "services/inventory/inventory-adjustment.service.ts#postStockAdjustment"
+      ],
+      "remaining": [
+        "No production UI caller found.",
+        "Changed frozen stock requires a new count; there is no connected guided refreeze/recount path.",
+        "Generated ledger blocker is distinct from posted count status and needs operational follow-up."
+      ]
+    },
+    {
+      "id": "IN-013",
+      "name": "Investigate shrinkage and count/adjustment evidence",
+      "purpose": "Review inventory loss, count variance and posting completeness.",
+      "personas": [
+        "Stock controller",
+        "Accountant",
+        "Auditor"
+      ],
+      "authority": [
+        "inventory.levels.read; tenant-scoped read action"
+      ],
+      "entryPoints": [
+        "/dashboard/inventory/loss-control",
+        "components/inventory/loss/InventoryLossWorkbench.tsx",
+        "hooks/useInventoryLossWorkbench.ts"
+      ],
+      "services": [
+        "actions/inventory/inventoryLossReadActions.ts",
+        "services/inventory/inventory-loss-read.service.ts"
+      ],
+      "records": [
+        "read model for counts/adjustments/loss/scope/completeness"
+      ],
+      "transitions": [
+        "period/filter → summary/table → evidence drawer → refresh"
+      ],
+      "sideEffects": [
+        "Read-only observations"
+      ],
+      "implementationStatus": "interactive_read",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "components/inventory/loss/InventoryLossWorkbench.tsx",
+        "hooks/useInventoryLossWorkbench.ts",
+        "actions/inventory/inventoryLossReadActions.ts",
+        "services/inventory/inventory-loss-read.service.ts"
+      ],
+      "remaining": [
+        "No mutation controls in this workbench; do not label the full count/adjustment workflow interactive.",
+        "Existing EN/FR copy and partial/error states are source-reviewed only; current runtime/accessibility not verified here."
+      ]
+    },
+    {
+      "id": "IN-014",
+      "name": "Reserve stock manually",
+      "purpose": "Record reservation effects against current available stock.",
+      "personas": [
+        "Stock operator",
+        "Internal owner workflow"
+      ],
+      "authority": [
+        "Legacy inventoryActions.reserveInventory requires inventory.levels.adjust and trusted actor/tenant context.",
+        "Movement action reserveInventoryMovement only calls getAuthenticatedUser then passes caller organizationId to kernel; no explicit permission or actor-org comparison found.",
+        "inventoryAction is error handling, not authorization. Kernel scopes item/location to supplied org, so this does not establish actor access."
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryActions.ts#reserveInventory",
+        "actions/inventory/inventoryMovementActions.ts#reserveInventoryMovement",
+        "hooks/useInventoryMovementQueries.ts#useInventoryReservation"
+      ],
+      "services": [
+        "services/inventory/inventory-stock-event.service.ts#postInventoryReservation"
+      ],
+      "records": [
+        "InventoryLevel reserved/available",
+        "reservation InventoryTransaction",
+        "BusinessEvent",
+        "outbox"
+      ],
+      "transitions": [
+        "request → reservation effect → owner consumption/release requirement"
+      ],
+      "sideEffects": [
+        "Reserves available quantity; manual expiresAt captured in metadata"
+      ],
+      "implementationStatus": "request_authority_and_feedback_corrected_lifecycle_open",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryActions.ts#reserveInventory",
+        "actions/inventory/inventoryMovementActions.ts#reserveInventoryMovement",
+        "hooks/useInventoryMovementQueries.ts#useInventoryReservation",
+        "services/inventory/inventory-stock-event.service.ts#postInventoryReservation",
+        "evidence/inventory-reservation-receipt.json",
+        "evidence/inventory-reservation-after.json"
+      ],
+      "remaining": [
+        "No direct production reservation UI traced beyond hook; owner-specific delivery reservation belongs to OTC.",
+        "Fallback idempotency includes Date.now; identical retry is a new intent unless explicit key used.",
+        "Legacy batch uses Promise.all of independent service transactions; partial batch success possible.",
+        "No expiry/release worker found; expiresAt metadata alone does not release stock.",
+        "Both manual-reservation actions now enforce trusted RBAC tenant/actor and the existing inventory write entitlement. Real action/session and stock-effect integration remain unverified.",
+        "Reviewed stop admission is not defined for manual reservations; request-boundary entitlement is not a transaction-level revocation lock."
+      ],
+      "verificationNotes": [
+        "21 failed/5 passed before correction; 69/69 focused and shared tests after. Five source/test files passed lint; full typecheck passed session23336/chunkdf0cab.",
+        "The real mutation hook is tested in EN/FR, including unknown-result no-retry. No production UI consumer was located, so this is not a completed manual reservation journey."
+      ]
+    },
+    {
+      "id": "IN-015",
+      "name": "Release an unused manual reservation",
+      "purpose": "Restore availability when a reservation is no longer needed.",
+      "personas": [
+        "Stock operator"
+      ],
+      "authority": [
+        "Not operational; no release command with validated source/quantity/actor"
+      ],
+      "entryPoints": [
+        "actions/inventory/inventoryActions.ts#releaseInventory"
+      ],
+      "services": [],
+      "records": [
+        "Required future compensating reservation evidence"
+      ],
+      "transitions": [
+        "currently throws explicit BusinessRuleError"
+      ],
+      "sideEffects": [
+        "No stock writes"
+      ],
+      "implementationStatus": "unavailable",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "actions/inventory/inventoryActions.ts#releaseInventory"
+      ],
+      "remaining": [
+        "Action explicitly states a service-owned release workflow is required.",
+        "Missing source-bound partial/full release and expiry/idempotency path can strand manual reservations."
+      ]
+    },
+    {
+      "id": "IN-016",
+      "name": "Compare reconstructed inventory valuation with stored projections",
+      "purpose": "Detect unexplained levels and quantity/value/average-cost drift from movement history.",
+      "personas": [
+        "Inventory engineer",
+        "Accountant"
+      ],
+      "authority": [
+        "Service input tenant/scope; no authenticated operator endpoint found"
+      ],
+      "entryPoints": [
+        "services/inventory/inventory-projection-rebuild.service.ts#rebuildInventoryProjection"
+      ],
+      "services": [
+        "services/inventory/inventory-projection-rebuild.service.ts"
+      ],
+      "records": [
+        "InventoryTransaction",
+        "InventoryLevel",
+        "projection/drift result"
+      ],
+      "transitions": [
+        "effective+recorded cutoff → deterministic reconstruction → compare current levels"
+      ],
+      "sideEffects": [
+        "Read-only calculation; function name does not mean it rewrites inventory levels"
+      ],
+      "implementationStatus": "service_only",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "services/inventory/inventory-projection-rebuild.service.ts#rebuildInventoryProjection",
+        "services/inventory/inventory-projection-rebuild.service.ts"
+      ],
+      "remaining": [
+        "No production caller other than barrel re-export found.",
+        "No controlled repair command/UI/scheduled monitor traced; do not auto-repair stock.",
+        "Historical asOf reconstruction is compared to current levels; interpretation of historical comparison requires review."
+      ]
+    },
+    {
+      "id": "IN-017",
+      "name": "Reconcile stock valuation with Class3 ledger and close evidence",
+      "purpose": "Expose inventory/ledger mismatch and unposted source evidence to accounting close.",
+      "personas": [
+        "Accountant",
+        "Close reviewer"
+      ],
+      "authority": [
+        "Internal owner services supply tenant and period; close action authority belongs to close lane"
+      ],
+      "entryPoints": [
+        "services/accounting/close-assurance.service.ts",
+        "services/accounting/close-assurance-pack.service.ts"
+      ],
+      "services": [
+        "services/inventory/inventory-reconciliation.service.ts#reconcileInventoryClass3"
+      ],
+      "records": [
+        "InventoryTransaction",
+        "Class3 posted JournalEntryLine",
+        "accounting source links",
+        "adjustment/count blockers",
+        "reconciliation snapshot"
+      ],
+      "transitions": [
+        "resolve period/currency/cutoff → aggregate opening/movement/closing → mismatch/blocker evidence"
+      ],
+      "sideEffects": [
+        "Read-only evaluation consumed by close assurance/pack"
+      ],
+      "implementationStatus": "integrated_service",
+      "reviewStatus": "source_trace_complete_for_initial_inventory",
+      "runtimeStatus": "not_executed_in_this_discovery",
+      "evidence": [
+        "services/accounting/close-assurance.service.ts",
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/inventory/inventory-reconciliation.service.ts#reconcileInventoryClass3"
+      ],
+      "remaining": [
+        "No standalone inventory reconciliation remediation UI traced.",
+        "Actual account mappings, cutoffs, late-arriving events, currencies and ledger blockers need expert-reviewed fixtures; no accounting certification here.",
+        "Close workflow itself must be counted in the accounting lane, not again here."
+      ]
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "components/inventory/movements/InventoryMovementHistoryWorkbench.tsx",
+      "sha256": "ea4577dc4d078941f91cc27d442d73f0c323a079a417f8e55bb5827d164a4892"
+    },
+    {
+      "path": "hooks/useInventoryMovementHistoryWorkbench.ts",
+      "sha256": "1bf7cfa87fee3c68a4f08743b3a43d57b90e08e10e6661a8e828d035489356e9"
+    },
+    {
+      "path": "services/inventory/inventory-read.service.ts",
+      "sha256": "0defd84d9b33de93b2baa55e5cb96fd1da1badc4297e403cbf4cb577fa52e195"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementHistoryActions.ts",
+      "sha256": "0a45f047c83eb9bdc84819022688d78d09049ce9e484aeb81606faf353ebb71f"
+    },
+    {
+      "path": "services/inventory/inventory-history-export.service.ts",
+      "sha256": "cdde40247d4b3e118c5cc2ba26c71fdbb88bd0490f72bd3fdc3d255d415e47c9"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts",
+      "sha256": "be7fcaddac60a6fb85c4dbf1f02a76fdf41f67c8ce236d454d6212ca25aeb890"
+    },
+    {
+      "path": "scripts/inventory-history-export-worker.ts",
+      "sha256": "2c70e00ede6aea86a1152c7c691afe2f09c74b51e4c8b529dc30157bd4187af2"
+    },
+    {
+      "path": "services/inventory/inventory-history-background-export.service.ts",
+      "sha256": "6ea0ee89d286d7f6952c0e09852280260ffc54f27e210c2083c478fadab96a6a"
+    },
+    {
+      "path": "services/inventory/inventory-history-export-artifact-store.ts",
+      "sha256": "6ad35bb24f1ebf81f1e03919399fb83f0ea2930da69461d76e775925dee5b35b"
+    },
+    {
+      "path": "components/inventory/transfers/CreateTransferModal.tsx",
+      "sha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb"
+    },
+    {
+      "path": "hooks/useTransferQueries.ts",
+      "sha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1"
+    },
+    {
+      "path": "actions/inventory/inventoryMovementActions.ts",
+      "sha256": "ec01770b4ed504ca2dea59e42a690b8f62afc2289a74678b0e1689388b0472a5"
+    },
+    {
+      "path": "services/inventory/inventory-transfer.service.ts",
+      "sha256": "ad1aee0a3cb2deb570581600eaf19125962f1ffd89835845a20937b8310015d3"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDetailsModal.tsx",
+      "sha256": "204ff7ae575e9fa6ba638aa6e4de6707e2c12fdf6a8de539dd97fdd545ea15b8"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDashboard.tsx",
+      "sha256": "1d2013ac354ae64ecc1642371464f43fc76d9fb8397531c0d5f1322625bb9e56"
+    },
+    {
+      "path": "actions/inventory/inventoryActions.ts",
+      "sha256": "54bc0175584abc16d8f1a6043d01f704687d42f6837b195174a9e379a9a1f53c"
+    },
+    {
+      "path": "actions/itemsShow/updateItemStockById.ts",
+      "sha256": "7aacebc8f21e722d1880174aa3ea37ed5cfe56ef365ad6b66817a2787dc192d3"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "b2b99b3b868ca33ba13b3f9e6610c21a8a879ddcf7beb0ecac766153e8b6d6fb"
+    },
+    {
+      "path": "actions/inventory/inventoryLossControlActions.ts",
+      "sha256": "537c584eb64b07faa49fc6df4172df25c2ef11e30fff29bb4f2d82e6d9eb8af1"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment-reversal.service.ts",
+      "sha256": "087d1cb80e27bfa231fffdb7f9d7c089c6f27e3054dbbeb8bc004fdedc08a689"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment-reversal.schemas.ts",
+      "sha256": "b644c829b9eda1b5f73dd39ce841f095093add0c66403c35057ce3d5cc9ae047"
+    },
+    {
+      "path": "services/inventory/inventory-count.service.ts",
+      "sha256": "0476fbb5691b41a0965a4186842b88fdc3f801c34ea94cbc7a32d1d0bc70517e"
+    },
+    {
+      "path": "services/modules/module-inventory-continuation.service.ts",
+      "sha256": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820"
+    },
+    {
+      "path": "components/inventory/loss/InventoryLossWorkbench.tsx",
+      "sha256": "4eac7dfb2d71abfabb29f7498be034f460e73585723df554325172b417db019e"
+    },
+    {
+      "path": "hooks/useInventoryLossWorkbench.ts",
+      "sha256": "06af3c718617360c571860baf8a194de5ebd8b676ac90c8bfac475120a5df25d"
+    },
+    {
+      "path": "actions/inventory/inventoryLossReadActions.ts",
+      "sha256": "8e13f4d02b4626c79b62e16f4d0ddcd7c51dc531a2651bba711e7c7af7b3dc16"
+    },
+    {
+      "path": "services/inventory/inventory-loss-read.service.ts",
+      "sha256": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438"
+    },
+    {
+      "path": "hooks/useInventoryMovementQueries.ts",
+      "sha256": "bb4578b7fe2a47a93970331efda3844744e3c603149ac9167eaf5665d92a24c8"
+    },
+    {
+      "path": "services/inventory/inventory-stock-event.service.ts",
+      "sha256": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84"
+    },
+    {
+      "path": "services/inventory/inventory-projection-rebuild.service.ts",
+      "sha256": "db8918d457bba669a5b7c4ab6c5db76688baf4f72ef6c673ad73d3aaba820832"
+    },
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "sha256": "dc721de85a3f3c7b10fa4e54be905627ab71e101fc3a78a45ea5f32a27f705ab"
+    },
+    {
+      "path": "services/accounting/close-assurance-pack.service.ts",
+      "sha256": "aae9074b6b3df04aff49ea6a89a1bc7135fa89e17fda09f503f64547ab2336f9"
+    },
+    {
+      "path": "services/inventory/inventory-reconciliation.service.ts",
+      "sha256": "d6357d6c4f5ee2c7dbeb9c485c7a191b37074e57715e5d26e9ce4d377d16ca6e"
+    },
+    {
+      "path": "lib/error-handling/server-action-wrapper.ts",
+      "sha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d"
+    }
+  ],
+  "reservationGatePlan": {
+    "recordedAt": "2026-09-05T18:42:59.188Z",
+    "status": "read_only_plan_no_code_or_tests_run",
+    "recommendation": "Reuse established inventory write entitlement enforcement on both public manual reservation transports after canonical RBAC and tenant checks; normalize hook failure. Do not expand reviewed stop policy or generic stock kernel.",
+    "definedStopScope": [
+      "inventory_adjustments",
+      "inventory_transfers",
+      "inventory_counts"
+    ],
+    "reservationStopPolicy": "not_defined_in_current_reviewed_scope; separate required work",
+    "sourceFiles": [
+      {
+        "path": "actions/inventory/inventoryLossControlActions.ts",
+        "sha256": "537c584eb64b07faa49fc6df4172df25c2ef11e30fff29bb4f2d82e6d9eb8af1"
+      },
+      {
+        "path": "actions/inventory/inventoryActions.ts",
+        "sha256": "54bc0175584abc16d8f1a6043d01f704687d42f6837b195174a9e379a9a1f53c"
+      },
+      {
+        "path": "actions/inventory/inventoryMovementActions.ts",
+        "sha256": "ec01770b4ed504ca2dea59e42a690b8f62afc2289a74678b0e1689388b0472a5"
+      },
+      {
+        "path": "hooks/useInventoryMovementQueries.ts",
+        "sha256": "bb4578b7fe2a47a93970331efda3844744e3c603149ac9167eaf5665d92a24c8"
+      },
+      {
+        "path": "services/modules/module-entitlement.service.ts",
+        "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+      },
+      {
+        "path": "services/modules/module-stop-policy.service.ts",
+        "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+      },
+      {
+        "path": "services/modules/module-admission.service.ts",
+        "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+      },
+      {
+        "path": "services/modules/module-operational-dependencies.ts",
+        "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+      },
+      {
+        "path": "services/inventory/inventory-stock-event.service.ts",
+        "sha256": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84"
+      },
+      {
+        "path": "services/_shared/protect.ts",
+        "sha256": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+      },
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+      },
+      {
+        "path": "services/modules/__tests__/module-access-regressions.test.ts",
+        "sha256": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b"
+      }
+    ]
+  },
+  "reservationRequestCorrection": {
+    "recordedAt": "2026-09-05T19:35:38.849Z",
+    "evidence": "evidence/inventory-reservation-receipt.json",
+    "sources": [
+      {
+        "path": "actions/inventory/inventoryActions.ts",
+        "sha256": "dfa361c9d39b05ca852aaf279ca0425105c7dd67d2d7487009e252272b737a3b"
+      },
+      {
+        "path": "actions/inventory/inventoryMovementActions.ts",
+        "sha256": "6d78a0c677f60e540c4b7f8e153fb74ec3c1046073fa2618a5a913408d8ef6d8"
+      },
+      {
+        "path": "hooks/useInventoryMovementQueries.ts",
+        "sha256": "75fcde1c659991044b2bea59e91f2631ba99269abc745eb27015caac025190b1"
+      }
+    ]
+  },
+  "updatedAt": "2026-09-05T19:35:38.851Z"
+}

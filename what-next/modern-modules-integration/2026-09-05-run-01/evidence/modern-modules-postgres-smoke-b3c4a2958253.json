@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "runId": "b3c4a2958253",
+  "generatedAt": "2026-09-05T13:18:53.911Z",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "source": "local-modern-modules-postgres-controls",
+  "synthetic": true,
+  "authenticatedBrowserEvidence": false,
+  "productionEvidence": false,
+  "retainedFixtureOrganizations": [
+    "org_modules_service_smoke_b3c4a2958253_legacy",
+    "org_modules_service_smoke_b3c4a2958253_race",
+    "org_modules_service_smoke_b3c4a2958253_restricted",
+    "org_modules_service_smoke_b3c4a2958253_foreign",
+    "org_modules_service_smoke_b3c4a2958253_superseded",
+    "org_modules_service_smoke_b3c4a2958253_stopped"
+  ],
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourcesBefore": [
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439"
+    },
+    {
+      "path": "scripts/modern-modules-lifecycle-fixture.ts",
+      "sha256": "ae73103abf21a1bad42b1f5d328b3089f6b2ff43973a3141d4b8d398c52de199"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    }
+  ],
+  "sourcesAfter": [
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439"
+    },
+    {
+      "path": "scripts/modern-modules-lifecycle-fixture.ts",
+      "sha256": "ae73103abf21a1bad42b1f5d328b3089f6b2ff43973a3141d4b8d398c52de199"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    }
+  ],
+  "checks": [
+    {
+      "name": "concurrent identical submissions commit once and preserve all 19 legacy grants",
+      "passed": true,
+      "durationMs": 1446
+    },
+    {
+      "name": "real missing inputs retain active workspace through requested and preparing events",
+      "passed": true,
+      "durationMs": 164
+    },
+    {
+      "name": "real setup then resume completes the same operation without repeating succeeded inputs",
+      "passed": true,
+      "durationMs": 1084
+    },
+    {
+      "name": "concurrent different commands have exactly one CAS winner without lost rights",
+      "passed": true,
+      "durationMs": 308
+    },
+    {
+      "name": "failed eligibility keeps the prior active configuration and cannot create grants",
+      "passed": true,
+      "durationMs": 192
+    },
+    {
+      "name": "recovery uses a new reviewed command and preserves failed evidence",
+      "passed": true,
+      "durationMs": 131
+    },
+    {
+      "name": "cross-tenant history reference is rejected and same-tenant history opens a new draft",
+      "passed": true,
+      "durationMs": 41
+    },
+    {
+      "name": "draft storage leaves observed configuration unchanged",
+      "passed": true,
+      "durationMs": 36
+    },
+    {
+      "name": "superseded preparation cannot overwrite a newer active workspace",
+      "passed": true,
+      "durationMs": 591
+    },
+    {
+      "name": "supported inventory purchasing and payroll stops deny new work and preserve all historical rights",
+      "passed": true,
+      "durationMs": 820
+    },
+    {
+      "name": "PostgreSQL lifecycle evidence is immutable and tenant-linked",
+      "passed": true,
+      "durationMs": 30
+    },
+    {
+      "name": "PostgreSQL rejects duplicate grants within a tenant",
+      "passed": true,
+      "durationMs": 6
+    },
+    {
+      "name": "PostgreSQL rejects command evidence update and deletion",
+      "passed": true,
+      "durationMs": 12
+    },
+    {
+      "name": "PostgreSQL forbids configuration deletion while authority and history remain",
+      "passed": true,
+      "durationMs": 10
+    },
+    {
+      "name": "PostgreSQL prevents a grant or command from being orphaned",
+      "passed": true,
+      "durationMs": 15
+    },
+    {
+      "name": "PostgreSQL rejects invalid grant intervals and statuses",
+      "passed": true,
+      "durationMs": 3
+    },
+    {
+      "name": "history records preserve exact preview and grant evidence",
+      "passed": true,
+      "durationMs": 4
+    },
+    {
+      "name": "tested source bindings remained unchanged throughout execution",
+      "passed": true,
+      "durationMs": 0
+    }
+  ],
+  "passed": 18,
+  "failed": 0
+}

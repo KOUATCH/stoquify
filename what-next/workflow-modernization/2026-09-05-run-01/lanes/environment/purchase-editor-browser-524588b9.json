@@ -1,0 +1,89 @@
+{
+  "mode": "browser",
+  "attempt": "524588b9",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "organizationId": "org_modules_legacy_en_desktop",
+  "startedAt": "2026-09-05T17:46:13.223Z",
+  "sourcesBefore": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "e1acb966d1ab94e3e9c44e151a14db2c3ca26120aeded0b9c13bbd3221087d41",
+    "components/purchase-orders/purchase-order-edit-model.ts": "2925b4bf34ce9793691716fb593a18fe2e5c2ca272a9a8b2f9544ff84b6b8423",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "32e79b6f2c7ec3ff3fad3ed0e645cdbbafce8ba7a7f1de38f0c6db594b369930",
+    "components/purchase-orders/PurchaseOrderCloneNotice.tsx": "5fd5c5f4064bcdbf4cee34be601d236e5d8cc8fcf558d45c7d82430dbff43d70",
+    "hooks/usePurchaseOrderClone.ts": "a69808e9eb6292209d5e542e4f264f2e04f7431e0843b0976705023d1c4efda1",
+    "services/purchase-order/purchase-order-capabilities.ts": "31d0384dc45ff85068730c7d3dfb88c729a873b09649d9b480370bccad2d0ec9",
+    "services/purchase-order/purchase-order.service.ts": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "hooks/useRecentPurchaseOrderQueries.ts": "5ee6a672fdd523203d09354b493b3a1fee754572b76da399e440a553bf334a1f",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "c78a6a89bba8919a94a38f79705f3059aa0159edd2b1c061ae965a9f41282351",
+    "messages/en.json": "8c18d3110ea5a7219a59838458a85781388b0449b020cbbbbd9d75bcf26a4ee8",
+    "messages/fr.json": "eec3542fc4fd5c3efbe475130e2f3133489f417fc132b3a5dd6264d007ddf02d",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "real clone service rejects existing source from another tenant without writes",
+      "passed": true
+    },
+    {
+      "name": "en genuine editor no-op and rejected-draft retention",
+      "passed": false,
+      "errors": [],
+      "screenshots": [
+        "en-purchase-editor-financial-values-524588b9.png",
+        "en-purchase-editor-failure-524588b9.png"
+      ],
+      "usefulReviewMs": 67223,
+      "error": "locator.evaluate: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Save changes', exact: true })\u001b[22m\n"
+    },
+    {
+      "name": "fr genuine editor no-op and rejected-draft retention",
+      "passed": false,
+      "errors": [],
+      "screenshots": [
+        "fr-purchase-editor-financial-values-524588b9.png",
+        "fr-purchase-editor-failure-524588b9.png"
+      ],
+      "usefulReviewMs": 13426,
+      "error": "locator.evaluate: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Enregistrer les modifications', exact: true })\u001b[22m\n"
+    },
+    {
+      "name": "real denied user cannot open the purchase route or invoke its clone control",
+      "passed": true,
+      "screenshot": "en-purchase-denied-524588b9.png",
+      "scope": "Page permission denial; no denied mutation request was sent"
+    }
+  ],
+  "blockedExternalOrigins": [],
+  "authoritySnapshotExclusions": [
+    "User.lastLogin",
+    "User.updatedAt: ordinary real-sign-in timestamps"
+  ],
+  "originalAuthorityHashBefore": "098e25baf933546a4e93935ab95efeca7447bf51e6adf02b0b7630d12715e865",
+  "browserContextsClosed": true,
+  "originalAuthorityHashAfter": "098e25baf933546a4e93935ab95efeca7447bf51e6adf02b0b7630d12715e865",
+  "existingUsersRolesOrganizationAndConfigurationUnchanged": true,
+  "sourcesAfter": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "e1acb966d1ab94e3e9c44e151a14db2c3ca26120aeded0b9c13bbd3221087d41",
+    "components/purchase-orders/purchase-order-edit-model.ts": "2925b4bf34ce9793691716fb593a18fe2e5c2ca272a9a8b2f9544ff84b6b8423",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "32e79b6f2c7ec3ff3fad3ed0e645cdbbafce8ba7a7f1de38f0c6db594b369930",
+    "components/purchase-orders/PurchaseOrderCloneNotice.tsx": "5fd5c5f4064bcdbf4cee34be601d236e5d8cc8fcf558d45c7d82430dbff43d70",
+    "hooks/usePurchaseOrderClone.ts": "a69808e9eb6292209d5e542e4f264f2e04f7431e0843b0976705023d1c4efda1",
+    "services/purchase-order/purchase-order-capabilities.ts": "31d0384dc45ff85068730c7d3dfb88c729a873b09649d9b480370bccad2d0ec9",
+    "services/purchase-order/purchase-order.service.ts": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "hooks/useRecentPurchaseOrderQueries.ts": "5ee6a672fdd523203d09354b493b3a1fee754572b76da399e440a553bf334a1f",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "c78a6a89bba8919a94a38f79705f3059aa0159edd2b1c061ae965a9f41282351",
+    "messages/en.json": "8c18d3110ea5a7219a59838458a85781388b0449b020cbbbbd9d75bcf26a4ee8",
+    "messages/fr.json": "eec3542fc4fd5c3efbe475130e2f3133489f417fc132b3a5dd6264d007ddf02d",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverHash": "fb3ff24822ba4b183fa6d0d2069f6737a61a86431fc508651e3eb2f79f932f4e",
+  "completedAt": "2026-09-05T17:49:33.614Z",
+  "passed": 2,
+  "failed": 2
+}

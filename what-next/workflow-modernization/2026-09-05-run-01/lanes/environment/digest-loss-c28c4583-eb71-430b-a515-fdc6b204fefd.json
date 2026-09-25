@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-19T12:03:01.476Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [],
+      "sourceHash": "sha256:4f2675960667d0992b831f7ba48f3825e109a5fb8b99c6c0d944cbf263ada137"
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Recorded inventory loss needs review', { exact: true }).first()\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('Recorded inventory loss needs review', { exact: true }).first()\n",
+  "failureView": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Loss Digest c28c4583-eb71-430b-a515-fdc6b204fefd\n\nOWNED LOSS READER\nSession\nMODULES\n4\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nDaily Digest\nManager Action Center\nOwner War Room\nOPERATIONS\n1\nInventory\nItems, loss control, stock movements, transfers, and units\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n1\nC\n\nc28c4583-eb71-430b-a515-fdc6b204fefd@example.invalid\n\nc28c4583-eb71-430b-a515-fdc6b204fefd@example.invalid\n\nDaily Digest\n\nCommand / Command Center / Daily Digest\n\nFR\nC\n\nLOAD FAILED\n\nDaily Digest could not load\n\nThe current digest could not be read. No digest figures are shown. Retry to read the sources again. If the problem persists, ask your administrator to check the sources and organization setup.\n\nRetry\nOpen command center",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d"
+  },
+  "sourceStable": true
+}

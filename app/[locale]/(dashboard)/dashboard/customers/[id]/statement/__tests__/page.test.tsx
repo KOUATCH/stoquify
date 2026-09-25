@@ -60,11 +60,13 @@ jest.mock("@/components/customers/CustomerStatementWorkflow", () => ({
   CustomerStatementWorkflow: ({
     currency,
     customer,
+    canCreateNew,
   }: {
     currency: string;
     customer: { id: string; name: string };
+    canCreateNew: boolean;
   }) => (
-    <section aria-label="customer-statement-workflow">
+    <section aria-label="customer-statement-workflow" data-can-create={canCreateNew}>
       {customer.id}:{customer.name}:{currency}
     </section>
   ),
@@ -103,7 +105,7 @@ describe("Customer statement route entitlement", () => {
     });
   });
 
-  it("enforces Accounting export entitlement before loading the customer", async () => {
+  it("enforces Accounting history read access before loading the customer and checks new-work eligibility separately", async () => {
     render(
       await CustomerStatementWorkflowPage({
         params: Promise.resolve({
@@ -127,7 +129,7 @@ describe("Customer statement route entitlement", () => {
       moduleSlug: "accounting",
       surfaceType: "page",
       surface: "/dashboard/customers/[id]/statement",
-      accessIntent: "export",
+      accessIntent: "read",
       mode: "enforce",
       audit: true,
     });
@@ -135,6 +137,13 @@ describe("Customer statement route entitlement", () => {
     expect(
       screen.getByLabelText("customer-statement-workflow"),
     ).toHaveTextContent("customer-1:Pilot Customer:XAF");
+  });
+
+  it("keeps retained history reachable when export access is read-only", async () => {
+    mockObserveModuleAccess.mockImplementation(async (input: { accessIntent: string }) => ({ allowed: input.accessIntent === "read" }));
+    render(await CustomerStatementWorkflowPage({ params: Promise.resolve({ locale: "en", id: "customer-1" }) }));
+    expect(screen.getByLabelText("customer-statement-workflow")).toHaveAttribute("data-can-create", "false");
+    expect(mockGetCustomerAction).toHaveBeenCalledWith("customer-1");
   });
 
   it("does not enumerate customer data when Accounting is not entitled", async () => {

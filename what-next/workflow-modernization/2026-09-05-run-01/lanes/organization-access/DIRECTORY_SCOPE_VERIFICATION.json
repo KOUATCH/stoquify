@@ -1,0 +1,76 @@
+{
+  "evidenceDate": "2026-09-05T18:39:04.692Z",
+  "finding": "OA-F01",
+  "status": "corrected_mocked_service_verified_not_browser_or_real_database_verified",
+  "productionFiles": [
+    "services/organization/organization-settings.service.ts"
+  ],
+  "testFiles": [
+    "services/organization/__tests__/organization-management-scope.service.test.ts"
+  ],
+  "before": {
+    "serviceSha256": "9ef5618a09e0d12d06769ab2ac51d2fec8c20ca40915212906f587277eed158a",
+    "testSha256": "8ab48376d8fa78a693690de35fa5535893a75745b0efad8f2c29eab9af9d4e6f",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/organization/__tests__/organization-management-scope.service.test.ts --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/lanes/organization-access/directory-scope-before.json",
+    "exitCode": 1,
+    "suites": 1,
+    "failed": 10,
+    "passed": 4,
+    "seconds": 3.523,
+    "output": "functions exec session 93944 / output chunk 88cace",
+    "artifactWrite": "EPERM after tests completed; requested Jest JSON file was not saved; this receipt records the actual tool output, not a reconstructed Jest result."
+  },
+  "after": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/organization/__tests__/organization-management-scope.service.test.ts services/organization/__tests__/organization-settings.service.test.ts",
+    "exitCode": 0,
+    "suites": 2,
+    "passed": 15,
+    "failed": 0,
+    "seconds": 6.999,
+    "output": "functions exec session 93321 / output chunk 007691",
+    "files": [
+      {
+        "file": "services/organization/organization-settings.service.ts",
+        "sha256": "d0403ea941a6f18494ee33c75e2920313f6677f56274efd8edb35a9e1861649d"
+      },
+      {
+        "file": "services/organization/__tests__/organization-management-scope.service.test.ts",
+        "sha256": "e763933ab22c01327b2172e24d4fe7c3eca8edb3893216a5e4ce1e594733182a"
+      },
+      {
+        "file": "services/organization/__tests__/organization-settings.service.test.ts",
+        "sha256": "627f38a68e168aa2e21e73ede1917c73d0c439f31e883185f72c3697d784c1fb"
+      }
+    ]
+  },
+  "actualChecks": [
+    "Canonical read and update scoped to current organization",
+    "COMPANY_READ and organizations/settings aliases scoped",
+    "Wildcard tenant administrator is not global scope",
+    "Missing/deleted current tenant returns no foreign records and performs no payment aggregation",
+    "PAID nondeleted payment sum restricted to returned current-tenant IDs",
+    "Full management-row counts and committed data contract preserved",
+    "Genuine no-payment result is zero; organization/payment lookup errors propagate",
+    "Existing administrator provisioning contract preserved"
+  ],
+  "sourceAfterTestChanges": [
+    {
+      "file": "services/organization/__tests__/organization-management-scope.service.test.ts",
+      "change": "Explicit it.each<[string, string[]]> tuple annotation only after the 15-pass run; behavior unchanged. Parent coordinated typecheck pending.",
+      "testAtExecutionSha256": "8ab48376d8fa78a693690de35fa5535893a75745b0efad8f2c29eab9af9d4e6f"
+    }
+  ],
+  "notExecuted": [
+    "Browser",
+    "Real PostgreSQL",
+    "Mutation of tenant data",
+    "Provider or external messages",
+    "Global authority redesign",
+    "Full typecheck after this source change"
+  ],
+  "remaining": [
+    "Create-organization service creates organization plus administrator role, without assigning owner/membership/switch; separate source finding OA-CREATE remains.",
+    "Directory UI wording and export behavior need actual tenant-separated browser proof.",
+    "No service-level claim that a caller-supplied organization ID is authenticated: the existing action derives ctx.orgId and asserts requested tenant; that boundary remains unchanged."
+  ]
+}

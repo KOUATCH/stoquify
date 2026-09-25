@@ -1,0 +1,166 @@
+{
+  "at": "2026-09-15T11:17:12.536Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v151.json",
+  "baselineReceipt": "747c56",
+  "sources": {
+    "services/compliance/country-adapter-pilot.service.ts": "909d778b369d2def651df66dd9d574d7bc8a9fae822af7ed2c6917d71ea8eb95",
+    "services/hris/document-evidence.service.ts": "b9d619ff1a7c4fb34756c29c3dd019da9ddb400e5ff2d156ee420083df83c47c",
+    "services/ai/copilot-proposal.service.ts": "b8a1ca4230510d5df435c500fa015669f0476836e78a59ebac159b3df01ff2cc",
+    "actions/agents/command-agent.actions.ts": "f22374e34401a229e803b4d9758572dfdfc3f14f2d26262c3ecfd42168e9a8a2",
+    "services/accounting/finance-statement-export.service.ts": "f3182b84654fb5e0127757234b6561b0dba6d80c58c10da10221573280ebac50",
+    "services/accounting/data-trust.service.ts": "0948539966599bb077e869cabc829643a61fe51680f55f29b0a00ac435d5f0f5",
+    "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+    "services/payroll/declaration-lifecycle.service.ts": "cba614b8e41a704cf79a6813d42eb691805bc534e1474f1b88fe3301af871303",
+    "services/payroll/contract.service.ts": "be262909bd25bf9093e7dd273d7e3c6e4727ba1e433eef59bddac6e2c14de3da",
+    "services/payroll/authority-adapter-execution.service.ts": "327cd55dfe276a9e4bb1211423907a8b75325d389cdd2a2bf245216dbb95efe3",
+    "services/payroll/payslip-self-service.service.ts": "d03876a42c18ec55b0742356664588a10471b89dc7c1679d456fff12196727c8",
+    "services/payroll/payroll-register.service.ts": "abec3c590902878faaa3c42db57e5e87e10ec45aa84f160e10870da56f268fde",
+    "services/payroll/compensation.service.ts": "006d85a8dcf51fadd840459ada67e08e71babee08e3deec3575d4855f352106e",
+    "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+    "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+  },
+  "correctedDirectCalls": 17,
+  "compensationHelperCallers": 7,
+  "tests": {
+    "passed": 162,
+    "suites": 16,
+    "receipt": "8c1b87",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/events/__tests__/business-event.service.test.ts services/events/__tests__/business-event-outbox.service.test.ts services/events/__tests__/business-event-anomaly.service.test.ts services/hris/__tests__/document-evidence.service.test.ts services/ai/__tests__/copilot-proposal.service.test.ts actions/agents/__tests__/command-agent.actions.test.ts services/compliance/__tests__/country-adapter-pilot.service.test.ts services/payroll/__tests__/payroll-contract.service.test.ts services/payroll/__tests__/payroll-compensation.service.test.ts services/payroll/__tests__/payroll-payment-evidence.service.test.ts services/payroll/__tests__/declaration-lifecycle.service.test.ts services/payroll/__tests__/authority-adapter-execution.service.test.ts services/payroll/__tests__/payroll-payslip-self-service.service.test.ts services/payroll/__tests__/payroll-register.service.test.ts services/accounting/__tests__/data-trust.service.test.ts services/accounting/__tests__/finance-statement-export.service.test.ts"
+  },
+  "lint": {
+    "passed": true,
+    "files": 19,
+    "receipt": "4ea49e",
+    "command": "node node_modules/eslint/bin/eslint.js services/compliance/country-adapter-pilot.service.ts services/hris/document-evidence.service.ts services/ai/copilot-proposal.service.ts actions/agents/command-agent.actions.ts services/accounting/finance-statement-export.service.ts services/accounting/data-trust.service.ts services/payroll/payment-evidence.service.ts services/payroll/declaration-lifecycle.service.ts services/payroll/contract.service.ts services/payroll/authority-adapter-execution.service.ts services/payroll/payslip-self-service.service.ts services/payroll/payroll-register.service.ts services/payroll/compensation.service.ts services/events/business-event.schemas.ts services/events/business-event.service.ts services/events/__tests__/business-event.service.test.ts services/payroll/__tests__/declaration-lifecycle.service.test.ts services/payroll/__tests__/payroll-payslip-self-service.service.test.ts services/payroll/__tests__/payroll-register.service.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "0840c7",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/event-sources-v151-82cc8181-61de-4a03-be28-e4372b23fc02.json",
+    "receipt": "fcafe3",
+    "at": "2026-09-15T11:12:53.821Z",
+    "scope": "Owned local database. Synthetic domain references and AI run evidence are verification fixtures, not operational approvals. No provider dispatch, browser claim or ledger posting.",
+    "sourceBefore": {
+      "services/compliance/country-adapter-pilot.service.ts": "909d778b369d2def651df66dd9d574d7bc8a9fae822af7ed2c6917d71ea8eb95",
+      "services/hris/document-evidence.service.ts": "b9d619ff1a7c4fb34756c29c3dd019da9ddb400e5ff2d156ee420083df83c47c",
+      "services/ai/copilot-proposal.service.ts": "b8a1ca4230510d5df435c500fa015669f0476836e78a59ebac159b3df01ff2cc",
+      "actions/agents/command-agent.actions.ts": "f22374e34401a229e803b4d9758572dfdfc3f14f2d26262c3ecfd42168e9a8a2",
+      "services/accounting/finance-statement-export.service.ts": "f3182b84654fb5e0127757234b6561b0dba6d80c58c10da10221573280ebac50",
+      "services/accounting/data-trust.service.ts": "0948539966599bb077e869cabc829643a61fe51680f55f29b0a00ac435d5f0f5",
+      "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+      "services/payroll/declaration-lifecycle.service.ts": "cba614b8e41a704cf79a6813d42eb691805bc534e1474f1b88fe3301af871303",
+      "services/payroll/contract.service.ts": "be262909bd25bf9093e7dd273d7e3c6e4727ba1e433eef59bddac6e2c14de3da",
+      "services/payroll/authority-adapter-execution.service.ts": "327cd55dfe276a9e4bb1211423907a8b75325d389cdd2a2bf245216dbb95efe3",
+      "services/payroll/payslip-self-service.service.ts": "d03876a42c18ec55b0742356664588a10471b89dc7c1679d456fff12196727c8",
+      "services/payroll/payroll-register.service.ts": "abec3c590902878faaa3c42db57e5e87e10ec45aa84f160e10870da56f268fde",
+      "services/payroll/compensation.service.ts": "006d85a8dcf51fadd840459ada67e08e71babee08e3deec3575d4855f352106e",
+      "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+      "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+      "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+    },
+    "checks": {
+      "domainReferencesPersisted": [
+        "COMPLIANCE_ADAPTER_CONFIG",
+        "HRIS_CONTRACT_DOCUMENT",
+        "AiActionProposal",
+        "AgentRun",
+        "FinanceStatementExport",
+        "AccountantTrustPack",
+        "PAYROLL_PAYMENT_DESTINATION",
+        "PAYROLL_DECLARATION",
+        "PAYROLL_CONTRACT",
+        "PAYROLL_PAYSLIP",
+        "PAYROLL_REGISTER",
+        "PAYROLL_RUBRIQUE",
+        "PAYROLL_RUBRIQUE_ASSIGNMENT",
+        "PAYROLL_SALARY_CHANGE"
+      ],
+      "accountingClassificationsPreserved": 37,
+      "invalidAndConflictNoEvent": true,
+      "concurrentReplayAndTenantScopedKey": true,
+      "changedPayloadRejected": true,
+      "domainEventAuditOutboxRollback": true,
+      "actualAiProposal": {
+        "created": true,
+        "replayed": true,
+        "accepted": true,
+        "deniedWithoutPermission": true,
+        "deniedForeignTenant": true,
+        "secondDecisionRejected": true,
+        "events": [
+          "AI_ACTION_PROPOSAL_CREATED",
+          "AI_ACTION_PROPOSAL_ACCEPTED"
+        ],
+        "financialCountsUnchanged": true,
+        "executionAuthority": "NONE"
+      }
+    },
+    "passed": true,
+    "sourceAfter": {
+      "services/compliance/country-adapter-pilot.service.ts": "909d778b369d2def651df66dd9d574d7bc8a9fae822af7ed2c6917d71ea8eb95",
+      "services/hris/document-evidence.service.ts": "b9d619ff1a7c4fb34756c29c3dd019da9ddb400e5ff2d156ee420083df83c47c",
+      "services/ai/copilot-proposal.service.ts": "b8a1ca4230510d5df435c500fa015669f0476836e78a59ebac159b3df01ff2cc",
+      "actions/agents/command-agent.actions.ts": "f22374e34401a229e803b4d9758572dfdfc3f14f2d26262c3ecfd42168e9a8a2",
+      "services/accounting/finance-statement-export.service.ts": "f3182b84654fb5e0127757234b6561b0dba6d80c58c10da10221573280ebac50",
+      "services/accounting/data-trust.service.ts": "0948539966599bb077e869cabc829643a61fe51680f55f29b0a00ac435d5f0f5",
+      "services/payroll/payment-evidence.service.ts": "7422672a354b12e59f640db0c76390bd8d67cd0c00653b1c679ebc94c28dc7db",
+      "services/payroll/declaration-lifecycle.service.ts": "cba614b8e41a704cf79a6813d42eb691805bc534e1474f1b88fe3301af871303",
+      "services/payroll/contract.service.ts": "be262909bd25bf9093e7dd273d7e3c6e4727ba1e433eef59bddac6e2c14de3da",
+      "services/payroll/authority-adapter-execution.service.ts": "327cd55dfe276a9e4bb1211423907a8b75325d389cdd2a2bf245216dbb95efe3",
+      "services/payroll/payslip-self-service.service.ts": "d03876a42c18ec55b0742356664588a10471b89dc7c1679d456fff12196727c8",
+      "services/payroll/payroll-register.service.ts": "abec3c590902878faaa3c42db57e5e87e10ec45aa84f160e10870da56f268fde",
+      "services/payroll/compensation.service.ts": "006d85a8dcf51fadd840459ada67e08e71babee08e3deec3575d4855f352106e",
+      "services/events/business-event.schemas.ts": "1cfc0162a05b0bf0ad6bed270bbcb332b11a34666aa5ee2876792564ecf209ee",
+      "services/events/business-event.service.ts": "a73603167ffd37ad636e408ffbfe4704e0852521da89c4d411f7cffa0e064f14",
+      "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+    },
+    "sourceStable": true
+  },
+  "attempts": [
+    {
+      "receipt": "2e8f39",
+      "result": "159 tests passed; three stale source-reference assertions failed. JSON result file write denied; tool output retained."
+    },
+    {
+      "receipt": "4c560a",
+      "file": "lanes/environment/event-sources-v151-09964f1a-d3d9-4f14-a29d-c1135868e8a9.json",
+      "result": "Gateway checks passed; synthetic agent freshness enum invalid."
+    },
+    {
+      "receipt": "a53f4e",
+      "file": "lanes/environment/event-sources-v151-29f8271d-2822-473e-a36d-12f548d1dfc9.json",
+      "result": "Gateway checks passed; verifier used incorrect posting batch delegate."
+    }
+  ],
+  "coverage": {
+    "discoveredWorkflows": 269,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2926,
+      "tests": 1044,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 193,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "migrations": false,
+  "browser": {
+    "run": false,
+    "reason": "No UI changes; complete affected workflow browser coverage remains open."
+  },
+  "wholeWorkflowComplete": false,
+  "guide": "EVENT_SOURCE_CONTRACT_V151.md"
+}

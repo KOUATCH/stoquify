@@ -1,3 +1,5 @@
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+
 import { redirect } from "next/navigation"
 import { BookOpenCheck, CalendarDays, CheckCircle2, Landmark, Settings2 } from "lucide-react"
 
@@ -114,7 +116,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
         </AccountingPanel>
       ) : (
         <div className="space-y-6">
-          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
             <AccountingStatCard
               label="Status"
               value={setup.settings.setupStatus}
@@ -195,7 +197,7 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
             </AccountingPanel>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-6">
             <AccountingPanel
               title="Journals"
               description="Default books for manual setup and future automated posting."
@@ -206,26 +208,33 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
               }
             >
               <div className="overflow-x-auto">
-                <table className="dashboard-table-base w-full min-w-[560px] text-sm">
-                  <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-                    <tr>
-                      <th className="px-4 py-3">Code</th>
-                      <th className="px-4 py-3">Name</th>
-                      <th className="px-4 py-3">Type</th>
-                      <th className="px-4 py-3">Manual</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {setup.journals.map((journal) => (
-                      <tr key={journal.id} className="border-b border-[var(--dash-border-subtle)]">
-                        <td className="px-4 py-3 font-medium">{journal.code}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{journal.nameEn}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{journal.type}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{journal.allowManualEntries ? "Yes" : "No"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <AccountingDataTable
+                  caption={"Journals"}
+                  locale={locale === "fr" ? "fr" : "en"}
+                  columns={[{ label: "Code" }, { label: "Name" }, { label: "Type" }, { label: "Manual" }]}
+                  rows={setup.journals.map((journal) => {
+                    return {
+                      id: journal.id,
+                      searchText: [journal.code, journal.nameEn, journal.type, journal.allowManualEntries ? "Yes" : "No"]
+                        .filter((value) => value !== null && value !== undefined)
+                        .join(" "),
+                      cells: [
+                        <div key="cell-0" className="font-medium">
+                          {journal.code}
+                        </div>,
+                        <div key="cell-1" className="text-[var(--dash-text-soft)]">
+                          {journal.nameEn}
+                        </div>,
+                        <div key="cell-2" className="text-[var(--dash-text-soft)]">
+                          {journal.type}
+                        </div>,
+                        <div key="cell-3" className="text-[var(--dash-text-soft)]">
+                          {journal.allowManualEntries ? "Yes" : "No"}
+                        </div>,
+                      ],
+                    }
+                  })}
+                />
               </div>
             </AccountingPanel>
 
@@ -239,35 +248,50 @@ async function AccountingSetupPageImpl({ params, searchParams }: PageProps) {
               }
             >
               <div className="overflow-x-auto">
-                <table className="dashboard-table-base w-full min-w-[620px] text-sm">
-                  <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-                    <tr>
-                      <th className="px-4 py-3">Period</th>
-                      <th className="px-4 py-3">Dates</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {setup.periods.slice(0, 12).map((period) => (
-                      <tr key={period.id} className="border-b border-[var(--dash-border-subtle)]">
-                        <td className="px-4 py-3 font-medium">{period.name}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">
+                <AccountingDataTable
+                  caption={"Accounting periods"}
+                  locale={locale === "fr" ? "fr" : "en"}
+                  columns={[
+                    { label: "Period" },
+                    { label: "Dates" },
+                    { label: "Status" },
+                    { label: "Action", className: "text-right" },
+                  ]}
+                  rows={setup.periods.map((period) => {
+                    return {
+                      id: period.id,
+                      searchText: [
+                        period.name,
+                        accountingDate(period.startDate),
+                        accountingDate(period.endDate),
+                        period.status,
+                      ]
+                        .filter((value) => value !== null && value !== undefined)
+                        .join(" "),
+                      cells: [
+                        <div key="cell-0" className="font-medium">
+                          {period.name}
+                        </div>,
+                        <div key="cell-1" className="text-[var(--dash-text-soft)]">
                           {accountingDate(period.startDate)} to {accountingDate(period.endDate)}
-                        </td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{period.status}</td>
-                        <td className="px-4 py-3 text-right">
+                        </div>,
+                        <div key="cell-2" className="text-[var(--dash-text-soft)]">
+                          {period.status}
+                        </div>,
+                        <div key="cell-3" className="text-right">
                           {period.status === "OPEN" ? (
                             <form action={closePeriod}>
                               <input type="hidden" name="periodId" value={period.id} />
-                              <button className="dashboard-button-secondary h-9 rounded-lg px-3 text-xs font-medium">Close</button>
+                              <button className="dashboard-button-secondary h-9 rounded-lg px-3 text-xs font-medium">
+                                Close
+                              </button>
                             </form>
                           ) : null}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>,
+                      ],
+                    }
+                  })}
+                />
               </div>
             </AccountingPanel>
           </div>

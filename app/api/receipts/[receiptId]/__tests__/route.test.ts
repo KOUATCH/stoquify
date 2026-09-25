@@ -48,6 +48,8 @@ describe("GET /api/receipts/[receiptId]", () => {
     const body = await response.json()
 
     expect(response.status).toBe(200)
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store, max-age=0")
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer")
     expect(response.headers.get("X-AqStoqFlow-Receipt-Access")).toBeNull()
     expect(mockGetPublicSalesReceipt).toHaveBeenCalledWith({
       salesOrderId: "sale-1",
@@ -61,6 +63,8 @@ describe("GET /api/receipts/[receiptId]", () => {
     const body = await response.json()
 
     expect(response.status).toBe(404)
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store, max-age=0")
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer")
     expect(response.headers.get("X-AqStoqFlow-Receipt-Access")).toBeNull()
     expect(mockGetPublicSalesReceipt).not.toHaveBeenCalled()
     expect(body).toMatchObject({ success: false, error: "safe error" })

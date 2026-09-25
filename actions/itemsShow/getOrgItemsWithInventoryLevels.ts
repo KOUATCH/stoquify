@@ -2,7 +2,8 @@
 import { ItemWithInventoryLevelsPayload } from "@/types/itemTypes";
 import { inventoryAction } from "@/lib/error-handling";
 import type { ServerActionResult } from "@/lib/error-handling/types";
-import { requirePermission } from "@/lib/security/rbac";
+import { RbacError, requirePermission } from "@/lib/security/rbac";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { listItemsWithInventoryLevels } from "@/services/item/item.service";
 
 export const getOrgItemsWithInventoryLevels = inventoryAction(
@@ -11,6 +12,20 @@ export const getOrgItemsWithInventoryLevels = inventoryAction(
       resource: "Item",
       auditAllowed: false,
     });
+    const decision = await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "inventory",
+      surfaceType: "action",
+      surface: "getOrgItemsWithInventoryLevels",
+      mode: "enforce",
+      accessIntent: "read",
+      audit: true,
+    });
+    if (!decision.allowed) {
+      throw new RbacError("Forbidden: inventory module is not available", "FORBIDDEN", 403);
+    }
 
     return {
       success: true,

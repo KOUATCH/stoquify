@@ -1,0 +1,114 @@
+{
+  "recordedAt": "2026-09-06T06:15:37.918Z",
+  "baseline": "evidence/source-baseline-v15.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 206,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2455,
+      "tests": 844,
+      "pages": 147,
+      "routeHandlers": 17,
+      "actionSources": 149,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2024,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 214,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "guide": "lanes/environment/INVITATION_QUEUE_AND_RECOVERY.md",
+  "decision": "lanes/environment/INVITATION_DELIVERY_TRANSPORT_REVIEW.md",
+  "sources": {
+    "services/users/user-invitation-issuance.service.ts": "40cf6caaab023f4937b1e0a44a0f872feeb1d58ac64448a955413b2ce069c42e",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "b7c53352750340e25398dd4e06d7f5caad48a2609645800d91a19f435bc14c10",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "14a4dea6fe59487b323893cbaac51c458033b6da0eee908c05b2938a8d6304a2",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/users/user-identity.service.ts": "477f141fde4e4b76f754d491cf02b497773965475bacbfe85cc53954d27ad35b",
+    "actions/users/sendInvite.ts": "7742eff33032f617b4076edd644a6042f06e33829f88a71c33294df6c8f540ec",
+    "components/Forms/users/userInvitationForm.tsx": "60fdabd14ab26f7eb57e49e231e1eab92f9dd3c759db8c82b28830a2f3668761",
+    "messages/en.json": "12df383a2a548708de9afb84add89d5d5433678bfeea1c0d52e038d8f9e9ce95",
+    "messages/fr.json": "60acf7e80ed23eb2530e313c2b0ad94c982e7767eb10e7927799d1e532aa406f",
+    "components/auth/v2/__tests__/UserInvitationForm.test.tsx": "2ab9cbec0764845275892035bc377667cea4995d7c1e71d07f6ddf0724668bb7",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "da50744da01871c8161b587fdb4aab0622d907f9d978a4e659b83bed90158378",
+    "services/users/__tests__/user-invitation-options.service.test.ts": "4e38ebfb107982890aac904790985bf94351568882f0b995c103f9ad89cc5d74",
+    "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts": "8d9923123f225eb3a19ce4bf562f4c43498637d9babb4375e0b39bba5cd01be4",
+    "services/users/__tests__/user-identity.service.test.ts": "0a0c6cbc4bcf7df5e3ec760cb19a55d0eb0b0f5456b3a17a77e68a4ddda42fa7",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts": "52a752c1eca49d3a296a14e5070f1f90c209ae4ec2491589ba733d6b566b4944",
+    "actions/users/__tests__/sendInvite.authorization.test.ts": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04",
+    "actions/users/__tests__/getOrgInvites.test.ts": "4850b694209dfc2e0d0f0daed366089e6ba25e7923d4c120e3f99776947748fd"
+  },
+  "tests": {
+    "file": "evidence/invitation-queue-after-02.json",
+    "passed": 134,
+    "suites": 8,
+    "chunk": "b1712e",
+    "seconds": 5.183
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "session": 32950,
+    "chunk": "a03e48",
+    "exitCode": 0
+  },
+  "lint": {
+    "files": 12,
+    "chunk": "c067d3",
+    "exitCode": 0
+  },
+  "diff": {
+    "chunk": "a84c1a",
+    "exitCode": 0
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-queue-postgres-613ce751-ad6.json",
+    "passed": 9,
+    "failed": 0,
+    "authorityUnchanged": true,
+    "isolatedAdaptersOnly": true
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-queue-browser-0174b59e-317.json",
+    "passed": 2,
+    "failed": 0,
+    "authorityUnchanged": true,
+    "queueAttempts": 0
+  },
+  "screenshots": [
+    {
+      "file": "evidence/invitation-queue/en-invitation-queue-recorded-0174b59e-317.png",
+      "sha256": "6ef2bd10196847156cdb991b028a0b5ac5309b3bd95b828a6e4989e943c741c2"
+    },
+    {
+      "file": "evidence/invitation-queue/en-invitation-queue-register-0174b59e-317.png",
+      "sha256": "324ec7606818061ba9db848653a2f041f8fb4ae3b193cf8f5a4df87b1a16c21b"
+    },
+    {
+      "file": "evidence/invitation-queue/fr-invitation-queue-response-lost-0174b59e-317.png",
+      "sha256": "44292b7d5373b8bae82453b24445912c2174579c5512e8c71c4a70fede926b9d"
+    },
+    {
+      "file": "evidence/invitation-queue/fr-invitation-queue-recorded-0174b59e-317.png",
+      "sha256": "b89c9ab8b805a6bc03f060e1c6f647966cbac8a0b28e4523d596614ca9abd308"
+    },
+    {
+      "file": "evidence/invitation-queue/fr-invitation-queue-register-0174b59e-317.png",
+      "sha256": "ada48577d978ff69ad23543f68f26aee7193e493747a4116a7f3bec395134192"
+    }
+  ],
+  "rejectedAction": {
+    "description": "Add live Resend sender implementation",
+    "reason": "Sensitive recipient/link egress not specifically authorized; no-live-email scope",
+    "applied": false,
+    "saferAlternative": "No production transport; internal worker and synthetic adapter verification only"
+  },
+  "remaining": "The production sender was rejected by automatic approval review because the proposed Resend integration could transmit recipient details and invitation links without specific authorization. The rejected files were not created or applied indirectly. No production adapter exists; the worker is disabled by default. The concrete implementation-only approval question is in lanes/environment/INVITATION_DELIVERY_TRANSPORT_REVIEW.md. Redemption-time issuance snapshot enforcement, legacy pending provenance, cancel/reissue/operator recovery and delivery-history UI remain open. No complete workflow, live delivery or release certification is claimed.",
+  "completeWorkflowVerified": false
+}

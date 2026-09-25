@@ -1,0 +1,129 @@
+{
+  "mode": "run",
+  "attempt": "f03ebb7afd2b",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-05T20:29:52.541Z",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "48ec09fc74321baa5d24d35bb132daaed6da7abb4bf1d5d238bf8b517d8c8bff",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "50333d251f63323c2862ffd4715d70a1c483cb8a45bbe9b6895dac84a41b12aa",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "Exact proposal retry returns one durable record and one notification",
+      "passed": true,
+      "durationMs": 427,
+      "detail": {
+        "proposalId": "cmtou6tnx000jma8s8a3c8sqx",
+        "duplicateEffects": 0
+      }
+    },
+    {
+      "name": "Approval rejects missing permission, self-approval, stale authentication, forged revision and foreign organization",
+      "passed": true,
+      "durationMs": 49,
+      "detail": {
+        "denied": 5,
+        "matchAndInboxEffects": 0,
+        "denialAuditRetained": 5
+      }
+    },
+    {
+      "name": "Concurrent approval commits one decision and safe retry returns its receipt",
+      "passed": true,
+      "durationMs": 126,
+      "detail": {
+        "approvalId": "cmtou6txe0011ma8s8f9vmcsk",
+        "originalProposalRetained": true,
+        "rejectedRaces": 1,
+        "duplicateEffects": 0
+      }
+    },
+    {
+      "name": "Competing proposals cannot allocate more than the evidence and exact residual is supported",
+      "passed": true,
+      "durationMs": 193,
+      "detail": {
+        "allocated": "100.00",
+        "ceiling": "100.00",
+        "rejectedExcess": "0.01"
+      }
+    },
+    {
+      "name": "Changed payment lifecycle prevents approval against the saved snapshot",
+      "passed": true,
+      "durationMs": 119,
+      "detail": {
+        "proposalId": "cmtou6u6p0033ma8spvo7nvr4",
+        "staleApprovalEffects": 0,
+        "replacementProposalId": "cmtou6u7q003bma8sovmg9b3e",
+        "originalRecordRetained": true
+      }
+    },
+    {
+      "name": "Revoked provider evidence prevents approval",
+      "passed": true,
+      "durationMs": 57,
+      "detail": {
+        "proposalId": "cmtou6ua10045ma8sn9hxhohx",
+        "invalidEvidenceEffects": 0
+      }
+    },
+    {
+      "name": "Pending read model excludes approved history before limiting results and respects organization",
+      "passed": true,
+      "durationMs": 716,
+      "detail": {
+        "pending": 2,
+        "approvedProposalExcluded": "cmtou6tnx000jma8s8a3c8sqx",
+        "foreignRows": 0
+      }
+    },
+    {
+      "name": "Manual matching does not manufacture accounting completion",
+      "passed": true,
+      "durationMs": 14,
+      "detail": {
+        "ledgerPostingBatches": 0,
+        "signedOrReadyRuns": 0,
+        "outboundCalls": 0
+      }
+    }
+  ],
+  "ownedOrganizations": [
+    "org_modules_service_smoke_manual_f03ebb7afd2b_main",
+    "org_modules_service_smoke_manual_f03ebb7afd2b_foreign"
+  ],
+  "limitations": [
+    "CONFIRMED payments, provider setup, actor permissions and fresh-auth timestamps are synthetic test preconditions. Actual sign-in, role grants, or professional approval are not established.",
+    "Real local HMAC capture, manual service writes, serializable transactions, append-only decisions, read queue and inbox effects are exercised; no live provider or external message.",
+    "No ledger posting, suspense resolution, run sign-off, browser, legacy-proposal renewal or production readiness claimed."
+  ],
+  "targetGuardPassed": true,
+  "fixture": {
+    "main": "org_modules_service_smoke_manual_f03ebb7afd2b_main",
+    "foreign": "org_modules_service_smoke_manual_f03ebb7afd2b_foreign",
+    "maker": "org_modules_service_smoke_manual_f03ebb7afd2b_maker",
+    "checker": "org_modules_service_smoke_manual_f03ebb7afd2b_checker",
+    "providerAccountId": "cmtou6tjd0003ma8sqj7dgjyu"
+  },
+  "completedAt": "2026-09-05T20:29:54.489Z",
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "48ec09fc74321baa5d24d35bb132daaed6da7abb4bf1d5d238bf8b517d8c8bff",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "50333d251f63323c2862ffd4715d70a1c483cb8a45bbe9b6895dac84a41b12aa",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "blockedOutbound": [],
+  "driverSha256": "078981e7b164c8f28e65c213a3695400ab2e0e8342ec94efce9ee03f4e039dd4",
+  "passed": 8,
+  "failed": 0
+}

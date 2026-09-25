@@ -1,0 +1,90 @@
+{
+  "at": "2026-09-08T19:45:17.163Z",
+  "run": "56370d48-4d3",
+  "sourcesBefore": {
+    "hooks/useAPHistoryWorkbench.ts": "d600f4fba4fac195ee585725e6c7db918fe86d206ad8b8952e93aca636bf240b",
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx": "888cac21fb94a53b2d2019b971efa289d23f012297e75b7a9bbf50cc5083a30d",
+    "components/dashboard/primitives/command-center-primitives.tsx": "ab5cb123d0032fea3b2ced2670634c4df8dd3d4007913fc191d17bf58f47dbe5",
+    "components/purchasing/APHistoryWorkbench.tsx": "2b441b13f756273719d93b1a449aec435e397a7271fd300540ea65520b50a528",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Actual EN/FR history describes the invoice as covered by payments/credits and shows zero open payable; retained detail and keyboard return work",
+        "Long status wording preserves mobile/tablet and 200% text reflow in the existing history layout",
+        "Credit reversal restores payment-pending history and open payable 2250 while cash paid remains 250",
+        "Current role denial hides the financial history"
+      ],
+      "screenshots": [
+        "invoice-coverage-en-covered-desktop-56370d48-4d3.png",
+        "invoice-coverage-en-covered-details-56370d48-4d3.png",
+        "invoice-coverage-en-covered-390-56370d48-4d3.png",
+        "invoice-coverage-en-covered-768-56370d48-4d3.png",
+        "invoice-coverage-en-text200-56370d48-4d3.png",
+        "invoice-coverage-en-reopened-desktop-56370d48-4d3.png",
+        "invoice-coverage-en-denied-56370d48-4d3.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 8312
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Actual EN/FR history describes the invoice as covered by payments/credits and shows zero open payable; retained detail and keyboard return work",
+        "Long status wording preserves mobile/tablet and 200% text reflow in the existing history layout",
+        "Credit reversal restores payment-pending history and open payable 2250 while cash paid remains 250",
+        "Current role denial hides the financial history"
+      ],
+      "screenshots": [
+        "invoice-coverage-fr-covered-desktop-56370d48-4d3.png",
+        "invoice-coverage-fr-covered-details-56370d48-4d3.png",
+        "invoice-coverage-fr-covered-390-56370d48-4d3.png",
+        "invoice-coverage-fr-covered-768-56370d48-4d3.png",
+        "invoice-coverage-fr-text200-56370d48-4d3.png",
+        "invoice-coverage-fr-reopened-desktop-56370d48-4d3.png",
+        "invoice-coverage-fr-denied-56370d48-4d3.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 7654
+        }
+      ]
+    }
+  ],
+  "scope": "Owned localhost invoice/payment/credit service fixtures; actual authenticated EN/FR history and financial read models. Credit/return calls use trusted domain fixture scope, not public-action authority proof. No real bank rail or notification delivery.",
+  "originalBefore": "8540baf2c5d10c3cf5176c20d21bb3b66585513c18fde156909826eb1634053e",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "hooks/useAPHistoryWorkbench.ts": "d600f4fba4fac195ee585725e6c7db918fe86d206ad8b8952e93aca636bf240b",
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx": "888cac21fb94a53b2d2019b971efa289d23f012297e75b7a9bbf50cc5083a30d",
+    "components/dashboard/primitives/command-center-primitives.tsx": "ab5cb123d0032fea3b2ced2670634c4df8dd3d4007913fc191d17bf58f47dbe5",
+    "components/purchasing/APHistoryWorkbench.tsx": "2b441b13f756273719d93b1a449aec435e397a7271fd300540ea65520b50a528",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "sourceStable": true
+}

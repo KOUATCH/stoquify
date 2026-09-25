@@ -86,7 +86,8 @@ export type RbacDecisionInput = {
 
 async function getBetterAuthSession() {
   try {
-    return await auth.api.getSession({ headers: await headers() })
+    // Authorization must observe revocation even while a signed cookie cache is valid.
+    return await auth.api.getSession({ headers: await headers(), query: { disableCookieCache: true } })
   } catch {
     return null
   }
@@ -97,17 +98,15 @@ async function loadRbacContextFromSession(session: Awaited<ReturnType<typeof get
     | { id?: string | null; email?: string | null; organizationId?: string | null }
     | undefined
 
-  if (!sessionUser?.id && !sessionUser?.email) {
+  if (!sessionUser?.id) {
     throw new RbacError("Authentication required", "UNAUTHENTICATED", 401)
   }
 
   const user = await db.user.findFirst({
     where: {
+      // Email can change or be reassigned; authority belongs to the session subject.
+      id: sessionUser.id,
       isActive: true,
-      OR: [
-        ...(sessionUser.id ? [{ id: sessionUser.id }] : []),
-        ...(sessionUser.email ? [{ email: { equals: sessionUser.email, mode: "insensitive" as const } }] : []),
-      ],
     },
     select: {
       id: true,
@@ -140,7 +139,7 @@ async function loadRbacContextFromSession(session: Awaited<ReturnType<typeof get
     },
   })
 
-  if (!user) {
+  if (!user || user.id !== sessionUser.id) {
     throw new RbacError("Authentication required", "UNAUTHENTICATED", 401)
   }
 

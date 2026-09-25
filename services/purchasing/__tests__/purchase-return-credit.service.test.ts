@@ -199,7 +199,19 @@ describe("purchase return and supplier credit service boundary", () => {
     }))
   })
 
-  it("requires a supplier credit invoice to share the return tenant, purchase order, and supplier", async () => {
+  it.each(["different-receipt", "different-order", "different-item"])("rejects %s line provenance even when the invoice has no header order", async mismatch => {
+    const tx = buildTx()
+    tx.supplierCreditNote.findUnique.mockResolvedValue(null)
+    tx.purchaseReturn.findFirst.mockResolvedValue({ id: "return-1", organizationId: "org-1", purchaseOrderId: "po-1", goodsReceiptId: "gr-1", supplierId: "supplier-1", direction: PurchaseCorrectionDirection.CORRECTION, reversedByPurchaseReturn: null, supplierCreditNotes: [], lines: [{ id: "return-line-1", invoicedQuantity: new Prisma.Decimal(1), sourceGoodsReceiptLineId: "gr-line-1", sourcePurchaseOrderLineId: "po-line-1", itemId: "item-1" }] })
+    tx.supplierInvoice.findFirst.mockResolvedValue({ id: "invoice-1", purchaseOrderId: null, status: "POSTED", postedAt: new Date(), supplier: { isActive: true }, lines: [{ id: "invoice-line-1", goodsReceiptLineId: mismatch === "different-receipt" ? "other" : "gr-line-1", purchaseOrderLineId: mismatch === "different-order" ? "other" : "po-line-1", itemId: mismatch === "different-item" ? "other" : "item-1" }] })
+    tx.supplierCreditNoteLine.findMany.mockResolvedValue([])
+    mockDb.$transaction.mockImplementation(async work => work(tx))
+    await expect(postSupplierCreditNote({ organizationId: "org-1", purchaseReturnId: "return-1", supplierInvoiceId: "invoice-1", postedById: "actor-1", idempotencyKey: "credit-line-check", creditNoteNumber: "CN-1", creditDate: new Date(), documentHash: "sha256:owned-evidence", reason: "Owned credit", lines: [{ sourcePurchaseReturnLineId: "return-line-1", sourceSupplierInvoiceLineId: "invoice-line-1" }] })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(mockPostLedger).not.toHaveBeenCalled()
+    expect(tx.supplier.update).not.toHaveBeenCalled()
+  })
+
+  it("requires the return tenant and supplier and a compatible optional invoice header order", async () => {
     const tx = buildTx()
     tx.supplierCreditNote.findUnique.mockResolvedValue(null)
     tx.purchaseReturn.findFirst.mockResolvedValue({
@@ -232,7 +244,7 @@ describe("purchase return and supplier credit service boundary", () => {
       where: expect.objectContaining({
         id: "invoice-1",
         organizationId: "org-1",
-        purchaseOrderId: "po-1",
+        OR: [{ purchaseOrderId: "po-1" }, { purchaseOrderId: null }],
         supplierId: "supplier-1",
       }),
     }))

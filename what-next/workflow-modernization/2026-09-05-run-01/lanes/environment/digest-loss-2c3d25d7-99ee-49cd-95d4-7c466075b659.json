@@ -1,0 +1,36 @@
+{
+  "at": "2026-09-19T12:07:42.451Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "components/bi/BIWhatChangedStrip.tsx": "7d30e3d3ac48a72f44e36a33f48c9a297a41114d080a562c10add1f2656f51e7"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [],
+      "sourceHash": "sha256:24afd88f0bdf5fefadf6d7884d66a0038b81376f16435ad392776ced77250d25",
+      "consoleErrors": [
+        "%o\n\n%s PrismaClientKnownRequestError: \nInvalid `prisma.paymentException.count()` invocation:\n\n\nToo many database connections opened: FATAL: sorry, too many clients already\nPrisma Accelerate has built-in connection pooling to prevent such errors: https://pris.ly/client/error-accelerate\n    at Promise.all (<anonymous>:1:20)\n    at getPaymentTruthSnapshot (about://React/Server/webpack-internal:///(rsc)/./services/snapshots/payment-truth-snapshot.service.ts?78:94:296)\n    at Promise.all (<anonymous>:1:20)\n    at getDailyHabitDigestData (about://React/Server/webpack-internal:///(rsc)/./services/daily-habit/daily-habit-digest.service.ts?79:263:109)\n    at onAllowed (about://React/Server/webpack-internal:///(rsc)/./app/%5Blocale%5D/(dashboard)/dashboard/daily-digest/page.tsx?80:32:26)\n    at resolveErrorDev (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js:2405:46)\n    at processFullStringRow (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js:2891:23)\n    at processFullBinaryRow (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development."
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "[\"%o\\n\\n%s PrismaClientKnownRequestError: \\nInvalid `prisma.paymentException.count()` invocation:\\n\\n\\nToo many database connections opened: FATAL: sorry, too many clients already\\nPrisma Accelerate has built-in connection pooling to prevent such errors: https://pris.ly/client/error-accelerate\\n    at Promise.all (<anonymous>:1:20)\\n    at getPaymentTruthSnapshot (about://React/Server/webpack-internal:///(rsc)/./services/snapshots/payment-truth-snapshot.service.ts?78:94:296)\\n    at Promise.all (<anonymous>:1:20)\\n    at getDailyHabitDigestData (about://React/Server/webpack-internal:///(rsc)/./services/daily-habit/daily-habit-digest.service.ts?79:263:109)\\n    at onAllowed (about://React/Server/webpack-internal:///(rsc)/./app/%5Blocale%5D/(dashboard)/dashboard/daily-digest/page.tsx?80:32:26)\\n    at resolveErrorDev (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js:2405:46)\\n    at processFullStringRow (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.browser.development.js:2891:23)\\n    at processFullBinaryRow (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-server-dom-webpack/cjs/react-server-dom-webpack-client.bro",
+  "failureView": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Loss Digest 2c3d25d7-99ee-49cd-95d4-7c466075b659\n\nOWNED LOSS READER\nSession\nMODULES\n4\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nDaily Digest\nManager Action Center\nOwner War Room\nOPERATIONS\n1\nInventory\nItems, loss control, stock movements, transfers, and units\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n1\n2\n\n2c3d25d7-99ee-49cd-95d4-7c466075b659@example.invalid\n\n2c3d25d7-99ee-49cd-95d4-7c466075b659@example.invalid\n\nDaily Digest\n\nCommand / Command Center / Daily Digest\n\nFR\n2\n\nLOAD FAILED\n\nDaily Digest could not load\n\nThe current digest could not be read. No digest figures are shown. Retry to read the sources again. If the problem persists, ask your administrator to check the sources and organization setup.\n\nRetry\nOpen command center",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "components/bi/BIWhatChangedStrip.tsx": "7d30e3d3ac48a72f44e36a33f48c9a297a41114d080a562c10add1f2656f51e7"
+  },
+  "sourceStable": true
+}

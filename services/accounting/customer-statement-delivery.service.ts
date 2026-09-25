@@ -125,6 +125,7 @@ function statementAccessUrl(input: {
   statementSnapshotId: string
   token: string
   referralCode: string
+  locale: string
   environment: Record<string, string | undefined>
 }) {
   const baseUrl = (
@@ -138,7 +139,8 @@ function statementAccessUrl(input: {
     "?token=" +
     encodeURIComponent(input.token) +
     "&ref=" +
-    encodeURIComponent(input.referralCode)
+    encodeURIComponent(input.referralCode) +
+    "&lang=" + (input.locale === "FR" ? "fr" : "en")
   return baseUrl ? baseUrl + path : path
 }
 
@@ -313,6 +315,7 @@ export async function queueCustomerStatementDeliveryInTx(
     statementSnapshotId,
     token: issued.token,
     referralCode,
+    locale,
     environment,
   })
   const sealedEnvelope = sealCustomerStatementDeliveryEnvelope({

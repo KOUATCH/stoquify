@@ -11,6 +11,7 @@ import {
   getLegacyCustomerOrdersForOrg,
   getLegacyCustomersForOrg,
   updateLegacyCustomerForOrg,
+  type CustomerRemovalReceipt,
 } from "@/services/customer/customer.service"
 import type { CustomerCreateInput, CustomerUpdateInput } from "@/services/customer/customer.schemas"
 import type {
@@ -153,7 +154,7 @@ export async function getCustomerOrders(customerId: string): Promise<ServerActio
   return { success: true, data: result }
 }
 
-export async function deleteCustomer(id: string): Promise<ServerActionResult<void>> {
+export async function deleteCustomer(id: string): Promise<ServerActionResult<CustomerRemovalReceipt>> {
   if (!id) {
     throw new BusinessRuleError("Customer ID is required")
   }
@@ -162,7 +163,7 @@ export async function deleteCustomer(id: string): Promise<ServerActionResult<voi
     resourceId: id,
     auditAllowed: true,
   })
-  await archiveLegacyCustomerForOrg(organizationId, id)
+  const receipt = await archiveLegacyCustomerForOrg(organizationId, id)
 
-  return { success: true, data: undefined }
+  return { success: true, data: receipt }
 }

@@ -1,0 +1,153 @@
+{
+  "run": "ad7b102e-576",
+  "at": "2026-09-07T16:20:32.426Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "81077180e0db919e1d9c2a0155c76aa94cd3ccf1ca0d3421c09fbc2996d3b370",
+    "services/purchase-order/purchase-order-lifecycle.ts": "94ced049f344723f370b70dad88dfe591da0ff1b45db993258dc99186cb6402b",
+    "services/purchase-order/purchase-order-lifecycle-contracts.ts": "dff60651de3094b7ce40bbb06e1407128f2ad80b5a71e675df781174f8048795",
+    "services/purchasing/ap-control.service.ts": "a4f1ba3797542bdeaf4d60f38cbf8345c8b96c662de1881076c80d20ddb2af53",
+    "services/_shared/action-errors.ts": "94e9e8c33ebd19d362f027743c6eec366963651cb855302bba8a078cab247b38",
+    "services/purchase-order/purchase-order-decision-history.ts": "6539a5f49def09db94e0267fc526edf64209cfbd77fd83963dcc81ebb18194b0"
+  },
+  "checks": [
+    {
+      "name": "submit rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "submit rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "submit rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "submit commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "cancel rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "cancel rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "cancel rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "cancel commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "complete rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "complete rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "complete rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "complete commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "archive rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "archive rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "archive rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "archive commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "Cancellation keeps original notes and linked evidence; archive does not hide them",
+      "status": "passed",
+      "notesPreserved": true,
+      "receiptAccessPreserved": true
+    },
+    {
+      "name": "Completion rejects status-only quantities and unresolved receiving",
+      "status": "passed",
+      "deniedCases": 2
+    },
+    {
+      "name": "Cross-tenant, stale assurance and unchecked legacy entry points are denied",
+      "status": "passed",
+      "deniedCases": 7
+    },
+    {
+      "name": "Evidence write failure rolls back and exact retry succeeds",
+      "status": "passed",
+      "rolledBackCases": 2
+    },
+    {
+      "name": "Archived decision history remains readable with current read-only authority and rejects another tenant",
+      "status": "passed",
+      "retainedReadAllowed": true,
+      "currentWriteDenied": true,
+      "crossTenantDenied": true
+    },
+    {
+      "name": "Cancellation allows invoice preparation only for received and uninvoiced goods",
+      "status": "passed",
+      "preparedWithoutPosting": true,
+      "excessQuantityDenied": true
+    },
+    {
+      "name": "Displayed currency and supplier-name changes invalidate review",
+      "status": "passed",
+      "deniedChanges": 2
+    },
+    {
+      "name": "Partial batch retries preserve successful receipts and reject a foreign order",
+      "status": "passed",
+      "deduplicated": true,
+      "foreignUnchanged": true,
+      "oneSuccessfulEffect": true
+    }
+  ],
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchase-order/purchase-order.service.ts": "81077180e0db919e1d9c2a0155c76aa94cd3ccf1ca0d3421c09fbc2996d3b370",
+    "services/purchase-order/purchase-order-lifecycle.ts": "94ced049f344723f370b70dad88dfe591da0ff1b45db993258dc99186cb6402b",
+    "services/purchase-order/purchase-order-lifecycle-contracts.ts": "dff60651de3094b7ce40bbb06e1407128f2ad80b5a71e675df781174f8048795",
+    "services/purchasing/ap-control.service.ts": "a4f1ba3797542bdeaf4d60f38cbf8345c8b96c662de1881076c80d20ddb2af53",
+    "services/_shared/action-errors.ts": "94e9e8c33ebd19d362f027743c6eec366963651cb855302bba8a078cab247b38",
+    "services/purchase-order/purchase-order-decision-history.ts": "6539a5f49def09db94e0267fc526edf64209cfbd77fd83963dcc81ebb18194b0"
+  }
+}

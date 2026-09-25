@@ -1,0 +1,2 @@
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+for(const name of ['capture-source-baseline.cjs','update-workflow-register.cjs']){const file=path.join(__dirname,name),text=fs.readFileSync(file,'utf8');assert.ok(text.includes('source-baseline-v77.json'));assert.ok(!text.includes('source-baseline-v78.json'));fs.writeFileSync(file,text.replaceAll('source-baseline-v77.json','source-baseline-v78.json'))}

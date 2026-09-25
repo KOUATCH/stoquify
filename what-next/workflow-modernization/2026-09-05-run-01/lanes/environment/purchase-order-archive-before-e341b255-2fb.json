@@ -1,0 +1,25 @@
+{
+  "run": "e341b255-2fb",
+  "mode": "before",
+  "at": "2026-09-07T12:45:43.344Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "963641ea7a66579eb3976d277fcc2e3690c9c5d91c8de630fe71a1c8b6ee45ed"
+  },
+  "scope": "Positive draft archive through the real domain service with retained line/audit/event checks. Owned local fixture only, no live archive or migration. Current service authority and archive replay remain separately open.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "observed": {
+    "failed": true,
+    "code": "INTERNAL_ERROR",
+    "archiveApplied": false,
+    "retainedLines": 1,
+    "auditCount": 0,
+    "eventCount": 0,
+    "unchanged": true
+  },
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchase-order/purchase-order.service.ts": "963641ea7a66579eb3976d277fcc2e3690c9c5d91c8de630fe71a1c8b6ee45ed"
+  },
+  "sourceStable": true
+}

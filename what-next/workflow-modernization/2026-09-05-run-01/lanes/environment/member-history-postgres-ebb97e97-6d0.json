@@ -1,0 +1,95 @@
+{
+  "run": "ebb97e97-6d0",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T14:09:30.431Z",
+  "sourcesBefore": {
+    "services/users/member-history.service.ts": "3c0c101b28134b89ba535021aab56d7bd92a4e06cc658e7ae0fe65510eb0d6a2",
+    "services/users/member-history-input.ts": "466440fe0a9acc3a9cdc2944cd459ca78657a450c0e8ed6b1007bd2f1d31ed58",
+    "services/security/export-safety.service.ts": "ec19538e6277c4cb047e935b5a74828143c884c978c3bd5866015cf0334dda8a",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "84b4fc7dd4b60c0e65159d95d46d765a428c808d3816292841f5b070022cccb6",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/roles/role-write.service.ts": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "checks": [
+    {
+      "name": "23 real access changes page without gaps and exclude later changes until refresh",
+      "passed": true,
+      "originalRecords": 23,
+      "firstPage": 20,
+      "secondPage": 3,
+      "newRecordRequiresRefresh": true,
+      "durationMs": 5046
+    },
+    {
+      "name": "reviewed older-page export matches bytes, references and mandatory audit",
+      "passed": true,
+      "exportedRows": 3,
+      "bytesMatchAudit": true,
+      "privateFieldsExcluded": true,
+      "durationMs": 36
+    },
+    {
+      "name": "foreign member and cursor are rejected under real tenant scope",
+      "passed": true,
+      "denials": 2,
+      "durationMs": 581
+    },
+    {
+      "name": "a read-only auditor cannot export, even with a wildcard",
+      "passed": true,
+      "exportDenied": true,
+      "durationMs": 186
+    },
+    {
+      "name": "current history remains available after account deactivation",
+      "passed": true,
+      "inactiveMemberHistoryRetained": true,
+      "durationMs": 107
+    },
+    {
+      "name": "a stale page hash cannot release different export content",
+      "passed": true,
+      "deniedWithoutExportAudit": true,
+      "durationMs": 49
+    },
+    {
+      "name": "mandatory audit failure releases no export and rolls back the transaction",
+      "passed": true,
+      "noExportReleased": true,
+      "auditCountUnchanged": true,
+      "durationMs": 57
+    }
+  ],
+  "limitations": [
+    "All mutations belong to newly created synthetic organizations; no migration or external requests.",
+    "The audit rollback case injects one sink exception inside a real PostgreSQL transaction."
+  ],
+  "originalAuthorityBefore": "13894fefb26ef812a801f7026d138d0b923d26070d30fbb6af1e5b1533e62532",
+  "originalAuthorityAfter": "13894fefb26ef812a801f7026d138d0b923d26070d30fbb6af1e5b1533e62532",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T14:09:36.977Z",
+  "sourcesAfter": {
+    "services/users/member-history.service.ts": "3c0c101b28134b89ba535021aab56d7bd92a4e06cc658e7ae0fe65510eb0d6a2",
+    "services/users/member-history-input.ts": "466440fe0a9acc3a9cdc2944cd459ca78657a450c0e8ed6b1007bd2f1d31ed58",
+    "services/security/export-safety.service.ts": "ec19538e6277c4cb047e935b5a74828143c884c978c3bd5866015cf0334dda8a",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "84b4fc7dd4b60c0e65159d95d46d765a428c808d3816292841f5b070022cccb6",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/roles/role-write.service.ts": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "sourceStable": true,
+  "driverSha256": "3407c0cc7b56cf9cc3ca2c9553620ba64937bcaffc91c736c0c3789cfcf7310a",
+  "passed": 7,
+  "failed": 0
+}

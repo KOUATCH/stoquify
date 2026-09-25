@@ -1,0 +1,689 @@
+{
+  "updatedAt": "2026-09-05T21:21:04.330Z",
+  "discoveryComplete": false,
+  "workflows": [
+    {
+      "id": "MC-01",
+      "name": "Inspect workspace capabilities and setup",
+      "purpose": "Understand available code, granted access, selected and active workspaces, actual setup and planned capabilities.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "MANAGE_SYSTEM_SETTINGS; current domain permissions for private setup scope",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#getModuleCompositionData"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Load tenant and current role",
+        "Resolve grants and active configuration",
+        "Read readiness and redacted setup scopes",
+        "Explain unavailable capabilities"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "baseline_route_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Catalogue labels and all denied/partial/failed data paths need current runtime review."
+      ]
+    },
+    {
+      "id": "MC-02",
+      "name": "Build an outcome-based workspace draft",
+      "purpose": "Start from retailer or service-business needs, search capabilities and understand required dependencies without changing authority.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "Module administrator; local draft conveys no entitlement",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#resolveCompositionModules"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Choose a recipe",
+        "Edit selected capabilities",
+        "Inspect required dependencies",
+        "Restore actor/tenant-scoped session draft"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Full retailer/service journeys and actor-switch draft isolation have only historical implementation evidence."
+      ]
+    },
+    {
+      "id": "MC-03",
+      "name": "Review workspace consequences",
+      "purpose": "Bind the proposed selection, preserved access, setup and new-work consequences to current evidence.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "MANAGE_SYSTEM_SETTINGS; scoped setup authority",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#previewModuleComposition"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Resolve dependency closure",
+        "Read setup and retained obligations",
+        "Compare revision",
+        "Hash actor/tenant/grant/evidence consequences"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_reconciliation_obligation_read_model_only",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md",
+        "evidence/reconciliation-access-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_ACCESS_AND_OBLIGATIONS.md"
+      ],
+      "remaining": [
+        "Preview reads are not one snapshot outside submission; submission recomputes serializably. Reproduce concurrent view changes and explanatory states.",
+        "Validated replacement count verified; this does not complete the full module preview/stop lifecycle or authorize stopping reconciliation."
+      ]
+    },
+    {
+      "id": "MC-04",
+      "name": "Save a configuration draft",
+      "purpose": "Retain selected capabilities and setup intent as a durable draft without promoting them to active.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "MANAGE_SYSTEM_SETTINGS and fresh authentication within 600 seconds",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#saveModuleCompositionDraft"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Check fresh authentication",
+        "Validate supported slugs",
+        "Snapshot legacy authority if necessary",
+        "Persist immutable keyed draft"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "UI generates a new draft key on an ordinary retry after an unknown response; reproduce duplicate draft-history entries before correction."
+      ]
+    },
+    {
+      "id": "MC-05",
+      "name": "Browse configuration history",
+      "purpose": "Inspect durable requests, outcomes and older pages without losing immutable source references.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "MANAGE_SYSTEM_SETTINGS; private setup fields filtered by domain permission",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#getModuleCompositionHistory"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Read newest commands and lifecycle status",
+        "Load older tenant-owned cursor",
+        "Review retained configuration and evidence"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Current pagination, concurrent history updates and unavailable cursor recovery remain unvisited."
+      ]
+    },
+    {
+      "id": "MC-06",
+      "name": "Reopen a prior configuration",
+      "purpose": "Create a new draft from a selected earlier record, requiring fresh review before any activation.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "MANAGE_SYSTEM_SETTINGS and fresh authentication",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#reopenModuleComposition"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Resolve tenant-owned historical command",
+        "Check current setup authority",
+        "Create a keyed new draft",
+        "Review against current eligibility"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Historical input redaction, revoked setup scope and unknown-response recovery need current runtime proof."
+      ]
+    },
+    {
+      "id": "MC-07",
+      "name": "Submit and prepare a workspace",
+      "purpose": "Record desired state and promote active navigation only after current supported readiness checks succeed.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "MANAGE_SYSTEM_SETTINGS and fresh authentication; no commercial purchase or human approval inferred",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#applyModuleComposition"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Recheck fresh authentication",
+        "Lock organization admission policy",
+        "Validate preview hash and revision",
+        "Persist command and preparation operation",
+        "Observe readiness",
+        "Promote active revision or retain previous workspace"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Action cache revalidation and result reload occur after durable effects and can return failure after commit; keyed retry exists but honest receipt recovery needs injected-failure proof.",
+        "Country, provider and scoped payroll setup are observed, not fabricated."
+      ]
+    },
+    {
+      "id": "MC-08",
+      "name": "Resume interrupted or waiting preparation",
+      "purpose": "Retry one existing operation without repeating unchanged successful observations or replacing the last active workspace early.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "Original reviewed actor with current administration/setup authority and fresh authentication",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#resumeModuleComposition"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Resolve owned operation and actor",
+        "Check revision/authority and lease",
+        "Recover expired lease",
+        "Reobserve changed inputs",
+        "Persist waiting/failure/active events"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Lease crash, unknown response, changed actor/grants and retained obligation progression need current end-to-end proof."
+      ]
+    },
+    {
+      "id": "MC-09",
+      "name": "Stop supported new work and retain obligations",
+      "purpose": "Stop explicitly supported inventory, purchasing or payroll creation while continuing permitted prior work and history.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "Current administrator plus existing domain command authority; preview-bound stop request",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#previewModuleComposition",
+        "services/modules/module-composition.service.ts#applyModuleComposition",
+        "services/modules/module-stop-policy.service.ts#getModuleStopImpactInTx",
+        "services/modules/module-admission.service.ts#assertModuleNewWorkInTx"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Inspect exact supported stop scope",
+        "Review retained obligations",
+        "Persist cutoff under organization lock",
+        "Deny covered new commands",
+        "Complete prior obligations and retain workspace state"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_reconciliation_obligation_read_model_only",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md",
+        "evidence/reconciliation-access-receipt.json",
+        "lanes/payments-reconciliation/MANUAL_ACCESS_AND_OBLIGATIONS.md"
+      ],
+      "remaining": [
+        "Inventory reservation stop admission is not in the current reviewed registry.",
+        "POS/Sales stop support remains unavailable; rejected offline candidate stays unapplied. Reconciliation/accounting stops need a retained provider-evidence continuation contract.",
+        "Validated replacement count verified; this does not complete the full module preview/stop lifecycle or authorize stopping reconciliation."
+      ]
+    },
+    {
+      "id": "MC-10",
+      "name": "Resume stopped new work",
+      "purpose": "Revalidate current access, setup and compatibility before removing a prior stop and activating the requested workspace.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "Current administrator and fresh authentication; domain authority remains separate",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#previewModuleComposition",
+        "services/modules/module-composition.service.ts#applyModuleComposition",
+        "services/modules/module-composition.service.ts#resumeModuleComposition",
+        "services/modules/module-stop-policy.service.ts#getModuleStopImpactInTx",
+        "services/modules/module-admission.service.ts#assertModuleNewWorkInTx"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Select resumed capability",
+        "Recompute dependencies/readiness",
+        "Prepare under current authority",
+        "Clear only supported reviewed stops at successful activation"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Scope/date/grant changes during resumption and required retained obligations need current runtime proof."
+      ]
+    },
+    {
+      "id": "MC-11",
+      "name": "Use the active permitted workspace",
+      "purpose": "Show sidebar/search/mobile shortcuts derived from active configuration and current permissions while preserving historical access.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "Current employee permissions and module decision for each actual operation",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+        "components/modules/ModuleCompositionWorkbench.tsx",
+        "actions/modules/module-composition.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-composition.service.ts#getModuleCompositionData",
+        "services/modules/module-navigation.service.ts#getModuleNavigationSnapshot"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Read active module snapshot",
+        "Filter navigation by current grant and role",
+        "Open permitted useful action",
+        "Handle direct-route/action denial consistently"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Navigation filtering does not enforce every direct route, API or action. Sales route and daily-report action permission requirements disagree; cross-domain transport matrix remains open."
+      ]
+    },
+    {
+      "id": "MC-12",
+      "name": "Activate a legacy capability",
+      "purpose": "Extend an unmanaged legacy organization without narrowing existing inferred access; managed tenants must use configuration review.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "MANAGE_SYSTEM_SETTINGS and fresh authentication",
+      "entryPoints": [
+        "actions/modules/module-control.actions.ts",
+        "components/modules/TenantModuleActivationButton.tsx"
+      ],
+      "services": [
+        "services/modules/module-entitlement.service.ts#activateTenantModule"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Check current administration and fresh authentication",
+        "Reject managed configuration",
+        "Resolve required canonical dependencies",
+        "Preserve existing/unknown intent",
+        "Audit the actual addition or already-active result"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Current legacy concurrency, unknown outcomes and supported catalogue boundary need source-bound runtime verification."
+      ]
+    },
+    {
+      "id": "MC-13",
+      "name": "Inspect an operation access decision",
+      "purpose": "Return and audit the current tenant module decision for an explicitly named surface/intent.",
+      "domain": "module_configuration",
+      "personas": [
+        "Workspace administrator; employee for resulting navigation"
+      ],
+      "authority": "dashboard.read on the observation action; a returned decision is not authority to perform another operation",
+      "entryPoints": [
+        "actions/modules/module-control.actions.ts"
+      ],
+      "services": [
+        "services/modules/module-entitlement.service.ts#observeModuleAccess"
+      ],
+      "records": [
+        "TenantModuleConfiguration",
+        "TenantModuleGrant",
+        "TenantModuleConfigurationCommand",
+        "TenantModuleLifecycleOperation",
+        "TenantModuleLifecycleStep",
+        "TenantModuleLifecycleEvent",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Derive current actor and organization",
+        "Validate canonical slug and surface",
+        "Evaluate current grants/dependencies/intent",
+        "Record observed or enforced decision"
+      ],
+      "sideEffects": [
+        "Configuration/grant snapshot, commands, lifecycle events, audit and cache refresh as stated; no billing/provider provisioning"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited_in_this_run",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v4.json",
+        "lanes/module-configuration/DISCOVERY.md",
+        "../../modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md"
+      ],
+      "remaining": [
+        "Caller-supplied surface text and observation audit behavior need abuse/input-bound review. Actual business entry points still require their own guards."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4"
+    },
+    {
+      "path": "components/modules/TenantModuleActivationButton.tsx",
+      "sha256": "5c7512eae51f34bf1162c666d46fffed8fcf5eabecb1da5a03913c450ccf65ca"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    }
+  ]
+}

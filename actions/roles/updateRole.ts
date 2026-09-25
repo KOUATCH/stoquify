@@ -7,11 +7,12 @@ import { updateOrganizationRole } from "@/services/roles/role.service";
 import { RoleFormData } from "@/types/types";
 import { revalidatePath } from "next/cache";
 import { safeSuccessActionErrorResult } from "../_shared/safe-action-responses";
-import { assertCanAssignPermissions } from "./role-auth";
+import { roleWriteContext } from "./role-auth";
+import type { RoleCommand } from "@/services/roles/role-command";
 
-export async function updateRole(id: string, data: Partial<RoleFormData>) {
+export async function updateRole(id: string, data: Partial<RoleFormData>, command?: RoleCommand) {
   try {
-    await requireFreshAuth(300);
+    const verified = await requireFreshAuth(300);
     const ctx = await requirePermission("roles.update", {
       resource: "Role",
       resourceId: id,
@@ -29,13 +30,10 @@ export async function updateRole(id: string, data: Partial<RoleFormData>) {
       mode: "observe",
     });
 
-    if (data.permissions) {
-      assertCanAssignPermissions(ctx, data.permissions);
-    }
+    const role = await updateOrganizationRole({ ctx: roleWriteContext(ctx, verified.claims), id, data, command });
 
-    const role = await updateOrganizationRole({ ctx, id, data });
-
-    revalidatePath("/dashboard/settings/roles");
+    revalidatePath("/[locale]/dashboard/settings/roles", "page");
+    revalidatePath("/[locale]/dashboard/settings/roles/update/[id]", "page");
     return { success: true as const, data: role, error: null };
   } catch (error) {
     return safeSuccessActionErrorResult(error, {

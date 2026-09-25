@@ -14,6 +14,7 @@ export type ResolveAgentContextInput = {
   requestedModules: readonly CommercialModuleSlug[]
   periodStart?: Date | string | null
   periodEnd?: Date | string | null
+  locale?: "en" | "fr"
 }
 
 type AgentContextDependencies = {
@@ -97,7 +98,7 @@ export async function resolveAgentExecutionContext(
     isSuperUser: rbac.isSuperUser,
     requestedAgentKey,
     sourceRoute,
-    locale: normalizeLocale(settings.defaultLocale),
+    locale: input.locale ?? normalizeLocale(settings.defaultLocale),
     currency: settings.currency || "XAF",
     periodStart,
     periodEnd,
@@ -118,4 +119,3 @@ function normalizeOptionalDate(value: Date | string | null | undefined) {
 function normalizeLocale(value: string): "en" | "fr" {
   return value.toLowerCase() === "fr" ? "fr" : "en"
 }
-

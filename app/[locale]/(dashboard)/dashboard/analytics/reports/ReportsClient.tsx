@@ -7,7 +7,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils"
 import { endOfMonth, format, startOfMonth, subDays } from "date-fns"
 import { AlertTriangle, CalendarIcon, DollarSign, FileText, Package, RefreshCw, SearchX, Users } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { useSearchParams } from "next/navigation"
+
+import { useLocale, useTranslations } from "next-intl"
+import { enUS, fr } from "date-fns/locale"
 
 import { CashFlowReportComponent } from "@/components/reports/cash-flow-report"
 import { CashierPerformanceReportComponent } from "@/components/reports/cashier-performance-report"
@@ -41,6 +45,8 @@ interface ReportsClientProps {
   locationId: string
   initialReport?: string
   initialPeriod?: string
+  initialFrom?: string
+  initialTo?: string
   focusItemId?: string
 }
 
@@ -51,35 +57,19 @@ function normalizeReportType(report?: string): ReportType {
   return "financial"
 }
 
-function getInitialDateRange(period?: string) {
+function getInitialDateRange(period?: string, initialFrom?: string, initialTo?: string) {
+  const fromValue = initialFrom, toValue = initialTo
+  if (fromValue && toValue && fromValue.length <= 30 && toValue.length <= 30) {
+    const from = new Date(fromValue), to = new Date(toValue)
+    if (Number.isFinite(from.getTime()) && Number.isFinite(to.getTime()) && from <= to) return { from, to }
+  }
   const now = new Date()
 
-  if (period === "30d") return { from: subDays(now, 30), to: now }
-  if (period === "90d") return { from: subDays(now, 90), to: now }
+  if (period === "30d") return { from: subDays(now, 29), to: now }
+  if (period === "90d") return { from: subDays(now, 89), to: now }
   if (period === "mtd") return { from: startOfMonth(now), to: now }
 
-  return { from: subDays(now, 7), to: now }
-}
-
-const REPORT_LOAD_ERROR_MESSAGE = "Reports could not be loaded safely. Try again or adjust the filters."
-
-const emptyReportCopy: Record<ReportType, { title: string; message: string }> = {
-  financial: {
-    title: "No financial report data",
-    message: "No completed sales or payments matched this report period. Try a wider date range or another location.",
-  },
-  cashier: {
-    title: "No cashier performance data",
-    message: "No cashier sessions with reportable sales matched this period. Try a wider date range or another location.",
-  },
-  items: {
-    title: "No item performance data",
-    message: "No sold inventory items matched this report period. Try a wider date range or another location.",
-  },
-  cashflow: {
-    title: "No cash flow report data",
-    message: "No cash drawer or cash payment activity matched this report period. Try a wider date range or another location.",
-  },
+  return { from: subDays(now, 6), to: now }
 }
 
 function hasSelectedReportData(
@@ -124,7 +114,7 @@ function ReportWorkspaceState({
   const Icon = kind === "error" ? AlertTriangle : SearchX
 
   return (
-    <Card className={analyticsPanelClass}>
+    <Card role={kind === "error" ? "alert" : "status"} className={analyticsPanelClass}>
       <CardContent className="flex min-h-[18rem] flex-col items-center justify-center px-6 py-12 text-center">
         <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--dash-border)] bg-[var(--dash-surface-elevated)] text-[var(--dash-muted)]">
           <Icon className="h-5 w-5" />
@@ -145,10 +135,20 @@ export default function ReportsClient({
   locationId,
   initialReport,
   initialPeriod,
+  initialFrom,
+  initialTo,
   focusItemId,
 }: ReportsClientProps) {
-  const [selectedReport, setSelectedReport] = useState<ReportType>(() => normalizeReportType(initialReport))
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>(() => getInitialDateRange(initialPeriod))
+  const t = useTranslations("operationalReports"), locale = useLocale()
+  const dateLocale = locale === "fr" ? fr : enUS
+  const currentReportScope = useRef("")
+  const generation = useRef(0)
+  const [completedScope, setCompletedScope] = useState("")
+  const searchParams = useSearchParams()
+  const selectedReport = normalizeReportType(searchParams.get("report") ?? initialReport)
+  const fromValue = searchParams.get("reportFrom") ?? initialFrom, toValue = searchParams.get("reportTo") ?? initialTo
+  const [initialRange] = useState(() => getInitialDateRange(initialPeriod, initialFrom, initialTo))
+  const dateRange = useMemo(() => fromValue && toValue ? getInitialDateRange(initialPeriod, fromValue, toValue) : initialRange, [fromValue, toValue, initialPeriod, initialRange])
   const [isLoading, setIsLoading] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
 
@@ -157,7 +157,11 @@ export default function ReportsClient({
   const [itemReports, setItemReports] = useState<ItemPerformanceReport[]>([])
   const [cashFlowReport, setCashFlowReport] = useState<CashFlowReport | null>(null)
 
+  const scopeKey = JSON.stringify([organizationId, locationId, selectedReport, dateRange.from.toISOString(), dateRange.to.toISOString()])
+  useLayoutEffect(() => { currentReportScope.current = scopeKey }, [scopeKey])
   const loadReports = useCallback(async () => {
+    const request = ++generation.current
+    const isCurrent = () => generation.current === request && currentReportScope.current === scopeKey
     setIsLoading(true)
     setLoadError(null)
     setFinancialReport(null)
@@ -169,47 +173,59 @@ export default function ReportsClient({
       switch (selectedReport) {
         case "financial": {
           const financial = await getFinancialSummaryReport(organizationId, locationId, dateRange.from, dateRange.to)
-          setFinancialReport(financial)
+          if (isCurrent()) setFinancialReport(financial)
           break
         }
         case "cashier": {
           const cashier = await getCashierPerformanceReport(organizationId, locationId, dateRange.from, dateRange.to)
-          setCashierReports(cashier)
+          if (isCurrent()) setCashierReports(cashier)
           break
         }
         case "items": {
           const items = await getItemPerformanceReport(organizationId, locationId, dateRange.from, dateRange.to)
-          setItemReports(items)
+          if (isCurrent()) setItemReports(items)
           break
         }
         case "cashflow": {
           const cashflow = await getCashFlowReport(organizationId, locationId, dateRange.from, dateRange.to)
-          setCashFlowReport(cashflow)
+          if (isCurrent()) setCashFlowReport(cashflow)
           break
         }
       }
-    } catch (error) {
-      console.error("Error loading reports:", error)
-      setLoadError(REPORT_LOAD_ERROR_MESSAGE)
+    } catch {
+      // Keep raw database/provider errors out of the client log.
+      if (isCurrent()) setLoadError("REPORT_READ_FAILED")
     } finally {
-      setIsLoading(false)
+      if (isCurrent()) { setIsLoading(false); setCompletedScope(scopeKey) }
     }
-  }, [dateRange, locationId, organizationId, selectedReport])
+  }, [dateRange, locationId, organizationId, selectedReport, scopeKey])
 
   useEffect(() => {
     void loadReports()
+    return () => { generation.current += 1 }
   }, [loadReports])
 
+  const saveReportView = (report: ReportType, range: { from: Date; to: Date }) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set("report", report)
+    url.searchParams.set("reportFrom", range.from.toISOString())
+    url.searchParams.set("reportTo", range.to.toISOString())
+    // Let Next synchronize its canonical URL. Passing its internal __NA state skips that synchronization.
+    window.history.replaceState(null, "", url)
+  }
+  const changeDateRange = (range: { from: Date; to: Date }) => {
+    saveReportView(selectedReport, range)
+  }
   const setQuickDateRange = (days: number) => {
-    setDateRange({
-      from: subDays(new Date(), days),
+    changeDateRange({
+      from: subDays(new Date(), days - 1),
       to: new Date(),
     })
   }
 
   const setMonthRange = () => {
     const now = new Date()
-    setDateRange({
+    changeDateRange({
       from: startOfMonth(now),
       to: endOfMonth(now),
     })
@@ -218,26 +234,26 @@ export default function ReportsClient({
   const reportTypes = [
     {
       id: "financial" as const,
-      name: "Financial Summary",
-      description: "Revenue, profit, and sales overview",
+      name: t("financialName"),
+      description: t("financialDescription"),
       icon: FileText,
     },
     {
       id: "cashier" as const,
-      name: "Cashier Performance",
-      description: "Individual cashier metrics and performance",
+      name: t("cashierName"),
+      description: t("cashierDescription"),
       icon: Users,
     },
     {
       id: "items" as const,
-      name: "Item Performance",
-      description: "Product sales and inventory analysis",
+      name: t("itemsName"),
+      description: t("itemsDescription"),
       icon: Package,
     },
     {
       id: "cashflow" as const,
-      name: "Cash Flow",
-      description: "Cash in/out and drawer reconciliation",
+      name: t("cashflowName"),
+      description: t("cashflowDescription"),
       icon: DollarSign,
     },
   ]
@@ -248,15 +264,15 @@ export default function ReportsClient({
     itemReports,
     cashFlowReport,
   )
-  const selectedEmptyCopy = emptyReportCopy[selectedReport]
+  const selectedEmptyCopy = { title: t((selectedReport + "Empty") as "financialEmpty"), message: t((selectedReport + "EmptyMessage") as "financialEmptyMessage") }
 
   return (
-    <div className={analyticsPageClass}>
+    <div className={analyticsPageClass} data-testid="report-workspace">
       <div className={analyticsContentClass}>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--dash-text)]">Financial Reports</h1>
-          <p className={analyticsMutedTextClass}>Comprehensive analytics and performance insights</p>
+          <h1 className="text-3xl font-bold text-[var(--dash-text)]">{t("workspaceTitle")}</h1>
+          <p className={analyticsMutedTextClass}>{t("workspaceDescription")}</p>
         </div>
       </div>
 
@@ -264,8 +280,8 @@ export default function ReportsClient({
         <CardContent className="pt-6">
           <div className="flex flex-col gap-4 lg:flex-row">
             <div className="flex-1">
-              <label className="mb-2 block text-sm font-medium text-[var(--dash-text)]">Report Type</label>
-              <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+              <label className="mb-2 block text-sm font-medium text-[var(--dash-text)]">{t("reportType")}</label>
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,9rem),1fr))] gap-2">
                 {reportTypes.map((type) => {
                   const Icon = type.icon
                   const isSelected = selectedReport === type.id
@@ -274,13 +290,14 @@ export default function ReportsClient({
                       key={type.id}
                       variant="outline"
                       className={cn(
-                        "flex h-auto min-h-[6.75rem] flex-col items-center gap-2 whitespace-normal p-3 text-center",
+                        "flex h-auto min-h-[6.75rem] min-w-0 flex-col items-center gap-2 whitespace-normal p-3 text-center [overflow-wrap:anywhere]",
                         isSelected ? analyticsPrimaryButtonClass : analyticsFilterClass
                       )}
-                      onClick={() => setSelectedReport(type.id)}
+                      aria-pressed={isSelected}
+                      onClick={() => saveReportView(type.id, dateRange)}
                     >
                       <Icon className="h-4 w-4" />
-                      <div className="text-center">
+                      <div className="min-w-0 max-w-full text-center">
                         <div className="text-xs font-medium">{type.name}</div>
                         <div className={`hidden text-xs lg:block ${isSelected ? "text-white/80" : analyticsMutedTextClass}`}>
                           {type.description}
@@ -292,8 +309,8 @@ export default function ReportsClient({
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[var(--dash-text)]">Date Range</label>
+            <div className="min-w-0 space-y-2">
+              <label className="text-sm font-medium text-[var(--dash-text)]">{t("dateRange")}</label>
               <div className="flex gap-2">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -301,22 +318,24 @@ export default function ReportsClient({
                       variant="outline"
                       className={cn(
                         analyticsControlClass,
-                        "w-[280px] justify-start text-start font-normal",
+                        "h-auto min-h-10 w-full max-w-full whitespace-normal justify-start text-start font-normal py-2",
                         !dateRange && analyticsMutedTextClass
                       )}
                     >
-                      <CalendarIcon className="me-2 h-4 w-4" />
+                      <CalendarIcon className="me-2 h-4 w-4 shrink-0" />
+                      <span className="min-w-0 break-words whitespace-normal">
                       {dateRange?.from ? (
                         dateRange.to ? (
                           <>
-                            {format(dateRange.from, "LLL dd, y")} - {format(dateRange.to, "LLL dd, y")}
+                            {format(dateRange.from, "LLL dd, y", { locale: dateLocale })} - {format(dateRange.to, "LLL dd, y", { locale: dateLocale })}
                           </>
                         ) : (
                           format(dateRange.from, "LLL dd, y")
                         )
                       ) : (
-                        <span>Pick a date range</span>
+                        <span>{t("pickRange")}</span>
                       )}
+                      </span>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className={`${analyticsPanelClass} w-auto p-0`} align="start">
@@ -327,24 +346,25 @@ export default function ReportsClient({
                       selected={dateRange}
                       onSelect={(range) => {
                         if (range?.from && range?.to) {
-                          setDateRange({ from: range.from, to: range.to })
+                          changeDateRange({ from: range.from, to: range.to })
                         }
                       }}
-                      numberOfMonths={2}
+                      numberOfMonths={1}
+                      locale={dateLocale}
                     />
                   </PopoverContent>
                 </Popover>
               </div>
 
-              <div className="flex gap-1">
-                <Button size="sm" variant="outline" className={analyticsFilterClass} onClick={() => setQuickDateRange(7)}>
-                  7 days
+              <div className="flex flex-wrap gap-1">
+                <Button size="sm" variant="outline" className={`${analyticsFilterClass} h-auto whitespace-normal py-2`} onClick={() => setQuickDateRange(7)}>
+                  {t("quickDays", { count: 7 })}
                 </Button>
-                <Button size="sm" variant="outline" className={analyticsFilterClass} onClick={() => setQuickDateRange(30)}>
-                  30 days
+                <Button size="sm" variant="outline" className={`${analyticsFilterClass} h-auto whitespace-normal py-2`} onClick={() => setQuickDateRange(30)}>
+                  {t("quickDays", { count: 30 })}
                 </Button>
-                <Button size="sm" variant="outline" className={analyticsFilterClass} onClick={setMonthRange}>
-                  This month
+                <Button size="sm" variant="outline" className={`${analyticsFilterClass} h-auto whitespace-normal py-2`} onClick={setMonthRange}>
+                  {t("thisMonth")}
                 </Button>
               </div>
             </div>
@@ -352,19 +372,19 @@ export default function ReportsClient({
         </CardContent>
       </Card>
 
-      {isLoading ? (
+      {isLoading || completedScope !== scopeKey ? (
         <Card className={analyticsPanelClass}>
           <CardContent className="py-12 text-center">
-            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-[var(--dash-brand)]" />
-            <p className={analyticsMutedTextClass}>Loading report...</p>
+            <div className="mx-auto mb-4 h-8 w-8 motion-reduce:animate-none animate-spin rounded-full border-b-2 border-[var(--dash-brand)]" />
+            <p role="status" className={analyticsMutedTextClass}>{t("loading")}</p>
           </CardContent>
         </Card>
       ) : loadError ? (
         <ReportWorkspaceState
           kind="error"
-          title="Reports could not load"
-          message={loadError}
-          actionLabel="Retry"
+          title={t("loadFailed")}
+          message={t("loadError")}
+          actionLabel={t("retry")}
           onAction={loadReports}
         />
       ) : selectedReportHasData ? (
@@ -384,7 +404,7 @@ export default function ReportsClient({
           kind="empty"
           title={selectedEmptyCopy.title}
           message={selectedEmptyCopy.message}
-          actionLabel="Try 30 days"
+          actionLabel={t("try30")}
           onAction={() => setQuickDateRange(30)}
         />
       )}

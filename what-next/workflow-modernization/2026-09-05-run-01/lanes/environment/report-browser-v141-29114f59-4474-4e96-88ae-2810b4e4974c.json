@@ -1,0 +1,36 @@
+{
+  "at": "2026-09-13T17:13:23.650Z",
+  "sourceBefore": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+    "components/reports/financial-summary-report.tsx": "2cea7bf749913434d51cfac3464e248300113ed3ff34f3e30fe28a29609cd0bf",
+    "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+    "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+    "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+    "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+    "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+    "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "pageErrors": [],
+      "readyMs": 63718,
+      "catalogueEditDoesNotRepriceMargin": true
+    }
+  ],
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByTestId('financial-summary-report').getByRole('table')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByTestId('financial-summary-report').getByRole('table')\n",
+  "sourceAfter": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+    "components/reports/financial-summary-report.tsx": "2cea7bf749913434d51cfac3464e248300113ed3ff34f3e30fe28a29609cd0bf",
+    "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+    "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+    "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+    "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+    "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+    "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+  },
+  "sourceStable": true
+}

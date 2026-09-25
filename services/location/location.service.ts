@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto"
 import { db } from "@/prisma/db"
 import type { LocationDTO } from "@/types/location"
-import { LocationType, POSSessionStatus } from "@prisma/client"
+import { LocationType, POSSessionStatus, type Prisma } from "@prisma/client"
 import { BusinessRuleError, NotFoundError } from "../_shared/action-errors"
 import { MAX_PAGE_SIZES } from "../_shared/pagination"
 import type { LocationManagementInput } from "./location.schemas"
@@ -284,12 +284,16 @@ export async function getLocationManagementDataForOrg(
   }
 }
 
-async function assertManagerBelongsToOrg(organizationId: string, managerId?: string | null) {
+async function assertManagerBelongsToOrg(
+  organizationId: string,
+  managerId?: string | null,
+  client: Pick<Prisma.TransactionClient, "user"> = db,
+) {
   const cleanedManagerId = cleanText(managerId)
 
   if (!cleanedManagerId) return null
 
-  const manager = await db.user.findFirst({
+  const manager = await client.user.findFirst({
     where: {
       id: cleanedManagerId,
       organizationId,
@@ -429,6 +433,10 @@ export async function updateLegacyLocationByIdForOrg(
       throw new NotFoundError("Location not found")
     }
 
+    const managerId = input.managerId !== undefined
+      ? await assertManagerBelongsToOrg(organizationId, input.managerId, tx)
+      : undefined
+
     return tx.location.update({
       where: { id: locationId },
       data: {
@@ -440,7 +448,7 @@ export async function updateLegacyLocationByIdForOrg(
         ...(input.email !== undefined ? { email: input.email } : {}),
         ...(input.isActive !== undefined ? { isActive: input.isActive } : {}),
         ...(input.isDefault !== undefined ? { isDefault: input.isDefault } : {}),
-        ...(input.managerId !== undefined ? { managerId: input.managerId } : {}),
+        ...(managerId !== undefined ? { managerId } : {}),
         ...(input.allowNegativeStock !== undefined ? { allowNegativeStock: input.allowNegativeStock } : {}),
         ...(input.requiresApproval !== undefined ? { requiresApproval: input.requiresApproval } : {}),
         updatedAt: new Date(),

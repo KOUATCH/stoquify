@@ -3,9 +3,20 @@
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
 import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
+} from "@tanstack/react-table"
+import {
   AlertTriangle,
   ArrowDownRight,
   ArrowUpRight,
+  ArrowUpDown,
   BarChart3,
   Building2,
   CalendarDays,
@@ -26,10 +37,20 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { DataTableSearch } from "@/components/DataTableComponents/DataTableSearch"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
+import { DataTableViewOptions } from "@/components/DataTableComponents/DataTableViewOptions"
+import { RenderedDataTable } from "@/components/DataTableComponents/RenderedDataTable"
 import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
+import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
+import { CanonicalTableDensityControl } from "@/components/DataTableComponents/CanonicalTableDensityControl"
+import { useCanonicalTablePreferences } from "@/components/DataTableComponents/useCanonicalTablePreferences"
+import { financeCashFlowTableContract } from "@/components/DataTableComponents/finance-accounting-contracts"
+import { createCanonicalTableQuery } from "@/components/DataTableComponents/table-system-contract"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import {
   ActionQueue,
@@ -46,6 +67,8 @@ import {
   PaymentsTable as FinanceLedgerPaymentsTable,
 } from "@/components/finance/FinanceSpecializedLedgerSurfaces"
 import { useFinanceDashboard } from "@/hooks/finance/useFinanceDashboard"
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+import { CashFlowMovementSummary, CashFlowNavigation, CashFlowSectionHeading } from "@/components/finance/CashFlowPresentation"
 import {
   dashboardControlClass,
   dashboardEmptyClass,
@@ -103,7 +126,7 @@ function defaultCustomRange() {
 }
 
 
-function LoadingState() {
+function LoadingState({ cashFlow = false }: { cashFlow?: boolean }) {
   return (
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4">
@@ -113,7 +136,7 @@ function LoadingState() {
             <Skeleton key={index} className="h-32 rounded-lg bg-[var(--dash-surface-raised)]" />
           ))}
         </div>
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+        <div className={cn("grid min-w-0 grid-cols-1 gap-3", !cashFlow && "xl:grid-cols-[minmax(0,1fr)_420px]")}>
           <Skeleton className="h-[520px] rounded-lg bg-[var(--dash-surface-raised)]" />
           <Skeleton className="h-[520px] rounded-lg bg-[var(--dash-surface-raised)]" />
         </div>
@@ -195,7 +218,9 @@ export default function FinanceCommandCenterDashboard({
   const commandActions = [
     { label: t("actions.reconciliation"), href: localizedHref("/dashboard/finance/reconciliation"), icon: ShieldCheck, variant: "primary" },
     { label: t("actions.orderPayments"), href: localizedHref("/dashboard/orders/payments"), icon: CreditCard, variant: "secondary" },
-    { label: t("actions.cashFlow"), href: localizedHref("/dashboard/finance/cash-flow"), icon: LineChart, variant: "secondary" },
+    view === "cash-flow"
+      ? { label: t("actions.cashDrawers"), href: localizedHref("/dashboard/finance/cash-drawer"), icon: Wallet, variant: "secondary" }
+      : { label: t("actions.cashFlow"), href: localizedHref("/dashboard/finance/cash-flow"), icon: LineChart, variant: "secondary" },
   ] satisfies CommandCenterAction[]
   const actionLabels = {
     OVERDUE_AR: t("views.receivables"),
@@ -249,21 +274,21 @@ export default function FinanceCommandCenterDashboard({
 
   const isProfitLossLayout = layout === "profit-loss"
   const isCostsLayout = layout === "costs"
-  const usesEnhancedPaymentsTable =
-    isProfitLossLayout || isCostsLayout || view === "retail" || view === "sales"
-  if (dashboardQuery.isLoading && !dashboard) return <LoadingState />
+  const isCashFlowLayout = view === "cash-flow"
+  const sectionPrefix = isCashFlowLayout ? "cash-flow" : "finance"
+  if (dashboardQuery.isLoading && !dashboard) return <LoadingState cashFlow={isCashFlowLayout} />
 
   if (errorMessage && !dashboard) {
     return <DashboardErrorState error="Finance dashboard data unavailable" reset={() => { void dashboardQuery.refetch() }} />
   }
 
   return (
-    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
+    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden" data-finance-result-state={errorMessage ? "error" : dashboardQuery.isFetching ? "refreshing" : "ready"}>
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 text-[var(--dash-text)] sm:px-6 sm:py-6">
       <CommandBriefHeader
-        title={t("title")}
-        summary={t("subtitle")}
-        eyebrow={t("command.eyebrow")}
+        title={isCashFlowLayout ? t("cashFlow.title") : isProfitLossLayout ? t("presentation.profitLossTitle") : view === "overview" ? t("title") : t(`views.${view}`)}
+        summary={isCashFlowLayout ? t("cashFlow.subtitle") : t(`presentation.descriptions.${view}`)}
+        eyebrow={t(isCashFlowLayout ? "cashFlow.eyebrow" : "command.eyebrow")}
         state={dashboard ? { label: `${t("metrics.confidence")} ${percent(dashboard.summary.financeConfidence)}`, tone: financeConfidenceTone(dashboard.summary.financeConfidence), icon: ShieldCheck } : { label: t("common.notAvailable"), tone: "muted" }}
         metadata={dashboard ? [
           { label: t("command.organization"), value: dashboard.organization.name, icon: Building2 },
@@ -286,7 +311,7 @@ export default function FinanceCommandCenterDashboard({
               {t("filters.view")}
             </div>
             <Select value={view} onValueChange={(value) => setView(value as FinanceDashboardView)}>
-              <SelectTrigger className={dashboardControlClass}>
+              <SelectTrigger className={dashboardControlClass} aria-label={t("filters.view")}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -305,7 +330,7 @@ export default function FinanceCommandCenterDashboard({
               {t("filters.location")}
             </div>
             <Select value={locationId} onValueChange={setLocationId}>
-              <SelectTrigger className={dashboardControlClass}>
+              <SelectTrigger className={dashboardControlClass} aria-label={t("filters.location")}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -325,7 +350,7 @@ export default function FinanceCommandCenterDashboard({
               {t("filters.period")}
             </div>
             <Select value={period} onValueChange={(value) => setPeriod(value as FinanceDashboardPeriod)}>
-              <SelectTrigger className={dashboardControlClass}>
+              <SelectTrigger className={dashboardControlClass} aria-label={t("filters.period")}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -370,18 +395,25 @@ export default function FinanceCommandCenterDashboard({
 
       {dashboard ? (
         <>
-          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-            <KpiTile label={t("metrics.cash")} value={money(dashboard.summary.cashPosition)} detail={t("details.cash", { amount: money(dashboard.summary.netCashFlow) })} icon={Wallet} tone={dashboard.summary.netCashFlow >= 0 ? "success" : "danger"} proof={{ state: "verified", source: t("command.proofSource") }} />
-            <KpiTile label={t("metrics.revenue")} value={money(dashboard.summary.revenue)} detail={t("details.margin", { value: percent(dashboard.summary.grossMargin) })} icon={TrendingUp} tone="brand" proof={{ state: "posted", source: t("command.proofSource") }} />
+          {isCashFlowLayout ? <CashFlowNavigation /> : <WorkspaceSectionNavigation label={t("presentation.navigation")} items={[
+            { id: "finance-overview", label: t("cashFlow.navigationLabels.overview") },
+            { id: "finance-movement", label: t("sections.movement") },
+            { id: "finance-aging", label: t("cashFlow.agingTitle") },
+            { id: "finance-payments", label: t("cashFlow.paymentsTitle") },
+            { id: "finance-workflows", label: t("presentation.workflows") },
+          ]} />}
+          <section id={`${sectionPrefix}-overview`} aria-label={isCashFlowLayout ? t("cashFlow.navigationLabels.overview") : undefined} className={cn("grid min-w-0 scroll-mt-24 gap-3", isCashFlowLayout ? "sm:grid-cols-2 2xl:grid-cols-4" : "sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5")}>
+            <KpiTile label={t("metrics.cash")} value={money(dashboard.summary.cashPosition)} detail={isCashFlowLayout ? t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) }) : t("details.cash", { amount: money(dashboard.summary.netCashFlow) })} icon={Wallet} tone={dashboard.summary.netCashFlow >= 0 ? "success" : "danger"} proof={{ state: "verified", source: t("command.proofSource") }} />
+            <KpiTile label={t(isCashFlowLayout ? "cashFlow.net" : "metrics.revenue")} value={money(isCashFlowLayout ? dashboard.summary.netCashFlow : dashboard.summary.revenue)} detail={isCashFlowLayout ? t("cashFlow.netDetail") : t("details.margin", { value: percent(dashboard.summary.grossMargin) })} icon={TrendingUp} tone={isCashFlowLayout && dashboard.summary.netCashFlow < 0 ? "danger" : "brand"} proof={{ state: "posted", source: t("command.proofSource") }} />
             <KpiTile label={t("metrics.receivables")} value={money(dashboard.summary.receivables)} detail={t("details.receivables", { count: dashboard.summary.openReceivableCount })} icon={HandCoins} tone="gold" proof={{ state: dashboard.summary.overdueReceivableAmount > 0 ? "pending" : "verified", source: t("command.proofSource") }} />
             <KpiTile label={t("metrics.payables")} value={money(dashboard.summary.payables)} detail={t("details.payables", { count: dashboard.summary.openPayableCount })} icon={FileText} tone={dashboard.summary.overduePayableAmount > 0 ? "danger" : "muted"} proof={{ state: dashboard.summary.overduePayableAmount > 0 ? "pending" : "verified", source: t("command.proofSource") }} />
-            <KpiTile label={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} tone={financeConfidenceTone(dashboard.summary.financeConfidence)} proof={{ state: dashboard.summary.financeConfidence >= 85 ? "certified" : "pending", source: t("command.proofSource") }} />
+            {!isCashFlowLayout ? <KpiTile label={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} tone={financeConfidenceTone(dashboard.summary.financeConfidence)} proof={{ state: dashboard.summary.financeConfidence >= 85 ? "certified" : "pending", source: t("command.proofSource") }} /> : null}
           </section>
 
           {!isProfitLossLayout ? (
           <section
             data-testid={isCostsLayout ? "costs-operating-status" : undefined}
-            className={cn("grid gap-3", !isCostsLayout && "xl:grid-cols-[minmax(0,1fr)_420px]")}
+            className="grid min-w-0 grid-cols-1 gap-4"
           >
             <StatusStrip
               title={t("command.statusTitle")}
@@ -391,60 +423,59 @@ export default function FinanceCommandCenterDashboard({
             {!isCostsLayout ? (
               <ActionQueue
                 title={t("command.actionTitle")}
-                detail={t("command.actionDetail")}
+                detail={t(isCashFlowLayout ? "cashFlow.actionDescription" : "command.actionDetail")}
                 emptyTitle={t("command.actionEmptyTitle")}
                 emptyMessage={t("command.actionEmptyMessage")}
                 items={actionQueueItems}
+                className="[&>div.mt-4]:grid [&>div.mt-4]:gap-3 [&>div.mt-4]:space-y-0 lg:[&>div.mt-4]:grid-cols-2"
               />
             ) : null}
           </section>
           ) : null}
 
           <section
+            id={`${sectionPrefix}-movement`}
             data-testid={isCostsLayout ? "costs-financial-movements" : undefined}
-            className={cn("grid gap-3", !isProfitLossLayout && !isCostsLayout && "xl:grid-cols-[minmax(0,1fr)_420px]")}
+            className="grid min-w-0 scroll-mt-24 grid-cols-1 gap-4"
           >
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <LineChart className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-                  {t("sections.movement")}
+                  <h2>{t("sections.movement")}</h2>
                 </CardTitle>
-                <CardDescription className={dashboardMutedTextClass}>{t("sections.movementDescription")}</CardDescription>
+                <CardDescription className={dashboardMutedTextClass}>{t(isCashFlowLayout ? "cashFlow.movementDescription" : "sections.movementDescription")}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <TrendPanel trend={dashboard.trend} money={money} shortMoney={shortMoney} dateFormatter={dateFormatter} t={t} />
+              <CardContent className={isCashFlowLayout ? "min-w-0 space-y-5" : undefined}>
+                {isCashFlowLayout ? <CashFlowMovementSummary trend={dashboard.trend} locale={locale} money={money} /> : null}
+                {view === "cash-flow" ? (
+                  <CashFlowStatementTable
+                    trend={dashboard.trend}
+                    currency={currency}
+                    locale={locale}
+                    entityId={dashboard.organization.id}
+                    entityName={dashboard.organization.name}
+                    period={dashboard.filters.period}
+                    periodStart={dashboard.filters.startDate}
+                    periodEnd={dashboard.filters.endDate}
+                    money={money}
+                  />
+                ) : (
+                  <TrendPanel trend={dashboard.trend} money={money} shortMoney={shortMoney} dateFormatter={dateFormatter} t={t} />
+                )}
               </CardContent>
             </Card>
 
-            {!isCostsLayout ? (
-              <EvidenceTimeline
-                title={t("command.evidenceTitle")}
-                detail={t("command.evidenceDetail")}
-                emptyMessage={t("empty.payments")}
-                events={isProfitLossLayout ? evidenceEvents.slice(0, 6) : evidenceEvents}
-                className={cn(
-                  isProfitLossLayout &&
-                    "[&>ol]:grid [&>ol]:grid-cols-1 [&>ol]:gap-3 [&>ol]:space-y-0 md:[&>ol]:grid-cols-2 xl:[&>ol]:grid-cols-3",
-                )}
-              />
-            ) : null}
           </section>
 
           {isCostsLayout ? (
-            <section data-testid="costs-action-evidence-row" className="grid gap-3 xl:grid-cols-2">
+            <section data-testid="costs-action-evidence-row" className="grid min-w-0 gap-4">
               <ActionQueue
                 title={t("command.actionTitle")}
                 detail={t("command.actionDetail")}
                 emptyTitle={t("command.actionEmptyTitle")}
                 emptyMessage={t("command.actionEmptyMessage")}
                 items={actionQueueItems}
-              />
-              <EvidenceTimeline
-                title={t("command.evidenceTitle")}
-                detail={t("command.evidenceDetail")}
-                emptyMessage={t("empty.payments")}
-                events={evidenceEvents}
               />
             </section>
           ) : null}
@@ -466,35 +497,49 @@ export default function FinanceCommandCenterDashboard({
             </section>
           ) : null}
 
-          <section className="grid gap-3 xl:grid-cols-2">
-            <AgingCard title={t("sections.receivables")} description={t("sections.receivablesDescription")} aging={dashboard.aging.receivables} counterparties={dashboard.topReceivables} money={money} t={t} />
-            <AgingCard title={t("sections.payables")} description={t("sections.payablesDescription")} aging={dashboard.aging.payables} counterparties={dashboard.topPayables} money={money} t={t} />
+          <section id={`${sectionPrefix}-aging`} aria-labelledby="cash-flow-aging-title" className="grid min-w-0 scroll-mt-24 grid-cols-1 gap-4">
+            <CashFlowSectionHeading section="aging" />
+            <AgingCard title={t("sections.receivables")} description={t("sections.receivablesDescription")} aging={dashboard.aging.receivables} counterparties={dashboard.topReceivables} money={money} t={t} fullWidth />
+            <AgingCard title={t("sections.payables")} description={t("sections.payablesDescription")} aging={dashboard.aging.payables} counterparties={dashboard.topPayables} money={money} t={t} fullWidth />
           </section>
 
-          <section data-testid={isCostsLayout ? "costs-payments-stack" : undefined}>
+          <section id={`${sectionPrefix}-payments`} aria-labelledby="cash-flow-payments-title" className="min-w-0 scroll-mt-24 space-y-4" data-testid={isCostsLayout ? "costs-payments-stack" : undefined}>
+            <CashFlowSectionHeading section="payments" />
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <CreditCard className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-                  {t("sections.payments")}
+                  <h3>{t("sections.payments")}</h3>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{t("sections.paymentsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
-                {usesEnhancedPaymentsTable ? (
-                  <FinanceLedgerPaymentsTable
+                <FinanceLedgerPaymentsTable
                     payments={dashboard.recentPayments}
                     money={money}
                     formatDateTime={formatDateTime}
                     t={t}
                     surfaceT={surfaceT}
                     empty={t("empty.payments")}
+                    financeContext={{
+                      entityId: dashboard.organization.id,
+                      entityName: dashboard.organization.name,
+                      periodStart: dashboard.filters.startDate,
+                      periodEnd: dashboard.filters.endDate,
+                      currency,
+                      sourceReadModel: "finance-dashboard.recent-payments",
+                      evidenceRoute: "/dashboard/finance/payments",
+                    }}
                   />
-                ) : (
-                  <PaymentsTable payments={dashboard.recentPayments} money={money} formatDateTime={formatDateTime} t={t} />
-                )}
               </CardContent>
             </Card>
+            <EvidenceTimeline
+                title={t("command.evidenceTitle")}
+                detail={t("cashFlow.evidenceDescription")}
+                emptyMessage={t("empty.payments")}
+                events={evidenceEvents}
+                className="min-w-0 [&>ol]:grid [&>ol]:grid-cols-1 [&>ol]:gap-3 [&>ol]:space-y-0 md:[&>ol]:grid-cols-2 2xl:[&>ol]:grid-cols-3"
+              />
           </section>
 
           <section data-finance-final-section="operational">
@@ -502,7 +547,7 @@ export default function FinanceCommandCenterDashboard({
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <ReceiptText className="h-4 w-4 text-[var(--dash-success)]" />
-                  {t("sections.methods")}
+                  <h2>{t("sections.methods")}</h2>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("payments.sections.methodsDescription")}</CardDescription>
               </CardHeader>
@@ -518,7 +563,7 @@ export default function FinanceCommandCenterDashboard({
             </Card>
           </section>
 
-          <section data-finance-final-section="workflow">
+          <section id="finance-workflows" className="scroll-mt-24" data-finance-final-section="workflow">
             <FinanceWorkflowActionPanel
               title={t("sections.workflows", { view: t(`views.${view}`) })}
               description={t("sections.workflowsDescription", { view: t(`views.${view}`) })}
@@ -587,6 +632,206 @@ function TrendPanel({
   )
 }
 
+type CashFlowStatementRow = FinanceTrendPoint & {
+  lineCode: string
+  lineName: string
+  currency: string
+  evidence: string
+}
+
+export function CashFlowStatementTable({
+  trend,
+  currency,
+  locale,
+  entityId,
+  entityName,
+  period,
+  periodStart,
+  periodEnd,
+  money,
+}: {
+  trend: FinanceTrendPoint[]
+  currency: string
+  locale: Locale
+  entityId: string
+  entityName: string
+  period: FinanceDashboardPeriod
+  periodStart: string
+  periodEnd: string
+  money: (value: number | null | undefined) => string
+}) {
+  const [sorting, setSorting] = useState<SortingState>([{ id: "lineCode", desc: false }])
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: financeCashFlowTableContract.query.defaultPageSize })
+  const [search, setSearch] = useState("")
+  const {
+    columnVisibility,
+    columnOrder,
+    density,
+    setColumnVisibility,
+    setColumnOrder,
+    setDensity,
+  } = useCanonicalTablePreferences(financeCashFlowTableContract)
+  const labels = locale === "fr"
+    ? { line: "Ligne", description: "Description", currency: "Devise", inflow: "Entrees", outflow: "Sorties", net: "Net", evidence: "Preuve", rows: "lignes", previous: "Page precedente", next: "Page suivante", empty: "Aucun flux de tresorerie pour cette periode." }
+    : { line: "Line", description: "Description", currency: "Currency", inflow: "Inflow", outflow: "Outflow", net: "Net", evidence: "Evidence", rows: "rows", previous: "Previous page", next: "Next page", empty: "No cash-flow rows for this period." }
+  const data = useMemo<CashFlowStatementRow[]>(
+    () => trend.map((point) => ({
+      ...point,
+      lineCode: point.key,
+      lineName: point.label,
+      currency: currency.toUpperCase(),
+      evidence: locale === "fr" ? "Lecture finance" : "Finance read model",
+    })),
+    [currency, locale, trend],
+  )
+  const header = (label: string) => function CashFlowColumnHeader({ column }: { column: { getIsSorted: () => false | "asc" | "desc"; getToggleSortingHandler: () => ((event: unknown) => void) | undefined } }) {
+    return (
+    <button
+      type="button"
+      className="inline-flex items-center gap-1 text-left font-semibold"
+      onClick={column.getToggleSortingHandler()}
+      aria-label={`${label}: ${column.getIsSorted() === "desc" ? "ascending" : "descending"}`}
+    >
+      {label}
+      <ArrowUpDown className="h-3.5 w-3.5" aria-hidden="true" />
+    </button>
+    )
+  }
+  const columns = useMemo<ColumnDef<CashFlowStatementRow>[]>(
+    () => [
+      { accessorKey: "lineCode", header: header(labels.line), enableHiding: false },
+      { accessorKey: "lineName", header: header(labels.description), enableHiding: false },
+      { accessorKey: "currency", header: header(labels.currency) },
+      { accessorKey: "inflow", header: header(labels.inflow), cell: ({ row }) => <span className="tabular-nums">{money(row.original.inflow)}</span> },
+      { accessorKey: "outflow", header: header(labels.outflow), cell: ({ row }) => <span className="tabular-nums">{money(row.original.outflow)}</span> },
+      { accessorKey: "net", header: header(labels.net), cell: ({ row }) => <span className="font-semibold tabular-nums">{money(row.original.net)}</span> },
+      { accessorKey: "evidence", header: labels.evidence, enableSorting: false },
+    ],
+    [labels.currency, labels.description, labels.evidence, labels.inflow, labels.line, labels.net, labels.outflow, money],
+  )
+  const table = useReactTable({
+    data,
+    columns,
+    getRowId: (row) => row.lineCode,
+    state: { sorting, columnVisibility, columnOrder, pagination, globalFilter: search },
+    onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
+    onPaginationChange: setPagination,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  })
+  const canonicalQuery = createCanonicalTableQuery(financeCashFlowTableContract, {
+    search,
+    filters: {
+      period: [period],
+      locationId: [entityId],
+      startDate: [periodStart],
+      endDate: [periodEnd],
+    },
+    sort: sorting,
+    pageIndex: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+  })
+
+  return (
+    <CanonicalTableBoundary
+      contract={financeCashFlowTableContract}
+      locale={locale}
+      query={canonicalQuery}
+      state={table.getFilteredRowModel().rows.length ? "ready" : search.trim() ? "no-results" : "empty"}
+      density={density}
+    >
+      <div
+        className="dashboard-table-shell dashboard-data-table min-w-0 overflow-hidden rounded-lg"
+        data-finance-entity-id={entityId}
+        data-finance-entity-name={entityName}
+        data-finance-period={period}
+        data-finance-period-start={periodStart}
+        data-finance-period-end={periodEnd}
+        data-finance-currency={currency}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--dash-border-subtle)] px-3 py-3">
+          <div>
+            <h3 className="text-sm font-semibold">{locale === "fr" ? "Etat des flux de tresorerie" : "Cash-flow statement"}</h3>
+            <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{entityName} / {currency.toUpperCase()} / {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(periodStart))} – {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(periodEnd))}</p>
+          </div>
+        </div>
+        <div className="dashboard-table-toolbar flex flex-nowrap items-center gap-3 overflow-x-auto border-b border-[var(--dash-border-subtle)] p-3">
+          <div className="min-w-48 flex-1">
+            <DataTableSearch value={search} onChange={(value) => { setSearch(value); table.setPageIndex(0) }} ariaLabel={locale === "fr" ? "Rechercher des flux de trésorerie" : "Search cash-flow rows"} placeholder={locale === "fr" ? "Rechercher dans le tableau..." : "Search table data..."} clearButtonLabel={locale === "fr" ? "Effacer la recherche" : "Clear table search"} />
+          </div>
+          <DataTableViewOptions
+            table={table}
+            label={locale === "fr" ? "Colonnes" : "View columns"}
+            columnLabels={{ lineCode: labels.line, lineName: labels.description, currency: labels.currency, inflow: labels.inflow, outflow: labels.outflow, net: labels.net, evidence: labels.evidence }}
+            className="dashboard-button-secondary h-9 shrink-0 rounded-lg"
+          />
+          <div className="shrink-0">
+            <CanonicalTableDensityControl density={density} locale={locale} onDensityChange={setDensity} />
+          </div>
+        </div>
+        {table.getFilteredRowModel().rows.length ? (
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-[900px]">
+              <TableHeader className="sticky top-0 z-10 bg-[var(--dash-surface-raised)]">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((headerCell) => (
+                      <TableHead
+                        key={headerCell.id}
+                        aria-sort={headerCell.column.getIsSorted() === "asc" ? "ascending" : headerCell.column.getIsSorted() === "desc" ? "descending" : "none"}
+                        data-column-id={headerCell.column.id}
+                        data-frozen={headerCell.column.id === "lineCode" || headerCell.column.id === "lineName" ? "start" : undefined}
+                        className={cn(
+                          "whitespace-nowrap px-3",
+                          headerCell.column.id === "lineCode" && "sticky left-0 z-20 min-w-[8rem] bg-[var(--dash-surface-raised)]",
+                          headerCell.column.id === "lineName" && "sticky left-[8rem] z-20 min-w-[14rem] bg-[var(--dash-surface-raised)]",
+                          ["inflow", "outflow", "net"].includes(headerCell.column.id) && "text-right",
+                        )}
+                      >
+                        {headerCell.isPlaceholder ? null : flexRender(headerCell.column.columnDef.header, headerCell.getContext())}
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} className="border-[var(--dash-border-subtle)]">
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        data-column-id={cell.column.id}
+                        data-frozen={cell.column.id === "lineCode" || cell.column.id === "lineName" ? "start" : undefined}
+                        className={cn(
+                          "px-3",
+                          cell.column.id === "lineCode" && "sticky left-0 z-10 bg-[var(--dash-surface)] font-medium",
+                          cell.column.id === "lineName" && "sticky left-[8rem] z-10 bg-[var(--dash-surface)]",
+                          ["inflow", "outflow", "net"].includes(cell.column.id) && "text-right",
+                        )}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ) : (
+          <p className="p-6 text-sm text-[var(--dash-text-soft)]">{search.trim() ? (locale === "fr" ? "Aucun résultat." : "No results.") : labels.empty}</p>
+        )}
+        <nav aria-label={locale === "fr" ? "Pagination des flux de trésorerie" : "Cash-flow pagination"} className="border-t border-[var(--dash-border-subtle)] p-3">
+          <DataTablePagination table={table} variant="landing" locale={locale} showSelectionCount={false} pageSizeOptions={financeCashFlowTableContract.query.allowedPageSizes} />
+        </nav>
+      </div>
+    </CanonicalTableBoundary>
+  )
+}
+
 function AgingCard({
   title,
   description,
@@ -594,6 +839,7 @@ function AgingCard({
   counterparties,
   money,
   t,
+  fullWidth = false,
 }: {
   title: string
   description: string
@@ -601,7 +847,9 @@ function AgingCard({
   counterparties: FinanceCounterparty[]
   money: (value: number | null | undefined) => string
   t: ReturnType<typeof useTranslations>
+  fullWidth?: boolean
 }) {
+  const locale = pickLocale(useLocale())
   const total = Math.max(1, aging.current + aging.d31 + aging.d61 + aging.d90)
   const buckets: Array<[keyof FinanceAgingSummary, string, string]> = [
     ["current", t("aging.current"), dashboardToneBg("success")],
@@ -611,9 +859,9 @@ function AgingCard({
   ]
 
   return (
-    <Card className={dashboardPanelClass}>
+    <Card className={cn(dashboardPanelClass, "min-w-0")}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">{title}</CardTitle>
+        <CardTitle className="text-base">{fullWidth ? <h3>{title}</h3> : title}</CardTitle>
         <CardDescription className={dashboardMutedTextClass}>{description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -624,7 +872,7 @@ function AgingCard({
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className={cn("grid grid-cols-2 gap-2 text-xs", fullWidth && "md:grid-cols-4")}>
           {buckets.map(([key, label, color]) => (
             <div key={key} className={cn(dashboardRowClass, "p-2")}>
               <div className="flex items-center gap-1.5 text-[var(--dash-text-soft)]"><span className={cn("h-2 w-2 rounded-full", color)} />{label}</div>
@@ -632,76 +880,31 @@ function AgingCard({
             </div>
           ))}
         </div>
-        <div className="space-y-2">
-          {counterparties.length === 0 ? (
-            <div className={cn(dashboardEmptyClass, "p-6")}>{t("empty.counterparties")}</div>
-          ) : counterparties.map((party) => (
-            <div key={party.id} className={cn(dashboardRowClass, "flex items-center justify-between gap-3 p-2 text-sm")}>
-              <div className="min-w-0">
-                <div className="truncate font-medium">{party.name}</div>
-                <div className="text-xs text-[var(--dash-text-soft)]">{party.terms ? t("aging.terms", { count: party.terms }) : t("common.notAvailable")}</div>
-              </div>
-              <Badge variant="outline" className={cn("shrink-0", dashboardSeverityClass(party.severity))}>{money(party.balance)}</Badge>
-            </div>
-          ))}
-        </div>
+        <RenderedDataTable
+          className="p-0"
+          tableClassName="!min-w-[28rem]"
+          locale={locale}
+          caption={title}
+          emptyMessage={t("empty.counterparties")}
+          columns={[
+            { label: t("table.counterparty") },
+            { label: locale === "fr" ? "Conditions de paiement" : "Payment terms" },
+            { label: locale === "fr" ? "Solde" : "Balance", className: "text-right" },
+          ]}
+          rows={counterparties.map((party) => {
+            const terms = party.terms ? t("aging.terms", { count: party.terms }) : t("common.notAvailable")
+            return {
+              id: party.id,
+              searchText: [party.name, terms, money(party.balance)].join(" "),
+              cells: [
+                <span key="name" className="font-medium text-[var(--dash-text)]">{party.name}</span>,
+                <span key="terms">{terms}</span>,
+                <div key="balance" className="text-right"><Badge variant="outline" className={cn("shrink-0 tabular-nums", dashboardSeverityClass(party.severity))}>{money(party.balance)}</Badge></div>,
+              ],
+            }
+          })}
+        />
       </CardContent>
     </Card>
-  )
-}
-
-function PaymentsTable({
-  payments,
-  money,
-  formatDateTime,
-  t,
-}: {
-  payments: FinanceRecentPayment[]
-  money: (value: number | null | undefined) => string
-  formatDateTime: (value: string | null | undefined) => string
-  t: ReturnType<typeof useTranslations>
-}) {
-  if (payments.length === 0) {
-    return <div className={dashboardEmptyClass}>{t("empty.payments")}</div>
-  }
-
-  return (
-    <ScrollArea className="w-full">
-      <table className="w-full min-w-[860px] text-sm">
-        <thead className="text-left text-xs text-[var(--dash-text-soft)]">
-          <tr className="border-b border-[var(--dash-border-subtle)]">
-            <th className="py-2 pr-3 font-medium">{t("table.payment")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.counterparty")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.method")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.status")}</th>
-            <th className="py-2 pr-3 text-right font-medium">{t("table.amount")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.time")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {payments.slice(0, 14).map((payment) => (
-            <tr key={payment.id} className="border-b border-[var(--dash-border-subtle)] last:border-0">
-              <td className="py-3 pr-3">
-                <div className="flex items-center gap-2 font-medium">
-                  {payment.direction === "out" ? <ArrowDownRight className="h-4 w-4 text-[var(--dash-danger)]" /> : <ArrowUpRight className="h-4 w-4 text-[var(--dash-success)]" />}
-                  {payment.paymentNumber}
-                </div>
-                <div className="mt-1 text-xs text-[var(--dash-text-soft)]">{payment.processedBy}</div>
-              </td>
-              <td className="py-3 pr-3">{payment.counterparty}</td>
-              <td className="py-3 pr-3">{t(`methods.${payment.method}`)}</td>
-              <td className="py-3 pr-3">
-                <Badge variant="outline" className={cn(payment.status === "PAID" ? dashboardSeverityClass("success") : payment.status === "PENDING" ? dashboardSeverityClass("warning") : dashboardSeverityClass("info"))}>
-                  {t(`statuses.${payment.status}`)}
-                </Badge>
-              </td>
-              <td className={cn("py-3 pr-3 text-right font-semibold tabular-nums", payment.direction === "out" ? "text-[var(--dash-danger)]" : "text-[var(--dash-success)]")}>{money(payment.amount)}</td>
-              <td className="py-3 pr-3 text-xs text-[var(--dash-text-soft)]">{formatDateTime(payment.createdAt)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
   )
 }

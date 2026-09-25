@@ -1,0 +1,479 @@
+{
+  "schemaVersion": 1,
+  "evaluationId": "stoquify-system-evaluation-2026-08-28",
+  "generatedAt": "2026-08-28T12:41:28.5922630Z",
+  "repository": {
+    "commit": "415789cb005da1d07bf80d5d714d79f32c3c6e10",
+    "branch": "codex/service-boundary-burndown",
+    "workingTreeClean": false,
+    "candidateBindingValid": false
+  },
+  "decision": {
+    "productionPromotion": "REJECTED",
+    "continuedBoundedEngineering": "APPROVED_WITH_REQUIRED_FIXES",
+    "releasePosture": "DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED",
+    "missionTarget": "QUALIFIED_FOR_CONTROLLED_PHASE_2B_PILOT",
+    "activationAuthorized": false,
+    "gate017Requestable": false,
+    "phase2bEligible": false,
+    "phase3Eligible": false
+  },
+  "summary": {
+    "enterpriseBlockers": 12,
+    "enterpriseReady": 3,
+    "enterpriseOpen": 9,
+    "externalIntakeChecksPassed": 1,
+    "externalIntakeChecks": 6,
+    "externalIntakeBlockers": 70,
+    "enterpriseExternalChecksPassed": 1,
+    "enterpriseExternalChecks": 13,
+    "enterpriseExternalBlockers": 102,
+    "moduleSurfaces": 410,
+    "moduleMapped": 369,
+    "moduleUnmapped": 5,
+    "moduleMissingPermission": 79,
+    "moduleDashboardOnlyRisk": 77,
+    "prismaMigrations": 79,
+    "pendingLocalMigrations": 1,
+    "destructiveMigrationFindings": 13,
+    "approvedDestructiveFindings": 0,
+    "payrollTrustSpineChecksPassed": 5,
+    "payrollTrustSpineChecks": 6,
+    "ciChecksPassed": 11,
+    "ciChecks": 11
+  },
+  "authoritativeSources": [
+    "what-next/enterprise-release-blocker-status.json",
+    "what-next/enterprise-release-external-evidence-intake-readiness.json",
+    "what-next/module-surface-inventory.json",
+    "what-next/release-secret-preflight.json",
+    "what-next/prisma-migration-deployment-readiness.json",
+    "what-next/payroll/payroll-trust-spine-readiness.json",
+    "what-next/ci-release-readiness.json"
+  ],
+  "dependencyEdges": [
+    { "from": "B03", "to": "B07", "reason": "Credential rotation requires stable managed database and runtime references." },
+    { "from": "B04", "to": "B07", "reason": "Credential rotation requires stable managed secret references." },
+    { "from": "B03", "to": "B08", "reason": "Operational evidence requires a deployed database target." },
+    { "from": "B04", "to": "B08", "reason": "Scheduler and alert evidence require managed secret references." },
+    { "from": "B06", "to": "B08", "reason": "Operational scope must reflect the approved statutory boundary." },
+    { "from": "B07", "to": "B08", "reason": "Operational release evidence includes credential-rotation proof." },
+    { "from": "B01", "to": "B09", "reason": "The final candidate must preserve a successful build." },
+    { "from": "B02", "to": "B09", "reason": "The final candidate must bind payroll immutability evidence." },
+    { "from": "B03", "to": "B09", "reason": "The freeze follows production-shaped migration proof." },
+    { "from": "B04", "to": "B09", "reason": "The freeze follows release secret readiness." },
+    { "from": "B05", "to": "B09", "reason": "The freeze must preserve country source hashes." },
+    { "from": "B06", "to": "B09", "reason": "The freeze must preserve the approved country scope." },
+    { "from": "B07", "to": "B09", "reason": "The freeze follows completed credential dispositions." },
+    { "from": "B08", "to": "B09", "reason": "The freeze follows completed operational evidence." },
+    { "from": "B09", "to": "B10", "reason": "Approvals must be bound to an immutable candidate." },
+    { "from": "B10", "to": "GATE-017", "reason": "Gate 017 requires accepted owners and artifact-bound approvals." },
+    { "from": "GATE-017", "to": "B11", "reason": "Phase 2B requires Enterprise Gate 017 GO." },
+    { "from": "B11", "to": "B12", "reason": "Phase 3 requires a completed and accepted Phase 2B pilot." },
+    { "from": "X01", "to": "B09", "reason": "Module access truth and surface coverage must be stable before freeze." },
+    { "from": "X02", "to": "B03", "reason": "Migration parity and exact-hash dispositions are database prerequisites." },
+    { "from": "X03", "to": "B02", "reason": "Payroll trust-spine regression coverage complements runtime immutability." },
+    { "from": "X04", "to": "GATE-017", "reason": "Pilot-route UX and accessibility proof is a release-gate requirement." }
+  ],
+  "blockers": [
+    {
+      "id": "B01",
+      "title": "Application production build",
+      "status": "READY",
+      "ready": true,
+      "ownerRole": "APPLICATION_RELEASE_OWNER",
+      "controlType": "engineering",
+      "prerequisites": [],
+      "evidence": ["what-next/build-diagnostics/enterprise-unblocking-b01/summary.json"],
+      "currentFacts": ["buildStatus=passed", "buildExitCode=0"],
+      "unresolvedCount": 0,
+      "commands": ["npm run build:app"],
+      "passCriteria": "Build succeeds from the frozen candidate and the digest is bound to the evidence bundle.",
+      "nextAction": "Preserve and rebind the proof to the final candidate."
+    },
+    {
+      "id": "B02",
+      "title": "Payroll immutability runtime proof",
+      "status": "READY",
+      "ready": true,
+      "ownerRole": "PAYROLL_CONTROLS_OWNER_AND_DATABASE_OWNER",
+      "controlType": "engineering_runtime",
+      "prerequisites": [],
+      "evidence": ["what-next/payroll/payroll-immutability-runtime-check.json"],
+      "currentFacts": ["isolated non-production PostgreSQL", "triggers 9/9", "blocked mutations 14/14", "allowed lifecycle 3/3"],
+      "unresolvedCount": 0,
+      "commands": ["npm run payroll:immutability:runtime"],
+      "passCriteria": "The runtime proof passes on the candidate-bound disposable PostgreSQL target.",
+      "nextAction": "Preserve scope wording and bind the proof to the final candidate."
+    },
+    {
+      "id": "B03",
+      "title": "Production database target and migration history",
+      "status": "BLOCKED_EXTERNAL_CONFIG",
+      "ready": false,
+      "ownerRole": "PLATFORM_DATABASE_OWNER",
+      "controlType": "external_environment",
+      "prerequisites": ["X02"],
+      "evidence": [
+        "what-next/prisma-migration-deployment-readiness.json",
+        "what-next/prisma-migration-history-health.json",
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json"
+      ],
+      "currentFacts": ["release preflight 7/9 in live check", "79 migrations", "13 destructive findings", "database URL absent", "local history has one pending migration"],
+      "unresolvedCount": 3,
+      "unresolved": ["destructive_sql_is_exact_hash_approved", "deployment_target_is_safe", "database_url_missing"],
+      "commands": [
+        "npm run prisma:migration:release:preflight",
+        "npm run prisma:migrate:deploy",
+        "npm run prisma:migration:history:health",
+        "npm run prisma:migrate:status"
+      ],
+      "passCriteria": "Approved non-local target, exact-hash dispositions, backup/restore proof, deploy success, and direct remote history health all pass.",
+      "nextAction": "Provision the approved target and execute the maker/checker migration and recovery sequence."
+    },
+    {
+      "id": "B04",
+      "title": "Managed production release secrets",
+      "status": "BLOCKED_EXTERNAL_CONFIG",
+      "ready": false,
+      "ownerRole": "SECURITY_PLATFORM_OWNER",
+      "controlType": "external_environment",
+      "prerequisites": [],
+      "evidence": [
+        "what-next/release-secret-preflight.json",
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json"
+      ],
+      "currentFacts": ["checks 5/21", "16 blockers", "no secret value printed"],
+      "unresolvedCount": 16,
+      "unresolved": [
+        "public_identity_secret_present",
+        "public_identity_secret_strong",
+        "public_receipt_secret_present",
+        "public_receipt_secret_strong",
+        "history_cursor_secret_present",
+        "history_cursor_secret_strong",
+        "statement_token_secret_present",
+        "statement_token_secret_strong",
+        "statement_delivery_encryption_key_present",
+        "statement_delivery_encryption_key_valid",
+        "accountant_invite_encryption_key_present",
+        "accountant_invite_encryption_key_valid",
+        "public_app_url_present",
+        "public_app_url_https",
+        "statement_live_delivery_channel_enabled",
+        "accountant_invite_live_delivery_enabled"
+      ],
+      "commands": [
+        "npm run release:secrets:preflight:release",
+        "npm run public-identity:abuse:gate:release",
+        "npm run receipt:token:config-gate:release",
+        "npm run release:evidence:gate:release"
+      ],
+      "passCriteria": "All 21 release checks pass using purpose-specific managed references with no values in evidence.",
+      "nextAction": "Provision managed references, URL, and approved live-delivery policy."
+    },
+    {
+      "id": "B05",
+      "title": "Cameroon source-artifact hash binding",
+      "status": "READY",
+      "ready": true,
+      "ownerRole": "COMPLIANCE_EVIDENCE_OWNER",
+      "controlType": "repository_evidence",
+      "prerequisites": [],
+      "evidence": ["what-next/statutory-country-pack-review-preflight.json"],
+      "currentFacts": ["source hashes 7/7"],
+      "unresolvedCount": 0,
+      "commands": ["npm run statutory:country-pack:review:preflight"],
+      "passCriteria": "Every included source artifact remains exact-hash bound to the candidate.",
+      "nextAction": "Preserve source identities and prevent post-review drift."
+    },
+    {
+      "id": "B06",
+      "title": "Cameroon qualified expert approval",
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "ready": false,
+      "ownerRole": "COMPLIANCE_LEGAL_OWNER",
+      "controlType": "qualified_human",
+      "prerequisites": ["B05"],
+      "evidence": [
+        "what-next/statutory-country-pack-review-preflight.json",
+        "what-next/statutory-country-pack-production-readiness.json",
+        "docs/blockers/enterprise-release-external-evidence-intake-2026-07-27.json"
+      ],
+      "currentFacts": ["review checks 4/12", "approval artifact verified false"],
+      "unresolvedCount": 9,
+      "unresolved": [
+        "reviewer_identity_complete",
+        "review_window_complete",
+        "reviewer_recomputed_source_digests",
+        "fixture_family_decisions_complete",
+        "all_required_fixture_families_approved",
+        "final_decision_consistent",
+        "signed_approval_metadata_complete",
+        "signed_approval_artifact_verified",
+        "source_artifact_expert_approval"
+      ],
+      "commands": [
+        "npm run statutory:country-pack:review:preflight",
+        "npm run statutory:country-pack:gate"
+      ],
+      "passCriteria": "Qualified reviewer and independent checker return signed, digest-bound decisions for every included fixture family.",
+      "nextAction": "Complete the real review; disable every excluded or unsupported behavior."
+    },
+    {
+      "id": "B07",
+      "title": "Credential rotation and revocation",
+      "status": "BLOCKED_DEPENDENCY",
+      "ready": false,
+      "ownerRole": "SECURITY_OWNER_WITH_SERVICE_OWNERS",
+      "controlType": "security_operations",
+      "prerequisites": ["B03", "B04"],
+      "evidence": ["docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_CREDENTIAL_ROTATION_REGISTER_2026-07-25.json"],
+      "currentFacts": ["credential status BLOCKED", "31 blockers"],
+      "unresolvedCount": 31,
+      "unresolvedCategories": {
+        "authorityAndAttestation": 8,
+        "releaseBinding": 6,
+        "credentialClassificationAndDisposition": 15,
+        "registerGovernance": 2
+      },
+      "authoritativeUnresolvedSource": "what-next/enterprise-release-blocker-status.json#/blockers/B07",
+      "commands": [
+        "npm run agent:credential-rotation:evidence:apply",
+        "npm run agent:credential-rotation:gate"
+      ],
+      "passCriteria": "Every credential has owner, classification, managed reference, rotation evidence, old-version rejection, and security approval.",
+      "nextAction": "Complete the credential register after B03 and B04 references stabilize."
+    },
+    {
+      "id": "B08",
+      "title": "Operational release evidence",
+      "status": "BLOCKED_DEPENDENCY",
+      "ready": false,
+      "ownerRole": "RELEASE_MANAGER_AND_SRE_OWNER",
+      "controlType": "operations",
+      "prerequisites": ["B03", "B04", "B06", "B07"],
+      "evidence": ["docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json"],
+      "currentFacts": ["operational status BLOCKED", "152 blockers"],
+      "unresolvedCount": 152,
+      "unresolvedCategories": {
+        "releaseBinding": 14,
+        "ciAndAttestation": 15,
+        "governanceBinding": 13,
+        "productAndSecurityApprovals": 14,
+        "ownerCoverage": 36,
+        "scheduler": 39,
+        "alerting": 17,
+        "credentialRotation": 4
+      },
+      "authoritativeUnresolvedSource": "what-next/enterprise-release-blocker-status.json#/blockers/B08",
+      "commands": ["npm run agent:operational-release:gate"],
+      "passCriteria": "Candidate, CI, governance, owners, scheduler, three run windows, alerts, recovery, and credential evidence all pass.",
+      "nextAction": "Build the production-shaped operational evidence packet and run three successful windows."
+    },
+    {
+      "id": "B09",
+      "title": "Clean immutable release freeze",
+      "status": "WAIT_FOR_STABLE_TREE",
+      "ready": false,
+      "ownerRole": "RELEASE_MANAGER",
+      "controlType": "release_governance",
+      "prerequisites": ["B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "X01", "X02", "X03", "X04"],
+      "evidence": ["docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2A_FREEZE_COMMIT_ATTESTATION_2026-07-25.json"],
+      "currentFacts": ["working tree dirty", "prior freeze status BLOCKED", "prior runtime drift 8"],
+      "unresolvedCount": 9,
+      "authoritativeUnresolvedSource": "what-next/enterprise-release-blocker-status.json#/blockers/B09",
+      "commands": ["npm run agent:phase2a:freeze:gate"],
+      "passCriteria": "One clean commit, exact artifact hashes, no post-freeze drift, and all prerequisite evidence bound.",
+      "nextAction": "Freeze only after engineering and external gates close."
+    },
+    {
+      "id": "B10",
+      "title": "Governance approvals and ownership",
+      "status": "BLOCKED_DEPENDENCY",
+      "ready": false,
+      "ownerRole": "PRODUCT_AND_SECURITY_RELEASE_AUTHORITIES",
+      "controlType": "qualified_human",
+      "prerequisites": ["B09"],
+      "evidence": ["docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_OPERATIONAL_RELEASE_EVIDENCE_2026-07-25.json"],
+      "currentFacts": ["50 blockers", "freeze ready false"],
+      "unresolvedCount": 50,
+      "unresolvedCategories": {
+        "productAndSecurityApprovals": 14,
+        "sixOwnerAssignments": 36
+      },
+      "authoritativeUnresolvedSource": "what-next/enterprise-release-blocker-status.json#/blockers/B10",
+      "commands": ["npm run agent:operational-release:gate", "npm run agent:phase2a:freeze:gate"],
+      "passCriteria": "Product and security decisions plus six primary/backup owner assignments are accepted and hash-bound to B09.",
+      "nextAction": "Obtain post-freeze approvals with segregation of duties."
+    },
+    {
+      "id": "GATE-017",
+      "title": "Enterprise release gate",
+      "status": "NOT_REQUESTABLE",
+      "ready": false,
+      "ownerRole": "INDEPENDENT_ENTERPRISE_RELEASE_REVIEWER",
+      "controlType": "independent_review",
+      "prerequisites": ["B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10"],
+      "evidence": ["what-next/system-evaluation-2026-08-28-comprehensive-report.md"],
+      "currentFacts": ["critical and high invariants remain open"],
+      "unresolvedCount": 1,
+      "unresolved": ["B01_TO_B10_NOT_ALL_READY"],
+      "commands": ["node scripts/enterprise-release-blocker-status.js --mode fail"],
+      "passCriteria": "Independent Gate 017 review returns GO with no critical or high invariant failure.",
+      "nextAction": "Remain on Gate 017; do not advance."
+    },
+    {
+      "id": "B11",
+      "title": "Phase 2B entry",
+      "status": "BLOCKED_DEPENDENCY",
+      "ready": false,
+      "ownerRole": "ENTERPRISE_RELEASE_AUTHORITY",
+      "controlType": "pilot_authorization",
+      "prerequisites": ["GATE-017"],
+      "evidence": ["docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_2B_ENTRY_DECISION_2026-07-25.json"],
+      "currentFacts": ["2/23 checks", "eligible false"],
+      "unresolvedCount": 21,
+      "authoritativeUnresolvedSource": "what-next/enterprise-release-blocker-status.json#/blockers/B11",
+      "commands": ["npm run agent:phase2b:entry:gate"],
+      "passCriteria": "23/23 checks pass and explicit scoped activation authority is recorded.",
+      "nextAction": "Run only after Gate 017 GO."
+    },
+    {
+      "id": "B12",
+      "title": "Phase 3 production decision",
+      "status": "NOT_STARTED",
+      "ready": false,
+      "ownerRole": "EXECUTIVE_PRODUCTION_RELEASE_AUTHORITY",
+      "controlType": "production_authorization",
+      "prerequisites": ["B11", "CONTROLLED_PHASE_2B_PILOT_EXIT"],
+      "evidence": ["docs/agents-runtime/STOQUIFY_AGENT_RUNTIME_PHASE_3_ENTRY_DECISION_2026-07-25.json"],
+      "currentFacts": ["0/34 checks", "eligible false"],
+      "unresolvedCount": 34,
+      "authoritativeUnresolvedSource": "what-next/enterprise-release-blocker-status.json#/blockers/B12",
+      "commands": ["npm run agent:phase3:entry:gate"],
+      "passCriteria": "Successful pilot, segregated exit approvals, 34/34 checks, and explicit production GO.",
+      "nextAction": "Do not start before accepted Phase 2B exit."
+    },
+    {
+      "id": "X01",
+      "title": "Module access truth and surface registry",
+      "status": "ENGINEERING_BLOCKED",
+      "ready": false,
+      "ownerRole": "PLATFORM_SECURITY_AND_MODULE_PRODUCT_OWNER",
+      "controlType": "engineering_control_plane",
+      "prerequisites": [],
+      "evidence": [
+        "what-next/module-surface-inventory.json",
+        "services/modules/module-entitlement.service.ts",
+        "services/modules/module-control-contracts.ts",
+        "lib/security/auth-session.ts"
+      ],
+      "currentFacts": ["410 surfaces", "5 unmapped", "79 missing permission", "77 dashboard-only risk", "observe/enforce truth mixed", "session claims hard-coded"],
+      "unresolvedCount": 163,
+      "commands": ["npm run module:surface:inventory", "npm run module:surface:fail"],
+      "passCriteria": "Durable pilot entitlements, one coherent guard contract, no pilot-scope gaps, and no new repository gaps.",
+      "nextAction": "Close access truth before candidate freeze; do not enable broad enforcement."
+    },
+    {
+      "id": "X02",
+      "title": "Migration parity and destructive-change control",
+      "status": "ENGINEERING_AND_EXTERNAL_BLOCKED",
+      "ready": false,
+      "ownerRole": "DATABASE_MIGRATION_OWNER_AND_INDEPENDENT_CHECKER",
+      "controlType": "data_integrity",
+      "prerequisites": [],
+      "evidence": ["what-next/prisma-migration-deployment-readiness.json"],
+      "currentFacts": ["one local migration pending", "13 destructive findings", "0 approvals"],
+      "unresolvedCount": 14,
+      "commands": ["npm run prisma:migrate:status", "npm run prisma:migration:release:preflight"],
+      "passCriteria": "Local/rehearsal/target histories agree and every destructive finding has exact-hash, recovery-backed approval.",
+      "nextAction": "Prove locally, then on the approved production-shaped target."
+    },
+    {
+      "id": "X03",
+      "title": "Payroll CAS, idempotency, and partial-commit regression coverage",
+      "status": "ENGINEERING_BLOCKED",
+      "ready": false,
+      "ownerRole": "PAYROLL_ENGINEERING_AND_CONTROLS_OWNER",
+      "controlType": "financial_integrity",
+      "prerequisites": [],
+      "evidence": ["what-next/payroll/payroll-trust-spine-readiness.json"],
+      "currentFacts": ["5/6 checks", "single missing regression family"],
+      "unresolvedCount": 1,
+      "unresolved": ["cas_idempotency_and_partial_commit_regressions_covered"],
+      "commands": ["npm run payroll:trust-spine:gate", "npm run payroll:trust-spine:postgres"],
+      "passCriteria": "Static gate 6/6 and disposable PostgreSQL concurrency/failure certificate pass.",
+      "nextAction": "Add the missing regression tests and rerun the candidate-bound certificate."
+    },
+    {
+      "id": "X04",
+      "title": "Pilot-route UX, accessibility, localization, and mobile proof",
+      "status": "EVIDENCE_MISSING",
+      "ready": false,
+      "ownerRole": "FRONTEND_PLATFORM_QA_ACCESSIBILITY_AND_LOCALIZATION_OWNERS",
+      "controlType": "product_quality",
+      "prerequisites": ["PILOT_SCOPE_APPROVED"],
+      "evidence": [
+        "what-next/ui-ux/STOQUIFY_ENTERPRISE_TABLE_BENCHMARK_AND_AUDIT_REPORT_2026-08-28.md",
+        "what-next/ui-ux/STOQUIFY_TABLE_SYSTEM_HARMONIZATION_ROADMAP_2026-08-28.md"
+      ],
+      "currentFacts": ["fragmented table implementations", "authenticated browser evidence absent", "screen-reader evidence absent", "performance baseline absent"],
+      "unresolvedCount": 5,
+      "unresolved": ["authenticated_route_smoke", "keyboard_and_screen_reader_proof", "phone_and_tablet_adaptation", "en_fr_parity", "representative_dataset_performance"],
+      "commands": ["npm run test:e2e", "npm run typecheck"],
+      "passCriteria": "Every pilot route passes authenticated EN/FR robust-state, keyboard, screen-reader, responsive, and bounded-performance checks.",
+      "nextAction": "Test only the approved pilot routes before broad table migration."
+    }
+  ],
+  "verificationRun": [
+    {
+      "command": "npm run module:surface:inventory",
+      "exitCode": 0,
+      "result": "REPORT_GENERATED_WITH_GAPS",
+      "artifact": "what-next/module-surface-inventory.json"
+    },
+    {
+      "command": "npm run release:secrets:preflight:release",
+      "exitCode": 1,
+      "result": "EXPECTED_FAIL_CLOSED_5_OF_21",
+      "artifact": "what-next/release-secret-preflight.json"
+    },
+    {
+      "command": "npm run prisma:migration:release:preflight",
+      "exitCode": 1,
+      "result": "EXPECTED_FAIL_CLOSED_7_OF_9",
+      "artifact": "what-next/prisma-migration-deployment-readiness.json"
+    },
+    {
+      "command": "npm run prisma:migrate:status",
+      "exitCode": 1,
+      "result": "ONE_PENDING_LOCAL_MIGRATION",
+      "artifact": null
+    },
+    {
+      "command": "npm run payroll:trust-spine:gate",
+      "exitCode": 1,
+      "result": "EXPECTED_FAIL_CLOSED_5_OF_6",
+      "artifact": "what-next/payroll/payroll-trust-spine-readiness.json"
+    },
+    {
+      "command": "npm run ci:release:gate",
+      "exitCode": 0,
+      "result": "READY_11_OF_11",
+      "artifact": "what-next/ci-release-readiness.json"
+    },
+    {
+      "command": "node scripts/enterprise-release-external-evidence-intake.js --mode fail",
+      "exitCode": 1,
+      "result": "EXPECTED_EXTERNAL_EVIDENCE_REQUIRED_1_OF_6",
+      "artifact": "what-next/enterprise-release-external-evidence-intake-readiness.json"
+    },
+    {
+      "command": "node scripts/enterprise-release-blocker-status.js --mode fail",
+      "exitCode": 1,
+      "result": "EXPECTED_BLOCKED_3_OF_12_READY",
+      "artifact": "what-next/enterprise-release-blocker-status.json"
+    }
+  ]
+}

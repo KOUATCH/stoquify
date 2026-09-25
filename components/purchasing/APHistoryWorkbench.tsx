@@ -1,7 +1,10 @@
 "use client"
 
+import { useState } from "react"
+import { APHistoryExportDialog } from "./APHistoryExportDialog"
+
 import { useLocale, useTranslations } from "next-intl"
-import { ArrowLeft, CalendarClock, Database, Landmark, ReceiptText, Truck } from "lucide-react"
+import { ArrowLeft, CalendarClock, Database, Landmark, ReceiptText, RotateCcw, Truck } from "lucide-react"
 
 import {
   DetailLine,
@@ -16,13 +19,18 @@ import {
   type DashboardTone,
 } from "@/components/dashboard/primitives/command-center-primitives"
 import { Badge } from "@/components/ui/badge"
+import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
+import { financePayablesHistoryTableContract } from "@/components/DataTableComponents/finance-accounting-contracts"
+import { createCanonicalTableQuery } from "@/components/DataTableComponents/table-system-contract"
 import { useAPHistoryWorkbench } from "@/hooks/useAPHistoryWorkbench"
+import { formatAPHistoryMoney, formatAPHistoryTotal } from "@/lib/purchasing/ap-history-presentation"
 import { cn } from "@/lib/utils"
 import type { APHistoryResult, APHistoryRow } from "@/services/purchasing/ap-history.service"
 
 type APHistoryT = ReturnType<typeof useTranslations<"apHistory">>
 
-export function APHistoryWorkbench() {
+export function APHistoryWorkbench({ organizationId, actorId }: { organizationId: string; actorId: string }) {
+  const [exportOpen, setExportOpen] = useState(false)
   const t = useTranslations("apHistory")
   const locale = useLocale()
   const {
@@ -32,6 +40,8 @@ export function APHistoryWorkbench() {
     selectedRowId,
     isLoading,
     isError,
+    isStale,
+    restartHistory,
     error,
     refetch,
     hasMore,
@@ -39,12 +49,9 @@ export function APHistoryWorkbench() {
     updateFilters,
     resetFilters,
     selectRow,
-    exportHistory,
-    exportStatus,
-    isExporting,
-  } = useAPHistoryWorkbench()
+  } = useAPHistoryWorkbench({ organizationId, actorId })
   const timezone = result?.snapshot.timezone ?? result?.appliedFilters.timezone ?? "UTC"
-  const selectedRow = rows.find((row) => row.id === selectedRowId) ?? null
+  const selectedRow = isError ? null : rows.find((row) => row.id === selectedRowId) ?? null
   const isPartial = result?.completeness.state === "partial"
   const supplierScope = filters.supplierId
     ? rows.find((row) => row.supplier.id === filters.supplierId)?.supplier.name ??
@@ -53,10 +60,47 @@ export function APHistoryWorkbench() {
   const scopeLabel = supplierScope
     ? t("scopeSupplier", { supplier: supplierScope })
     : t("scopeLabel")
+  const canonicalQuery = createCanonicalTableQuery(financePayablesHistoryTableContract, {
+    filters: {
+      ...(filters.lane && filters.lane !== "all" ? { lane: [filters.lane] } : {}),
+      ...(filters.supplierId ? { supplierId: [filters.supplierId] } : {}),
+      ...(filters.dateFrom ? { dateFrom: [filters.dateFrom] } : {}),
+      ...(filters.dateTo ? { dateTo: [filters.dateTo] } : {}),
+    },
+    sort: [{ id: "effectiveAt", desc: true }],
+    pageIndex: 0,
+    pageSize: filters.pageSize,
+    cursor: filters.cursor,
+  })
+  const hasActiveFilters = Boolean(
+    (filters.lane && filters.lane !== "all") ||
+      filters.supplierId ||
+      filters.dateFrom ||
+      filters.dateTo,
+  )
+  const canonicalState = isError
+    ? "error"
+    : isLoading && rows.length === 0
+      ? "loading"
+      : rows.length === 0
+        ? hasActiveFilters
+          ? "no-results"
+          : "empty"
+        : isLoading
+          ? "refreshing"
+          : "ready"
 
   return (
-    <TransactionHistoryWorkbenchShell
+    <>
+    <APHistoryExportDialog open={exportOpen} onOpenChange={setExportOpen} organizationId={organizationId} actorId={actorId} filters={{ lane: filters.lane, supplierId: filters.supplierId, dateFrom: filters.dateFrom, dateTo: filters.dateTo }} />
+    <CanonicalTableBoundary
+      contract={financePayablesHistoryTableContract}
       locale={locale === "fr" ? "fr" : "en"}
+      query={canonicalQuery}
+      state={canonicalState}
+    >
+      <TransactionHistoryWorkbenchShell
+        locale={locale === "fr" ? "fr" : "en"}
       labels={{
         eyebrow: t("eyebrow"),
         title: t("title"),
@@ -72,7 +116,7 @@ export function APHistoryWorkbench() {
         dateToLabel: t("filters.dateTo"),
         pageSizeLabel: t("filters.pageSize"),
         resetFilters: t("filters.reset"),
-        retry: t("states.retry"),
+        retry: t(isStale ? "states.refreshHistory" : "states.retry"),
         export: t("actions.export"),
         exporting: t("actions.exporting"),
         tableCaption: t("table.caption"),
@@ -85,7 +129,7 @@ export function APHistoryWorkbench() {
         emptyMessage: t("states.emptyMessage"),
         emptyFilteredTitle: t("states.emptyFilteredTitle"),
         emptyFilteredMessage: t("states.emptyFilteredMessage"),
-        errorTitle: t("states.errorTitle"),
+        errorTitle: t(isStale ? "states.staleTitle" : "states.errorTitle"),
         partialTitle: t("states.partialTitle"),
         partialMessage: t("states.partialMessage"),
         permissionTitle: t("states.permissionTitle"),
@@ -110,8 +154,8 @@ export function APHistoryWorkbench() {
         id: (row) => row.id,
         title: (row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId,
         subtitle: (row) => `${row.supplier.name} / ${laneLabel(row.lane, t)}`,
-        status: (row) => <StateBadge state={row.controlState} t={t} />,
-        value: (row) => formatMoney(row.signedPayableMovement, row.currency, locale),
+        status: (row) => <><StateBadge state={row.controlState} t={t} />{row.retained ? <span className="ml-2 text-xs">{t("retained")}</span> : null}</>,
+        value: (row) => movementLabel(row, t, locale),
       }}
       drawerTitle={(row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId}
       drawerDescription={(row) => `${row.supplier.name} / ${row.sourceType}`}
@@ -127,18 +171,17 @@ export function APHistoryWorkbench() {
       onResetFilters={resetFilters}
       onSelectRow={selectRow}
       onNextPage={nextPage}
-      onRetry={() => refetch()}
-      onExport={exportHistory}
+      onRetry={() => isStale ? restartHistory() : refetch()}
+      onExport={() => setExportOpen(true)}
       isLoading={isLoading}
       isError={isError}
-      errorMessage={error instanceof Error ? error.message : undefined}
+      errorMessage={isStale ? t("states.staleMessage") : error instanceof Error ? error.message : undefined}
       hasMore={hasMore}
       isPartial={isPartial}
       partialSources={result?.completeness.sources.filter((source) => source.state === "partial").map((source) => source.source) ?? []}
-      isExporting={isExporting}
-      exportStatus={exportStatus ? t(`exportStatus.${exportStatus}`) : null}
-      headerActions={
-        filters.supplierId
+      headerActions={[
+        ...(isStale ? [{ label: t("filters.reset"), icon: RotateCcw, onClick: resetFilters, variant: "secondary" as const }] : []),
+        ...(filters.supplierId
           ? [
               {
                 label: t("actions.backToSupplier"),
@@ -148,11 +191,11 @@ export function APHistoryWorkbench() {
                   "/dashboard/purchases/suppliers/" +
                   encodeURIComponent(filters.supplierId),
                 icon: ArrowLeft,
-                variant: "secondary",
+                variant: "secondary" as const,
               },
             ]
-          : []
-      }
+          : [])
+      ]}
       hideEmptyActionQueue
       snapshotMetadata={[
         ...(supplierScope
@@ -162,7 +205,9 @@ export function APHistoryWorkbench() {
         { label: t("snapshot.recordedThrough"), value: formatHistoryDate(result?.snapshot.recordedThrough, locale, timezone), icon: CalendarClock },
         { label: t("snapshot.generatedAt"), value: formatHistoryDate(result?.snapshot.generatedAt, locale, timezone), icon: Database },
       ]}
-    />
+      />
+    </CanonicalTableBoundary>
+    </>
   )
 }
 
@@ -174,12 +219,12 @@ function APHistoryDrawer({ row, locale, timezone, t }: { row: APHistoryRow; loca
           <DetailLine label={t("drawer.lane")} value={laneLabel(row.lane, t)} />
           <DetailLine label={t("drawer.source")} value={`${row.sourceType} / ${row.sourceId}`} />
           <DetailLine label={t("drawer.amount")} value={formatMoney(row.amount, row.currency, locale)} />
-          <DetailLine label={t("drawer.signedMovement")} value={formatMoney(row.signedPayableMovement, row.currency, locale)} />
+          <DetailLine label={t("drawer.signedMovement")} value={movementLabel(row, t, locale)} />
         </dl>
       </DetailSection>
       <DetailSection title={t("drawer.accounting")}>
         <dl>
-          <DetailLine label={t("drawer.businessState")} value={row.businessState} />
+          <DetailLine label={t("drawer.businessState")} value={row.lane === "invoice" ? controlStateLabel(row.controlState, t) : row.businessState} />
           <DetailLine label={t("drawer.ledgerPostingBatch")} value={row.accounting.ledgerPostingBatchId} />
           <DetailLine label={t("drawer.businessEvent")} value={row.accounting.postedBusinessEventId} />
           <DetailLine label={t("drawer.documentHash")} value={row.accounting.documentHash} />
@@ -204,20 +249,22 @@ function buildKpis(result: APHistoryResult | undefined, t: APHistoryT, locale: s
   const summary = result?.summary
   return [
     { id: "transactions", label: t("kpis.transactions"), value: summary?.transactionCount ?? 0, tone: "brand" },
-    { id: "openPayable", label: t("kpis.openPayable"), value: formatMoney(summary?.openPayable ?? "0", summary?.currency ?? "XAF", locale), tone: "gold" },
-    { id: "releasedPayments", label: t("kpis.releasedPayments"), value: formatMoney(summary?.releasedPaymentTotal ?? "0", summary?.currency ?? "XAF", locale), tone: "success" },
-    { id: "ledgerBlockers", label: t("kpis.ledgerBlockers"), value: summary?.ledgerBlockerCount ?? 0, tone: summary?.ledgerBlockerCount ? "danger" : "success" },
+    { id: "openPayable", label: t("kpis.openPayable"), value: formatAPHistoryTotal(summary, "openPayable", locale), tone: "gold" },
+    { id: "releasedPayments", label: t("kpis.releasedPayments"), value: formatAPHistoryTotal(summary, "releasedPaymentTotal", locale), tone: summary?.unverifiedCount ? "gold" : "info" },
+    { id: "ledgerBlockers", label: t("kpis.ledgerBlockers"), value: summary?.ledgerBlockerCount ?? 0, tone: summary?.ledgerBlockerCount ? "danger" : "info" },
   ]
 }
 
 function buildColumns(t: APHistoryT, locale: string, timezone: string): TransactionHistoryColumn<APHistoryRow>[] {
   return [
-    { id: "supplier", header: t("table.supplier"), cell: (row) => row.supplier.name },
-    { id: "reference", header: t("table.reference"), cell: (row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId },
+    { id: "documentNumber", header: t("table.reference"), cell: (row) => row.reference.invoiceNumber ?? row.reference.paymentNumber ?? row.sourceId },
+    { id: "counterparty", header: t("table.supplier"), cell: (row) => row.supplier.name },
+    { id: "dueDate", header: t("drawer.dueDate"), cell: (row) => formatHistoryDate(row.reference.dueDate, locale, timezone) },
+    { id: "status", header: t("table.state"), cell: (row) => <><StateBadge state={row.controlState} t={t} />{row.retained ? <span className="ml-2 text-xs">{t("retained")}</span> : null}</> },
+    { id: "currency", header: t("table.currency"), cell: (row) => row.currency },
     { id: "amount", header: t("table.amount"), cell: (row) => formatMoney(row.amount, row.currency, locale) },
-    { id: "movement", header: t("table.movement"), cell: (row) => formatMoney(row.signedPayableMovement, row.currency, locale) },
-    { id: "state", header: t("table.state"), cell: (row) => <StateBadge state={row.controlState} t={t} /> },
-    { id: "effectiveAt", header: t("table.effectiveAt"), cell: (row) => formatHistoryDate(row.effectiveAt, locale, timezone) },
+    { id: "movement", header: t("table.movement"), cell: (row) => movementLabel(row, t, locale) },
+    { id: "evidence", header: t("drawer.evidenceHash"), cell: (row) => row.accounting.evidenceHash ?? t("proof.unavailableTitle") },
   ]
 }
 
@@ -291,9 +338,14 @@ function controlStateLabel(
   }
 }
 
-function formatMoney(value: string | number, currency: string, locale: string) {
-  const amount = typeof value === "number" ? value : Number(value)
-  return new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 0 }).format(Number.isFinite(amount) ? amount : 0)
+function formatMoney(value: string | number | null, currency: string, locale: string) {
+  return formatAPHistoryMoney(value, currency, locale)
+}
+
+function movementLabel(row: APHistoryRow, t: APHistoryT, locale: string) {
+  if (row.movementState === "not_recognized") return t("movement.notRecognized")
+  if (row.movementState !== "recorded" || row.signedPayableMovement == null) return t("movement.unverified")
+  return formatMoney(row.signedPayableMovement, row.currency, locale)
 }
 
 function formatHistoryDate(value: string | null | undefined, locale: string, timezone: string) {

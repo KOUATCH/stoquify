@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-15T14:05:08.140Z",
+  "baseline": false,
+  "sourceBefore": {
+    "services/signals/business-signal-rules.service.ts": "29ff551e140ab010a5ee0316b624c401fa4ab401642ad760a3a2863503e507e8",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "919717eb9e643dca7c8f0772aee4c8d593084ab0a2aa784cc8c98bf94f05edf3",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "0cc44b23fff031f063c5783dcdcdcbe16c4e926ac402f28a474d56a972e61d6e",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "5bdbccf9a38d0d9e27c465707af6b912f4cdce18412d4ff3c3075e84b9a9a0fd",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "cf703743e000a88106951e5fc044b05ed2ad153c8f566af78b4c6f3d05487c04"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [
+        "digest-close-a8c763e3-8b44-4a5d-bf38-02813e52071d-en-source.png"
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Owned close handoff period', { exact: true }).first()\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('Owned close handoff period', { exact: true }).first()\n",
+  "failureState": "CLOSE ASSURANCE\nClose & Assurance Center\n\nClose readiness from the ledger, reconciliation, suspense, and data-trust evidence already in the accounting backbone.\n\nControl center\nEvidence\nBLOCKED\nPersisted\nT0\nClose readiness journey\n\nA read-only path from operating sources to reconciliation, posted ledger, findings, certification, and export readiness.\n\nReadiness\n\n42%\n\nNo coverage\n\nOPEN\nOperational sources\n\nOwned close handoff period: 0 checklist gate(s), 0 evidence item(s).\n\nACCOUNTING_PERIODS\n\nUNAVAILABLE\nReconciliation proof\n\nPayment reconciliation evidence is not available in this close snapshot.\n\nRECONCILIATION_RUNS\n\nUNAVAILABLE\nPosted ledger\n\nLedger posting evidence is not available in this close snapshot.\n\nJOURNAL_ENTRIES\n\n0\nClose findings\n\n0 open finding(s), 0 critical blocker(s).\n\nCLOSE_ASSURANCE_FINDINGS\n\nBLOCKED\nCertification\n\nClose run is not READY.\n\nCLOSE_RUNS\n\nREADY\nExport readiness\n\nDraft close pack export is available; certified export still enforces readiness gates.\n\nCLOSE_PACK_EXPORTS\n\nJourney blockers\n\nNo high-risk journey blockers are visible.\n\nSystem evidence only. Statutory filings still require qualified expert validation.\n\nSTATUS\n\nBLOCKED\n\nPersisted run\n\nREADINESS\n\n42%\n\n0/0 gates passed\n\nEVIDENCE COVERAGE\n\nn/a\n\n0 evidence items\n\nCRITICAL BLOCKERS\n\n0\n\n0 high severity\n\nOPEN FINDINGS\n\n0\n\n0 total findings\n\nTRUST LEVEL\n\nT0\n\nAs of: Sep 15, 2026, 3:05 PM\n\nClose blocked\n\nOwned close handoff period - Sep 14, 2026 to Sep 16, 2026\n\nOwned close handoff period - OPEN\nRun assessment\nRefresh\n\nPartial data\n\nUNAVAILABLE\n\nSome close evidence domains are unavailable. Cer",
+  "sourceAfter": {
+    "services/signals/business-signal-rules.service.ts": "29ff551e140ab010a5ee0316b624c401fa4ab401642ad760a3a2863503e507e8",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "919717eb9e643dca7c8f0772aee4c8d593084ab0a2aa784cc8c98bf94f05edf3",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "0cc44b23fff031f063c5783dcdcdcbe16c4e926ac402f28a474d56a972e61d6e",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "5bdbccf9a38d0d9e27c465707af6b912f4cdce18412d4ff3c3075e84b9a9a0fd",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "cf703743e000a88106951e5fc044b05ed2ad153c8f566af78b4c6f3d05487c04"
+  },
+  "sourceStable": true
+}

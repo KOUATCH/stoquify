@@ -1,0 +1,106 @@
+{
+  "run": "55330c15-ba7",
+  "at": "2026-09-08T10:04:03.447Z",
+  "sourcesBefore": {
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c",
+    "services/purchasing/invoice-approval-contracts.ts": "915ff07659779dfbd62d8b718ff77348edfa687d3a5287d677d60e489b4b2998",
+    "actions/purchasing/invoice-approval.actions.ts": "fd2d31f8260450fa7a815ac61006ab92f1359c2519f397cf0c1fbd2f8e30d95e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx": "495dc8ef8acc110694b033dee2bdfd3bc628fb0c1251eafc34e03049a3085950",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "dc0c0b588bb53cdfdd1f2aa3122e1d5d4e77b7851a1ae9055059ae3903db415d",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "8491cca32f1548d5fec47a56b1ef6916fb1ab156bcbeef7506589c69340af33d",
+    "messages/en.json": "ba258474c279b53b5a823ac0976cb77d1a8cdff3f36f228426dc5f628e182fc9",
+    "messages/fr.json": "18f55977868265e428f4a88eb96dc4c94849ed78d5c84aea43c75e36e613b63e",
+    "services/purchasing/ap-control.service.ts": "26c14bc3b1f102809d56d26b6f6c7f97f4d9956f1194cc640e33d9b597e7a3a7",
+    "services/purchasing/invoice-preparation.service.ts": "8af82bddd3ef11f02f9e3222660c2ce6b1cc6d92e7c33cc0f61da0f99e3c9a2a",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx": "6d0772630bdf749b894af6bbe72b5142ca0fb96069d30ee39f62fb6b66608ac1",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "actions/purchasing/invoice-ledger-recovery.actions.ts": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Existing AP entry point, current sources and selected invoice survive refresh",
+        "Keyboard focus stays in review and returns; mobile and tablet have no overflow",
+        "Incorrect password denied; actual password step-up followed by stale configuration rejection",
+        "Committed response loss recovered with one journal; mobile/200% text and reduced-motion preference exercised",
+        "History distinguishes recorded success from later synthetic journal reversal",
+        "Approve a payable with missing rules, follow recovery and post its journal without repeating the liability or approval",
+        "Revoked current role denies direct route; original approval/liability/balance preserved"
+      ],
+      "screenshots": [
+        "invoice-approval-en-selected-desktop-55330c15-ba7.png",
+        "invoice-approval-en-selected-320-55330c15-ba7.png",
+        "invoice-approval-en-selected-390-55330c15-ba7.png",
+        "invoice-approval-en-selected-768-55330c15-ba7.png",
+        "invoice-approval-en-review-desktop-55330c15-ba7.png",
+        "invoice-approval-en-stale-55330c15-ba7.png",
+        "invoice-approval-en-recovered-desktop-55330c15-ba7.png",
+        "invoice-approval-en-recovered-mobile-55330c15-ba7.png",
+        "invoice-approval-en-recovered-text200-55330c15-ba7.png",
+        "invoice-approval-en-history-current-reversal-55330c15-ba7.png",
+        "invoice-approval-en-approval-warning-55330c15-ba7.png",
+        "invoice-approval-en-approved-payable-blocked-journal-55330c15-ba7.png",
+        "invoice-approval-en-approval-to-recovery-55330c15-ba7.png",
+        "invoice-approval-en-denied-55330c15-ba7.png"
+      ],
+      "timings": [
+        {
+          "name": "AP to approval development baseline",
+          "ms": 7344
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [
+        "Existing AP entry point, current sources and selected invoice survive refresh",
+        "Keyboard focus stays in review and returns; mobile and tablet have no overflow"
+      ],
+      "screenshots": [
+        "invoice-approval-fr-selected-desktop-55330c15-ba7.png",
+        "invoice-approval-fr-selected-320-55330c15-ba7.png",
+        "invoice-approval-fr-selected-390-55330c15-ba7.png",
+        "invoice-approval-fr-selected-768-55330c15-ba7.png",
+        "invoice-approval-fr-review-desktop-55330c15-ba7.png",
+        "invoice-approval-fr-failure-55330c15-ba7.png"
+      ],
+      "timings": [
+        {
+          "name": "AP to approval development baseline",
+          "ms": 8295
+        }
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"La facture ou le paramétrage comptable a changé. Examinez un nouvel aperçu avant de poursuivre.\"\nError: strict mode violation: getByRole('alert') resolved to 3 elements:\n    1) <p role=\"alert\" class=\"rounded-xl border border-[var(--dash-border)] bg-[var(--dash-surface)] p-4 sm:p-6 border-[var(--dash-warning)]\">…</p> aka getByText('La facture ou le paramétrage')\n    2) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').nth(1)\n    3) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    }
+  ],
+  "scope": "Actual isolated application; real receiving/session-aware preparation setup, normal browser sign-in and password step-up, original approval and recovery UI, database effects and history. No statutory certification claim.",
+  "originalBefore": "bfa0521715e987b1c49ceba9ef3fe2be9f7d726df46fb8d1357096c92799a5eb",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c",
+    "services/purchasing/invoice-approval-contracts.ts": "915ff07659779dfbd62d8b718ff77348edfa687d3a5287d677d60e489b4b2998",
+    "actions/purchasing/invoice-approval.actions.ts": "fd2d31f8260450fa7a815ac61006ab92f1359c2519f397cf0c1fbd2f8e30d95e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx": "495dc8ef8acc110694b033dee2bdfd3bc628fb0c1251eafc34e03049a3085950",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "dc0c0b588bb53cdfdd1f2aa3122e1d5d4e77b7851a1ae9055059ae3903db415d",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "8491cca32f1548d5fec47a56b1ef6916fb1ab156bcbeef7506589c69340af33d",
+    "messages/en.json": "ba258474c279b53b5a823ac0976cb77d1a8cdff3f36f228426dc5f628e182fc9",
+    "messages/fr.json": "18f55977868265e428f4a88eb96dc4c94849ed78d5c84aea43c75e36e613b63e",
+    "services/purchasing/ap-control.service.ts": "26c14bc3b1f102809d56d26b6f6c7f97f4d9956f1194cc640e33d9b597e7a3a7",
+    "services/purchasing/invoice-preparation.service.ts": "8af82bddd3ef11f02f9e3222660c2ce6b1cc6d92e7c33cc0f61da0f99e3c9a2a",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx": "6d0772630bdf749b894af6bbe72b5142ca0fb96069d30ee39f62fb6b66608ac1",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "actions/purchasing/invoice-ledger-recovery.actions.ts": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b"
+  },
+  "sourceStable": true
+}

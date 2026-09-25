@@ -34,7 +34,7 @@ const getOwnerWarRoom = protect<unknown, OwnerWarRoomData>(
       moduleSlug: "dashboard",
       surface: "actions/owner-war-room/owner-war-room.actions.ts",
       accessIntent: "read",
-      mode: "observe",
+      mode: "enforce",
     },
   },
   async (input, ctx) => {

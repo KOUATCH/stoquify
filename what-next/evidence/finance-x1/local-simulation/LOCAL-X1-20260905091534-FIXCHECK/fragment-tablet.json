@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOCAL_SIMULATION_AUTHENTICATED_EVIDENCE_FRAGMENT",
+  "authoritative": false,
+  "approvedForReleaseEvidence": false,
+  "releaseGate": "BLOCKED_EXTERNAL_APPROVAL_REQUIRED",
+  "status": "FAIL",
+  "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+  "viewport": "tablet",
+  "artifacts": [
+    {
+      "artifactId": "LOCAL-X1-20260905091534-FIXCHECK-tablet-en-cash-flow",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534-FIXCHECK/screenshots/tablet/en/cash-flow.png",
+      "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "en",
+      "viewport": "tablet",
+      "route": "/en/dashboard/finance/cash-flow",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:29:45.340Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 834,
+        "measurementVersion": 2,
+        "renderedRowCount": 5,
+        "resultKind": "table-rows",
+        "navigationMs": 1545,
+        "usefulResultMs": 6132,
+        "authCheckMs": 874,
+        "accessibilityMs": 1514,
+        "screenshotMs": 2704,
+        "captureElapsedMs": 11559,
+        "bodyOverflowPx": 0
+      }
+    },
+    {
+      "artifactId": "LOCAL-X1-20260905091534-FIXCHECK-tablet-fr-cash-flow",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534-FIXCHECK/screenshots/tablet/fr/cash-flow.png",
+      "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "fr",
+      "viewport": "tablet",
+      "route": "/fr/dashboard/finance/cash-flow",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:29:59.442Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 834,
+        "measurementVersion": 2,
+        "renderedRowCount": 5,
+        "resultKind": "table-rows",
+        "navigationMs": 2317,
+        "usefulResultMs": 7854,
+        "authCheckMs": 1034,
+        "accessibilityMs": 1573,
+        "screenshotMs": 2470,
+        "captureElapsedMs": 13329,
+        "bodyOverflowPx": 0
+      }
+    }
+  ]
+}

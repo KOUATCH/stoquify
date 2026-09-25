@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-19T16:29:32.535Z",
+  "runtime": "lanes/environment/digest-reflow-982478dc-5b69-43f1-8ad2-b48ba6cf1a75.json",
+  "passed": true,
+  "views": 126,
+  "sourceAfter": {
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "9cd1a13a895c3d681f5c96c1f9168eef94525cf5914b22e98b86b092cde12070",
+    "components/daily-habit/DailyHabitDigestDashboard.module.css": "5c251e4844803ad09ea1edb476b3892bf9c3e7e9da888aae86b27d11b03257e3",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "components/ui/button.tsx": "5bc624855cdeadbcde67dcd15ce7ef02bda974571021aef7d4579c7b2fcad1b7",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BIKpiCard.tsx": "9aa1c770aefc75c85762d70bc95d33dae3b02cf57e3e05da4e6d0988692c239e",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a"
+  },
+  "componentTests": {
+    "result": "ebd861",
+    "suites": 2,
+    "passed": 17
+  },
+  "lintDiff": "0fb5c4",
+  "priorFullTypecheck": {
+    "result": "c4088e",
+    "passed": true,
+    "predatesFinalSelectionScroll": true
+  },
+  "failures": [
+    {
+      "receipt": "digest-reflow-b2d0f36a-c9d6-49c1-ac40-9f9693df2ecd.json",
+      "result": "9a97f4",
+      "cause": "Synthetic user lacked separately selected Manager audience; fixed fixture only."
+    },
+    {
+      "receipt": "digest-reflow-f6576f9f-2780-4137-82fe-fe3d0c077d52.json",
+      "result": "61d40d",
+      "passedOriginalAssertions": true,
+      "limitation": "Page-level overflow assertion missed clipped selected label; retained as baseline."
+    },
+    {
+      "receipt": "digest-reflow-b9d1c76c-7bd9-4e73-875f-a2ec4b2cdb66.json",
+      "result": "bbac37",
+      "cause": "Selected Finance button clipped at 320px; fixed explicit selection scroll."
+    }
+  ],
+  "completeWorkflowVerified": false
+}

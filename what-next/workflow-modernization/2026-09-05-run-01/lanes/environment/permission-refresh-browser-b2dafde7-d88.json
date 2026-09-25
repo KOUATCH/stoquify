@@ -1,0 +1,97 @@
+{
+  "run": "b2dafde7-d88",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T15:24:56.081Z",
+  "sourcesBefore": {
+    "app/api/me/permissions/route.ts": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+    "lib/auth-client.ts": "d5dcaf05372e073b5b4f3b4c4d765e219c62f7e111bad90c3dd5fc292b903b38",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "hooks/useRoleEditor.ts": "fa6566a87e6a1cc3a12833572140980e244eba92c54678463c3c033147088e0f",
+    "hooks/useMemberAccess.ts": "62819de4c49d56cedfa3edde9a4887eda38424df0d55389aa245823f1c006d5b",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "ff29e526bcddf9497535cff3715b0cdd456a555f0921920124328e37571d2041",
+    "messages/en.json": "243cf605e4051644f034688cce2871af203596c7c734af447344588c478e2b68",
+    "messages/fr.json": "a0fcec471a2be8abf0164a7a4090ca78675de8365760659fefe58324d1ec5a65"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-permission-refresh-mobile-error-b2dafde7-d88.png",
+        "en-permission-refresh-desktop-error-b2dafde7-d88.png",
+        "en-permission-refresh-recovered-b2dafde7-d88.png"
+      ],
+      "pageErrors": [],
+      "actualApi": {
+        "status": 200,
+        "privateNoStore": true,
+        "actorBound": true,
+        "organizationBound": true,
+        "permissionCount": 620
+      },
+      "routeReadyMs": 11326,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "injectedLookupFailureVisible": true,
+      "keyboardRetryRecovered": true,
+      "emulatedVisibilityTransitionRefreshVerified": true
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-permission-refresh-mobile-error-b2dafde7-d88.png",
+        "fr-permission-refresh-desktop-error-b2dafde7-d88.png",
+        "fr-permission-refresh-recovered-b2dafde7-d88.png"
+      ],
+      "pageErrors": [],
+      "actualApi": {
+        "status": 200,
+        "privateNoStore": true,
+        "actorBound": true,
+        "organizationBound": true,
+        "permissionCount": 620
+      },
+      "routeReadyMs": 9668,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "injectedLookupFailureVisible": true,
+      "keyboardRetryRecovered": true,
+      "emulatedVisibilityTransitionRefreshVerified": true
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Browser permission failure is an explicitly injected HTTP 503; it is not evidence of a real database outage.",
+    "No financial action or grant mutation is requested. Existing owned credentials are used for sign-in.",
+    "Shell permission snapshots and fully active cross-tab push refresh remain separate review boundaries."
+  ],
+  "before": "da91a534033e633d824114c2081bec68876f36e322370bc6c0cce616853d868a",
+  "anonymousDenied": true,
+  "after": "da91a534033e633d824114c2081bec68876f36e322370bc6c0cce616853d868a",
+  "originalAuthorityAndFinancialRecordsUnchanged": true,
+  "completedAt": "2026-09-06T15:25:35.221Z",
+  "sourcesAfter": {
+    "app/api/me/permissions/route.ts": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+    "lib/auth-client.ts": "d5dcaf05372e073b5b4f3b4c4d765e219c62f7e111bad90c3dd5fc292b903b38",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "hooks/useRoleEditor.ts": "fa6566a87e6a1cc3a12833572140980e244eba92c54678463c3c033147088e0f",
+    "hooks/useMemberAccess.ts": "62819de4c49d56cedfa3edde9a4887eda38424df0d55389aa245823f1c006d5b",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "ff29e526bcddf9497535cff3715b0cdd456a555f0921920124328e37571d2041",
+    "messages/en.json": "243cf605e4051644f034688cce2871af203596c7c734af447344588c478e2b68",
+    "messages/fr.json": "a0fcec471a2be8abf0164a7a4090ca78675de8365760659fefe58324d1ec5a65"
+  },
+  "sourceStable": true,
+  "driverSha256": "1a94fa4b6f6b4140b397627a88bea69e278ec9f5a082e8914573cc33ea003db7",
+  "passed": 2,
+  "failed": 0
+}

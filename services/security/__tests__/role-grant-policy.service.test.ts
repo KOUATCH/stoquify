@@ -4,6 +4,18 @@ import { evaluateRoleGrantPolicy } from "../role-grant-policy.service"
 const grantAuthority = ["users.invite", "users.roles.assign"]
 
 describe("role grant policy", () => {
+  it.each(["roles.permissions.assign", "roles.permissions.remove", "admin.role.assign"])("cannot grant %s through user-role assignment's shared legacy alias", permission => {
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: grantAuthority, targetRole: { organizationId: "org-1", permissions: [permission] } })).toMatchObject({ allowed: false, reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED" })
+  })
+  it("cannot grant the broad legacy alias from a single canonical operation", () => {
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: grantAuthority, targetRole: { organizationId: "org-1", permissions: ["ASSIGN_ROLES"] } })).toMatchObject({ allowed: false, reasonCode: "ACTOR_GRANT_CEILING_EXCEEDED" })
+  })
+  it("does not infer user-role assignment from permission editing authority", () => {
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: ["users.invite", "roles.permissions.assign"], targetRole: { organizationId: "org-1", permissions: [] } })).toMatchObject({ allowed: false, reasonCode: "MISSING_GRANT_AUTHORITY" })
+  })
+  it("preserves an explicitly stored legacy role-management grant", () => {
+    expect(evaluateRoleGrantPolicy({ actorOrganizationId: "org-1", actorPermissions: ["users.invite", "ASSIGN_ROLES"], targetRole: { organizationId: "org-1", permissions: ["roles.permissions.remove", "users.roles.assign"] } })).toMatchObject({ allowed: true })
+  })
   it("rejects actors without role-assignment authority", () => {
     const decision = evaluateRoleGrantPolicy({
       actorOrganizationId: "org-1",

@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-13T14:07:23.933Z",
+  "phase": "after",
+  "sourceBefore": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+  "checks": [
+    {
+      "name": "insufficient stock rejects without altering cart",
+      "passed": true
+    },
+    {
+      "name": "closed shift denies cart edit",
+      "passed": true
+    },
+    {
+      "name": "concurrent additions both retained after aborted transaction retry",
+      "quantity": "3",
+      "passed": true
+    }
+  ],
+  "scope": "Real cart services on owned local PostgreSQL. Synthetic fixtures and controlled read barrier; no payment, posting or external operation.",
+  "passed": true,
+  "sourceAfter": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+  "sourceStable": true
+}

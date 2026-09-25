@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-09T12:30:53.527Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v101.json",
+  "sources": {
+    "services/reconciliation/reconciliation-certificate-history.service.ts": "2d6503d6be9685af7c3075d44d662c8a667325dcf53749c76e4e1b3322d6078f",
+    "services/reconciliation/reconciliation-certificate-history.contracts.ts": "127ec0302868e710af0d12f1143f13efbdbc7d84e6775e179f4a4715c06a274b",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "57681f328bc19b07687dec7e00a414e37a51a165f4a4609fae2bc716502f52a0",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "components/finance/ReconciliationCertificateHistory.tsx": "97eeb3b05f01a3b907cf2b3560864170270dd314ccea263d9fb003ed15a156a7",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d6bf72aecb454cc0d33b388de9587f96bf03cfa709e0b55ec6c53422284b8a00",
+    "messages/en.json": "5a4566db726a31f49ff322f7b1c8c5fa8646914524c0ef47000b56fe4c69f65c",
+    "messages/fr.json": "725daad0ae6b6f4d93b6bc0526ee413bee899077f7be092d6340c3631f92d5a5",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "b59fb7bd90233e21372b1fb1a462e8878deaf7d0c5344c2348a4bcef891d3061",
+    "services/reconciliation/__tests__/reconciliation-certificate-history.service.test.ts": "3de321b681bb2e3036cea792d6b89fcf06f9f3256b3983b8ed382e53f8680f64",
+    "components/finance/__tests__/ReconciliationCertificateHistory.test.tsx": "dff8212dee3b6597a40e67a6b4f20df3a4f9ed1e3b7b1c08e99047f8ec5488ee",
+    "components/finance/__tests__/ReconciliationCertificateExportPanel.test.tsx": "5344b9b63b1db01966cf6eb90536e99d97b86069d61bb6d90d9ec2209dfd174f",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "17bbadcabdf1bc0b08b23cc77fe105d96c2c33dbe6830ff86a7caae61cdb1d39",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "3c57f12034975eac0de77a63232be658b766cfa3816f9018226876d8b4b3b932"
+  },
+  "tests": {
+    "file": "evidence/certificate-history-tests-v101.json",
+    "passed": 99,
+    "suites": 6
+  },
+  "runtime": {
+    "file": "lanes/environment/certificate-history-v101-778c73f4-e9b.json",
+    "checks": 9
+  },
+  "browser": {
+    "file": "lanes/environment/certificate-history-v101-browser-8ec8cc0a-874.json",
+    "artifacts": "evidence/certificate-history-v101-files",
+    "screenshots": 20,
+    "downloads": 2
+  },
+  "typecheck": {
+    "session": 28455,
+    "exitCode": 0
+  },
+  "lint": {
+    "receipt": "d13917",
+    "files": 12,
+    "exitCode": 0
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 230,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2803,
+      "tests": 989,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2411,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "previousGoalTurn": "concrete progress: v100 immutable certificate exports and actual EN/FR recovery; v101 extends historical discovery and fixes reproduced late-evidence count mismatch"
+}

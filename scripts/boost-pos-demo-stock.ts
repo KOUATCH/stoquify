@@ -1,8 +1,11 @@
 import { Prisma, PrismaClient, TransactionReferenceType, TransactionType } from "@prisma/client"
+import { assertDisposableDatabaseTarget, assertDisposableDatabaseIdentity } from "./disposable-fixture-guard"
 
-// @inventory-boundary-demo-script
 // Demo-only stock booster for local POS stress testing. Do not use for runtime tenant stock workflows.
-const prisma = new PrismaClient()
+// Never fall back to the application's DATABASE_URL. Provision this disposable
+// database independently; this script does not create or migrate databases.
+const target = assertDisposableDatabaseTarget(process.env.POS_DEMO_FIXTURE_DATABASE_URL, ["stoquify_pos_demo_disposable"])
+const prisma = new PrismaClient({ datasources: { db: { url: target.url } } })
 
 const DEFAULT_TARGET_STOCK = "12500"
 const DEFAULT_ITEMS_PER_ORG = 50
@@ -97,6 +100,7 @@ async function verifyStock(threshold: Prisma.Decimal) {
 }
 
 async function main() {
+  await assertDisposableDatabaseIdentity(prisma, target.database)
   const dryRun = isDryRun()
   const verifyOnly = isVerifyOnly()
   const targetStock = decimalArg("target", DEFAULT_TARGET_STOCK)

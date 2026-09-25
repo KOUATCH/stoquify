@@ -1,0 +1,166 @@
+{
+  "recordedAt": "2026-09-06T06:43:41.248Z",
+  "baseline": "evidence/source-baseline-v16.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 206,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2460,
+      "tests": 846,
+      "pages": 147,
+      "routeHandlers": 17,
+      "actionSources": 150,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2029,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 214,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "guide": "lanes/environment/INVITATION_CANCELLATION_AND_REISSUE.md",
+  "sources": {
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "c7e8c48397d238b3d04699c646817ebbc1fa96991aa24685b43de2fb4bda4847",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/users/invitation-revision.ts": "c46ccc217f3aa3cfc17f91474f3dab2896ed3f0094ad1eee7f3e2311081d35d4",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82",
+    "services/users/user-identity.service.ts": "04cc28dd026b90c5962fdd296b3a2544b408d7801addf67c5b33db22e879ac7a",
+    "actions/users/sendInvite.ts": "8b201c204f756194f0bc3c2d4e5f003d0183938499648e9ef4a0d3adde9acca4",
+    "components/Forms/users/userInvitationForm.tsx": "00648a757494997efe64b548146fd42d7775d6d4bf3a623148731f06e8e2a514",
+    "messages/en.json": "5043f90008a8a040b946fe28a1ced9c12fa3eeb7677c606c80f7c718d8a20d74",
+    "messages/fr.json": "5d2ef0e13a0d93fb6b3e905cdf0516f8a342552098efee26f414336c82baa7eb",
+    "actions/users/cancelInvite.ts": "86b7317f0ba4afad9c2a482736b9a51368b2221b312e8f8997f27bb9be20a243",
+    "components/dashboard/Tables/Invites.tsx": "b4f53b5bfd31a5ac0a625ea35ed94851d9870fe4d0fe0e7fca1b48c8a589365c",
+    "components/ui/dialog.tsx": "fd78c279fbfbf3960d59a2a0b13c4eb5f2c6db3a076078e1cd493f30e3528463",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "01c9b147d5ecef8e4b2a74da68bc2d4f10db8b0939b9462aea6f7986e1dc0c8f",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "4ef059dc1ead2e085c063e03bf465ec72ba44fb2170e9e6bd2c66a09e00b05ea",
+    "components/auth/v2/__tests__/UserInvitationForm.test.tsx": "9bc4561d717710f31602ea61fe227ed0873756257583e70036071c53711be4e1",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "da50744da01871c8161b587fdb4aab0622d907f9d978a4e659b83bed90158378",
+    "actions/users/__tests__/cancelInvite.test.ts": "8d0880ef2a97cf80c3a0fd58354fdcc95441d8d4de1a498706b7f54b43235582",
+    "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts": "8d9923123f225eb3a19ce4bf562f4c43498637d9babb4375e0b39bba5cd01be4",
+    "services/users/__tests__/user-invitation-options.service.test.ts": "4e38ebfb107982890aac904790985bf94351568882f0b995c103f9ad89cc5d74",
+    "services/users/__tests__/user-invitation-management.service.test.ts": "a2f24660dcae808969461e27c8bfc4c9328da684cca9fbfa604ed6f290874cb1",
+    "services/users/__tests__/user-identity.service.test.ts": "c7d7242aebbd35fe50bad8b28fefa7c34684237ca20391b5e9f87a213ef61dd7",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts": "1aada20c4014ed82b41275e678f264ae40e111624e2ee42e3123dbcb4b403d7d",
+    "actions/users/__tests__/sendInvite.authorization.test.ts": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04",
+    "actions/users/__tests__/getOrgInvites.test.ts": "4850b694209dfc2e0d0f0daed366089e6ba25e7923d4c120e3f99776947748fd"
+  },
+  "tests": {
+    "file": "evidence/invitation-management-after-03.json",
+    "passed": 151,
+    "suites": 10,
+    "chunk": "681de6",
+    "seconds": 6.392
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "session": 47637,
+    "chunk": "6f40a8",
+    "exitCode": 0
+  },
+  "lint": {
+    "files": 18,
+    "chunk": "594ef5",
+    "exitCode": 0
+  },
+  "diff": {
+    "chunk": "681494",
+    "exitCode": 0
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-queue-postgres-6fe45358-008.json",
+    "passed": 15,
+    "failed": 0,
+    "authorityUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-management-browser-e59ab633-d9e.json",
+    "passed": 2,
+    "failed": 0,
+    "authorityUnchanged": true,
+    "queueAttempts": 0,
+    "timings": [
+      {
+        "locale": "en",
+        "routeMs": 4505,
+        "initialRecordMs": 956
+      },
+      {
+        "locale": "fr",
+        "routeMs": 4743,
+        "initialRecordMs": 2207
+      }
+    ]
+  },
+  "supplementaryReaders": {
+    "file": "lanes/environment/invitation-options-browser-6420dc4f-ed4.json",
+    "passed": 2,
+    "failed": 0,
+    "sourceDifferences": [
+      "messages/en.json",
+      "messages/fr.json"
+    ],
+    "explanation": "Only cancellation confirmation copy changed afterward; reader actions/code remain identical. This supplemental run is preserved with its own exact bindings."
+  },
+  "boundaries": {
+    "file": "evidence/invitation-management-boundaries.json",
+    "moduleGaps": 0,
+    "activeServiceBoundaryViolations": 0
+  },
+  "screenshots": [
+    {
+      "file": "evidence/invitation-management/en-invitation-management-recorded-e59ab633-d9e.png",
+      "sha256": "f9079b3fa275a21025079f46dc741699d894d10a5a2de13c211039f0d41c9c71"
+    },
+    {
+      "file": "evidence/invitation-management/en-invitation-management-register-e59ab633-d9e.png",
+      "sha256": "837068c7755d1c8b6c3bdc78b7a3300dbc3032c455733037fd7691b8efce986f"
+    },
+    {
+      "file": "evidence/invitation-management/en-invitation-management-stale-review-e59ab633-d9e.png",
+      "sha256": "99a276eeab750c8d7911d5b6cce95e6eba17d4de31d7acbdd3678de9298d56cd"
+    },
+    {
+      "file": "evidence/invitation-management/en-invitation-management-replacement-recorded-e59ab633-d9e.png",
+      "sha256": "c67a2c39875d29f3552c1e951062551e5db2911f177828080dbb6fca6555db9f"
+    },
+    {
+      "file": "evidence/invitation-management/en-invitation-management-cancelled-e59ab633-d9e.png",
+      "sha256": "305eb68bd87d0a0bb5a7373aa296a553e75838b90662343b6bcf67fe95d81037"
+    },
+    {
+      "file": "evidence/invitation-management/fr-invitation-management-response-lost-e59ab633-d9e.png",
+      "sha256": "a3fd832d873556b173d7c496ba3dd23828bef6b060f9ad9dcced3e3d77897445"
+    },
+    {
+      "file": "evidence/invitation-management/fr-invitation-management-recorded-e59ab633-d9e.png",
+      "sha256": "5dae6a7fd830eb0a61474f773ec1e20caffcbda6b9a7dfb435c17fcb4ca9f3b0"
+    },
+    {
+      "file": "evidence/invitation-management/fr-invitation-management-register-e59ab633-d9e.png",
+      "sha256": "c4f574460f1c45f58b83ed045316d94dcdfeccbb091f5a32c2dd0d2b6fff3498"
+    },
+    {
+      "file": "evidence/invitation-management/fr-invitation-management-stale-review-e59ab633-d9e.png",
+      "sha256": "314f433ad015161ccca80f9dba03a6df9fd0ae592058e917c5bd8fcdb4d60008"
+    },
+    {
+      "file": "evidence/invitation-management/fr-invitation-management-replacement-recorded-e59ab633-d9e.png",
+      "sha256": "a225b6fa462b811c2f57f758c1a63b75ebebf2fc9507f6cb502bffc73fee6098"
+    },
+    {
+      "file": "evidence/invitation-management/fr-invitation-management-cancelled-e59ab633-d9e.png",
+      "sha256": "458b44bbcb6ff361554eb04867ae08e733df6b1688d253526753c5f3f13d9a57"
+    }
+  ],
+  "remaining": "Redemption-time issuance snapshot/current-issuer enforcement, explicit missing/legacy evidence handling and delivery/history/operator UI remain open. The now-implemented replacement path can support the legacy transition. The production sender remains absent after automatic approval review rejected its external recipient/link egress; an implementation-only approval question has already been asked and no answer assumed. No real email, complete workflow, X1 clearance or full build/release certification is claimed.",
+  "completeWorkflowVerified": false
+}

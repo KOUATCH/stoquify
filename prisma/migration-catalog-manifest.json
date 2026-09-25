@@ -7,8 +7,8 @@
     "encoding": "UTF-8",
     "canonicalization": "Decode as UTF-8, normalize CRLF and lone CR line endings to LF, preserve every other byte represented by the decoded text, then SHA-256 hash the UTF-8 result."
   },
-  "catalogSha256": "82d4b81e7dbb388b732402e3920dcbe701ad96354fbcf11985b8375e92a3d630",
-  "migrationCount": 80,
+  "catalogSha256": "8505c241d96dcbd1aff64021fa1b5d4f7b91df01652640c9d9d0bbe5bc5b12e9",
+  "migrationCount": 85,
   "migrations": [
     {
       "name": "20260528124341_refine_item_barcode",
@@ -729,6 +729,51 @@
       "rawSha256": "ee40069dd6ca75c79161d721d297f1140b9508ed22f90be836cbe3640225459e",
       "canonicalLfSha256": "ee40069dd6ca75c79161d721d297f1140b9508ed22f90be836cbe3640225459e",
       "canonicalCrlfSha256": "471c12eec18d2cc54ecf786cff437794368246ee4b6d40fb004c7edcf608307f"
+    },
+    {
+      "name": "20260905170000_add_tenant_module_composition",
+      "timestamp": "20260905170000",
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "byteLength": 4947,
+      "rawSha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb",
+      "canonicalLfSha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb",
+      "canonicalCrlfSha256": "cea69cf9716cd0b1995d01c735edeed71621000ea7ae11d92cdf5f780f327a97"
+    },
+    {
+      "name": "20260905173000_protect_module_configuration_authority",
+      "timestamp": "20260905173000",
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "byteLength": 871,
+      "rawSha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66",
+      "canonicalLfSha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66",
+      "canonicalCrlfSha256": "6738895057221f5c62a7ceb6ad248a8b1b600ca03135103a39d397f93822563d"
+    },
+    {
+      "name": "20260905200000_add_module_lifecycle_command_state",
+      "timestamp": "20260905200000",
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "byteLength": 154,
+      "rawSha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73",
+      "canonicalLfSha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73",
+      "canonicalCrlfSha256": "44eaab1126a796cf178df1ef6d8c9935b7ce2f65605d3e5d53672009e4844d0f"
+    },
+    {
+      "name": "20260905200100_add_module_lifecycle",
+      "timestamp": "20260905200100",
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "byteLength": 5532,
+      "rawSha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c",
+      "canonicalLfSha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c",
+      "canonicalCrlfSha256": "b35470164919bcebb8d3f0cb09f4b09ce3963f07d90caa46a59621e7f38105e0"
+    },
+    {
+      "name": "20260909093000_add_suspense_posting_cycles",
+      "timestamp": "20260909093000",
+      "path": "prisma/migrations/20260909093000_add_suspense_posting_cycles/migration.sql",
+      "byteLength": 991,
+      "rawSha256": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+      "canonicalLfSha256": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+      "canonicalCrlfSha256": "56a8e904926e60cb2a816a1c68a86d85fbb1d92d337ae5cf5ba7d3b265c2202f"
     }
   ]
 }

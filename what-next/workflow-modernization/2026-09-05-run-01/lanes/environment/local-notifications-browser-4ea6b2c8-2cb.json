@@ -1,0 +1,209 @@
+{
+  "run": "4ea6b2c8-2cb",
+  "startedAt": "2026-09-06T19:19:01.726Z",
+  "sourcesBefore": {
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx": "4f213b600911cfbcaf9c9f51221140e570a82c3a264bb095fb68586b65ebac54",
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx": "2acf5214f3ba1ebd5308701a8f0a380fb58ab706df7c3b73796b9dfae122a28f",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx": "67f27a2ca78fa1bedeb64b65e594de3706aad72ae3c955d21cde317cc2fe947b",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "components/notifications/NotificationProvider.tsx": "b047600c7eb7462b13ee21f05f2adbccd2bc9f265ed96ac3a3db4a51cb3f77ce",
+    "components/notifications/NotificationSystem.tsx": "fe0a2203474ab94f5378e5c14627cebc8de38c2bb62a8282de8b629eb9cae14c",
+    "components/Providers.tsx": "a568563f7f8d6e85cb1c8e713b5863c31bacf858fdd5aa7eb9b7e44694cce6f4",
+    "components/dashboard/Navbar.tsx": "fcc1cfa10276a1a5f71510750d4e0b27023c33d8daf45af94dcce8387529b627",
+    "lib/notifications/presentation.ts": "bf8f351daf1f9e9d77e1f41c091a7c69afda37ffd7a91b25cb31a6a30b713bc8",
+    "lib/notifications/notify.ts": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-local-notifications-denied-4ea6b2c8-2cb.png",
+        "en-local-notifications-empty-4ea6b2c8-2cb.png",
+        "en-local-notifications-explicit-example-4ea6b2c8-2cb.png",
+        "en-local-notifications-storage-unavailable-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-320-100-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-320-200-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-390-100-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-390-200-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-768-100-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-768-200-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-1440-100-4ea6b2c8-2cb.png",
+        "en-local-notifications-review-1440-200-4ea6b2c8-2cb.png",
+        "en-local-notifications-focused-toast-4ea6b2c8-2cb.png",
+        "en-local-notifications-failure-toast-4ea6b2c8-2cb.png",
+        "en-local-notifications-shared-390-100-4ea6b2c8-2cb.png",
+        "en-local-notifications-shared-320-200-4ea6b2c8-2cb.png"
+      ],
+      "cases": [
+        {
+          "width": 320,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        }
+      ],
+      "deniedWithoutGrant": true,
+      "routeReadyMs": 4063,
+      "localActionsDidNotWriteBusinessOrAuditRecords": true,
+      "fullReloadClearedMessagesAndKeptSoundPreference": true,
+      "malformedPreferenceUsesBooleanDefaultWithoutOverwrite": true,
+      "storageFailureAndExplicitRetry": true,
+      "crossTabPreferenceSynchronized": true,
+      "keyboardPausesTimerAndRetainsReadFocus": true,
+      "localReadPreservesExternalFailure": true,
+      "localizedSharedControlsAndLiveRegion": true,
+      "originalPermissionsRestored": true
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-local-notifications-denied-4ea6b2c8-2cb.png",
+        "fr-local-notifications-empty-4ea6b2c8-2cb.png",
+        "fr-local-notifications-explicit-example-4ea6b2c8-2cb.png",
+        "fr-local-notifications-storage-unavailable-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-320-100-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-320-200-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-390-100-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-390-200-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-768-100-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-768-200-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-1440-100-4ea6b2c8-2cb.png",
+        "fr-local-notifications-review-1440-200-4ea6b2c8-2cb.png",
+        "fr-local-notifications-focused-toast-4ea6b2c8-2cb.png",
+        "fr-local-notifications-failure-toast-4ea6b2c8-2cb.png",
+        "fr-local-notifications-shared-390-100-4ea6b2c8-2cb.png",
+        "fr-local-notifications-shared-320-200-4ea6b2c8-2cb.png"
+      ],
+      "cases": [
+        {
+          "width": 320,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "panelContained": true,
+          "primaryActionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "panelContained": true,
+          "primaryActionVisible": true
+        }
+      ],
+      "deniedWithoutGrant": true,
+      "routeReadyMs": 2962,
+      "localActionsDidNotWriteBusinessOrAuditRecords": true,
+      "fullReloadClearedMessagesAndKeptSoundPreference": true,
+      "malformedPreferenceUsesBooleanDefaultWithoutOverwrite": true,
+      "storageFailureAndExplicitRetry": true,
+      "crossTabPreferenceSynchronized": true,
+      "keyboardPausesTimerAndRetainsReadFocus": true,
+      "localReadPreservesExternalFailure": true,
+      "localizedSharedControlsAndLiveRegion": true,
+      "originalPermissionsRestored": true
+    }
+  ],
+  "scope": "Owned EN/FR local notification review and shared toast verification. Temporary notification-read grants restored. No business mutation or external send; injected feedback is explicitly labeled verification.",
+  "originalBefore": "8e9539f37bf6adef2ba45485f5ed56a28cbb4dfb1fc8320916dcc886ab5e5e55",
+  "originalAfter": "8e9539f37bf6adef2ba45485f5ed56a28cbb4dfb1fc8320916dcc886ab5e5e55",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T19:20:31.328Z",
+  "sourcesAfter": {
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx": "4f213b600911cfbcaf9c9f51221140e570a82c3a264bb095fb68586b65ebac54",
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx": "2acf5214f3ba1ebd5308701a8f0a380fb58ab706df7c3b73796b9dfae122a28f",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx": "67f27a2ca78fa1bedeb64b65e594de3706aad72ae3c955d21cde317cc2fe947b",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "components/notifications/NotificationProvider.tsx": "b047600c7eb7462b13ee21f05f2adbccd2bc9f265ed96ac3a3db4a51cb3f77ce",
+    "components/notifications/NotificationSystem.tsx": "fe0a2203474ab94f5378e5c14627cebc8de38c2bb62a8282de8b629eb9cae14c",
+    "components/Providers.tsx": "a568563f7f8d6e85cb1c8e713b5863c31bacf858fdd5aa7eb9b7e44694cce6f4",
+    "components/dashboard/Navbar.tsx": "fcc1cfa10276a1a5f71510750d4e0b27023c33d8daf45af94dcce8387529b627",
+    "lib/notifications/presentation.ts": "bf8f351daf1f9e9d77e1f41c091a7c69afda37ffd7a91b25cb31a6a30b713bc8",
+    "lib/notifications/notify.ts": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "9828b5b1aaad36ad723319b74d3e32e7f2dee32e1d59ef354fa892340b968d94"
+}

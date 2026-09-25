@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-15T13:13:59.441Z",
+  "sourceBefore": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "errors": [],
+      "accessibility": []
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Actions and risks', exact: true }).getByText('Urgency not assessed', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Actions and risks', exact: true }).getByText('Urgency not assessed', { exact: true })\n",
+  "sourceAfter": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a"
+  },
+  "sourceStable": true
+}

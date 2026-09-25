@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-13T17:47:46.211Z",
+  "phase": "before",
+  "sourceBefore": {
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+    "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+  },
+  "checks": [
+    {
+      "name": "uncounted_shift",
+      "status": "ACTIVE",
+      "variance": 0,
+      "performanceScore": 100
+    },
+    {
+      "name": "closing_count_is_not_outflow",
+      "cashIn": 100,
+      "cashOut": 100,
+      "net": 0,
+      "expectedOperationalNet": 100
+    },
+    {
+      "name": "void_return_is_outflow",
+      "cashIn": 200,
+      "cashOut": 0,
+      "net": 200,
+      "expectedOperationalNet": 0
+    }
+  ],
+  "reproduced": true,
+  "scope": "Owned local database and actual synthetic POS sale, void and close services; report reads add no financial effects. No live payment, external provider, deployment or statutory approval.",
+  "sourceAfter": {
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+    "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,289 @@
+{
+  "status": "OBSERVED_BLOCKED",
+  "exitCode": 0,
+  "timedOut": false,
+  "command": "node scripts/x1-approval-automation-orchestrator.js --mode report --no-write",
+  "report": {
+    "status": "BLOCKED_AWAITING_EXTERNAL_CONFIGURATION_AND_SIGNATURE",
+    "blockers": [
+      {
+        "code": "MISSING_APPROVALPLATFORM",
+        "description": "approvalPlatform is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_APPROVALWORKSPACEID",
+        "description": "approvalWorkspaceId is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_APPROVALTEMPLATEID",
+        "description": "approvalTemplateId is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_PROVIDERADAPTERMODULE",
+        "description": "providerAdapterModule is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_IDENTITYPROVIDER",
+        "description": "identityProvider is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_GOVERNANCEREGISTERURI",
+        "description": "governanceRegisterUri is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SECRETMANAGERREFERENCE",
+        "description": "secretManagerReference is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_CALLBACKURL",
+        "description": "callbackUrl is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_EVIDENCESTOREURI",
+        "description": "evidenceStoreUri is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_RETENTIONPOLICYREFERENCE",
+        "description": "retentionPolicyReference is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SERVICEPRINCIPALS_APPROVALORCHESTRATION",
+        "description": "servicePrincipals.approvalOrchestration is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SERVICEPRINCIPALS_EVIDENCECAPTURE",
+        "description": "servicePrincipals.evidenceCapture is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SERVICEPRINCIPALS_INDEPENDENTVERIFIER",
+        "description": "servicePrincipals.independentVerifier is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SERVICEPRINCIPALS_IMPLEMENTATIONCI",
+        "description": "servicePrincipals.implementationCi is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SIGNEDDELEGATION_APPROVALRECORDID",
+        "description": "signedDelegation.approvalRecordId is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SIGNEDDELEGATION_SIGNATUREREFERENCE",
+        "description": "signedDelegation.signatureReference is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SIGNEDDELEGATION_SIGNEDARTIFACTURI",
+        "description": "signedDelegation.signedArtifactUri is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SIGNEDDELEGATION_SIGNEDARTIFACTSHA256",
+        "description": "signedDelegation.signedArtifactSha256 is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SIGNEDDELEGATION_SIGNEDAT",
+        "description": "signedDelegation.signedAt is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SIGNEDDELEGATION_EXPIRESAT",
+        "description": "signedDelegation.expiresAt is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "MISSING_SIGNEDDELEGATION_SIGNINGMODEL",
+        "description": "signedDelegation.signingModel is required.",
+        "source": "X1 approval automation configuration"
+      },
+      {
+        "code": "DELEGATION_POLICY_NOT_APPROVED",
+        "description": "STOQ-X1-POL-004 is not signed and approved in an authoritative system.",
+        "source": "Approval/e-signature system"
+      }
+    ],
+    "artifacts": {
+      "contractArtifactUri": "repository://stoquify/docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+      "contractManifestSha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4",
+      "checks": [
+        {
+          "artifact": "components/DataTableComponents/table-system-contract.ts",
+          "expectedSha256": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2",
+          "actualSha256": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2",
+          "valid": true
+        },
+        {
+          "artifact": "components/DataTableComponents/finance-accounting-contracts.ts",
+          "expectedSha256": "15f33ee14c2039e2c924707d1fbf053e5d0400a88f742e5d08d9741f8cc44f9b",
+          "actualSha256": "15f33ee14c2039e2c924707d1fbf053e5d0400a88f742e5d08d9741f8cc44f9b",
+          "valid": true
+        },
+        {
+          "artifact": "components/DataTableComponents/next-phase-contracts.ts",
+          "expectedSha256": "825bee313616523f0b96992d1fd8c85d9619e149a4eaeb9e686fd3d9a7d2f633",
+          "actualSha256": "825bee313616523f0b96992d1fd8c85d9619e149a4eaeb9e686fd3d9a7d2f633",
+          "valid": true
+        },
+        {
+          "artifact": "components/DataTableComponents/finance-x1-evidence-binding.ts",
+          "expectedSha256": "3114dec10ee0fbcd84af7e217434b48d16ad4ae86fa3901eebb4fc993eb94d40",
+          "actualSha256": "3114dec10ee0fbcd84af7e217434b48d16ad4ae86fa3901eebb4fc993eb94d40",
+          "valid": true
+        },
+        {
+          "artifact": "docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+          "expectedSha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4",
+          "actualSha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4",
+          "valid": true
+        },
+        {
+          "artifact": "docs/blockers-docs/STOQ-X1-POL-001_PRODUCT_PERFORMANCE_BUDGET_DELEGATION_DRAFT.docx",
+          "expectedSha256": "ea1873b12e8d6070ebbc19f9cadb3c8b02080003e71facbe05c4cf29d62514e2",
+          "actualSha256": "ea1873b12e8d6070ebbc19f9cadb3c8b02080003e71facbe05c4cf29d62514e2",
+          "valid": true
+        },
+        {
+          "artifact": "docs/blockers-docs/STOQ-X1-POL-002_NONPRODUCTION_CREDENTIAL_TENANT_EVIDENCE_DELEGATION_DRAFT.docx",
+          "expectedSha256": "add6694ba90b62742fa6bb44224a98bc6c8d61d9332595f5b0eebd6c33da3728",
+          "actualSha256": "add6694ba90b62742fa6bb44224a98bc6c8d61d9332595f5b0eebd6c33da3728",
+          "valid": true
+        },
+        {
+          "artifact": "docs/blockers-docs/STOQ-X1-POL-003_TECHNICAL_EVIDENCE_GATE_PROMOTION_DELEGATION_DRAFT.docx",
+          "expectedSha256": "e40b1d069cc77a5788a6eb5c2635622ecbeabc90776ab712dfefb9f57b882b25",
+          "actualSha256": "e40b1d069cc77a5788a6eb5c2635622ecbeabc90776ab712dfefb9f57b882b25",
+          "valid": true
+        },
+        {
+          "artifact": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+          "expectedSha256": "74d494820edecab96e53e4b3e083bd1628ab008b958a9631ba393fa617dcae9c",
+          "actualSha256": "74d494820edecab96e53e4b3e083bd1628ab008b958a9631ba393fa617dcae9c",
+          "valid": true
+        },
+        {
+          "artifact": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.pdf",
+          "expectedSha256": "7d18c51746e6a8b9aef4a140b7987747b44e7fd1a731704d7a9afc0bfdaf7a65",
+          "actualSha256": "7d18c51746e6a8b9aef4a140b7987747b44e7fd1a731704d7a9afc0bfdaf7a65",
+          "valid": true
+        }
+      ],
+      "valid": true,
+      "policyDocuments": [
+        {
+          "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-001_PRODUCT_PERFORMANCE_BUDGET_DELEGATION_DRAFT.docx",
+          "path": "docs/blockers-docs/STOQ-X1-POL-001_PRODUCT_PERFORMANCE_BUDGET_DELEGATION_DRAFT.docx",
+          "sha256": "ea1873b12e8d6070ebbc19f9cadb3c8b02080003e71facbe05c4cf29d62514e2",
+          "artifactType": "unsigned-policy-docx"
+        },
+        {
+          "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-002_NONPRODUCTION_CREDENTIAL_TENANT_EVIDENCE_DELEGATION_DRAFT.docx",
+          "path": "docs/blockers-docs/STOQ-X1-POL-002_NONPRODUCTION_CREDENTIAL_TENANT_EVIDENCE_DELEGATION_DRAFT.docx",
+          "sha256": "add6694ba90b62742fa6bb44224a98bc6c8d61d9332595f5b0eebd6c33da3728",
+          "artifactType": "unsigned-policy-docx"
+        },
+        {
+          "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-003_TECHNICAL_EVIDENCE_GATE_PROMOTION_DELEGATION_DRAFT.docx",
+          "path": "docs/blockers-docs/STOQ-X1-POL-003_TECHNICAL_EVIDENCE_GATE_PROMOTION_DELEGATION_DRAFT.docx",
+          "sha256": "e40b1d069cc77a5788a6eb5c2635622ecbeabc90776ab712dfefb9f57b882b25",
+          "artifactType": "unsigned-policy-docx"
+        }
+      ],
+      "delegationArtifacts": [
+        {
+          "path": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+          "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+          "mediaType": "text/markdown",
+          "byteLength": 13585,
+          "sha256": "74d494820edecab96e53e4b3e083bd1628ab008b958a9631ba393fa617dcae9c"
+        },
+        {
+          "path": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.pdf",
+          "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.pdf",
+          "mediaType": "application/pdf",
+          "byteLength": 107695,
+          "sha256": "7d18c51746e6a8b9aef4a140b7987747b44e7fd1a731704d7a9afc0bfdaf7a65"
+        }
+      ]
+    },
+    "database": {
+      "status": "RETRIEVED_READ_ONLY",
+      "target": {
+        "safe": true,
+        "databaseName": "stoquify_replay_next_20260830"
+      },
+      "existingX1ActivationPackages": 0,
+      "roles": [
+        {
+          "id": "rds_org_001_compliance_role_external_accountant",
+          "code": "external_accountant",
+          "permissionCount": 24,
+          "candidateUserIds": [
+            "rds_org_001_compliance_user_external_accountant"
+          ],
+          "formalAuthorityProven": false
+        },
+        {
+          "id": "rds_org_001_compliance_role_owner",
+          "code": "owner",
+          "permissionCount": 217,
+          "candidateUserIds": [
+            "rds_org_001_compliance_user_owner"
+          ],
+          "formalAuthorityProven": false
+        },
+        {
+          "id": "rds_org_001_compliance_role_product_approver",
+          "code": "product_approver",
+          "permissionCount": 32,
+          "candidateUserIds": [
+            "rds_org_001_compliance_user_product_approver"
+          ],
+          "formalAuthorityProven": false
+        },
+        {
+          "id": "rds_org_001_compliance_role_qa_owner",
+          "code": "qa_owner",
+          "permissionCount": 27,
+          "candidateUserIds": [
+            "rds_org_001_compliance_user_qa_owner"
+          ],
+          "formalAuthorityProven": false
+        },
+        {
+          "id": "rds_org_001_compliance_role_security_owner",
+          "code": "security_owner",
+          "permissionCount": 5,
+          "candidateUserIds": [
+            "rds_org_001_compliance_user_security_owner"
+          ],
+          "formalAuthorityProven": false
+        },
+        {
+          "id": "rds_org_001_compliance_role_sre_owner",
+          "code": "sre_owner",
+          "permissionCount": 20,
+          "candidateUserIds": [
+            "rds_org_001_compliance_user_sre_owner"
+          ],
+          "formalAuthorityProven": false
+        }
+      ]
+    }
+  },
+  "diagnostic": null
+}

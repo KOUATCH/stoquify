@@ -1,6 +1,8 @@
 "use client"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useTranslations } from "next-intl"
+import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 
 import {
   approvePayrollRunAction,
@@ -41,10 +43,12 @@ export function usePayrollWorkbench(limit = 20) {
 
 export function useCalculatePayrollRun() {
   const queryClient = useQueryClient()
+  const t = useTranslations("moduleComposition.stop")
   return useMutation({
     mutationFn: async (input: unknown) => {
       const result = await calculatePayrollRunAction(input)
       if (!result.success || !result.data) {
+        if (getModuleOperationErrorReason(result)) throw new Error(t("deniedMessage"))
         throw new Error(actionErrorMessage(result.error, "Failed to calculate payroll run"))
       }
       return result.data

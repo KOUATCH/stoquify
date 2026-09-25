@@ -37,6 +37,8 @@ export interface CreatePurchaseOrderPayload {
 export interface UpdatePurchaseOrderDTO {
   id: string
   organizationId: string
+  expectedRevision: string
+  idempotencyKey: string
   supplierId?: string
   locationId?: string
   date?: string
@@ -78,6 +80,8 @@ export interface Pagination {
 
 export interface PurchaseOrderWithRelations {
   id: string
+  editRevision?: string
+  editReceipt?: { requestReference: string; orderId: string; revision: string; savedAt: string; replayed: boolean }
   orderNumber: string
   status: PurchaseOrderStatus
   orderDate: string | Date
@@ -121,6 +125,8 @@ export interface PaginatedPurchaseOrdersResponse {
 export interface PurchaseOrderResponse<T> {
   success: boolean
   error?: string | null
+  code?: import("@/services/_shared/action-errors").ApplicationErrorCode
+  reason?: import("@/lib/modules/module-operation-error").ModuleOperationErrorReason
   message?: string
   data: T
 }

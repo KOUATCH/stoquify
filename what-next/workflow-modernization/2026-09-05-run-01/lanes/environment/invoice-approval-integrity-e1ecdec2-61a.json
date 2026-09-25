@@ -1,0 +1,30 @@
+{
+  "run": "e1ecdec2-61a",
+  "at": "2026-09-08T08:17:45.591Z",
+  "checks": [
+    {
+      "name": "Concurrent different invoices preserve both supplier liabilities",
+      "status": "failed",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '2500.00'\n- '5000.00'\n"
+    },
+    {
+      "name": "Concurrent identical approvals return one liability and one retained outcome",
+      "status": "failed",
+      "message": "Supplier invoice approval was already claimed; reload before retrying."
+    },
+    {
+      "name": "Approval records operation time while preserving the effective invoice date",
+      "status": "failed",
+      "message": "Posting timestamp was backdated to the invoice date"
+    },
+    {
+      "name": "Replay without ledger-status metadata does not claim a posted journal",
+      "status": "failed",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'POSTED'\n- 'UNVERIFIED'\n"
+    }
+  ],
+  "scope": "Owned local PostgreSQL; synthetic independent actors, real receiving and AP kernel. Missing posting rules must remain blocked; this does not verify current-session approval transport.",
+  "sourceBefore": "54ba7d6afb127d1647623b1bc1727a740acfcadffa645aa13e624de9d5eef32f",
+  "originalUnchanged": true,
+  "sourceAfter": "54ba7d6afb127d1647623b1bc1727a740acfcadffa645aa13e624de9d5eef32f"
+}

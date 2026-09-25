@@ -7,6 +7,11 @@
  * ink/rule/accent variables used by existing section components.
  */
 
+.landing-root :is(a, button, summary):focus-visible {
+  outline: 3px solid var(--color-brand);
+  outline-offset: 4px;
+}
+
 .landing-root {
   /* Semantic surfaces: shared with the canonical dashboard contract. */
   --color-canvas: var(--product-canvas);

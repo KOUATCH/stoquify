@@ -1,0 +1,44 @@
+{
+  "at": "2026-09-19T14:09:53.602Z",
+  "sourceHashes": {
+    "services/daily-habit/daily-habit-digest.service.ts": "4fc7991d63d4543ac8bcdc627217cb299daa5a3fa8c28f102968d47291d21258",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "509930bc5f4ae45248d690e7974067a26c98284d0feb93d3e289723c30aacefe",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx": "3f89edc1bd3d1f3384c2d997871f5ef1d90f2bf850e9eba79f90dc7161df6109",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts": "564ee5a3abda4fa4cfc88848ac996b49165a3904cd554bf9a50c44f330947838",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "07dafccc60cced10f4a619c41b607d350f74dc2296861c54108f8299d5260f11",
+    "messages/fr.json": "dff8799a3a8206748b7865f9c6b2e608b163cf2e0eb85db001de4910cf5383ba"
+  },
+  "matrix": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1.json",
+  "priorBrowserEvidence": "digest-workspace-533c5a18-9b97-47f9-a3ea-0d9a0d4a42cb.json",
+  "browserCases": [
+    "legacy-default",
+    "explicit-empty",
+    "both-active",
+    "analytics-suspended",
+    "analytics-read-only",
+    "analytics-stopped-retained",
+    "dashboard-suspended",
+    "analytics-only-permission",
+    "analytics-permission-revoked"
+  ],
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/access-recovery.test.tsx\" \"services/agents/__tests__/command-tool-adapters.test.ts\" \"services/modules/__tests__/module-entitlement.service.test.ts\"",
+    "supplementalTests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/access-recovery.test.tsx\"",
+    "lint": "node node_modules/eslint/bin/eslint.js \"services/daily-habit/daily-habit-digest.service.ts\" \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"components/daily-habit/DailyHabitDigestDashboard.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts\" \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/access-recovery.test.tsx\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "runtime": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-workspace-access.cjs --browser-from=analytics-only-permission"
+  },
+  "results": {
+    "tests": "7ae8ab / 93c4e6: 124 passed in four suites; 4edd0d: 18 passed in analytics suite after adding one query-failure test; 125 distinct tests",
+    "lint": "5a2b26 passed, six files",
+    "diff": "4edd0d passed with existing line-ending warnings",
+    "typecheck": "8a3db6 passed",
+    "runtime": "8bcc8c passed: 19 EN/FR service cases, final two browser cases; seven prior complete browser cases retained with identical source bindings"
+  },
+  "failedAttempts": [
+    "3fd2c3: 8 failed / 91 passed; weekly fixtures omitted actor/module context and inventory expectations omitted the new dashboard decision. Explicit authorized fixtures corrected; missing/denied access tests use the raw composer.",
+    "ce09c9: first browser run failed on guessed French denial title after 17 complete cases; changed verifier to read the actual localized title. Final run repeats all service cases and only the two remaining browser cases."
+  ],
+  "completeWorkflowVerified": false
+}

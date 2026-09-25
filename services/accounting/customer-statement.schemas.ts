@@ -32,3 +32,28 @@ export const revokeCustomerStatementAccessInputSchema = z.object({
   tokenId: id,
   reason: z.string().trim().min(3).max(500),
 })
+
+export const retryCustomerStatementInputSchema = z.object({
+  customerId: id, statementId: id, deliveryId: id,
+  expectedRevision: z.string().regex(/^[0-9a-f]{64}$/),
+  reason: z.string().trim().min(3).max(500), idempotencyKey: z.string().uuid(),
+}).strict()
+export type RetryCustomerStatementInput = z.infer<typeof retryCustomerStatementInputSchema>
+
+export const statementRecipientCommandSchema = z.object({
+  actionType: z.enum(["DISPUTE", "PROMISE_TO_PAY"]),
+  customerReceivableDocumentId: id.nullable().optional().default(null),
+  requestedAmount: z.string().trim().regex(/^\d{1,12}(\.\d{1,2})?$/).refine(value => Number(value) > 0),
+  promisedFor: z.string().max(40).refine(value => Number.isFinite(Date.parse(value))).nullable().optional().default(null),
+  note: z.string().trim().min(3).max(500),
+  idempotencyKey: z.string().trim().min(8).max(160),
+  correlationId: z.string().trim().min(8).max(160),
+}).strict().superRefine((value, ctx) => {
+  if (value.actionType === "DISPUTE" && (!value.customerReceivableDocumentId || value.promisedFor)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["customerReceivableDocumentId"], message: "A dispute requires a document and no promise date" })
+  }
+  if (value.actionType === "PROMISE_TO_PAY" && !value.promisedFor) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["promisedFor"], message: "A promise requires a date" })
+  }
+})
+export type StatementRecipientCommand = z.infer<typeof statementRecipientCommandSchema>

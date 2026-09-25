@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-13T14:23:17.079Z",
+  "phase": "after",
+  "checks": [
+    {
+      "operation": "commit",
+      "preflightAllowedBeforeGrantChanged": true,
+      "restrictedWrite": "denied_all_financial_state_unchanged",
+      "authorizedExplicitRecovery": true,
+      "balancedPostedEntries": 2,
+      "stockQuantity": 19,
+      "exactServiceReplayAfterRestriction": true,
+      "foreignActorReplayDenied": true,
+      "passed": true
+    },
+    {
+      "operation": "refund",
+      "preflightAllowedBeforeGrantChanged": true,
+      "restrictedWrite": "denied_all_financial_state_unchanged",
+      "authorizedExplicitRecovery": true,
+      "balancedPostedEntries": 3,
+      "stockQuantity": 20,
+      "exactServiceReplayAfterRestriction": true,
+      "foreignActorReplayDenied": true,
+      "passed": true
+    }
+  ],
+  "scope": "Owned local PostgreSQL, actual cash sale/posting/correction services, synthetic accounts and rules; no external payment, delivery, statutory approval or live activation.",
+  "sourceBefore": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+  "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '[{\"id\":\"cmtzwm8gp008yma1sjf8xu1rk\",\"orderNumber\":\"POS-OWNED-20260913-RI4YZ\",\"status\":\"CANCELLED\",\"channel\":\"POS\",\"version\":0,\"orderDate\":\"2026-09-13T14:23:19.224Z\",\"dueDate\":null,\"notes\":null,\"deliveryAddress\":null,\"priceTaxSnapshotHash\":null,\"confirmedAt\":null,\"confirmedById\":null,\"deliveredAt\":null,\"deliveredById\":null,\"subtotal\":\"100\",\"taxAmount\":\"0\",\"shippingCost\":\"0\",\"discount\":\"0\",\"total\":\"100\",\"paymentStatus\":\"CANCELLED\",\"customerId\":\"cmtzwm8gh008wma1swbvrpzra\",\"locationId\":\"cmtzwm8ed008ima1srurmaqb4\",\"organizationId\":\"workflow_tender_void_21a5dd54-33c0-4845-88aa-af397d47e806\",\"createdById\":\"cmtzwm8e8008gma1srdxvuhxx\",\"terminalId\":\"cmtzwm8eg008kma1sx3tph8wf\",\"sessionId\":\"cmtzwm8f6008mma1scuq0ax5u\",\"deletedAt\":null,\"createdAt\":\"2026-09-13T14:23:19.130Z\",\"updatedAt\":\"2026-09-13T14:23:19.515Z\"},[{\"id\":\"cmtzwm8fx008uma1sccpuqxif\",\"itemId\":\"cmtzwm8ft008sma1s2arr48iy\",\"locationId\":\"cmtzwm8ed008ima1srurmaqb4\",\"quantityOnHand\":\"20\",\"quantityReserved\":\"0\",\"quantityAvailable\":\"20\",\"quantityInTransit\":\"0\",\"quantityOnOrder\":\"0\",\"reorderPoint\":\"0\",\"averageCost\":\"20\",\"totalValue\":\"400\",\"version\":2,\"lastCountDate\":null,\"lastTransactionAt\":\"2026-09-13T14:23:19.544Z\",\"createdAt\":\"2026-09-13T14:23:19.101Z\",\"updatedAt\":\"2026-09-13T14:23:19.558Z\"}],[{\"id\":\"cmtzwm8kz00auma1s49u1h8yv\",\"paymentNumber\":\"PAY-20260913-YJNCQYO\",\"amount\":\"100\",\"method\":\"CASH\",\"status\":\"CANCELLED\",\"idempotencyKey\":null,\"organizationId\":\"workflow_tender_void_21a5dd54-33c0-4845-88aa-af397d47e806\",\"salesOrderId\":\"cmtzwm8gp008yma1sjf8xu1rk\",\"purchaseOrder",
+  "sourceAfter": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+  "sourceStable": true
+}

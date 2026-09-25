@@ -179,6 +179,7 @@ function buildLocationScopeUnsupportedSnapshot(
       completedSalesRevenue: 0,
       cashCollected: 0,
       pendingPurchaseOrderCount: 0,
+      overduePurchaseOrderCount: null,
       approvedOrPaidPayrollRunCount: 0,
       activeEmployeeBalanceCaseCount: 0,
       openEmployeeBalanceCaseCount: 0,
@@ -298,6 +299,7 @@ async function buildTenantOperatingSnapshot(input: {
     completedSalesCount,
     cashCollected,
     pendingPurchaseOrderCount,
+    overduePurchaseOrderCount,
     approvedOrPaidPayrollRunCount,
     activeEmployeeBalanceCaseCount,
     openEmployeeBalanceCaseCount,
@@ -358,6 +360,14 @@ async function buildTenantOperatingSnapshot(input: {
         organizationId: scope.organizationId,
         deletedAt: null,
         status: { in: PENDING_PURCHASE_STATUSES },
+      },
+    }),
+    db.purchaseOrder.count({
+      where: {
+        organizationId: scope.organizationId,
+        deletedAt: null,
+        status: { in: PENDING_PURCHASE_STATUSES },
+        expectedDeliveryDate: { lt: scope.now },
       },
     }),
     db.payrollRun.count({
@@ -501,6 +511,7 @@ async function buildTenantOperatingSnapshot(input: {
     completedSalesRevenue: toNumber(salesTotals._sum.total),
     cashCollected: toNumber(cashCollected._sum.amount),
     pendingPurchaseOrderCount,
+    overduePurchaseOrderCount,
     approvedOrPaidPayrollRunCount,
     activeEmployeeBalanceCaseCount,
     openEmployeeBalanceCaseCount,

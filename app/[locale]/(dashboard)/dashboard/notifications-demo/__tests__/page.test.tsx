@@ -4,6 +4,7 @@ import { RbacError, requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import NotificationsDemoPage from "../page"
+jest.mock("next/navigation", () => ({ notFound: () => { throw new Error("NOT_FOUND") } }))
 
 jest.mock("@/components/notifications/EnhancedNotificationTest", () => ({
   EnhancedNotificationTest: () => <section aria-label="notification-demo-client">Notification demo client</section>,
@@ -63,7 +64,9 @@ function params(locale = "en") {
 }
 
 describe("notifications demo route", () => {
+  const originalEnvironment = process.env.NODE_ENV
   beforeEach(() => {
+    ;(process.env as Record<string, string | undefined>).NODE_ENV = "development"
     jest.clearAllMocks()
     mockRequirePermission.mockResolvedValue({
       orgId: "org-1",
@@ -77,6 +80,14 @@ describe("notifications demo route", () => {
       mode: "observe",
       moduleSlug: "settings",
     })
+  })
+  afterEach(() => { (process.env as Record<string, string | undefined>).NODE_ENV = originalEnvironment })
+
+  it.each(["production", "test"])("does not expose the demonstration in %s", async environment => {
+    ;(process.env as Record<string, string | undefined>).NODE_ENV = environment
+    await expect(NotificationsDemoPage({ params: params("en") })).rejects.toThrow("NOT_FOUND")
+    expect(mockRequirePermission).not.toHaveBeenCalled()
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
   })
 
   it("guards the notification demo with read permission and settings module observation", async () => {

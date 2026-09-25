@@ -1,0 +1,90 @@
+{
+  "runId": "dd56bf1aa069",
+  "mode": "statement",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-05T17:20:01.210Z",
+  "sourceBefore": {
+    "services/users/user-identity.service.ts": "96457d81c9c80d533b73f586ff2ca56baabf5f756acc505f607b7283ec4ebbc2",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "lib/auth.ts": "f25dea0fb814f3be0e32d0431ba50614e53942953d6258a215df3c36f65d5e19",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "lib/security/password-utils.ts": "bf6f4b60c23f6251f42e0d434d9bdf07086b25cd8df1445164f2c91aca293295",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "services/security/public-identity-abuse.service.ts": "b359eed84e7c0b30392acedbc29acb475a78d1fdcbef7f436c6c4d4c39204ccb",
+    "lib/security/audit-log.ts": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+    "services/accounting/customer-statement-recipient-action.service.ts": "5b8f169ae50dc9c589dd6a7692452e1e9dd88538c6f767c0ed2a0097c84496e0",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "real signed statement promise late retry and negative boundaries preserve one action",
+      "passed": true,
+      "durationMs": 696,
+      "detail": {
+        "first": "created",
+        "lateRetry": "same recorded action",
+        "negatives": [
+          "changed payload conflict",
+          "new past-dated promise",
+          "expired token",
+          "foreign snapshot",
+          "revoked token"
+        ],
+        "counts": {
+          "actions": 1,
+          "states": 1,
+          "events": 1
+        },
+        "snapshotHash": "e30d5cdffec3faedd9cdf2d12344d8e1fe594d58746dd5f7c04824647ecb061a",
+        "actionStateHash": "2054be452d451ec0ff13b943c11dbc83f9e7b7201562a545e8c7a5bcdc4e8f47"
+      }
+    }
+  ],
+  "ownedOrganizations": [
+    "org_modules_service_smoke_workflow_dd56bf1aa069_statement"
+  ],
+  "limitations": [
+    "HIBP network deliberately unavailable: production offline handling exercised, online breach service unverified",
+    "Synthetic immutable statement input: snapshot generation and ledger provenance unverified",
+    "Internal service calls: public transport behavior is separate coverage"
+  ],
+  "network": {
+    "actualRequestsSent": 0,
+    "blockedFetchOrigins": []
+  },
+  "guard": {
+    "verified": true,
+    "existingOwnedOrganizations": 38,
+    "completedMigrations": 84,
+    "browserDatabaseUntouched": true
+  },
+  "runtimeImports": "Current production services and real Better Auth loaded",
+  "sourceAfter": {
+    "services/users/user-identity.service.ts": "96457d81c9c80d533b73f586ff2ca56baabf5f756acc505f607b7283ec4ebbc2",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "lib/auth.ts": "f25dea0fb814f3be0e32d0431ba50614e53942953d6258a215df3c36f65d5e19",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "lib/security/password-utils.ts": "bf6f4b60c23f6251f42e0d434d9bdf07086b25cd8df1445164f2c91aca293295",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "services/security/public-identity-abuse.service.ts": "b359eed84e7c0b30392acedbc29acb475a78d1fdcbef7f436c6c4d4c39204ccb",
+    "lib/security/audit-log.ts": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+    "services/accounting/customer-statement-recipient-action.service.ts": "5b8f169ae50dc9c589dd6a7692452e1e9dd88538c6f767c0ed2a0097c84496e0",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverHash": "daed51df4a325ced08bfbcadd4c22182b3ac9266e9406e24a0cf2dd90d364241",
+  "completedAt": "2026-09-05T17:20:11.791Z",
+  "passed": 1,
+  "failed": 0,
+  "status": "PASSED"
+}

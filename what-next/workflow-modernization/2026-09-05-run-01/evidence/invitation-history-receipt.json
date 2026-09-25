@@ -1,0 +1,114 @@
+{
+  "recordedAt": "2026-09-06T07:47:12.204Z",
+  "baseline": "evidence/source-baseline-v18.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "guide": "lanes/environment/INVITATION_HISTORY.md",
+  "coverage": {
+    "discoveredWorkflows": 206,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2468,
+      "tests": 850,
+      "pages": 147,
+      "routeHandlers": 17,
+      "actionSources": 151,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2033,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 214,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "sources": {
+    "services/users/user-invitation-history.service.ts": "42e0841b739da253e30755949b783d4d353b5d4b0bd9cf6be0eef2c4c8258c81",
+    "actions/users/getInvitationHistory.ts": "26cef822d040e5ccb5a16156b738ef1ffbab8e8a40e7b6a0d5b9eee10e088363",
+    "components/Forms/users/InvitationHistory.tsx": "65aabd09efaa68e6ea0ed54c7bc47844644e506b872a20b8b4ff42e540af65e4",
+    "components/dashboard/Tables/Invites.tsx": "512621d092ec92dd7f16bea8be0c9ed6f6e59fbee069e0b0d9f1697500fc10cb",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82",
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "messages/en.json": "da1ef0a3db2a617b715d12dd37d5610488a8d2b67d2de054599cf44278f77233",
+    "messages/fr.json": "c7984875904f8f8d50bec3be2203279a18dc7efd2762eef9efb756c7ef34a877",
+    "components/auth/v2/__tests__/UserInvitationForm.test.tsx": "8d43e362f4ad85dc6123dfafbd6a64e4088e31846de203573e97cf5824544609",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "5b20553e349dabf06740092b622355772d20db0740c24efb7df41fc6e1c051ca",
+    "components/auth/v2/__tests__/InvitationHistory.test.tsx": "65efbe2591ac58c4794d67652534c1222473eaf529a3880a479af5bb7575f796",
+    "services/users/__tests__/user-identity.service.test.ts": "c2f0322affd64cb72e8d419ba01db9275cc396031aec64e9ceb3e05d1d311f91",
+    "services/users/__tests__/user-invitation-history.service.test.ts": "7c429453dcd0958d627df6a220b29e99ae90f2e7457769abaaa9f9e8c3f1b788",
+    "services/users/__tests__/user-invitation-management.service.test.ts": "a2f24660dcae808969461e27c8bfc4c9328da684cca9fbfa604ed6f290874cb1",
+    "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts": "8d9923123f225eb3a19ce4bf562f4c43498637d9babb4375e0b39bba5cd01be4",
+    "services/users/__tests__/user-invitation-redemption-authority.service.test.ts": "a0d77876c37581e44b9c110ba1ae148b18f1d65e00004e4b999ba2ea5dda1222",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts": "1aada20c4014ed82b41275e678f264ae40e111624e2ee42e3123dbcb4b403d7d",
+    "services/users/__tests__/user-invitation-options.service.test.ts": "4e38ebfb107982890aac904790985bf94351568882f0b995c103f9ad89cc5d74",
+    "actions/users/__tests__/sendInvite.authorization.test.ts": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04",
+    "actions/users/__tests__/getInvitationHistory.test.ts": "446437d97fa70bd861e33ed78da551c242b9191f8a6ce5e288b6ffa1936fc1a1",
+    "actions/users/__tests__/getOrgInvites.test.ts": "4850b694209dfc2e0d0f0daed366089e6ba25e7923d4c120e3f99776947748fd",
+    "actions/users/__tests__/cancelInvite.test.ts": "8d0880ef2a97cf80c3a0fd58354fdcc95441d8d4de1a498706b7f54b43235582"
+  },
+  "tests": {
+    "file": "evidence/invitation-history-final-regression.json",
+    "passed": 218,
+    "suites": 14,
+    "success": true
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "session": 50242,
+    "chunk": "699e45",
+    "exitCode": 0
+  },
+  "lint": {
+    "files": 8,
+    "chunk": "217fc5",
+    "exitCode": 0
+  },
+  "diff": {
+    "chunk": "bfc4da",
+    "exitCode": 0
+  },
+  "boundaries": {
+    "file": "evidence/invitation-history-final-boundaries.json",
+    "chunk": "bb9cb0"
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-history-verify-e49fd26f-983.json",
+    "passed": 2,
+    "failed": 0
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-history-browser-448f773a-116.json",
+    "passed": 2,
+    "failed": 0
+  },
+  "screenshots": [
+    {
+      "file": "evidence/invitation-history/en-invitation-history-first-page-448f773a-116.png",
+      "sha256": "75dbb1cc0db951e5a352cba88041d6f7b8e71a7d7d0e68c25ed3b49eb3cb0bae"
+    },
+    {
+      "file": "evidence/invitation-history/en-invitation-history-retry-448f773a-116.png",
+      "sha256": "12cde31c96e716e89631cf030428eb3504db63e0e8271b89b0465430ff2d5faa"
+    },
+    {
+      "file": "evidence/invitation-history/en-invitation-history-older-decisions-448f773a-116.png",
+      "sha256": "3e1c75cfd6d3a05b65d0b0ec9aeb28a8c2b63b4b522c92492950c789f580a9ab"
+    },
+    {
+      "file": "evidence/invitation-history/fr-invitation-history-first-page-448f773a-116.png",
+      "sha256": "6c05e5d3ea2537e1e51e28e853871555457747e075db7f82557dcbda69835753"
+    },
+    {
+      "file": "evidence/invitation-history/fr-invitation-history-retry-448f773a-116.png",
+      "sha256": "0c3241637d466772700002603724401e50642fe52aae438069f5082315572215"
+    },
+    {
+      "file": "evidence/invitation-history/fr-invitation-history-older-decisions-448f773a-116.png",
+      "sha256": "89911bd2d84a3eeb57de99df7c535aa895a222aff3115b23f582f6715af869e2"
+    }
+  ],
+  "completeWorkflowVerified": false
+}

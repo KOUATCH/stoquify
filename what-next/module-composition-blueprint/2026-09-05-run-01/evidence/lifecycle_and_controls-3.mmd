@@ -1,0 +1,16 @@
+stateDiagram-v2
+  [*] --> Draft
+  Draft --> Validated: compatible plan and reviewed impact
+  Validated --> Provisioning: expected revision accepted
+  Provisioning --> Active: required steps verified
+  Provisioning --> Failed: recoverable or permanent step failure
+  Failed --> Provisioning: retry same operation identity
+  Failed --> Draft: revise plan
+  Active --> Upgrading: compatible target prepared
+  Upgrading --> Active: verified switch
+  Upgrading --> Failed: preserve last compatible active revision
+  Active --> Suspending: stop new work
+  Suspending --> Active: cancel suspension after revalidation
+  Suspending --> Retained: obligations drained or transferred safely
+  Retained --> Validated: reactivation requested
+  Retained --> Retired: retention policy permits terminal retirement

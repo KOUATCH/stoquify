@@ -1,0 +1,413 @@
+{
+  "recordedAt": "2026-09-07T09:33:39.475Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceBaseline": "evidence/source-baseline-v45.json",
+  "workflow": "CS-STATEMENT-RESPONSE-REVIEW",
+  "connectedWorkflows": [
+    "CS-STATEMENT-DISPUTE",
+    "CS-STATEMENT-PROMISE",
+    "CS-STATEMENT-HISTORY"
+  ],
+  "sources": {
+    "app/customer-statement/[statementId]/CustomerStatementPortal.tsx": "8487768a84e3098b2a3c3b61e4e25fccce7b5873b93ed33e759706bb2bb10021",
+    "app/customer-statement/[statementId]/page.tsx": "7ebe0e2d01f729c99bb1fec6552de836da56809ced39207cf1c7ed1996763f0e",
+    "app/api/customer-statements/[statementId]/route.ts": "e8aa985f476ba20c2a90a49b7dedf04ecd8a767e2f625c6e96c1113ab29c7e3f",
+    "app/api/customer-statements/[statementId]/actions/route.ts": "160a7db42370beb533b085eddb004662c50df9704045f366f23ab4f2027694c0",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/statement-recipient-request.ts": "80ef7b0138324f5bccd177dd16cba5fcf7850dea6dc488f8bc685963b023a91a",
+    "app/customer-statement/[statementId]/statement-portal-copy.ts": "ec2369269aa8adfacf2134a64f46dd57c048bcd4121ba5a35da660eb36388539",
+    "services/accounting/customer-statement.schemas.ts": "8a80048d0a8765040be5b0491012a093729aae3274e5f6b9b7acb3489f5ba602",
+    "services/accounting/customer-statement-http.ts": "624442851d2ea42453a258f840e365beae79d4091f844fe54cb6e573f58d171d",
+    "services/accounting/customer-statement-delivery.service.ts": "21e3f90d05a8996ad852853a8e6833b85c88d8430f5a17269d649dfb4f248214",
+    "middleware.ts": "4a0271f27c93a9c7d50211377091a1b6ce69679bf15b47106639b5bd09f10f3c",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/accounting/customer-statement-response.service.ts": "aaf5c2b09be01a67f184ab65dff63679ae68c8f03217737af599dfd47ab4194a",
+    "services/accounting/customer-statement-response.schemas.ts": "dcf30b1cdafa69ab794f635dad0f11168abb3ca43a5a6eaa1959b67b0148b34b",
+    "actions/accounting/customer-statement-response.actions.ts": "b1ba2293cb9e8d85b0950a5b0a0a62a458fb980a96a9cee004d5051a0aa1e422",
+    "hooks/customer-statement-review-request.ts": "f8205e23927e8beaf699b67f987e28e02898872ecaed5a056aa7c146a74a0d9e",
+    "components/customers/CustomerStatementResponses.tsx": "27ebf45aadc2bbb947c617b911459e3cb2006f86e827a2cd940f10e233be5958",
+    "components/customers/CustomerStatementWorkflow.tsx": "f2aa193b0e12656de3215ecb03a8d027ec2423184d78eaa5df77ab79b95f8ad1",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx": "7487e978d28377cfbaeda466b073a24c9217308693d8554442906858341adf41",
+    "components/customers/__tests__/CustomerStatementWorkflow.test.tsx": "af5a0ef28f792f56608421061b766d3703803b43411814798921ad087fa5c362",
+    "components/customers/__tests__/CustomerStatementResponses.test.tsx": "341baaef12f1659d236d7b89103ee5578ffde96c30dc606d28225914a3328a46",
+    "components/customers/__tests__/CustomerStatementHistory.test.tsx": "a80f59eea0cbdf391bf74ef78f12b81b90c5cf486cbdf9ffcc7ecb2448dd58bb",
+    "actions/accounting/__tests__/customer-statement-history.actions.test.ts": "7e977ef03c0655b1d8c2fb1b01db5d2763e69116ef3b39dfa62936d6ff6f76ab",
+    "services/accounting/__tests__/customer-statement-response.service.test.ts": "7970bf769747fc1379a002f49113ced85235e090afee8d84fe01312b844280bf",
+    "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts": "9e828e6fc3b2d0263721af408eba7cb2450aba8b996a6e71616e3b400dd916be",
+    "actions/accounting/__tests__/customer-statement-response.actions.test.ts": "d28bc1c7aeaa77fd78848a24331bf6e767e941f98d390d8096d7ab79aedc3085",
+    "services/accounting/__tests__/customer-statement-history.service.test.ts": "5116580011a4a4fe2a970b516c2a6eed67baaef2183d6e26392f08883d3c08a4",
+    "hooks/__tests__/customer-statement-review-request.test.ts": "357adc4d39845338c509a72215b03a1d19f36c16b2cc0fcbc6e98cbbc12a0251",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "services/_shared/action-errors.ts": "4cbfb642bddb1472c256ddf2ad952fe713982d91c872022f87730c05db89f2e6"
+  },
+  "verification": {
+    "evidenceDate": "2026-09-07",
+    "before": {
+      "file": "lanes/environment/statement-review-before-33b3f4a2-5db.json",
+      "receipt": "c3ce36",
+      "reproduced": 2
+    },
+    "tests": {
+      "file": "evidence/statement-review-tests-03.json",
+      "receipt": "c96d64",
+      "exitCode": 0,
+      "tests": 99,
+      "suites": 10,
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath 'app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx' 'components/customers/__tests__/CustomerStatementWorkflow.test.tsx' 'components/customers/__tests__/CustomerStatementResponses.test.tsx' 'components/customers/__tests__/CustomerStatementHistory.test.tsx' 'actions/accounting/__tests__/customer-statement-history.actions.test.ts' 'services/accounting/__tests__/customer-statement-response.service.test.ts' 'services/accounting/__tests__/customer-statement-recipient-action.service.test.ts' 'actions/accounting/__tests__/customer-statement-response.actions.test.ts' 'services/accounting/__tests__/customer-statement-history.service.test.ts' 'hooks/__tests__/customer-statement-review-request.test.ts' --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-review-tests-03.json"
+    },
+    "postgres": {
+      "file": "lanes/environment/statement-review-postgres-e080d0da-cef.json",
+      "receipt": "05ec1a",
+      "exitCode": 0,
+      "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-review-postgres.cjs"
+    },
+    "browser": {
+      "file": "lanes/environment/statement-review-browser-932c1910-7f2.json",
+      "receipt": "c0c86a",
+      "exitCode": 0,
+      "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-review-browser.cjs"
+    },
+    "typecheck": {
+      "receipt": "e3736b",
+      "exitCode": 0,
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+    },
+    "lint": {
+      "receipt": "e77749",
+      "exitCode": 0,
+      "paths": [
+        "services/accounting/customer-statement-response.service.ts",
+        "services/accounting/customer-statement-response.schemas.ts",
+        "actions/accounting/customer-statement-response.actions.ts",
+        "hooks/customer-statement-review-request.ts",
+        "components/customers/CustomerStatementResponses.tsx",
+        "components/customers/CustomerStatementWorkflow.tsx",
+        "services/accounting/__tests__/customer-statement-response.service.test.ts",
+        "hooks/__tests__/customer-statement-review-request.test.ts",
+        "components/customers/__tests__/CustomerStatementResponses.test.tsx",
+        "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+        "actions/accounting/__tests__/customer-statement-response.actions.test.ts",
+        "app/customer-statement/[statementId]/statement-portal-copy.ts"
+      ],
+      "command": "node node_modules/eslint/bin/eslint.js 'services/accounting/customer-statement-response.service.ts' 'services/accounting/customer-statement-response.schemas.ts' 'actions/accounting/customer-statement-response.actions.ts' 'hooks/customer-statement-review-request.ts' 'components/customers/CustomerStatementResponses.tsx' 'components/customers/CustomerStatementWorkflow.tsx' 'services/accounting/__tests__/customer-statement-response.service.test.ts' 'hooks/__tests__/customer-statement-review-request.test.ts' 'components/customers/__tests__/CustomerStatementResponses.test.tsx' 'components/customers/__tests__/CustomerStatementWorkflow.test.tsx' 'actions/accounting/__tests__/customer-statement-response.actions.test.ts' 'app/customer-statement/[statementId]/statement-portal-copy.ts'"
+    },
+    "moduleInventory": {
+      "receipt": "aa17d2",
+      "exitCode": 0,
+      "result": "New action source mapped to Accounting/protect/enforce without dependency gaps. File-level inventory aggregates read and mutation permissions; individual action behavior is established by focused action tests, not inferred from this aggregate."
+    },
+    "baseline": {
+      "file": "evidence/source-baseline-v45.json",
+      "receipt": "822b76",
+      "exitCode": 0
+    },
+    "visualInspection": {
+      "receipt": "48bf88",
+      "file": "lanes/environment/statement-review-fr-932c1910-7f2-review-320.png",
+      "result": "French narrow review content and focus ring are visible; no section or page horizontal overflow in recorded viewport checks."
+    },
+    "build": {
+      "status": "not_run",
+      "reason": "Actual owned Next development routes compiled and executed; no full production-build result is claimed. Default migration-bearing build was not invoked."
+    },
+    "nativeAccessibility": {
+      "status": "not_verified",
+      "reason": "Keyboard focus, accessible names, reduced-motion context and CSS width/text reflow are covered. Native screen readers, browser zoom and comprehensive contrast require separate evidence."
+    }
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "label": "populated-desktop",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-populated-desktop.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-populated-desktop.png",
+      "sha256": "916bcaa8c4e42346af7cf1b8d5cca61b4e6a17242ca0411c454a158c4ec7bd78"
+    },
+    {
+      "locale": "en",
+      "label": "lost-acknowledgement",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-lost-acknowledgement.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-lost-acknowledgement.png",
+      "sha256": "a20949f63a129b173204bc1013c8ef0d7961f9b3b5d139f9bc9009f2bd381dea"
+    },
+    {
+      "locale": "en",
+      "label": "history",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-history.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-history.png",
+      "sha256": "ae81c839340d275f2043f2a9455511e6d67eee49be359cdeebcd54997f0bb5d0"
+    },
+    {
+      "locale": "en",
+      "label": "review-320",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-review-320.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-review-320.png",
+      "sha256": "5de95292cb6c88c1d5913fe7a6433b0c66afa140ea2f0665edb992297f00cb52"
+    },
+    {
+      "locale": "en",
+      "label": "review-390",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-review-390.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-review-390.png",
+      "sha256": "71d36351fa6cfea4a5bce011a59a8cefe8aa11ff2ed7332066082441a20fc2f7"
+    },
+    {
+      "locale": "en",
+      "label": "review-768",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-review-768.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-review-768.png",
+      "sha256": "1df2d834bfc99701f34513ca37fb8218e6a325d896d3a288e1fa889d00e54294"
+    },
+    {
+      "locale": "en",
+      "label": "review-1440",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-review-1440.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-review-1440.png",
+      "sha256": "be9b08383d7b6ca90916dd6fc31093e76e85305aed3120648b34b355a7ddcbd9"
+    },
+    {
+      "locale": "en",
+      "label": "review-320-text-200",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-review-320-text-200.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-review-320-text-200.png",
+      "sha256": "3759b7590d06ff4b067af8f868ec13ae9d446157f2fe5d02936b727af1e27f41"
+    },
+    {
+      "locale": "en",
+      "label": "read-only",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-read-only.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-read-only.png",
+      "sha256": "2739b31123ce874ac336884ef66990b3fbea80ac1f129f683c85fe22eb648805"
+    },
+    {
+      "locale": "en",
+      "label": "denied",
+      "file": "evidence/statement-response-review/statement-review-en-932c1910-7f2-denied.png",
+      "source": "lanes/environment/statement-review-en-932c1910-7f2-denied.png",
+      "sha256": "3646d51111b84cafc26911de4e9f6b7f7aae5b83406f620046a6e32ea81118aa"
+    },
+    {
+      "locale": "fr",
+      "label": "populated-desktop",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-populated-desktop.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-populated-desktop.png",
+      "sha256": "6aea341649994d039dce18bddc20f1cf2ced872b7b3cdf024c8c56b5f69cdbf3"
+    },
+    {
+      "locale": "fr",
+      "label": "lost-acknowledgement",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-lost-acknowledgement.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-lost-acknowledgement.png",
+      "sha256": "35551f734686daed3066817d1b48c059db523b453a08883012b06b517ae462d9"
+    },
+    {
+      "locale": "fr",
+      "label": "history",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-history.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-history.png",
+      "sha256": "fb6ace186aadafdb9eeb2ea013b89a1e1eb9f0e129590c45747c902c8b65ce23"
+    },
+    {
+      "locale": "fr",
+      "label": "review-320",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-review-320.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-review-320.png",
+      "sha256": "9a9703a193d3f4dff5c0a74d188b208ef59aa86e2b4dc80d05b005378912e7b5"
+    },
+    {
+      "locale": "fr",
+      "label": "review-390",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-review-390.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-review-390.png",
+      "sha256": "df955004b2f3d9851e4b1b1c986a85cfc1407a741916bc6cbda3604efeb4dd6c"
+    },
+    {
+      "locale": "fr",
+      "label": "review-768",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-review-768.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-review-768.png",
+      "sha256": "6a36ec613563cb71f3405cff12ff722e8b933cc82e68f7280e0c2bb2c558cbd8"
+    },
+    {
+      "locale": "fr",
+      "label": "review-1440",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-review-1440.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-review-1440.png",
+      "sha256": "568941278c934d7a04cebc7dd4e159fd1bb561c2c5d31dace3c8d3cfe292532c"
+    },
+    {
+      "locale": "fr",
+      "label": "review-320-text-200",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-review-320-text-200.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-review-320-text-200.png",
+      "sha256": "7745fc5231b834ee4b2c9ca2bd98553b201a3aa11498045a61c278e1165ad80c"
+    },
+    {
+      "locale": "fr",
+      "label": "read-only",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-read-only.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-read-only.png",
+      "sha256": "01acf0827943aec2c4cfc338c2dcab177c0caa9fe76f2d89b15c7c6523481ed4"
+    },
+    {
+      "locale": "fr",
+      "label": "denied",
+      "file": "evidence/statement-response-review/statement-review-fr-932c1910-7f2-denied.png",
+      "source": "lanes/environment/statement-review-fr-932c1910-7f2-denied.png",
+      "sha256": "8f98f03f7bd316482015092d27ee7174217a7ac50be3cfe9de51efa4db8cfb5c"
+    }
+  ],
+  "layouts": [
+    {
+      "locale": "en",
+      "width": 320,
+      "client": 286,
+      "scroll": 286,
+      "viewport": 320,
+      "document": 320,
+      "passed": true
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "client": 356,
+      "scroll": 356,
+      "viewport": 390,
+      "document": 390,
+      "passed": true
+    },
+    {
+      "locale": "en",
+      "width": 768,
+      "client": 498,
+      "scroll": 498,
+      "viewport": 768,
+      "document": 768,
+      "passed": true
+    },
+    {
+      "locale": "en",
+      "width": 1440,
+      "client": 1102,
+      "scroll": 1102,
+      "viewport": 1440,
+      "document": 1440,
+      "passed": true
+    },
+    {
+      "locale": "en",
+      "width": 320,
+      "textScale": "200% CSS root font; not native browser zoom",
+      "client": 254,
+      "scroll": 254,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "client": 286,
+      "scroll": 286,
+      "viewport": 320,
+      "document": 320,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "client": 356,
+      "scroll": 356,
+      "viewport": 390,
+      "document": 390,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "width": 768,
+      "client": 498,
+      "scroll": 498,
+      "viewport": 768,
+      "document": 768,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "width": 1440,
+      "client": 1102,
+      "scroll": 1102,
+      "viewport": 1440,
+      "document": 1440,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "textScale": "200% CSS root font; not native browser zoom",
+      "client": 254,
+      "scroll": 254,
+      "passed": true
+    }
+  ],
+  "developmentTimings": [
+    {
+      "locale": "en",
+      "routeMs": 3067,
+      "responseReadMs": 2251,
+      "environment": "Local Next development server; observation only, no production performance claim"
+    },
+    {
+      "locale": "fr",
+      "routeMs": 4564,
+      "responseReadMs": 2549,
+      "environment": "Local Next development server; observation only, no production performance claim"
+    }
+  ],
+  "reviewMatrix": {
+    "architecture": "Reuses the authenticated customer statement page and existing recipient action/state/event records. Original response stays immutable; new service owns review truth. No duplicate shell, ledger or module system.",
+    "backend_api": "Strict list/history/review commands; server-derived scope; fresh-auth claim identity matching; exact receipt/request matching. Current read/write action boundaries tested. Failures do not become successful empty lists.",
+    "database_migrations": "Serializable decisions lock current organization/module/user/role/session/response evidence. Eleven real PostgreSQL checks include same-request convergence, competing-writer conflict, audit rollback and append-only history pagination. No schema changes.",
+    "security_iam_privacy": "Current same-tenant usable account and permissions checked inside service. Decisions require customer update, customer read, statement export and current Accounting write access; fresh persisted session required. Foreign objects/actors/cursors and expired/read-only grants tested. No password or bearer token in review recovery storage.",
+    "frontend_design_system": "Existing dashboard panel/control/border/brand tokens and inherited shell. Brand marks the review form; success marks a recorded receipt. Text explicitly separates review completion from payments and account adjustments. No new portal/modal primitive.",
+    "workflow_accessibility_localization": "EN/FR instructions, reasons, outcomes, history, errors and recovery. Focus moves to the reason when opening and to the heading after recording. Actual mobile/tablet/desktop, CSS text reflow and reduced-motion context checked. Native assistive technology and contrast remain open.",
+    "product_process": "Closes the reproduced missing recipient-to-sender handoff. Exact reference lookup, a durable review receipt, preserved original evidence and reopen-before-correction make the next action explicit. No automatic resolution or financial consequence is invented.",
+    "finance_reconciliation_controls": "Review outcomes never post payments/journals or change balances. Original payment/journal hashes remain unchanged. Actual recipient replay exposes the current review status without internal reasons; saved statement balance remains unchanged.",
+    "statutory_country": "Not applicable to rule changes: no country pack, tax, payroll, statutory filing or financial calculation modified. This is an internal review record, not expert approval.",
+    "audit_records": "Each decision appends a hashed state linked to its prior version, source payload and applied event, with required reason and reviewer. Mandatory audit stores a reason hash. Exact retry returns existing evidence without duplicate states. Original recipient action unchanged.",
+    "quality_release": "99 tests/ten suites, eleven PostgreSQL scenarios, two real EN/FR browser journeys, twenty screenshots, ten viewport/text checks, typecheck and twelve-file lint. All failed attempts retained; hashes bound to v45. No complete-workflow or release pass inferred.",
+    "sre_performance_cost": "Owned development route/read timings recorded separately from production budgets. Queries are bounded and paginated. Serializable conflicts retry at most twice. No new provider cost or background worker.",
+    "integrations_events": "Existing business event type infrastructure and canonical source enum reused. Applied event, state and audit commit together; audit failure leaves no review event/state. No external notification is sent.",
+    "pos_offline": "Not applicable to POS/sync changes. Browser session draft recovery is local intent; all review decisions still require online server authority.",
+    "purchasing_ap": "Not applicable to supplier/AP behavior; analogous supplier acknowledgement workflows remain independently open.",
+    "hris_payroll": "Not applicable: no workforce record, permission, payment or payroll rule changed.",
+    "analytics_data_governance": "Reads expose original received time and checked time, without treating failed queries as zero records. No analytics metric, export contract or data-sharing change.",
+    "ai_agents": "Not applicable: no model call, autonomous approval or agent capability changed.",
+    "saas_packaging": "Commercial/module gates remain effective; read-only can inspect and cannot review. No price, subscription, customer activation or eligibility change.",
+    "rollout_support": "Release service/action/UI/recovery contracts together; retain append-only records and pending request identities on rollback. The guide identifies required inputs, owners and where to obtain them. Operator reconciliation remains required for unrecoverable local storage."
+  },
+  "limitations": [
+    "Sender response inspection, review, reopening and exact retry are verified in an owned isolated application/database. This does not complete the entire customer statement, receivable settlement or order-to-cash lifecycle.",
+    "Fixtures start from synthetic sales sources followed by actual posted-receivable, snapshot, token and recipient services. No payment, balance adjustment, journal, debt cancellation or statutory approval is caused by a review decision.",
+    "Native screen readers, native browser zoom, comprehensive contrast and broader financial accessibility remain unverified. Responsive checks cover 320/390/768/1440 widths plus 320px with 200% CSS root text in EN/FR, not native zoom certification.",
+    "Corrupt/unavailable recovery storage, lost browser sessions and inaccessible accounts require authorized operator reconciliation of saved response/review references. There is no automatic cross-browser recovery or new review inbox/assignment/SLA workflow.",
+    "Read history is tenant/customer scoped and paginated. Source notes and reviewer reasons are retained as entered; the review does not upload or authenticate supporting documents, establish signer authority or clear X1.",
+    "No full production build, deployment, live delivery, payment, provider integration, migration or professional certification occurred. Unknown delivery outcomes, narrow enlarged sender-delivery history, other workers and the remaining workflow register remain open."
+  ],
+  "failedAttempts": "evidence/statement-review-attempts.md",
+  "completeWorkflowVerified": false,
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false
+}

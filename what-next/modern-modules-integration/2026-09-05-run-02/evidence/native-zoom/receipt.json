@@ -1,0 +1,614 @@
+{
+  "classification": "ISOLATED_APPLICATION_VERIFICATION",
+  "startedAt": "2026-09-05T16:20:08.271Z",
+  "productionApproval": false,
+  "browserMechanism": "chrome.tabs.setZoom, automatic mode, per-tab scope",
+  "profile": {
+    "freshOwnedTemporaryProfile": true,
+    "userProfileUsed": false,
+    "closed": true,
+    "removed": true
+  },
+  "viewportEmulation": false,
+  "cssZoomUsed": false,
+  "pageScaleEmulationUsed": false,
+  "fixture": "service_en_desktop",
+  "readOnlyConfiguration": true,
+  "sources": [
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "8766c25d759076bcd8d2de7d150e671dbb7dfb46bd66568c3833260a637552a0"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "sha256": "09ba3c156ed0d00f27bc964671fee2b20e85edd0d7269dd903c0a22138831c13"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "5e10711b9dd0b4cfbc0c320d37f81e63b6f90602841b1373a0eee674df2a29cd"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "ba0b6ce96ef5c706fff415c93c2e8cdb6efaf215f41d9a53caf13394305b4e94"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    }
+  ],
+  "cases": [
+    {
+      "locale": "en",
+      "requestedZoom": 2,
+      "startedAt": "2026-09-05T16:20:10.918Z",
+      "screenshots": [
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-builder-top.png",
+          "sha256": "b5d249646e74b4e6f52d92b758e25f2a605bf1a5bdcb6dd8746adb391a1b8d47",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-review-focus.png",
+          "sha256": "c357e57bc3b8c42f9846d050cce6633b7b2d29b7eb0c459980f72f9a8e51b89f",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-dialog-top.png",
+          "sha256": "c40dca6e445562dbebd9044c3b02577120b74d1be6bc8e702dae71cabfad0e86",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-dialog-actions.png",
+          "sha256": "8f72ec7723de08b0cb4ccc752435b3cead6988768f687faae4f2d121e23eb11e",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        }
+      ],
+      "baseline": {
+        "innerWidth": 1258,
+        "innerHeight": 1002,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 1,
+        "visualViewport": {
+          "width": 1258,
+          "height": 1002,
+          "scale": 1
+        },
+        "documentWidth": 1258,
+        "bodyWidth": 1258,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "browserZoom": {
+        "actual": 2,
+        "settings": {
+          "defaultZoomFactor": 1,
+          "mode": "automatic",
+          "scope": "per-tab"
+        }
+      },
+      "zoomed": {
+        "innerWidth": 629,
+        "innerHeight": 501,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 2,
+        "visualViewport": {
+          "width": 629,
+          "height": 501,
+          "scale": 1
+        },
+        "documentWidth": 629,
+        "bodyWidth": 629,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "reviewKeyboard": {
+        "tabs": 34,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 16,
+          "y": 443,
+          "width": 597,
+          "height": 46
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "dialog": {
+        "scrollWidth": 595,
+        "clientWidth": 595,
+        "scrollHeight": 966,
+        "clientHeight": 467,
+        "textLength": 1218
+      },
+      "applyKeyboard": {
+        "tabs": 3,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 41,
+          "y": 364,
+          "width": 547,
+          "height": 44
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "axeViolations": [],
+      "focusReturned": true,
+      "status": "passed",
+      "finishedAt": "2026-09-05T16:20:45.948Z"
+    },
+    {
+      "locale": "en",
+      "requestedZoom": 4,
+      "startedAt": "2026-09-05T16:20:45.949Z",
+      "screenshots": [
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-builder-top.png",
+          "sha256": "723ef4340320cdec5d6734aa9da6cebef4e580ce92d63892526576562df0856f",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-review-focus.png",
+          "sha256": "3541401c4687b5ea631d23d784e8ebde8004a912991adc3ee180f456bfb2dc98",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-dialog-top.png",
+          "sha256": "52b3f4a713b81c8d8d50fce151553edd3e23438ed6b41b1e8b4847c2c059ee9a",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-dialog-actions.png",
+          "sha256": "83ba20c24146297d1bd3e716321f70a87966966ab61b08c3399cfa67a65f261d",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        }
+      ],
+      "baseline": {
+        "innerWidth": 1258,
+        "innerHeight": 1002,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 1,
+        "visualViewport": {
+          "width": 1258,
+          "height": 1002,
+          "scale": 1
+        },
+        "documentWidth": 1258,
+        "bodyWidth": 1258,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "browserZoom": {
+        "actual": 3.9999999999999996,
+        "settings": {
+          "defaultZoomFactor": 1,
+          "mode": "automatic",
+          "scope": "per-tab"
+        }
+      },
+      "zoomed": {
+        "innerWidth": 314,
+        "innerHeight": 250,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 4,
+        "visualViewport": {
+          "width": 314.5,
+          "height": 250.5,
+          "scale": 1
+        },
+        "documentWidth": 314,
+        "bodyWidth": 315,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "reviewKeyboard": {
+        "tabs": 34,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 16,
+          "y": 192.5,
+          "width": 282.5,
+          "height": 46
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "dialog": {
+        "scrollWidth": 281,
+        "clientWidth": 281,
+        "scrollHeight": 1294,
+        "clientHeight": 217,
+        "textLength": 1218
+      },
+      "applyKeyboard": {
+        "tabs": 3,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 33,
+          "y": 137.5,
+          "width": 248.5,
+          "height": 44
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "axeViolations": [],
+      "focusReturned": true,
+      "status": "passed",
+      "finishedAt": "2026-09-05T16:21:14.211Z"
+    },
+    {
+      "locale": "fr",
+      "requestedZoom": 2,
+      "startedAt": "2026-09-05T16:21:14.211Z",
+      "screenshots": [
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-builder-top.png",
+          "sha256": "10f656256e35504c44361beef2ec82d63585030fb4c26d99538003cdc5d6d58f",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-review-focus.png",
+          "sha256": "6d7df09fbc15f73ce1a78de7834b027e5d34c3a5a47df942792dc416b90cdcd7",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-dialog-top.png",
+          "sha256": "2b3278875cd42f2564701adb0d1369d333a5771ef1f5aa4395b6d37337db1979",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-dialog-actions.png",
+          "sha256": "41cfe486d25890a0b58cea412321378369455f616eedbdcb85e2892b34efd2fe",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        }
+      ],
+      "baseline": {
+        "innerWidth": 1258,
+        "innerHeight": 1002,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 1,
+        "visualViewport": {
+          "width": 1258,
+          "height": 1002,
+          "scale": 1
+        },
+        "documentWidth": 1258,
+        "bodyWidth": 1258,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "browserZoom": {
+        "actual": 2,
+        "settings": {
+          "defaultZoomFactor": 1,
+          "mode": "automatic",
+          "scope": "per-tab"
+        }
+      },
+      "zoomed": {
+        "innerWidth": 629,
+        "innerHeight": 501,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 2,
+        "visualViewport": {
+          "width": 629,
+          "height": 501,
+          "scale": 1
+        },
+        "documentWidth": 629,
+        "bodyWidth": 629,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "reviewKeyboard": {
+        "tabs": 34,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 16,
+          "y": 443,
+          "width": 597,
+          "height": 46
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "dialog": {
+        "scrollWidth": 595,
+        "clientWidth": 595,
+        "scrollHeight": 946,
+        "clientHeight": 467,
+        "textLength": 1374
+      },
+      "applyKeyboard": {
+        "tabs": 3,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 41,
+          "y": 364,
+          "width": 547,
+          "height": 44
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "axeViolations": [],
+      "focusReturned": true,
+      "status": "passed",
+      "finishedAt": "2026-09-05T16:21:41.113Z"
+    },
+    {
+      "locale": "fr",
+      "requestedZoom": 4,
+      "startedAt": "2026-09-05T16:21:41.114Z",
+      "screenshots": [
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-builder-top.png",
+          "sha256": "632b729beb34408629b4ecf4cec2e459be0a8d4c872d071ee76d54cbaf9f9bc7",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-review-focus.png",
+          "sha256": "6f0e9804ea2759ad6ce442cf77081d8a9563877e3dce0c8bc197540468c6c11a",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-dialog-top.png",
+          "sha256": "a05b46448facb03c8d727a1f4fce70bb2d5f12eeb3289901af01a799a5181ed1",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-dialog-actions.png",
+          "sha256": "b8256ea8b8593924eef6246a5346b0a4552d27eedf3bbf8feca2da709fd03063",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-history-older-focus.png",
+          "sha256": "4c25953d370dd659e7c7de800465f00a0d10105afa6ad2e403bbf6104c0f7c77",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        },
+        {
+          "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-history-loaded-reopen-focus.png",
+          "sha256": "ef34ae85fe30bd429886837ef9502e0ad7e6350198903ab0498617c86a1bf7b9",
+          "pixelWidth": 1258,
+          "pixelHeight": 1002,
+          "capture": "Page.captureScreenshot, fromSurface:true, no clip or page scaling"
+        }
+      ],
+      "baseline": {
+        "innerWidth": 1258,
+        "innerHeight": 1002,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 1,
+        "visualViewport": {
+          "width": 1258,
+          "height": 1002,
+          "scale": 1
+        },
+        "documentWidth": 1258,
+        "bodyWidth": 1258,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "browserZoom": {
+        "actual": 3.9999999999999996,
+        "settings": {
+          "defaultZoomFactor": 1,
+          "mode": "automatic",
+          "scope": "per-tab"
+        }
+      },
+      "zoomed": {
+        "innerWidth": 314,
+        "innerHeight": 250,
+        "outerWidth": 1280,
+        "outerHeight": 1100,
+        "devicePixelRatio": 4,
+        "visualViewport": {
+          "width": 314.5,
+          "height": 250.5,
+          "scale": 1
+        },
+        "documentWidth": 314,
+        "bodyWidth": 315,
+        "rootCssZoom": "1",
+        "bodyCssZoom": "1",
+        "scrollX": 0,
+        "scrollY": 0
+      },
+      "reviewKeyboard": {
+        "tabs": 34,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 16,
+          "y": 192.5,
+          "width": 282.5,
+          "height": 46
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "dialog": {
+        "scrollWidth": 281,
+        "clientWidth": 281,
+        "scrollHeight": 1382,
+        "clientHeight": 217,
+        "textLength": 1374
+      },
+      "applyKeyboard": {
+        "tabs": 3,
+        "focused": true,
+        "focusVisible": true,
+        "outline": {
+          "style": "solid",
+          "width": "3px",
+          "color": "rgb(87, 150, 255)"
+        },
+        "bounds": {
+          "x": 33,
+          "y": 137.5,
+          "width": 248.5,
+          "height": 44
+        },
+        "centerUnoccluded": true,
+        "fullyInViewport": true
+      },
+      "axeViolations": [],
+      "focusReturned": true,
+      "history": {
+        "beforeCount": 25,
+        "olderLabel": "Charger les modifications précédentes",
+        "tabs": 52,
+        "olderFocus": {
+          "focused": true,
+          "focusVisible": true,
+          "outline": {
+            "style": "solid",
+            "width": "3px",
+            "color": "rgb(87, 150, 255)"
+          },
+          "bounds": {
+            "x": 16,
+            "y": 168.25,
+            "width": 282.5,
+            "height": 58
+          },
+          "centerUnoccluded": true,
+          "fullyInViewport": true
+        },
+        "afterCount": 50,
+        "firstLoadedRecordFocused": true,
+        "focusedRecordId": "module-history-cmtoi9as2004hma7km3fkyfjg",
+        "reopenFocus": {
+          "focused": true,
+          "focusVisible": true,
+          "outline": {
+            "style": "solid",
+            "width": "3px",
+            "color": "rgb(87, 150, 255)"
+          },
+          "bounds": {
+            "x": 33,
+            "y": 70.25,
+            "width": 248.5,
+            "height": 58
+          },
+          "centerUnoccluded": true,
+          "fullyInViewport": true
+        },
+        "noReopenSubmission": true
+      },
+      "status": "passed",
+      "finishedAt": "2026-09-05T16:22:10.088Z"
+    }
+  ],
+  "browserVersion": "151.0.7922.34",
+  "executable": {
+    "path": "C:\\Users\\J COMPUTER\\AppData\\Local\\ms-playwright\\chromium-1234\\chrome-win64\\chrome.exe",
+    "sha256": "409805a16d6416087e6b2f778df1cf8f7bbb267d6b99f6b5bb0a618eace234f2"
+  },
+  "status": "passed",
+  "finishedAt": "2026-09-05T16:22:17.412Z",
+  "helperSha256": "38418edec5a3e0c2ecea2e5a2aff2bbdeecc8461c3230cbb5952f413e17d540d"
+}

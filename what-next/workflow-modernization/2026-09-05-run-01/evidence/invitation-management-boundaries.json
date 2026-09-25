@@ -1,0 +1,64 @@
+{
+  "recordedAt": "2026-09-06T06:36:01.789Z",
+  "sources": {
+    "actions/users/sendInvite.ts": "8b201c204f756194f0bc3c2d4e5f003d0183938499648e9ef4a0d3adde9acca4",
+    "actions/users/cancelInvite.ts": "86b7317f0ba4afad9c2a482736b9a51368b2221b312e8f8997f27bb9be20a243",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "4ef059dc1ead2e085c063e03bf465ec72ba44fb2170e9e6bd2c66a09e00b05ea",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "01c9b147d5ecef8e4b2a74da68bc2d4f10db8b0939b9462aea6f7986e1dc0c8f",
+    "components/Forms/users/userInvitationForm.tsx": "00648a757494997efe64b548146fd42d7775d6d4bf3a623148731f06e8e2a514",
+    "components/dashboard/Tables/Invites.tsx": "b4f53b5bfd31a5ac0a625ea35ed94851d9870fe4d0fe0e7fca1b48c8a589365c"
+  },
+  "records": [
+    {
+      "file": "actions/users/cancelInvite.ts",
+      "surface": "users/cancelInvite.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "settings",
+      "permission": "INVITATION_ROLE_GRANT_PERMISSIONS",
+      "guard": "requireAllPermissions",
+      "observeOrEnforce": "observe",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
+      "file": "actions/users/sendInvite.ts",
+      "surface": "users/sendInvite.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "settings",
+      "permission": "INVITATION_ROLE_GRANT_PERMISSIONS",
+      "guard": "requireAllPermissions",
+      "observeOrEnforce": "observe",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx",
+      "surface": "/dashboard/settings/users",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "settings",
+      "permission": "READ_USERS",
+      "guard": "checkPermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    }
+  ],
+  "moduleGaps": [],
+  "serviceBoundary": {
+    "activeViolationCount": 0,
+    "allowedFindingCount": 0,
+    "totalFindings": 0,
+    "byClassification": {},
+    "bySeverity": {}
+  },
+  "findings": []
+}

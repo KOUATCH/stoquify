@@ -614,7 +614,7 @@ async function recordPaymentDestinationEvent(
     payload: input.payload,
     occurredAt: new Date(),
     actorId: input.actorId,
-    sourceType: "PAYROLL_PAYMENT_DESTINATION",
+    sourceEntityType: "PAYROLL_PAYMENT_DESTINATION",
     sourceId: input.sourceId,
     documentHash: input.documentHash,
     metadata: { gate: "aqstoqflow-hrpayroll-10-payment-evidence-readiness", ...(input.metadata ?? {}) },

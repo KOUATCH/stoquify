@@ -36,6 +36,7 @@ export const purchaseOrdersRouteCatalog: PurchaseOrdersRouteSurface[] = [
       moduleSlug: "purchasing",
       surface: "/dashboard/purchase-orders",
       accessIntent: "read",
+      mode: "enforce",
     },
   },
   {
@@ -48,6 +49,7 @@ export const purchaseOrdersRouteCatalog: PurchaseOrdersRouteSurface[] = [
       moduleSlug: "purchasing",
       surface: "/dashboard/purchase-orders/analytics",
       accessIntent: "read",
+      mode: "enforce",
     },
   },
   {
@@ -60,6 +62,7 @@ export const purchaseOrdersRouteCatalog: PurchaseOrdersRouteSurface[] = [
       moduleSlug: "purchasing",
       surface: "/dashboard/purchase-orders/[id]",
       accessIntent: "read",
+      mode: "enforce",
     },
   },
   {

@@ -1,5 +1,9 @@
 "use client"
 
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+
 import { useMemo } from "react"
 import {
   AlertTriangle,
@@ -446,8 +450,15 @@ export function AccountingControlCenter({
   }
 
   return (
-    <div className="space-y-5">
-      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-6">
+    <div className="min-w-0 space-y-6">
+      <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
+        { id: "accounting-readiness", label: t.readinessTitle },
+        { id: "accounting-mappings", label: t.mappingsTitle },
+        { id: "accounting-journals", label: t.journalsTitle },
+        { id: "accounting-rules", label: t.rulesTitle },
+        { id: "accounting-events", label: t.controlPlaneTitle },
+      ]} />
+      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <MetricTile
           label={t.settings}
           value={data.settings.setupStatus}
@@ -494,21 +505,28 @@ export function AccountingControlCenter({
 
       <OpenPeriodBanner data={data} locale={locale} />
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[1.25fr_0.75fr]">
+      <section id="accounting-readiness" className="grid min-w-0 scroll-mt-24 grid-cols-1 gap-4">
         <AccountingReadinessChecklist data={data} locale={locale} />
         <SetupLockControl data={data} locale={locale} onLock={() => lockMutation.mutate()} isLocking={lockMutation.isPending} />
+      </section>
+
+      <div className="grid min-w-0 grid-cols-1 gap-5">
+        <section id="accounting-mappings" className="min-w-0 scroll-mt-24">
+          <AccountMappingsPanel data={data} locale={locale} />
+        </section>
+        <section id="accounting-journals" className="min-w-0 scroll-mt-24">
+          <DefaultJournalsPanel data={data} locale={locale} />
+        </section>
       </div>
 
-      <ControlPlaneStatusPanel data={data} locale={locale} />
+      <section id="accounting-rules" className="min-w-0 scroll-mt-24">
+        <PostingRulesStatusTable data={data} locale={locale} />
+      </section>
 
-      <BusinessEventOutboxPanel data={data} locale={locale} />
-
-      <div className="grid min-w-0 gap-5 xl:grid-cols-2">
-        <AccountMappingsPanel data={data} locale={locale} />
-        <DefaultJournalsPanel data={data} locale={locale} />
-      </div>
-
-      <PostingRulesStatusTable data={data} locale={locale} />
+      <section id="accounting-events" className="min-w-0 scroll-mt-24 space-y-4">
+        <ControlPlaneStatusPanel data={data} locale={locale} />
+        <BusinessEventOutboxPanel data={data} locale={locale} />
+      </section>
     </div>
   )
 }
@@ -617,70 +635,86 @@ export function ControlPlaneStatusPanel({
         </div>
       }
     >
-      {data.controlEvents.latest.length === 0 ? (
-        <div className="p-5 text-sm text-[var(--dash-text-soft)]">{t.noEvents}</div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="dashboard-table-base w-full min-w-[840px] text-sm">
-            <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-              <tr>
-                <th className="px-4 py-3">{t.source}</th>
-                <th className="px-4 py-3">{t.status}</th>
-                <th className="px-4 py-3">{t.detail}</th>
-                <th className="px-4 py-3">{t.resource}</th>
-                <th className="px-4 py-3">{t.actor}</th>
-                <th className="px-4 py-3">{t.time}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.controlEvents.latest.map((event) => (
-                <tr key={`${event.source}-${event.id}`} className="border-b border-[var(--dash-border-subtle)] align-top">
-                  <td className="px-4 py-3">
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "rounded-md",
-                        event.source === "ledger"
-                          ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]"
-                          : "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
-                      )}
-                    >
-                      {event.source}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "rounded-md",
-                        event.status === "denied"
-                          ? statusClass("blocked")
-                          : event.status === "allowed"
-                            ? statusClass("ok")
-                            : statusClass("warning"),
-                      )}
-                    >
-                      {event.status}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-[var(--dash-text)]">{event.action}</p>
-                    <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">
-                      {event.message || event.reasonCode || event.riskTier || "-"}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3 text-[var(--dash-text-soft)]">
-                    {event.resourceType}
-                    <span className="block max-w-[12rem] truncate text-xs text-[var(--dash-text-faint)]">{event.resourceId || "-"}</span>
-                  </td>
-                  <td className="px-4 py-3 max-w-[12rem] truncate text-[var(--dash-text-soft)]">{event.actorId || "-"}</td>
-                  <td className="px-4 py-3 text-xs leading-5 text-[var(--dash-text-soft)]">{formatDate(event.createdAt, locale)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <AccountingDataTable
+        caption={t.controlPlaneTitle}
+        locale={locale === "fr" ? "fr" : "en"}
+        emptyMessage={t.noEvents}
+        columns={[
+          { label: t.source },
+          { label: t.status },
+          { label: t.detail },
+          { label: t.resource },
+          { label: t.actor },
+          { label: t.time },
+        ]}
+        rows={data.controlEvents.latest.map((event) => {
+          return {
+            id: `${event.source}-${event.id}`,
+            searchText: [
+              event.source,
+              event.status,
+              event.action,
+              event.message,
+              event.reasonCode,
+              event.riskTier,
+              event.resourceType,
+              event.resourceId,
+              event.actorId,
+              formatDate(event.createdAt, locale),
+            ]
+              .filter((value) => value !== null && value !== undefined)
+              .join(" "),
+            cells: [
+              <div key="cell-0">
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "rounded-md",
+                    event.source === "ledger"
+                      ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]"
+                      : "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
+                  )}
+                >
+                  {event.source}
+                </Badge>
+              </div>,
+              <div key="cell-1">
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "rounded-md",
+                    event.status === "denied"
+                      ? statusClass("blocked")
+                      : event.status === "allowed"
+                        ? statusClass("ok")
+                        : statusClass("warning"),
+                  )}
+                >
+                  {event.status}
+                </Badge>
+              </div>,
+              <div key="cell-2">
+                <p className="font-medium text-[var(--dash-text)]">{event.action}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">
+                  {event.message || event.reasonCode || event.riskTier || "-"}
+                </p>
+              </div>,
+              <div key="cell-3" className="text-[var(--dash-text-soft)]">
+                {event.resourceType}
+                <span className="block max-w-[12rem] truncate text-xs text-[var(--dash-text-faint)]">
+                  {event.resourceId || "-"}
+                </span>
+              </div>,
+              <div key="cell-4" className="max-w-[12rem] truncate text-[var(--dash-text-soft)]">
+                {event.actorId || "-"}
+              </div>,
+              <div key="cell-5" className="text-xs leading-5 text-[var(--dash-text-soft)]">
+                {formatDate(event.createdAt, locale)}
+              </div>,
+            ],
+          }
+        })}
+      />
     </Panel>
   )
 }
@@ -885,52 +919,77 @@ export function AccountMappingsPanel({
   return (
     <Panel title={t.mappingsTitle} description={t.mappingsDescription}>
       <div className="overflow-x-auto">
-        <table className="dashboard-table-base w-full min-w-[780px] text-sm">
-          <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-            <tr>
-              <th className="px-4 py-3">{t.required}</th>
-              <th className="px-4 py-3">{t.account}</th>
-              <th className="px-4 py-3">{t.type}</th>
-              <th className="px-4 py-3">{t.syscohada}</th>
-              <th className="px-4 py-3">{t.status}</th>
-              <th className="px-4 py-3">{t.detail}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.accountMappings.map((row) => (
-              <tr key={row.key} className="border-b border-[var(--dash-border-subtle)] align-top">
-                <td className="px-4 py-3">
+        <AccountingDataTable
+          caption={t.mappingsTitle}
+          locale={locale === "fr" ? "fr" : "en"}
+          columns={[
+            { label: t.required },
+            { label: t.account },
+            { label: t.type },
+            { label: t.syscohada },
+            { label: t.status },
+            { label: t.detail },
+          ]}
+          rows={data.accountMappings.map((row) => {
+            return {
+              id: row.key,
+              searchText: [
+                row.key,
+                row.labelEn,
+                row.labelFr,
+                row.code,
+                row.nameEn,
+                row.nameFr,
+                row.requiredType,
+                row.requiredNormalBalance,
+                row.syscohadaClass,
+                row.requiredSyscohadaClass,
+                row.syscohadaReference,
+                statusLabel(row.status, locale),
+                row.blockerCategories.join(" "),
+                row.blockers.map((item) => pick(locale, item.messageEn, item.messageFr)).join(" "),
+              ]
+                .filter((value) => value !== null && value !== undefined)
+                .join(" "),
+              cells: [
+                <div key="cell-0">
                   <p className="font-medium text-[var(--dash-text)]">{row.key}</p>
-                  <p className="mt-1 text-xs text-[var(--dash-text-faint)]">{pick(locale, row.labelEn, row.labelFr)}</p>
-                </td>
-                <td className="px-4 py-3">
+                  <p className="mt-1 text-xs text-[var(--dash-text-faint)]">
+                    {pick(locale, row.labelEn, row.labelFr)}
+                  </p>
+                </div>,
+                <div key="cell-1">
                   <p className="font-medium text-[var(--dash-text)]">{row.code || "-"}</p>
-                  <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{pick(locale, row.nameEn, row.nameFr) || "-"}</p>
-                </td>
-                <td className="px-4 py-3 text-[var(--dash-text-soft)]">
+                  <p className="mt-1 text-xs text-[var(--dash-text-soft)]">
+                    {pick(locale, row.nameEn, row.nameFr) || "-"}
+                  </p>
+                </div>,
+                <div key="cell-2" className="text-[var(--dash-text-soft)]">
                   {row.requiredType} / {row.requiredNormalBalance}
-                </td>
-                <td className="px-4 py-3 text-[var(--dash-text-soft)]">
+                </div>,
+                <div key="cell-3" className="text-[var(--dash-text-soft)]">
                   {row.syscohadaClass || row.requiredSyscohadaClass}
-                  <span className="block text-xs text-[var(--dash-text-faint)]">{row.syscohadaReference || t.notSet}</span>
-                </td>
-                <td className="px-4 py-3">
+                  <span className="block text-xs text-[var(--dash-text-faint)]">
+                    {row.syscohadaReference || t.notSet}
+                  </span>
+                </div>,
+                <div key="cell-4">
                   <Badge variant="outline" className={cn("rounded-md", statusClass(row.status))}>
                     {statusLabel(row.status, locale)}
                   </Badge>
-                </td>
-                <td className="px-4 py-3">
+                </div>,
+                <div key="cell-5">
                   <CategoryPills categories={row.blockerCategories} locale={locale} />
                   {row.blockers.length ? (
                     <p className="mt-2 text-xs leading-5 text-[var(--dash-text-soft)]">
                       {row.blockers.map((item) => pick(locale, item.messageEn, item.messageFr)).join("; ")}
                     </p>
                   ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>,
+              ],
+            }
+          })}
+        />
       </div>
     </Panel>
   )
@@ -948,39 +1007,57 @@ export function DefaultJournalsPanel({
   return (
     <Panel title={t.journalsTitle} description={t.journalsDescription}>
       <div className="overflow-x-auto">
-        <table className="dashboard-table-base w-full min-w-[620px] text-sm">
-          <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-            <tr>
-              <th className="px-4 py-3">{t.type}</th>
-              <th className="px-4 py-3">{t.journal}</th>
-              <th className="px-4 py-3">{t.manual}</th>
-              <th className="px-4 py-3">{t.status}</th>
-              <th className="px-4 py-3">{t.detail}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.defaultJournals.map((row) => (
-              <tr key={row.type} className="border-b border-[var(--dash-border-subtle)] align-top">
-                <td className="px-4 py-3 font-medium text-[var(--dash-text)]">{row.type}</td>
-                <td className="px-4 py-3">
+        <AccountingDataTable
+          caption={t.journalsTitle}
+          locale={locale === "fr" ? "fr" : "en"}
+          columns={[
+            { label: t.type },
+            { label: t.journal },
+            { label: t.manual },
+            { label: t.status },
+            { label: t.detail },
+          ]}
+          rows={data.defaultJournals.map((row) => {
+            return {
+              id: row.type,
+              searchText: [
+                row.type,
+                row.code,
+                row.nameEn,
+                row.nameFr,
+                row.allowManualEntries === null ? "-" : row.allowManualEntries ? t.yes : t.no,
+                statusLabel(row.status, locale),
+                row.blockers.map((item) => pick(locale, item.messageEn, item.messageFr)).join(" "),
+              ]
+                .filter((value) => value !== null && value !== undefined)
+                .join(" "),
+              cells: [
+                <div key="cell-0" className="font-medium text-[var(--dash-text)]">
+                  {row.type}
+                </div>,
+                <div key="cell-1">
                   <p className="font-medium text-[var(--dash-text)]">{row.code || "-"}</p>
-                  <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{pick(locale, row.nameEn, row.nameFr) || "-"}</p>
-                </td>
-                <td className="px-4 py-3 text-[var(--dash-text-soft)]">{row.allowManualEntries === null ? "-" : row.allowManualEntries ? t.yes : t.no}</td>
-                <td className="px-4 py-3">
+                  <p className="mt-1 text-xs text-[var(--dash-text-soft)]">
+                    {pick(locale, row.nameEn, row.nameFr) || "-"}
+                  </p>
+                </div>,
+                <div key="cell-2" className="text-[var(--dash-text-soft)]">
+                  {row.allowManualEntries === null ? "-" : row.allowManualEntries ? t.yes : t.no}
+                </div>,
+                <div key="cell-3">
                   <Badge variant="outline" className={cn("rounded-md", statusClass(row.status))}>
                     {statusLabel(row.status, locale)}
                   </Badge>
-                </td>
-                <td className="px-4 py-3 text-xs leading-5 text-[var(--dash-text-soft)]">
+                </div>,
+                <div key="cell-4" className="text-xs leading-5 text-[var(--dash-text-soft)]">
                   {row.blockers.length
                     ? row.blockers.map((item) => pick(locale, item.messageEn, item.messageFr)).join("; ")
                     : t.ok}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>,
+              ],
+            }
+          })}
+        />
       </div>
     </Panel>
   )
@@ -998,61 +1075,80 @@ export function PostingRulesStatusTable({
   return (
     <Panel title={t.rulesTitle} description={t.rulesDescription}>
       <div className="overflow-x-auto">
-        <table className="dashboard-table-base w-full min-w-[940px] text-sm">
-          <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-            <tr>
-              <th className="px-4 py-3">{t.purpose}</th>
-              <th className="px-4 py-3">{t.source}</th>
-              <th className="px-4 py-3">{t.rule}</th>
-              <th className="px-4 py-3">{t.lines}</th>
-              <th className="px-4 py-3">{t.effective}</th>
-              <th className="px-4 py-3">{t.status}</th>
-              <th className="px-4 py-3">{t.detail}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.postingRules.map((row) => (
-              <tr key={row.postingPurpose} className="border-b border-[var(--dash-border-subtle)] align-top">
-                <td className="px-4 py-3">
+        <AccountingDataTable
+          caption={t.rulesTitle}
+          locale={locale === "fr" ? "fr" : "en"}
+          emptyMessage={t.emptyRows}
+          columns={[
+            { label: t.purpose },
+            { label: t.source },
+            { label: t.rule },
+            { label: t.lines },
+            { label: t.effective },
+            { label: t.status },
+            { label: t.detail },
+          ]}
+          rows={data.postingRules.map((row) => {
+            return {
+              id: row.postingPurpose,
+              searchText: [
+                row.postingPurpose,
+                row.defaultCode,
+                row.sourceType,
+                row.expectedSourceType,
+                row.code,
+                row.nameEn,
+                row.nameFr,
+                row.lineCount,
+                row.debitLineCount,
+                row.creditLineCount,
+                row.effectiveFrom,
+                row.effectiveTo,
+                statusLabel(row.status, locale),
+                row.blockers.map((item) => pick(locale, item.messageEn, item.messageFr)).join(" "),
+              ]
+                .filter((value) => value !== null && value !== undefined)
+                .join(" "),
+              cells: [
+                <div key="cell-0">
                   <p className="font-medium text-[var(--dash-text)]">{row.postingPurpose}</p>
                   <p className="mt-1 text-xs text-[var(--dash-text-faint)]">{row.defaultCode || "-"}</p>
-                </td>
-                <td className="px-4 py-3 text-[var(--dash-text-soft)]">{row.sourceType || row.expectedSourceType || "-"}</td>
-                <td className="px-4 py-3">
+                </div>,
+                <div key="cell-1" className="text-[var(--dash-text-soft)]">
+                  {row.sourceType || row.expectedSourceType || "-"}
+                </div>,
+                <div key="cell-2">
                   <p className="font-medium text-[var(--dash-text)]">{row.code || "-"}</p>
-                  <p className="mt-1 text-xs text-[var(--dash-text-soft)]">{pick(locale, row.nameEn, row.nameFr) || "-"}</p>
-                </td>
-                <td className="px-4 py-3 text-[var(--dash-text-soft)]">
+                  <p className="mt-1 text-xs text-[var(--dash-text-soft)]">
+                    {pick(locale, row.nameEn, row.nameFr) || "-"}
+                  </p>
+                </div>,
+                <div key="cell-3" className="text-[var(--dash-text-soft)]">
                   {row.lineCount}
                   <span className="block text-xs text-[var(--dash-text-faint)]">
                     D {row.debitLineCount} / C {row.creditLineCount}
                   </span>
-                </td>
-                <td className="px-4 py-3 text-xs leading-5 text-[var(--dash-text-soft)]">
+                </div>,
+                <div key="cell-4" className="text-xs leading-5 text-[var(--dash-text-soft)]">
                   {row.effectiveFrom ? formatDateOnly(row.effectiveFrom, locale) : t.notSet}
-                  <span className="block">{row.effectiveTo ? formatDateOnly(row.effectiveTo, locale) : t.notSet}</span>
-                </td>
-                <td className="px-4 py-3">
+                  <span className="block">
+                    {row.effectiveTo ? formatDateOnly(row.effectiveTo, locale) : t.notSet}
+                  </span>
+                </div>,
+                <div key="cell-5">
                   <Badge variant="outline" className={cn("rounded-md", statusClass(row.status))}>
                     {statusLabel(row.status, locale)}
                   </Badge>
-                </td>
-                <td className="px-4 py-3 text-xs leading-5 text-[var(--dash-text-soft)]">
+                </div>,
+                <div key="cell-6" className="text-xs leading-5 text-[var(--dash-text-soft)]">
                   {row.blockers.length
                     ? row.blockers.map((item) => pick(locale, item.messageEn, item.messageFr)).join("; ")
                     : t.ok}
-                </td>
-              </tr>
-            ))}
-            {data.postingRules.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-[var(--dash-text-soft)]">
-                  {t.emptyRows}
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
+                </div>,
+              ],
+            }
+          })}
+        />
       </div>
     </Panel>
   )

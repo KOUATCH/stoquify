@@ -199,9 +199,10 @@ function dateTime(value: string, locale: Locale) {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return "-"
   return new Intl.DateTimeFormat(locale === "fr" ? "fr-FR" : "en-US", {
+    timeZone: "UTC",
     dateStyle: "medium",
     timeStyle: "short",
-  }).format(date)
+  }).format(date) + " UTC"
 }
 
 const statusLabels: Record<Locale, Record<string, string>> = {
@@ -211,7 +212,7 @@ const statusLabels: Record<Locale, Record<string, string>> = {
     PAYMENT_PENDING: "Payment pending", AWAITING_STATEMENT_MATCH: "Awaiting statement match",
     NOT_CONFIGURED: "Not configured", BLOCKED_PENDING_RULES: "Blocked pending rules", FAILED: "Failed",
     LEDGER_BLOCKED: "Ledger blocked", UNRESOLVED: "Unresolved", MISSING_COUNTRY: "Country missing",
-    NOT_POSTED: "Not posted", UNKNOWN: "Unknown", DRAFT: "Draft", MATCHED: "Matched", PAID: "Paid",
+    NOT_POSTED: "Not posted", UNKNOWN: "Unknown", DRAFT: "Draft", MATCHED: "Matched", PAID: "Covered by payments/credits",
     RELEASED: "Released", RECONCILED: "Reconciled", SETTLED: "Settled", COMPLETED: "Completed",
     CANCELLED: "Cancelled", EXCEPTION: "Exception", PARTIAL: "Partial",
   },
@@ -221,7 +222,7 @@ const statusLabels: Record<Locale, Record<string, string>> = {
     PAYMENT_PENDING: "Paiement en attente", AWAITING_STATEMENT_MATCH: "Rapprochement relevé en attente",
     NOT_CONFIGURED: "Non configuré", BLOCKED_PENDING_RULES: "Bloqué par les règles", FAILED: "Échec",
     LEDGER_BLOCKED: "Comptabilité bloquée", UNRESOLVED: "Non résolu", MISSING_COUNTRY: "Pays manquant",
-    NOT_POSTED: "Non comptabilisé", UNKNOWN: "Inconnu", DRAFT: "Brouillon", MATCHED: "Rapproché", PAID: "Payé",
+    NOT_POSTED: "Non comptabilisé", UNKNOWN: "Inconnu", DRAFT: "Brouillon", MATCHED: "Rapproché", PAID: "Couverte par paiements/avoirs",
     RELEASED: "Libéré", RECONCILED: "Rapproché", SETTLED: "Réglé", COMPLETED: "Terminé",
     CANCELLED: "Annulé", EXCEPTION: "Exception", PARTIAL: "Partiel",
   },

@@ -1,0 +1,59 @@
+{
+  "capturedAt": "2026-09-05T17:14:38.960Z",
+  "source": [
+    {
+      "path": "services/users/user-identity.service.ts",
+      "sha256": "96457d81c9c80d533b73f586ff2ca56baabf5f756acc505f607b7283ec4ebbc2"
+    },
+    {
+      "path": "services/users/__tests__/user-identity.service.test.ts",
+      "sha256": "fd9c04add6374c9b95b4e594ae4a736672cf879bfaf296236e64e5d63457a09e"
+    },
+    {
+      "path": "lib/token.ts",
+      "sha256": "d3dc419de967193c5b2c24f2a73d0c2f1aad93e16b04ad121766a7437904835a"
+    },
+    {
+      "path": "lib/generateOtp.ts",
+      "sha256": "bf146775ae9ab472d68e3bd9dd547bd4c3065366c423ab55b469ee1509cf80da"
+    },
+    {
+      "path": "lib/__tests__/identity-token-generation.test.ts",
+      "sha256": "1995fda01dddd53162fca3093a216ee51d1da8b7625e7fe3b076560f9b96d459"
+    }
+  ],
+  "jest": {
+    "artifact": "evidence/identity-controls-after.json",
+    "exitCode": 0,
+    "suites": 4,
+    "passed": 39,
+    "failed": 0,
+    "elapsedSeconds": 5.312,
+    "executionSession": 9963
+  },
+  "lint": {
+    "command": "node node_modules/eslint/bin/eslint.js services/users/user-identity.service.ts services/users/__tests__/user-identity.service.test.ts lib/token.ts lib/generateOtp.ts lib/__tests__/identity-token-generation.test.ts",
+    "exitCode": 0,
+    "elapsedSeconds": 8.839,
+    "observedToolChunk": "8b47fe",
+    "output": "No diagnostics"
+  },
+  "boundary": "Unit/action checks use mocked database, email and security collaborators. They do not prove real PostgreSQL concurrency, provider delivery, complete browser journeys or certification.",
+  "changes": [
+    "Atomic reset-token consumption inside credential transaction",
+    "OTP format/expiry and conditional consumption",
+    "Cryptographic random token/code generation with no insecure fallback",
+    "Lazy mail-client initialization and explicit provider rejection handling"
+  ],
+  "remaining": [
+    "Real database concurrency/rollback and session revocation",
+    "Honest registration delivery state and working resend",
+    "Durable invitation delivery/recovery",
+    "Current role/expiry concurrency during invitation redemption",
+    "Complete EN/FR browser journeys"
+  ],
+  "primaryReferences": [
+    "https://nodejs.org/api/crypto.html#cryptorandomintmin-max-callback",
+    "https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "certificate": {
+    "mode": "DURABLE_EVIDENCE_KERNEL",
+    "runId": "cmtu2mob2003tmaush5vorbs2",
+    "totals": {
+      "matchCount": 1,
+      "matchedAmount": "100.25",
+      "exceptionCount": 0,
+      "externalAmount": "100.25",
+      "internalAmount": "100.25",
+      "suspenseAmount": "0.00"
+    },
+    "version": 2,
+    "controls": {
+      "freshAuthEnforced": true,
+      "periodOpenVerified": true,
+      "makerCheckerEnforced": true,
+      "sourceVersionGuardEnforced": true,
+      "suspensePostingGatewayOnly": true,
+      "providerAccountReadyVerified": true,
+      "conditionalTerminalTransition": true
+    },
+    "evidence": {
+      "sourceHash": "aa18f0b327489956229670e1e13f24218e96c68b01613d335631a41ae896d293",
+      "sourceCounts": {
+        "suspenseCount": 0,
+        "exceptionCount": 0,
+        "matchRecordCount": 1,
+        "providerEventCount": 1,
+        "statementFileCount": 0,
+        "statementLineCount": 0,
+        "paymentTransactionCount": 1
+      },
+      "openSuspenseCount": 0,
+      "openExceptionCount": 0,
+      "providerEventCount": 1,
+      "statementLineCount": 0,
+      "sourceManifestVersion": 1
+    },
+    "signedAt": "2026-09-09T12:25:00.321Z",
+    "periodEnd": "2026-08-02T00:00:00.000Z",
+    "signedById": "cmtu2mnxw002amaus1zp1b4su",
+    "periodStart": "2026-08-01T00:00:00.000Z",
+    "businessDate": "2026-08-01T00:00:00.000Z",
+    "providerCode": "OWNED-CERTIFICATE",
+    "correlationId": "5c9181c1-aab4-4b72-8cca-17b4ea370fe8",
+    "paymentRailId": "cmtu2mnyo002kmausd9tbwksi",
+    "organizationId": "workflow_supplier_ack_en_certificate-history-browser-v101-8ec8cc0a-874-en",
+    "providerAccountId": "cmtu2mnyu002mmausuxyedg1s",
+    "sourceVersionHash": "sha256:cd5d02baaaacba9853ff77cb4f99a296ea8bd43979335f57b6a6639f9765ddfc",
+    "accountingPeriodId": "cmtu2mn7o000pmausytpo4cdn"
+  },
+  "export": {
+    "exportedAt": "2026-09-09T12:25:02.462Z",
+    "exportedById": "cmtu2mmyu0001maus63xmxfm2",
+    "correlationId": "a1c558b8-4f48-4842-8970-a9536a2d6fa8",
+    "watermarkId": "recon-cert-cmtu2mob2003tmaush5vorbs2-21af0f712c1a",
+    "rowCount": 1,
+    "receiptId": "5ebdf10d-8fb1-4ce1-be97-e613c4ac201d",
+    "purpose": "Retained application reconciliation certificate; export does not issue a new approval or independent signer certificate",
+    "redaction": "raw provider payloads and secrets excluded"
+  }
+}

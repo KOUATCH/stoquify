@@ -1,0 +1,9 @@
+Scope: app, actions, services, components, hooks, lib, config, package.json; code extensions ts, tsx, js, json; excluding graphs and test fixtures.
+Provider searches: OpenAI, Anthropic, AI SDK, generative AI SDKs, chat/completions, responses.create, generateText, streamText, Ollama, Mistral and LLM. No executable provider/model inference path found.
+Broad discovery also searched forecast, predict, recommend, suggest, insight, intelligence, assistant, OCR and anomaly. Domain analytics, fixed business signals and event idempotency checks were examined separately.
+Command production caller: command-agent.actions.ts; one fixed readRoleDailyDigest tool invocation. Eight other MVP tool entries are registry metadata, not eight dispatched Command capabilities.
+Connector inventory caller search: no application caller for getConnectorInventoryReadModel found. Connector health is called by that inventory read model.
+proposalDraftsEnabled: optional prop, defaults false; only dashboard caller omits it.
+AgentCostLedger production writer search: none found; fixture/smoke writers exist in scripts.
+evaluateAgentFreshness: definition and test references only in services/agents search.
+Reports are static/repository evidence; no deployed target, database usage sample or actual customer productivity results were inspected.

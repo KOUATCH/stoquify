@@ -1,0 +1,102 @@
+{
+  "at": "2026-09-09T10:50:15.150Z",
+  "run": "5321b868-7f5",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "17bd5eaa6b0f89116fc519261f2b94c3ab02e88cc0d247a1fc54de1dcb9b8468",
+    "components/finance/PaymentSuspenseQueue.tsx": "b9cb7afd9114455fed8dad8d7c24ce3db9dcba5425803097a465b551b73390bb",
+    "hooks/payments/correction-export-download.ts": "169dbdac44a6f45e2c5791c570e315828036da3d2ecdea412a9e28bb1fa5ba1b",
+    "services/reconciliation/payment-suspense-correction-export.service.ts": "e1b348c4134c2cf9f39361a8c97cd3ee7ade61edd0c6c59c8abe1570c155e9c3",
+    "services/reconciliation/payment-suspense-correction-record.ts": "33f0bf41936af45123921d1097fe38d82b4fc3f8f620f12db8916140ad614acc",
+    "services/reconciliation/payment-suspense-correction.service.ts": "1d71db7a73885a2751f3977743e65e5bce59a05bcd27b56fe0e0e61a4a2b9e41",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "ac0fd1f2bef44c07835c7047f456bafaf7b9636d15b70696b09b031f2f5176ff",
+    "actions/payments/reconciliation.actions.ts": "0d9787cce983bed5168f18d5d075808ca1445d1906d798c78be652c09fdf0fd2",
+    "messages/en.json": "7cf3de5c047ea81c325f8f0c5bff8d39adef24948585cd1a9945e9c02ecd367f",
+    "messages/fr.json": "bba51df8b5d528935afdd83ad9358a934d271a1afea030d5552126a01a684efa"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Export requires real fresh authentication; password step-up does not automatically issue or download evidence",
+        "Lost committed response survives reload; exact retry downloads the same retained UTF-8 bytes and one issued receipt",
+        "EN/FR evidence controls support keyboard download, 320/390/768 widths and 200 percent text reflow"
+      ],
+      "screenshots": [
+        "suspense-export-v99-en-fresh-auth-5321b868-7f5.png",
+        "suspense-export-v99-en-lost-response-5321b868-7f5.png",
+        "suspense-export-v99-en-download-desktop-5321b868-7f5.png",
+        "suspense-export-v99-en-history-320-5321b868-7f5.png",
+        "suspense-export-v99-en-history-390-5321b868-7f5.png",
+        "suspense-export-v99-en-history-768-5321b868-7f5.png",
+        "suspense-export-v99-en-history-text200-5321b868-7f5.png",
+        "suspense-export-v99-en-failure-5321b868-7f5.png"
+      ],
+      "downloads": [
+        {
+          "filename": "suspense-export-v99-en-recovered-5321b868-7f5.json",
+          "receiptId": "c6c74824-777a-4835-8b7c-84101df6e429",
+          "sha256": "89f1392287442b5ef93c1040563b480c6498051d7eb6daa4415ce7c728079c35"
+        },
+        {
+          "filename": "suspense-export-v99-en-keyboard-5321b868-7f5.json",
+          "receiptId": "0654c0cf-9f41-4719-8f2b-96b58d418b32",
+          "sha256": "eba96c01bc4245509b8b68ec746a8d439c98c28f49c9fdd8e96e20a55e07073d"
+        }
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "loadMs": 27073,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('button', { name: 'Correction and history', exact: true }).first()\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Correction and history', exact: true }).first()\n    119 × locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">Correction and history</button>\n        - unexpected value \"inactive\"\n"
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Export requires real fresh authentication; password step-up does not automatically issue or download evidence",
+        "Lost committed response survives reload; exact retry downloads the same retained UTF-8 bytes and one issued receipt",
+        "EN/FR evidence controls support keyboard download, 320/390/768 widths and 200 percent text reflow"
+      ],
+      "screenshots": [
+        "suspense-export-v99-fr-fresh-auth-5321b868-7f5.png",
+        "suspense-export-v99-fr-lost-response-5321b868-7f5.png",
+        "suspense-export-v99-fr-download-desktop-5321b868-7f5.png",
+        "suspense-export-v99-fr-history-320-5321b868-7f5.png",
+        "suspense-export-v99-fr-history-390-5321b868-7f5.png",
+        "suspense-export-v99-fr-history-768-5321b868-7f5.png",
+        "suspense-export-v99-fr-history-text200-5321b868-7f5.png",
+        "suspense-export-v99-fr-failure-5321b868-7f5.png"
+      ],
+      "downloads": [
+        {
+          "filename": "suspense-export-v99-fr-recovered-5321b868-7f5.json",
+          "receiptId": "63a5b782-517e-4097-bc9a-a75f087b3289",
+          "sha256": "903ce3a1bb688b22a9f45537a807e35fee5e5669a271fce18f742593f3445ad5"
+        },
+        {
+          "filename": "suspense-export-v99-fr-keyboard-5321b868-7f5.json",
+          "receiptId": "b0067a7e-5c7e-431b-b27a-91f14b172ebd",
+          "sha256": "275bd4a326789d1c4dbc3d4b1b40f2265d85ba230c748878852e357d666eb04a"
+        }
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "loadMs": 16042,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('button', { name: 'Correction et historique', exact: true }).first()\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Correction et historique', exact: true }).first()\n    120 × locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">Correction et historique</button>\n        - unexpected value \"inactive\"\n"
+    }
+  ],
+  "scope": "Owned loopback application, normal password sessions, real correction export actions and downloaded file bytes. Synthetic initial correction setup, no external effects.",
+  "originalBefore": "886a9c6b439bf68d8db16540a22a1cd19cdb63fef5e245cecd1189d54c0dfec2",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "17bd5eaa6b0f89116fc519261f2b94c3ab02e88cc0d247a1fc54de1dcb9b8468",
+    "components/finance/PaymentSuspenseQueue.tsx": "b9cb7afd9114455fed8dad8d7c24ce3db9dcba5425803097a465b551b73390bb",
+    "hooks/payments/correction-export-download.ts": "169dbdac44a6f45e2c5791c570e315828036da3d2ecdea412a9e28bb1fa5ba1b",
+    "services/reconciliation/payment-suspense-correction-export.service.ts": "e1b348c4134c2cf9f39361a8c97cd3ee7ade61edd0c6c59c8abe1570c155e9c3",
+    "services/reconciliation/payment-suspense-correction-record.ts": "33f0bf41936af45123921d1097fe38d82b4fc3f8f620f12db8916140ad614acc",
+    "services/reconciliation/payment-suspense-correction.service.ts": "1d71db7a73885a2751f3977743e65e5bce59a05bcd27b56fe0e0e61a4a2b9e41",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "ac0fd1f2bef44c07835c7047f456bafaf7b9636d15b70696b09b031f2f5176ff",
+    "actions/payments/reconciliation.actions.ts": "0d9787cce983bed5168f18d5d075808ca1445d1906d798c78be652c09fdf0fd2",
+    "messages/en.json": "7cf3de5c047ea81c325f8f0c5bff8d39adef24948585cd1a9945e9c02ecd367f",
+    "messages/fr.json": "bba51df8b5d528935afdd83ad9358a934d271a1afea030d5552126a01a684efa"
+  },
+  "sourceStable": true
+}

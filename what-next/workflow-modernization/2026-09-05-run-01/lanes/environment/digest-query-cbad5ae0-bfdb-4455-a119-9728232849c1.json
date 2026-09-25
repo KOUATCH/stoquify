@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-19T11:47:48.644Z",
+  "sourceBefore": {
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "a9357ca90715ace608cdfaebff2ba6e329486728a17944df9b15be14348ba784",
+    "components/bi/BIEvidenceBadgeRow.tsx": "11c8b2b2f03b8d50e8ac13a6875b7444abe5f398b6035f6471f610defee3cb0b",
+    "lib/dashboard/bi-presentation.ts": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "033f0f8f6a3eeb0340df615b504ed275e4ffe085e9218c240ba5579960f628cf",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "prisma/db.ts": "084bd6d526604205122db857e7c1c96478aa93b3e07a17962b419e88cd788a61",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/digest-query-fault-preload.cjs": "d8c440237fe02d36047db9e1e5388b91f6538520ffea3075413edc10c4c6198a"
+  },
+  "browser": [],
+  "serverPid": 26600,
+  "serverDiagnostics": "node:internal/modules/cjs/loader:1520\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module 'E:/ohada saas/Focused projects/stoquify/what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-network-fence.cjs E:/ohada saas/Focused projects/stoquify/what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/digest-query-fault-preload.cjs'\r\nRequire stack:\r\n- internal/preload\r\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1294:5)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\r\n    at node:internal/modules/cjs/loader:2164:12\r\n    at loadPreloadModules (node:internal/process/pre_execution:710:5)\r\n    at initializeModuleLoaders (node:internal/process/pre_execution:243:5) {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: [ 'internal/preload' ]\r\n}\r\n\r\nNode.js v24.19.0\r\n",
+  "passed": false,
+  "error": "Expected values to be strictly equal:\n\n500 !== 200\n",
+  "testServerStopped": true,
+  "sourceAfter": {
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "a9357ca90715ace608cdfaebff2ba6e329486728a17944df9b15be14348ba784",
+    "components/bi/BIEvidenceBadgeRow.tsx": "11c8b2b2f03b8d50e8ac13a6875b7444abe5f398b6035f6471f610defee3cb0b",
+    "lib/dashboard/bi-presentation.ts": "2f2c1a8b8c5811c1d3d4f68608e5dc13da94d2ea1be8a2018c4626a3b85a912a",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "033f0f8f6a3eeb0340df615b504ed275e4ffe085e9218c240ba5579960f628cf",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "prisma/db.ts": "084bd6d526604205122db857e7c1c96478aa93b3e07a17962b419e88cd788a61",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/digest-query-fault-preload.cjs": "d8c440237fe02d36047db9e1e5388b91f6538520ffea3075413edc10c4c6198a"
+  },
+  "sourceStable": true
+}

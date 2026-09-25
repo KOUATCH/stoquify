@@ -1,0 +1,100 @@
+{
+  "at": "2026-09-08T17:56:52.965Z",
+  "run": "230406e4-48a",
+  "scope": "Owned localhost fixture organizations, actual authenticated execution recorder and password assurance. Request/approval use actual services; bank destination and external execution evidence are synthetic setup fixtures. No external bank rail or live customer mutation.",
+  "sourcesBefore": {
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "55c74693947cac7dc7e3683c185fce01ed61fad50188b046cd396f397fa67fca",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-release-contracts.ts": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "12d71975bfdf0ffa811348930001accff117c06db7941ed237eb50f8fcb049af",
+    "actions/purchasing/payment-release.actions.ts": "fc88eaf0cecb36b1fe8ad7660b74065a0ec8c52b477d5263f4de1a0881a4e60e",
+    "actions/purchasing/ap-control.actions.ts": "46e6cdc26f3ad4f43c3e62a88b535ea71bef843a877f86841ad4f6a0ef08f3d1",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx": "bec844b1464db9fe8b6bfa83fbbbe7708d847b59511695af27da5c1ade5a6f12",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "d66268fce6c2c4d0660d9ea628c0da6874630eb8cbac75908f3a2b8909ca3815",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "73fac5a844b799dd62802501310be79dd81bae7ad24bc3ed9a0d4ea35b98ca76",
+    "i18n/request.ts": "c05310ca7f3be731b33477ff34aba2b049b986e531e4d45627dd9553f24eaf58",
+    "app/[locale]/layout.tsx": "8d69f9aeb68628a5dca069dbba29ff0cf7bda44a78c10622f3d2a0fdf19098dc",
+    "messages/payment-execution/en.json": "0e12e41879fbbd5696da2efd26a7b663e2fe7afb8194f81fe845afb5ddb7bbcc",
+    "messages/payment-execution/fr.json": "a8bef9ba63af78546481b14fbc965a797094fa06beead93c506450ca5692b906"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Real navigation, incomplete draft reload, local evidence hash, mobile reflow and dialog keyboard containment/return",
+        "Incorrect password and stale preview are denied without paid effects; execution draft retained",
+        "Committed response loss recovers after reload using one financial effect; failed posting and suspense shown separately",
+        "Durable execution history, tablet/text reflow and current-role direct-route denial"
+      ],
+      "screenshots": [
+        "payment-execution-en-evidence-desktop-230406e4-48a.png",
+        "payment-execution-en-evidence-mobile-230406e4-48a.png",
+        "payment-execution-en-review-mobile-230406e4-48a.png",
+        "payment-execution-en-stale-draft-230406e4-48a.png",
+        "payment-execution-en-recorded-mobile-230406e4-48a.png",
+        "payment-execution-en-recorded-tablet-230406e4-48a.png",
+        "payment-execution-en-recorded-text200-230406e4-48a.png",
+        "payment-execution-en-history-desktop-230406e4-48a.png",
+        "payment-execution-en-denied-230406e4-48a.png"
+      ],
+      "timings": [
+        {
+          "interaction": "AP navigation to selectable execution record (development server)",
+          "milliseconds": 120398
+        }
+      ],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Real navigation, incomplete draft reload, local evidence hash, mobile reflow and dialog keyboard containment/return",
+        "Incorrect password and stale preview are denied without paid effects; execution draft retained",
+        "Committed response loss recovers after reload using one financial effect; failed posting and suspense shown separately",
+        "Durable execution history, tablet/text reflow and current-role direct-route denial"
+      ],
+      "screenshots": [
+        "payment-execution-fr-evidence-desktop-230406e4-48a.png",
+        "payment-execution-fr-evidence-mobile-230406e4-48a.png",
+        "payment-execution-fr-review-mobile-230406e4-48a.png",
+        "payment-execution-fr-stale-draft-230406e4-48a.png",
+        "payment-execution-fr-recorded-mobile-230406e4-48a.png",
+        "payment-execution-fr-recorded-tablet-230406e4-48a.png",
+        "payment-execution-fr-recorded-text200-230406e4-48a.png",
+        "payment-execution-fr-history-desktop-230406e4-48a.png",
+        "payment-execution-fr-denied-230406e4-48a.png"
+      ],
+      "timings": [
+        {
+          "interaction": "AP navigation to selectable execution record (development server)",
+          "milliseconds": 14817
+        }
+      ],
+      "pageErrors": [],
+      "passed": true
+    }
+  ],
+  "originalBefore": "b81e498ce6ba1b6a4f46284e9bb015e47e47a08f05f7f8bb274632b036c92f42",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "55c74693947cac7dc7e3683c185fce01ed61fad50188b046cd396f397fa67fca",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-release-contracts.ts": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "12d71975bfdf0ffa811348930001accff117c06db7941ed237eb50f8fcb049af",
+    "actions/purchasing/payment-release.actions.ts": "fc88eaf0cecb36b1fe8ad7660b74065a0ec8c52b477d5263f4de1a0881a4e60e",
+    "actions/purchasing/ap-control.actions.ts": "46e6cdc26f3ad4f43c3e62a88b535ea71bef843a877f86841ad4f6a0ef08f3d1",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx": "bec844b1464db9fe8b6bfa83fbbbe7708d847b59511695af27da5c1ade5a6f12",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "d66268fce6c2c4d0660d9ea628c0da6874630eb8cbac75908f3a2b8909ca3815",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "73fac5a844b799dd62802501310be79dd81bae7ad24bc3ed9a0d4ea35b98ca76",
+    "i18n/request.ts": "c05310ca7f3be731b33477ff34aba2b049b986e531e4d45627dd9553f24eaf58",
+    "app/[locale]/layout.tsx": "8d69f9aeb68628a5dca069dbba29ff0cf7bda44a78c10622f3d2a0fdf19098dc",
+    "messages/payment-execution/en.json": "0e12e41879fbbd5696da2efd26a7b663e2fe7afb8194f81fe845afb5ddb7bbcc",
+    "messages/payment-execution/fr.json": "a8bef9ba63af78546481b14fbc965a797094fa06beead93c506450ca5692b906"
+  },
+  "sourceStable": true
+}

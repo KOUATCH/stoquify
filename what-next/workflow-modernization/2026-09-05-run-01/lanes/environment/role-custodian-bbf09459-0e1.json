@@ -1,0 +1,69 @@
+{
+  "run": "bbf09459-0e1",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T12:11:56.753Z",
+  "sourcesBefore": {
+    "services/roles/role-write.service.ts": "68092c89897f9fdcb4b47db27e4c913feacb36195aaa08cda364d721f7d4dee9",
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "last custodian cannot lose explicit member assignment",
+      "passed": true,
+      "rolesAndAuditsUnchanged": true,
+      "durationMs": 495
+    },
+    {
+      "name": "permission editor without member assignment is not a replacement custodian",
+      "passed": true,
+      "rolesAndAuditsUnchanged": true,
+      "durationMs": 340
+    },
+    {
+      "name": "qualified remaining administrator permits an authorized role change",
+      "passed": true,
+      "commits": 1,
+      "remainingAdministratorUnchanged": true,
+      "durationMs": 274
+    },
+    {
+      "name": "two simultaneous removals preserve one real custodian",
+      "passed": true,
+      "commits": 1,
+      "denials": 1,
+      "remainingCustodians": 1,
+      "durationMs": 288
+    },
+    {
+      "name": "an explicitly stored legacy custodian remains recognized",
+      "passed": true,
+      "explicitLegacyAuthorityPreserved": true,
+      "durationMs": 405
+    }
+  ],
+  "limitations": [
+    "Only new synthetic organizations are mutated; real password step-up is used, never seeded assurance.",
+    "This is a role-edit custodian guard. Member deactivation and role-assignment workflows remain uncorrected and must coordinate the same invariant.",
+    "No browser mutation, migration, production action, email or external call."
+  ],
+  "originalAuthorityBefore": "e17be3e763808f76a1e3f948e2dc4246fe900d1c0189c3b807b59256e82db7bf",
+  "originalAuthorityAfter": "e17be3e763808f76a1e3f948e2dc4246fe900d1c0189c3b807b59256e82db7bf",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T12:11:59.031Z",
+  "sourcesAfter": {
+    "services/roles/role-write.service.ts": "68092c89897f9fdcb4b47db27e4c913feacb36195aaa08cda364d721f7d4dee9",
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "8038122f80ae4fc9f29b00948212512c8a5c0b93a01ba1d6546c4510fd83fe1c",
+  "passed": 5,
+  "failed": 0
+}

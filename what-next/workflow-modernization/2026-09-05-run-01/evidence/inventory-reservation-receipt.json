@@ -1,0 +1,94 @@
+{
+  "recordedAt": "2026-09-05T19:33:48.098Z",
+  "before": {
+    "failed": 21,
+    "passed": 5,
+    "suites": 2,
+    "seconds": 36.982,
+    "exitCode": 1,
+    "toolSession": 54059,
+    "finalToolChunk": "49302f",
+    "report": null,
+    "limitation": "The npm.ps1 invocation did not forward the requested serial/JSON flags. Console proved these two suites and counts; no JSON baseline or serial execution is claimed. Production bytes are bound to source-baseline-v4, also unchanged throughout the preceding build."
+  },
+  "after": {
+    "failed": 0,
+    "passed": 69,
+    "suites": 5,
+    "success": true,
+    "report": "evidence/inventory-reservation-after.json",
+    "toolSession": 19987,
+    "finalToolChunk": "33d447",
+    "runner": "Bundled Node invokes node_modules/jest/bin/jest.js directly with --runInBand --runTestsByPath --json; 26 new regressions plus existing movement and entitlement suites."
+  },
+  "lint": {
+    "files": [
+      "actions/inventory/inventoryMovementActions.ts",
+      "actions/inventory/inventoryActions.ts",
+      "hooks/useInventoryMovementQueries.ts",
+      "actions/inventory/__tests__/inventoryReservationActions.test.ts",
+      "hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx"
+    ],
+    "exitCode": 0,
+    "toolSession": 71903,
+    "finalToolChunk": "33e351"
+  },
+  "productionBefore": [
+    {
+      "path": "actions/inventory/inventoryMovementActions.ts",
+      "sha256": "ec01770b4ed504ca2dea59e42a690b8f62afc2289a74678b0e1689388b0472a5"
+    },
+    {
+      "path": "actions/inventory/inventoryActions.ts",
+      "sha256": "54bc0175584abc16d8f1a6043d01f704687d42f6837b195174a9e379a9a1f53c"
+    },
+    {
+      "path": "hooks/useInventoryMovementQueries.ts",
+      "sha256": "bb4578b7fe2a47a93970331efda3844744e3c603149ac9167eaf5665d92a24c8"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "2b269dffd58334739079ee51718fef2bd7e534b5007b901964a318564f6acad5"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "6cf697b3943ba7f580d85a5aee5bdb7ef043dc06f54a015122fc304e11b6f40e"
+    }
+  ],
+  "sourcesAfter": [
+    {
+      "path": "actions/inventory/inventoryMovementActions.ts",
+      "sha256": "6d78a0c677f60e540c4b7f8e153fb74ec3c1046073fa2618a5a913408d8ef6d8"
+    },
+    {
+      "path": "actions/inventory/inventoryActions.ts",
+      "sha256": "dfa361c9d39b05ca852aaf279ca0425105c7dd67d2d7487009e252272b737a3b"
+    },
+    {
+      "path": "hooks/useInventoryMovementQueries.ts",
+      "sha256": "75fcde1c659991044b2bea59e91f2631ba99269abc745eb27015caac025190b1"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "1862877405f493c23c80959d7d9f7d639c0a1693293e743d847275597830aa14"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "d81c16d63b703646a4f980f1d46ff47f83e86e936aaf95f85db66bbe5f239703"
+    },
+    {
+      "path": "actions/inventory/__tests__/inventoryReservationActions.test.ts",
+      "sha256": "5b38e9218cafa8d3e2195fe7ef5039c37cc6f5b9b358bc0301d2093e547f67d4"
+    },
+    {
+      "path": "hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx",
+      "sha256": "96658e19511e9abf20a781ec41a5b79271f4602edf7019f8edf378aa48863f9d"
+    }
+  ],
+  "limits": [
+    "RBAC, module observer and stock collaborators are mocked at the action tests; shared module suites exercise current evaluator rules separately.",
+    "Real hook/mutation behavior is tested in EN/FR; the hook has no located production UI consumer and no browser journey is claimed.",
+    "Existing inventory request-boundary entitlement policy is reused. Reservation stop admission, release/expiry, partial batch effects, durable command idempotency and revocation during a stock transaction remain open.",
+    "No stock kernel, valuation, ledger owner, schema or rejected offline/POS candidate changed."
+  ]
+}

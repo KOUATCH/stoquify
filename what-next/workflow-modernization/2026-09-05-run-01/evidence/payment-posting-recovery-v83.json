@@ -1,0 +1,246 @@
+{
+  "at": "2026-09-08T18:53:51.405Z",
+  "sourceBaseline": "evidence/source-baseline-v83.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "components/purchasing/PaymentPostingRecoveryWorkbench.tsx": "a2d072489109d6ccc085667baf8c433e928abf3f56c23e66912f5206b699944a",
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "f36966f67dd179cbbd551e3f0882a8a7fbeb819268abc0e06fda9f35acc41950",
+    "services/purchasing/payment-posting-recovery.service.ts": "65991f8dac589001bfde2729c347dee8922caf653c323e49e5a972134cb44c0c",
+    "services/purchasing/payment-posting-recovery-contracts.ts": "52204aa8e71e3fded6a0d521b308da5e802c24ccf54dee032b14eb3282aa5efb",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "782645c28ee8a60f3e435f12196fc3816a2b797ee1894a533f5dcc21401fc743",
+    "actions/purchasing/payment-release.actions.ts": "201352770e7d1e8e99543337fb005c440fd9675843b0fb6ce84b91608eb9dec3",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/recovery/page.tsx": "e4d0ac7645f12a197b5e10bfc5dc4243459b3a6a7bd67cab3519d9a20979beca",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "84d349ae026306e65e0226c2a16ce0d3be8ab6802afb98a1df2740a1da6bdfe0",
+    "i18n/request.ts": "41195f59c7713a92cf74e5b51e1377b2bab4814feeaea7da30f05872e40a7c12",
+    "app/[locale]/layout.tsx": "77033f5b5bebd94d1957fbdf7cfa669495bcfae8ef514ef445b79b788d018c98",
+    "messages/payment-posting-recovery/en.json": "50bb59bffa71a4a5df6ccc7fc0d7d3170c7e31d07a77ea223a1494a940356b1c",
+    "messages/payment-posting-recovery/fr.json": "e8bd34cd1154de8b41a53ef7351bcf247edb844342363db188bec246f0851c15",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "components/purchasing/__tests__/PaymentExecutionWorkbench.test.tsx": "01ecba63f2b8640da4a3a70bbf4ccf09ed5679583698cbf902672ac3a25af961",
+    "scripts/__tests__/module-purchases-route-evidence.test.js": "a379d5f41e99e4a9d749cd74f0a055f3e4b678c720cccfe828863cb309615568",
+    "components/purchasing/__tests__/PaymentPostingRecoveryWorkbench.test.tsx": "66fba485f9956fa8a07727bc62a55bbce269f99f955e683e3a81f0d97f666f4d",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts": "8eebbccd8a6a62a0abcd5c068d345ca262b18d605c536b57bfab52690f86eef0",
+    "services/purchasing/__tests__/payment-release-evidence.test.ts": "32a74254e418a785ffa3258be5ceef686783c7b722f758094c5f90dfba849d2d",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "1db9488be214cd3a3d8344635c73789043eb1944909beb79c985e7ada6b06a7a",
+    "services/purchasing/__tests__/supplier-payment-balance.test.ts": "e6ae42ac0f5733062bfa7c3643248111a9651bd50a25d9274698e60b1886d87b",
+    "services/purchasing/__tests__/payment-request-evidence.test.ts": "f68442ff80469bcd5d85dc6570e057f0a7a881373d43191d944671f0678db16a",
+    "services/purchasing/__tests__/payment-posting-recovery.service.test.ts": "b88f2a5af206c3b1b57c6daa9090a391bb0db62a4641651362e29594623d765b",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+    "messages/payment-execution/en.json": "cda51e4e035f333dfa11011a8f071833e2f6382d763b6bf5c032888362748879",
+    "messages/payment-execution/fr.json": "831fd8da9e2576de772b899f51346f658667bc302bc84f54f8644cd4db417e1b"
+  },
+  "tests": {
+    "file": "evidence/payment-posting-recovery-final-v83.json",
+    "passed": 114,
+    "suites": 9,
+    "session": 83989,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 5461,
+      "exitCode": 0,
+      "status": "passed",
+      "binding": "Started before final single calendar-date formatting expression; final tests/lint/browser include that expression."
+    },
+    {
+      "command": "changed-file eslint; full exact list in PAYMENT_POSTING_RECOVERY_VERIFICATION_V83.md",
+      "session": 36638,
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js components/purchasing/PaymentPostingRecoveryWorkbench.tsx",
+      "session": 38337,
+      "exitCode": 0,
+      "status": "passed after date formatting correction"
+    }
+  ],
+  "database": {
+    "file": "lanes/environment/payment-posting-recovery-ecacca72-2a6.json",
+    "session": 55190,
+    "checks": 8,
+    "exitCode": 0,
+    "originalUnchanged": true,
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/payment-posting-recovery-browser-11f74bf2-289.json",
+    "session": 74721,
+    "exitCode": 0,
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "stagesPerLocale": 4,
+    "screenshots": 16,
+    "originalUnchanged": true,
+    "sourceStable": true,
+    "pageErrors": [],
+    "actualBankExecution": false,
+    "developmentTimings": [
+      {
+        "locale": "en",
+        "timings": [
+          {
+            "interaction": "Existing payment navigation to recovery preview (development server)",
+            "milliseconds": 24834
+          }
+        ]
+      },
+      {
+        "locale": "fr",
+        "timings": [
+          {
+            "interaction": "Existing payment navigation to recovery preview (development server)",
+            "milliseconds": 12252
+          }
+        ]
+      }
+    ]
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-blocked-desktop-11f74bf2-289.png",
+      "sha256": "019531ad7ad60a9ccdf2ec7208420de56ea04793b28fff6d325992c0330e8bb9"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-preview-mobile-11f74bf2-289.png",
+      "sha256": "5c9e5416704006d1400ee3caa72e1bd7b9ec09a3cfb0f055dd3ac5bc5c9e23cf"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-stale-mobile-11f74bf2-289.png",
+      "sha256": "fb312e7178ceede3352463aca9abc0445a93884b941ebc344d73089e295b0143"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-recorded-mobile-11f74bf2-289.png",
+      "sha256": "670b35dcedf0da93807090f4c158eaa686eb097a925a30eac7a36d28e047a47a"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-recorded-tablet-11f74bf2-289.png",
+      "sha256": "6e7d2d58db868f8f277321888185584924a71b1ec14deae04db787f65e3af098"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-recorded-text200-11f74bf2-289.png",
+      "sha256": "f56ea53163bb2c4de74da748b12fc68f4a40201cf34469ac59355158b677bdab"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-history-desktop-11f74bf2-289.png",
+      "sha256": "6164714fbed794f961e6fb6cad8a8876938408a40b175c7433bb4236e9453625"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-en-denied-11f74bf2-289.png",
+      "sha256": "b285ca2e7c029dfa9f6a6f043572dd753b6178f5450cbccb6abd74b5e7180656"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-blocked-desktop-11f74bf2-289.png",
+      "sha256": "c4b157e1361901d10dc028f1a6cc9615179b09fa2d4b8a16b178f11145938e89"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-preview-mobile-11f74bf2-289.png",
+      "sha256": "8e33e5d0842a057c8a373a76e506f9a9addb38f8839893768ede084292952c34"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-stale-mobile-11f74bf2-289.png",
+      "sha256": "f56d3718e8f64698337239d2c54ce9296d12efe081a000274b8dba4d88e177de"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-recorded-mobile-11f74bf2-289.png",
+      "sha256": "b8e9874f1b7eab3bb76f73994aa83fc061cd92c278249166f5ccdfaf88865a8b"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-recorded-tablet-11f74bf2-289.png",
+      "sha256": "454466994e7aab1f4f12cfc34644777d3fb1bf352ad1a5a3d48eacdfe92615b7"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-recorded-text200-11f74bf2-289.png",
+      "sha256": "a464b19228e4c19b95dc59210fa41c384cd6971627b27fe44616ac503f148cde"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-history-desktop-11f74bf2-289.png",
+      "sha256": "790a58996aa6caa3acf9171e60bd3af5e700fc3f62661bb98b128c51612fe687"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-posting-recovery-v83/payment-posting-recovery-fr-denied-11f74bf2-289.png",
+      "sha256": "6815ee016118b63fd873d1604d75786b70a05d13f2c76e3b1f97b029e8975234"
+    }
+  ],
+  "baselineCapture": {
+    "session": 27930,
+    "exitCode": 0
+  },
+  "failedAttempts": [
+    {
+      "session": 82976,
+      "reason": "Nullable document hash input; corrected"
+    },
+    {
+      "session": 96979,
+      "passedTests": 45,
+      "failedTests": 1,
+      "reason": "Combined page declaration unresolved by conservative guard scanner; page changed to existing recognized declaration, scanner not weakened"
+    },
+    {
+      "session": 99692,
+      "passedTests": 114,
+      "exitCode": 1,
+      "reason": "EPERM writing receipt; later narrow rerun retained complete output"
+    },
+    {
+      "session": 56263,
+      "file": "lanes/environment/payment-posting-recovery-browser-c42ea2be-d9e.json",
+      "reason": "French stale-alert assertion also matched hidden announcement regions; verifier narrowed to expected text. Visual review also corrected date formatting before final repeat."
+    }
+  ],
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2760,
+      "tests": 969,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2357,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "fullBuild": "not run; actual application routes compiled and executed; no migration-bearing build",
+  "next": "Credit-aware final invoice status, retained payment reversal/reconciliation, and remaining platform workflow inventory",
+  "remaining": [
+    "Complete non-payment AP posting recovery, financial reversal, downstream statement matching, close and async delivery/operator paths",
+    "Broader legitimate post-recovery reversal/history behavior and current matching/suspense/settlement cases require separate proof",
+    "Missing legacy request/approval/execution evidence is not fabricated or adopted automatically",
+    "Richer account-level preview diagnostics, source pagination/high volume, full module/read-only/expired-session browser matrix and native assistive technology remain unverified",
+    "Inherited French desktop shell still displays the English Purchases title; scoped recovery workbench is localized",
+    "No bank execution authenticity, production deployment, statutory or release certification is established"
+  ]
+}

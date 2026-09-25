@@ -1,0 +1,558 @@
+{
+  "at": "2026-09-19T16:25:21.872Z",
+  "sourceBefore": {
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "0c3e2cd47a41d193a3863188c3c124e9024f92767956f1cac2db6875e3e015c8",
+    "components/daily-habit/DailyHabitDigestDashboard.module.css": "5c251e4844803ad09ea1edb476b3892bf9c3e7e9da888aae86b27d11b03257e3",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "components/ui/button.tsx": "5bc624855cdeadbcde67dcd15ce7ef02bda974571021aef7d4579c7b2fcad1b7",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BIKpiCard.tsx": "9aa1c770aefc75c85762d70bc95d33dae3b02cf57e3e05da4e6d0988692c239e",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a"
+  },
+  "views": [
+    {
+      "locale": "fr",
+      "width": 320,
+      "workspace": "Dirigeant",
+      "mode": "Synthèse",
+      "viewport": 320,
+      "documentWidth": 320,
+      "reducedMotion": true,
+      "focusedModeVisible": true,
+      "unnamedControls": [],
+      "runningMotion": [],
+      "viewText": 598,
+      "selectedWorkspaceClipping": []
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "workspace": "Dirigeant",
+      "mode": "Pilotage",
+      "viewport": 320,
+      "documentWidth": 320,
+      "reducedMotion": true,
+      "focusedModeVisible": true,
+      "unnamedControls": [],
+      "runningMotion": [
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        }
+      ],
+      "viewText": 442,
+      "selectedWorkspaceClipping": []
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "workspace": "Dirigeant",
+      "mode": "Examiner",
+      "viewport": 320,
+      "documentWidth": 320,
+      "reducedMotion": true,
+      "focusedModeVisible": true,
+      "unnamedControls": [],
+      "runningMotion": [
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        }
+      ],
+      "viewText": 468,
+      "selectedWorkspaceClipping": []
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "workspace": "Responsable",
+      "mode": "Synthèse",
+      "viewport": 320,
+      "documentWidth": 320,
+      "reducedMotion": true,
+      "focusedModeVisible": true,
+      "unnamedControls": [],
+      "runningMotion": [
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        }
+      ],
+      "viewText": 851,
+      "selectedWorkspaceClipping": []
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "workspace": "Responsable",
+      "mode": "Pilotage",
+      "viewport": 320,
+      "documentWidth": 320,
+      "reducedMotion": true,
+      "focusedModeVisible": true,
+      "unnamedControls": [],
+      "runningMotion": [
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        }
+      ],
+      "viewText": 842,
+      "selectedWorkspaceClipping": []
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "workspace": "Responsable",
+      "mode": "Examiner",
+      "viewport": 320,
+      "documentWidth": 320,
+      "reducedMotion": true,
+      "focusedModeVisible": true,
+      "unnamedControls": [],
+      "runningMotion": [
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        }
+      ],
+      "viewText": 723,
+      "selectedWorkspaceClipping": []
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "workspace": "Finance",
+      "mode": "Synthèse",
+      "viewport": 320,
+      "documentWidth": 320,
+      "reducedMotion": true,
+      "focusedModeVisible": true,
+      "unnamedControls": [],
+      "runningMotion": [
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "background-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-bottom-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-left-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-right-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "border-top-color"
+        },
+        {
+          "type": "CSSTransition",
+          "property": "color"
+        }
+      ],
+      "viewText": 614,
+      "selectedWorkspaceClipping": [
+        {
+          "tag": "DIV",
+          "left": 263.8125,
+          "right": 355.265625,
+          "availableLeft": 23,
+          "availableRight": 297
+        },
+        {
+          "tag": "MAIN",
+          "left": 263.8125,
+          "right": 355.265625,
+          "availableLeft": 0,
+          "availableRight": 320
+        },
+        {
+          "tag": "MAIN",
+          "left": 263.8125,
+          "right": 355.265625,
+          "availableLeft": 0,
+          "availableRight": 320
+        },
+        {
+          "tag": "DIV",
+          "left": 263.8125,
+          "right": 355.265625,
+          "availableLeft": 0,
+          "availableRight": 320
+        },
+        {
+          "tag": "DIV",
+          "left": 263.8125,
+          "right": 355.265625,
+          "availableLeft": 0,
+          "availableRight": 320
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Chromium DOM and keyboard evidence; no native screen-reader certification.",
+    "320 CSS pixel viewport verifies narrow reflow, not browser-chrome zoom.",
+    "Read-only seven-workspace fixture; distinct denied-persona evidence is retained in earlier matrices."
+  ],
+  "passed": false,
+  "error": "Selected workspace label must remain visible inside its horizontal selector\n+ actual - expected\n\n+ [\n+   {\n+     availableLeft: 23,\n+     availableRight: 297,\n+     left: 263.8125,\n+     right: 355.265625,\n+     tag: 'DIV'\n+   },\n+   {\n+     availableLeft: 0,\n+     availableRight: 320,\n+     left: 263.8125,\n+     right: 355.265625,\n+     tag: 'MAIN'\n+   },\n+   {\n+     availableLeft: 0,\n+     availableRight: 320,\n+     left: 263.8125,\n+     right: 355.265625,\n+     tag: 'MAIN'\n+   },\n+   {\n+     availableLeft: 0,\n+     availableRight: 320,\n+     left: 263.8125,\n+     right: 355.265625,\n+     tag: 'DIV'\n+   },\n+   {\n+     availableLeft: 0,\n+     availableRight: 320,\n+     left: 263.8125,\n+     right: 355.265625,\n+     tag: 'DIV'\n+   }\n+ ]\n- []\n",
+  "failureScreenshot": "digest-reflow-b9d1c76c-7bd9-4e73-875f-a2ec4b2cdb66-failed.png",
+  "sourceAfter": {
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "0c3e2cd47a41d193a3863188c3c124e9024f92767956f1cac2db6875e3e015c8",
+    "components/daily-habit/DailyHabitDigestDashboard.module.css": "5c251e4844803ad09ea1edb476b3892bf9c3e7e9da888aae86b27d11b03257e3",
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "components/ui/button.tsx": "5bc624855cdeadbcde67dcd15ce7ef02bda974571021aef7d4579c7b2fcad1b7",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/bi/BICommandBriefHeader.tsx": "73a8986d62d3d261853e6a031de61df60ba7f3353ea8bda61f7ffa40077bb643",
+    "components/bi/BIKpiCard.tsx": "9aa1c770aefc75c85762d70bc95d33dae3b02cf57e3e05da4e6d0988692c239e",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a"
+  },
+  "sourceStable": true
+}

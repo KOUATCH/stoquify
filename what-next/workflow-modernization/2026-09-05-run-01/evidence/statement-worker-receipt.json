@@ -1,0 +1,189 @@
+{
+  "recordedAt": "2026-09-07T07:47:29.744Z",
+  "sourceBaseline": "evidence/source-baseline-v42.json",
+  "workflows": [
+    "CS-STATEMENT-DELIVERY-WORKER",
+    "CS-STATEMENT-HISTORY"
+  ],
+  "overlap": "NTF-STATEMENT-DELIVER is the same canonical statement worker, not another coverage increment.",
+  "sources": {
+    "services/communication/customer-statement-delivery-worker.service.ts": "5a4498f398b473ff5e38b9c08b6f3ec949b3c1bec2ebc34c5c9d96cc0fc79174",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "actions/accounting/customer-statement-history.actions.ts": "1ff57815a13397c7fdfe7cfb4236afaab98132c1a0f85eea135221bdd7b6ad4e",
+    "components/customers/CustomerStatementHistory.tsx": "778ddc168a79285cf8326dccb4361318d6ab49a8b7240ee9eb14e85366c757e1",
+    "components/customers/CustomerStatementWorkflow.tsx": "dff49be7603465584649dddfe528f93af52432f820f25894005353a1dcb4745f",
+    "components/customers/__tests__/CustomerStatementWorkflow.test.tsx": "5a45d57cafa3faa14ef9fc1c40c135f14d77edbdef3aba7e0198254fde30e5f7",
+    "components/customers/__tests__/CustomerStatementHistory.test.tsx": "e7075a95275ec62ddff1be2feaea31da790a887783e7aa8e82d584c9eae9ec2e",
+    "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts": "f9faf9d7a63988ea9c8c935d870b0b6e4e49d7a80d2cb7e97ff0511bb8cf5871",
+    "services/accounting/__tests__/customer-statement-history.service.test.ts": "5116580011a4a4fe2a970b516c2a6eed67baaef2183d6e26392f08883d3c08a4",
+    "services/communication/__tests__/customer-statement-delivery.provider.test.ts": "852c2711593dc868d0599591a03a9c845f379aaeb73abbaa2f2f67ab9fc3ca9f",
+    "scripts/__tests__/referral-delivery-worker.test.ts": "d1bf750aee51bb014d8b17dfa07f75bec90042014d5aaedfb6b8aba96ab12ad6",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "services/accounting/customer-statement.schemas.ts": "2a52c60020a6c033715d8725295b383e040e9326120be4ea78b15446a622616b"
+  },
+  "verification": {
+    "tests": {
+      "exitCode": 0,
+      "terminalReceipt": "e8e025",
+      "file": "evidence/statement-worker-tests-04.json",
+      "passed": 60,
+      "suites": 6
+    },
+    "postgres": {
+      "exitCode": 0,
+      "terminalReceipt": "cd20a3",
+      "file": "lanes/environment/statement-worker-after-20bcedd1-6eb.json",
+      "checks": 12
+    },
+    "browser": {
+      "exitCode": 0,
+      "terminalReceipt": "e526c4",
+      "file": "lanes/environment/statement-worker-history-browser-996ed983-be8.json",
+      "journeys": 2,
+      "screenshots": 18,
+      "widthTextCases": 16
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "terminalReceipt": "8d09ab",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false"
+    },
+    "lint": {
+      "exitCode": 0,
+      "terminalReceipt": "754802",
+      "finalProviderReceipt": "d2a368",
+      "scope": "Seven changed worker/provider/history files and tests; final SDK name classification rechecked."
+    },
+    "baseline": {
+      "exitCode": 0,
+      "terminalReceipt": "5dc440",
+      "file": "evidence/source-baseline-v42.json"
+    },
+    "visualInspection": {
+      "receipt": "e12e21",
+      "scope": "EN desktop history and FR 320px/200% CSS text screenshot inspected; narrow enlarged French text wraps into a tall column. Native zoom, assistive technology and full contrast remain open."
+    }
+  },
+  "postgres": "lanes/environment/statement-worker-after-20bcedd1-6eb.json",
+  "browser": "lanes/environment/statement-worker-history-browser-996ed983-be8.json",
+  "screenshots": [
+    {
+      "source": "lanes/environment/en-statement-worker-history-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-history-996ed983-be8.png",
+      "sha256": "cc40bd86d92e39ea5d5ee4ff0fc384b99337a5cd45e4224ea139af10aa811c71"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-320-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-320-100-996ed983-be8.png",
+      "sha256": "d14dcd7d275cadde77aa63d04888545a8c999e1c11bb090e83762234889da3d3"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-320-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-320-200-996ed983-be8.png",
+      "sha256": "79fc390e7ebd67455cbc8faacbbe2a88211a8d1694de9daa405682353e232c7f"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-390-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-390-100-996ed983-be8.png",
+      "sha256": "e1fdbced027ff521bba8b53c3f88445bcb1033552f371562cb129af2710e347b"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-390-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-390-200-996ed983-be8.png",
+      "sha256": "68fe1a0efe25207a0303332a345eaee652f1e269032bd1f92e360fff3e93cfe0"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-768-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-768-100-996ed983-be8.png",
+      "sha256": "653f3059d928151f580cea5b0d2aa5643fafc71c026c21b025213403aedd003c"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-768-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-768-200-996ed983-be8.png",
+      "sha256": "75fd84682ec48d8068d07fc351e8374f645c3d75e489e3b0a814d8d14054dc82"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-1440-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-1440-100-996ed983-be8.png",
+      "sha256": "6b34d865eeb7dd95b26c34a9e6fa700ca995a2592b3dead5b3e78d11a2a2e393"
+    },
+    {
+      "source": "lanes/environment/en-statement-worker-reflow-1440-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/en-statement-worker-reflow-1440-200-996ed983-be8.png",
+      "sha256": "3beb2180f0fd07652226b8d48c7526dee5386f4cf5123866f9f12a99fed6dc98"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-history-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-history-996ed983-be8.png",
+      "sha256": "10ad5ce5ca3f9fd586938427f08b3147169847dcec6dbccdaa876240951aa976"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-320-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-320-100-996ed983-be8.png",
+      "sha256": "086f61134cee4e1c8b128872711ef3ac07aefc88dc22d4d028187bcc63a7708c"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-320-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-320-200-996ed983-be8.png",
+      "sha256": "2d912b929884e89702b2770154c36fc5eceda2a11bdb754660515975079c4569"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-390-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-390-100-996ed983-be8.png",
+      "sha256": "f4af1307ba26bf95ab97aa4b512be93efd514c55faac351ac7a764e004d93a12"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-390-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-390-200-996ed983-be8.png",
+      "sha256": "3d2e636094df8690d9b1fb8d709407f011caf70b93d5955a547c213527a828f1"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-768-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-768-100-996ed983-be8.png",
+      "sha256": "cca18387c570b7c0f856444a118773820d3b8f2449986cfba18112411ac7c158"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-768-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-768-200-996ed983-be8.png",
+      "sha256": "072fe82efd3e8233edecd1bfe8ecdcf29ab12f12f49770ec011568339787eda3"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-1440-100-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-1440-100-996ed983-be8.png",
+      "sha256": "a2aa213dd55d22c1d00a3dd8c303af76777a3d9ee660c8b43be9dcc656a2a93b"
+    },
+    {
+      "source": "lanes/environment/fr-statement-worker-reflow-1440-200-996ed983-be8.png",
+      "file": "evidence/statement-worker/fr-statement-worker-reflow-1440-200-996ed983-be8.png",
+      "sha256": "a9c1185c76d72451fc1608243bfdcea3a7a4e2cc6b066cfe4ad5d33d01a504c1"
+    }
+  ],
+  "developmentTimings": [
+    {
+      "locale": "en",
+      "routeReadyMs": 1664
+    },
+    {
+      "locale": "fr",
+      "routeReadyMs": 3776
+    }
+  ],
+  "latencyMeaning": "Local development route observations, not controlled before/after or production acceptance.",
+  "before": "lanes/environment/statement-worker-before-8ec6bbe4-99b.json",
+  "failedAttempts": "evidence/statement-worker-attempts.md",
+  "limitations": [
+    "Controlled operator requeue for known-not-sent deferred requests is still engineering work; enabling a provider alone does not resume them.",
+    "Unknown provider outcomes require evidence reconciliation and remain held. No live provider acceptance, delivery callback or recipient read was verified.",
+    "Accountant invitation and WhatsApp receipt workers are separate open workflows; this fix does not establish their correctness.",
+    "Public recipient revocation races, populated financial source lifecycle, corrupt local command resolution, native zoom, screen readers and full contrast remain open.",
+    "No full build, deployment, external message, migration, X1 clearance, production performance acceptance or professional certification."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

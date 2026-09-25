@@ -1,4 +1,9 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { usePermissions } from "@/hooks/usePermissions"
+import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+
+jest.mock("@/hooks/usePermissions", () => ({ usePermissions: jest.fn(() => ({ organizationId: "org-1", permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })) }))
+jest.mock("@/actions/security/step-up-auth.actions", () => ({ stepUpWithPasswordAction: jest.fn() }))
 
 jest.mock("lucide-react", () => {
   const React = require("react")
@@ -69,6 +74,10 @@ jest.mock("next-intl", () => ({
       "manualMatch.internalEvidence": "Internal {reference} / {amount}",
       "manualMatch.externalEvidence": "External {reference} / {amount}",
       "manualMatch.amountLabel": "Amount to match",
+      "manualMatch.internalRemaining": "Internal remaining {amount}",
+      "manualMatch.externalRemaining": "External remaining {amount}",
+      "manualMatch.availableAmount": "Available to match {amount}",
+      "manualMatch.amountLimit": "Enter a positive amount up to {amount}",
       "manualMatch.approvalTitle": "Independent approval queue",
       "manualMatch.emptyApprovals": "No manual match proposal is waiting for approval.",
       "manualMatch.proposalFacts": "{id} / {amount} / {time}",
@@ -189,6 +198,7 @@ const mockUseManualMatchWorkflow = useManualMatchWorkflow as jest.Mock
 const mockUseResolveSuspenseItem = useResolveSuspenseItem as jest.Mock
 
 const dashboard: PaymentReconciliationDashboardData = {
+  scope: { organizationId: "org-1", actorId: "checker-1" },
   source: {
     mode: "DURABLE_EVIDENCE_KERNEL",
     certificationStatus: "NEEDS_REVIEW",
@@ -206,12 +216,14 @@ const dashboard: PaymentReconciliationDashboardData = {
     openExceptionCount: 6,
     criticalExceptionCount: 1,
     openSuspenseCount: 3,
-    openSuspenseAmount: 12000,
+    openSuspenseByCurrency: [{ currencyCode: "XAF", amount: "12000.25", count: 3 }],
+    pendingRunCount: 1,
     closeBlockerCount: 4,
   },
   providerAccounts: [],
   statementFiles: [],
   manualMatchCandidates: [],
+  manualMatchPreparation: { writeAllowed: true, checkedAt: "2026-09-06T03:00:00Z", hasMore: false, limit: 12 },
   manualMatchProposals: [],
   recentRuns: [],
   suspenseQueue: [],
@@ -347,6 +359,8 @@ function proofTrail(overrides: Partial<ProofTrailResult> = {}): ProofTrailResult
 function setupWorkbench(data = workbenchData(), durableDashboard?: PaymentReconciliationDashboardData) {
   const importStatement = mutationMock()
   const manualMatch = { propose: mutationMock(), approve: mutationMock() }
+  manualMatch.propose.mutateAsync.mockResolvedValue({ matchId: "saved-proposal", alreadyApplied: false })
+  manualMatch.approve.mutateAsync.mockResolvedValue({ matchId: "saved-approval", alreadyApplied: false })
   mockUsePaymentReconciliationWorkbench.mockReturnValue({
     data,
     isLoading: false,
@@ -354,7 +368,7 @@ function setupWorkbench(data = workbenchData(), durableDashboard?: PaymentReconc
     error: null,
     refetch: jest.fn(),
   })
-  mockUsePaymentReconciliationDashboard.mockReturnValue({ data: durableDashboard, isLoading: false, error: null })
+  mockUsePaymentReconciliationDashboard.mockReturnValue({ data: durableDashboard, isLoading: false, error: null, refetch: jest.fn() })
   mockUseImportProviderStatement.mockReturnValue(importStatement)
   mockUseManualMatchWorkflow.mockReturnValue(manualMatch)
   mockUseRunPaymentReconciliation.mockReturnValue(mutationMock())
@@ -376,6 +390,22 @@ function rowForPayment(paymentNumber: string) {
 }
 
 describe("PaymentTrustBanner", () => {
+  it.each(["REQUESTED", "RUNNING", "FAILED", "COMPLETE"] as const)("shows authoritative %s scan progress without treating it as issue resolution", state => {
+    setupWorkbench(workbenchData(), { ...dashboard, alertScan: { kind: "RECONCILIATION_ALERT_SCAN_V1", scanId: "c781b497-8491-46b9-bc94-e626b2c28816", workerId: "worker-1", startedAt: "2026-09-09T10:00:00Z", updatedAt: "2026-09-09T10:01:00Z", completedAt: null, state, phase: "SUSPENSE", cursor: null, version: 1, examined: 100, created: 90, errorCode: state === "FAILED" ? "ALERT_SCAN_PAGE_FAILED" : null } })
+    const inbox = within(screen.getByRole("region", { name: "inbox.title" }))
+    expect(inbox.getByRole("status")).toHaveTextContent(`inbox.scan.states.${state}`)
+    expect(inbox.getByRole("status")).toHaveTextContent("inbox.scan.description")
+  })
+  it("shows all returned observations with exact recorded currency and honest status", () => {
+    setupWorkbench(workbenchData(), { ...dashboard, notificationQueue: Array.from({ length: 25 }, (_, i) => ({ id: `notice-${i}`, type: "payment-reconciliation.exception.created", severity: "HIGH", ownerId: null, dueAt: null, amount: i === 0 ? "9007199254740993.25" : i === 1 ? "5.50" : "1.00", currency: i === 0 ? "XAF" : i === 1 ? "USD" : null, status: "UNREAD", source: "RECONCILIATION_RUN", createdAt: "2026-09-09T10:00:00Z", evidenceRef: {} })) })
+    const inbox = within(screen.getByRole("region", { name: "inbox.title" }))
+    expect(inbox.getByText("9,007,199,254,740,993.25 XAF")).toBeVisible()
+    expect(inbox.getByText("5.50 USD")).toBeVisible()
+    expect(inbox.getAllByText("inbox.recorded")).toHaveLength(25)
+    expect(inbox.getAllByText("inbox.amountUnavailable")).toHaveLength(23)
+    expect(inbox.queryByText("UNREAD")).not.toBeInTheDocument()
+    expect(inbox.getAllByText("inbox.severities.HIGH")).toHaveLength(25)
+  })
   it("shows provider evidence, statement evidence, signed runs, suspense, exceptions, blockers, and freshness", () => {
     render(
       <PaymentTrustBanner
@@ -393,7 +423,7 @@ describe("PaymentTrustBanner", () => {
     expect(within(screen.getByText("Statement evidence").parentElement!.parentElement!).getByText("Available")).toBeInTheDocument()
     expect(within(screen.getByText("Signed runs").parentElement!.parentElement!).getByText("2")).toBeInTheDocument()
     expect(within(screen.getByText("Open suspense").parentElement!.parentElement!).getByText("3")).toBeInTheDocument()
-    expect(screen.getByText("Exposure XAF 12000")).toBeInTheDocument()
+    expect(screen.getByText("12,000.25 XAF")).toBeInTheDocument()
     expect(within(screen.getByText("Critical exceptions").parentElement!.parentElement!).getByText("1")).toBeInTheDocument()
     expect(within(screen.getByText("Close blockers").parentElement!.parentElement!).getByText("4")).toBeInTheDocument()
     expect(within(screen.getByText("Freshness").parentElement!.parentElement!).getByText("Jun 23, 09:45")).toBeInTheDocument()
@@ -403,6 +433,21 @@ describe("PaymentTrustBanner", () => {
 describe("PaymentReconciliationWorkbench proof launcher", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })
+  })
+
+  it("paginates and searches suspense rows beyond the former 25-row cutoff", () => {
+    setupWorkbench(workbenchData({ suspenseReadyFailures: Array.from({ length: 31 }, (_, index) => suspenseFailure({ id: `failure-${index}`, paymentNumber: `PAY-PAGE-${index}`, paymentTransactionId: `pt-${index}` })) }))
+    const suspenseTable = () => within(screen.getByRole("table", { name: "Suspense-ready failures" }))
+    expect(suspenseTable().getByText("PAY-PAGE-0")).toBeInTheDocument()
+    expect(suspenseTable().queryByText("PAY-PAGE-30")).not.toBeInTheDocument()
+    const pagination = within(screen.getByRole("navigation", { name: "Suspense-ready failures pagination" }))
+    fireEvent.click(pagination.getByRole("button", { name: "Go to last page" }))
+    expect(suspenseTable().getByText("PAY-PAGE-30")).toBeInTheDocument()
+    fireEvent.change(screen.getByRole("searchbox", { name: "Search: Suspense-ready failures" }), { target: { value: "PAY-PAGE-0" } })
+    expect(suspenseTable().getByText("PAY-PAGE-0")).toBeInTheDocument()
+    expect(pagination.getByText("Page 1 of 1")).toBeInTheDocument()
+    expect(within(rowForPayment("PAY-PAGE-0")).getByRole("button", { name: "Open proof" })).toBeInTheDocument()
   })
 
   it("opens payment transaction proof from a suspense transaction row and preserves redactions", async () => {
@@ -485,6 +530,7 @@ describe("PaymentReconciliationWorkbench proof launcher", () => {
 describe("PaymentReconciliationWorkbench evidence operations", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "checker-1" } })
   })
 
   it("imports statement content through the protected provider account workflow", async () => {
@@ -532,19 +578,22 @@ describe("PaymentReconciliationWorkbench evidence operations", () => {
         severity: "HIGH",
         internalReference: "RE****01",
         externalReference: "RE****02",
-        internalAmount: 1000,
-        externalAmount: 900,
+        internalAmount: "1000.00",
+        externalAmount: "900.00",
+        internalRemaining: "1000.00", externalRemaining: "900.00", availableAmount: "900.00", eligibility: "READY", externalCurrencyCode: "XAF",
         currencyCode: "XAF",
         occurredAt: "2026-08-14T08:00:00.000Z",
       }],
       manualMatchProposals: [{
+        evidenceRevision: `sha256:${"a".repeat(64)}`,
+        evidenceSummary: { internalAmount: "1000.00", externalAmount: "900.00", direction: "INBOUND", externalSource: "STATEMENT_LINE" },
         id: "proposed-match-1",
         providerAccountId: "provider-account-1",
         providerAccountName: "MTN MoMo",
         paymentTransactionId: "payment-transaction-1",
         providerEventId: null,
         statementLineId: "statement-line-1",
-        amountMatched: 900,
+        amountMatched: "900.00",
         currencyCode: "XAF",
         matchedById: "maker-1",
         createdAt: "2026-08-14T08:30:00.000Z",
@@ -560,10 +609,193 @@ describe("PaymentReconciliationWorkbench evidence operations", () => {
         paymentTransactionId: "payment-transaction-1",
         providerEventId: undefined,
         statementLineId: "statement-line-1",
-        amountMatched: "900",
+        amountMatched: "900.00",
         currencyCode: "XAF",
       })
-      expect(rendered.manualMatch.approve.mutateAsync).toHaveBeenCalledWith({ proposedMatchId: "proposed-match-1" })
+      expect(rendered.manualMatch.approve.mutateAsync).toHaveBeenCalledWith({ proposedMatchId: "proposed-match-1", expectedEvidenceRevision: `sha256:${"a".repeat(64)}` })
     })
   })
+
+  const proposal = {
+    id: "proposal-review-1", providerAccountId: "provider-account-1", providerAccountName: "Review rail",
+    paymentTransactionId: "payment-transaction-1", providerEventId: "event-1", statementLineId: null,
+    amountMatched: "60.00", currencyCode: "XAF", matchedById: "maker-1", createdAt: "2026-09-05T20:00:00Z",
+    evidenceRevision: `sha256:${"b".repeat(64)}`,
+    evidenceSummary: { internalAmount: "100.00", externalAmount: "100.00", direction: "INBOUND", externalSource: "PROVIDER_EVENT" },
+  }
+
+  const residualCandidate: PaymentReconciliationDashboardData["manualMatchCandidates"][number] = {
+    exceptionId: "residual-exception", providerAccountId: "provider-account-1", providerAccountName: "Residual rail",
+    paymentTransactionId: "payment-transaction-1", providerEventId: "event-1", statementLineId: null,
+    exceptionType: "AMOUNT_MISMATCH", severity: "HIGH", internalReference: "IN****01", externalReference: "EX****01",
+    internalAmount: "100.00", externalAmount: "90.00", currencyCode: "XAF", externalCurrencyCode: "XAF",
+    internalRemaining: "13.25", externalRemaining: "3.25", availableAmount: "3.25", eligibility: "READY", occurredAt: "2026-09-06T03:00:00Z",
+  }
+
+  it("defaults to the exact remaining allocation and accepts a comma without changing its value", async () => {
+    const rendered = setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [residualCandidate] })
+    const input = screen.getByLabelText("Amount to match")
+    expect(input).toHaveValue("3.25")
+    expect(screen.getByText("Internal remaining 13.25 XAF")).toBeInTheDocument()
+    expect(screen.getByText("External remaining 3.25 XAF")).toBeInTheDocument()
+    fireEvent.change(input, { target: { value: "3,25" } })
+    fireEvent.click(screen.getByRole("button", { name: "Propose match" }))
+    await waitFor(() => expect(rendered.manualMatch.propose.mutateAsync).toHaveBeenCalledWith(expect.objectContaining({ amountMatched: "3.25" })))
+  })
+
+  it.each(["90", "0", "-1", "3.251", "3,26", "invalid"])("prevents an invalid residual amount %s and explains the limit", amount => {
+    const rendered = setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [residualCandidate] })
+    const input = screen.getByLabelText("Amount to match")
+    fireEvent.change(input, { target: { value: amount } })
+    expect(input).toHaveAttribute("aria-invalid", "true")
+    expect(input).toHaveAccessibleDescription("Enter a positive amount up to 3.25 XAF")
+    const button = screen.getByRole("button", { name: "Propose match" })
+    expect(button).toBeDisabled()
+    fireEvent.click(button)
+    expect(rendered.manualMatch.propose.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("preserves the edited amount across a failed refresh and revalidates the refreshed residual", () => {
+    const data = { ...dashboard, manualMatchCandidates: [residualCandidate] }
+    const rendered = setupWorkbench(workbenchData(), data)
+    fireEvent.change(screen.getByLabelText("Amount to match"), { target: { value: "2.75" } })
+    mockUsePaymentReconciliationDashboard.mockReturnValue({ data, isLoading: false, error: new Error("Evidence temporarily unavailable") })
+    rendered.rerender(<PaymentReconciliationWorkbench />)
+    expect(screen.getByText("notifications.failedMessage")).toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "Propose match" })).not.toBeInTheDocument()
+    expect(screen.queryByText("No evidence pair currently requires a manual match proposal.")).not.toBeInTheDocument()
+    mockUsePaymentReconciliationDashboard.mockReturnValue({ data: { ...data, manualMatchCandidates: [{ ...residualCandidate, availableAmount: "2.00" }] }, isLoading: false, error: null })
+    rendered.rerender(<PaymentReconciliationWorkbench />)
+    expect(screen.getByLabelText("Amount to match")).toHaveValue("2.75")
+    expect(screen.getByRole("button", { name: "Propose match" })).toBeDisabled()
+    expect(screen.getByText("Enter a positive amount up to 2.00 XAF")).toBeInTheDocument()
+  })
+
+  it.each(["loading", "error", "signed_out"])("preserves entered amounts and blocks changes during access %s", state => {
+    const rendered = setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [residualCandidate], manualMatchProposals: [proposal] })
+    fireEvent.change(screen.getByLabelText("Amount to match"), { target: { value: "2.75" } })
+    const retry = jest.fn()
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: state, refreshPermissions: retry, hasPermission: () => true, user: { id: "checker-1" } })
+    rendered.rerender(<PaymentReconciliationWorkbench />)
+    expect(screen.getByLabelText("Amount to match")).toHaveValue("2.75")
+    expect(screen.getByRole("button", { name: "Propose match" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Approve match" })).toBeDisabled()
+    expect(screen.queryByText("manualMatch.recovery.proposeDenied")).not.toBeInTheDocument()
+    if (state === "error") {
+      expect(screen.getByRole("alert")).toHaveTextContent("manualMatch.recovery.accessFailed")
+      fireEvent.click(screen.getByRole("button", { name: "manualMatch.recovery.retryAccess" }))
+      expect(retry).toHaveBeenCalledTimes(1)
+    } else if (state === "signed_out") {
+      expect(screen.getByRole("alert")).toHaveTextContent("manualMatch.recovery.sessionUnavailable")
+      expect(screen.getByRole("link", { name: "manualMatch.recovery.signIn" })).toHaveAttribute("href", "/en/login-v2")
+      expect(screen.queryByRole("button", { name: "manualMatch.recovery.retryAccess" })).not.toBeInTheDocument()
+    } else expect(screen.getByText("manualMatch.recovery.accessLoading", { selector: '[role="status"]' })).toHaveAttribute("role", "status")
+    expect(rendered.manualMatch.propose.mutateAsync).not.toHaveBeenCalled()
+    expect(rendered.manualMatch.approve.mutateAsync).not.toHaveBeenCalled()
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", refreshPermissions: retry, hasPermission: () => true, user: { id: "checker-1" } })
+    rendered.rerender(<PaymentReconciliationWorkbench />)
+    expect(screen.getByRole("button", { name: "Propose match" })).toBeEnabled()
+    expect(screen.getByLabelText("Amount to match")).toHaveValue("2.75")
+  })
+  it("retains the amount after a rejected proposal and permits correcting it", async () => {
+    const rendered = setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [residualCandidate] })
+    rendered.manualMatch.propose.mutateAsync.mockRejectedValueOnce(new Error("Evidence changed; refresh and review"))
+    fireEvent.change(screen.getByLabelText("Amount to match"), { target: { value: "2.75" } })
+    fireEvent.click(screen.getByRole("button", { name: "Propose match" }))
+    expect(await screen.findByRole("alert")).toHaveTextContent("Evidence changed; refresh and review")
+    expect(screen.getByLabelText("Amount to match")).toHaveValue("2.75")
+    fireEvent.change(screen.getByLabelText("Amount to match"), { target: { value: "2.00" } })
+    fireEvent.click(screen.getByRole("button", { name: "Propose match" }))
+    await waitFor(() => expect(rendered.manualMatch.propose.mutateAsync).toHaveBeenLastCalledWith(expect.objectContaining({ amountMatched: "2.00" })))
+  })
+
+  it("refreshes both reconciliation views and requests rejection on fetch failures", async () => {
+    setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [residualCandidate] })
+    fireEvent.click(screen.getByRole("button", { name: "Refresh" }))
+    await waitFor(() => expect(mockUsePaymentReconciliationDashboard().refetch).toHaveBeenCalledWith({ throwOnError: true }))
+    expect(mockUsePaymentReconciliationWorkbench().refetch).toHaveBeenCalledWith({ throwOnError: true })
+  })
+
+  it("keeps read-only preparation visible and disables both financial submissions", () => {
+    setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [residualCandidate], manualMatchProposals: [proposal], manualMatchPreparation: { ...dashboard.manualMatchPreparation, writeAllowed: false } })
+    expect(screen.getByLabelText("Amount to match")).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Propose match" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Approve match" })).toBeDisabled()
+    expect(screen.getAllByText("manualMatch.moduleUnavailable")).toHaveLength(2)
+    expect(screen.getByText("External remaining 3.25 XAF")).toBeInTheDocument()
+  })
+
+  it.each(["FULLY_ALLOCATED", "PROVIDER_EVIDENCE_INVALID", "EVIDENCE_SELECTION_REQUIRED"] as const)("explains %s without enabling a proposal", eligibility => {
+    setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [{ ...residualCandidate, eligibility, availableAmount: eligibility === "FULLY_ALLOCATED" ? "0.00" : null }] })
+    expect(screen.getByLabelText("Amount to match")).toBeDisabled()
+    expect(screen.getByLabelText("Amount to match")).toHaveAccessibleDescription(`manualMatch.eligibility.${eligibility}`)
+    expect(screen.getByRole("button", { name: "Propose match" })).toBeDisabled()
+  })
+
+  it("displays each evidence currency and never substitutes zero for missing amounts", () => {
+    setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [{ ...residualCandidate, externalCurrencyCode: "EUR", externalAmount: "90.00", externalRemaining: null, internalRemaining: null, availableAmount: null, eligibility: "CURRENCY_MISMATCH" }] })
+    expect(screen.getByText("External EX****01 / 90.00 EUR")).toBeInTheDocument()
+    expect(screen.getByText("Internal remaining Not available")).toBeInTheDocument()
+    expect(screen.getByText("External remaining Not available")).toBeInTheDocument()
+    expect(screen.getByLabelText("Amount to match")).toHaveValue("")
+  })
+
+  it("keeps large record amounts exact and discloses the bounded queue", () => {
+    setupWorkbench(workbenchData(), { ...dashboard, manualMatchCandidates: [{ ...residualCandidate, internalAmount: "9999999999999999.99" }], manualMatchPreparation: { ...dashboard.manualMatchPreparation, hasMore: true } })
+    expect(screen.getByText("Internal IN****01 / 9,999,999,999,999,999.99 XAF")).toBeInTheDocument()
+    expect(screen.getByText("manualMatch.moreCandidates")).toBeInTheDocument()
+  })
+
+  it.each(["XAF", "EUR"])("shows the exact manual approval amount in the record currency %s", currencyCode => {
+    setupWorkbench(workbenchData(), { ...dashboard, manualMatchProposals: [{ ...proposal, currencyCode, amountMatched: "0.50" }] })
+    const card = screen.getByText("Review rail").closest("[data-manual-proposal]") as HTMLElement
+    expect(card).toHaveTextContent(`0.50 ${currencyCode}`)
+  })
+
+  it.each(["denied", "maker", "legacy"])("explains unavailable %s approval without submitting", reason => {
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => reason !== "denied", user: { id: reason === "maker" ? "maker-1" : "checker-1" } })
+    const rendered = setupWorkbench(workbenchData(), { ...dashboard, manualMatchProposals: [{ ...proposal, evidenceRevision: reason === "legacy" ? null : proposal.evidenceRevision }] })
+    const button = screen.getByRole("button", { name: "Approve match" })
+    expect(button).toBeDisabled()
+    expect(screen.getByText(`manualMatch.recovery.${reason === "denied" ? "approveDenied" : reason === "maker" ? "independent" : "legacy"}`)).toBeInTheDocument()
+    fireEvent.click(button); expect(rendered.manualMatch.approve.mutateAsync).not.toHaveBeenCalled()
+  })
+
+  it("confirms identity and retries the same reviewed proposal without retaining the password", async () => {
+    const rendered = setupWorkbench(workbenchData(), { ...dashboard, manualMatchProposals: [proposal] })
+    rendered.manualMatch.approve.mutateAsync.mockRejectedValueOnce(Object.assign(new Error("Confirm identity"), { code: "FRESH_AUTH_REQUIRED" })).mockResolvedValueOnce({ matchId: "approved-saved", alreadyApplied: true })
+    ;(stepUpWithPasswordAction as jest.Mock).mockResolvedValue({ success: true, data: {} })
+    fireEvent.click(screen.getByRole("button", { name: "Approve match" }))
+    const password = await screen.findByLabelText("manualMatch.passwordLabel")
+    fireEvent.change(password, { target: { value: "synthetic-test-password" } })
+    fireEvent.submit(password.closest("form")!)
+    await waitFor(() => expect(rendered.manualMatch.approve.mutateAsync).toHaveBeenCalledTimes(2))
+    expect(stepUpWithPasswordAction).toHaveBeenCalledWith({ password: "synthetic-test-password" })
+    expect(rendered.manualMatch.approve.mutateAsync.mock.calls[0]).toEqual(rendered.manualMatch.approve.mutateAsync.mock.calls[1])
+    expect(await screen.findByText("manualMatch.notifications.alreadyRecorded")).toHaveAttribute("role", "status")
+    expect(screen.queryByLabelText("manualMatch.passwordLabel")).not.toBeInTheDocument()
+  })
+
+  it("opens the existing scoped proof drawer for a manual proposal", async () => {
+    mockGetProofTrailAction.mockResolvedValue({ success: true, data: proofTrail(), error: null, status: 200 })
+    setupWorkbench(workbenchData(), { ...dashboard, manualMatchProposals: [proposal] })
+    const card = screen.getByText("Review rail").parentElement!
+    fireEvent.click(within(card).getByRole("button", { name: "Open proof" }))
+    await waitFor(() => expect(mockGetProofTrailAction).toHaveBeenCalledWith({ subjectType: "payment.transaction", subjectId: "payment-transaction-1" }))
+  })
+  it("lets the original preparer replace stale evidence without approving it", async () => {
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "ready", refreshPermissions: jest.fn(), hasPermission: () => true, user: { id: "maker-1" } })
+    const rendered = setupWorkbench(workbenchData(), { ...dashboard, manualMatchProposals: [proposal] })
+    fireEvent.click(screen.getByRole("button", { name: "manualMatch.actions.renew" }))
+    await waitFor(() => expect(rendered.manualMatch.propose.mutateAsync).toHaveBeenCalledWith(expect.objectContaining({ supersedesProposalId: proposal.id, paymentTransactionId: proposal.paymentTransactionId, providerEventId: proposal.providerEventId, amountMatched: "60.00" })))
+    expect(rendered.manualMatch.approve.mutateAsync).not.toHaveBeenCalled()
+  })
 })
+jest.mock("@/actions/payments/reconciliation.actions", () => ({ getPaymentSuspenseRecordsAction: jest.fn() }))
+
+jest.mock("@/actions/payments/reconciliation-preparation.actions", () => ({}))
+jest.mock("@/actions/payments/suspense-resolution.actions", () => ({}))
+jest.mock("@/actions/payments/exception-link.actions", () => ({}))
+jest.mock("@/actions/payments/exception-closure.actions", () => ({}))
+
+jest.mock("@/actions/payments/reconciliation-sign-review.actions", () => ({}))

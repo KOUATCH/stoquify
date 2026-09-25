@@ -1,0 +1,60 @@
+{
+  "run": "8ec6bbe4-99b",
+  "startedAt": "2026-09-07T07:23:35.379Z",
+  "sourcesBefore": {
+    "services/communication/customer-statement-delivery-worker.service.ts": "0f87d4666c537fa27da6aa10dea88a745cff190c38168d2fc4261917baa314e6",
+    "services/communication/customer-statement-delivery.provider.ts": "dff95a73a1b783655847a2a1ebab17c33bad68e51b3e13af887d21cb4a7cd37d",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": "Owned real PostgreSQL, new synthetic organization, network-free injected adapter. Observations reproduce defects; no external message.",
+  "checks": [
+    {
+      "name": "old operation settles reclaimed attempt with reused worker identity",
+      "defectReproduced": true,
+      "adapterCalls": 1,
+      "observed": {
+        "queue": "SENT",
+        "attempts": 2,
+        "code": null,
+        "domain": "SENT",
+        "version": 2
+      }
+    },
+    {
+      "name": "accepted delivery followed by settlement outage becomes retryable and is sent twice",
+      "defectReproduced": true,
+      "adapterCalls": 2,
+      "afterOutage": {
+        "queue": "FAILED",
+        "attempts": 1,
+        "code": "STATEMENT_DELIVERY_INTEGRITY_FAILED",
+        "domain": "QUEUED",
+        "version": 1
+      }
+    },
+    {
+      "name": "invalid envelope produces failed transport with queued domain history",
+      "defectReproduced": true,
+      "adapterCalls": 0,
+      "observed": {
+        "queue": "FAILED",
+        "attempts": 1,
+        "code": "STATEMENT_DELIVERY_INTEGRITY_FAILED",
+        "domain": "QUEUED",
+        "version": 1
+      }
+    }
+  ],
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T07:23:35.987Z",
+  "sourcesAfter": {
+    "services/communication/customer-statement-delivery-worker.service.ts": "0f87d4666c537fa27da6aa10dea88a745cff190c38168d2fc4261917baa314e6",
+    "services/communication/customer-statement-delivery.provider.ts": "dff95a73a1b783655847a2a1ebab17c33bad68e51b3e13af887d21cb4a7cd37d",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

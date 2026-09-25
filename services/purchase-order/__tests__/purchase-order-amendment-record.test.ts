@@ -1,0 +1,9 @@
+import type { BusinessEvent } from '@prisma/client'
+import { hashBusinessPayload } from '@/services/events/business-event.service'
+import { readPurchaseAmendmentEvent } from '../purchase-order-amendment-record'
+const result={requestReference:'request-001',orderId:'po',proposalId:'proposal',reviewedRevision:'a'.repeat(64),approvedById:'approver',approvedAt:'2026-09-07T10:00:00.000Z',acceptedById:'buyer',proposalStateHash:'b'.repeat(64),total:'20312.5',status:'APPROVED'}
+function record(){const payload={entityType:'PurchaseOrder',commandHash:'c'.repeat(64),result};return {organizationId:'org',eventSource:'INTERNAL',idempotencyKey:'purchase-order-amendment:proposal',eventType:'purchase_order.amended',schemaVersion:1,sourceType:null,sourceId:'po',status:'APPLIED',processedAt:new Date(),payload,payloadHash:hashBusinessPayload(payload),actorId:'approver',occurredAt:new Date(result.approvedAt)} as unknown as BusinessEvent}
+it('projects a verified amendment decision without disclosing the private payload',()=>{expect(readPurchaseAmendmentEvent(record(),'org','po','proposal')).toEqual({result,commandHash:'c'.repeat(64)})})
+it.each(['organizationId','actorId','sourceId','eventType','status'] as const)('rejects incorrect %s bindings',field=>{const event={...record(),[field]:'wrong'};expect(()=>readPurchaseAmendmentEvent(event as BusinessEvent,'org','po','proposal')).toThrow()})
+it('rejects tampered receipt contents even if the stored payload hash was left intact',()=>{const event=record();event.payload={entityType:'PurchaseOrder',commandHash:'c'.repeat(64),result:{...result,total:'1'}};expect(()=>readPurchaseAmendmentEvent(event,'org','po','proposal')).toThrow()})
+it('rejects a missing request binding even with a consistent payload hash',()=>{const event=record();event.payload={entityType:'PurchaseOrder',result};event.payloadHash=hashBusinessPayload(event.payload);expect(()=>readPurchaseAmendmentEvent(event,'org','po','proposal')).toThrow()})

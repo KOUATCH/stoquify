@@ -1,0 +1,186 @@
+{
+  "at": "2026-09-19T13:11:06.076Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "finance": false,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "finance": true,
+      "reconciliation": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "finance-suspended",
+      "finance": false,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "finance-expired",
+      "finance": false,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "finance-future",
+      "finance": false,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "finance-missing",
+      "finance": false,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "finance-read-only",
+      "finance": true,
+      "reconciliation": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "finance-read-only-flag",
+      "finance": true,
+      "reconciliation": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "reconciliation-suspended",
+      "finance": true,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "accounting-dependency-suspended",
+      "finance": true,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "stopped-new-work-retained-read",
+      "finance": true,
+      "reconciliation": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "rawEvidenceUnchanged": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e"
+  },
+  "sourceStable": true
+}

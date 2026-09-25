@@ -36,12 +36,12 @@ const urls = [
     const prisma = new PrismaClient()
     try {
       const out = await prisma.$queryRawUnsafe('SELECT 1 as ok')
-      console.log(`OK ${url}`)
+      console.log("OK: database connection established")
       console.log(out)
       await prisma.$disconnect()
       return
     } catch (e) {
-      console.log(`ERR ${url} -> ${e.code || e.message}`)
+      console.log("ERR: database connection failed; inspect the configured target locally")
     } finally {
       await prisma.$disconnect()
     }

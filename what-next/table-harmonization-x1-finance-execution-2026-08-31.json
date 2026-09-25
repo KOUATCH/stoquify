@@ -1,0 +1,93 @@
+{
+  "executionDate": "2026-08-31",
+  "target": {
+    "databaseName": "stoquify_replay_next_20260830",
+    "mode": "read-only-fixture-and-contract-verification",
+    "scope": "X1-finance-accounting",
+    "destructiveReseedExecuted": false
+  },
+  "verification": {
+    "prismaValidate": "PASS",
+    "migrationStatus": "PASS: 80 migrations; schema up to date",
+    "readonlySeedVerifier": "PASS",
+    "x1FocusedTests": {
+      "suites": 7,
+      "tests": 29,
+      "status": "PASS"
+    },
+    "x1ContractCount": 13,
+    "inventory": {
+      "status": "PASS",
+      "minimumActiveStockedItemsPerLocation": 20,
+      "verifiedLocations": 28
+    },
+    "finance": {
+      "status": "PASS",
+      "journalStatuses": ["DRAFT", "POSTED", "REVERSED", "VOIDED"],
+      "currencies": ["EUR", "USD", "XAF"],
+      "periodStatuses": ["CLOSED", "OPEN"],
+      "perOrganizationCounts": {
+        "receivables": 12,
+        "payables": 12,
+        "payments": 12,
+        "refunds": 12,
+        "reconciled": 12,
+        "unreconciled": 12,
+        "cashHistory": 12,
+        "closeEvidence": 12,
+        "drillToEvidenceLinks": 12
+      }
+    }
+  },
+  "tenants": [
+    {
+      "organizationId": "rds_org_001",
+      "name": "Wilkinson - Feeney 001",
+      "slug": "cmp-rds-org001-convergence",
+      "countryCode": "CM",
+      "baseCurrency": "XAF",
+      "personas": [
+        {"persona":"owner","roleCode":"owner","userId":"rds_org_001_compliance_user_owner","name":"Mireille Nkoa","accountIdentifier":"owner.rds-org001@stockflow.test"},
+        {"persona":"accountant","roleCode":"accountant","userId":"rds_org_001_user_008","name":"Nadia Essomba","accountIdentifier":"accountant.rds-org001@stockflow.test"},
+        {"persona":"external_accountant","roleCode":"external_accountant","userId":"rds_org_001_compliance_user_external_accountant","name":"Carine Manga","accountIdentifier":"external.accountant.rds-org001@stockflow.test"},
+        {"persona":"support","roleCode":"support","userId":"rds_org_001_compliance_user_support","name":"Adele Ngan","accountIdentifier":"support.rds-org001@stockflow.test"},
+        {"persona":"auditor","roleCode":"auditor","userId":"rds_org_001_user_010","name":"Helene Mbarga","accountIdentifier":"auditor.rds-org001@stockflow.test"}
+      ]
+    },
+    {
+      "organizationId": "rds_org_002",
+      "name": "McDermott, Greenholt and Johnson 002",
+      "slug": "cmp-rds-org002-e-commerce",
+      "countryCode": "CM",
+      "baseCurrency": "XAF",
+      "personas": [
+        {"persona":"owner","roleCode":"owner","userId":"rds_org_002_compliance_user_owner","name":"Mireille Nkoa","accountIdentifier":"owner.rds-org002@stockflow.test"},
+        {"persona":"accountant","roleCode":"accountant","userId":"rds_org_002_user_008","name":"Nadia Essomba","accountIdentifier":"accountant.rds-org002@stockflow.test"},
+        {"persona":"external_accountant","roleCode":"external_accountant","userId":"rds_org_002_compliance_user_external_accountant","name":"Carine Manga","accountIdentifier":"external.accountant.rds-org002@stockflow.test"},
+        {"persona":"support","roleCode":"support","userId":"rds_org_002_compliance_user_support","name":"Adele Ngan","accountIdentifier":"support.rds-org002@stockflow.test"},
+        {"persona":"auditor","roleCode":"auditor","userId":"rds_org_002_user_010","name":"Helene Mbarga","accountIdentifier":"auditor.rds-org002@stockflow.test"}
+      ]
+    }
+  ],
+  "externalGates": [
+    {
+      "id": "X1-GATE-01",
+      "description": "Product approval of proposed scale budgets",
+      "status": "PENDING",
+      "evidence": "Budgets remain proposed-not-measured and notAnSla=true"
+    },
+    {
+      "id": "X1-GATE-02",
+      "description": "Authenticated EN/FR desktop/tablet/mobile evidence",
+      "status": "BLOCKED",
+      "evidence": "Evidence binding has no artifact paths and claims are false"
+    }
+  ],
+  "identityNotes": [
+    "Kouatchoua Mark is mapped to product_approver in rds_org_001.",
+    "Tamen Marceline is mapped to maker and order_to_cash_product_owner, not external_accountant.",
+    "Tchana Nikita is mapped to qualified_accounting_reviewer with verification pending.",
+    "Persona presence and database credential verification do not constitute product approval or authenticated UI evidence."
+  ],
+  "decision": "Technical X1 fixture and contract readiness is PASS for controlled review. Product budget approval and authenticated EN/FR evidence remain outstanding."
+}

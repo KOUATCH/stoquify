@@ -14,15 +14,9 @@ const QUERY_SURFACES = [
 ] as const
 
 describe("table date-range adoption contract", () => {
-  it("uses one shared picker instead of paired native date inputs on query surfaces", () => {
-    let pickerCount = 0
-
-    for (const file of QUERY_SURFACES) {
-      const source = readFileSync(join(process.cwd(), file), "utf8")
-      expect(source).not.toContain('type="date"')
-      pickerCount += source.match(/<TableDateRangePicker/g)?.length ?? 0
-    }
-
-    expect(pickerCount).toBe(11)
+  it.each(QUERY_SURFACES)("uses the shared picker rather than native date inputs in %s", (file) => {
+    const source = readFileSync(join(process.cwd(), file), "utf8")
+    expect(source).not.toContain('type="date"')
+    expect(source).toMatch(/<TableDateRangePicker(?:\s|>)/)
   })
 })

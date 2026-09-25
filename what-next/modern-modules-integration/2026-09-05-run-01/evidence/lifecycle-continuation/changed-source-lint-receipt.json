@@ -1,0 +1,563 @@
+{
+  "name": "changed-source-lint",
+  "startedAt": "2026-09-05T13:20:36.930Z",
+  "finishedAt": "2026-09-05T13:20:48.220Z",
+  "command": [
+    "node_modules/eslint/bin/eslint.js",
+    "services/modules/module-control-contracts.ts",
+    "services/modules/module-catalog.service.ts",
+    "services/modules/module-entitlement.service.ts",
+    "services/modules/module-composition-contracts.ts",
+    "services/modules/module-composition.service.ts",
+    "services/modules/module-navigation.service.ts",
+    "services/modules/__tests__/module-entitlement.service.test.ts",
+    "services/modules/__tests__/module-access-regressions.test.ts",
+    "services/modules/__tests__/module-composition.service.test.ts",
+    "services/modules/__tests__/module-navigation.test.ts",
+    "services/modules/__tests__/module-transport.integration.test.ts",
+    "actions/modules/module-control.actions.ts",
+    "actions/modules/module-composition.actions.ts",
+    "actions/modules/__tests__/module-control.actions.test.ts",
+    "actions/modules/__tests__/module-composition.actions.test.ts",
+    "components/modules/ModuleCompositionWorkbench.tsx",
+    "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+    "components/modules/__tests__/TenantModuleActivationButton.test.tsx",
+    "components/ui/dialog.tsx",
+    "components/dashboard/Sidebar.tsx",
+    "components/dashboard/Navbar.tsx",
+    "config/sidebar.ts",
+    "lib/modules/navigation.ts",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx",
+    "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+    "app/[locale]/(dashboard)/dashboard/settings/modules/loading.tsx",
+    "app/[locale]/(dashboard)/dashboard/settings/modules/error.tsx",
+    "playwright.modern-modules.config.ts",
+    "tests/e2e/modern-modules.spec.ts",
+    "services/modules/module-admission.service.ts",
+    "services/modules/module-inventory-continuation.service.ts",
+    "services/modules/module-stop-policy.service.ts",
+    "services/modules/module-lifecycle.service.ts",
+    "services/modules/module-lifecycle-readiness.service.ts",
+    "services/modules/module-reconciliation-obligations.service.ts",
+    "services/inventory/inventory-adjustment.service.ts",
+    "services/inventory/inventory-count.service.ts",
+    "services/inventory/inventory-transfer.service.ts",
+    "services/accounting/journals.service.ts",
+    "services/purchase-order/purchase-order.service.ts",
+    "services/payroll/payroll-control.service.ts",
+    "services/payroll/payroll-setup-readiness.service.ts",
+    "services/pos/pos.service.ts",
+    "services/order-to-cash/delivery-order.service.ts",
+    "services/reconciliation/payment-reconciliation-run.service.ts"
+  ],
+  "exitCode": 0,
+  "sourcesBefore": [
+    {
+      "path": "package.json",
+      "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "f0fb757a153323532442459d44a34681a7f4c81c6c4324cf3bad4350bf627eb8"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "fdc54c81f7aeb4c266d8a0c3597d28a529dccddbade9a2a1317bf721df208827"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "c931a56edbcd535c812e1442aa1261917e4ccf8442025c160a9a9940b17acc30"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "a16a5913ad9fd1f09a7958b12df2cea95cc0f358ef253afb654ae154d495263b"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "sha256": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc"
+    },
+    {
+      "path": "services/modules/__tests__/module-access-regressions.test.ts",
+      "sha256": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "9189fe3acf416afff975c5f39947c23668f724521cfc3627fc212719b5737724"
+    },
+    {
+      "path": "services/modules/__tests__/module-navigation.test.ts",
+      "sha256": "0b354d84a14420c1fe67b7ed9eec394260eb89329445c96fffe871a53d50991a"
+    },
+    {
+      "path": "services/modules/__tests__/module-transport.integration.test.ts",
+      "sha256": "b429064df5453dac57bc67178afe7a5cb3a4c05fa77eb05b9040c3b1a6fe661d"
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "eecb236e32167fedb1dacd27151599fc42590823078fe4d5cb62a2d5cbcb2aff"
+    },
+    {
+      "path": "actions/modules/__tests__/module-control.actions.test.ts",
+      "sha256": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "2ae12d7a4b2d95f1c5b5100678cfc8dff50575d3ee8d9be53ed054d74de9249d"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "22dc997434afc2d7f5d2332e226e7fe3a41887f9ecad7b3bcbf3e03d0d96fc06"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "8766c25d759076bcd8d2de7d150e671dbb7dfb46bd66568c3833260a637552a0"
+    },
+    {
+      "path": "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+      "sha256": "6318a743f0db6bdc3f7232c2d714e99a0910c6d9c638ebd4af416f155461b718"
+    },
+    {
+      "path": "components/modules/__tests__/TenantModuleActivationButton.test.tsx",
+      "sha256": "720915f30107842f0daea2998a7f211e1fab1bff242681a3818a90e6a8bd17a4"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "sha256": "09ba3c156ed0d00f27bc964671fee2b20e85edd0d7269dd903c0a22138831c13"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "87b4ceeec07f61dbf4d0e7daf2438371f908b227227dd2040b3a7bdd95ef27f2"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "4b998875ef69a4f3a635c2902fddd431c131219e1b00c30af5f0435256ee0bc0"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "ca426baa0072391a390550c735546c6fe5d031d415c9d2430a6ac2cab81401a0"
+    },
+    {
+      "path": "lib/modules/navigation.ts",
+      "sha256": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "sha256": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/loading.tsx",
+      "sha256": "137d531237b9399ad95c6fab981074bc3a1cb102acf718ae56faa69b98c65342"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/error.tsx",
+      "sha256": "67f27e55eb0c53f061bb515a19a3d35f76928ecae0fe87bafdd76fb8c3984c54"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "2ee131766f076e6bcd3360a089d9734a3248e2d6763ba2f282456fb57aba88c6"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "84616453d65878bbdcbfa3d88b78d693eba881e1c367b7da56f0930db9ab701c"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "f7de12cb4a298c2282ecc8f4d97f38692e90c70a0fd4a4d02cad8b5e4f8a2bf7"
+    },
+    {
+      "path": "scripts/run-modern-modules-postgres-smoke.js",
+      "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb"
+    },
+    {
+      "path": "playwright.modern-modules.config.ts",
+      "sha256": "6d626c28c07e0f9cf937f808b0627acfb4c322062281809454ff604b6dd9a1b3"
+    },
+    {
+      "path": "tests/e2e/modern-modules.spec.ts",
+      "sha256": "899ee528869ae4bb1f72538c901372c05f127bdc918e41c649d4b36ff0c97723"
+    },
+    {
+      "path": "what-next/module-system/execution-status.md",
+      "sha256": "c39d28f3fe705de6d1bce9fc19d4d71c0b6d3adf1613a891f5eb25d74bf49856"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "2dd910be6c62d976487e8f5e7ee1e6a3685b39ed9fb0fbc22f65cb19ffebe8a1"
+    },
+    {
+      "path": "services/modules/module-inventory-continuation.service.ts",
+      "sha256": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "services/modules/module-reconciliation-obligations.service.ts",
+      "sha256": "38ce6fe4b3f74ab85199227eb7235177e0733a17e1ce1faf672ca8b40f82d0d6"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "b2b99b3b868ca33ba13b3f9e6610c21a8a879ddcf7beb0ecac766153e8b6d6fb"
+    },
+    {
+      "path": "services/inventory/inventory-count.service.ts",
+      "sha256": "0476fbb5691b41a0965a4186842b88fdc3f801c34ea94cbc7a32d1d0bc70517e"
+    },
+    {
+      "path": "services/inventory/inventory-transfer.service.ts",
+      "sha256": "ad1aee0a3cb2deb570581600eaf19125962f1ffd89835845a20937b8310015d3"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "7c6c366c1b6c0fda87feba20d905adebe6f9d5bbeb5ab8d39242abaa9ca56108"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9"
+    },
+    {
+      "path": "services/payroll/payroll-setup-readiness.service.ts",
+      "sha256": "28c53d5da7ea67f5171846189109edac2164812ef8bea1c3cc1d192bccebc292"
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "sha256": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22"
+    },
+    {
+      "path": "services/order-to-cash/delivery-order.service.ts",
+      "sha256": "f7529c1f9c3acd0080c3a8190a57bbfebf477622861e4415f7a9a45f8e71a4ec"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-run.service.ts",
+      "sha256": "0d8c80ef828dd406ade1632f4d250bda1a8906d7118340465c0d22cd42e64a15"
+    },
+    {
+      "path": "scripts/module-surface-inventory.js",
+      "sha256": "75e43fb85fc74535473a52811037a099dff27a125d061c90a3469dddf368d2e2"
+    },
+    {
+      "path": "scripts/modern-modules-lifecycle-fixture.ts",
+      "sha256": "ae73103abf21a1bad42b1f5d328b3089f6b2ff43973a3141d4b8d398c52de199"
+    },
+    {
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    }
+  ],
+  "sourcesAfter": [
+    {
+      "path": "package.json",
+      "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "f0fb757a153323532442459d44a34681a7f4c81c6c4324cf3bad4350bf627eb8"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "fdc54c81f7aeb4c266d8a0c3597d28a529dccddbade9a2a1317bf721df208827"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "c931a56edbcd535c812e1442aa1261917e4ccf8442025c160a9a9940b17acc30"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "a16a5913ad9fd1f09a7958b12df2cea95cc0f358ef253afb654ae154d495263b"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "sha256": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc"
+    },
+    {
+      "path": "services/modules/__tests__/module-access-regressions.test.ts",
+      "sha256": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "9189fe3acf416afff975c5f39947c23668f724521cfc3627fc212719b5737724"
+    },
+    {
+      "path": "services/modules/__tests__/module-navigation.test.ts",
+      "sha256": "0b354d84a14420c1fe67b7ed9eec394260eb89329445c96fffe871a53d50991a"
+    },
+    {
+      "path": "services/modules/__tests__/module-transport.integration.test.ts",
+      "sha256": "b429064df5453dac57bc67178afe7a5cb3a4c05fa77eb05b9040c3b1a6fe661d"
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "eecb236e32167fedb1dacd27151599fc42590823078fe4d5cb62a2d5cbcb2aff"
+    },
+    {
+      "path": "actions/modules/__tests__/module-control.actions.test.ts",
+      "sha256": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "2ae12d7a4b2d95f1c5b5100678cfc8dff50575d3ee8d9be53ed054d74de9249d"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "22dc997434afc2d7f5d2332e226e7fe3a41887f9ecad7b3bcbf3e03d0d96fc06"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "8766c25d759076bcd8d2de7d150e671dbb7dfb46bd66568c3833260a637552a0"
+    },
+    {
+      "path": "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+      "sha256": "6318a743f0db6bdc3f7232c2d714e99a0910c6d9c638ebd4af416f155461b718"
+    },
+    {
+      "path": "components/modules/__tests__/TenantModuleActivationButton.test.tsx",
+      "sha256": "720915f30107842f0daea2998a7f211e1fab1bff242681a3818a90e6a8bd17a4"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "sha256": "09ba3c156ed0d00f27bc964671fee2b20e85edd0d7269dd903c0a22138831c13"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "87b4ceeec07f61dbf4d0e7daf2438371f908b227227dd2040b3a7bdd95ef27f2"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "4b998875ef69a4f3a635c2902fddd431c131219e1b00c30af5f0435256ee0bc0"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "ca426baa0072391a390550c735546c6fe5d031d415c9d2430a6ac2cab81401a0"
+    },
+    {
+      "path": "lib/modules/navigation.ts",
+      "sha256": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "sha256": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/loading.tsx",
+      "sha256": "137d531237b9399ad95c6fab981074bc3a1cb102acf718ae56faa69b98c65342"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/error.tsx",
+      "sha256": "67f27e55eb0c53f061bb515a19a3d35f76928ecae0fe87bafdd76fb8c3984c54"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "2ee131766f076e6bcd3360a089d9734a3248e2d6763ba2f282456fb57aba88c6"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "84616453d65878bbdcbfa3d88b78d693eba881e1c367b7da56f0930db9ab701c"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "f7de12cb4a298c2282ecc8f4d97f38692e90c70a0fd4a4d02cad8b5e4f8a2bf7"
+    },
+    {
+      "path": "scripts/run-modern-modules-postgres-smoke.js",
+      "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb"
+    },
+    {
+      "path": "playwright.modern-modules.config.ts",
+      "sha256": "6d626c28c07e0f9cf937f808b0627acfb4c322062281809454ff604b6dd9a1b3"
+    },
+    {
+      "path": "tests/e2e/modern-modules.spec.ts",
+      "sha256": "899ee528869ae4bb1f72538c901372c05f127bdc918e41c649d4b36ff0c97723"
+    },
+    {
+      "path": "what-next/module-system/execution-status.md",
+      "sha256": "c39d28f3fe705de6d1bce9fc19d4d71c0b6d3adf1613a891f5eb25d74bf49856"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "2dd910be6c62d976487e8f5e7ee1e6a3685b39ed9fb0fbc22f65cb19ffebe8a1"
+    },
+    {
+      "path": "services/modules/module-inventory-continuation.service.ts",
+      "sha256": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "services/modules/module-reconciliation-obligations.service.ts",
+      "sha256": "38ce6fe4b3f74ab85199227eb7235177e0733a17e1ce1faf672ca8b40f82d0d6"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "b2b99b3b868ca33ba13b3f9e6610c21a8a879ddcf7beb0ecac766153e8b6d6fb"
+    },
+    {
+      "path": "services/inventory/inventory-count.service.ts",
+      "sha256": "0476fbb5691b41a0965a4186842b88fdc3f801c34ea94cbc7a32d1d0bc70517e"
+    },
+    {
+      "path": "services/inventory/inventory-transfer.service.ts",
+      "sha256": "ad1aee0a3cb2deb570581600eaf19125962f1ffd89835845a20937b8310015d3"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "7c6c366c1b6c0fda87feba20d905adebe6f9d5bbeb5ab8d39242abaa9ca56108"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9"
+    },
+    {
+      "path": "services/payroll/payroll-setup-readiness.service.ts",
+      "sha256": "28c53d5da7ea67f5171846189109edac2164812ef8bea1c3cc1d192bccebc292"
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "sha256": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22"
+    },
+    {
+      "path": "services/order-to-cash/delivery-order.service.ts",
+      "sha256": "f7529c1f9c3acd0080c3a8190a57bbfebf477622861e4415f7a9a45f8e71a4ec"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-run.service.ts",
+      "sha256": "0d8c80ef828dd406ade1632f4d250bda1a8906d7118340465c0d22cd42e64a15"
+    },
+    {
+      "path": "scripts/module-surface-inventory.js",
+      "sha256": "75e43fb85fc74535473a52811037a099dff27a125d061c90a3469dddf368d2e2"
+    },
+    {
+      "path": "scripts/modern-modules-lifecycle-fixture.ts",
+      "sha256": "ae73103abf21a1bad42b1f5d328b3089f6b2ff43973a3141d4b8d398c52de199"
+    },
+    {
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    }
+  ],
+  "sourceStable": true
+}

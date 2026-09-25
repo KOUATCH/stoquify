@@ -1,11 +1,11 @@
 import RoleForm from "@/components/Forms/RoleForm";
-import { checkPermission } from "@/config/useAuth";
+import { requirePermission } from "@/lib/security/rbac";
 import { routeByKey, withSettingsSurfaceAccess } from "../../settings-route-access"
 
 async function pageImpl() {
-  await checkPermission("roles.create");
+  const ctx = await requirePermission("roles.create");
 
-  return <RoleForm />;
+  return <div className="dashboard-landing-theme min-h-screen overflow-x-hidden"><RoleForm organizationId={ctx.orgId} actorId={ctx.userId} /></div>;
 }
 
 

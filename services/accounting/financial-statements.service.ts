@@ -475,7 +475,6 @@ export async function getFinancialStatements(input: FinancialStatementsInput) {
     );
   }
 
-  const statementTypes = Array.from(STATEMENT_ACCOUNT_TYPES);
   const [
     availablePeriods,
     accounts,
@@ -500,13 +499,29 @@ export async function getFinancialStatements(input: FinancialStatementsInput) {
     db.chartOfAccount.findMany({
       where: {
         organizationId: input.organizationId,
-        deletedAt: null,
-        type: { in: statementTypes },
+        OR: [
+          { deletedAt: null },
+          {
+            journalLines: {
+              some: {
+                organizationId: input.organizationId,
+                journalEntry: {
+                  organizationId: input.organizationId,
+                  status: {
+                    in: [JournalEntryStatus.POSTED, JournalEntryStatus.REVERSED],
+                  },
+                  entryDate: { lte: requestedPeriod.endDate },
+                },
+              },
+            },
+          },
+        ],
       },
       orderBy: { code: "asc" },
       select: {
         id: true,
         code: true,
+        organizationId: true,
         nameEn: true,
         nameFr: true,
         type: true,
@@ -556,6 +571,14 @@ export async function getFinancialStatements(input: FinancialStatementsInput) {
       select: { currency: true },
     }),
   ]);
+
+  const accountIds = new Set(accounts.map((account) => account.id));
+  if (
+    accounts.some((account) => account.organizationId !== input.organizationId) ||
+    [...periodActivity, ...cumulativeActivity].some((activity) => !accountIds.has(activity.accountId))
+  ) {
+    throw new BusinessRuleError("Posted journal account evidence is unavailable for this organization");
+  }
 
   return buildFinancialStatementsReadModel({
     organizationId: input.organizationId,

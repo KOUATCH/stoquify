@@ -1,0 +1,132 @@
+// REVIEW CANDIDATE ONLY. NOT APPLIED. NOT EXECUTED.
+import { createHash } from "node:crypto"
+import { Prisma } from "@prisma/client"
+import { hashBusinessPayload } from "@/services/events/business-event.service"
+import { getModuleAdmissionInTx } from "@/services/modules/module-admission.service"
+import { assertAcceptedOfflineContinuationInTx, captureOfflineContinuationProofInTx, readAcceptedOfflineSale } from "../offline-continuation.service"
+
+jest.mock("@/services/modules/module-admission.service", () => ({
+  ...jest.requireActual("@/services/modules/module-admission.service"),
+  getModuleAdmissionInTx: jest.fn(),
+}))
+
+const reference = { organizationId: "offline-review-org", userId: "offline-review-cashier", offlineEventId: "offline-review-event" }
+const input = {
+  salesOrderId: "offline-review-sale", locationId: "offline-review-location", terminalId: "offline-review-terminal",
+  sessionId: "offline-review-session", clientCommitId: "offline:offline-review-event",
+  tenders: [{ method: "CASH" as const, amount: 118 }], receipt: { channel: "NONE" as const },
+}
+const receivedAt = new Date("2026-09-05T10:00:00.000Z")
+const acceptedAt = new Date("2026-09-05T10:00:00.001Z")
+const cutoff = "2026-09-05T10:01:00.000Z"
+
+function fixture() {
+  const sale = { id: input.salesOrderId, customerId: "customer-1", total: "118.00", lines: [{ id: "line-1", quantity: "1", unitPrice: "118" }] }
+  const payload = { commitSale: input }, payloadHash = hashBusinessPayload(payload)
+  const entryHash = createHash("sha256").update(["device-1", "1", "OFFLINE_SALE_CAPTURED", "1", payloadHash, ""].join("|")).digest("hex")
+  const proof = {
+    version: 1, organizationId: reference.organizationId, actorId: reference.userId,
+    offlineEventId: reference.offlineEventId, deviceId: "device-1", terminalId: input.terminalId,
+    locationId: input.locationId, sessionId: input.sessionId, deviceSeq: 1, schemaVersion: 1,
+    payloadHash, entryHash, receivedAtServer: receivedAt.toISOString(), acceptedAtServer: acceptedAt.toISOString(),
+    configurationRevision: 3, draftHash: hashBusinessPayload(sale), signingKeyHash: null, signatureVerification: "LEGACY_UNVERIFIED",
+  }
+  const event = {
+    id: reference.offlineEventId, organizationId: reference.organizationId, deviceId: "device-1",
+    terminalId: input.terminalId, locationId: input.locationId, sessionId: input.sessionId,
+    deviceSeq: 1, schemaVersion: 1, eventType: "OFFLINE_SALE_CAPTURED", idempotencyKey: "offline-1",
+    prevHash: null, entryHash, payloadHash, payload, status: "PENDING_REPLAY",
+    receivedAtServer: receivedAt, capturedAtDevice: new Date("1970-01-01T00:00:00.000Z"),
+    device: { id: "device-1", organizationId: reference.organizationId, terminalId: input.terminalId,
+      locationId: input.locationId, status: "ACTIVE", signingPublicKeyPem: null },
+    syncBatch: { id: "batch-1", organizationId: reference.organizationId, actorId: reference.userId,
+      deviceId: "device-1", terminalId: input.terminalId, locationId: input.locationId },
+    businessEvent: {
+      id: "acceptance-1", organizationId: reference.organizationId, actorId: reference.userId,
+      eventSource: "OFFLINE_POS", eventType: "pos.offline.event.captured", idempotencyKey: "offline-event:offline-1:captured",
+      sourceId: reference.offlineEventId, payloadHash, deviceId: "device-1", registerId: input.terminalId,
+      locationId: input.locationId, recordedAt: receivedAt,
+      payload: { offlineEventId: reference.offlineEventId, eventType: "OFFLINE_SALE_CAPTURED", deviceSeq: 1,
+        payloadHash, entryHash, continuation: { proof, proofHash: hashBusinessPayload(proof) } },
+    },
+  }
+  const queries: string[] = []
+  const tx = {
+    $queryRaw: jest.fn(async (query: Prisma.Sql) => {
+      queries.push(query.sql)
+      return query.sql.includes("clock_timestamp") ? [{ now: acceptedAt }] : [{ id: input.salesOrderId }]
+    }),
+    pOSOfflineEvent: { findFirst: jest.fn(async () => event) },
+    salesOrder: { findFirst: jest.fn(async () => sale) },
+    tenantModuleConfiguration: { findUnique: jest.fn(async () => ({ revision: 3 })) },
+  }
+  return { event, proof, sale, tx, queries, client: tx as unknown as Prisma.TransactionClient }
+}
+
+describe("accepted offline continuation proof (proposed focused unit tests)", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    ;(getModuleAdmissionInTx as jest.Mock).mockResolvedValue({ allowed: false, blockedBy: ["pos", "sales"], stoppedAt: { pos: cutoff, sales: cutoff } })
+  })
+  it("accepts a matching server receipt before every dependency cutoff", async () => {
+    const f = fixture()
+    await expect(assertAcceptedOfflineContinuationInTx(f.client, reference, input)).resolves.toBeUndefined()
+    expect(f.queries[0]).toContain('pos_offline_devices')
+    expect(f.queries[1]).toContain('pos_offline_events')
+    expect(f.queries[2]).toContain('business_events')
+    expect(f.queries[3]).toContain('sales_orders')
+    expect(f.queries[4]).toContain('sales_order_lines')
+  })
+  it.each([undefined, "", "invalid", "2026-09-05T10:00:00.001Z", "2026-09-05T09:59:59.999Z"])(
+    "rejects missing, invalid, equal or earlier cutoff %s despite old device time", async stoppedAt => {
+      const f = fixture()
+      ;(getModuleAdmissionInTx as jest.Mock).mockResolvedValue({ allowed: false, blockedBy: ["pos"], stoppedAt: { pos: stoppedAt } })
+      await expect(assertAcceptedOfflineContinuationInTx(f.client, reference, input)).rejects.toMatchObject({ metadata: { reason: "MODULE_NEW_WORK_STOPPED" } })
+      expect(f.tx.salesOrder.findFirst).not.toHaveBeenCalled()
+    })
+  it("requires fresh transaction payload to match the input resolved before finalization", async () => {
+    const f = fixture()
+    await expect(assertAcceptedOfflineContinuationInTx(f.client, reference, { ...input, tenders: [{ method: "CASH", amount: 119 }] }))
+      .rejects.toMatchObject({ code: "CONFLICT" })
+    expect(f.tx.salesOrder.findFirst).not.toHaveBeenCalled()
+  })
+  it("rejects a changed server cart with identical total", async () => {
+    const f = fixture()
+    f.sale.lines[0].id = "different-item-same-total"
+    await expect(assertAcceptedOfflineContinuationInTx(f.client, reference, input)).rejects.toMatchObject({ code: "CONFLICT" })
+  })
+  it.each(["organization", "actor", "device", "terminal", "session", "acceptance", "proof", "key"])(
+    "rejects changed %s evidence", async field => {
+      const f = fixture()
+      if (field === "organization") f.event.businessEvent.organizationId = "other-tenant"
+      if (field === "actor") f.event.syncBatch.actorId = "another-cashier"
+      if (field === "device") f.event.device.status = "REVOKED"
+      if (field === "terminal") f.event.device.terminalId = "other-terminal"
+      if (field === "session") f.event.sessionId = "other-session"
+      if (field === "acceptance") f.event.businessEvent.payload.entryHash = "changed"
+      if (field === "proof") f.event.businessEvent.payload.continuation.proofHash = "changed"
+      if (field === "key") Object.assign(f.event.device, { signingPublicKeyPem: "rotated-key" })
+      await expect(assertAcceptedOfflineContinuationInTx(f.client, reference, input)).rejects.toBeDefined()
+    })
+  it("does not expose a foreign event when the tenant-scoped lookup misses", async () => {
+    const f = fixture()
+    f.tx.pOSOfflineEvent.findFirst.mockResolvedValue(null as never)
+    await expect(readAcceptedOfflineSale(f.client, reference)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(f.tx.pOSOfflineEvent.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: reference.offlineEventId, organizationId: reference.organizationId },
+    }))
+  })
+  it("captures proof from the stored event and database wall clock, not client metadata", async () => {
+    const f = fixture()
+    Object.assign(f.event, { metadata: { acceptedAtServer: "1970-01-01T00:00:00.000Z", continuation: true } })
+    const result = await captureOfflineContinuationProofInTx(f.client, reference)
+    expect(result?.proof).toMatchObject({ acceptedAtServer: acceptedAt.toISOString(), receivedAtServer: receivedAt.toISOString(), configurationRevision: 3 })
+    expect(result?.proofHash).toBe(hashBusinessPayload(result?.proof))
+  })
+  it("propagates failed source reads without recording successful zero readiness", async () => {
+    const f = fixture()
+    f.tx.salesOrder.findFirst.mockRejectedValue(new Error("source unavailable"))
+    await expect(captureOfflineContinuationProofInTx(f.client, reference)).rejects.toThrow("source unavailable")
+  })
+})
+

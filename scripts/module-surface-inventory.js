@@ -2,6 +2,7 @@ const fs = require("fs")
 const path = require("path")
 const { buildApiRouteGuardInventory } = require("./api-route-guard-inventory")
 const { writeGeneratedReportFile } = require("./generated-report-writer")
+const { purchasesRouteEvidence } = require("./module-purchases-route-evidence")
 
 const DEFAULT_JSON_OUT = "what-next/module-surface-inventory.json"
 const DEFAULT_MARKDOWN_OUT = "what-next/module-surface-inventory.md"
@@ -107,7 +108,7 @@ function inferModuleSlug(surface, source, catalog) {
   const matchedPrefix = routePrefixes.find((entry) => normalizedSurface.startsWith(entry.prefix))
   if (matchedPrefix) return matchedPrefix.slug
 
-  if (normalizedSurface === "modules/module-control.actions.ts") return "settings"
+  if (["modules/module-control.actions.ts", "modules/module-composition.actions.ts"].includes(normalizedSurface)) return "settings"
 
   if (
     normalizedSurface === "signals/business-signals.actions.ts" ||
@@ -335,7 +336,7 @@ function inferModuleApplicability(file, surface, source) {
     if (source.includes("verifyEmailOtpWorkflow")) return "not applicable: public email verification"
   }
 
-  if (normalizedFile === "services/modules/module-control-contracts.ts") {
+  if (["services/modules/module-control-contracts.ts", "services/modules/module-composition-contracts.ts"].includes(normalizedFile)) {
     return "not applicable: internal module governance contract"
   }
 
@@ -496,6 +497,7 @@ function dashboardRecords(root, catalog) {
         surface: dashboardRoute(file),
         surfaceType: file.endsWith("layout.tsx") ? "layout" : "page",
         source,
+        ...purchasesRouteEvidence(root, file, source, dashboardRoute(file)),
       }, catalog)
     })
 }
@@ -534,6 +536,20 @@ function actionRecords(root, catalog) {
 
 function moduleServiceRecords(root, catalog) {
   const modulesRoot = path.join(root, "services/modules")
+  // Explicit ownership for the composition control plane. These remain visible
+  // as mapped enforcement candidates with their detected guards; no blanket
+  // exemption is applied to new services. This also avoids mistaking Prisma's
+  // orderBy: { moduleSlug: "asc" } for a production capability identifier.
+  const compositionOwners = {
+    "services/modules/module-admission.service.ts": "settings",
+    "services/modules/module-composition.service.ts": "settings",
+    "services/modules/module-lifecycle-readiness.service.ts": "settings",
+    "services/modules/module-lifecycle.service.ts": "settings",
+    "services/modules/module-navigation.service.ts": "settings",
+    "services/modules/module-stop-policy.service.ts": "settings",
+    "services/modules/module-inventory-continuation.service.ts": "inventory",
+    "services/modules/module-reconciliation-obligations.service.ts": "payment_reconciliation",
+  }
   return walk(modulesRoot, (file) => /\.(ts|tsx)$/.test(file) && !file.includes("__tests__"))
     .map((absolute) => {
       const file = toRepoPath(root, absolute)
@@ -542,6 +558,7 @@ function moduleServiceRecords(root, catalog) {
         file,
         surface: file.replace(/^services\/modules\//, ""),
         surfaceType: "module_service",
+        moduleSlug: compositionOwners[file],
         source,
         guard: detectGuard(source),
       }, catalog)

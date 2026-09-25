@@ -1,4 +1,12 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
+import { readPendingSale, savePendingSale } from "@/lib/pos/pending-sale"
+jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", hasPermission: () => false }) }))
+jest.mock("@/hooks/posHooks/usePOSCheckoutLifecycle", () => ({ usePOSCheckoutLifecycle: jest.fn(() => ({
+  ready: true, busy: false, leaseId: "00000000-0000-4000-8000-000000000001", error: null, snapshot: null,
+  acceptedCartId: jest.requireMock("@/hooks/posHooks/usePosOperations").useActivePOSCart()?.data?.data?.id ?? null,
+  acceptCart: jest.fn(), refresh: jest.fn(), command: jest.fn().mockResolvedValue({ activeCartId: "sale-1" }),
+})) }))
+jest.mock("@/actions/pos/checkout.actions", () => ({ retainLegacyPOSCheckoutAction: jest.fn().mockResolvedValue({ success: true, data: null }) }))
 
 const mockNotifications = {
   warning: jest.fn(),
@@ -40,6 +48,7 @@ jest.mock("@/hooks/posHooks/usePosOperations", () => ({
   useAddPOSCartLine: jest.fn(),
   useClosePOSShift: jest.fn(),
   useCommitPOSSale: jest.fn(),
+  usePOSSaleCommitStatus: jest.fn(),
   useCurrentUserPOSShift: jest.fn(),
   useOpenPOSShift: jest.fn(),
   usePOSCatalog: jest.fn(),
@@ -55,6 +64,7 @@ jest.mock("@/hooks/posHooks/usePosOperations", () => ({
 }))
 
 import * as posHooks from "@/hooks/posHooks/usePosOperations"
+import { usePOSCheckoutLifecycle } from "@/hooks/posHooks/usePOSCheckoutLifecycle"
 import ProfessionalPOSSystem from "../ProfessionalPOSSystem"
 
 const mockHooks = posHooks as jest.Mocked<typeof posHooks>
@@ -119,6 +129,7 @@ function setupHooks(expectedBalance: number, closeResponse: unknown) {
   mockHooks.useUpdatePOSCartLine.mockReturnValue(mutationState() as never)
   mockHooks.useRemovePOSCartLine.mockReturnValue(mutationState() as never)
   mockHooks.useCommitPOSSale.mockReturnValue(mutationState() as never)
+  mockHooks.usePOSSaleCommitStatus.mockReturnValue(mutationState() as never)
   mockHooks.useRevokePublicReceiptAccessToken.mockReturnValue(mutationState() as never)
   mockHooks.usePublicReceiptAccessTokens.mockReturnValue({ data: actionSuccess([]), isFetching: false } as never)
   mockHooks.usePublicReceiptSalesSearch.mockReturnValue({ data: actionSuccess([]), isFetching: false } as never)
@@ -142,9 +153,268 @@ function openCloseDialog() {
   return screen.getByRole("dialog")
 }
 
+describe("ProfessionalPOSSystem resume at checkout", () => {
+  const lifecycleMock = jest.mocked(usePOSCheckoutLifecycle)
+  const defaultLifecycle = lifecycleMock.getMockImplementation()!
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+    sessionStorage.clear()
+  })
+
+  afterEach(() => {
+    lifecycleMock.mockImplementation(defaultLifecycle)
+    sessionStorage.clear()
+  })
+
+  function setupUnfinishedCart() {
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess({
+      id: "saved-cart", revision: "a".repeat(64), total: 100, subtotal: 100, taxAmount: 0, discount: 0,
+      lines: [{ id: "line-1", itemId: "item-1", nameEn: "Coffee", quantity: 1, unitPrice: 100, lineTotal: 100 }],
+    }) } as never)
+    const lifecycle = { ...defaultLifecycle({ locationId: "location-1", terminalId: "terminal-1" }), acceptedCartId: null as string | null, command: jest.fn() }
+    lifecycleMock.mockReturnValue(lifecycle)
+    const commit = jest.fn()
+    mockHooks.useCommitPOSSale.mockReturnValue(mutationState(commit) as never)
+    return { lifecycle, commit }
+  }
+
+  it("offers Resume beside disabled Charge and waits for cart validation without submitting a sale", async () => {
+    const { lifecycle, commit } = setupUnfinishedCart()
+    let finishResume!: (value: { activeCartId: string }) => void
+    lifecycle.command.mockImplementation(() => new Promise<{ activeCartId: string }>(resolve => { finishResume = resolve }))
+    const view = render(<ProfessionalPOSSystem />)
+    const footer = within(screen.getByTestId("pos-charge-footer"))
+    const charge = footer.getByRole("button", { name: "charge.cta" })
+    const resume = footer.getByRole("button", { name: "lifecycle.resume" })
+    expect(charge).toBeDisabled()
+    expect(charge).toHaveAccessibleDescription("lifecycle.resumeRequired")
+    expect(resume).toHaveAccessibleDescription("lifecycle.resumeRequired")
+    fireEvent.click(resume)
+    expect(lifecycle.command).toHaveBeenCalledWith("RESUME", "saved-cart")
+    expect(charge).toBeDisabled()
+    lifecycle.busy = true
+    view.rerender(<ProfessionalPOSSystem />)
+    expect(resume).toBeDisabled()
+    lifecycle.acceptedCartId = "saved-cart"
+    lifecycle.busy = false
+    finishResume({ activeCartId: "saved-cart" })
+    await waitFor(() => expect(charge).toBeEnabled())
+    expect(footer.queryByRole("button", { name: "lifecycle.resume" })).not.toBeInTheDocument()
+    expect(commit).not.toHaveBeenCalled()
+    expect(screen.getByTestId("pos-cart-line")).toHaveTextContent("Coffee")
+  })
+
+  it("keeps Charge disabled and the cart intact when resuming fails", async () => {
+    const { lifecycle, commit } = setupUnfinishedCart()
+    lifecycle.command.mockResolvedValue(null)
+    render(<ProfessionalPOSSystem />)
+    const footer = within(screen.getByTestId("pos-charge-footer"))
+    fireEvent.click(footer.getByRole("button", { name: "lifecycle.resume" }))
+    await waitFor(() => expect(lifecycle.command).toHaveBeenCalledWith("RESUME", "saved-cart"))
+    expect(footer.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    expect(screen.getByTestId("pos-cart-line")).toHaveTextContent("Coffee")
+    expect(commit).not.toHaveBeenCalled()
+  })
+
+  it("does not resume a cart before register ownership is verified", () => {
+    const { lifecycle } = setupUnfinishedCart()
+    lifecycle.ready = false
+    render(<ProfessionalPOSSystem />)
+    const footer = within(screen.getByTestId("pos-charge-footer"))
+    expect(footer.getByRole("button", { name: "lifecycle.resume" })).toBeDisabled()
+    expect(footer.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    expect(lifecycle.command).not.toHaveBeenCalled()
+  })
+})
+
+describe("ProfessionalPOSSystem checkout recovery", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    sessionStorage.clear()
+  })
+
+  afterEach(() => sessionStorage.clear())
+
+  function setupRecovery(kind: "CART_CHANGED" | "CART_REVIEW_REQUIRED" | "NOT_COMMITTED" | "NOT_FOUND" | "PENDING", failedRead = false, cartId = "sale-1") {
+    setupHooks(100, actionSuccess({ terminalId: "terminal-1" }))
+    const request = {
+      clientCommitId: "pos:original-attempt", salesOrderId: "sale-1", expectedCartRevision: "a".repeat(64),
+      locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1",
+      tenders: [{ method: "CASH" as const, amount: 100 }], receipt: { channel: "NONE" as const },
+    }
+    savePendingSale(sessionStorage, { version: 1, organizationId: "org-1", actorId: "cashier-1", request })
+    const cart = {
+      id: cartId, revision: "b".repeat(64), status: "DRAFT", locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1",
+      customer: null, subtotal: 100, discount: 0, taxAmount: 0, total: 100,
+      lines: [{ id: "line-1", itemId: "item-1", nameEn: "Coffee", quantity: 1, unitPrice: 100, lineTotal: 100, stock: { trackInventory: true, quantityOnHand: 10 } }],
+    }
+    const refetch = jest.fn().mockResolvedValue({ data: actionSuccess(cart), isError: failedRead })
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess(cart), refetch } as never)
+    const recover = jest.fn().mockResolvedValue(actionSuccess({ kind }))
+    mockHooks.usePOSSaleCommitStatus.mockReturnValue(mutationState(recover) as never)
+    const commit = jest.fn().mockResolvedValue({ success: false, data: null, error: "Test response" })
+    mockHooks.useCommitPOSSale.mockReturnValue(mutationState(commit) as never)
+    return { request, refetch, recover, commit }
+  }
+
+  it.each(["NOT_FOUND", "CART_CHANGED", "CART_REVIEW_REQUIRED"] as const)("unlocks Charge only after a successful %s review and retains the original request identifier", async kind => {
+    const { request, refetch, recover, commit } = setupRecovery(kind)
+    render(<ProfessionalPOSSystem />)
+    const charge = screen.getByRole("button", { name: "charge.cta" })
+    const footer = screen.getByTestId("pos-charge-footer")
+    expect(charge).toBeDisabled()
+    expect(charge).toHaveAccessibleDescription("recovery.chargePaused")
+    fireEvent.click(within(footer).getByRole("button", { name: "recovery.open" }))
+    expect(screen.getByTestId("pos-commit-recovery")).toHaveFocus()
+    fireEvent.click(screen.getByRole("button", { name: "recovery.check" }))
+    const review = await screen.findByRole("button", { name: kind === "CART_CHANGED" ? "recovery.reviewChanged" : "recovery.reviewCurrent" })
+    expect(recover).toHaveBeenCalledWith(expect.objectContaining(request))
+    expect(charge).toBeDisabled()
+    fireEvent.click(review)
+    await waitFor(() => expect(charge).toBeEnabled())
+    expect(refetch).toHaveBeenCalledTimes(1)
+    expect(within(footer).queryByText("recovery.chargePaused")).not.toBeInTheDocument()
+    const recovery = within(screen.getByTestId("pos-commit-recovery"))
+    expect(recovery.getByRole("heading", { name: "recovery.reviewTitle" })).toBeInTheDocument()
+    expect(recovery.getByText("recovery.reviewReady")).toBeInTheDocument()
+    expect(recovery.queryByText("recovery.notFound")).not.toBeInTheDocument()
+    expect(recovery.queryByText("recovery.explanation")).not.toBeInTheDocument()
+    expect(recovery.queryByRole("button", { name: "recovery.retryOriginal" })).not.toBeInTheDocument()
+    expect(recovery.queryByRole("button", { name: /recovery.review(Current|Changed)/ })).not.toBeInTheDocument()
+    fireEvent.click(recovery.getByRole("button", { name: "recovery.continueCheckout" }))
+    expect(footer).toHaveFocus()
+    expect(commit).not.toHaveBeenCalled()
+    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")?.request.clientCommitId).toBe(request.clientCommitId)
+    fireEvent.click(charge)
+    await waitFor(() => expect(commit).toHaveBeenCalledWith(expect.objectContaining({
+      clientCommitId: request.clientCommitId, salesOrderId: "sale-1", expectedCartRevision: "b".repeat(64),
+    })))
+    await screen.findByText("recovery.chargePaused")
+  })
+
+  it("requires another review after rechecking an unrecorded attempt", async () => {
+    const { commit, recover } = setupRecovery("NOT_FOUND")
+    render(<ProfessionalPOSSystem />)
+    await waitFor(() => expect(recover).toHaveBeenCalled())
+    await waitFor(() => expect(screen.getByTestId("pos-commit-recovery")).toHaveTextContent("recovery.notFound"))
+    fireEvent.click(within(screen.getByTestId("pos-commit-recovery")).getByRole("button", { name: "recovery.reviewCurrent" }))
+    await screen.findByText("recovery.reviewReady")
+    fireEvent.click(screen.getByRole("button", { name: "recovery.check" }))
+    await screen.findByText("recovery.notFound")
+    expect(screen.queryByText("recovery.reviewReady")).not.toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "recovery.continueCheckout" })).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    expect(commit).not.toHaveBeenCalled()
+    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).not.toBeNull()
+  })
+
+  it("requires a fresh review after losing register ownership", async () => {
+    const { commit } = setupRecovery("NOT_FOUND")
+    const lifecycleMock = jest.mocked(usePOSCheckoutLifecycle)
+    const implementation = lifecycleMock.getMockImplementation()!
+    const lifecycle = { ...implementation({ locationId: "location-1", terminalId: "terminal-1" }) }
+    lifecycleMock.mockReturnValue(lifecycle)
+    try {
+      const view = render(<ProfessionalPOSSystem />)
+      fireEvent.click(await screen.findByRole("button", { name: "recovery.reviewCurrent" }))
+      await screen.findByText("recovery.reviewReady")
+      lifecycle.ready = false
+      lifecycle.acceptedCartId = null
+      view.rerender(<ProfessionalPOSSystem />)
+      expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+      lifecycle.ready = true
+      view.rerender(<ProfessionalPOSSystem />)
+      await screen.findByRole("button", { name: "recovery.reviewCurrent" })
+      expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+      expect(screen.queryByText("recovery.reviewReady")).not.toBeInTheDocument()
+      expect(commit).not.toHaveBeenCalled()
+      expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).not.toBeNull()
+    } finally { lifecycleMock.mockImplementation(implementation) }
+  })
+
+  it.each([
+    { failedRead: true, cartId: "sale-1", message: "recovery.failed" },
+    { failedRead: false, cartId: "another-cart", message: "recovery.cartMismatch" },
+  ])("keeps Charge locked when cart review returns $message", async ({ failedRead, cartId, message }) => {
+    const { commit } = setupRecovery("CART_CHANGED", failedRead, cartId)
+    render(<ProfessionalPOSSystem />)
+    fireEvent.click(screen.getByRole("button", { name: "recovery.check" }))
+    fireEvent.click(await screen.findByRole("button", { name: "recovery.reviewChanged" }))
+    expect(await screen.findByRole("alert")).toHaveTextContent(message)
+    expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    expect(commit).not.toHaveBeenCalled()
+    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).not.toBeNull()
+  })
+
+  it("automatically clears a verified obsolete attempt without submitting another sale", async () => {
+    const { commit } = setupRecovery("NOT_COMMITTED", false, "current-cart")
+    render(<ProfessionalPOSSystem />)
+    expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    expect(screen.queryByRole("button", { name: "recovery.acknowledge" })).not.toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole("button", { name: "charge.cta" })).toBeEnabled())
+    expect(screen.getByTestId("pos-cart-line")).toHaveTextContent("Coffee")
+    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).toBeNull()
+    expect(commit).not.toHaveBeenCalled()
+  })
+
+  it.each(["NOT_FOUND", "PENDING"] as const)("does not allow clearing an unresolved %s attempt", async kind => {
+    setupRecovery(kind)
+    render(<ProfessionalPOSSystem />)
+    fireEvent.click(screen.getByRole("button", { name: "recovery.check" }))
+    await screen.findByText(kind === "NOT_FOUND" ? "recovery.notFound" : "recovery.pending")
+    expect(screen.queryByRole("button", { name: "recovery.acknowledge" })).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    expect(readPendingSale(sessionStorage, "org-1", "cashier-1")).not.toBeNull()
+  })
+})
+
 describe("ProfessionalPOSSystem shift close", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  it("retains a rejected requested quantity through refetch and saves an explicit correction", async () => {
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    const line = { id: "line-1", itemId: "item-1", sku: "OWNED", nameEn: "Owned item", quantity: 1, unitPrice: 100, discount: 0, taxRate: 0, taxAmount: 0, lineTotal: 100, stock: { trackInventory: true, quantityOnHand: 10, quantityAvailable: 3 } }
+    const cart = { id: "sale-1", status: "DRAFT", locationId: "location-1", terminalId: "terminal-1", sessionId: "session-1", customer: null, subtotal: 100, discount: 0, taxAmount: 0, total: 100, lines: [line] }
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess(cart) } as never)
+    const update = jest.fn().mockResolvedValueOnce({ success: false, error: "Insufficient stock", data: null })
+      .mockResolvedValueOnce(actionSuccess({ ...cart, total: 200, lines: [{ ...line, quantity: 2, lineTotal: 200 }] }))
+    mockHooks.useUpdatePOSCartLine.mockReturnValue(mutationState(update) as never)
+    const view = render(<ProfessionalPOSSystem />)
+    const quantity = within(screen.getByTestId("pos-cart-line")).getByRole("spinbutton")
+    fireEvent.change(quantity, { target: { value: "25" } }); fireEvent.blur(quantity)
+    await waitFor(() => expect(update).toHaveBeenCalledWith(expect.objectContaining({ salesOrderId: "sale-1", lineId: "line-1", quantity: 25 })))
+    await waitFor(() => expect(quantity).toHaveAttribute("aria-invalid", "true"))
+    expect(quantity).toHaveValue(25)
+    expect(screen.getByRole("button", { name: "charge.cta" })).toBeDisabled()
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess({ ...cart, lines: [{ ...line }] }) } as never)
+    view.rerender(<ProfessionalPOSSystem />)
+    expect(quantity).toHaveValue(25)
+    fireEvent.change(quantity, { target: { value: "2" } }); fireEvent.blur(quantity)
+    await waitFor(() => expect(quantity).not.toHaveAttribute("aria-invalid"))
+    expect(update).toHaveBeenLastCalledWith(expect.objectContaining({ salesOrderId: "sale-1", lineId: "line-1", quantity: 2 }))
+    expect(quantity).toHaveValue(2)
+  })
+
+  it("hides checkout during a shift read failure, retries the read and preserves entered quantities", async () => {
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    const line = { id: "line-1", itemId: "item-1", sku: "OWNED", nameEn: "Owned item", quantity: 1, unitPrice: 100, discount: 0, taxRate: 0, taxAmount: 0, lineTotal: 100, stock: { trackInventory: true, quantityOnHand: 10, quantityAvailable: 10 } }
+    mockHooks.useActivePOSCart.mockReturnValue({ data: actionSuccess({ id: "sale-1", total: 100, lines: [line] }) } as never)
+    const view = render(<ProfessionalPOSSystem />)
+    fireEvent.change(within(screen.getByTestId("pos-cart-line")).getByRole("spinbutton"), { target: { value: "7" } })
+    const retryRead = jest.fn()
+    mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(shiftFixture(0)), isError: true, retryRead } as never)
+    view.rerender(<ProfessionalPOSSystem />)
+    expect(screen.getByRole("heading", { name: "readState.failedTitle" })).toBeInTheDocument()
+    expect(screen.queryByTestId("pos-cart-line")).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }))
+    expect(retryRead).toHaveBeenCalledTimes(1)
+    mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(shiftFixture(0)), isError: false } as never)
+    view.rerender(<ProfessionalPOSSystem />)
+    expect(within(screen.getByTestId("pos-cart-line")).getByRole("spinbutton")).toHaveValue(7)
   })
 
   it("requires an explicit count and submits a literal zero instead of falling back to expected cash", async () => {
@@ -171,6 +441,49 @@ describe("ProfessionalPOSSystem shift close", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
   })
 
+  it.each([
+    { currency: "XAF", expectedBalance: 100.49, closingAmount: "100" },
+    { currency: "XAF", expectedBalance: 0, closingAmount: "0" },
+    { currency: "USD", expectedBalance: 100.25, closingAmount: "100.25" },
+  ])("fills expected $currency cash $closingAmount without submitting until confirmed", async ({ currency, expectedBalance, closingAmount }) => {
+    const closeMutateAsync = setupHooks(expectedBalance, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.usePOSLocations.mockReturnValue({ data: actionSuccess([{
+      id: "location-1", name: "Main shop", isDefault: true,
+      organization: { name: "Stoquify", currency, defaultLocale: "EN" },
+    }]) } as never)
+
+    render(<ProfessionalPOSSystem />)
+    fireEvent.click(screen.getByRole("button", { name: "shift.useExpectedCash" }))
+    expect(screen.getByLabelText("shift.countedCash")).toHaveValue(Number(closingAmount))
+    expect(closeMutateAsync).not.toHaveBeenCalled()
+
+    const dialog = openCloseDialog()
+    const countedCash = within(dialog).getByLabelText("shift.countedCash")
+    const submit = within(dialog).getByRole("button", { name: "shift.close" })
+    expect(countedCash).toHaveValue(Number(closingAmount))
+
+    fireEvent.change(countedCash, { target: { value: "200" } })
+    expect(within(dialog).getByText("shift.varianceWarning")).toBeInTheDocument()
+    fireEvent.change(within(dialog).getByLabelText("shift.varianceExplanation"), { target: { value: "Previous count" } })
+    fireEvent.click(within(dialog).getByRole("button", { name: "shift.useExpectedCash" }))
+
+    expect(countedCash).toHaveValue(Number(closingAmount))
+    expect(within(dialog).queryByText("shift.varianceWarning")).not.toBeInTheDocument()
+    expect(within(dialog).queryByLabelText("shift.varianceExplanation")).not.toBeInTheDocument()
+    expect(submit).toBeEnabled()
+    expect(closeMutateAsync).not.toHaveBeenCalled()
+
+    fireEvent.change(countedCash, { target: { value: "200" } })
+    expect(within(dialog).getByLabelText("shift.varianceExplanation")).toHaveValue("")
+    expect(submit).toBeDisabled()
+    fireEvent.click(within(dialog).getByRole("button", { name: "shift.useExpectedCash" }))
+    fireEvent.click(submit)
+    await waitFor(() => expect(closeMutateAsync).toHaveBeenCalledWith({
+      sessionId: "session-1", actualBalance: closingAmount, notes: undefined,
+    }))
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument())
+  })
+
   it("does not require an explanation when a sub-franc XAF difference displays as zero", async () => {
     const closeMutateAsync = setupHooks(100.49, actionSuccess({ terminalId: "terminal-1" }))
     mockHooks.usePOSLocations.mockReturnValue({
@@ -185,6 +498,15 @@ describe("ProfessionalPOSSystem shift close", () => {
     render(<ProfessionalPOSSystem />)
     const dialog = openCloseDialog()
     const submit = within(dialog).getByRole("button", { name: "shift.close" })
+
+    const countedCash = within(dialog).getByLabelText("shift.countedCash")
+    expect(countedCash).toHaveAttribute("step", "1")
+    expect(countedCash).toHaveAttribute("inputmode", "numeric")
+    fireEvent.change(countedCash, { target: { value: "100.49" } })
+    expect(countedCash).toHaveAttribute("aria-invalid", "true")
+    expect(submit).toBeDisabled()
+    fireEvent.click(submit)
+    expect(closeMutateAsync).not.toHaveBeenCalled()
 
     fireEvent.change(within(dialog).getByLabelText("shift.countedCash"), { target: { value: "100" } })
 
@@ -375,7 +697,7 @@ describe("ProfessionalPOSSystem terminal availability", () => {
     render(<ProfessionalPOSSystem />)
 
     expect(await screen.findByText("shift.occupied")).toBeInTheDocument()
-    expect(screen.getByRole("status")).toHaveTextContent("shift.occupiedDescription")
+    expect(screen.getByText("shift.occupiedDescription")).toHaveAttribute("role", "status")
     expect(screen.queryByRole("button", { name: "shift.openCta" })).not.toBeInTheDocument()
   })
 })
@@ -423,6 +745,7 @@ describe("ProfessionalPOSSystem sale commit", () => {
 
     await waitFor(() => {
       expect(addMutateAsync).toHaveBeenCalledWith({
+        checkoutLeaseId: "00000000-0000-4000-8000-000000000001",
         locationId: "location-1",
         terminalId: "terminal-1",
         sessionId: "session-1",
@@ -474,7 +797,8 @@ describe("ProfessionalPOSSystem sale commit", () => {
       "title",
       "Representative long inventory item name 1",
     )
-    expect(screen.getByTestId("pos-tender-scroll-region")).toHaveClass("xl:min-h-0", "xl:overflow-y-auto")
+    expect(screen.getByTestId("pos-tender-scroll-region")).toHaveClass("shrink-0")
+    expect(screen.getByTestId("pos-tender-scroll-region")).not.toHaveClass("xl:overflow-y-auto")
     expect(screen.getByTestId("pos-tender-controls").compareDocumentPosition(screen.getByTestId("receipt-token-history-panel")))
       .toBe(Node.DOCUMENT_POSITION_FOLLOWING)
     expect(screen.getByTestId("pos-charge-footer")).toHaveClass("shrink-0")
@@ -561,16 +885,8 @@ describe("ProfessionalPOSSystem sale commit", () => {
 
     render(<ProfessionalPOSSystem />)
 
-    expect(screen.getByTestId("pos-cart-lines")).toHaveClass(
-      "min-h-[18rem]",
-      "xl:min-h-0",
-      "xl:flex-[3_1_20rem]",
-    )
-    expect(screen.getByTestId("pos-payment-panel")).toHaveClass(
-      "xl:min-h-[20rem]",
-      "xl:flex-[2_1_24rem]",
-      "xl:overflow-hidden",
-    )
+    expect(screen.getByTestId("pos-cart-lines")).toHaveClass("shrink-0")
+    expect(screen.getByTestId("pos-payment-panel")).toHaveClass("shrink-0")
     expect(screen.getByTestId("pos-totals-summary")).toHaveClass("grid-cols-2")
     expect(screen.getByTestId("pos-totals-summary")).not.toHaveClass("sm:grid-cols-4")
     expect(screen.getByTestId("pos-charge-summary")).toHaveClass("grid", "grid-cols-2")
@@ -784,5 +1100,63 @@ describe("ProfessionalPOSSystem sale commit", () => {
       "notifications.locationChangeBlockedMessage",
       { category: "pos", priority: "high" },
     )
+  })
+})
+
+describe("shift opening recovery", () => {
+  beforeEach(() => jest.clearAllMocks())
+  it.each(["XAF", "USD"])("uses %s precision for the opening balance", async currency => {
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+    mockHooks.useActivePOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+    mockHooks.usePOSLocations.mockReturnValue({ data: actionSuccess([{
+      id: "location-1", name: "Owned store", isDefault: true,
+      organization: { name: "Stoquify", currency, defaultLocale: "EN" },
+    }]) } as never)
+    mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([{ id: "terminal-1", locationId: "location-1", name: "Owned till", terminalNumber: "T01", currentSessionId: null }]) } as never)
+    const submit = jest.fn().mockResolvedValue(actionSuccess(shiftFixture(0)))
+    mockHooks.useOpenPOSShift.mockReturnValue(mutationState(submit) as never)
+
+    render(<ProfessionalPOSSystem />)
+    const amount = screen.getByRole("spinbutton", { name: "shift.openingBalance" })
+    const openButton = screen.getByRole("button", { name: "shift.openCta" })
+    await waitFor(() => expect(openButton).toBeEnabled())
+    expect(amount).toHaveAttribute("step", currency === "XAF" ? "1" : "0.01")
+    fireEvent.change(amount, { target: { value: "125.50" } })
+
+    if (currency === "XAF") {
+      expect(amount).toHaveAttribute("aria-invalid", "true")
+      expect(openButton).toBeDisabled()
+      fireEvent.click(openButton)
+      expect(submit).not.toHaveBeenCalled()
+      fireEvent.change(amount, { target: { value: "125" } })
+    }
+
+    expect(openButton).toBeEnabled()
+    fireEvent.click(openButton)
+    await waitFor(() => expect(submit).toHaveBeenCalledWith({
+      locationId: "location-1", terminalId: "terminal-1",
+      openingBalance: currency === "XAF" ? "125" : "125.50",
+    }))
+  })
+
+  it.each([true, false])("retains opening float and explains stopped=%s without success", async stopped => {
+    setupHooks(0, actionSuccess({ terminalId: "terminal-1" }))
+    mockHooks.useCurrentUserPOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+    mockHooks.useActivePOSShift.mockReturnValue({ data: actionSuccess(null) } as never)
+    mockHooks.usePOSLocations.mockReturnValue({ data: actionSuccess([{ id: "location-1", name: "Owned store", isDefault: true }]) } as never)
+    mockHooks.usePOSTerminals.mockReturnValue({ data: actionSuccess([{ id: "terminal-1", locationId: "location-1", name: "Owned till", terminalNumber: "T01", currentSessionId: null }]) } as never)
+    const submit = stopped ? jest.fn().mockResolvedValue({ success: false, data: null, error: "raw error", code: "MODULE_NEW_WORK_STOPPED" }) : jest.fn().mockRejectedValue(new Error("private transport error"))
+    mockHooks.useOpenPOSShift.mockReturnValue(mutationState(submit) as never)
+    render(<ProfessionalPOSSystem />)
+    const amount = screen.getByRole("spinbutton", { name: "shift.openingBalance" })
+    fireEvent.change(amount, { target: { value: "125" } })
+    await waitFor(() => expect(screen.getByRole("button", { name: "shift.openCta" })).toBeEnabled())
+    fireEvent.click(screen.getByRole("button", { name: "shift.openCta" }))
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(stopped ? "notifications.openShiftStopped" : "notifications.openShiftUnconfirmed"))
+    expect(amount).toHaveValue(125)
+    expect(submit).toHaveBeenCalledTimes(1)
+    expect(mockNotifications.success).not.toHaveBeenCalled()
+    expect(screen.queryByText("private transport error")).not.toBeInTheDocument()
   })
 })

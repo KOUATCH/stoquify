@@ -1,0 +1,86 @@
+{
+  "at": "2026-09-09T14:28:40.897Z",
+  "run": "ff8ffda6-f9c",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "393f26973d8f582b3fc10555951c7db9106beac164a4f5153f27b043de72c350",
+    "components/finance/PaymentSuspenseQueue.tsx": "fa5737fd40c903814e9021885898ee7d9e867866234dcc347f05c72e39c2cd63",
+    "actions/payments/suspense-resolution.actions.ts": "f1005a1db5c4258b20d3ca6669a99455d0fe0397e84207afe1c01e1c3dc3f47b",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "26a84fadf8232881f64a5dcdf35517a74511201bf24a932cdf77b9f7820f4563",
+    "services/reconciliation/payment-suspense-resolution-read.contracts.ts": "58fac1515972b404f43f20d2b88bd93546f363fd739ac9f8354e223f78defd7f",
+    "services/reconciliation/payment-suspense-resolution.service.ts": "01e600364a7a75e64856c62b5cfe19fabf84fee85bd6b9f33a88109bdc9e91d2",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts": "05459e28fff50a6014abfe96336b5d8e16e37245e858f96bde00f8cefa799808",
+    "messages/en.json": "d8680dd24dcf3ff89ba728a401895cc09bd995a800ba979ad618d9b881457071",
+    "messages/fr.json": "123d6a57e36fdf0e8918025911fc3af17cfc6735ab627f0e7714b5234dda61fa"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "suspense-resolution-local-recovery-v106-en-unreadable-320-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-en-preview-desktop-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-en-preview-320-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-en-preview-768-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-en-resolved-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-en-recovered-history-ff8ffda6-f9c.png"
+      ],
+      "stages": [
+        "Unreadable local draft warning stays visible; explicit keyboard reset first reads current server records, changes no financial evidence and preserves unrelated browser keys",
+        "Actual maker searches/selects clearing journal, previews consequences and proposes; maker approval unavailable; desktop/mobile/tablet verified",
+        "After resolution removes the original opener, closing returns keyboard focus to the existing queue; retained history reopens the final record",
+        "Independent actual password step-up has no posting effect; reload restores exact approval request; explicit retry resolves without another journal",
+        "Previously final item discovered through retained history; separate reviewer authenticates, reloads and confirms recovery; exact clearing reversal and durable decision history visible"
+      ],
+      "pageErrors": [],
+      "routeLoadMs": [
+        28001,
+        13191,
+        13387
+      ],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "suspense-resolution-local-recovery-v106-fr-unreadable-320-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-fr-preview-desktop-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-fr-preview-320-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-fr-preview-768-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-fr-resolved-ff8ffda6-f9c.png",
+        "suspense-resolution-local-recovery-v106-fr-recovered-history-ff8ffda6-f9c.png"
+      ],
+      "stages": [
+        "Unreadable local draft warning stays visible; explicit keyboard reset first reads current server records, changes no financial evidence and preserves unrelated browser keys",
+        "Actual maker searches/selects clearing journal, previews consequences and proposes; maker approval unavailable; desktop/mobile/tablet verified",
+        "After resolution removes the original opener, closing returns keyboard focus to the existing queue; retained history reopens the final record",
+        "Independent actual password step-up has no posting effect; reload restores exact approval request; explicit retry resolves without another journal",
+        "Previously final item discovered through retained history; separate reviewer authenticates, reloads and confirms recovery; exact clearing reversal and durable decision history visible"
+      ],
+      "pageErrors": [],
+      "routeLoadMs": [
+        10594,
+        10245,
+        13499
+      ],
+      "passed": true
+    }
+  ],
+  "scope": "Owned actual application. Normal password sign-in and step-up. Synthetic accounting setup; no live approval or external delivery.",
+  "originalBefore": "90596252dc3627cd2847b1fe87f938ce9f93cc99560b73094b7c31e9b1a4023b",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "393f26973d8f582b3fc10555951c7db9106beac164a4f5153f27b043de72c350",
+    "components/finance/PaymentSuspenseQueue.tsx": "fa5737fd40c903814e9021885898ee7d9e867866234dcc347f05c72e39c2cd63",
+    "actions/payments/suspense-resolution.actions.ts": "f1005a1db5c4258b20d3ca6669a99455d0fe0397e84207afe1c01e1c3dc3f47b",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "26a84fadf8232881f64a5dcdf35517a74511201bf24a932cdf77b9f7820f4563",
+    "services/reconciliation/payment-suspense-resolution-read.contracts.ts": "58fac1515972b404f43f20d2b88bd93546f363fd739ac9f8354e223f78defd7f",
+    "services/reconciliation/payment-suspense-resolution.service.ts": "01e600364a7a75e64856c62b5cfe19fabf84fee85bd6b9f33a88109bdc9e91d2",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts": "05459e28fff50a6014abfe96336b5d8e16e37245e858f96bde00f8cefa799808",
+    "messages/en.json": "d8680dd24dcf3ff89ba728a401895cc09bd995a800ba979ad618d9b881457071",
+    "messages/fr.json": "123d6a57e36fdf0e8918025911fc3af17cfc6735ab627f0e7714b5234dda61fa"
+  },
+  "sourceStable": true
+}

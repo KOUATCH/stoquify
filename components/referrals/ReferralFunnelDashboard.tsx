@@ -15,6 +15,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import en from "@/messages/referral-funnel/en.json"
+import fr from "@/messages/referral-funnel/fr.json"
 import type { ReferralFunnelReadModel } from "@/services/referrals/referral-funnel-read-model.service"
 
 type ReferralFunnelDashboardProps = {
@@ -22,50 +24,7 @@ type ReferralFunnelDashboardProps = {
   locale?: "en" | "fr"
 }
 
-const copy = {
-  en: {
-    eyebrow: "Privacy-bounded growth evidence",
-    title: "Referral funnel",
-    description:
-      "Customer-statement deliveries and accountant-client invites, grouped by source and campaign.",
-    allTime: "All-time evidence",
-    tenantScoped: "Tenant scoped",
-    privacyTitle: "Aggregate evidence only",
-    privacyDescription:
-      "Recipient contacts and raw IP or user-agent data are never included in this dashboard contract.",
-    issuedLinks: "Issued links",
-    clicks: "Clicks",
-    conversions: "Conversions",
-    inviteActivations: "Invite activations",
-    source: "Source",
-    campaign: "Campaign",
-    customerStatement: "Customer statement delivery",
-    accountantInvite: "Accountant-client invite",
-    noEvidence: "No referral evidence has been issued for this tenant yet.",
-    updated: "Updated",
-  },
-  fr: {
-    eyebrow: "Preuves de croissance respectueuses de la vie privee",
-    title: "Entonnoir de parrainage",
-    description:
-      "Livraisons de releves clients et invitations comptable-client, regroupees par source et campagne.",
-    allTime: "Preuves cumulees",
-    tenantScoped: "Limite au tenant",
-    privacyTitle: "Preuves agregees uniquement",
-    privacyDescription:
-      "Les contacts destinataires et les donnees IP ou user-agent brutes ne figurent jamais dans ce contrat de tableau de bord.",
-    issuedLinks: "Liens emis",
-    clicks: "Clics",
-    conversions: "Conversions",
-    inviteActivations: "Invitations activees",
-    source: "Source",
-    campaign: "Campagne",
-    customerStatement: "Livraison de releve client",
-    accountantInvite: "Invitation comptable-client",
-    noEvidence: "Aucune preuve de parrainage n'a encore ete emise pour ce tenant.",
-    updated: "Actualise",
-  },
-} as const
+const copy = { en, fr } as const
 
 function sourceLabel(
   sourceType: ReferralFunnelReadModel["rows"][number]["sourceType"],
@@ -83,31 +42,36 @@ export function ReferralFunnelDashboard({
   const labels = copy[locale]
   const numberFormatter = new Intl.NumberFormat(locale)
   const dateFormatter = new Intl.DateTimeFormat(locale, {
+    timeZone: "UTC",
     dateStyle: "medium",
     timeStyle: "short",
   })
   const metrics = [
     {
-      label: labels.issuedLinks,
-      value: data.totals.issuedLinks,
+      label: labels.preparedLinks,
+      value: data.totals.preparedLinks,
+      detail: labels.preparedLinksDetail,
       icon: Link2,
       tone: "text-[var(--dash-brand)] bg-[var(--dash-brand-soft)]",
     },
     {
       label: labels.clicks,
       value: data.totals.clicks,
+      detail: labels.clicksDetail,
       icon: MousePointerClick,
       tone: "text-[var(--dash-info)] bg-[var(--dash-info-soft)]",
     },
     {
-      label: labels.conversions,
-      value: data.totals.conversions,
+      label: labels.registrations,
+      value: data.totals.registrations,
+      detail: labels.registrationsDetail,
       icon: UserRoundCheck,
-      tone: "text-[var(--dash-success)] bg-[var(--dash-success-soft)]",
+      tone: "text-[var(--dash-info)] bg-[var(--dash-info-soft)]",
     },
     {
-      label: labels.inviteActivations,
-      value: data.totals.inviteActivations,
+      label: labels.acceptedInvitations,
+      value: data.totals.acceptedInvitations,
+      detail: labels.acceptedInvitationsDetail,
       icon: BadgeCheck,
       tone: "text-[var(--dash-gold)] bg-[var(--dash-gold-soft)]",
     },
@@ -167,6 +131,7 @@ export function ReferralFunnelDashboard({
                   <p className="text-3xl font-semibold tracking-tight">
                     {numberFormatter.format(metric.value)}
                   </p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--dash-text-soft)]">{metric.detail}</p>
                 </CardContent>
               </Card>
             )
@@ -188,16 +153,17 @@ export function ReferralFunnelDashboard({
               {labels.noEvidence}
             </p>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" role="region" aria-label={labels.tableLabel} tabIndex={0}>
               <table className="w-full min-w-[760px] text-sm">
+                <caption className="sr-only">{labels.tableLabel}</caption>
                 <thead className="bg-[var(--dash-surface)] text-left text-xs uppercase tracking-wide text-[var(--dash-text-faint)]">
                   <tr>
-                    <th className="px-5 py-3 font-semibold sm:px-6">{labels.source}</th>
-                    <th className="px-5 py-3 font-semibold">{labels.campaign}</th>
-                    <th className="px-5 py-3 text-right font-semibold">{labels.issuedLinks}</th>
-                    <th className="px-5 py-3 text-right font-semibold">{labels.clicks}</th>
-                    <th className="px-5 py-3 text-right font-semibold">{labels.conversions}</th>
-                    <th className="px-5 py-3 text-right font-semibold sm:px-6">{labels.inviteActivations}</th>
+                    <th scope="col" className="px-5 py-3 font-semibold sm:px-6">{labels.source}</th>
+                    <th scope="col" className="px-5 py-3 font-semibold">{labels.campaign}</th>
+                    <th scope="col" className="px-5 py-3 text-right font-semibold">{labels.preparedLinks}</th>
+                    <th scope="col" className="px-5 py-3 text-right font-semibold">{labels.clicks}</th>
+                    <th scope="col" className="px-5 py-3 text-right font-semibold">{labels.registrations}</th>
+                    <th scope="col" className="px-5 py-3 text-right font-semibold sm:px-6">{labels.acceptedInvitations}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -211,10 +177,10 @@ export function ReferralFunnelDashboard({
                           {row.campaign}
                         </code>
                       </td>
-                      <td className="px-5 py-4 text-right tabular-nums">{numberFormatter.format(row.issuedLinks)}</td>
+                      <td className="px-5 py-4 text-right tabular-nums">{numberFormatter.format(row.preparedLinks)}</td>
                       <td className="px-5 py-4 text-right tabular-nums">{numberFormatter.format(row.clicks)}</td>
-                      <td className="px-5 py-4 text-right tabular-nums">{numberFormatter.format(row.conversions)}</td>
-                      <td className="px-5 py-4 text-right tabular-nums sm:px-6">{numberFormatter.format(row.inviteActivations)}</td>
+                      <td className="px-5 py-4 text-right tabular-nums">{numberFormatter.format(row.registrations)}</td>
+                      <td className="px-5 py-4 text-right tabular-nums sm:px-6">{numberFormatter.format(row.acceptedInvitations)}</td>
                     </tr>
                   ))}
                 </tbody>

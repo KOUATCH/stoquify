@@ -77,7 +77,7 @@ export type CashCommandActionItem = {
 
 export type CashCommandSummary = {
   cashCollected: number
-  unreconciledCash: number
+  unreconciledCash: number | null
   openSuspenseCount: number
   drawerVariance: number
   drawerAlertCount: number

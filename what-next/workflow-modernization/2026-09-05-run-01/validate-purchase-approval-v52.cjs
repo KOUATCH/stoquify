@@ -1,0 +1,17 @@
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'../../..'),read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,p),'utf8'));
+const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const receipt=read('evidence/purchase-approval-receipt.json'),register=read('WORKFLOW_REGISTER.json'),baseline=read(receipt.paths.baseline);
+for(const[file,digest]of Object.entries(receipt.source.hashes))assert.equal(sha(path.join(root,file)),digest,file);
+for(const[file,digest]of Object.entries(receipt.verificationScripts))assert.equal(sha(path.join(root,file)),digest,file);
+for(const shot of receipt.screenshots)assert.equal(sha(path.join(__dirname,shot.file)),shot.sha256,shot.file);
+for(const file of Object.values(receipt.paths))assert.ok(fs.existsSync(path.join(__dirname,file)),file);
+assert.equal(receipt.results.tests,115);assert.equal(receipt.results.postgresGroups,10);assert.equal(receipt.results.browserJourneys,2);assert.ok(receipt.screenshots.length>=24);
+const marker='## Purchase-order approval and exact recovery — source v52';
+const artifacts=['WORKFLOW_MAP.md','FINDINGS_AND_REMEDIATION.md','IMPLEMENTATION_REPORT.md','DESIGN_SYSTEM_AND_UX.md','VERIFICATION.md','ROLLOUT_AND_RECOVERY.md','USER_AND_OPERATOR_GUIDE.md','COMPLETION_AUDIT.md'];
+for(const file of artifacts)assert.equal(fs.readFileSync(path.join(__dirname,file),'utf8').split(marker).length,2,file);
+const workflow=register.workflows.find(w=>w.id==='PA-004');assert.ok(workflow.evidence.some(p=>p.endsWith('purchase-approval-receipt.json')));assert.equal(workflow.completeWorkflowVerified,false);
+assert.equal(register.coverage.discoveredWorkflows,register.workflows.length);assert.equal(register.coverage.completeWorkflowsVerified,0);assert.ok(JSON.stringify(register).includes('source-baseline-v52.json'));
+assert.deepEqual(register.coverage.sourceCandidateCounts,baseline.summary);
+const result={at:new Date().toISOString(),sourceBindings:Object.keys(receipt.source.hashes).length,verificationScriptBindings:Object.keys(receipt.verificationScripts).length,screenshots:receipt.screenshots.length,rootArtifacts:9,sourceMismatches:0,baselineSummary:baseline.summary,coverage:register.coverage,fullGoalComplete:false};
+fs.writeFileSync(path.join(__dirname,'evidence/purchase-approval-final-validation.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify(result));

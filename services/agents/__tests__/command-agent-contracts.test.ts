@@ -10,12 +10,17 @@ describe("Command Agent public contracts", () => {
   }
 
   it.each([
+    ["unsupported locale", { locale: "../../admin" }],
     ["tenant identity", { organizationId: "org-other" }],
     ["free-form prompt", { prompt: "post this to the ledger" }],
     ["generic tool selection", { toolKey: "postLedgerEntry" }],
     ["generic tool arguments", { toolInput: { amount: 50_000 } }],
   ])("rejects client-controlled %s", (_label, injected) => {
     expect(commandAgentRequestSchema.safeParse({ ...base, ...injected }).success).toBe(false)
+  })
+
+  it.each(["en", "fr"])("accepts the bounded display language %s", locale => {
+    expect(commandAgentRequestSchema.parse({ ...base, locale }).locale).toBe(locale)
   })
 
   it("accepts only bounded feedback classifications without correction prose", () => {

@@ -1,0 +1,151 @@
+{
+  "recordedAt": "2026-09-05T14:13:37.073Z",
+  "scope": "Persistent inline stopped-transfer feedback correcting actual modal toast occlusion",
+  "previousReceipt": {
+    "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-localization-receipt.json",
+    "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\lifecycle-continuation\\stopped-work-localization-receipt.json",
+    "sha256": "35d472cb1de4fde856de74b5580e4d519a0ade6d97886a0c6f39f2f2c316d065"
+  },
+  "sourceFiles": [
+    {
+      "path": "components/inventory/transfers/CreateTransferModal.tsx",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\components\\inventory\\transfers\\CreateTransferModal.tsx",
+      "sha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb"
+    },
+    {
+      "path": "hooks/useTransferQueries.ts",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\hooks\\useTransferQueries.ts",
+      "sha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\components\\inventory\\transfers\\__tests__\\CreateTransferModal.module-stop.test.tsx",
+      "sha256": "0aea85d176a01294958a0cc958b0facc78126045a07408003193c414b93fd81a"
+    },
+    {
+      "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\hooks\\__tests__\\useTransferQueries.module-stop.test.tsx",
+      "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+    }
+  ],
+  "documentationFiles": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/DESIGN_SYSTEM_MAPPING.md",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\DESIGN_SYSTEM_MAPPING.md",
+      "sha256": "6e85f7c0f062f170fc1bea6f00f4640a32d34e2198b195ebb67352d8764876eb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/USER_GUIDE.md",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\USER_GUIDE.md",
+      "sha256": "92a72052cae829180b0fa12ac0b322cc7f468f908b5e7c84a89c6435eebbfbd5"
+    }
+  ],
+  "checks": [
+    {
+      "name": "initial",
+      "file": "stopped-work-inline-feedback-tests.json",
+      "exitCode": 1,
+      "paths": [
+        "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx",
+        "hooks/__tests__/useTransferQueries.module-stop.test.tsx"
+      ],
+      "notes": "Hook tests passed; modal suite failed to load lucide ESM. Added established Jest icon mock only.",
+      "evidence": {
+        "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-tests.json",
+        "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\lifecycle-continuation\\stopped-work-inline-feedback-tests.json",
+        "sha256": "bb63d66c668009d4f88c860d24eafadf09ca6cfca9d0427889bdad37f1cb1201"
+      },
+      "command": "C:/Users/J COMPUTER/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx\" \"hooks/__tests__/useTransferQueries.module-stop.test.tsx\" --testTimeout=20000 --json --outputFile=what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-tests.json",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "totalSuites": 2
+    },
+    {
+      "name": "modal_rerun",
+      "file": "stopped-work-inline-feedback-modal-rerun.json",
+      "exitCode": 1,
+      "paths": [
+        "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx"
+      ],
+      "notes": "Two modal cases reached visible localized alert and retained draft, then failed an ambiguous spinbutton selector. Scoped the assertion to the retained line-item value.",
+      "evidence": {
+        "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-modal-rerun.json",
+        "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\lifecycle-continuation\\stopped-work-inline-feedback-modal-rerun.json",
+        "sha256": "2768102d6ac868456c4a0dc66a57280a95d7fb8356fb565cf928bd62b9238326"
+      },
+      "command": "C:/Users/J COMPUTER/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx\" --testTimeout=20000 --json --outputFile=what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-modal-rerun.json",
+      "passed": 0,
+      "failed": 2,
+      "skipped": 0,
+      "totalSuites": 1
+    },
+    {
+      "name": "final",
+      "file": "stopped-work-inline-feedback-final-tests.json",
+      "exitCode": 0,
+      "paths": [
+        "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx",
+        "hooks/__tests__/useTransferQueries.module-stop.test.tsx"
+      ],
+      "notes": "Both EN/FR modal cases and all three existing hook notification cases passed.",
+      "evidence": {
+        "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-final-tests.json",
+        "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\lifecycle-continuation\\stopped-work-inline-feedback-final-tests.json",
+        "sha256": "a7dd524c659c4bea12b0d5f277597c734a5c6e2388cdd5aa1de15e75ac990544"
+      },
+      "command": "C:/Users/J COMPUTER/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx\" \"hooks/__tests__/useTransferQueries.module-stop.test.tsx\" --testTimeout=20000 --json --outputFile=what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-final-tests.json",
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "totalSuites": 2
+    }
+  ],
+  "lint": {
+    "exitCode": 0,
+    "evidence": {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-final-lint.json",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\lifecycle-continuation\\stopped-work-inline-feedback-final-lint.json",
+      "sha256": "cec40218726e53d5dd04c110d61384b28f35d86985786f2d399200e68165ff30"
+    },
+    "files": 4,
+    "errors": 0,
+    "warnings": 0,
+    "command": "C:/Users/J COMPUTER/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe node_modules/eslint/bin/eslint.js \"components/inventory/transfers/CreateTransferModal.tsx\" \"hooks/useTransferQueries.ts\" \"components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx\" \"hooks/__tests__/useTransferQueries.module-stop.test.tsx\" --format json --output-file what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-final-lint.json"
+  },
+  "behavior": [
+    "The dialog alert is derived only from the actual failed mutation and allowlisted stopped-work reason.",
+    "The dialog stays open and preserves source/destination, item quantity and notes.",
+    "The modal opts out of the stopped toast because it owns persistent inline feedback. Other hook callers keep default translated stopped notifications; unrelated errors retain existing handling.",
+    "No global stacking, authentication, admission or lifecycle backend change."
+  ],
+  "browser": {
+    "owner": "verification_environment",
+    "status": "passed and visually inspected by verifier and parent",
+    "result": {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-stopped-work-fr.json",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results-stopped-work-fr.json",
+      "sha256": "54f30dd51339ab3485e1f63a839349d7059c5eb685ee5d5f0569ccb1a44bed4c"
+    },
+    "screenshot": {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-inventory-new-work-denied.png",
+      "absolutePath": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\screenshots\\mobile-fr-inventory-new-work-denied.png",
+      "sha256": "b3efe5d09ee765039b165d750ea385f1faae42671fe101a2d7fa22faa2638246"
+    },
+    "assertions": [
+      "French role=alert within dialog",
+      "Actual hit-test surface not occluded",
+      "Retained draft item line",
+      "No transfer created"
+    ]
+  },
+  "typecheck": {
+    "owner": "parent",
+    "reportedStatus": "passed",
+    "startedAt": "2026-09-05T14:08:57Z",
+    "completedAt": "2026-09-05T14:10:32Z",
+    "notes": "Reported full typecheck passed after production source freeze; parent owns its separate receipt."
+  }
+}

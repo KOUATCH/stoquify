@@ -1,0 +1,95 @@
+{
+  "approvalPlatform": "LOCAL_FILE_APPROVAL_SIMULATOR",
+  "authenticatedEvidence": false,
+  "authoritative": false,
+  "classification": "LOCAL_SIMULATION_NOT_AUTHORITATIVE",
+  "createdAt": "2026-09-01T14:21:21.770Z",
+  "decision": "APPROVE",
+  "effectiveUntil": "2026-10-01T14:23:34.845Z",
+  "evidenceWatermark": "LOCAL SIMULATION - NOT RELEASE EVIDENCE",
+  "gateReleaseAllowed": false,
+  "recordHash": "022adb69a2bfd96e8a502129a6c60b2cd5b6aba412bd0270f40537d52bc52268",
+  "recordId": "LOCAL-X1-ADA0D45231B9ACE7",
+  "releaseGate": "BLOCKED_EXTERNAL_APPROVAL_REQUIRED",
+  "schemaVersion": 1,
+  "servicePrincipals": {
+    "approvalOrchestration": "local-sp://x1-approval-orchestration",
+    "evidenceCapture": "local-sp://x1-evidence-capture",
+    "implementationCi": "local-sp://x1-implementation-ci",
+    "independentVerifier": "local-sp://x1-independent-verifier"
+  },
+  "signatureReference": null,
+  "signatureVerified": false,
+  "simulationDecidedAt": "2026-09-01T14:23:34.843Z",
+  "simulationDecidedBy": "local-product-and-security-simulator",
+  "simulationDecisionScope": {
+    "evidenceAuthorization": {
+      "applicationOrigin": "http://127.0.0.1:3000",
+      "authenticatedEvidence": false,
+      "classification": "LOCAL_SIMULATION_ONLY",
+      "database": "stoquify_replay_next_20260830",
+      "decision": "APPROVE",
+      "evidencePersona": {
+        "email": "external.accountant.rds-org001@stockflow.test",
+        "name": "Carine Manga",
+        "roleId": "rds_org_001_compliance_role_external_accountant",
+        "userId": "rds_org_001_compliance_user_external_accountant"
+      },
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "locales": [
+        "en",
+        "fr"
+      ],
+      "primaryTenantId": "rds_org_001",
+      "readOnly": true,
+      "redactionRequired": true,
+      "routeMatrix": "playwright.finance-x1-evidence.config.ts",
+      "viewports": [
+        "desktop",
+        "tablet",
+        "mobile"
+      ]
+    },
+    "productBudgets": [
+      {
+        "decision": "APPROVE",
+        "id": "bounded-client-sort-filter-p75",
+        "target": "Interaction response under 100 ms at p75 test hardware"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "server-filter-sort-loading",
+        "target": "Loading indication under 150 ms"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "server-filter-sort-result-p75",
+        "target": "Useful result under 1,000 ms at p75"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "page-navigation-p75",
+        "target": "Useful rows under 750 ms at p75 after cached shell"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "bulk-action-acknowledgement",
+        "target": "Immediate job receipt with progress and partial result available"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "preference-view-hydration",
+        "target": "No visible column-layout flash after initial shell"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "browser-row-dom",
+        "target": "Bounded by pagination or proven virtualization strategy"
+      }
+    ]
+  },
+  "status": "SIMULATED_APPROVED",
+  "templateId": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+  "updatedAt": "2026-09-01T14:23:34.843Z",
+  "workspaceId": "local://stoquify/x1/workspace"
+}

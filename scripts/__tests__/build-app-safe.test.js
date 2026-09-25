@@ -26,6 +26,49 @@ function writeFile(filePath, contents = "") {
 }
 
 describe("safe build app wrapper", () => {
+  it("rejects an absent output below an existing link outside the workspace", () => {
+    const root = makeTempRoot()
+    const outside = makeTempRoot()
+    fs.symlinkSync(outside, path.join(root, "linked-output"), "junction")
+    expect(() => inspectNextOutput(root, { env: { NEXT_DIST_DIR: "linked-output/not-created" } }))
+      .toThrow(/unsafe build output/)
+  })
+
+  it("validates isolated build output while preserving the ordinary output", async () => {
+    const root = makeTempRoot()
+    writeFile(path.join(root, ".next", "server", "keep.txt"), "previous output")
+    const summary = await runSafeBuild({
+      root, skipClean: true, processRows: [],
+      env: { NEXT_DIST_DIR: ".next-gate-review" },
+      buildRunner: async () => {
+        writeFile(path.join(root, ".next-gate-review", "BUILD_ID"), "isolated")
+        writeFile(path.join(root, ".next-gate-review", "static", "isolated", "_ssgManifest.js"))
+        return { exitCode: 0 }
+      },
+    })
+    expect(summary.status).toBe("passed")
+    expect(summary.nextOutput.state).toBe("absent")
+    expect(summary.postBuildNextOutput.nextDir).toBe(path.join(root, ".next-gate-review"))
+    expect(fs.readFileSync(path.join(root, ".next", "server", "keep.txt"), "utf8")).toBe("previous output")
+  })
+
+  it("does not let a valid ordinary build mask incomplete isolated output", async () => {
+    const root = makeTempRoot()
+    writeFile(path.join(root, ".next", "BUILD_ID"), "old")
+    writeFile(path.join(root, ".next", "static", "old", "_ssgManifest.js"))
+    const summary = await runSafeBuild({
+      root, skipClean: true, processRows: [],
+      env: { NEXT_DIST_DIR: ".next-gate-review" },
+      buildRunner: async () => ({ exitCode: 0 }),
+    })
+    expect(summary.status).toBe("failed-post-build-output")
+    expect(summary.postBuildNextOutput.state).toBe("absent")
+  })
+
+  it.each(["..", "../outside", "."])("rejects unsafe build output %s", (distDir) => {
+    expect(() => inspectNextOutput(makeTempRoot(), { env: { NEXT_DIST_DIR: distDir } })).toThrow(/unsafe build output/)
+  })
+
   it("parses wrapper defaults with a bounded build timeout", () => {
     const args = parseArgs(["node", "script"], {
       env: {},

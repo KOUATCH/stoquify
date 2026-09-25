@@ -4,6 +4,7 @@ import { BIEmptyState } from "@/components/bi/BIEmptyState"
 import type { BIKpiState } from "@/services/bi/bi-contracts"
 
 type BIStateSurfaceProps = {
+  locale?: string
   state: BIKpiState
   title?: string
   detail?: string
@@ -63,8 +64,21 @@ const emptyStateKinds: Partial<Record<BIKpiState, Parameters<typeof BIEmptyState
   safe_error: "safe_error",
 }
 
-export function BIStateSurface({ state, title, detail, action, className }: BIStateSurfaceProps) {
-  const copy = stateCopy[state]
+const frenchStateCopy: typeof stateCopy = {
+  loading: { title: "Chargement des données de pilotage", detail: "L’état de fiabilité apparaîtra lorsque les données seront prêtes." },
+  empty: { title: "Aucune donnée de pilotage", detail: "Une activité source fiable est nécessaire pour présenter la situation métier." },
+  ready: { title: "Données de pilotage disponibles", detail: "Les données fiables disponibles permettent d’afficher la situation métier actuelle." },
+  stale: { title: "Données de pilotage périmées", detail: "Le dernier recalcul dépasse la durée de validité attendue. Actualisez ou recalculez avant de vous y fier." },
+  partial: { title: "Données de pilotage partielles", detail: "Certaines sources sont disponibles, mais des preuves manquent pour compléter cette vue." },
+  blocked: { title: "Données de pilotage bloquées", detail: "Un blocage doit être résolu avant de pouvoir se fier à cette vue." },
+  redacted: { title: "Données sensibles masquées", detail: "Les informations protégées sont masquées conformément à la politique de confidentialité." },
+  permission_denied: { title: "Autorisation requise", detail: "L’utilisateur actuel ne dispose pas de l’autorisation serveur nécessaire pour cette vue." },
+  module_unavailable: { title: "Module indisponible", detail: "Cette vue dépend d’un module indisponible selon les droits actuels de l’organisation." },
+  safe_error: { title: "Données temporairement indisponibles", detail: "Cette vue n’a pas pu être chargée de façon fiable. Aucune donnée masquée ou non fiable n’est affichée." },
+}
+
+export function BIStateSurface({ state, title, detail, action, className, locale = "en" }: BIStateSurfaceProps) {
+  const copy = (locale.startsWith("fr") ? frenchStateCopy : stateCopy)[state]
 
   return (
     <BIEmptyState

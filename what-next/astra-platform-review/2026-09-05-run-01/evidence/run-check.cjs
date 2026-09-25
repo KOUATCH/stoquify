@@ -1,0 +1,33 @@
+const fs = require('fs');
+const path = require('path');
+const {spawn} = require('child_process');
+const {createHash} = require('crypto');
+const root = process.cwd();
+const id = process.argv[2];
+if (!id || !/^[a-z0-9-]+$/.test(id)) throw new Error('Supply a safe evidence ID');
+const args = process.argv.slice(3);
+if (!args.length) throw new Error('Supply a Node entry point and arguments');
+const startedAt = new Date().toISOString();
+const sourcePaths = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'coverage.json'), 'utf8')).files.map(f => f.path);
+const sourceSnapshot = () => Object.fromEntries(sourcePaths.map(p => [p, fs.existsSync(path.join(root, p)) ? createHash('sha256').update(fs.readFileSync(path.join(root, p))).digest('hex') : null]));
+const sourceBefore = sourceSnapshot();
+const redact = value => value.replace(/([a-z][a-z0-9+.-]*:\/\/)[^\s/@]+:[^\s/@]+@/gi,'$1[REDACTED]@').replace(/((?:password|secret|access_token|refresh_token|api_key)\s*[=:]\s*)[^\s,;]+/gi,'$1[REDACTED]');
+const env = {...process.env, DATABASE_URL:'postgresql://audit_disabled@127.0.0.1:1/audit_disabled', DIRECT_URL:'postgresql://audit_disabled@127.0.0.1:1/audit_disabled', NO_COLOR:'1', NEXT_TELEMETRY_DISABLED:'1'};
+let stdout='',stderr='';
+const child = spawn(process.execPath,args,{cwd:root,env,windowsHide:true,stdio:['ignore','pipe','pipe']});
+child.stdout.on('data',b=>stdout+=b.toString());child.stderr.on('data',b=>stderr+=b.toString());
+child.on('error',error=>{stderr+=error.message;});
+child.on('close',(code,signal)=>{
+ const sourceAfter = sourceSnapshot();
+ const changedDuringCheck = sourcePaths.filter(p => sourceBefore[p] !== sourceAfter[p]);
+ fs.writeFileSync(path.join(__dirname, id+'-source-binding.json'), JSON.stringify({startedAt,finishedAt:new Date().toISOString(),before:sourceBefore,after:sourceAfter,changedDuringCheck},null,2)+'\n');
+ const combined=redact(stdout+'\n'+stderr);
+ fs.writeFileSync(path.join(__dirname,id+'.log'),combined);
+ let summary=null;
+ if(args.some(a=>a.includes('jest'))){const marker=stdout.indexOf('{"numFailedTestSuites"');if(marker>=0){try{const result=JSON.parse(stdout.slice(marker));summary={suites:result.numTotalTestSuites,passedSuites:result.numPassedTestSuites,failedSuites:result.numFailedTestSuites,tests:result.numTotalTests,passedTests:result.numPassedTests,failedTests:result.numFailedTests,pendingTests:result.numPendingTests,results:result.testResults.map(r=>({file:path.relative(root,r.name).replace(/\\/g,'/'),status:r.status,assertions:r.assertionResults.map(a=>({title:a.fullName,status:a.status})),message:redact(r.message||'')}))};fs.writeFileSync(path.join(__dirname,id+'-tests.json'),JSON.stringify(summary,null,2));}catch{}}}
+ const record={id,startedAt,finishedAt:new Date().toISOString(),command:[process.execPath,...args],target:'local workspace; database connection disabled with loopback port 1',sourceBinding:id+'-source-binding.json',changedDuringCheck,exitCode:code,signal,status:code===0?'passed':'failed',summary:summary?{...summary,results:undefined}:null,log:id+'.log'};
+ fs.writeFileSync(path.join(__dirname,id+'.json'),JSON.stringify(record,null,2)+'\n');
+ console.log(JSON.stringify(record,null,2));
+ if(code!==0)console.log(combined.slice(-4500));
+ process.exitCode=code??1;
+});

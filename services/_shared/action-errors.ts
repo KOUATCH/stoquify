@@ -9,6 +9,16 @@ import { ErrorCategory, ErrorSeverity } from "@/lib/error-handling/types"
 export type SafeActionStatus = CanonicalErrorStatus
 
 export type ApplicationErrorCode =
+  | "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED"
+  | "EXECUTION_EVIDENCE_REQUIRED"
+  | "PERIOD_UNAVAILABLE"
+  | "REVIEW_REQUIRED"
+  | "ARCHIVE_STATUS"
+  | "RETAINED_OBLIGATIONS"
+  | "OPEN_RECEIPT"
+  | "REFERENCE_UNAVAILABLE"
+  | "RECEIPT_EVIDENCE_REQUIRED"
+  | "INVOICE_EVIDENCE_REQUIRED"
   | "VALIDATION_ERROR"
   | "AUTH_REQUIRED"
   | "FORBIDDEN"
@@ -142,6 +152,7 @@ export function getPrismaKnownRequestField(error: unknown): string {
 
 function legacyCode(code: CanonicalError["code"]): ApplicationErrorCode {
   switch (code) {
+    case "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED":
     case "VALIDATION_ERROR":
     case "AUTH_REQUIRED":
     case "FORBIDDEN":

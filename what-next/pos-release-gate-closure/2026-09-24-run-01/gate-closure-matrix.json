@@ -1,0 +1,806 @@
+{
+  "generatedAt": "2026-09-24T09:07:34.739Z",
+  "sourceProgram": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+  "sourceProgramSha256": "95058c201dad8c9693d2a96830ce492828a5245baaf7bac36f92a97059e195f2",
+  "gates": [
+    {
+      "id": "G1",
+      "purpose": "Architecture and control contract freeze",
+      "dependencies": [],
+      "historicalDeclaredStatus": "BLOCKED_AUTHENTIC_APPROVALS",
+      "disposition": "BLOCKED_AUTHENTIC_APPROVALS",
+      "acceptanceCriteria": [
+        "11 decision approvals with role-complete authentic evidence bound to exact contract."
+      ],
+      "stopConditions": [
+        "Unverified or missing approval"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "Fresh gate reports and hardening regressions from this run; detached register remains empty."
+      ],
+      "externalRequirements": [],
+      "accountableRoles": [
+        "Product owner",
+        "Financial controller",
+        "Payments owner",
+        "Retail operations owner",
+        "POS architect",
+        "Security owner",
+        "Treasury owner",
+        "Risk owner",
+        "QA owner",
+        "Support owner",
+        "Qualified Cameroon country-pack reviewer",
+        "SRE owner",
+        "Order-to-cash product owner",
+        "Qualified accounting reviewer",
+        "Inventory controller",
+        "Fulfillment owner",
+        "Accounting owner"
+      ],
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Review decision packets and supply authentic role-complete approvals; rerun hardened gate.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": []
+    },
+    {
+      "id": "G2",
+      "purpose": "Transaction and access trust",
+      "dependencies": [
+        "G1"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_AND_PARTIAL_IMPLEMENTATION",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "One-active-draft and unique-line measurement plus additive migration proof",
+        "Cart version/command replay/stale-write PostgreSQL races",
+        "Sellable-availability conflict without silent clamping",
+        "Duplicate scan and concurrent cart/stock/rollback/response-loss races",
+        "Unified navigation/route/read/write/offline/receipt/report/export/API access decision",
+        "Cashier least-privilege and tenant/location/terminal negative matrix",
+        "Fresh-auth and maker-checker positive/negative matrix",
+        "Privacy, redaction, abuse, retention and safe-error evidence"
+      ],
+      "stopConditions": [
+        "Cross-tenant or cross-location access",
+        "Lost cart update",
+        "Duplicate sale/stock/journal consequence",
+        "Silent quantity clamp",
+        "Unredacted secret or unnecessary PII"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/full-commit-readiness.md",
+        "what-next/pos-enterprise-modernization/2026-09-23/verification-matrix.md",
+        "services/pos/cart-revision.ts",
+        "services/pos/cart-write-access.ts",
+        "services/pos/__tests__/checkout-lifecycle.postgres.test.ts"
+      ],
+      "externalRequirements": [],
+      "accountableRoles": "POS engineering, security and QA",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": {
+        "M2-A01": "VERIFIED_LOCAL",
+        "M2-A02": "VERIFIED_LOCAL",
+        "M2-A03": "VERIFIED_LOCAL",
+        "M2-A04": "VERIFIED_LOCAL",
+        "M2-A05": "NOT_IMPLEMENTED_ONE_DRAFT_AND_LINE_IDENTITY",
+        "M2-A06": "NOT_IMPLEMENTED_CART_VERSION_COMMAND_ID",
+        "M2-A07": "NOT_IMPLEMENTED_TYPED_STALE_AUTHORITATIVE_RESULT",
+        "M2-A08": "FAILED_CURRENT_RUNTIME_SILENT_QUANTITY_CLAMP",
+        "M2-A09": "PARTIAL_COMMIT_RACE_ONLY_NOT_FULL_CART_STOCK_MATRIX",
+        "M2-B01": "NOT_IMPLEMENTED_SINGLE_POS_SURFACE_ACCESS_DESCRIPTOR",
+        "M2-B02": "IMPLEMENTED_REQUIRES_CURRENT_ENTITLEMENT_PROOF",
+        "M2-B03": "REQUIRES_EXPLICIT_CASHIER_ALLOWLIST_PROOF",
+        "M2-B04": "PARTIAL_LOCATION_SCOPE_NO_COMPLETE_NEGATIVE_MATRIX",
+        "M2-B05": "PARTIAL_REFUND_VOID_FRESH_AUTH_NO_COMPLETE_MAKER_CHECKER_MATRIX",
+        "M2-B06": "PARTIAL_RECEIPT_REDACTION_NO_COMPLETE_CASHIER_DTO_PROOF",
+        "M2-B07": "FOUNDATION_READY_PRODUCTION_SECRET_MISSING",
+        "M2-B08": "REQUIRES_CURRENT_API_READ_PERMISSION_PROOF",
+        "M2-B09": "PARTIAL_TEST_COVERAGE"
+      },
+      "localClosureOrder": [
+        "M2-A05",
+        "M2-A06",
+        "M2-A07",
+        "M2-A08",
+        "M2-A09",
+        "M2-B01",
+        "M2-B02",
+        "M2-B03",
+        "M2-B04",
+        "M2-B05",
+        "M2-B06",
+        "M2-B07",
+        "M2-B08",
+        "M2-B09"
+      ]
+    },
+    {
+      "id": "G3A",
+      "purpose": "Provider-authoritative payment truth",
+      "dependencies": [
+        "G2"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_AND_EXTERNAL_PROVIDER",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "Success",
+        "Decline",
+        "Timeout",
+        "Unknown",
+        "Duplicate",
+        "Late capture",
+        "Reversal",
+        "Refund",
+        "Dispute",
+        "Chargeback",
+        "Settlement",
+        "Statement mismatch"
+      ],
+      "stopConditions": [
+        "Pending/unknown completes sale",
+        "Unsigned/replayed callback posts",
+        "Provider uncertainty mapped to success",
+        "Unowned captured-without-sale or settlement drift"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/payment-gate.json",
+        "services/payments/"
+      ],
+      "externalRequirements": [
+        "Named real provider",
+        "Merchant sandbox account",
+        "Official webhook/signature specification",
+        "Sandbox credentials in managed secret custody",
+        "Settlement statement source and fee schedule",
+        "Treasury/accounting/security approval"
+      ],
+      "accountableRoles": "Payments, treasury, accounting and security owners",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": [
+        "Canonical provider state machine",
+        "Payment intent and idempotency",
+        "Signed callback/polling ingestion",
+        "Capture-to-sale bridge",
+        "Unknown/captured-without-sale case workflow",
+        "Clearing/fee/refund/reversal/dispute/chargeback postings",
+        "Three-leg reconciliation and health read model",
+        "Outage/replay/tamper/load tests"
+      ]
+    },
+    {
+      "id": "G3B",
+      "purpose": "Immutable receipt and fiscal-source truth",
+      "dependencies": [
+        "G2"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_AND_QUALIFIED_COUNTRY_REVIEW",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "Immutable source before sale result",
+        "Historical snapshot independence",
+        "Number uniqueness and replay",
+        "Authority outage and rejection",
+        "Delivery failure recovery",
+        "Correction lineage",
+        "Token rotation and revocation"
+      ],
+      "stopConditions": [
+        "Sale completes without immutable source",
+        "Final number allocated outside country authority",
+        "Delivery failure rolls back or hides sale",
+        "Original fiscal evidence mutated"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/security-review.md",
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/receipt-config-gate.json"
+      ],
+      "externalRequirements": [
+        "Qualified Cameroon fiscal review",
+        "Independent checker verification",
+        "Official authority numbering/submission specification or explicit unsupported decision",
+        "Managed production signing secrets",
+        "Authorized delivery providers for enabled channels"
+      ],
+      "accountableRoles": "Qualified Cameroon country reviewer, independent checker and financial controller",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": [
+        "Versioned fiscal-source schema",
+        "Materialize/hash inside sale transaction",
+        "Remove competing synchronous owner",
+        "Country-pack numbering interface",
+        "Worker lease/retry/dead-letter/replay",
+        "Durable per-channel delivery states",
+        "Token rotation/revocation gate",
+        "Correction lineage",
+        "Receipt recovery UI"
+      ]
+    },
+    {
+      "id": "G4",
+      "purpose": "Bounded POS workstation release candidate",
+      "dependencies": [
+        "G2",
+        "G3B"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_AND_PHYSICAL_MATRIX",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "Authenticated EN/FR at all viewports",
+        "Keyboard",
+        "Screen reader",
+        "Touch",
+        "200% zoom and 320px reflow",
+        "Scanner",
+        "Printer",
+        "Drawer",
+        "Device disconnect/retry/fallback"
+      ],
+      "stopConditions": [
+        "Unknown device rendered ready",
+        "Responsibility lost on lock/handover",
+        "Unsupported offline or tender shown available",
+        "Secret/PII in screenshot or telemetry"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/browser-completion-2026-09-24.md",
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/localization-parity.json"
+      ],
+      "externalRequirements": [
+        "Approved browser/version matrix",
+        "Named scanner/printer/drawer devices or signed exclusion",
+        "Physical test operator",
+        "Accessibility review scope",
+        "Professional French review"
+      ],
+      "accountableRoles": "Retail operations, QA, accessibility/French reviewers and support owner",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": [
+        "POSSurfaceContext",
+        "Exact barcode versus search",
+        "Preflight and typed command envelopes",
+        "Cashier layout/result recovery",
+        "Lock/handover",
+        "EN/FR catalog completion",
+        "Keyboard/screen-reader/touch/reflow/contrast tests",
+        "Redacted telemetry"
+      ]
+    },
+    {
+      "id": "G5",
+      "purpose": "Store financial close",
+      "dependencies": [
+        "G3A",
+        "G3B",
+        "G4"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_AND_PARTIAL_CLOSE_MODEL",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "Session/declaration/day/statement/reconciliation/accounting-close state separation",
+        "Cash/provider/ledger/bank tie-out",
+        "Suspense ownership and aging",
+        "Late-correction invalidation"
+      ],
+      "stopConditions": [
+        "Z omits accepted event",
+        "Self-approved material variance",
+        "Unexplained tie-out difference",
+        "Late correction leaves close evidence valid"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/services-review.md",
+        "what-next/pos-enterprise-modernization/2026-09-23/verification-matrix.md"
+      ],
+      "externalRequirements": [
+        "Qualified Cameroon X/Z terminology, numbering and retention review",
+        "Store/controller/treasury approvers",
+        "Real or production-like statement/settlement cycle"
+      ],
+      "accountableRoles": "Store supervisor, controller and treasury owner",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": [
+        "BusinessDay aggregate",
+        "Included-session manifest/hash",
+        "Blind declaration",
+        "Variance approval and no-self-approval",
+        "X/Z artifacts",
+        "Retail statement",
+        "Statement posting",
+        "Provider/suspense close readiness",
+        "Typed invalidation and accounting-close handoff"
+      ]
+    },
+    {
+      "id": "G6",
+      "purpose": "Physical fulfillment truth",
+      "dependencies": [
+        "G2"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_AND_MISSING_AGGREGATES",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "Concurrent reservation",
+        "Partial fulfillment",
+        "Backorder",
+        "Cancellation",
+        "Goods issue",
+        "Issue reversal",
+        "No oversell",
+        "No duplicate COGS"
+      ],
+      "stopConditions": [
+        "Confirmation posts accounting",
+        "Reservation changes on-hand/COGS",
+        "Oversell",
+        "Duplicate goods issue or COGS",
+        "Unsupported inventory combination proceeds"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "services/inventory/inventory-stock-event.service.ts",
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/full-commit-readiness.md"
+      ],
+      "externalRequirements": [
+        "Inventory controller approval of negative-stock/UOM/lot/serial scope",
+        "Named fulfillment owner"
+      ],
+      "accountableRoles": "Inventory controller, fulfillment owner and accounting owner",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": [
+        "Versioned order commands",
+        "Non-posting confirmation",
+        "Reservation aggregate",
+        "Sellable availability",
+        "Fulfillment aggregate",
+        "Goods issue through stock kernel",
+        "Reservation consumption/backorder",
+        "Cancellation/reversal",
+        "Exception workbench",
+        "Unsupported-combination fail-closed policy"
+      ]
+    },
+    {
+      "id": "G7",
+      "purpose": "Financial order-to-cash and returns",
+      "dependencies": [
+        "G3A",
+        "G3B",
+        "G6"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_AND_PARTIAL_AR_FOUNDATION",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "No double billing",
+        "AR/revenue/tax balance",
+        "Explicit allocation/unapplied cash",
+        "Return disposition before sellable restock",
+        "Cross-domain partial-flow tie-out",
+        "Maker-checker/fresh-auth matrix"
+      ],
+      "stopConditions": [
+        "Undelivered quantity billed without approved advance policy",
+        "Funds silently auto-applied",
+        "Return increases sellable stock before disposition",
+        "Correction rewrites original fact"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/full-commit-readiness.md",
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/security-review.md"
+      ],
+      "externalRequirements": [
+        "Controller approval of recognition and correction policy",
+        "Returns disposition owner",
+        "Treasury approval for refunds and unapplied cash policy"
+      ],
+      "accountableRoles": "Controller, qualified accounting reviewer, treasury and returns owner",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": [
+        "Delivered-quantity invoice eligibility",
+        "Immutable invoice source and posting",
+        "Partial invoices/due dates/allocations/unapplied cash",
+        "Provider collections bridge",
+        "Return authorization/receipt/inspection/disposition",
+        "Restock/quarantine/damage/write-off",
+        "Credit/refund/AR/stock corrections",
+        "Dispute/chargeback recovery",
+        "Statement/aging close invalidation",
+        "Role-separated correction timeline"
+      ]
+    },
+    {
+      "id": "G8",
+      "purpose": "Operational readiness candidate",
+      "dependencies": [
+        "G3A",
+        "G3B",
+        "G4",
+        "G5",
+        "G6",
+        "G7"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCIES_AND_PRODUCTION_LIKE_EVIDENCE",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "Load",
+        "Soak",
+        "Network loss",
+        "Provider outage",
+        "Worker backlog",
+        "Backup restore",
+        "PITR",
+        "Failover",
+        "Secret rotation",
+        "Penetration/privacy",
+        "Alert delivery and acknowledgement",
+        "Incident drill"
+      ],
+      "stopConditions": [
+        "Critical defect open",
+        "Evidence lost on restore",
+        "Alert has no owner/runbook",
+        "Non-critical source blanks command surface",
+        "Second finalizer or direct stock owner introduced"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "what-next/pos-enterprise-modernization/2026-09-23/evidence/build-isolated-outcome.json",
+        "what-next/pos-enterprise-modernization/2026-09-23/rollout-and-support.md"
+      ],
+      "externalRequirements": [
+        "Official Linux CI artifact or approved Windows symlink capability",
+        "Production-like load/soak environment",
+        "Backup/restore/PITR/failover drill owners",
+        "Managed secret rotation",
+        "Independent penetration/security review",
+        "Physical/accessibility regression evidence",
+        "Scheduler/alert delivery/incident-response owners"
+      ],
+      "accountableRoles": "SRE, security/privacy, QA, support and incident owners",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": [
+        "Candidate-only scan boundary",
+        "Remove live inventory boundary violation",
+        "Role-cockpit fixes",
+        "Frozen service/UI decomposition",
+        "Support timeline",
+        "Partial-data command surfaces",
+        "Observe-mode incident pilot"
+      ]
+    },
+    {
+      "id": "G9",
+      "purpose": "Bounded pilot and production expansion",
+      "dependencies": [
+        "G8"
+      ],
+      "historicalDeclaredStatus": "BLOCKED_DEPENDENCY_NOT_STARTED",
+      "disposition": "BLOCKED_DEPENDENCY; INDEPENDENT_PREFLIGHT_PARTIAL",
+      "acceptanceCriteria": [
+        "Entry snapshot per cohort",
+        "SLO/error-budget report",
+        "Close and reconciliation cycles",
+        "Incident and support load",
+        "Stop-condition evaluation",
+        "Signed expansion or rollback decision"
+      ],
+      "stopConditions": [
+        "Duplicate consequence",
+        "False payment success",
+        "Cross-tenant access",
+        "Fiscal/stock/accounting mismatch",
+        "Unrecoverable close",
+        "Evidence loss",
+        "Support overload",
+        "Error-budget breach"
+      ],
+      "implementationSource": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "evidencePointers": [
+        "No pilot execution or expansion approval has been established."
+      ],
+      "externalRequirements": [
+        "Named design partner and agreement",
+        "Qualified product/controller/security/country approvals",
+        "Daily evidence review owner",
+        "Support and rollback capacity",
+        "Artifact-bound expansion decisions per cohort"
+      ],
+      "accountableRoles": "Product, controller, security, country reviewer, rollout and support owners",
+      "actualOwners": null,
+      "currentLocalEvidenceIsProductionProof": false,
+      "permittedNow": "Gate tooling, evidence preparation, existing development-control corrections and read-only later-gate preflight.",
+      "nextAction": "Resolve prerequisite gates; then execute the recorded local closure order and external procedures.",
+      "residualRisk": "Source/test foundations do not establish the complete required scenario matrix or external operating scope.",
+      "workPackages": null,
+      "localClosureOrder": []
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D-01",
+      "title": "Store-credit tender disposition",
+      "exactSelectedOption": "DISABLE_HIDE_AND_REJECT_STORE_CREDIT",
+      "requiredRoles": [
+        "Product owner",
+        "Financial controller",
+        "Payments owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "UI hides unsupported tender and server rejects crafted store-credit requests before sale, inventory, cash or journal consequences."
+    },
+    {
+      "id": "D-02",
+      "title": "Physical terminal/register and drawer session boundary",
+      "exactSelectedOption": "TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM",
+      "requiredRoles": [
+        "Retail operations owner",
+        "POS architect",
+        "Security owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Race concurrent open, handover, close, sale and recovery commands; prove one owner and no mutation through a stale session across organizations and locations."
+    },
+    {
+      "id": "D-03",
+      "title": "First electronic payment provider",
+      "exactSelectedOption": "ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED",
+      "requiredRoles": [
+        "Payments owner",
+        "Treasury owner",
+        "Security owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Unsupported electronic tenders fail before mutation. Later activation needs signed callback/replay, unknown/late-capture, settlement and reversal evidence."
+    },
+    {
+      "id": "D-04",
+      "title": "Offline tender policy",
+      "exactSelectedOption": "OFFLINE_CAPTURE_DISABLED",
+      "requiredRoles": [
+        "Product owner",
+        "Risk owner",
+        "Retail operations owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Network loss cannot produce a false recorded sale; reconnect preserves the original request identity and resolves uncertain outcomes safely."
+    },
+    {
+      "id": "D-05",
+      "title": "Browser, terminal and peripheral support matrix",
+      "exactSelectedOption": "EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT",
+      "requiredRoles": [
+        "Retail operations owner",
+        "QA owner",
+        "Support owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Record actual versions and viewport dimensions, EN/FR, keyboard, screen-reader, touch, zoom/reflow, disconnect/retry and each included physical device."
+    },
+    {
+      "id": "D-06",
+      "title": "Returns, voids and refunds policy",
+      "exactSelectedOption": "LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE",
+      "requiredRoles": [
+        "Financial controller",
+        "Retail operations owner",
+        "Risk owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Fresh-auth denial, permissions, original-drawer ownership, insufficient cash, duplicate correction and unsupported electronic reversal have no unintended effects; approved paths balance."
+    },
+    {
+      "id": "D-07",
+      "title": "Pilot country, currency, language and fiscal profile",
+      "exactSelectedOption": "CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY",
+      "requiredRoles": [
+        "Product owner",
+        "Financial controller",
+        "Qualified Cameroon country-pack reviewer"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Qualified reviewer and independent checker bind dated sources and supported/unsupported rules to the country-pack version and release candidate."
+    },
+    {
+      "id": "D-08",
+      "title": "Pilot service levels and error budgets",
+      "exactSelectedOption": "NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE",
+      "requiredRoles": [
+        "SRE owner",
+        "Product owner",
+        "Support owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Record workload, concurrency, duration, latency percentiles, errors, recovery time, alert acknowledgement and explicitly approved thresholds."
+    },
+    {
+      "id": "D-09",
+      "title": "Delivery invoice recognition event",
+      "exactSelectedOption": "ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY",
+      "requiredRoles": [
+        "Financial controller",
+        "Order-to-cash product owner",
+        "Qualified accounting reviewer"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Confirmation remains non-posting; eligible accepted delivery quantities, partial invoices and retries cannot create duplicate invoices, revenue or tax."
+    },
+    {
+      "id": "D-10",
+      "title": "Reservation, availability and goods-issue policy",
+      "exactSelectedOption": "RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS",
+      "requiredRoles": [
+        "Inventory controller",
+        "Fulfillment owner",
+        "Accounting owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Concurrent reservation, partial issue, backorder, cancellation and reversal prove no oversell or duplicate COGS; reservation alone leaves on-hand and COGS unchanged."
+    },
+    {
+      "id": "D-11",
+      "title": "Business-day, statement, reconciliation and accounting-close boundary",
+      "exactSelectedOption": "KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE",
+      "requiredRoles": [
+        "Financial controller",
+        "Treasury owner",
+        "Retail operations owner"
+      ],
+      "actualOwners": null,
+      "status": "PENDING_AUTHENTIC_REVIEW",
+      "packet": "approval-packets.md",
+      "acceptance": "Prove blind declaration where required, no self-approved material variance, cash/provider/ledger/bank tie-out and late-correction invalidation."
+    }
+  ],
+  "externalEvidence": [
+    {
+      "id": "EXT-G1-APPROVALS",
+      "gate": "G1",
+      "status": "MISSING_AUTHENTIC_RETURN",
+      "required": "D-01 through D-11 role-complete detached approvals",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-PROVIDER-SANDBOX",
+      "gate": "G3A",
+      "status": "MISSING",
+      "required": "Named provider, merchant sandbox and official callback/statement contract",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-CM-QUALIFIED-REVIEW",
+      "gate": "G3B",
+      "status": "MISSING_AUTHENTIC_RETURN",
+      "required": "Qualified Cameroon review plus independent checker",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-HARDWARE-MATRIX",
+      "gate": "G4",
+      "status": "MISSING_OR_EXCLUDED",
+      "required": "Physical device certification or signed exclusion",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-CLOSE-CYCLE",
+      "gate": "G5",
+      "status": "MISSING",
+      "required": "Production-like business-day and settlement cycle",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-INVENTORY-POLICY",
+      "gate": "G6",
+      "status": "MISSING_APPROVAL",
+      "required": "Inventory scope and unsupported-combination decision",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-AR-RETURNS-POLICY",
+      "gate": "G7",
+      "status": "MISSING_APPROVAL",
+      "required": "Recognition, allocation, return and correction policies",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-OPS-DRILLS",
+      "gate": "G8",
+      "status": "MISSING",
+      "required": "Load, recovery, failover, rotation, penetration, alerting and incident drills",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    },
+    {
+      "id": "EXT-PILOT-COHORTS",
+      "gate": "G9",
+      "status": "NOT_STARTED",
+      "required": "R0 through R6 cohort evidence and signed decisions",
+      "actualOwners": null,
+      "procedure": "external-verification-procedures.md",
+      "classification": "EXTERNAL_REQUIREMENT_NOT_SUPPLIED"
+    }
+  ]
+}

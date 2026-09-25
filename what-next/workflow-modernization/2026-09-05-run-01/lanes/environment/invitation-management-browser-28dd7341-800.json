@@ -1,0 +1,95 @@
+{
+  "run": "28dd7341-800",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T06:28:53.606Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "04cc28dd026b90c5962fdd296b3a2544b408d7801addf67c5b33db22e879ac7a",
+    "services/users/invitation-input.ts": "c7e8c48397d238b3d04699c646817ebbc1fa96991aa24685b43de2fb4bda4847",
+    "actions/users/sendInvite.ts": "8b201c204f756194f0bc3c2d4e5f003d0183938499648e9ef4a0d3adde9acca4",
+    "components/Forms/users/userInvitationForm.tsx": "a3dc6915f7dfde6afe9b6fe15853447313324c053e4af9270bc8f14fe9a9952a",
+    "messages/en.json": "dca224567939a9affb44402fa20fc30d954758a9bf1f7a1ae7b8caa336ad45fe",
+    "messages/fr.json": "ad10b4f707e6ea1611591bbeaa4cf4b73bde7cd384e25f40846efb3fa82a3c06",
+    "services/users/invitation-revision.ts": "c46ccc217f3aa3cfc17f91474f3dab2896ed3f0094ad1eee7f3e2311081d35d4",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82",
+    "actions/users/cancelInvite.ts": "86b7317f0ba4afad9c2a482736b9a51368b2221b312e8f8997f27bb9be20a243",
+    "components/dashboard/Tables/Invites.tsx": "96ed48605bddeedcfa692eea93fc7341c050d37141e87155f1374c534640ed65",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "2d775ac4d2e611fa82f944727ef3f5a9c99c32bed56419b757668095ac201664",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "4ef059dc1ead2e085c063e03bf465ec72ba44fb2170e9e6bd2c66a09e00b05ea"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "pageErrors": [],
+      "screenshots": [
+        "en-invitation-management-recorded-28dd7341-800.png",
+        "en-invitation-management-register-28dd7341-800.png",
+        "en-invitation-management-stale-review-28dd7341-800.png",
+        "en-invitation-management-replacement-recorded-28dd7341-800.png",
+        "en-invitation-management-cancelled-28dd7341-800.png"
+      ],
+      "routeMs": 4255,
+      "recordMs": 978,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "issuedRevisions": 3,
+      "cancelled": true,
+      "staleReviewRejected": true,
+      "noEmailAttempted": true,
+      "responseDroppedAfterCommit": false
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "pageErrors": [],
+      "screenshots": [
+        "fr-invitation-management-response-lost-28dd7341-800.png",
+        "fr-invitation-management-recorded-28dd7341-800.png",
+        "fr-invitation-management-register-28dd7341-800.png",
+        "fr-invitation-management-stale-review-28dd7341-800.png",
+        "fr-invitation-management-replacement-recorded-28dd7341-800.png",
+        "fr-invitation-management-failure-28dd7341-800.png"
+      ],
+      "routeMs": 4771,
+      "recordMs": 2565,
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('dialog', { name: 'Annuler l’invitation', exact: true }).getByRole('status')\nExpected substring: \"Invitation annulée\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByRole('dialog', { name: 'Annuler l’invitation', exact: true }).getByRole('status')\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Actual authenticated application and queued PostgreSQL writes; no production transport is present and no email is sent.",
+    "Response loss is simulated after the local server commits; the retry uses the real server action and its same request reference.",
+    "Viewport and keyboard checks are not screen-reader, native zoom, contrast or accessibility certification."
+  ],
+  "authorityBefore": "b1a5a9d9195cf4eb7e7b7505b4fe2500ff09bf0128f5708b64d78ed10e68e2df",
+  "authorityAfter": "b1a5a9d9195cf4eb7e7b7505b4fe2500ff09bf0128f5708b64d78ed10e68e2df",
+  "authorityUnchanged": true,
+  "completedAt": "2026-09-06T06:29:47.365Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "04cc28dd026b90c5962fdd296b3a2544b408d7801addf67c5b33db22e879ac7a",
+    "services/users/invitation-input.ts": "c7e8c48397d238b3d04699c646817ebbc1fa96991aa24685b43de2fb4bda4847",
+    "actions/users/sendInvite.ts": "8b201c204f756194f0bc3c2d4e5f003d0183938499648e9ef4a0d3adde9acca4",
+    "components/Forms/users/userInvitationForm.tsx": "a3dc6915f7dfde6afe9b6fe15853447313324c053e4af9270bc8f14fe9a9952a",
+    "messages/en.json": "dca224567939a9affb44402fa20fc30d954758a9bf1f7a1ae7b8caa336ad45fe",
+    "messages/fr.json": "ad10b4f707e6ea1611591bbeaa4cf4b73bde7cd384e25f40846efb3fa82a3c06",
+    "services/users/invitation-revision.ts": "c46ccc217f3aa3cfc17f91474f3dab2896ed3f0094ad1eee7f3e2311081d35d4",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82",
+    "actions/users/cancelInvite.ts": "86b7317f0ba4afad9c2a482736b9a51368b2221b312e8f8997f27bb9be20a243",
+    "components/dashboard/Tables/Invites.tsx": "96ed48605bddeedcfa692eea93fc7341c050d37141e87155f1374c534640ed65",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "2d775ac4d2e611fa82f944727ef3f5a9c99c32bed56419b757668095ac201664",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "4ef059dc1ead2e085c063e03bf465ec72ba44fb2170e9e6bd2c66a09e00b05ea"
+  },
+  "sourceStable": true,
+  "driverSha256": "a35ecf6527f9818bfc9c07e9eea977b3f9bab5361926632a4a266f7ef52f6cea",
+  "passed": 1,
+  "failed": 1
+}

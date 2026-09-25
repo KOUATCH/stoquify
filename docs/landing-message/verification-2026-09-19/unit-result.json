@@ -1,0 +1,32 @@
+{
+  "check": "unit",
+  "started": "2026-09-19T15:39:56.344Z",
+  "finished": "2026-09-19T15:41:00.588Z",
+  "command": [
+    "node",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--testTimeout=30000",
+    "--roots",
+    "scripts/__tests__",
+    "components/auth",
+    "hooks/__tests__",
+    "actions/users/__tests__",
+    "--runTestsByPath",
+    "scripts/__tests__/landing-public-content.test.js",
+    "scripts/__tests__/landing-navigation-localization.test.js",
+    "scripts/__tests__/landing-refinement-content.test.js",
+    "scripts/__tests__/landing-packages-content.test.js",
+    "scripts/__tests__/public-color-contract.test.js",
+    "components/auth/__tests__/LoginSubmissionSafety.test.tsx",
+    "components/auth/v2/__tests__/BeautifulRegisterForm.workflow.test.tsx",
+    "components/auth/v2/__tests__/VerifyV2Form.recovery.test.tsx",
+    "components/auth/v2/__tests__/PasswordRecoveryForms.test.tsx",
+    "hooks/__tests__/useRegisterWorkflow.test.tsx",
+    "actions/users/__tests__/public-identity-actions.test.ts",
+    "--json",
+    "--outputFile",
+    "E:\\ohada saas\\Focused projects\\stoquify\\docs\\landing-message\\verification-2026-09-19\\unit-tests.json"
+  ],
+  "exitCode": 0
+}

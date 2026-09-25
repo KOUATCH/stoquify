@@ -1,4 +1,5 @@
 import {
+  AccountantClientInviteStatus,
   ReferralAttributionEventType,
   ReferralAttributionSource,
 } from "@prisma/client"
@@ -13,10 +14,10 @@ const REFERRAL_FUNNEL_SOURCES = [
 export type ReferralFunnelRow = {
   sourceType: ReferralAttributionSource
   campaign: string
-  issuedLinks: number
+  preparedLinks: number
   clicks: number
-  conversions: number
-  inviteActivations: number
+  registrations: number
+  acceptedInvitations: number
 }
 
 export type ReferralFunnelReadModel = {
@@ -36,10 +37,10 @@ type ReferralFunnelReadClient = Pick<typeof db, "referralAttribution">
 
 function emptyCounts() {
   return {
-    issuedLinks: 0,
+    preparedLinks: 0,
     clicks: 0,
-    conversions: 0,
-    inviteActivations: 0,
+    registrations: 0,
+    acceptedInvitations: 0,
   }
 }
 
@@ -56,6 +57,15 @@ export async function getReferralFunnelReadModel(
     select: {
       sourceType: true,
       campaign: true,
+      accountantClientInvite: {
+        select: {
+          states: {
+            where: { organizationId, status: AccountantClientInviteStatus.ACCEPTED },
+            take: 1,
+            select: { status: true },
+          },
+        },
+      },
       events: {
         where: {
           organizationId,
@@ -86,20 +96,23 @@ export async function getReferralFunnelReadModel(
       ...emptyCounts(),
     }
 
-    row.issuedLinks += 1
+    row.preparedLinks += 1
     for (const event of attribution.events) {
       if (event.eventType === ReferralAttributionEventType.CLICK) {
         row.clicks += 1
       }
       if (event.eventType === ReferralAttributionEventType.CONVERSION) {
-        row.conversions += 1
-        if (
-          attribution.sourceType ===
-            ReferralAttributionSource.ACCOUNTANT_INVITE
-        ) {
-          row.inviteActivations += 1
-        }
+        row.registrations += 1
       }
+    }
+
+    // Count the invitation's recorded acceptance once, independently of registration events.
+    // Historical acceptance does not establish a currently effective access grant.
+    if (
+      attribution.sourceType === ReferralAttributionSource.ACCOUNTANT_INVITE &&
+      attribution.accountantClientInvite?.states.length
+    ) {
+      row.acceptedInvitations += 1
     }
 
     rowsByCampaign.set(key, row)
@@ -107,11 +120,11 @@ export async function getReferralFunnelReadModel(
 
   const rows = [...rowsByCampaign.values()]
   const totals = rows.reduce((aggregate, row) => ({
-    issuedLinks: aggregate.issuedLinks + row.issuedLinks,
+    preparedLinks: aggregate.preparedLinks + row.preparedLinks,
     clicks: aggregate.clicks + row.clicks,
-    conversions: aggregate.conversions + row.conversions,
-    inviteActivations:
-      aggregate.inviteActivations + row.inviteActivations,
+    registrations: aggregate.registrations + row.registrations,
+    acceptedInvitations:
+      aggregate.acceptedInvitations + row.acceptedInvitations,
   }), emptyCounts())
 
   return {

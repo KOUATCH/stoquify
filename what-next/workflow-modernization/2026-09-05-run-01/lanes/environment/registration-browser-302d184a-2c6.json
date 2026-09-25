@@ -1,0 +1,111 @@
+{
+  "run": "302d184a-2c6",
+  "startedAt": "2026-09-06T09:36:48.741Z",
+  "baseUrl": "http://127.0.0.1:3108",
+  "mode": "recovery-all",
+  "database": "stoquify_local_registration_20260906_01",
+  "sourcesBefore": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "checks": [
+    {
+      "key": "register-v2-en",
+      "passed": true,
+      "screenshots": [
+        "register-v2-en-entry-302d184a-2c6.png",
+        "register-v2-en-ready-302d184a-2c6.png",
+        "register-v2-en-recovery-302d184a-2c6.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2203,
+      "reviewDoesNotCreate": true,
+      "abortedRequests": 1,
+      "recoveryOnly": true
+    },
+    {
+      "key": "register-v2-fr",
+      "passed": true,
+      "screenshots": [
+        "register-v2-fr-entry-302d184a-2c6.png",
+        "register-v2-fr-ready-302d184a-2c6.png",
+        "register-v2-fr-recovery-302d184a-2c6.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 3008,
+      "reviewDoesNotCreate": true,
+      "abortedRequests": 1,
+      "recoveryOnly": true
+    },
+    {
+      "key": "register-en",
+      "passed": true,
+      "screenshots": [
+        "register-en-entry-302d184a-2c6.png",
+        "register-en-required-302d184a-2c6.png",
+        "register-en-company-302d184a-2c6.png",
+        "register-en-ready-302d184a-2c6.png",
+        "register-en-recovery-302d184a-2c6.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 4528,
+      "abortedRequests": 1,
+      "recoveryOnly": true
+    },
+    {
+      "key": "register-fr",
+      "passed": true,
+      "screenshots": [
+        "register-fr-entry-302d184a-2c6.png",
+        "register-fr-required-302d184a-2c6.png",
+        "register-fr-company-302d184a-2c6.png",
+        "register-fr-ready-302d184a-2c6.png",
+        "register-fr-recovery-302d184a-2c6.png",
+        "register-fr-cooldown-302d184a-2c6.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2578,
+      "abortedRequests": 1,
+      "serverRetryIntervalShown": true,
+      "recoveryOnly": true
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Owned local application and actual registration service with external email disabled. Verification handoff is tested; no delivered code is claimed.",
+    "Full mode plans three browser creations and a fourth denial. Recovery modes abort submission before dispatch; recovery-all also verifies the existing real French cooldown. No counter reset, spoofing or bypass.",
+    "Browser accessibility checks cover labels, keyboard, focus and reflow; no actual screen-reader or comprehensive contrast certification.",
+    "The browser uses a separate database cloned only from owned synthetic controls; baseline tenant authority is checked unchanged."
+  ],
+  "originalAuthorityBefore": "de544c67140ccb3f045759c07acf8083beeffe132fd7b1492b1caed54104473d",
+  "originalAuthorityAfter": "de544c67140ccb3f045759c07acf8083beeffe132fd7b1492b1caed54104473d",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T09:37:29.252Z",
+  "sourcesAfter": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "sourceStable": true,
+  "driverSha256": "a1910ab26e33a46285427cb2de1662f871537577008839bbc8636c7e8fd2cd3c",
+  "passed": 4,
+  "failed": 0
+}

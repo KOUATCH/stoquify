@@ -98,4 +98,26 @@ describe("customer statement delivery provider", () => {
     expect(body.template.name).toBe("stoquify_customer_statement")
     expect(JSON.stringify(body)).toContain(baseInput.accessUrl)
   })
+
+  it.each(["rate_limit_exceeded", "invalid_parameter", "application_error", "invalid_idempotent_request", "internal_server_error"])("distinguishes rejection from uncertainty for SDK email error %s", async name => {
+    mockEmailSend.mockResolvedValue({ data: null, error: { name, message: "Owned SDK error" } })
+    const result = await sendCustomerStatementDelivery(baseInput, { environment: { STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS: "true", RESEND_API_KEY: "test-only", RESEND_FROM_EMAIL: "worker@example.invalid" } })
+    expect(result.status).toBe(name === "rate_limit_exceeded" || name === "invalid_parameter" ? "FAILED" : "UNKNOWN")
+    expect(result.retryable).toBe(name === "rate_limit_exceeded")
+  })
+
+  it.each(["throw", "missing-reference"])("does not present %s as a safely retryable email", async kind => {
+    if (kind === "throw") mockEmailSend.mockRejectedValue(new Error("private transport detail"))
+    else mockEmailSend.mockResolvedValue({ data: {}, error: null })
+    const result = await sendCustomerStatementDelivery(baseInput, { environment: { STOQUIFY_STATEMENT_EMAIL_LIVE_SENDS: "true", RESEND_API_KEY: "test-only", RESEND_FROM_EMAIL: "worker@example.invalid" } })
+    expect(result).toMatchObject({ status: "UNKNOWN", retryable: false })
+    expect(result.message).not.toContain("private transport detail")
+  })
+
+  it.each([429, 400, 408, 409, 500, 200])("classifies WhatsApp response %s without inventing acceptance evidence", async status => {
+    const fetcher = jest.fn().mockResolvedValue({ ok: status === 200, status, json: async () => ({}) })
+    const result = await sendCustomerStatementDelivery({ ...baseInput, channel: "WHATSAPP" }, { fetcher, environment: { STOQUIFY_STATEMENT_WHATSAPP_LIVE_SENDS: "true", WHATSAPP_PHONE_NUMBER_ID: "owned", WHATSAPP_ACCESS_TOKEN: "test-only" } })
+    expect(result.status).toBe(status === 400 || status === 429 ? "FAILED" : "UNKNOWN")
+    expect(result.retryable).toBe(status === 429)
+  })
 })

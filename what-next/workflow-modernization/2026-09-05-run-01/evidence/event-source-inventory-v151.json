@@ -1,0 +1,1166 @@
+{
+  "at": "2026-09-15T11:03:40.372Z",
+  "meaning": "Syntactic direct-call discovery, not complete call-graph or runtime verification. Aliased or indirect wrappers require separate review.",
+  "allowedAccountingSources": [
+    "MANUAL",
+    "POS_SALE",
+    "POS_PAYMENT",
+    "POS_REFUND",
+    "POS_VOID",
+    "DELIVERY_ORDER",
+    "DELIVERY_GOODS_ISSUE",
+    "DELIVERY_INVOICE",
+    "CASH_DRAWER_CLOSE",
+    "GOODS_RECEIPT",
+    "SUPPLIER_INVOICE",
+    "SUPPLIER_PAYMENT",
+    "PURCHASE_RETURN",
+    "SUPPLIER_CREDIT_NOTE",
+    "CUSTOMER_SETTLEMENT",
+    "EXPENSE",
+    "STOCK_ADJUSTMENT",
+    "STOCK_COUNT",
+    "STOCK_TRANSFER",
+    "PAYROLL_RUN",
+    "PAYROLL_PAYMENT",
+    "PAYROLL_EMPLOYEE_BALANCE",
+    "PAYROLL_EMPLOYEE_BALANCE_SETTLEMENT",
+    "PRODUCTION_BATCH",
+    "PAYMENT_RECONCILIATION",
+    "PAYMENT_SUSPENSE",
+    "OPENING_BALANCE",
+    "IMPORT",
+    "CUSTOMER_RECEIVABLE_DOCUMENT",
+    "CUSTOMER_STATEMENT_SNAPSHOT",
+    "CUSTOMER_STATEMENT",
+    "CUSTOMER_STATEMENT_DELIVERY",
+    "CUSTOMER_STATEMENT_RECIPIENT_ACTION",
+    "SUPPLIER_PO_ACKNOWLEDGEMENT",
+    "CUSTOMER_SETTLEMENT_ALLOCATION",
+    "CUSTOMER_SETTLEMENT_REVERSAL",
+    "ACCOUNTANT_CLIENT_INVITE"
+  ],
+  "calls": [
+    {
+      "file": "services/inventory/inventory-transfer.service.ts",
+      "line": 759,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ded6044f78c74886628e090932f0eceb6b708e90842d59116feaadfc0b93b5a4",
+      "eventType": "\"stock.transfer.posted\"",
+      "expression": "\"STOCK_TRANSFER\"",
+      "literal": "STOCK_TRANSFER",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/inventory/inventory-transfer-lifecycle.service.ts",
+      "line": 139,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dd1e68110290bb41c1f2f3b429333deae03d5e3c6f71fe182db5550a7f195df8",
+      "expression": "\"STOCK_TRANSFER\"",
+      "literal": "STOCK_TRANSFER",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/inventory/inventory-stock-event.service.ts",
+      "line": 692,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+      "eventType": "input.eventType",
+      "expression": "input.sourceType",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/inventory/inventory-history-background-export.service.ts",
+      "line": 619,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6ea0ee89d286d7f6952c0e09852280260ffc54f27e210c2083c478fadab96a6a",
+      "eventType": "CHUNK_EVENT_TYPE",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/inventory/inventory-history-background-export.service.ts",
+      "line": 761,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6ea0ee89d286d7f6952c0e09852280260ffc54f27e210c2083c478fadab96a6a",
+      "eventType": "REQUEST_EVENT_TYPE",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/inventory/inventory-history-background-export.service.ts",
+      "line": 994,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6ea0ee89d286d7f6952c0e09852280260ffc54f27e210c2083c478fadab96a6a",
+      "eventType": "COMPLETED_EVENT_TYPE",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/inventory/inventory-count.service.ts",
+      "line": 697,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "0476fbb5691b41a0965a4186842b88fdc3f801c34ea94cbc7a32d1d0bc70517e",
+      "eventType": "\"inventory.physical_count.validated\"",
+      "expression": "AccountingSourceType.STOCK_COUNT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/inventory/inventory-adjustment.service.ts",
+      "line": 1215,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "b2b99b3b868ca33ba13b3f9e6610c21a8a879ddcf7beb0ecac766153e8b6d6fb",
+      "eventType": "adjustmentEventType(adjustment)",
+      "expression": "AccountingSourceType.STOCK_ADJUSTMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/inventory/inventory-adjustment-reversal.service.ts",
+      "line": 709,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "087d1cb80e27bfa231fffdb7f9d7c089c6f27e3054dbbeb8bc004fdedc08a689",
+      "eventType": "\"stock.adjustment.reversed\"",
+      "expression": "AccountingSourceType.STOCK_ADJUSTMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/compliance/fiscalization-outbox.service.ts",
+      "line": 456,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "905d637eb5b16a7b9895089b5b0c43b4ce4c1267086c28bf70bf4c54282c3dcc",
+      "eventType": "\"pos.sale.fiscalized\"",
+      "expression": "\"POS_SALE\"",
+      "literal": "POS_SALE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/compliance/fiscal-document.service.ts",
+      "line": 492,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ca4a7cc19a6671398c30230fc7d5792b48a7dc6c5261cbaacfecda520715dbbb",
+      "eventType": "\"compliance.fiscal_document.created\"",
+      "expression": "fiscalDocument.sourceType",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/compliance/country-adapter-pilot.service.ts",
+      "line": 327,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "7b0554b6aafed28e37db99fb372bd8fd956d411ce8517b5bbde4d89b596d25f7",
+      "eventType": "\"AUTHORITY_ADAPTER_CONFIGURED\"",
+      "expression": "\"COMPLIANCE_ADAPTER_CONFIG\"",
+      "literal": "COMPLIANCE_ADAPTER_CONFIG",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/compliance/country-adapter-pilot.service.ts",
+      "line": 427,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "7b0554b6aafed28e37db99fb372bd8fd956d411ce8517b5bbde4d89b596d25f7",
+      "eventType": "\"AUTHORITY_CREDENTIAL_ROTATED\"",
+      "expression": "\"COMPLIANCE_ADAPTER_CONFIG\"",
+      "literal": "COMPLIANCE_ADAPTER_CONFIG",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/compliance/country-adapter-pilot.service.ts",
+      "line": 525,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "7b0554b6aafed28e37db99fb372bd8fd956d411ce8517b5bbde4d89b596d25f7",
+      "eventType": "\"AUTHORITY_ADAPTER_REVIEW_RECORDED\"",
+      "expression": "\"COMPLIANCE_ADAPTER_CONFIG\"",
+      "literal": "COMPLIANCE_ADAPTER_CONFIG",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/compliance/country-adapter-pilot.service.ts",
+      "line": 599,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "7b0554b6aafed28e37db99fb372bd8fd956d411ce8517b5bbde4d89b596d25f7",
+      "eventType": "\"AUTHORITY_ADAPTER_DISABLED\"",
+      "expression": "\"COMPLIANCE_ADAPTER_CONFIG\"",
+      "literal": "COMPLIANCE_ADAPTER_CONFIG",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/compliance/certification-outbox.service.ts",
+      "line": 154,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6e5b394d4a103f34e3a1d715518f26ff298e4edd16d934b01065a6742ae25742",
+      "eventType": "\"compliance.submission.queued\"",
+      "expression": "fiscalDocument.sourceType",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/compliance/certification-outbox.service.ts",
+      "line": 706,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6e5b394d4a103f34e3a1d715518f26ff298e4edd16d934b01065a6742ae25742",
+      "eventType": "persistedStatus === ComplianceSubmissionStatus.REJECTED\n            ? \"AUTHORITY_SUBMISSION_REJECTED\"\n            : retryable\n              ? \"compliance.submission.retry_scheduled\"\n              : \"compliance.submission.failed\"",
+      "expression": "fiscalDocument.sourceType",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/compliance/certification-outbox.service.ts",
+      "line": 909,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6e5b394d4a103f34e3a1d715518f26ff298e4edd16d934b01065a6742ae25742",
+      "eventType": "\"AUTHORITY_SUBMISSION_SENT\"",
+      "expression": "fiscalDocument.sourceType",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/compliance/certification-outbox.service.ts",
+      "line": 1088,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6e5b394d4a103f34e3a1d715518f26ff298e4edd16d934b01065a6742ae25742",
+      "eventType": "\"AUTHORITY_SUBMISSION_ACCEPTED\"",
+      "expression": "fiscalDocument.sourceType",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/hris/time-leave.service.ts",
+      "line": 511,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "81a81e14d226b84220ca748abd94aa2c6158be430e344593810819a4a28ed242",
+      "eventType": "\"attendance.period.corrected\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/hris/operational-time.service.ts",
+      "line": 585,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c6b2ee7f1bcf688e5a36c8782e012b79b6e60cac246353119f59f3c260f748c2",
+      "eventType": "\"LEAVE_APPROVED\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/hris/lifecycle.service.ts",
+      "line": 271,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "fd73421be53ecd7412094fd89967eb5f3a01f392ecfe4e3479c675d080b49b24",
+      "eventType": "input.eventType",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/hris/document-evidence.service.ts",
+      "line": 180,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "26c2071e4a198033cf3d9418e6354ac48d852cd2de9d3db6c0b91bd6fe2e65bf",
+      "eventType": "input.eventType",
+      "expression": "\"HRIS_CONTRACT_DOCUMENT\"",
+      "literal": "HRIS_CONTRACT_DOCUMENT",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/communication/whatsapp-receipt-worker.service.ts",
+      "line": 318,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "685422b972030294ebaea85ac151068c233514642ddc8658dedd168be731353b",
+      "eventType": "\"POS_RECEIPT_WHATSAPP_DELIVERY_SENT\"",
+      "expression": "\"POS_SALE\"",
+      "literal": "POS_SALE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/communication/whatsapp-receipt-outbox.service.ts",
+      "line": 112,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "12aed1863c51f978f684f17dca0776b30fdce2db64215cb9cba91670bf174a7f",
+      "eventType": "WHATSAPP_RECEIPT_EVENT_TYPE",
+      "expression": "\"POS_SALE\"",
+      "literal": "POS_SALE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/communication/customer-statement-delivery-worker.service.ts",
+      "line": 152,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+      "eventType": "\"CUSTOMER_STATEMENT_DELIVERY_\" + input.status",
+      "expression": "\"CUSTOMER_STATEMENT_DELIVERY\"",
+      "literal": "CUSTOMER_STATEMENT_DELIVERY",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/communication/accountant-client-invite-worker.service.ts",
+      "line": 137,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "15a265f1021f3f139714a379faf5bfb5b42f6f6e3433108c2fe86161121b73eb",
+      "eventType": "\"ACCOUNTANT_CLIENT_INVITE_DELIVERY_\" + input.deliveryStatus",
+      "expression": "\"ACCOUNTANT_CLIENT_INVITE\"",
+      "literal": "ACCOUNTANT_CLIENT_INVITE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/events/business-event.service.ts",
+      "line": 305,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+      "classification": "indirect_input_review_required",
+      "expression": "normalizedInput"
+    },
+    {
+      "file": "services/end-of-day-close/end-of-day-close-review.service.ts",
+      "line": 244,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "268fe2ed362bd435791d5bf415629a7a7c89677f167eb00b317e2ea81dda5a2b",
+      "eventType": "\"branch.daily-close.review-started\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/end-of-day-close/branch-daily-close-sign-off.service.ts",
+      "line": 314,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "b5a7df72c71cba86ac249857820c5f6dc7988201d0b9e5d2b1d19e01a3d0f807",
+      "eventType": "\"branch.daily-close.signed\"",
+      "expression": "\"MANUAL\"",
+      "literal": "MANUAL",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/ai/copilot-proposal.service.ts",
+      "line": 209,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "37e34c4f1b84b02c46ca02f3eac3982e9ad3de12b966ea3d73fe393b09ff86f7",
+      "eventType": "\"AI_ACTION_PROPOSAL_CREATED\"",
+      "expression": "\"AiActionProposal\"",
+      "literal": "AiActionProposal",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/ai/copilot-proposal.service.ts",
+      "line": 293,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "37e34c4f1b84b02c46ca02f3eac3982e9ad3de12b966ea3d73fe393b09ff86f7",
+      "expression": "\"AiActionProposal\"",
+      "literal": "AiActionProposal",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/order-to-cash/delivery-order.service.ts",
+      "line": 127,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "f7529c1f9c3acd0080c3a8190a57bbfebf477622861e4415f7a9a45f8e71a4ec",
+      "eventType": "existing.eventType",
+      "expression": "AccountingSourceType.DELIVERY_ORDER",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/order-to-cash/delivery-order.service.ts",
+      "line": 201,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "f7529c1f9c3acd0080c3a8190a57bbfebf477622861e4415f7a9a45f8e71a4ec",
+      "eventType": "input.eventType",
+      "expression": "AccountingSourceType.DELIVERY_ORDER",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/reconciliation/payment-reconciliation-certification.service.ts",
+      "line": 795,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "949adbc1ee759f8beb8153221c47651d62a660cc324c8fa1f01d35562ba18190",
+      "eventType": "\"payment.reconciliation.signed\"",
+      "expression": "\"PAYMENT_RECONCILIATION\"",
+      "literal": "PAYMENT_RECONCILIATION",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/reconciliation/payment-reconciliation-certification.service.ts",
+      "line": 1289,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "949adbc1ee759f8beb8153221c47651d62a660cc324c8fa1f01d35562ba18190",
+      "eventType": "\"payment.reconciliation.certificate.exported\"",
+      "expression": "\"PAYMENT_RECONCILIATION\"",
+      "literal": "PAYMENT_RECONCILIATION",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "actions/agents/command-agent.actions.ts",
+      "line": 49,
+      "call": "recordBusinessEvent",
+      "sourceHash": "fc76042735444e3978a6644f6fc95ed28be70baeef03724fe353e0719a0d4e11",
+      "eventType": "\"AI_ANALYSIS_REQUESTED\"",
+      "expression": "\"AgentRun\"",
+      "literal": "AgentRun",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/purchasing/invoice-ledger-recovery.service.ts",
+      "line": 106,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+      "eventType": "\"purchase.supplier_invoice.ledger_recovery_recorded\"",
+      "expression": "\"SUPPLIER_INVOICE\"",
+      "literal": "SUPPLIER_INVOICE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/invoice-correction.service.ts",
+      "line": 125,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+      "expression": "\"SUPPLIER_INVOICE\"",
+      "literal": "SUPPLIER_INVOICE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/invoice-approval.service.ts",
+      "line": 115,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+      "expression": "\"SUPPLIER_INVOICE\"",
+      "literal": "SUPPLIER_INVOICE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 2052,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"purchase.supplier_invoice.posted\"",
+      "expression": "AccountingSourceType.SUPPLIER_INVOICE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 2170,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"purchase.supplier_invoice.match_exception.expired\"",
+      "expression": "AccountingSourceType.SUPPLIER_INVOICE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 2275,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"purchase.supplier_invoice.match_exception.requested\"",
+      "expression": "AccountingSourceType.SUPPLIER_INVOICE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 2441,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "approved\n        ? \"purchase.supplier_invoice.match_exception.approved\"\n        : \"purchase.supplier_invoice.match_exception.rejected\"",
+      "expression": "AccountingSourceType.SUPPLIER_INVOICE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 2779,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"purchase.supplier_invoice.posted\"",
+      "expression": "AccountingSourceType.SUPPLIER_INVOICE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 2953,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"supplier.bank_change.requested\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 3068,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"supplier.bank_change.approved\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 3341,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"supplier.payment.approved\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchasing/ap-control.service.ts",
+      "line": 3753,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "eventType": "\"supplier.payment.released\"",
+      "expression": "AccountingSourceType.SUPPLIER_PAYMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/purchase-return-credit.service.ts",
+      "line": 676,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+      "eventType": "\"purchase.supplier_credit.posted\"",
+      "expression": "AccountingSourceType.SUPPLIER_CREDIT_NOTE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/purchase-return-credit.service.ts",
+      "line": 833,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+      "eventType": "\"purchase.supplier_credit.reversed\"",
+      "expression": "AccountingSourceType.SUPPLIER_CREDIT_NOTE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/purchasing/payment-request.service.ts",
+      "line": 50,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "849a9cb77abae98d91e72fca95f7cca8f54f493fe9cd524a882b8be630d84bb6",
+      "eventType": "PAYMENT_REQUEST_EVENT",
+      "expression": "\"SUPPLIER_PAYMENT\"",
+      "literal": "SUPPLIER_PAYMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/payment-request.service.ts",
+      "line": 89,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "849a9cb77abae98d91e72fca95f7cca8f54f493fe9cd524a882b8be630d84bb6",
+      "eventType": "PAYMENT_REQUEST_APPROVAL_EVENT",
+      "expression": "\"SUPPLIER_PAYMENT\"",
+      "literal": "SUPPLIER_PAYMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/payment-release.service.ts",
+      "line": 74,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+      "expression": "\"SUPPLIER_PAYMENT\"",
+      "literal": "SUPPLIER_PAYMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/payment-posting-recovery.service.ts",
+      "line": 80,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "65991f8dac589001bfde2729c347dee8922caf653c323e49e5a972134cb44c0c",
+      "expression": "\"SUPPLIER_PAYMENT\"",
+      "literal": "SUPPLIER_PAYMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/invoice-preparation.service.ts",
+      "line": 93,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+      "eventType": "\"purchase.supplier_invoice.prepared\"",
+      "expression": "\"SUPPLIER_INVOICE\"",
+      "literal": "SUPPLIER_INVOICE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchasing/invoice-match-exception.service.ts",
+      "line": 86,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82",
+      "expression": "\"SUPPLIER_INVOICE\"",
+      "literal": "SUPPLIER_INVOICE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/leakage/cash-shortage-policy.service.ts",
+      "line": 320,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ce91a8307122fa261cd291aff6428c4a7b73a82854fedf85deaa82399af95268",
+      "eventType": "POLICY_APPROVAL_EVENT_TYPE",
+      "expression": "\"MANUAL\"",
+      "literal": "MANUAL",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/accounting/finance-statement-export.service.ts",
+      "line": 237,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "872f7e9b99cd0b0c727c04fc146563c89a8b87e44e676476b304b28adb0f91ee",
+      "eventType": "FINANCE_STATEMENT_EXPORT_REQUEST_EVENT",
+      "expression": "\"FinanceStatementExport\"",
+      "literal": "FinanceStatementExport",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/accounting/data-trust.service.ts",
+      "line": 2633,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "f25a82b358ef2f039f38bcc3e6b37176d578731d8141f36598e21065d2a55943",
+      "eventType": "\"REPORT_EXPORT_CREATED\"",
+      "expression": "\"AccountantTrustPack\"",
+      "literal": "AccountantTrustPack",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/accounting/customer-statement.service.ts",
+      "line": 617,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+      "eventType": "\"customer.statement.snapshot.created\"",
+      "expression": "\"CUSTOMER_STATEMENT_SNAPSHOT\"",
+      "literal": "CUSTOMER_STATEMENT_SNAPSHOT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/accounting/customer-statement-retry.service.ts",
+      "line": 64,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "709da1ab5f944cdce472a842dcfabe3beb7a98bb34b3b3b93f0bfc969254b1f7",
+      "eventType": "\"customer.statement.delivery.retry.requested\"",
+      "expression": "AccountingSourceType.CUSTOMER_STATEMENT_DELIVERY",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/accounting/customer-statement-response.service.ts",
+      "line": 170,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "aaf5c2b09be01a67f184ab65dff63679ae68c8f03217737af599dfd47ab4194a",
+      "expression": "AccountingSourceType.CUSTOMER_STATEMENT_RECIPIENT_ACTION",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/accounting/customer-statement-recipient-action.service.ts",
+      "line": 347,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+      "eventType": "\"customer.statement.recipient_action.created\"",
+      "expression": "\"CUSTOMER_STATEMENT_RECIPIENT_ACTION\"",
+      "literal": "CUSTOMER_STATEMENT_RECIPIENT_ACTION",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/accounting/customer-statement-delivery.service.ts",
+      "line": 352,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "21e3f90d05a8996ad852853a8e6833b85c88d8430f5a17269d649dfb4f248214",
+      "eventType": "\"CUSTOMER_STATEMENT_DELIVERY_REQUESTED\"",
+      "expression": "\"CUSTOMER_STATEMENT\"",
+      "literal": "CUSTOMER_STATEMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/accounting/customer-settlement.service.ts",
+      "line": 941,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "607321e7d5541a82d5aba4e88bc5ee7b5064a3b5afee371faea39ef32799616e",
+      "eventType": "\"customer.settlement.posted\"",
+      "expression": "AccountingSourceType.CUSTOMER_SETTLEMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/accounting/customer-settlement-reversal.service.ts",
+      "line": 1091,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ddccb853d7df229ffc577a3f698986ac3d2111b5d7df5959a199a7d15967fb70",
+      "eventType": "\"customer.settlement.reversed\"",
+      "expression": "AccountingSourceType.CUSTOMER_SETTLEMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/accounting/customer-receivable-lifecycle.service.ts",
+      "line": 211,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6047d97fe8fe2e29211bd573e88c9877a5a944fd5cfc4405588989a5fbacdbfd",
+      "eventType": "\"customer.receivable.lifecycle.changed\"",
+      "expression": "CUSTOMER_RECEIVABLE_REFERENCE_TYPE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/accounting/customer-receivable-document.service.ts",
+      "line": 416,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+      "eventType": "\"customer.receivable.posted\"",
+      "expression": "CUSTOMER_RECEIVABLE_REFERENCE_TYPE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/accounting/close-assurance.service.ts",
+      "line": 528,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dc721de85a3f3c7b10fa4e54be905627ab71e101fc3a78a45ea5f32a27f705ab",
+      "eventType": "params.eventType",
+      "expression": "CLOSE_WORKFLOW_ACCOUNTING_SOURCE_TYPE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/accounting/close-assurance-pack.service.ts",
+      "line": 1653,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+      "eventType": "\"close.certification.invalidated\"",
+      "expression": "\"MANUAL\"",
+      "literal": "MANUAL",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/accounting/accountant-client-invite.service.ts",
+      "line": 333,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "4d0bc0e67f6e2bf4ca874c44ef3598a64658ce71a079cd817e50b1fa018ae8a7",
+      "eventType": "\"ACCOUNTANT_CLIENT_INVITE_REQUESTED\"",
+      "expression": "\"ACCOUNTANT_CLIENT_INVITE\"",
+      "literal": "ACCOUNTANT_CLIENT_INVITE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/accounting/accountant-client-invite.service.ts",
+      "line": 616,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "4d0bc0e67f6e2bf4ca874c44ef3598a64658ce71a079cd817e50b1fa018ae8a7",
+      "eventType": "\"ACCOUNTANT_CLIENT_INVITE_ACCEPTED\"",
+      "expression": "\"ACCOUNTANT_CLIENT_INVITE\"",
+      "literal": "ACCOUNTANT_CLIENT_INVITE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/accounting/accountant-access.service.ts",
+      "line": 157,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0",
+      "eventType": "\"ACCOUNTANT_ACCESS_EXPIRED\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/accounting/accountant-access.service.ts",
+      "line": 248,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0",
+      "eventType": "\"ACCOUNTANT_ACCESS_GRANTED\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/accounting/accountant-access.service.ts",
+      "line": 368,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0",
+      "eventType": "\"ACCOUNTANT_ACCESS_REVOKED\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchase-order/purchase-order-amendment.service.ts",
+      "line": 97,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "5ac5d729bc8ffaa227298085c0e2ad9c985aa7bfa7698ebcb84418e89d36831d",
+      "eventType": "\"purchase_order.amended\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchase-order/purchase-receiving-workbench.service.ts",
+      "line": 162,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f",
+      "eventType": "eventType(command.draft.kind)",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 673,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+      "eventType": "\"purchase_order.draft_updated\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 768,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+      "eventType": "purchaseLifecycleEventType(request.kind)",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchase-order/purchase-order.service.ts",
+      "line": 837,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+      "eventType": "\"purchase_order.approved\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "line": 425,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6",
+      "eventType": "\"supplier.po.envelope.created\"",
+      "expression": "\"SUPPLIER_PO_ACKNOWLEDGEMENT\"",
+      "literal": "SUPPLIER_PO_ACKNOWLEDGEMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "line": 601,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6",
+      "eventType": "\"supplier.po.invite.issued\"",
+      "expression": "\"SUPPLIER_PO_ACKNOWLEDGEMENT\"",
+      "literal": "SUPPLIER_PO_ACKNOWLEDGEMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "line": 1028,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6",
+      "eventType": "\"supplier.po.proposal.submitted\"",
+      "expression": "\"SUPPLIER_PO_ACKNOWLEDGEMENT\"",
+      "literal": "SUPPLIER_PO_ACKNOWLEDGEMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "line": 1214,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6",
+      "eventType": "parsed.decision === \"ACCEPT\"\n          ? \"supplier.po.proposal.buyer_accepted\"\n          : \"supplier.po.proposal.buyer_rejected\"",
+      "expression": "\"SUPPLIER_PO_ACKNOWLEDGEMENT\"",
+      "literal": "SUPPLIER_PO_ACKNOWLEDGEMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "line": 1314,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6",
+      "eventType": "\"supplier.po.invite.revoked\"",
+      "expression": "\"SUPPLIER_PO_ACKNOWLEDGEMENT\"",
+      "literal": "SUPPLIER_PO_ACKNOWLEDGEMENT",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 1502,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58",
+      "eventType": "POS_SHIFT_CLOSED_EVENT_TYPE",
+      "expression": "AccountingSourceType.CASH_DRAWER_CLOSE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 2766,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58",
+      "eventType": "\"pos.sale.finalized\"",
+      "expression": "\"POS_SALE\"",
+      "literal": "POS_SALE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 3525,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58",
+      "eventType": "\"pos.refund.issued\"",
+      "expression": "\"POS_REFUND\"",
+      "literal": "POS_REFUND",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/pos/pos.service.ts",
+      "line": 3732,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58",
+      "eventType": "\"pos.sale.voided\"",
+      "expression": "\"POS_VOID\"",
+      "literal": "POS_VOID",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "line": 710,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "eventType": "\"pos.offline.device.enrolled\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "line": 783,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "eventType": "\"pos.offline.sync.conflict\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "line": 837,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "eventType": "\"pos.offline.event.captured\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "line": 1078,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "eventType": "\"pos.offline.event.replayed\"",
+      "expression": "\"POS_SALE\"",
+      "literal": "POS_SALE",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "line": 1199,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ae1cdd135257b0a3f8edf29bfbb1e0c1d092bbee1033c85de2fdb44d28f1aea6",
+      "eventType": "\"pos.offline.replay.blocked\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/payroll/payroll-employee-balance.service.ts",
+      "line": 1626,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "e9a7c38b63298fdc4898649e1621399eca20fe1929337e72209a706930727e6f",
+      "eventType": "\"payroll.employee_balance.opened\"",
+      "expression": "AccountingSourceType.PAYROLL_EMPLOYEE_BALANCE",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-employee-balance.service.ts",
+      "line": 1922,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "e9a7c38b63298fdc4898649e1621399eca20fe1929337e72209a706930727e6f",
+      "eventType": "\"payroll.employee_balance.settled\"",
+      "expression": "AccountingSourceType.PAYROLL_EMPLOYEE_BALANCE_SETTLEMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 5275,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"attendance.period.frozen\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 6420,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"payroll.run.calculated\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 6870,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"PAYROLL_RUN_REVIEWED\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 7029,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"PAYROLL_RUN_APPROVED\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 7287,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"PAYSLIP_EMITTED\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 7650,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"PAYROLL_POSTED\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 8039,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"payroll.run.posted\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 8524,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"payroll.payment_batch.requested\"",
+      "expression": "AccountingSourceType.PAYROLL_PAYMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 8704,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"payroll.payment_batch.approved\"",
+      "expression": "AccountingSourceType.PAYROLL_PAYMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 9091,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"payroll.payment_batch.released\"",
+      "expression": "AccountingSourceType.PAYROLL_PAYMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payroll-control.service.ts",
+      "line": 9574,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "eventType": "\"payroll.declaration.prepared\"",
+      "expression": "AccountingSourceType.PAYROLL_RUN",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payment-reconciliation.service.ts",
+      "line": 1640,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "3ab59273bedf397541d9db3adc104a49c0c85f4daa774afb0375c97538febe0f",
+      "eventType": "\"payroll.payment_batch.reconciled\"",
+      "expression": "AccountingSourceType.PAYROLL_PAYMENT",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/payment-evidence.service.ts",
+      "line": 608,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "b6041a7d59478f2cf38c9e46dcfc3d9cb7a89a9b0a3c1c662acf25dd4ee2b635",
+      "eventType": "input.eventType",
+      "expression": "\"PAYROLL_PAYMENT_DESTINATION\"",
+      "literal": "PAYROLL_PAYMENT_DESTINATION",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/payroll/employee.service.ts",
+      "line": 736,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "2a3a3f9094b27e9b1593c3c68ce6a0319d964eb35c7c82ef93789994e04af04d",
+      "eventType": "\"payroll.employee.source_data.upserted\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/payroll/employee.service.ts",
+      "line": 841,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "2a3a3f9094b27e9b1593c3c68ce6a0319d964eb35c7c82ef93789994e04af04d",
+      "eventType": "\"payroll.employee.evidence_attached\"",
+      "classification": "omitted"
+    },
+    {
+      "file": "services/payroll/declaration-lifecycle.service.ts",
+      "line": 1528,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "42ece1f1515634a4e7bdb888eca30251731e9c51b2f9527cf48e31e55376eeb5",
+      "eventType": "config.eventType",
+      "expression": "\"PAYROLL_DECLARATION\"",
+      "literal": "PAYROLL_DECLARATION",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/payroll/contract.service.ts",
+      "line": 555,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "f399fcbb6c7ed3b24070aee089369482dda89507c56fa63fd7262cba048fa5f9",
+      "eventType": "input.eventType",
+      "expression": "\"PAYROLL_CONTRACT\"",
+      "literal": "PAYROLL_CONTRACT",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/payroll/compensation.service.ts",
+      "line": 445,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "ef5ac29ad3c3d34104f7e9b3d8e26bf29fa8dd0935dbe281aaa7527dec427a93",
+      "eventType": "input.eventType",
+      "expression": "input.sourceType",
+      "classification": "dynamic_review_required"
+    },
+    {
+      "file": "services/payroll/authority-adapter-execution.service.ts",
+      "line": 716,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "fc82ca6fffb05d961f0d87c4d6908ac34993575298187f8c4e5993701ff27f52",
+      "eventType": "\"payroll.declaration.adapter_execution.queued\"",
+      "expression": "\"PAYROLL_DECLARATION\"",
+      "literal": "PAYROLL_DECLARATION",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/payroll/authority-adapter-execution.service.ts",
+      "line": 1066,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "fc82ca6fffb05d961f0d87c4d6908ac34993575298187f8c4e5993701ff27f52",
+      "eventType": "retryable\n        ? \"payroll.declaration.adapter_execution.retry_scheduled\"\n        : \"payroll.declaration.adapter_execution.processed\"",
+      "expression": "\"PAYROLL_DECLARATION\"",
+      "literal": "PAYROLL_DECLARATION",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/payroll/payslip-self-service.service.ts",
+      "line": 909,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "8552106b352b9650bcdfb39405de458ec08d19a5f565662f03da543ecf225718",
+      "eventType": "\"payroll.payslip.exported\"",
+      "expression": "\"PAYROLL_PAYSLIP\"",
+      "literal": "PAYROLL_PAYSLIP",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/payroll/payroll-register.service.ts",
+      "line": 2511,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "304a4ff7b9272b2caa3e859444356cf9430ad7e2afc32aa67c29aa55866f8f7c",
+      "eventType": "\"payroll.register.exported\"",
+      "expression": "\"PAYROLL_REGISTER\"",
+      "literal": "PAYROLL_REGISTER",
+      "classification": "invalid_literal"
+    },
+    {
+      "file": "services/payments/provider-event.service.ts",
+      "line": 338,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+      "eventType": "\"payment.provider_event.rejected\"",
+      "expression": "\"PAYMENT_RECONCILIATION\"",
+      "literal": "PAYMENT_RECONCILIATION",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/payments/provider-event.service.ts",
+      "line": 394,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+      "eventType": "\"payment.provider_event.captured\"",
+      "expression": "\"PAYMENT_RECONCILIATION\"",
+      "literal": "PAYMENT_RECONCILIATION",
+      "classification": "valid_literal"
+    },
+    {
+      "file": "services/payments/statement-import.service.ts",
+      "line": 365,
+      "call": "recordBusinessEventInTx",
+      "sourceHash": "1e66cd632527ebdb0b71277c9db98c17184c154ac2921cdc2699f6c9ce18da33",
+      "eventType": "\"payment.statement.imported\"",
+      "expression": "\"PAYMENT_RECONCILIATION\"",
+      "literal": "PAYMENT_RECONCILIATION",
+      "classification": "valid_literal"
+    }
+  ]
+}

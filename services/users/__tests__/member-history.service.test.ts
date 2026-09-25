@@ -1,0 +1,36 @@
+jest.mock("server-only", () => ({}))
+jest.mock("@/prisma/db", () => ({ db: { $transaction: jest.fn() } }))
+import { db } from "@/prisma/db"
+import { getMemberHistory, exportMemberHistory } from "../member-history.service"
+import { createHash } from "node:crypto"
+
+const scope = { organizationId: "org", actorId: "actor", targetUserId: "member" }, proof = { id: "session", token: "private-unit-session" }
+const timestamp = new Date("2026-09-06T10:00:00.000Z")
+it("binds the audit hash to the exact binary download transport", async () => {
+  const page = await getMemberHistory(scope), result = await exportMemberHistory(scope, { page: {}, expectedHash: page.pageHash, locale: "fr" }, proof)
+  const bytes = Buffer.from(result.contentBase64, "base64")
+  expect([...bytes.subarray(0, 3)]).toEqual([239, 187, 191])
+  expect(createHash("sha256").update(bytes).digest("hex")).toBe(result.contentHash)
+})
+let tx: any, permissions: string[], records: any[], session: any, actor: any
+beforeEach(() => {
+  jest.clearAllMocks(); permissions = ["users.read", "controls.audit.read", "reports.export"]
+  actor = { isActive: true, isVerified: true, emailVerified: true, isLocked: false, lockedUntil: null }
+  records = Array.from({ length: 21 }, (_, index) => ({ id: "record-" + String(30 - index).padStart(2, "0"), createdAt: timestamp, userId: "acting-user", action: "MEMBER_ACCESS_CHANGED", changes: { operation: "roles", reason: index === 0 ? "\n=untrusted formula" : "Reviewed change", added: ["role"], removed: [], sessionToken: "private-omitted", fingerprint: "internal-omitted" } }))
+  session = { expiresAt: new Date(Date.now() + 600000), assuranceVerifiedAt: new Date(), assuranceMethod: "password", assuranceOrganizationId: "org", assuranceLevel: 1 }
+  tx = {
+    $queryRaw: jest.fn(async (strings: TemplateStringsArray) => { const sql = strings.join("?"); if (sql.includes("FROM users")) return [actor]; if (sql.includes("FROM sessions")) return session ? [session] : []; return [] }),
+    user: { findFirst: jest.fn(async ({ where }: any) => where.id === "actor" ? { ...actor, roles: [{ permissions }] } : where.id === "member" ? { id: "member" } : null) },
+    auditLog: { findFirst: jest.fn(async ({ where }: any) => where.id ? records.find(row => row.id === where.id) ?? null : records[0] ?? null), findMany: jest.fn(async () => records), create: jest.fn(async () => ({ id: "export-audit" })) },
+  }
+  ;(db.$transaction as jest.Mock).mockImplementation(work => work(tx))
+})
+it("returns twenty records with a stable cursor and no private internals", async () => { const result = await getMemberHistory(scope); expect(result.entries).toHaveLength(20); expect(result.pageInfo.nextCursor).toBe("record-11"); expect(result.pageInfo.throughId).toBe("record-30"); expect(JSON.stringify(result)).not.toMatch(/private-omitted|internal-omitted|sessionToken|fingerprint/); expect(result.entries[0].addedRoleIds).toEqual(["role"]) })
+it("uses timestamp-and-id ordering under the same member scope", async () => { await getMemberHistory(scope, { throughId: "record-30", beforeId: "record-11" }); expect(tx.auditLog.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org", entityId: "member", AND: expect.arrayContaining([expect.objectContaining({ OR: [{ createdAt: { lt: timestamp } }, { createdAt: timestamp, id: { lt: "record-11" } }] })]) }), take: 21 })) })
+it.each([{ beforeId: "record-11" }, { throughId: "foreign" }, { throughId: "record-30", beforeId: "foreign" }, { throughId: "x".repeat(201) }])("rejects unscoped or malformed cursors %#", async page => { await expect(getMemberHistory(scope, page)).rejects.toMatchObject({ code: page.throughId?.length === 201 || !page.throughId ? "VALIDATION_ERROR" : "CONFLICT" }); expect(tx.auditLog.findMany).not.toHaveBeenCalled() })
+it.each(["users.read", "controls.audit.read"])("requires current %s", async permission => { permissions = permissions.filter(value => value !== permission); await expect(getMemberHistory(scope)).rejects.toMatchObject({ code: "FORBIDDEN" }); expect(tx.auditLog.findMany).not.toHaveBeenCalled() })
+it("returns empty only after successful scoped reads", async () => { records = []; expect((await getMemberHistory(scope)).entries).toEqual([]); tx.auditLog.findFirst.mockRejectedValue(new Error("database unavailable")); await expect(getMemberHistory(scope)).rejects.toThrow("database unavailable") })
+it("exports exactly the reviewed page with a watermark, hash and mandatory audit", async () => { const page = await getMemberHistory(scope), result = await exportMemberHistory(scope, { page: { throughId: page.pageInfo.throughId! }, expectedHash: page.pageHash, locale: "fr" }, proof); expect(result.rowCount).toBe(20); expect(Buffer.from(result.contentBase64, "base64").toString("utf8")).toContain("Référence"); expect(Buffer.from(result.contentBase64, "base64").toString("utf8")).toContain("\"'\n=untrusted formula\""); expect(Buffer.from(result.contentBase64, "base64").toString("utf8")).not.toContain("private-omitted"); expect(result.contentHash).toMatch(/^[a-f0-9]{64}$/); expect(tx.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: "CONTROLLED_EXPORT_ALLOWED", changes: expect.objectContaining({ metadata: { contentHash: result.contentHash, rowIds: page.entries.map(row => row.id) } }) }) })) })
+it("refuses an altered page instead of exporting different records", async () => { const page = await getMemberHistory(scope); records[1].changes.reason = "Changed historical content"; await expect(exportMemberHistory(scope, { page: { throughId: page.pageInfo.throughId! }, expectedHash: page.pageHash, locale: "en" }, proof)).rejects.toMatchObject({ code: "CONFLICT" }); expect(tx.auditLog.create).not.toHaveBeenCalled() })
+it.each(["permission", "wildcard", "missing", "expired", "future", "old", "wrong-organization", "method", "locked"])("does not export with invalid authority: %s", async kind => { const page = await getMemberHistory(scope); if (kind === "permission") permissions = permissions.filter(value => value !== "reports.export"); if (kind === "wildcard") permissions = ["users.read", "controls.audit.read", "*"]; if (kind === "missing") session = null; if (kind === "expired") session.expiresAt = timestamp; if (kind === "future") session.assuranceVerifiedAt = new Date(Date.now() + 60000); if (kind === "old") session.assuranceVerifiedAt = timestamp; if (kind === "wrong-organization") session.assuranceOrganizationId = "other"; if (kind === "method") session.assuranceMethod = "email"; if (kind === "locked") actor.isLocked = true; await expect(exportMemberHistory(scope, { page: {}, expectedHash: page.pageHash, locale: "en" }, proof)).rejects.toMatchObject({ code: ["permission", "wildcard", "locked"].includes(kind) ? "FORBIDDEN" : "FRESH_AUTH_REQUIRED" }); expect(tx.auditLog.create).not.toHaveBeenCalled() })
+it("does not release file content when audit storage fails", async () => { const page = await getMemberHistory(scope); tx.auditLog.create.mockRejectedValue(new Error("mandatory audit unavailable")); await expect(exportMemberHistory(scope, { page: {}, expectedHash: page.pageHash, locale: "en" }, proof)).rejects.toThrow("mandatory audit unavailable") })

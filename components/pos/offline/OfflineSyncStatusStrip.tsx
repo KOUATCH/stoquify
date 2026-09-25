@@ -1,13 +1,16 @@
 "use client"
+import { useState } from "react"
+import { OfflineConflictReview } from "./OfflineConflictReview"
 
-import { AlertTriangle, Clock3, RefreshCw, ShieldCheck, Wifi, WifiOff } from "lucide-react"
+import { AlertTriangle, Clock3, RefreshCw, Wifi, WifiOff } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { useOfflineSyncDashboard } from "@/hooks/posHooks/useOfflineSync"
+import { useOfflineSyncDashboard, type OfflineReviewAccess } from "@/hooks/posHooks/useOfflineSync"
 
 type OfflineSyncStatusStripProps = {
+  access: OfflineReviewAccess
   locationId?: string | null
   terminalId?: string | null
   sessionId?: string | null
@@ -21,8 +24,8 @@ const copy = {
     loading: "Checking offline sync state...",
     unavailable: "Offline sync evidence is unavailable.",
     permissionDenied: "Offline sync status requires POS transaction access.",
-    ready: "Online certified path",
-    degraded: "Offline degraded path armed",
+    ready: "No offline device enrolled",
+    degraded: "Offline device enrolled",
     blocked: "Offline close blocked",
     pending: "pending",
     conflicts: "conflicts",
@@ -38,8 +41,8 @@ const copy = {
     loading: "Verification de l'etat de synchronisation hors ligne...",
     unavailable: "Les preuves de synchronisation hors ligne sont indisponibles.",
     permissionDenied: "Le statut hors ligne requiert l'acces aux transactions POS.",
-    ready: "Parcours certifie en ligne",
-    degraded: "Mode degrade hors ligne arme",
+    ready: "Aucun appareil hors ligne inscrit",
+    degraded: "Appareil hors ligne inscrit",
     blocked: "Cloture hors ligne bloquee",
     pending: "en attente",
     conflicts: "conflits",
@@ -70,7 +73,10 @@ export function OfflineSyncStatusStrip({
   sessionId,
   locale = "en",
   className,
+  access,
 }: OfflineSyncStatusStripProps) {
+  const { organizationId, userId, canRead } = access
+  const [showReview, setShowReview] = useState(false)
   const t = copy[locale]
   const enabled = Boolean(locationId && terminalId)
   const query = useOfflineSyncDashboard(
@@ -79,9 +85,10 @@ export function OfflineSyncStatusStrip({
       terminalId: terminalId ?? undefined,
       limit: 10,
     },
-    { enabled },
+    { enabled, access },
   )
 
+  if (!canRead) return <p className="text-sm text-[var(--dash-text-soft)]">{t.permissionDenied}</p>
   if (!enabled) {
     return (
       <section className={cn("flex flex-wrap items-center gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(15,23,42,0.48)] px-4 py-3 text-sm text-[var(--dash-text-soft)]", className)}>
@@ -128,7 +135,7 @@ export function OfflineSyncStatusStrip({
   const blocked = conflictCount > 0 || blockerCount > 0 || stalePolicyCount > 0
 
   return (
-    <section className={cn(
+    <><section className={cn(
       "flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 text-sm shadow-[0_14px_34px_rgba(5,12,16,0.18)]",
       blocked
         ? "border-[var(--dash-warning)]/45 bg-[rgba(120,53,15,0.32)] text-[#ffedd5]"
@@ -136,7 +143,7 @@ export function OfflineSyncStatusStrip({
       className,
     )}>
       <div className="flex min-w-0 flex-wrap items-center gap-2">
-        {blocked ? <AlertTriangle className="h-4 w-4 text-[var(--dash-warning)]" /> : <ShieldCheck className="h-4 w-4 text-[var(--dash-spruce)]" />}
+        {blocked ? <AlertTriangle className="h-4 w-4 text-[var(--dash-warning)]" /> : <Wifi className="h-4 w-4 text-[var(--dash-info)]" />}
         <span className="font-medium text-[var(--dash-text)]">
           {blocked ? t.blocked : hasDevice ? t.degraded : t.ready}
         </span>
@@ -171,11 +178,13 @@ export function OfflineSyncStatusStrip({
             {t.asOf} {formatAsOf(data.asOf, locale)}
           </span>
         ) : null}
+        <Button className="h-auto min-h-10 min-w-0 max-w-full whitespace-normal py-2" variant="outline" aria-expanded={showReview} onClick={() => setShowReview(value => !value)}>{locale === "fr" ? "Examiner les conflits" : "Review conflicts"}</Button>
         <Button type="button" variant="outline" size="sm" onClick={() => query.refetch()} className="h-8 border-white/15 bg-white/5 px-2.5 text-[var(--dash-text)] hover:bg-white/10">
           <RefreshCw className="h-3.5 w-3.5" />
           <span className="sr-only">{t.retry}</span>
         </Button>
       </div>
     </section>
+    {showReview && data ? <OfflineConflictReview key={`${organizationId}:${userId}:${locationId}:${terminalId}`} conflicts={data.conflicts} count={conflictCount} access={access} locationId={locationId ?? undefined} terminalId={terminalId ?? undefined} /> : null}</>
   )
 }

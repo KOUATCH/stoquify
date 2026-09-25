@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-05T17:41:25.226Z",
+  "lane": "purchasing-ap",
+  "workflowId": "PA-007",
+  "findingIds": [
+    "PA-F06",
+    "PA-F11"
+  ],
+  "status": "implemented-focused-verification-passed-browser-pending",
+  "sourceFiles": [
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "2f42458d5426171211a1542f9c89c48168039cc2b62b9f474bc8dc2649dab514"
+    },
+    {
+      "path": "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+      "sha256": "32e79b6f2c7ec3ff3fad3ed0e645cdbbafce8ba7a7f1de38f0c6db594b369930"
+    },
+    {
+      "path": "components/purchase-orders/PurchaseOrderCloneNotice.tsx",
+      "sha256": "5fd5c5f4064bcdbf4cee34be601d236e5d8cc8fcf558d45c7d82430dbff43d70"
+    },
+    {
+      "path": "hooks/usePurchaseOrderClone.ts",
+      "sha256": "a69808e9eb6292209d5e542e4f264f2e04f7431e0843b0976705023d1c4efda1"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "8c18d3110ea5a7219a59838458a85781388b0449b020cbbbbd9d75bcf26a4ee8"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "eec3542fc4fd5c3efbe475130e2f3133489f417fc132b3a5dd6264d007ddf02d"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "services/purchase-order/__tests__/purchase-order-clone-scope.service.test.ts",
+      "sha256": "26134f10cc299395101d5e5265bb4a6d8a5655bdc9dfdf83fdafc6ecc5764983"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order.service.test.ts",
+      "sha256": "40e0798226855653966d46bac83f0889a5cef6b5aaaf755a724e0b8d1a6e442d"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "sha256": "9e73939caf841d234cda1aac42e3d52b45457b193018b142cc4a919c76d82225"
+    },
+    {
+      "path": "hooks/__tests__/usePurchaseOrderClone.test.tsx",
+      "sha256": "8af32bcc65c3befbec7d558dcf446212f1f8307188fc50bcb8815f8463c7cdd4"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/PurchaseOrderCloneNotice.test.tsx",
+      "sha256": "75475ce9f42fb843abcea253d8373c59d1468fcc7fec97828672dfba954fea43"
+    }
+  ],
+  "baseline": {
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-clone-before.json",
+    "success": false,
+    "suites": 1,
+    "passed": 0,
+    "failed": 6,
+    "total": 6,
+    "startTime": 1788628849997
+  },
+  "attempts": [
+    {
+      "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-clone-after-01.json",
+      "success": false,
+      "suites": 5,
+      "passed": 52,
+      "failed": 2,
+      "total": 54,
+      "startTime": 1788629871088,
+      "reason": "Strict hook test found TanStack mutation context passed as a second server-action argument. Production mutationFn now explicitly forwards only the declared payload."
+    }
+  ],
+  "tests": {
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-clone-final.json",
+    "success": true,
+    "suites": 5,
+    "passed": 54,
+    "failed": 0,
+    "total": 54,
+    "startTime": 1788629950386,
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/purchase-order/__tests__/purchase-order-clone-scope.service.test.ts services/purchase-order/__tests__/purchase-order.service.test.ts actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts hooks/__tests__/usePurchaseOrderClone.test.tsx components/purchase-orders/__tests__/PurchaseOrderCloneNotice.test.tsx --json --outputFile what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-clone-final.json",
+    "exitCode": 0
+  },
+  "lint": {
+    "status": "passed",
+    "exitCode": 0,
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/lint-clone.log",
+    "paths": [
+      "services/purchase-order/purchase-order.service.ts",
+      "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+      "components/purchase-orders/PurchaseOrderCloneNotice.tsx",
+      "hooks/usePurchaseOrderClone.ts",
+      "services/purchase-order/__tests__/purchase-order-clone-scope.service.test.ts",
+      "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "hooks/__tests__/usePurchaseOrderClone.test.tsx",
+      "components/purchase-orders/__tests__/PurchaseOrderCloneNotice.test.tsx"
+    ]
+  },
+  "localization": {
+    "status": "EN/FR namespace parses and key parity passed",
+    "namespace": "purchaseOrderClone",
+    "keys": [
+      "button",
+      "pending",
+      "created",
+      "scope",
+      "failedTitle",
+      "denied",
+      "unavailable",
+      "stopped",
+      "unknownTitle",
+      "unknown",
+      "openOrders",
+      "draftOnly"
+    ]
+  },
+  "verificationBoundaries": {
+    "database": "No live/database operations in this receipt; service transactions mocked. Shared verifier owns genuine isolated persistence proof.",
+    "browser": "Not yet asserted by this receipt.",
+    "typecheck": "Parent combined check pending; prior editor aggregate check passed before clone changes.",
+    "release": "No migration, production deployment, supplier message, provider call, real payment, posting or approval performed."
+  },
+  "remaining": [
+    "No cross-session durable clone-command idempotency or explicit clone source relation; uncertain local result blocks further submission and requires inspection.",
+    "Current source/reference concurrent changes not independently serialized beyond current transaction checks; broader workflow concurrency batch remains required.",
+    "AP interactive writes, held-inspection resolution and bulk status UI still require implementation.",
+    "Current new controls localized; legacy purchase detail labels remain outside this correction."
+  ]
+}

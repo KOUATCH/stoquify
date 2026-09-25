@@ -88,6 +88,7 @@ export const inventoryRouteCatalog: InventoryRouteSurface[] = [
     resource: "InventoryItems",
     title: "Inventory items",
     permissions: ["inventory.items.read"],
+    module: { moduleSlug: "inventory", surface: "/dashboard/inventory/items", accessIntent: "read", mode: "enforce" },
   },
   {
     key: "inventory-items-create",
@@ -144,6 +145,28 @@ export const inventoryRouteCatalog: InventoryRouteSurface[] = [
     resource: "InventoryTransfers",
     title: "Inventory transfers",
     permissions: ["TRANSFERS_READ"],
+  },
+  {
+    key: "inventory-transfers-detail",
+    route: "/dashboard/inventory/transfers/[id]",
+    resource: "StockTransfer",
+    title: "Transfer progress",
+    permissions: ["inventory.levels.read"],
+    module: { moduleSlug: "inventory", surface: "/dashboard/inventory/transfers/[id]", accessIntent: "read", mode: "enforce" },
+  },
+  {
+    key: "inventory-transfers-create",
+    route: "/dashboard/inventory/transfers/create",
+    resource: "StockTransfer",
+    title: "Create inventory transfer",
+    permissions: ["TRANSFERS_READ", "inventory.stock.transfer"],
+    permissionMode: "all",
+    module: {
+      moduleSlug: "inventory",
+      surface: "/dashboard/inventory/transfers/create",
+      accessIntent: "write",
+      mode: "enforce",
+    },
   },
   {
     key: "inventory-units",

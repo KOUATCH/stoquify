@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path');
+let code=fs.readFileSync(path.join(__dirname,'verify-purchase-approval-register-debug.cjs'),'utf8');
+code=code.replace("const shot=async name=>{const file=", "const bufferedShots=[];const shot=async name=>{const file=");
+code=code.replace("await page.screenshot({path:path.join(__dirname,file),animations:'disabled'});result.screenshots.push(file)", "bufferedShots.push({file,buffer:await page.screenshot({animations:'disabled'})});result.screenshots.push(file)");
+code=code.replace("}finally{await context.close()};return result;", "}finally{await context.close();for(const shot of bufferedShots)fs.writeFileSync(path.join(__dirname,shot.file),shot.buffer,{flag:'wx'})};return result;");
+code=code.replace("actionRequests:[],", "actionRequests:[],refreshEvents:[],");
+code=code.replace("page.on('request',r=>", "page.on('console',message=>{const text=message.text();if(/Fast Refresh|reload|rebuilding/i.test(text))result.refreshEvents.push({at:Date.now(),message:f.safe(text,secrets)})});page.on('framenavigated',frame=>{if(frame===page.mainFrame())result.refreshEvents.push({at:Date.now(),navigation:true})});page.on('request',r=>");
+code=code.replace("file='purchase-approval-register-probe-'", "file='purchase-approval-register-memory-probe-'");
+fs.writeFileSync(path.join(__dirname,'verify-purchase-approval-register-memory.cjs'),code,{flag:'wx'});
+console.log('Prepared deferred-file screenshot probe with navigation/refresh observations.');

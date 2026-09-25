@@ -1,0 +1,40 @@
+{
+  "run": "57394fd3-a89",
+  "startedAt": "2026-09-07T09:55:27.888Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "2ebdf0598a2061bb8b5da6393dab8ebcb7ec24f9ebb7f5227e1be5c6cb406518",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "5e2ce58b9a8451b4fe4d018797ffae09045a619c078812a5f86bd14ad2a29723",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "ea965a8d8c5565f0c2aca8c8c83eddbf3615aa2365e832cfbaf7db065593938d",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ad146b7ea0a3015badb5c4f9d3a50403a2230c1f02d29af9dbdaae94ecc3597b",
+    "messages/fr.json": "5cd4d422a2977fe3381d6a576154a942391858d3d6c93fe9ebebf7890532b4ce"
+  },
+  "checks": [],
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "orderBefore": "b25bf5ad6380ce1bd46115114f95f0def10842cc7814e2813eb76b6405936a0c",
+  "error": "\nInvalid `db.supplierPoAccessToken.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-supplier-permissions-before.cjs:4:32\n\n  1 const f=require('./supplier-ack-fixtures.cjs'),{db,fs,path,crypto,assert}=f;\n  2 const run=crypto.randomUUID().slice(0,12),r={run,startedAt:new Date().toISOString(),sourcesBefore:f.sources(),checks:[]};\n  3 (async()=>{await f.local.withClient(f.target,f.local.assertOwned);r.originalBefore=await f.stable();const x=await f.fixture('en',run);r.orderBefore=await f.orderState(x);\n→ 4 await db.supplierPoAccessToken.update(\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"P0001\", message: \"Supplier PO access token identity is immutable\", severity: \"ERROR\", detail: None, column: None, hint: None }), transient: false })",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "2ebdf0598a2061bb8b5da6393dab8ebcb7ec24f9ebb7f5227e1be5c6cb406518",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "5e2ce58b9a8451b4fe4d018797ffae09045a619c078812a5f86bd14ad2a29723",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "ea965a8d8c5565f0c2aca8c8c83eddbf3615aa2365e832cfbaf7db065593938d",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ad146b7ea0a3015badb5c4f9d3a50403a2230c1f02d29af9dbdaae94ecc3597b",
+    "messages/fr.json": "5cd4d422a2977fe3381d6a576154a942391858d3d6c93fe9ebebf7890532b4ce"
+  },
+  "sourceStable": true
+}

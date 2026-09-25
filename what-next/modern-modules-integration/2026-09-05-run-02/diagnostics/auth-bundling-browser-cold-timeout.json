@@ -1,0 +1,78 @@
+{
+  "startedAt": "2026-09-05T14:27:14.711Z",
+  "completedAt": "2026-09-05T14:30:06.706Z",
+  "classification": "ISOLATED_AUTHENTICATED_APPLICATION_VERIFICATION",
+  "productionApproval": false,
+  "observations": [
+    {
+      "check": "real_password_sign_in",
+      "passed": true
+    },
+    {
+      "check": "real_persisted_session",
+      "passed": true
+    },
+    {
+      "check": "server_permissions_and_foreign_tenant_header",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "failure": {
+    "message": "page.goto: Timeout 120000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3107/fr/dashboard/inventory/transfers\", waiting until \"domcontentloaded\"\u001b[22m\n",
+    "name": "TimeoutError"
+  },
+  "beforeSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "282aa45adf3637c7de07beac0233d2167a83518315f795819a0acecedec66948"
+    },
+    {
+      "path": "hooks/useClientAuth.ts",
+      "sha256": "c76b06c6630426a3c5aa5d898d8b02bd13634aa09bdced72ed1f20baf3c7df7b"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDashboard.tsx",
+      "sha256": "1d2013ac354ae64ecc1642371464f43fc76d9fb8397531c0d5f1322625bb9e56"
+    },
+    {
+      "path": "actions/security/step-up-auth.actions.ts",
+      "sha256": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+    }
+  ],
+  "afterSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "282aa45adf3637c7de07beac0233d2167a83518315f795819a0acecedec66948"
+    },
+    {
+      "path": "hooks/useClientAuth.ts",
+      "sha256": "c76b06c6630426a3c5aa5d898d8b02bd13634aa09bdced72ed1f20baf3c7df7b"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDashboard.tsx",
+      "sha256": "1d2013ac354ae64ecc1642371464f43fc76d9fb8397531c0d5f1322625bb9e56"
+    },
+    {
+      "path": "actions/security/step-up-auth.actions.ts",
+      "sha256": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+    }
+  ],
+  "sourceStable": true,
+  "bundle": {
+    "path": ".next-modern-modules-integration/server/app/[locale]/(dashboard)/dashboard/inventory/transfers/page.js",
+    "sha256": "6e9f3c135fdfdd0d32d27deb467f64672db5ae0a12eea5138d4f90d2dbb4efb1",
+    "externalClient": false,
+    "bundledReactStore": false,
+    "vendoredSsrReact": true
+  },
+  "scope": "Actual fixture password sign-in, session, permissions, transfer render and password step-up; only one new synthetic draft, no activation or transfer write."
+}

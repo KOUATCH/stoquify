@@ -92,10 +92,12 @@ const inputClass =
 export function LoginV2Form({ locale }: { locale: Locale }) {
   const t = copy[locale]
   const params = useSearchParams()
-  const { formError, formSuccess } = useNotifications()
+  const { formError, success } = useNotifications()
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [sharedDevice, setSharedDevice] = useState(false)
+  const [ready, setReady] = useState(false)
+  useEffect(() => { setReady(true) }, [])
   const {
     register,
     handleSubmit,
@@ -113,15 +115,16 @@ export function LoginV2Form({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     if (params.get("registered") === "true") {
-      formSuccess(t.successTitle, t.verifyHelp)
+      success(t.successTitle, t.verifyHelp, { category: "system" })
     }
 
     if (params.get("error") === "email-not-verified") {
       formError(t.errors.verificationTitle, t.errors.verificationBody)
     }
-  }, [formError, formSuccess, params, t])
+  }, [formError, params, success, t])
 
   const onSubmit = async (data: LoginProps) => {
+    if (!ready || loading) return
     try {
       setLoading(true)
       const result = await authClient.signIn.email({
@@ -136,7 +139,7 @@ export function LoginV2Form({ locale }: { locale: Locale }) {
         return
       }
 
-      formSuccess(t.successTitle, t.successBody)
+      success(t.successTitle, t.successBody, { category: "system" })
       window.location.href = returnUrl
     } catch {
       formError(t.errors.connectionTitle, t.errors.connectionBody)
@@ -160,7 +163,8 @@ export function LoginV2Form({ locale }: { locale: Locale }) {
         </span>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form method="post" onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={!ready || loading} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="email-v2" className="flex items-center gap-2 text-sm font-bold text-[#253943]">
             {t.email}
@@ -171,6 +175,8 @@ export function LoginV2Form({ locale }: { locale: Locale }) {
             <Input
               id="email-v2"
               type="email"
+              autoComplete="username"
+              maxLength={254}
               placeholder={t.emailPlaceholder}
               className={cn(inputClass, errors.email && "border-[#ef6a6a] focus:border-[#ef6a6a] focus:ring-[#ef6a6a]/15")}
               {...register("email", {
@@ -194,6 +200,8 @@ export function LoginV2Form({ locale }: { locale: Locale }) {
             <Input
               id="password-v2"
               type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              maxLength={128}
               placeholder={t.passwordPlaceholder}
               className={cn(inputClass, "pr-12", errors.password && "border-[#ef6a6a] focus:border-[#ef6a6a] focus:ring-[#ef6a6a]/15")}
               {...register("password", { required: t.errors.passwordRequired })}
@@ -238,6 +246,7 @@ export function LoginV2Form({ locale }: { locale: Locale }) {
             </span>
           )}
         </Button>
+        </fieldset>
       </form>
 
       <div className="mt-6 rounded-lg border border-[#178e83]/25 bg-[#edf8f5] p-4">

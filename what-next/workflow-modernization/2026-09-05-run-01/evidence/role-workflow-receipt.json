@@ -1,0 +1,132 @@
+{
+  "recordedAt": "2026-09-06T11:17:25.488Z",
+  "baseline": "evidence/source-baseline-v24.json",
+  "sources": {
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "services/roles/role-write.service.ts": "8285f804f041634e0189e32f7c5b61e1c24ef617654ff3c0c93011ac2d46d6ca",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/roles/role-permission-policy.ts": "6032136d22d3e512a3ba40e8b9ce2e916c62fa018de052d489014d44908a5b01",
+    "services/roles/role-editor.service.ts": "968c4ffe3bb88318c352481c86731d4a439e5e8ce42f619a3b71efa82ed65251",
+    "actions/roles/createRole.ts": "975bda73763e8ed1635a6b792afe60a3b5176f937387a3833aabc78ca9c2e6c5",
+    "actions/roles/updateRole.ts": "b117ab151a5048a5d19fa73c279c1db84f98625ea0b05ce6e449534cc4e77b36",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "actions/roles/getRoleEditor.ts": "5065ead28b91412149f465d503336ab3721e1eaf034475d21f2f9d3a8c583852",
+    "hooks/useRoleEditor.ts": "5ab52edd6d1950242d5bc14439acc299492ba21840da90f95255a671de5a70dc",
+    "components/Forms/RoleForm.tsx": "62d6d82f0e8ed378463dc6e6d752078d24edb15a78ba98fcd08458648802a1f4",
+    "components/Forms/RoleHistory.tsx": "f1eadf683f56f3d2fc973dc220ec9ff2174f439899b54f9a5dd5494dc2c0b222",
+    "components/Forms/role-editor-copy.ts": "39f697fb44cbedf414bd69fb9f2a2e9a17c654ce9a8dde7cc7303d11165573df",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx": "46d73de978cc9bab23c2e9ebbf456488afdba46d6b138d977f398cc3bc957c2e",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx": "f0ea83103b432e2190badd345b3972e7102faa04b022a2ca828cdc6ccd9d4606",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "components/NotAuthorized.tsx": "acb12472fe0de37e97de279688847dc436feaaa6b8e878e99112e3df3f2210cd",
+    "app/[locale]/(auth)/unauthorized/page.tsx": "e5c0f909ea17f4ac61a275ee2b72a8ed342294f9383dc9d3f7b2f9c6f97a2d65",
+    "services/roles/__tests__/role.service.test.ts": "8375dabb84489c5fcc7e05ca063f69cd426397c0b4f3559d8b1d47aa8a911e8e",
+    "actions/roles/__tests__/role-actions.test.ts": "7509ec4e6c27f5063424b8b81f3b02a626378523796f1f7635ee839756233f06",
+    "components/settings/__tests__/RoleForm.workflow.test.tsx": "61a490bd4fd529fb638a353087cb04b7025c36cf93e4fde8b49287a2881e1e33",
+    "types/types.ts": "dcd878efa6cf4a1758ea275cdcbb671d83b392219a0148df6c689c952a190e91",
+    "actions/roles/role-auth.ts": "c87624aba019dad2124f0fac840358aba13e00066160604311b4ed253431ff98"
+  },
+  "scope": [
+    "OA-ROLE-CREATE",
+    "OA-ROLE-UPDATE",
+    "OA-ROLE-HISTORY"
+  ],
+  "unitAndAction": {
+    "file": "evidence/role-workflow-tests-02.json",
+    "passed": 60,
+    "failed": 0,
+    "suites": 4,
+    "chunk": "9ab15a"
+  },
+  "postgres": {
+    "file": "lanes/environment/role-commands-134c5dee-491.json",
+    "passed": 22,
+    "failed": 0,
+    "chunk": "0f9735",
+    "sourceStable": true,
+    "originalAuthorityUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/role-editor-browser-browser-9b114a07-ed1.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "211726",
+    "sourceStable": true,
+    "originalAuthorityUnchanged": true,
+    "newAuditsPerLocale": 4,
+    "historyRowsPerLocale": 4,
+    "widths": [
+      390,
+      768,
+      1440
+    ],
+    "screenshots": [
+      "evidence/role-workflow/en-role-editor-denied-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-ready-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-review-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-created-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-stale-draft-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-merged-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-lost-acknowledgement-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-recovered-9b114a07-ed1.png",
+      "evidence/role-workflow/en-role-editor-history-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-denied-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-ready-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-review-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-created-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-stale-draft-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-merged-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-lost-acknowledgement-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-recovered-9b114a07-ed1.png",
+      "evidence/role-workflow/fr-role-editor-history-9b114a07-ed1.png"
+    ]
+  },
+  "lint": {
+    "exitCode": 0,
+    "chunk": "ed2c9b"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "4fe31e"
+  },
+  "historicalAttempts": [
+    {
+      "chunk": "625122",
+      "result": "7 old-contract unit failures; session, command and transactional fixtures updated with stronger service checks"
+    },
+    {
+      "chunk": "d65949",
+      "result": "2 failures reproduced canonical assign/remove alias conflation; stored-grant policy corrected"
+    },
+    {
+      "chunk": "0ebe6f",
+      "result": "PostgreSQL run could not retain its report due to EPERM; no pass inferred; synthetic fixtures retained"
+    },
+    {
+      "file": "lanes/environment/role-editor-browser-browser-296961ad-4d5.json",
+      "result": "0/2: denial expectation differed from actual outer gate; no role changes"
+    },
+    {
+      "file": "lanes/environment/role-editor-browser-browser-9b1e9c57-579.json",
+      "result": "0/2: creates succeeded, edit navigation exceeded default five-second assertion; screenshots also exposed missing page theme"
+    },
+    {
+      "file": "lanes/environment/role-editor-browser-browser-e7dd6550-526.json",
+      "result": "2/2 passed; screenshot review exposed duplicate global notifications, fixed in final proof"
+    }
+  ],
+  "completeWorkflowVerified": false,
+  "remaining": [
+    "Role-list/row-action authorization, localization and failed-read presentation",
+    "Member assignment/deactivation and connected last-administrator safety",
+    "Invitation-grant implications of shared legacy permission aliases",
+    "History export/pagination/retention review",
+    "Tab-close draft recovery, native zoom, screen reader and complete contrast review",
+    "Whole-platform workflow reconciliation and remaining remediation"
+  ],
+  "deployment": false,
+  "migration": false,
+  "externalEmail": false
+}

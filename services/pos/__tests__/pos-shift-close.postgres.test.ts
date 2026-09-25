@@ -1,3 +1,4 @@
+/** @jest-environment node */
 import { randomUUID } from "node:crypto"
 import { setImmediate as nodeSetImmediate } from "node:timers"
 import { Prisma } from "@prisma/client"
@@ -47,6 +48,7 @@ type Fixture = {
 }
 
 async function createFixture(label: string): Promise<Fixture> {
+  assertIsolatedCertificationDatabase()
   const suffix = `${label}-${randomUUID()}`
   const organizationId = `org-${suffix}`
   const userId = `user-${suffix}`
@@ -151,7 +153,16 @@ function closeInput(fixture: Fixture, actualBalance: string, notes?: string) {
 
 type EvidenceFailureTarget = "event" | "event_apply" | "outbox" | "audit"
 
-const CERTIFICATION_SCHEMA = "codex_pos_shift_close_cert_20260719"
+const disposableDatabase = process.env.POS_DISPOSABLE_DATABASE_NAME
+const CERTIFICATION_SCHEMA = disposableDatabase ? "public" : "codex_pos_shift_close_cert_20260719"
+function assertIsolatedCertificationDatabase() {
+  const target = new URL(process.env.DATABASE_URL ?? "")
+  const local = ["localhost", "127.0.0.1", "::1"].includes(target.hostname.toLowerCase())
+  const dedicated = !disposableDatabase || (/^stoquify_pos_audit_\d{8}_[a-f0-9]+$/.test(disposableDatabase) && target.pathname === `/${disposableDatabase}`)
+  if (!local || !dedicated || target.searchParams.get("schema") !== CERTIFICATION_SCHEMA) {
+    throw new Error("Refusing POS shift close tests outside the isolated certification target")
+  }
+}
 const evidenceFailureTargets = {
   event: {
     table: "business_events",
@@ -179,10 +190,7 @@ async function withInjectedEvidenceFailure<T>(
   target: EvidenceFailureTarget,
   run: () => Promise<T>,
 ): Promise<T> {
-  const databaseUrl = new URL(process.env.DATABASE_URL ?? "")
-  if (databaseUrl.searchParams.get("schema") !== CERTIFICATION_SCHEMA) {
-    throw new Error("Refusing to install a failure trigger outside the certification schema")
-  }
+  assertIsolatedCertificationDatabase()
 
   const config = evidenceFailureTargets[target]
   const functionName = `cert_fail_${target}`
@@ -369,7 +377,9 @@ describeCertification("POS shift close PostgreSQL certification", () => {
         withInjectedEvidenceFailure(target, () =>
           closePOSShift(closeInput(fixture, "100.00")),
         ),
-      ).rejects.toThrow("POS shift close could not be completed safely.")
+      ).rejects.toMatchObject(target === "event" || target === "outbox"
+        ? { code: "INTERNAL_ERROR", status: 500, expose: false, message: "Business event could not be recorded." }
+        : { code: "BUSINESS_RULE_VIOLATION", status: 422, message: "POS shift close could not be completed safely." })
 
       const [session, drawer, terminal] = await Promise.all([
         db.pOSSession.findUniqueOrThrow({ where: { id: fixture.sessionId } }),

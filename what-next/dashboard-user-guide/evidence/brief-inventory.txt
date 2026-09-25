@@ -1,0 +1,574 @@
+
+ROUTE /en/dashboard/inventory/brands/create
+FILE app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx; components/brands/ModernBrandForm.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; services/brand/brand.schemas.ts; hooks/useBrands.ts
+REDIRECTS []
+HEADINGS Organization Required | Edit Brand / Create Brand | Brand Inventory | Brand Name (English) | Brand Name (French) | Description (English) | Description (French) | Logo URL | Active | Brand Preview
+PROPS nameEn | Acme Foods | nameFr | Acme Aliments | descriptionEn | descriptionFr | logoUrl | https://example.com/logo.png | isActive | Catalog Status | Localization | Logo
+CONTROLS Back to Brands (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx:29)
+Back to Brands (Link, {"href":"returnHref"}, app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx:30)
+Back to Brands (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)"}, components/brands/ModernBrandForm.tsx:241)
+Acme Foods (Input, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:339)
+Acme Aliments (Input, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:362)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:384)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:403)
+https://example.com/logo.png (Input, {"type":"\"url\"","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:427)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"field.onChange","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:451)
+Cancel (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:459)
+Save Changes / Create Brand (Button, {"type":"\"submit\"","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:468)
+
+ROUTE /en/dashboard/inventory/brands
+FILE app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx; components/inventory/EnhancedBrandsManagement.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx
+DEPENDENCIES actions/brands/getBrandsAction.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; hooks/useBrands.ts; lib/utils.ts; lib/dateFilters.ts
+REDIRECTS []
+HEADINGS Organization Required | Brand Catalog | Brand Management | Archive Brand
+PROPS Usage | Status | search
+CONTROLS View Items (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx:68)
+View Items (Link, {"href":"`/${locale}/dashboard/inventory/items`"}, app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx:69)
+Add Brand (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx:74)
+Add Brand (Link, {"href":"`${basePath}/create`"}, app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx:75)
+Refresh (Button, {"onClick":"() => brandsQuery.refetch()","disabled":"brandsQuery.isFetching"}, components/inventory/EnhancedBrandsManagement.tsx:229)
+Export (Button, {"onClick":"() => downloadCsv(filteredData)"}, components/inventory/EnhancedBrandsManagement.tsx:233)
+Clear (Button, {"type":"\"button\"","onClick":"() => {\n                  setUsageFilter(\"all\")\n                  setStatusFilter(\"all\")\n                }"}, components/inventory/EnhancedBrandsManagement.tsx:245)
+All Usage With Items No Items (Select, {"onValueChange":"setUsageFilter"}, components/inventory/EnhancedBrandsManagement.tsx:270)
+All Status Active Inactive (Select, {"onValueChange":"setStatusFilter"}, components/inventory/EnhancedBrandsManagement.tsx:280)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)
+
+ROUTE /en/dashboard/inventory/brands/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx; components/brands/ModernBrandForm.tsx
+DEPENDENCIES actions/brands/getBrandsAction.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; services/brand/brand.schemas.ts; hooks/useBrands.ts
+REDIRECTS []
+HEADINGS Edit Brand / Create Brand | Brand Inventory | Brand Name (English) | Brand Name (French) | Description (English) | Description (French) | Logo URL | Active | Brand Preview
+PROPS nameEn | Acme Foods | nameFr | Acme Aliments | descriptionEn | descriptionFr | logoUrl | https://example.com/logo.png | isActive | Catalog Status | Localization | Logo
+CONTROLS Back to Brands (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)"}, components/brands/ModernBrandForm.tsx:241)
+Acme Foods (Input, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:339)
+Acme Aliments (Input, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:362)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:384)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:403)
+https://example.com/logo.png (Input, {"type":"\"url\"","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:427)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"field.onChange","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:451)
+Cancel (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:459)
+Save Changes / Create Brand (Button, {"type":"\"submit\"","disabled":"isSubmitting"}, components/brands/ModernBrandForm.tsx:468)
+
+ROUTE /en/dashboard/inventory/categories/create
+FILE app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx; components/categories/ModernCategoryForm.tsx
+DEPENDENCIES actions/categories/getOrgCategories.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; hooks/useCategories.ts; services/category/category.schemas.ts
+REDIRECTS []
+HEADINGS Edit Category / Create Category | Category Details | Category Title (English) | Category Title (French) | Description (English) | Description (French) | Image URL | Parent Category | Active | Preview
+PROPS titleEn | Electronics | titleFr | Electronique | descriptionEn | descriptionFr | imageUrl | https://example.com/category.png | parentId | No parent | isActive
+CONTROLS Back to categories (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)"}, components/categories/ModernCategoryForm.tsx:124)
+Electronics (Input, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:187)
+Electronique (Input, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:207)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:229)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:248)
+https://example.com/category.png (Input, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:269)
+No parent (Select, {"onValueChange":"(value) => field.onChange(value === \"none\" ? null : value)","disabled":"isSubmitting || parentOptions.length === 0"}, components/categories/ModernCategoryForm.tsx:288)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"field.onChange","disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:320)
+Cancel (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)","disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:327)
+Save Changes / Create Category (Button, {"type":"\"submit\"","disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:336)
+
+ROUTE /en/dashboard/inventory/categories
+FILE app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx; components/dashboard/categories/CategoriesPageClient.tsx; components/inventory/EnhancedCategoriesManagement.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx
+DEPENDENCIES actions/categories/getOrgCategories.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; hooks/useCategories.ts; lib/utils.ts; lib/dateFilters.ts
+REDIRECTS []
+HEADINGS Organization Required | Category Catalog | Category Management | Archive Category
+PROPS Hierarchy | Status | search
+CONTROLS View Items (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx:68)
+View Items (Link, {"href":"`/${locale}/dashboard/inventory/items`"}, app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx:69)
+Add Category (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx:74)
+Add Category (Link, {"href":"`${basePath}/create`"}, app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx:75)
+Refresh (Button, {"onClick":"() => categoriesQuery.refetch()","disabled":"categoriesQuery.isFetching"}, components/inventory/EnhancedCategoriesManagement.tsx:230)
+Export (Button, {"onClick":"() => downloadCsv(filteredData)"}, components/inventory/EnhancedCategoriesManagement.tsx:234)
+Clear (Button, {"type":"\"button\"","onClick":"() => {\n                  setHierarchyFilter(\"all\")\n                  setStatusFilter(\"all\")\n                }"}, components/inventory/EnhancedCategoriesManagement.tsx:246)
+All Levels Root Child (Select, {"onValueChange":"setHierarchyFilter"}, components/inventory/EnhancedCategoriesManagement.tsx:271)
+All Status Active Inactive (Select, {"onValueChange":"setStatusFilter"}, components/inventory/EnhancedCategoriesManagement.tsx:281)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)
+
+ROUTE /en/dashboard/inventory/categories/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx; components/categories/ModernCategoryForm.tsx
+DEPENDENCIES actions/categories/getCategoriesAction.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; hooks/useCategories.ts; services/category/category.schemas.ts
+REDIRECTS []
+HEADINGS Edit Category / Create Category | Category Details | Category Title (English) | Category Title (French) | Description (English) | Description (French) | Image URL | Parent Category | Active | Preview
+PROPS titleEn | Electronics | titleFr | Electronique | descriptionEn | descriptionFr | imageUrl | https://example.com/category.png | parentId | No parent | isActive
+CONTROLS Back to categories (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)"}, components/categories/ModernCategoryForm.tsx:124)
+Electronics (Input, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:187)
+Electronique (Input, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:207)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:229)
+[dynamic or icon-only label] (Textarea, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:248)
+https://example.com/category.png (Input, {"disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:269)
+No parent (Select, {"onValueChange":"(value) => field.onChange(value === \"none\" ? null : value)","disabled":"isSubmitting || parentOptions.length === 0"}, components/categories/ModernCategoryForm.tsx:288)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"field.onChange","disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:320)
+Cancel (Button, {"type":"\"button\"","onClick":"() => router.push(returnHref)","disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:327)
+Save Changes / Create Category (Button, {"type":"\"submit\"","disabled":"isSubmitting"}, components/categories/ModernCategoryForm.tsx:336)
+
+ROUTE /en/dashboard/inventory/categories/[id]
+FILE app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx
+DEPENDENCIES actions/categories/getCategoriesAction.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx
+REDIRECTS []
+HEADINGS Assigned Items | Category ID | Updated | Descriptions | Record Details
+PROPS 
+CONTROLS Back to categories (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx:52)
+Back to categories (Link, {"href":"basePath"}, app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx:53)
+View Items (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx:82)
+View Items (Link, {"href":"`/${locale}/dashboard/inventory/items?category=${category.id}`"}, app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx:83)
+Edit Category (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx:88)
+Edit Category (Link, {"href":"`${basePath}/${category.id}/edit`"}, app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx:89)
+
+ROUTE /en/dashboard/inventory/items/create
+FILE app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx; components/inventory/CreateItemWizard.tsx; components/FormInputs/EnhancedImageUploadButton.tsx; components/inventory/item-form/ItemReferenceSelect.tsx
+DEPENDENCIES actions/brands/getOrgBrands.ts; actions/categories/getOrgCategories.ts; actions/item/items.ts; actions/locations/getOrgLocations.ts; actions/taxRate/getOrgTaxRates.ts; actions/units/getOrgUnits.ts; config/useAuth.ts; lib/generateSKU.ts; lib/i18n/organization-money.ts; services/modules/module-entitlement.service.ts; services/organization/organization-settings.service.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; lib/item/form-validation.ts; lib/utils.ts; lib/notifications/notify.ts; lib/uploadthing.ts; actions/storage/photo-upload-actions.ts; actions/storage/storage-config-actions.ts
+REDIRECTS []
+HEADINGS Organization Required | Basic Information | Product Name (English) * | Product Name (French) | Description (English) | Description (French) | Product Details | SKU (Stock Keeping Unit) * | Barcode | Category | Brand | Pricing & Units | Cost Price * | Selling Price * | Profit Analysis | Unit of Measure | Tax Rate | Inventory Settings | Minimum Stock Level | Maximum Stock Level | Weight (kg) | Dimensions | Active Product | Serial Number Tracking | Add Opening Stock | Location * | Opening Quantity * | Opening Unit Cost | Reference Number | Opening Stock Notes | Product Media | Image Tips for Better Sales | Create New Product | Live Preview | Pricing Overview
+PROPS nameEn | Enter product name | nameFr | Nom du produit | descriptionEn | Describe the product in English... | descriptionFr | Decrivez le produit en francais... | sku | AUTO-GENERATED | barcode | UPC, EAN, or other barcode | categoryId | Choose a category | brandId | Select a brand | costPrice | 0.00 | sellingPrice | 0.00 | unitId | Select unit | taxRateId | Select tax rate | minStockLevel | 0 | maxStockLevel | 0 | weight | 0.0 | dimensions | L x W x H (e.g., 10 x 5 x 3 cm) | isActive | isSerialTracked | initialInventory.locationId | Select location | initialInventory.quantity | initialInventory.unitCost | initialInventory.referenceNumber | Optional receiving reference | initialInventory.notes | Optional audit note | Upload Product Image
+CONTROLS Back to Items (Button, {"type":"\"submit\""}, app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx:168)
+Enter product name (Input, {}, components/inventory/CreateItemWizard.tsx:558)
+Nom du produit (Input, {}, components/inventory/CreateItemWizard.tsx:582)
+Describe the product in English... (Textarea, {}, components/inventory/CreateItemWizard.tsx:606)
+Decrivez le produit en francais... (Textarea, {}, components/inventory/CreateItemWizard.tsx:628)
+AUTO-GENERATED (Input, {}, components/inventory/CreateItemWizard.tsx:683)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"copySKU"}, components/inventory/CreateItemWizard.tsx:691)
+Generate New SKU (Button, {"type":"\"button\"","onClick":"generateSKU"}, components/inventory/CreateItemWizard.tsx:703)
+UPC, EAN, or other barcode (Input, {}, components/inventory/CreateItemWizard.tsx:734)
+0.00 (Input, {"type":"\"number\"","onChange":"(e) => {\n                            const value = e.target.value\n                            field.onChange(value === '' ? 0 : parseFloat(value) || 0)\n                          }","onBlur":"field.onBlur","name":"field.name"}, components/inventory/CreateItemWizard.tsx:830)
+0.00 (Input, {"type":"\"number\"","onChange":"(e) => {\n                            const value = e.target.value\n                            field.onChange(value === '' ? 0 : parseFloat(value) || 0)\n                          }","onBlur":"field.onBlur","name":"field.name"}, components/inventory/CreateItemWizard.tsx:866)
+0 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(Number(e.target.value) || 0)"}, components/inventory/CreateItemWizard.tsx:1010)
+0 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(e.target.value === \"\" ? null : Number(e.target.value))"}, components/inventory/CreateItemWizard.tsx:1038)
+0.0 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(Number(e.target.value) || 0)"}, components/inventory/CreateItemWizard.tsx:1068)
+L x W x H (e.g., 10 x 5 x 3 cm) (Input, {}, components/inventory/CreateItemWizard.tsx:1097)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"field.onChange"}, components/inventory/CreateItemWizard.tsx:1129)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"(checked) => {\n                          field.onChange(checked)\n                          if (checked && openingStockEnabled) {\n                            setOpeningStockEnabled(false)\n                            form.setValue('initialInventory', undefined, { shouldDirty: true, shouldValidate: true })\n                            info(\"Opening Stock Cleared\", \"Receive serial-tracked stock after creating the item so each serial number can be recorded.\")\n                          }\n                        }"}, components/inventory/CreateItemWizard.tsx:1150)
+Add Opening Stock Optionally create the item and post its starting quantity in one transaction. (Switch, {"disabled":"locations.length === 0 || Boolean(isSerialTracked)","onCheckedChange":"(checked) => {\n                        setOpeningStockEnabled(checked)\n                        form.setValue(\n                          'initialInventory',\n                          checked\n                            ? {\n                                locationId: \"\",\n                                quantity: 1,\n                                unitCost: Number(form.getValues('costPrice')) || 0,\n                                notes: \"\",\n                                referenceNumber: \"\",\n                              }\n                            : undefined,\n                          { shouldDirty: true, shouldValidate: true },\n                        )\n                      }"}, components/inventory/CreateItemWizard.tsx:1178)
+[dynamic or icon-only label] (Select, {"onValueChange":"field.onChange"}, components/inventory/CreateItemWizard.tsx:1222)
+[dynamic or icon-only label] (Input, {"type":"\"number\"","onChange":"(event) => field.onChange(Number(event.target.value))","onBlur":"field.onBlur","name":"field.name"}, components/inventory/CreateItemWizard.tsx:1248)
+[dynamic or icon-only label] (Input, {"type":"\"number\"","onChange":"(event) => field.onChange(Number(event.target.value))","onBlur":"field.onBlur","name":"field.name"}, components/inventory/CreateItemWizard.tsx:1271)
+Optional receiving reference (Input, {}, components/inventory/CreateItemWizard.tsx:1296)
+Optional audit note (Input, {}, components/inventory/CreateItemWizard.tsx:1315)
+Back to Items (Button, {"onClick":"handleCancel"}, components/inventory/CreateItemWizard.tsx:1420)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => isAccessible && handleStepClick(step.id)","disabled":"!isAccessible"}, components/inventory/CreateItemWizard.tsx:1475)
+Previous (Button, {"type":"\"button\"","onClick":"handlePrevious","disabled":"currentStepIndex === 0"}, components/inventory/CreateItemWizard.tsx:1526)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isExplicitlySubmitting || form.formState.isSubmitting || isLoading || isImageUploading || !itemImageUrl.trim()","onClick":"() => void handleExplicitSubmit()"}, components/inventory/CreateItemWizard.tsx:1538)
+Next Step (Button, {"type":"\"button\"","onClick":"handleNext"}, components/inventory/CreateItemWizard.tsx:1562)
+Remove (Button, {"type":"\"button\"","onClick":"handleRemoveImage"}, components/FormInputs/EnhancedImageUploadButton.tsx:192)
+file-upload (input, {"type":"\"file\"","onChange":"handleFileSelect","disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:212)
+[dynamic or icon-only label] (Button, {"disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:220)
+[dynamic or icon-only label] (Select, {"onValueChange":"(nextValue) => onValueChange(nextValue === NONE_VALUE ? null : nextValue)"}, components/inventory/item-form/ItemReferenceSelect.tsx:73)
+
+ROUTE /en/dashboard/inventory/items/new
+FILE app/[locale]/(dashboard)/dashboard/inventory/items/new/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/items/new/page.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx
+REDIRECTS [{"name":"redirect","line":17,"args":"localizePath(\"/dashboard/inventory/items/create\", locale)"}]
+HEADINGS 
+PROPS 
+CONTROLS 
+
+ROUTE /en/dashboard/inventory/items
+FILE app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx; components/ui/groups/inventory/ItemManagement.tsx; components/DataTableComponents/index.ts; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/ui/groups/inventory/ItemForm2.tsx; components/FormInputs/EnhancedImageUploadButton.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; actions/brands/getOrgBrands.ts; actions/categories/getOrgCategories.ts; actions/itemsShow/getOrgItemsWithInventoryLevels.ts; actions/taxRate/getOrgTaxRates.ts; actions/units/getOrgUnits.ts; config/useAuth.ts; lib/i18n/organization-money.ts; services/organization/organization-settings.service.ts; lib/notifications/notify.ts; hooks/useAllItemQueries.ts; hooks/itemsHooks/useItemHooks.ts; lib/formatCurrency.ts; lib/formateDate.ts; lib/generateSKU.ts; lib/uploadthing.ts; actions/storage/photo-upload-actions.ts; actions/storage/storage-config-actions.ts; lib/utils.ts; lib/dateFilters.ts
+REDIRECTS []
+HEADINGS Organization Required | Inventory Items | No matching items / No inventory items yet | Error Loading Items | Item Name * | Product SKU * | Cost Price * | Selling Price * | Item Image
+PROPS Loading inventory data... | Search items, SKUs, categories, or brands | Stock status | Add New Item | Delete Item | Are you sure you want to delete this item? | name | Enter item name | sku | Generated SKU will appear here... | Copy to clipboard | costPrice | 0.00 | sellingPrice | 0.00 | Upload Item Image
+CONTROLS Export (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx:298)
+Add Item (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx:302)
+Add Item (Link, {"href":"\"/dashboard/inventory/items/create\""}, app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx:303)
+Select all (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/ui/groups/inventory/ItemManagement.tsx:193)
+Select row (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)"}, components/ui/groups/inventory/ItemManagement.tsx:200)
+Open menu (Button, {}, components/ui/groups/inventory/ItemManagement.tsx:291)
+Copy ID (DropdownMenuItem, {"onClick":"() => navigator.clipboard.writeText(item.id || \"\")"}, components/ui/groups/inventory/ItemManagement.tsx:298)
+Edit Item (DropdownMenuItem, {"onClick":"() => handleEditClick(item)"}, components/ui/groups/inventory/ItemManagement.tsx:304)
+Deleting... / Delete Item (DropdownMenuItem, {"onClick":"() => handleDeleteClick(item)","disabled":"isBeingDeleted"}, components/ui/groups/inventory/ItemManagement.tsx:307)
+Refreshing / Refresh (Button, {"onClick":"onRefresh","disabled":"isLoading"}, components/ui/groups/inventory/ItemManagement.tsx:494)
+Export (Button, {"onClick":"() => onExport(data)"}, components/ui/groups/inventory/ItemManagement.tsx:504)
+Clear (Button, {"onClick":"handleClearFilters"}, components/ui/groups/inventory/ItemManagement.tsx:532)
+Search items, SKUs, categories, or brands (Input, {"onChange":"(event) => setGlobalFilter(event.target.value)"}, components/ui/groups/inventory/ItemManagement.tsx:549)
+x (button, {"type":"\"button\"","onClick":"() => setGlobalFilter(\"\")"}, components/ui/groups/inventory/ItemManagement.tsx:556)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleStockFilterChange"}, components/ui/groups/inventory/ItemManagement.tsx:582)
+Export Selected (Button, {"onClick":"() => onExport(selectedItems)"}, components/ui/groups/inventory/ItemManagement.tsx:600)
+View (Button, {}, components/ui/groups/inventory/ItemManagement.tsx:614)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/ui/groups/inventory/ItemManagement.tsx:626)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"header.column.getToggleSortingHandler()"}, components/ui/groups/inventory/ItemManagement.tsx:675)
+Clear Search (Button, {"onClick":"() => setGlobalFilter(\"\")"}, components/ui/groups/inventory/ItemManagement.tsx:745)
+Try Again (Button, {"onClick":"handleRefresh"}, components/ui/groups/inventory/ItemManagement.tsx:978)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+Enter item name (Input, {}, components/ui/groups/inventory/ItemForm2.tsx:57)
+Generate SKU (Input, {"type":"\"text\""}, components/ui/groups/inventory/ItemForm2.tsx:74)
+Generate SKU (Button, {"type":"\"button\"","onClick":"generateSKU"}, components/ui/groups/inventory/ItemForm2.tsx:82)
+📋 (Button, {"type":"\"button\"","onClick":"copyToClipboard"}, components/ui/groups/inventory/ItemForm2.tsx:87)
+0.00 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(Number(e.target.value) || 0)"}, components/ui/groups/inventory/ItemForm2.tsx:133)
+0.00 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(Number(e.target.value) || 0)"}, components/ui/groups/inventory/ItemForm2.tsx:162)
+Remove (Button, {"type":"\"button\"","onClick":"handleRemoveImage"}, components/FormInputs/EnhancedImageUploadButton.tsx:192)
+file-upload (input, {"type":"\"file\"","onChange":"handleFileSelect","disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:212)
+[dynamic or icon-only label] (Button, {"disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:220)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/inventory/items/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/page.tsx; app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/EditItemClient.tsx; components/dashboard/items/ModernItemFormForEditing.tsx; components/FormInputs/EnhancedImageUploadButton.tsx; components/inventory/item-form/ItemReferenceSelect.tsx
+DEPENDENCIES actions/brands/getOrgBrands.ts; actions/categories/getOrgCategories.ts; actions/taxRate/getOrgTaxRates.ts; actions/units/getOrgUnits.ts; config/useAuth.ts; services/item/item.service.ts; services/modules/module-entitlement.service.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; actions/item/items.ts; lib/item/schemas.ts; lib/notifications/notify.ts; lib/uploadthing.ts; actions/storage/photo-upload-actions.ts; actions/storage/storage-config-actions.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/login\", locale)"},{"name":"redirect","line":35,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Item not found | Edit | Basic information & image | Current item image | Replacement image | Names and descriptions | Identity & physical details | Pricing & tax | Classification | Inventory policy | Lifecycle & tracking
+PROPS Replacement image ready / Replace product image | English name | French name | English description | French description | SKU | Barcode | Dimensions | Weight | Cost price | Selling price | MSRP | Tax rate | taxRateId | No tax rate | trackInventory | Use inventory ledgers and stock controls for this item. | Track inventory | Minimum stock level | Maximum stock level | Reorder level | Reorder quantity | isActive | Available for supported operational workflows. | Active item | isDiscontinued | Retain history while preventing normal future use. | Discontinued | trackSerialNumbers | Require serial-level evidence in supported stock workflows. | Serial number tracking | trackBatches | Capture batch identity in supported stock workflows. | Batch tracking | trackExpiry | Capture expiry evidence in supported stock workflows. | Expiry tracking
+CONTROLS [dynamic or icon-only label] (Switch, {"disabled":"disabled","onCheckedChange":"onCheckedChange"}, components/dashboard/items/ModernItemFormForEditing.tsx:185)
+Back to items (Button, {"type":"\"button\"","onClick":"navigateAway"}, components/dashboard/items/ModernItemFormForEditing.tsx:326)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => goToSection(id)"}, components/dashboard/items/ModernItemFormForEditing.tsx:378)
+nameEn (Input, {}, components/dashboard/items/ModernItemFormForEditing.tsx:482)
+nameFr (Input, {}, components/dashboard/items/ModernItemFormForEditing.tsx:485)
+descriptionEn (Textarea, {}, components/dashboard/items/ModernItemFormForEditing.tsx:488)
+descriptionFr (Textarea, {}, components/dashboard/items/ModernItemFormForEditing.tsx:491)
+sku (Input, {}, components/dashboard/items/ModernItemFormForEditing.tsx:506)
+barcode (Input, {}, components/dashboard/items/ModernItemFormForEditing.tsx:509)
+dimensions (Input, {}, components/dashboard/items/ModernItemFormForEditing.tsx:512)
+weight (Input, {"type":"\"number\""}, components/dashboard/items/ModernItemFormForEditing.tsx:515)
+costPrice (Input, {"type":"\"number\""}, components/dashboard/items/ModernItemFormForEditing.tsx:527)
+sellingPrice (Input, {"type":"\"number\""}, components/dashboard/items/ModernItemFormForEditing.tsx:530)
+msrp (Input, {"type":"\"number\""}, components/dashboard/items/ModernItemFormForEditing.tsx:533)
+minStockLevel (Input, {"type":"\"number\"","disabled":"!trackInventory"}, components/dashboard/items/ModernItemFormForEditing.tsx:616)
+maxStockLevel (Input, {"type":"\"number\"","disabled":"!trackInventory"}, components/dashboard/items/ModernItemFormForEditing.tsx:619)
+reorderLevel (Input, {"type":"\"number\"","disabled":"!trackInventory"}, components/dashboard/items/ModernItemFormForEditing.tsx:622)
+reorderQuantity (Input, {"type":"\"number\"","disabled":"!trackInventory"}, components/dashboard/items/ModernItemFormForEditing.tsx:625)
+Cancel (Button, {"type":"\"button\"","disabled":"isSaving","onClick":"navigateAway"}, components/dashboard/items/ModernItemFormForEditing.tsx:666)
+Saving… / Save changes (Button, {"type":"\"button\"","disabled":"!isDirty || isSaving || isImageUploading","onClick":"saveChanges"}, components/dashboard/items/ModernItemFormForEditing.tsx:669)
+Remove (Button, {"type":"\"button\"","onClick":"handleRemoveImage"}, components/FormInputs/EnhancedImageUploadButton.tsx:192)
+file-upload (input, {"type":"\"file\"","onChange":"handleFileSelect","disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:212)
+[dynamic or icon-only label] (Button, {"disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:220)
+[dynamic or icon-only label] (Select, {"onValueChange":"(nextValue) => onValueChange(nextValue === NONE_VALUE ? null : nextValue)"}, components/inventory/item-form/ItemReferenceSelect.tsx:73)
+
+ROUTE /en/dashboard/inventory/items/[id]/others
+FILE app/[locale]/(dashboard)/dashboard/inventory/items/[id]/others/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/items/[id]/others/page.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx
+REDIRECTS []
+HEADINGS 
+PROPS 
+CONTROLS 
+
+ROUTE /en/dashboard/inventory/items/[id]/suppliers
+FILE app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx; app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx; app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/LayoutItemSuppliers.tsx; app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx; app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SuppliersList.tsx
+DEPENDENCIES actions/item-suppliers/getItemWithSuppliers.ts; actions/itemsShow/getBriefItemById.ts; actions/suppliers/getOrgSuppliers.ts; config/useAuth.ts; lib/i18n/organization-money.ts; services/organization/organization-settings.service.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; lib/notifications/notify.ts; actions/item-suppliers/addItemSuppliers.ts; hooks/useAllItemSuppliers.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS Add Suppliers to Item | Discard changes? | No Supplier Selected | Edit Supplier Details | Supplier Preferences | Preferred Supplier | Supplier SKU | Order Details | Lead Time (days) | Min Order Quantity | Unit Cost | Last Purchase Date | Additional Notes | Item Suppliers | Item Suppliers ( )
+PROPS Item data | Search suppliers by name, email, or phone... | isPreferred | supplierSku | Enter supplier's SKU for this item | leadTime | 0 | minOrderQty | 0 | unitCost | 0.00 | lastPurchaseDate | notes | Add any additional notes about this supplier, special terms, contact preferences, etc... | Search suppliers by name, SKU, or email...
+CONTROLS Back to item (Link, {"href":"\"/dashboard/inventory/items\""}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx:63)
+Back to item (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx:64)
+Items (Link, {"href":"\"/dashboard/inventory/items\""}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/page.tsx:70)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:208)
+Search suppliers by name, email, or phone... (Input, {"onChange":"(e) => setSearchQuery(e.target.value)","disabled":"isSubmitting"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:228)
+[dynamic or icon-only label] (Button, {"onClick":"() => setSearchQuery(\"\")"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:236)
+Select All (Button, {"onClick":"selectAllAvailable","disabled":"isSubmitting || selectedCount === availableCount"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:256)
+Clear (Button, {"onClick":"deselectAll","disabled":"isSubmitting || selectedCount === 0"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:264)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"() => toggleSupplier(supplier.id)","disabled":"isSubmitting"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:298)
+Clear search (Button, {"onClick":"() => setSearchQuery(\"\")"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:340)
+Cancel (Button, {"onClick":"handleClose","disabled":"isSubmitting"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:367)
+Adding... (Button, {"onClick":"handleSubmit","disabled":"selectedCount === 0 || isSubmitting"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/AddSuppliersToItemModal.tsx:370)
+[dynamic or icon-only label] (Switch, {"onCheckedChange":"field.onChange"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:274)
+Enter supplier's SKU for this item (Input, {}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:288)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleGenerateSKU","disabled":"isPending"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:289)
+0 (Input, {"type":"\"number\""}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:323)
+0 (Input, {"type":"\"number\""}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:341)
+0.00 (Input, {"type":"\"number\""}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:362)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:380)
+Add any additional notes about this supplier, special terms, contact preferences, etc... (Textarea, {}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:426)
+Reset Changes (Button, {"type":"\"button\"","onClick":"handleReset","disabled":"isPending || !form.formState.isDirty"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:445)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isPending || !form.formState.isDirty"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SupplierEditForm.tsx:455)
+Search suppliers by name, SKU, or email... (Input, {"onChange":"(e) => setSearchQuery(e.target.value)"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SuppliersList.tsx:77)
+[dynamic or icon-only label] (Button, {"onClick":"clearSearch"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SuppliersList.tsx:84)
+[dynamic or icon-only label] (Button, {"onClick":"() => onSelectSupplier(itemSupplier)"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SuppliersList.tsx:113)
+Clear search (Button, {"onClick":"clearSearch"}, app/[locale]/(dashboard)/dashboard/inventory/items/[id]/suppliers/SuppliersList.tsx:170)
+
+ROUTE /en/dashboard/inventory/loss-control
+FILE app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/loss-control/page.tsx; components/inventory/loss/InventoryLossWorkbench.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; hooks/useInventoryLossWorkbench.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS loss-breakdown-title | recent-loss-title
+PROPS 
+CONTROLS [dynamic or icon-only label] (TabsTrigger, {}, components/inventory/loss/InventoryLossWorkbench.tsx:405)
+[dynamic or icon-only label] (TabsTrigger, {}, components/inventory/loss/InventoryLossWorkbench.tsx:406)
+[dynamic or icon-only label] (TabsTrigger, {}, components/inventory/loss/InventoryLossWorkbench.tsx:407)
+[dynamic or icon-only label] (TabsTrigger, {}, components/inventory/loss/InventoryLossWorkbench.tsx:408)
+[dynamic or icon-only label] (TabsTrigger, {}, components/inventory/loss/InventoryLossWorkbench.tsx:409)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelect(record)"}, components/inventory/loss/InventoryLossWorkbench.tsx:683)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/inventory/movements
+FILE app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx; components/inventory/movements/InventoryMovementHistoryWorkbench.tsx; components/dashboard/history/TransactionHistoryWorkbenchShell.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; hooks/useInventoryMovementHistoryWorkbench.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS 
+PROPS Business identity | Item | Type | Quantity | Value | Source attribution | Reference | Actor | Batch | Expiry date | Control states | Correction | Proof | Notes
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => onFilterChange({ type: value === \"all\" ? undefined : value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:68)
+25 50 100 (Select, {"onValueChange":"(value) => onFilterChange({ pageSize: Number(value) as 25 | 50 | 100 })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:77)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onNextPage","disabled":"!hasMore || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:81)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRetry","disabled":"isLoading || isFetching"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:163)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onExport","disabled":"isLoading || isExporting"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:164)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => onFilterChange({ search: event.target.value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:172)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onFilterChange({ search: undefined })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:173)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => onFilterChange({ type: value === \"all\" ? undefined : value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:175)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onResetFilters","disabled":"!hasActiveFilters"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:182)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:184)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"() => toggleColumn(column.id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:185)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"toggleAllRows"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:196)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"() => toggleRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:204)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:206)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:206)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"() => toggleRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:214)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:214)
+25 50 100 (Select, {"onValueChange":"(value) => onFilterChange({ pageSize: Number(value) as 25 | 50 | 100 })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:221)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onFirstPage","disabled":"!canPreviousPage || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:223)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onPreviousPage","disabled":"!canPreviousPage || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:224)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onNextPage","disabled":"!hasMore || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:225)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:263)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:267)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:280)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/inventory
+FILE app/[locale]/(dashboard)/dashboard/inventory/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/page.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx
+REDIRECTS [{"name":"redirect","line":19,"args":"localizePath(\"/dashboard/inventory/items\", locale)"}]
+HEADINGS 
+PROPS 
+CONTROLS 
+
+ROUTE /en/dashboard/inventory/transfers
+FILE app/[locale]/(dashboard)/dashboard/inventory/transfers/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/transfers/page.tsx; components/inventory/transfers/TransferDashboard.tsx; components/inventory/transfers/CreateTransferModal.tsx; components/inventory/transfers/TransferDetailsModal.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; hooks/useAllLocationsQueries.ts; hooks/useClientAuth.ts; hooks/useTransferQueries.ts; actions/inventory/inventoryActions.ts; hooks/useAllItemQueries.ts; lib/notifications/notify.ts; lib/modules/module-operation-error.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS Location Transfers | Location Transfers | Transfer # | Route | Status | Priority | Items | Created By | Date | Actions | Status Mix | Route Snapshot | Organization Required | Create Location Transfer | Transfer Route | From Location | To Location | Transfer Details | Priority | Requested Date | Notes | Internal Notes | Add Items | Search Items | Select Item | Quantity | Add | Items to Transfer items / total qty | Qty | Transfer Details - | Transfer Items | Item | Requested Qty | Unit Cost | Total Value | Status | Transfer Information | Transfer Number | Status | Priority | Created By | Created Date | Approved By | Transfer Timeline | Transfer Notes | Internal Notes Internal | No Notes
+PROPS Search transfers... | All Statuses | From Location | To Location | Locations | Open Transfers | Completed | Filtered Rows | Select source location | Select destination location | Source | Destination | Select requested date | Add transfer notes... | Internal notes for operations... | Search by name or SKU... | Choose item | 0
+CONTROLS Create Transfer (Button, {"type":"\"button\"","onClick":"() => setShowCreateModal(true)"}, components/inventory/transfers/TransferDashboard.tsx:257)
+Transfer History (TabsTrigger, {}, components/inventory/transfers/TransferDashboard.tsx:293)
+Transfer Analytics (TabsTrigger, {}, components/inventory/transfers/TransferDashboard.tsx:299)
+Clear Filters (Button, {"type":"\"button\"","onClick":"clearFilters"}, components/inventory/transfers/TransferDashboard.tsx:321)
+Search transfers... (Input, {"onChange":"(event) => setSearchQuery(event.target.value)"}, components/inventory/transfers/TransferDashboard.tsx:336)
+All Statuses (Select, {"onValueChange":"(value) => setSelectedStatus(value as TransferStatus | \"all\")"}, components/inventory/transfers/TransferDashboard.tsx:344)
+All Sources (Select, {"onValueChange":"setSelectedFromLocation"}, components/inventory/transfers/TransferDashboard.tsx:364)
+All Destinations (Select, {"onValueChange":"setSelectedToLocation"}, components/inventory/transfers/TransferDashboard.tsx:378)
+View (Button, {"type":"\"button\"","onClick":"(event) => {\n                                    event.stopPropagation()\n                                    setSelectedTransfer(transfer.id)\n                                  }"}, components/inventory/transfers/TransferDashboard.tsx:482)
+[dynamic or icon-only label] (Select, {"onValueChange":"setFromLocationId"}, components/inventory/transfers/CreateTransferModal.tsx:297)
+[dynamic or icon-only label] (Select, {"onValueChange":"setToLocationId"}, components/inventory/transfers/CreateTransferModal.tsx:313)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPriority(value as TransferPriority)"}, components/inventory/transfers/CreateTransferModal.tsx:356)
+Notes (Textarea, {"onChange":"(event) => setNotes(event.target.value)"}, components/inventory/transfers/CreateTransferModal.tsx:384)
+Internal Notes (Textarea, {"onChange":"(event) => setInternalNotes(event.target.value)"}, components/inventory/transfers/CreateTransferModal.tsx:395)
+Search by name or SKU... (Input, {"onChange":"(event) => setItemSearch(event.target.value)"}, components/inventory/transfers/CreateTransferModal.tsx:419)
+[dynamic or icon-only label] (Select, {"onValueChange":"setSelectedItemId"}, components/inventory/transfers/CreateTransferModal.tsx:430)
+Quantity (Input, {"type":"\"number\"","onChange":"(event) => setQuantity(event.target.value)"}, components/inventory/transfers/CreateTransferModal.tsx:451)
+Add (Button, {"type":"\"button\"","onClick":"handleAddLine","disabled":"!selectedItemId || !quantity || Number(quantity) <= 0"}, components/inventory/transfers/CreateTransferModal.tsx:467)
+Available: Qty (Input, {"type":"\"number\"","onChange":"(event) => handleUpdateLineQuantity(line.id, Number(event.target.value))"}, components/inventory/transfers/CreateTransferModal.tsx:507)
+Remove item (Button, {"type":"\"button\"","onClick":"() => setLines(lines.filter((entry) => entry.id !== line.id))"}, components/inventory/transfers/CreateTransferModal.tsx:517)
+Cancel (Button, {"type":"\"button\"","onClick":"() => onOpenChange(false)"}, components/inventory/transfers/CreateTransferModal.tsx:540)
+Create Transfer (Button, {"type":"\"button\"","onClick":"handleSubmit","disabled":"!isValid || createTransferMutation.isPending"}, components/inventory/transfers/CreateTransferModal.tsx:548)
+Approving... / Approve Transfer (Button, {"onClick":"handleApprove","disabled":"approveTransferMutation.isPending"}, components/inventory/transfers/TransferDetailsModal.tsx:164)
+Items ( ) (TabsTrigger, {}, components/inventory/transfers/TransferDetailsModal.tsx:234)
+Details (TabsTrigger, {}, components/inventory/transfers/TransferDetailsModal.tsx:235)
+Timeline (TabsTrigger, {}, components/inventory/transfers/TransferDetailsModal.tsx:236)
+Notes (TabsTrigger, {}, components/inventory/transfers/TransferDetailsModal.tsx:237)
+
+ROUTE /en/dashboard/inventory/units/create
+FILE app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx; components/units/UnitsManagementDashboard.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; lib/utils.ts; actions/units/unit-management-actions.ts; hooks/useUnitManagement.ts; lib/dateFilters.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Units dashboard | Unit Management | Edit unit / Create unit | Active | Remove unit
+PROPS Items | Active | Total units | Active | Used by items | Conversions | Type | Status | English name | Kilogram | French name | Kilogramme | Symbol | kg | Type | Base unit | Gram | Conversion rate | 1000 | search
+CONTROLS Actions (Button, {}, components/units/UnitsManagementDashboard.tsx:668)
+View details (DropdownMenuItem, {}, components/units/UnitsManagementDashboard.tsx:676)
+View details (Link, {"href":"dashboardPath(\"inventory\", \"units\", unit.id, \"details\")"}, components/units/UnitsManagementDashboard.tsx:677)
+Edit unit (DropdownMenuItem, {"onClick":"() => openEdit(unit)"}, components/units/UnitsManagementDashboard.tsx:682)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyUnitId(unit)"}, components/units/UnitsManagementDashboard.tsx:686)
+Remove (DropdownMenuItem, {"onClick":"() => setRemoveTarget(unit)"}, components/units/UnitsManagementDashboard.tsx:691)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/units/UnitsManagementDashboard.tsx:727)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/units/UnitsManagementDashboard.tsx:756)
+Create unit (Button, {"type":"\"button\"","onClick":"openCreate"}, components/units/UnitsManagementDashboard.tsx:766)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/units/UnitsManagementDashboard.tsx:799)
+Export (Button, {"type":"\"button\"","onClick":"exportUnits"}, components/units/UnitsManagementDashboard.tsx:810)
+Clear (Button, {"type":"\"button\"","onClick":"() => {\n                    setTypeFilter(\"all\")\n                    setStatusFilter(\"all\")\n                  }"}, components/units/UnitsManagementDashboard.tsx:822)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as UnitType | \"all\")"}, components/units/UnitsManagementDashboard.tsx:863)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/units/UnitsManagementDashboard.tsx:874)
+Kilogram (Input, {"onChange":"(event) => updateFormField(\"nameEn\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:923)
+Kilogramme (Input, {"onChange":"(event) => updateFormField(\"nameFr\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:931)
+kg (Input, {"onChange":"(event) => updateFormField(\"symbol\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:939)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as UnitType)"}, components/units/UnitsManagementDashboard.tsx:947)
+Gram (Input, {"onChange":"(event) => updateFormField(\"baseUnit\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:959)
+1000 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"conversionRate\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:967)
+Active (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/units/UnitsManagementDashboard.tsx:981)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/units/UnitsManagementDashboard.tsx:991)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/units/UnitsManagementDashboard.tsx:1000)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/units/UnitsManagementDashboard.tsx:1060)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)
+
+ROUTE /en/dashboard/inventory/units
+FILE app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx; components/units/UnitsManagementDashboard.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; lib/utils.ts; actions/units/unit-management-actions.ts; hooks/useUnitManagement.ts; lib/dateFilters.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Units dashboard | Unit Management | Edit unit / Create unit | Active | Remove unit
+PROPS Items | Active | Total units | Active | Used by items | Conversions | Type | Status | English name | Kilogram | French name | Kilogramme | Symbol | kg | Type | Base unit | Gram | Conversion rate | 1000 | search
+CONTROLS Actions (Button, {}, components/units/UnitsManagementDashboard.tsx:668)
+View details (DropdownMenuItem, {}, components/units/UnitsManagementDashboard.tsx:676)
+View details (Link, {"href":"dashboardPath(\"inventory\", \"units\", unit.id, \"details\")"}, components/units/UnitsManagementDashboard.tsx:677)
+Edit unit (DropdownMenuItem, {"onClick":"() => openEdit(unit)"}, components/units/UnitsManagementDashboard.tsx:682)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyUnitId(unit)"}, components/units/UnitsManagementDashboard.tsx:686)
+Remove (DropdownMenuItem, {"onClick":"() => setRemoveTarget(unit)"}, components/units/UnitsManagementDashboard.tsx:691)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/units/UnitsManagementDashboard.tsx:727)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/units/UnitsManagementDashboard.tsx:756)
+Create unit (Button, {"type":"\"button\"","onClick":"openCreate"}, components/units/UnitsManagementDashboard.tsx:766)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/units/UnitsManagementDashboard.tsx:799)
+Export (Button, {"type":"\"button\"","onClick":"exportUnits"}, components/units/UnitsManagementDashboard.tsx:810)
+Clear (Button, {"type":"\"button\"","onClick":"() => {\n                    setTypeFilter(\"all\")\n                    setStatusFilter(\"all\")\n                  }"}, components/units/UnitsManagementDashboard.tsx:822)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as UnitType | \"all\")"}, components/units/UnitsManagementDashboard.tsx:863)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/units/UnitsManagementDashboard.tsx:874)
+Kilogram (Input, {"onChange":"(event) => updateFormField(\"nameEn\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:923)
+Kilogramme (Input, {"onChange":"(event) => updateFormField(\"nameFr\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:931)
+kg (Input, {"onChange":"(event) => updateFormField(\"symbol\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:939)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as UnitType)"}, components/units/UnitsManagementDashboard.tsx:947)
+Gram (Input, {"onChange":"(event) => updateFormField(\"baseUnit\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:959)
+1000 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"conversionRate\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:967)
+Active (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/units/UnitsManagementDashboard.tsx:981)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/units/UnitsManagementDashboard.tsx:991)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/units/UnitsManagementDashboard.tsx:1000)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/units/UnitsManagementDashboard.tsx:1060)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)
+
+ROUTE /en/dashboard/inventory/units/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx; components/units/UnitsManagementDashboard.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx
+DEPENDENCIES config/useAuth.ts; app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx; lib/utils.ts; actions/units/unit-management-actions.ts; hooks/useUnitManagement.ts; lib/dateFilters.ts
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/unauthorized\", locale)"}]
+HEADINGS Units dashboard | Unit Management | Edit unit / Create unit | Active | Remove unit
+PROPS Items | Active | Total units | Active | Used by items | Conversions | Type | Status | English name | Kilogram | French name | Kilogramme | Symbol | kg | Type | Base unit | Gram | Conversion rate | 1000 | search
+CONTROLS Actions (Button, {}, components/units/UnitsManagementDashboard.tsx:668)
+View details (DropdownMenuItem, {}, components/units/UnitsManagementDashboard.tsx:676)
+View details (Link, {"href":"dashboardPath(\"inventory\", \"units\", unit.id, \"details\")"}, components/units/UnitsManagementDashboard.tsx:677)
+Edit unit (DropdownMenuItem, {"onClick":"() => openEdit(unit)"}, components/units/UnitsManagementDashboard.tsx:682)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyUnitId(unit)"}, components/units/UnitsManagementDashboard.tsx:686)
+Remove (DropdownMenuItem, {"onClick":"() => setRemoveTarget(unit)"}, components/units/UnitsManagementDashboard.tsx:691)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/units/UnitsManagementDashboard.tsx:727)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/units/UnitsManagementDashboard.tsx:756)
+Create unit (Button, {"type":"\"button\"","onClick":"openCreate"}, components/units/UnitsManagementDashboard.tsx:766)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/units/UnitsManagementDashboard.tsx:799)
+Export (Button, {"type":"\"button\"","onClick":"exportUnits"}, components/units/UnitsManagementDashboard.tsx:810)
+Clear (Button, {"type":"\"button\"","onClick":"() => {\n                    setTypeFilter(\"all\")\n                    setStatusFilter(\"all\")\n                  }"}, components/units/UnitsManagementDashboard.tsx:822)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as UnitType | \"all\")"}, components/units/UnitsManagementDashboard.tsx:863)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/units/UnitsManagementDashboard.tsx:874)
+Kilogram (Input, {"onChange":"(event) => updateFormField(\"nameEn\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:923)
+Kilogramme (Input, {"onChange":"(event) => updateFormField(\"nameFr\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:931)
+kg (Input, {"onChange":"(event) => updateFormField(\"symbol\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:939)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as UnitType)"}, components/units/UnitsManagementDashboard.tsx:947)
+Gram (Input, {"onChange":"(event) => updateFormField(\"baseUnit\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:959)
+1000 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"conversionRate\", event.target.value)"}, components/units/UnitsManagementDashboard.tsx:967)
+Active (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/units/UnitsManagementDashboard.tsx:981)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/units/UnitsManagementDashboard.tsx:991)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/units/UnitsManagementDashboard.tsx:1000)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/units/UnitsManagementDashboard.tsx:1060)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)

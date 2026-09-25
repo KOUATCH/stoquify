@@ -160,7 +160,8 @@ async function retireExpiredAccountantAccessGrantInTx(
     eventSource: "INTERNAL",
     idempotencyKey: `accountant-access-expired:${grant.id}`,
     occurredAt: grant.expiresAt,
-    sourceType: "AccountantAccessGrant",
+    // Access grants are not accounting sources; retain their domain type in event metadata.
+    metadata: { sourceEntityType: "AccountantAccessGrant" },
     sourceId: grant.id,
     payload: {
       grantId: grant.id,
@@ -250,7 +251,8 @@ export async function grantAccountantAccess(
       eventSource: "INTERNAL",
       idempotencyKey: `accountant-access-granted:${grant.id}`,
       actorId,
-      sourceType: "AccountantAccessGrant",
+      // Access grants are not accounting sources; retain their domain type in event metadata.
+    metadata: { sourceEntityType: "AccountantAccessGrant" },
       sourceId: grant.id,
       documentHash: input.consentEvidenceHash,
       payload: {
@@ -369,7 +371,8 @@ export async function revokeAccountantAccess(
       eventSource: "INTERNAL",
       idempotencyKey: `accountant-access-revoked:${grant.id}`,
       actorId,
-      sourceType: "AccountantAccessGrant",
+      // Access grants are not accounting sources; retain their domain type in event metadata.
+    metadata: { sourceEntityType: "AccountantAccessGrant" },
       sourceId: grant.id,
       payload: {
         grantId: grant.id,

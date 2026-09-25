@@ -1,0 +1,89 @@
+{
+  "run": "98ebd564-7fc",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T14:12:07.240Z",
+  "sourcesBefore": {
+    "services/users/member-history.service.ts": "3c0c101b28134b89ba535021aab56d7bd92a4e06cc658e7ae0fe65510eb0d6a2",
+    "services/users/member-history-input.ts": "466440fe0a9acc3a9cdc2944cd459ca78657a450c0e8ed6b1007bd2f1d31ed58",
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "84b4fc7dd4b60c0e65159d95d46d765a428c808d3816292841f5b070022cccb6",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "actions/users/memberHistory.ts": "ebc7378784926ab106137f6adf708aefb192bf216e3baa36b64f1711589069c1",
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "hooks/useMemberHistory.ts": "59255739a89d4a9a8678a0f98e172b955d80e241e0690ef7fd39e25d1e4986ae",
+    "hooks/member-access-draft.ts": "095a540c01799e56af0b372cdb4dd0102e07c933021b206eb81ec0a5151018f9",
+    "hooks/useMemberAccess.ts": "b8fbd52fd866b8ba52abd1b1ad6b69dd17564748fabd3a0ec9072e79b2288082",
+    "components/settings/MemberAccessHistory.tsx": "2ddfaf8309b644ca241bfcb3d2476ec02214c4dc84ed68b76db5f44a12336b46",
+    "components/settings/member-history-copy.ts": "a41bed5a6e7f2cc818263d35c108bd660a2f19e0d3bd51faf833d38e643f7b0f",
+    "components/settings/MemberAccessEditor.tsx": "8c30ab71b133617676ecbaaf66199f6190242782acb590baf2e40e60c88f0312",
+    "components/settings/member-access-copy.ts": "32224403e66b520862e3caa7e9ee76e2cd7da6fd171c7838c92ca61e71b6ae95"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-member-history-auditor-older-98ebd564-7fc.png",
+        "en-member-history-failure-98ebd564-7fc.png"
+      ],
+      "downloads": [],
+      "pageErrors": [],
+      "routeReadyMs": 9984,
+      "paging": {
+        "first": 20,
+        "older": 3,
+        "readerExportAbsent": true,
+        "focusAfterPaging": true
+      },
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'cf3fcef027f306b0d2e1e45a44215a592324bc33c49a73f01d8f0be7ab72aabd'\n- 'a8c8094222298982aede5a780a676a0289d55e88c03aca6e5d34065ca5f2fda0'\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-member-history-auditor-older-98ebd564-7fc.png",
+        "fr-member-history-failure-98ebd564-7fc.png"
+      ],
+      "downloads": [],
+      "pageErrors": [],
+      "routeReadyMs": 6418,
+      "paging": {
+        "first": 20,
+        "older": 3,
+        "readerExportAbsent": true,
+        "focusAfterPaging": true
+      },
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'b716921f9704d4022845e59aa4ba2ad2672505dc3e89714053fc30fb7106c5ed'\n- '4058415d45a9fb8fbfb41c92daa4f15beb5b36b0599857a28ecef68d51fe45f6'\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Changes belong only to fresh synthetic members and roles in owned fixture organizations.",
+    "Browser response interruption is injected after the real database commit. No external messages or migrations.",
+    "Draft recovery is limited to the same browser tab and 24 hours. Native screen-reader certification is not claimed."
+  ],
+  "originalAuthorityBefore": "d40f86fbeb6f59c4fabca0fc5ea2ceff8f2a875ea9fe8662e223db60c42ab6ed",
+  "originalAuthorityAfter": "d40f86fbeb6f59c4fabca0fc5ea2ceff8f2a875ea9fe8662e223db60c42ab6ed",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T14:13:48.810Z",
+  "sourcesAfter": {
+    "services/users/member-history.service.ts": "3c0c101b28134b89ba535021aab56d7bd92a4e06cc658e7ae0fe65510eb0d6a2",
+    "services/users/member-history-input.ts": "466440fe0a9acc3a9cdc2944cd459ca78657a450c0e8ed6b1007bd2f1d31ed58",
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "84b4fc7dd4b60c0e65159d95d46d765a428c808d3816292841f5b070022cccb6",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "actions/users/memberHistory.ts": "ebc7378784926ab106137f6adf708aefb192bf216e3baa36b64f1711589069c1",
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "hooks/useMemberHistory.ts": "59255739a89d4a9a8678a0f98e172b955d80e241e0690ef7fd39e25d1e4986ae",
+    "hooks/member-access-draft.ts": "095a540c01799e56af0b372cdb4dd0102e07c933021b206eb81ec0a5151018f9",
+    "hooks/useMemberAccess.ts": "b8fbd52fd866b8ba52abd1b1ad6b69dd17564748fabd3a0ec9072e79b2288082",
+    "components/settings/MemberAccessHistory.tsx": "2ddfaf8309b644ca241bfcb3d2476ec02214c4dc84ed68b76db5f44a12336b46",
+    "components/settings/member-history-copy.ts": "a41bed5a6e7f2cc818263d35c108bd660a2f19e0d3bd51faf833d38e643f7b0f",
+    "components/settings/MemberAccessEditor.tsx": "8c30ab71b133617676ecbaaf66199f6190242782acb590baf2e40e60c88f0312",
+    "components/settings/member-access-copy.ts": "32224403e66b520862e3caa7e9ee76e2cd7da6fd171c7838c92ca61e71b6ae95"
+  },
+  "sourceStable": true,
+  "driverSha256": "536f3a44eb0abb99421a0de92947935305ed709a3f8f2f8504f9a07d12306b1e",
+  "passed": 0,
+  "failed": 2
+}

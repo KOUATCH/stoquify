@@ -12,6 +12,6 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages,
+    messages: { ...messages, dashboardShared: (await import(`../messages/dashboard-shared/${locale}.json`)).default, paymentRequest: (await import(`../messages/payment-request/${locale}.json`)).default, paymentExecution: (await import(`../messages/payment-execution/${locale}.json`)).default, paymentPostingRecovery: (await import(`../messages/payment-posting-recovery/${locale}.json`)).default },
   };
 });

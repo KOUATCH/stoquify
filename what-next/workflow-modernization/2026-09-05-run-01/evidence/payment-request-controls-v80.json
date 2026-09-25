@@ -1,0 +1,87 @@
+{
+  "at": "2026-09-08T16:45:55.662Z",
+  "sourceBaseline": "evidence/source-baseline-v80.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "services/purchasing/payment-request.service.ts": "a990f4b39fb06fb98ea24bc72be4370beabfc31b0e2b9e704eb044a2c5e4987f",
+    "services/purchasing/payment-request-authority.ts": "b857f5fc4dc0270255df808acf682d9a29db48744c479c9181a7f0dabeb66bfe",
+    "services/purchasing/payment-request-evidence.ts": "c8d17217471e860a17175cc7fbbbb45f2009c8664a3c441cb80492c17f3f767b",
+    "services/purchasing/payment-request-contracts.ts": "05b3381795ccff918c5936660e6b722db92e66a6b57b10ed4c23d7f9c2ccf425",
+    "services/purchasing/ap-control.service.ts": "bc9f48d0e61e84afb3f034d2c3190cf343de120f4276e3932ad757e7245352a6",
+    "actions/purchasing/payment-request.actions.ts": "0eb3eec16d6051ac736583678e61da2c62c1f682c0de684cb6b8c4372ff570ef",
+    "actions/purchasing/ap-control.actions.ts": "a07e0198105c4a21b54753a4f0df6bb4ee4637fbb7a9855d7c97d882238693a3",
+    "services/purchasing/ap-control.schemas.ts": "3f726d590f0ebd9bf496010cdc1b82fd50b7c547987ed0af3238e604941070f6",
+    "actions/purchasing/__tests__/payment-request.actions.test.ts": "4688771d10af68d08f65ff70a459ec4f51761a63b21c638ca5f1817bb4be8927",
+    "services/purchasing/__tests__/payment-request-evidence.test.ts": "f68442ff80469bcd5d85dc6570e057f0a7a881373d43191d944671f0678db16a",
+    "services/purchasing/__tests__/supplier-payment-balance.test.ts": "e6ae42ac0f5733062bfa7c3643248111a9651bd50a25d9274698e60b1886d87b",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "76056311ea8f0f046c2d3f7ef73285a1cfe6f1079dfeafb54eeb3926bd79b4c0",
+    "services/purchasing/__tests__/payment-request-contracts.test.ts": "227d6d35d702ae250d87549315abf689a8d0cf85dab3f53f4f08316324feca65"
+  },
+  "tests": {
+    "file": "evidence/payment-request-final-v80.json",
+    "passed": 95,
+    "suites": 6,
+    "session": 45526,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 34647,
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/payment-request-contracts.ts services/purchasing/payment-request-authority.ts services/purchasing/payment-request-evidence.ts services/purchasing/payment-request.service.ts services/purchasing/ap-control.schemas.ts services/purchasing/ap-control.service.ts actions/purchasing/payment-request.actions.ts actions/purchasing/ap-control.actions.ts services/purchasing/__tests__/payment-request-contracts.test.ts services/purchasing/__tests__/payment-request-evidence.test.ts actions/purchasing/__tests__/payment-request.actions.test.ts actions/purchasing/__tests__/ap-control.actions.test.ts",
+      "session": 78487,
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "database": "lanes/environment/payment-request-cce2f459-3ad.json",
+  "databaseSession": 15864,
+  "priorDatabase": {
+    "file": "lanes/environment/payment-request-3ae17b5e-1ef.json",
+    "passed": 9,
+    "session": 80842,
+    "exitCode": 0
+  },
+  "intermediate": {
+    "session": 51428,
+    "passedTests": 77,
+    "suites": 4,
+    "exitCode": 0
+  },
+  "failedAttempt": {
+    "session": 39016,
+    "exitCode": 1,
+    "reason": "Normal sandbox execution failed writing its receipt with EPERM; its outcome is not counted. Ownership-checked fixture rerun with scoped access retained evidence."
+  },
+  "browser": "not verified: production payment request/approval/release interfaces remain missing",
+  "guardEvidence": "The reviewed purchases route wrapper hash belongs to purchases-route-access.tsx, which this batch did not change; no guard hash was repinned.",
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2734,
+      "tests": 963,
+      "pages": 155,
+      "routeHandlers": 18,
+      "actionSources": 167,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2284,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 208,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "remaining": "EN/FR payment source pickers, request/review/release UI, history and recovery; full platform workflow scope remains open",
+  "migration": "none",
+  "externalActions": "none"
+}

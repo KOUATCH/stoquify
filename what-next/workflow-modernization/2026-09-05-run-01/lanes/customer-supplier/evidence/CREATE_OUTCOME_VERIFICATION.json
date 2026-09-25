@@ -1,0 +1,160 @@
+{
+  "recordedAt": "2026-09-05T17:15:31.949Z",
+  "classification": "INJECTED_CREATION_FAILURE_AND_COMPONENT_VERIFICATION",
+  "productionApproval": false,
+  "baseline": {
+    "exitCode": 1,
+    "suites": 4,
+    "passed": 14,
+    "failed": 5,
+    "seconds": 5.893,
+    "toolSession": 95099,
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/customer/__tests__/customer-create-receipt.service.test.ts",
+      "services/supplier/__tests__/supplier-create-receipt.service.test.ts",
+      "actions/customers/__tests__/customer-management-actions.test.ts",
+      "actions/suppliers/__tests__/supplier-create-receipt.actions.test.ts",
+      "--silent"
+    ],
+    "note": "Four failures reproduce existing post-commit reload/cache ambiguity; fifth specifies the new cache status."
+  },
+  "firstFollowup": {
+    "exitCode": 1,
+    "suites": 7,
+    "passed": 45,
+    "failed": 1,
+    "seconds": 10.468,
+    "toolSession": 71287,
+    "note": "Supplier action test expected unnormalized input; existing schema supplies defaults. Corrected test expectation only."
+  },
+  "final": {
+    "exitCode": 0,
+    "suites": 7,
+    "passed": 46,
+    "failed": 0,
+    "seconds": 11.366,
+    "toolSession": 75328,
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/customer/__tests__/customer-create-receipt.service.test.ts",
+      "services/supplier/__tests__/supplier-create-receipt.service.test.ts",
+      "actions/customers/__tests__/customer-management-actions.test.ts",
+      "actions/suppliers/__tests__/supplier-create-receipt.actions.test.ts",
+      "hooks/__tests__/managed-create-receipt.test.tsx",
+      "components/customers/__tests__/CustomerActionPage.test.tsx",
+      "components/suppliers/__tests__/SupplierManagementDashboard.presentation.test.tsx",
+      "--silent"
+    ]
+  },
+  "lint": {
+    "exitCode": 0,
+    "paths": [
+      "services/customer/customer.service.ts",
+      "services/supplier/supplier.service.ts",
+      "actions/customers/customer-management-actions.ts",
+      "actions/suppliers/supplier-management-actions.ts",
+      "hooks/useCustomerManagement.ts",
+      "hooks/useSupplierManagement.ts",
+      "services/customer/__tests__/customer-create-receipt.service.test.ts",
+      "services/supplier/__tests__/supplier-create-receipt.service.test.ts",
+      "actions/customers/__tests__/customer-management-actions.test.ts",
+      "actions/suppliers/__tests__/supplier-create-receipt.actions.test.ts",
+      "hooks/__tests__/managed-create-receipt.test.tsx",
+      "components/customers/__tests__/CustomerActionPage.test.tsx",
+      "components/suppliers/__tests__/SupplierManagementDashboard.presentation.test.tsx"
+    ]
+  },
+  "baselineSourceHashes": [
+    {
+      "path": "services/customer/customer.service.ts",
+      "sha256": "7431db06ded29860acef7875f5b82a50bbd9d0a279ff8ba693990c5c3e4ea7ec"
+    },
+    {
+      "path": "services/supplier/supplier.service.ts",
+      "sha256": "5f37f38b580e382a82850ec4bdae60cce3399cf8ec3a0904dfff33585332d292"
+    },
+    {
+      "path": "actions/customers/customer-management-actions.ts",
+      "sha256": "3d9314420da150f0bf8257723c3d4f54fc4644c60bd5f065e326e4b74ac631c1"
+    },
+    {
+      "path": "actions/suppliers/supplier-management-actions.ts",
+      "sha256": "d2458fb9e32af37f01a45bfabab0e9e22f34b1f87e8ca65908f0ae2b8fa3192e"
+    },
+    {
+      "path": "hooks/useCustomerManagement.ts",
+      "sha256": "ad0be2688afaf63667a7fc1af4c1a7789641d0edd36aaa5a2e89df0b862a165a"
+    },
+    {
+      "path": "hooks/useSupplierManagement.ts",
+      "sha256": "6b5918e3785486a4ca10c39abcbdd770738be3b0f8e437fbf62f0a62cef00a99"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "services/customer/customer.service.ts",
+      "sha256": "0d2e606e3717e71cf9467b761ee5740df855ee3539202ce8c7c6d2c28260990d"
+    },
+    {
+      "path": "services/supplier/supplier.service.ts",
+      "sha256": "1959dfc465638b1f3599e8c98ce7175d334c0c69c0bf2cfd247393fea1f8933d"
+    },
+    {
+      "path": "actions/customers/customer-management-actions.ts",
+      "sha256": "e46c1b32782912e92c0b11f2711ac86505f37031493c8da60d0ac39955974611"
+    },
+    {
+      "path": "actions/suppliers/supplier-management-actions.ts",
+      "sha256": "8e7067b9a89607c33ebf5348baf59a324bcb0745d8b9af62f4384f03d099a724"
+    },
+    {
+      "path": "hooks/useCustomerManagement.ts",
+      "sha256": "788453d8630a28da8bc6b332aa1c3e8ee65f44ba58a9c95a2216abe08e39a467"
+    },
+    {
+      "path": "hooks/useSupplierManagement.ts",
+      "sha256": "d6e3cd438a456af698d18c1cc99d478e07ddab5ecd95227d77b0a32455634403"
+    },
+    {
+      "path": "services/customer/__tests__/customer-create-receipt.service.test.ts",
+      "sha256": "3352f7d450d5bdd797518675fd24b9a81b5eb60f63b2132ef3cb5e3ab1f07901"
+    },
+    {
+      "path": "services/supplier/__tests__/supplier-create-receipt.service.test.ts",
+      "sha256": "907f24c22966d73961027379e3ef2c01909bd50d9f904cb88d3e16b74dfbf197"
+    },
+    {
+      "path": "actions/customers/__tests__/customer-management-actions.test.ts",
+      "sha256": "5c4938d2fa12d32cecaf18e9efcde3a943b0e6beef92752bfe9c72e6ba1aaff3"
+    },
+    {
+      "path": "actions/suppliers/__tests__/supplier-create-receipt.actions.test.ts",
+      "sha256": "d9568fec6501760aec160118a6d480d8987aa832d88d255464be1d4e43661ef9"
+    },
+    {
+      "path": "hooks/__tests__/managed-create-receipt.test.tsx",
+      "sha256": "a44d391c4295607071cf4b11672ec01a19f46d721cc5b3c49d3b75574f1d839e"
+    },
+    {
+      "path": "components/customers/__tests__/CustomerActionPage.test.tsx",
+      "sha256": "dc70fd74b6a105780d5b73c6e73594eb6802763203614521cd640730184ebf3c"
+    },
+    {
+      "path": "components/suppliers/__tests__/SupplierManagementDashboard.presentation.test.tsx",
+      "sha256": "123b2bd19e31944c54bfa3ec76938d36a2035f009924dc4cc01c9a15f18cec13"
+    }
+  ],
+  "limits": [
+    "No PostgreSQL or browser execution; database calls injected.",
+    "Actual React Query mutation lifecycle and form components run with mocked service boundaries.",
+    "No automatic-create command idempotency, network-unknown outcome or update/reload correction claimed.",
+    "Typecheck/build and authorized runtime verification remain parent-owned."
+  ]
+}

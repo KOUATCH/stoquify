@@ -1,0 +1,27 @@
+{
+  "id": "corrected-security-finance-tests",
+  "startedAt": "2026-09-05T09:08:42.014Z",
+  "finishedAt": "2026-09-05T09:09:51.532Z",
+  "command": [
+    "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--json",
+    "--testPathPatterns",
+    "lib/security/__tests__|services/_shared/__tests__|services/security/__tests__|app/api/.*/__tests__|actions/storage/__tests__|finance-statement-export|PaymentReconciliationWorkbench.test|finance-x1|finance-accounting-contracts"
+  ],
+  "target": "local workspace; database connection disabled with loopback port 1",
+  "exitCode": 0,
+  "signal": null,
+  "status": "passed",
+  "summary": {
+    "suites": 42,
+    "passedSuites": 42,
+    "failedSuites": 0,
+    "tests": 204,
+    "passedTests": 204,
+    "failedTests": 0,
+    "pendingTests": 0
+  },
+  "log": "corrected-security-finance-tests.log"
+}

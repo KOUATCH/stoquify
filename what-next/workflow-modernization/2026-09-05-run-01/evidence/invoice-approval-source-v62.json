@@ -1,0 +1,86 @@
+{
+  "at": "2026-09-08T09:28:57.109Z",
+  "sourceBaseline": "evidence/source-baseline-v62.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "6dea48f361ab55f455f92d236ac8d3bf3c7d5646ef89370f7736587a8214e444",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "49ee0611aa286f363112fcd5ec64fc5af41335ac7eb1a7e46837c7e301e69c29",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "552ef1b5391f0ab196399a44dd988d2fa25cbe8f11d68b64ba1c5ad45e349e7a"
+  },
+  "runtimes": [
+    {
+      "path": "lanes/environment/invoice-approval-source-7cd74893-ef5.json",
+      "passedGroups": 12
+    },
+    {
+      "path": "lanes/environment/invoice-approval-integrity-6be995ba-e34.json",
+      "passedGroups": 4
+    },
+    {
+      "path": "lanes/environment/invoice-ledger-recovery-19942d2b-bbe.json",
+      "passedGroups": 20
+    }
+  ],
+  "tests": "evidence/invoice-approval-source-tests-final.json",
+  "priorAttempts": [
+    "lanes/environment/invoice-approval-source-91bc60ee-0b6.json",
+    "lanes/environment/invoice-approval-source-250f4702-95c.json",
+    "evidence/invoice-approval-source-tests-initial.json"
+  ],
+  "verifiers": [
+    {
+      "path": "lanes/environment/verify-invoice-approval-source.cjs",
+      "sha256": "6971da132cf3772b4c4fcc7bc58b033c3b20840949ac3556b35a1e00206fd4a0"
+    },
+    {
+      "path": "lanes/environment/verify-invoice-approval-integrity.cjs",
+      "sha256": "a18d0368d3126b0d6dc923441efe36d62c5ffb5623f3efc6a07a05d16c6a7c98"
+    },
+    {
+      "path": "lanes/environment/verify-invoice-ledger-recovery.cjs",
+      "sha256": "a491e8d817d79bce6e776d00b122922414032982943d0df4aa186eee15387040"
+    }
+  ],
+  "checks": [
+    {
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/purchasing/__tests__/ap-control.service.test.ts services/purchasing/__tests__/ap-ledger-retry.test.ts services/purchasing/__tests__/invoice-preparation-contracts.test.ts actions/purchasing/__tests__/ap-control.actions.test.ts services/purchasing/__tests__/invoice-ledger-recovery-contracts.test.ts actions/purchasing/__tests__/invoice-ledger-recovery.actions.test.ts --json --outputFile what-next/workflow-modernization/2026-09-05-run-01/evidence/invoice-approval-source-tests-final.json",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/ap-control.service.ts services/purchasing/__tests__/ap-control.service.test.ts",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "migration": "none",
+  "browser": "No new UI; v61 evidence remains historical",
+  "build": "not run; migration-bearing default not invoked",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2673,
+      "tests": 937,
+      "pages": 151,
+      "routeHandlers": 18,
+      "actionSources": 163,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2211,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 203,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

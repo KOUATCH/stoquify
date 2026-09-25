@@ -50,7 +50,7 @@ export function LandingHeader({ session }: LandingHeaderProps) {
               <Link href="/login" className="body-text text-sm font-semibold text-[var(--color-text-secondary)] transition hover:text-[var(--color-text-primary)]">
                 {t("login")}
               </Link>
-              <Link href="/#pricing" className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-4 py-2 body-text text-sm font-semibold text-white transition hover:bg-[var(--color-brand-hover)]">
+              <Link href="/register" className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-4 py-2 body-text text-sm font-semibold text-white transition hover:bg-[var(--color-brand-hover)]">
                 {t("startFree")}
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
@@ -77,7 +77,7 @@ export function LandingHeader({ session }: LandingHeaderProps) {
                 {session ? t("dashboard") : t("login")}
               </Link>
               {!session ? (
-                <Link href="/#pricing" className="mt-2 rounded-lg bg-[var(--color-brand-action)] px-3 py-2 text-center body-text text-sm font-semibold text-white">
+                <Link href="/register" className="mt-2 rounded-lg bg-[var(--color-brand-action)] px-3 py-2 text-center body-text text-sm font-semibold text-white">
                   {t("startFree")}
                 </Link>
               ) : null}

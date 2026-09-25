@@ -82,7 +82,8 @@ describe("landing workflow, HRIS, and daily-control refinement", () => {
     expect(en.landing.peopleToPay.boundaryBody).toContain("controlled local pilot")
     expect(fr.landing.peopleToPay.boundaryBody).toContain("pilote local contrôlé")
     expect(peopleToPay).toContain("data-people-to-pay")
-    expect(page).toContain("<PeopleToPay />")
+    expect(page).not.toContain("<PeopleToPay />")
+    expect(page).toContain("<GettingStarted />")
   })
 
   it("keeps seven bilingual daily-control domains with complete decision evidence", () => {

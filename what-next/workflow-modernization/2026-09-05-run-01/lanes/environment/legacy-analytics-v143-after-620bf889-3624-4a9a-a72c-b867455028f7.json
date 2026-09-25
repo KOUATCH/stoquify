@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-13T18:08:05.490Z",
+  "phase": "after",
+  "sourceBefore": {
+    "services/analytics/sales-analytics.service.ts": "d624749d195c165c0460ebe8e1f5bee75cd4d40ae2bdf8eb305cf18c7d74e5fe",
+    "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+    "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d"
+  },
+  "checks": [
+    {
+      "name": "foreign_location",
+      "allFiveDenied": true
+    },
+    {
+      "name": "draft_sale",
+      "count": 0
+    },
+    {
+      "name": "uncounted_score",
+      "score": null
+    },
+    {
+      "name": "historical_margin",
+      "before": 80,
+      "after": 80
+    },
+    {
+      "name": "void_flow",
+      "in": 100,
+      "out": 100
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/analytics/sales-analytics.service.ts": "d624749d195c165c0460ebe8e1f5bee75cd4d40ae2bdf8eb305cf18c7d74e5fe",
+    "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+    "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-09T09:03:51.275Z",
+  "migration": "20260909093000_add_suspense_posting_cycles",
+  "sqlSha256": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+  "checks": [
+    "All existing batch bytes preserved; every old batch defaults to cycle 1",
+    "Distinct suspense posting and reversal cycles retain the same canonical source ID",
+    "Same-cycle source uniqueness and tenant request-key uniqueness both remain enforced",
+    "Non-suspense later cycles, incompatible purpose, zero and negative cycles are rejected",
+    "Unchanged single-effect source identity remains enforced for ordinary manual postings",
+    "Rehearsal rollback restores original schema and batch bytes, with no synthetic batch retained"
+  ],
+  "applied": false,
+  "database": "stoquify_local_registration_20260906_01",
+  "passed": true
+}

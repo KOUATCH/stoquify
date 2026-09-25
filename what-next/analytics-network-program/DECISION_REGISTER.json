@@ -1,0 +1,255 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-ANALYTICS-CONTROLLED-NETWORK",
+  "asOf": "2026-09-02",
+  "approvalContract": {
+    "rule": "A development recommendation or user instruction is not legal, accounting, privacy, security, provider, or production approval. Missing named accountable evidence retains a fail-closed status.",
+    "requiredForProduction": [
+      "selectedOption",
+      "rationale",
+      "accountableApprover",
+      "approvedAt",
+      "effectiveVersion",
+      "reviewOrExpiryAt",
+      "evidenceLinks",
+      "affectedCapabilities",
+      "rollbackOrDisablePolicy"
+    ],
+    "internalPackageAcceptance": {
+      "requiredFields": [
+        "decisionId",
+        "decision",
+        "accountablePerson",
+        "role",
+        "reviewedVersionOrHash",
+        "rationaleOrConditions",
+        "decidedAt",
+        "evidenceReference"
+      ],
+      "rule": "Record a traceable response from the accountable owner for the specific reviewed scope. Development execution authority is already granted; this is package acceptance, not a new production or X1 signature gate."
+    }
+  },
+  "decisions": [
+    {
+      "id": "AN-D01",
+      "title": "Market model for Phases 0–3",
+      "status": "AUTHORIZED_FOR_EXECUTION",
+      "selectedOption": "ACCOUNTANT_LED_INVITE_ONLY_CONTROLLED_COLLABORATION_NETWORK",
+      "rationale": "Existing consent, statement, referral, and supplier-proposal foundations can produce governed participation value without public marketplace risk.",
+      "nonGoals": [
+        "open marketplace",
+        "public discovery",
+        "public ratings",
+        "lending",
+        "escrow",
+        "credit scoring",
+        "marketplace payouts"
+      ]
+    },
+    {
+      "id": "AN-D02",
+      "title": "Program WIP policy",
+      "status": "AUTHORIZED_FOR_EXECUTION",
+      "selectedOption": "MAXIMUM_TWO_MAJOR_WORK_PACKAGES",
+      "rationale": "Preserves source-owner review and prevents dashboard, control, and external-delivery work from advancing without evidence."
+    },
+    {
+      "id": "AN-D03",
+      "title": "Canonical Phase 1 routes",
+      "status": "AUTHORIZED_FOR_DEVELOPMENT",
+      "selectedOption": "EXTEND_EXISTING_ROUTES",
+      "routes": [
+        "/dashboard/finance/cash-command",
+        "/dashboard/finance/reconciliation",
+        "/dashboard/accounting/accountant-portfolio"
+      ],
+      "rationale": "The routes already own the corresponding workflows and evidence; a new generic analytics route would duplicate them.",
+      "packageAcceptanceStatus": "PENDING_OWNER_ACCEPTANCE",
+      "acceptanceRequest": {
+        "id": "AN-D03",
+        "package": "P0-02",
+        "status": "PENDING_OWNER_ACCEPTANCE",
+        "accountableRole": "Product Program Lead",
+        "reviewRoles": [
+          "UX Architecture",
+          "Finance",
+          "Payments",
+          "Accounting",
+          "Purchasing",
+          "Data/BI"
+        ],
+        "accountablePerson": null,
+        "approvedAt": null,
+        "decisionRequired": "Accept or revise the 12 canonical jobs, all 53 KPI ownership assignments and canonical drill-through destinations in ownership registry v1.1.0. Existing navigation remains; subsequent consolidation needs its own reviewed change.",
+        "recommendedOption": "ACCEPT_OWNERSHIP_DESIGN_V1_1",
+        "scope": [
+          "what-next/analytics-network-program/SURFACE_OWNERSHIP_REGISTRY.json",
+          "what-next/analytics-network-program/SURFACE_OWNERSHIP_AND_DUPLICATION_MAP.md"
+        ],
+        "evidenceHashes": [
+          "2868970ffceece00ab1c039b2618cb42585e0a809a6e0ec61f7f1a1492129193",
+          "7fd05cea51158b60601ad7b7cd4ce95f3fdaf44a8c5e08030b9800c6a31c84f3"
+        ],
+        "dueBefore": "P0-02 acceptance and activation of P0-04/P0-06",
+        "unlocks": "P0-02 owner acceptance only; does not waive TypeScript or certify runtime access."
+      },
+      "acceptancePacket": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md"
+    },
+    {
+      "id": "AN-D04",
+      "title": "Organization analytical context",
+      "status": "AUTHORIZED_FOR_DEVELOPMENT",
+      "selectedOption": "ORGANIZATION_CURRENCY_IANA_TIMEZONE_EXPLICIT_HALF_OPEN_PERIOD",
+      "rationale": "Hard-coded currency and server-local dates are unsafe across tenants. Periods use inclusive start and exclusive end to avoid millisecond ambiguity.",
+      "productionApprovalStatus": "PENDING_FINANCE_AND_DATA_OWNER_G0_SIGNOFF",
+      "packageAcceptanceStatus": "PENDING_OWNER_ACCEPTANCE",
+      "acceptanceRequest": {
+        "id": "AN-D04",
+        "package": "P0-03",
+        "status": "PENDING_OWNER_ACCEPTANCE",
+        "accountableRole": "Finance Owner",
+        "reviewRoles": [
+          "Finance Platform",
+          "Data/BI",
+          "Accounting"
+        ],
+        "accountablePerson": null,
+        "approvedAt": null,
+        "decisionRequired": "Accept or revise remediation design v1: organization currency and IANA timezone, explicit half-open periods, authorized scope, Decimal source aggregation, per-client currency separation, unavailable states and target-model context matrix.",
+        "recommendedOption": "ACCEPT_CONTEXT_DESIGN_WITH_EXPLICIT_POLICIES",
+        "scope": [
+          "services/analytics/analytical-context-contracts.ts",
+          "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md"
+        ],
+        "evidenceHashes": [
+          "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+          "7d3c5320e30da395813564852d7c9cdcd07fd3f1998188145078424cb29094c3"
+        ],
+        "dueBefore": "P0-03 runtime implementation acceptance",
+        "unlocks": "Approved implementation design; no runtime completion claim."
+      },
+      "acceptancePacket": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md"
+    },
+    {
+      "id": "AN-D05",
+      "title": "Analytical write authority",
+      "status": "AUTHORIZED_FOR_EXECUTION",
+      "selectedOption": "READ_ONLY_COMPOSITION_AND_AUTHORIZED_DRILL_THROUGH",
+      "rationale": "Source-domain services retain ledger, payment, purchasing, inventory, payroll, and accounting write authority."
+    },
+    {
+      "id": "AN-D06",
+      "title": "Phase 3 pilot envelope",
+      "status": "AUTHORIZED_AS_PLANNING_BOUNDARY_ONLY",
+      "selectedOption": "ALLOWLISTED_SINGLE_COUNTRY_SINGLE_CURRENCY_CLOSED_COHORT",
+      "limits": {
+        "organizations": "10-20",
+        "accountantsOrFirms": "3-5",
+        "suppliers": "20-40",
+        "statementRecipients": "100-300",
+        "implementationPartners": 2
+      },
+      "productionApprovalStatus": "REQUIRES_NAMED_COHORT_SUPPORT_PRIVACY_SECURITY_AND_DOMAIN_APPROVALS"
+    },
+    {
+      "id": "AN-D07",
+      "title": "External delivery channel and provider",
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "recommendation": "Transactional email first; WhatsApp only with provider, template, consent, callback, secret-custody, and country evidence.",
+      "requiredApprovers": [
+        "SRE/Communications owner",
+        "Security owner",
+        "Privacy owner",
+        "Country/legal reviewer"
+      ],
+      "disablePolicy": "All outbound channels remain disabled until G2."
+    },
+    {
+      "id": "AN-D08",
+      "title": "Privacy, consent, retention, and wrong-recipient policy",
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "recommendation": "Purpose-bound transactional consent, aggregate-only growth analytics, minimum cohort thresholds, expiry/revocation, suppression, retention/deletion, and wrong-recipient response.",
+      "requiredApprovers": [
+        "Privacy owner",
+        "Security owner",
+        "Support owner",
+        "Domain owner"
+      ]
+    },
+    {
+      "id": "AN-D09",
+      "title": "Cross-tenant participant identity",
+      "status": "AUTHORIZED_FOR_EXECUTION",
+      "selectedOption": "NO_CROSS_TENANT_IDENTITY_MERGE",
+      "rationale": "Current suppliers, customers, users, and grants are tenant-scoped and do not constitute verified shared marketplace identities."
+    },
+    {
+      "id": "AN-D10",
+      "title": "Forecast scenario authority",
+      "status": "AUTHORIZED_FOR_PHASE_1_DEVELOPMENT",
+      "selectedOption": "DETERMINISTIC_READ_ONLY_BASELINE",
+      "rationale": "A 13-week read model may compose source facts, but saved/approved scenarios require a separately governed maker-checker lifecycle.",
+      "deferred": [
+        "saved scenarios",
+        "scenario approval",
+        "autonomous prediction",
+        "automated financial recommendation"
+      ]
+    },
+    {
+      "id": "AN-D11",
+      "package": "P0-03",
+      "status": "PENDING_SCOPE_DECISION",
+      "accountableRole": "Product Program Lead and Finance Owner",
+      "reviewRoles": [
+        "Data/BI"
+      ],
+      "accountablePerson": null,
+      "approvedAt": null,
+      "decisionRequired": "Resolve roadmap design-only wording versus the registry runtime acceptance criteria. Recommended: retain strict runtime completion within P0-03. Alternative: explicitly amend scope and reassign all three runtime criteria and release dependencies to P1-01.",
+      "recommendedOption": "RETAIN_STRICT_P0_03_RUNTIME_ACCEPTANCE",
+      "options": [
+        "RETAIN_STRICT_P0_03_RUNTIME_ACCEPTANCE",
+        "EXPLICIT_DESIGN_ONLY_SCOPE_AMENDMENT_WITH_RUNTIME_CRITERIA_IN_P1_01"
+      ],
+      "scope": [
+        "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md",
+        "what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md",
+        "what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_WORK_PACKAGE_REGISTRY_2026-08-30.json"
+      ],
+      "dueBefore": "Declaring P0-03 complete",
+      "unlocks": "Unambiguous package completion boundary. No automatic amendment has been made.",
+      "title": "P0-03 acceptance scope reconciliation",
+      "acceptancePacket": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md"
+    },
+    {
+      "id": "AN-D12",
+      "package": "P0-03",
+      "status": "PENDING_POLICY_INPUT",
+      "accountableRole": "Finance Owner",
+      "reviewRoles": [
+        "Accounting",
+        "Data/BI"
+      ],
+      "accountablePerson": null,
+      "approvedAt": null,
+      "decisionRequired": "Provide the approved currency catalog/list and version; approve display rounding and currency precision, organization-calendar day/comparison periods, forecast-start convention and separate elapsed-age versus business-day SLA semantics.",
+      "recommendedOption": "VERSIONED_SUPPORTED_CURRENCY_POLICY_AND_EXPLICIT_CALENDAR_RULES",
+      "requiredInput": [
+        "supportedCurrencyCatalogOrList",
+        "catalogVersion",
+        "displayRoundingRule",
+        "periodAndForecastStartDecision",
+        "accountableOwner"
+      ],
+      "scope": [
+        "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md"
+      ],
+      "dueBefore": "Finalizing runtime currency eligibility and calendar/rounding behavior",
+      "unlocks": "Implementation can enforce a product-approved currency policy. Intl precision and currency test fixtures alone are not approval.",
+      "title": "Supported currency and analytical calendar/display policy",
+      "acceptancePacket": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md"
+    }
+  ],
+  "lastUpdatedAt": "2026-09-02T12:41:50.689Z"
+}

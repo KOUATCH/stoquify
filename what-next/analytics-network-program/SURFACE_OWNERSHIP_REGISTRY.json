@@ -1,0 +1,807 @@
+{
+  "schemaVersion": "1.1.0",
+  "programId": "STOQUIFY-ANALYTICS-CONTROLLED-NETWORK",
+  "workPackage": "P0-02",
+  "asOf": "2026-09-02",
+  "policy": {
+    "oneCanonicalSurfacePerJob": true,
+    "oneSemanticOwnerPerMetric": true,
+    "secondarySurfacesUseBandsOrAlerts": true,
+    "secondarySurfacesLinkToCanonicalRoute": true,
+    "independentSecondaryFormula": false,
+    "analyticalMutationAuthority": false
+  },
+  "surfaces": [
+    {
+      "id": "business-pulse",
+      "route": "/dashboard/analytics",
+      "canonicalJob": "What changed today across the business, what is at risk, and where should the user go next?",
+      "presentationOwner": "Analytics/Business Pulse",
+      "sourceOwner": "Source domain per metric",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts",
+      "implementation": [
+        "services/analytics/sales-analytics.service.ts",
+        "services/analytics/business-pulse-contracts.ts",
+        "components/analytics/BusinessPulseDashboard.tsx"
+      ],
+      "primaryMetrics": [
+        "today_sales",
+        "today_transactions",
+        "today_average_transaction",
+        "week_sales",
+        "month_sales",
+        "active_sessions",
+        "low_stock_items"
+      ],
+      "mustNotOwn": [
+        "thirteen_week_cash_runway",
+        "reconciliation_root_cause_queue",
+        "accountant_multi_client_triage",
+        "participation_cohorts"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Analytics/Business Pulse",
+        "canonicalWorkflowRoute": "/dashboard/analytics",
+        "sourceWriteAuthority": "Source domain per metric",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "daily-digest",
+      "route": "/dashboard/daily-digest",
+      "canonicalJob": "What changed since the last review and what should this role read or act on today?",
+      "presentationOwner": "Dashboard/Daily Digest",
+      "sourceOwner": "BI composition over source domains",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts",
+      "implementation": [
+        "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx"
+      ],
+      "primaryMetrics": [
+        "daily_change_count",
+        "daily_risk_count",
+        "daily_action_count"
+      ],
+      "mustNotOwn": [
+        "cash_forecast_formula",
+        "reconciliation_exposure_formula",
+        "accountant_portfolio_formula"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Dashboard/Daily Digest",
+        "canonicalWorkflowRoute": "/dashboard/daily-digest",
+        "sourceWriteAuthority": "BI composition over source domains",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "manager-action-center",
+      "route": "/dashboard/manager-action-center",
+      "canonicalJob": "Which permitted location-level operating actions require a manager today?",
+      "presentationOwner": "Manager Action Center",
+      "sourceOwner": "Source domain and location scope per action",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-data-access.ts",
+      "implementation": [
+        "services/manager-action-center",
+        "app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx"
+      ],
+      "primaryMetrics": [
+        "manager_open_actions",
+        "manager_overdue_actions",
+        "daily_close_state"
+      ],
+      "mustNotOwn": [
+        "tenant_wide_owner_risk",
+        "thirteen_week_cash_runway",
+        "firm_level_accountant_triage"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Manager Action Center",
+        "canonicalWorkflowRoute": "/dashboard/manager-action-center",
+        "sourceWriteAuthority": "Source domain and location scope per action",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "owner-war-room",
+      "route": "/dashboard/owner-war-room",
+      "canonicalJob": "Which tenant-wide cross-domain risks require owner attention now?",
+      "presentationOwner": "Owner War Room",
+      "sourceOwner": "BI composition over source command models",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-data-access.ts",
+      "implementation": [
+        "app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx"
+      ],
+      "primaryMetrics": [
+        "critical_risk_count",
+        "blocked_domain_count",
+        "owner_action_pressure"
+      ],
+      "mustNotOwn": [
+        "cash_forecast_line_items",
+        "reconciliation_exception_workflow",
+        "supplier_proposal_workflow"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Owner War Room",
+        "canonicalWorkflowRoute": "/dashboard/owner-war-room",
+        "sourceWriteAuthority": "BI composition over source command models",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "finance-analytics",
+      "route": "/dashboard/finance/analytics",
+      "canonicalJob": "How did finance perform over the selected historical period?",
+      "presentationOwner": "Finance Analytics",
+      "sourceOwner": "Finance and Accounting",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "implementation": [
+        "services/analytics/financial-analytics.service.ts"
+      ],
+      "primaryMetrics": [
+        "historical_finance_trends",
+        "finance_period_comparison"
+      ],
+      "mustNotOwn": [
+        "thirteen_week_cash_runway",
+        "reconciliation_owner_sla_queue"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Finance Analytics",
+        "canonicalWorkflowRoute": "/dashboard/finance/analytics",
+        "sourceWriteAuthority": "Finance and Accounting",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "cash-command",
+      "route": "/dashboard/finance/cash-command",
+      "canonicalJob": "Can the organization meet obligations over the next 13 weeks, and what action is required?",
+      "presentationOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance composition; Accounting, Purchasing, Payroll, Inventory, and Payments own facts",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "implementation": [
+        "services/cash-command/cash-command.service.ts",
+        "services/cash-command/cash-command-contracts.ts",
+        "components/cash-command/CashCommandDashboard.tsx"
+      ],
+      "primaryMetrics": [
+        "projected_closing_cash",
+        "minimum_cash_week",
+        "funding_gap",
+        "collection_coverage",
+        "committed_outflow",
+        "forecast_source_coverage",
+        "forecast_error"
+      ],
+      "proposedReadModel": "CashForecastCommandReadModel",
+      "mustNotOwn": [
+        "source_document_mutation",
+        "saved_scenario_approval_in_phase_1"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Finance/Cash Command",
+        "canonicalWorkflowRoute": "/dashboard/finance/cash-command",
+        "sourceWriteAuthority": "Finance composition; Accounting, Purchasing, Payroll, Inventory, and Payments own facts",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "cash-flow",
+      "route": "/dashboard/finance/cash-flow",
+      "canonicalJob": "What cash movements occurred in the selected historical period?",
+      "presentationOwner": "Finance/Cash Flow",
+      "sourceOwner": "Finance and Accounting",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "implementation": [
+        "app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx"
+      ],
+      "primaryMetrics": [
+        "historical_cash_inflow",
+        "historical_cash_outflow",
+        "historical_net_cash_flow"
+      ],
+      "mustNotOwn": [
+        "forward_thirteen_week_scenario",
+        "cash_deficit_action_queue"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Finance/Cash Flow",
+        "canonicalWorkflowRoute": "/dashboard/finance/cash-flow",
+        "sourceWriteAuthority": "Finance and Accounting",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "payment-reconciliation",
+      "route": "/dashboard/finance/reconciliation",
+      "canonicalJob": "Where is cash unreconciled or exposed, why, who owns it, and what is the SLA?",
+      "presentationOwner": "Payments/Reconciliation",
+      "sourceOwner": "Payments/Reconciliation; POS, Cash Drawer, Finance, and Accounting own source facts",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "implementation": [
+        "services/payments/payment-reconciliation-workbench.service.ts",
+        "services/payments/payment-reconciliation.service.ts",
+        "components/finance/PaymentReconciliationWorkbench.tsx"
+      ],
+      "primaryMetrics": [
+        "unreconciled_exposure",
+        "open_suspense",
+        "aged_exception_exposure",
+        "duplicate_exposure",
+        "signed_run_coverage",
+        "median_resolution_time"
+      ],
+      "proposedReadModel": "ReconciliationLeakageReadModel",
+      "mustNotOwn": [
+        "unverified_loss_claim",
+        "analytics_only_override_authority"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Payments/Reconciliation",
+        "canonicalWorkflowRoute": "/dashboard/finance/reconciliation",
+        "sourceWriteAuthority": "Payments/Reconciliation; POS, Cash Drawer, Finance, and Accounting own source facts",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "stock-to-cash",
+      "route": "/dashboard/finance/stock-to-cash",
+      "canonicalJob": "Where is working capital tied up or blocked between purchasing, inventory, sales, payments, and close?",
+      "presentationOwner": "Finance/Stock-to-Cash",
+      "sourceOwner": "Inventory, Purchasing, Sales, Payments, and Accounting",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "implementation": [
+        "services/stock-to-cash/stock-to-cash-flow.service.ts",
+        "components/stock-to-cash/StockToCashFlowDashboard.tsx"
+      ],
+      "primaryMetrics": [
+        "inventory_cash_exposure",
+        "stock_to_cash_blockers",
+        "working_capital_flow_coverage"
+      ],
+      "mustNotOwn": [
+        "thirteen_week_cash_forecast",
+        "inventory_adjustment_authority"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Finance/Stock-to-Cash",
+        "canonicalWorkflowRoute": "/dashboard/finance/stock-to-cash",
+        "sourceWriteAuthority": "Inventory, Purchasing, Sales, Payments, and Accounting",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "accountant-portfolio",
+      "route": "/dashboard/accounting/accountant-portfolio",
+      "canonicalJob": "Which actively consented client needs accountant intervention first?",
+      "presentationOwner": "Accounting/Accountant Access",
+      "sourceOwner": "Per-client source domains under an active grant",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "implementation": [
+        "services/accounting/accountant-access.service.ts",
+        "components/accounting/AccountantPortfolio.tsx"
+      ],
+      "primaryMetrics": [
+        "clients_needing_action",
+        "critical_blocker_count",
+        "close_ready_clients",
+        "stale_evidence_clients",
+        "expiring_mandates"
+      ],
+      "proposedReadModel": "AccountantAdvisoryPortfolioReadModel",
+      "mustNotOwn": [
+        "cross_currency_amount_sum",
+        "client_without_active_grant",
+        "raw_referral_recipient_pii"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Accounting/Accountant Access",
+        "canonicalWorkflowRoute": "/dashboard/accounting/accountant-portfolio",
+        "sourceWriteAuthority": "Per-client source domains under an active grant",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "referral-funnel",
+      "route": "/dashboard/analytics/referrals",
+      "canonicalJob": "Which governed invitation source produces delivered, activated, trusted, and retained participation?",
+      "presentationOwner": "Growth Analytics/Referrals",
+      "sourceOwner": "Referrals owns attribution aggregates; invitation, delivery, access, and activation services own source events",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts",
+      "implementation": [
+        "services/referrals/referral-funnel-read-model.service.ts",
+        "components/referrals/ReferralFunnelDashboard.tsx"
+      ],
+      "primaryMetrics": [
+        "delivery_rate",
+        "acceptance_rate",
+        "activation_rate",
+        "time_to_first_trusted_value",
+        "retained_activation",
+        "bounded_k_factor"
+      ],
+      "proposedReadModel": "ParticipationFunnelReadModel",
+      "mustNotOwn": [
+        "raw_recipient_identity",
+        "cross_tenant_benchmark",
+        "marketing_reuse_of_transactional_consent"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Growth Analytics/Referrals",
+        "canonicalWorkflowRoute": "/dashboard/analytics/referrals",
+        "sourceWriteAuthority": "Referrals owns attribution aggregates; invitation, delivery, access, and activation services own source events",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    },
+    {
+      "id": "purchase-order-analytics",
+      "route": "/dashboard/purchase-orders/analytics",
+      "canonicalJob": "Which supplier commitments, receipts, delivery evidence, or purchase exceptions need intervention?",
+      "presentationOwner": "Purchasing/Purchase Order Analytics",
+      "sourceOwner": "Purchasing/AP",
+      "routeCatalog": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "implementation": [
+        "services/purchase-order/purchase-order.service.ts"
+      ],
+      "primaryMetrics": [
+        "open_commitment",
+        "overdue_commitment",
+        "acknowledgement_rate",
+        "delivery_evidence_coverage",
+        "supplier_concentration"
+      ],
+      "mustNotOwn": [
+        "public_supplier_rating",
+        "shared_supplier_identity",
+        "supplier_direct_po_mutation"
+      ],
+      "actionOwnership": {
+        "presentationOwner": "Purchasing/Purchase Order Analytics",
+        "canonicalWorkflowRoute": "/dashboard/purchase-orders/analytics",
+        "sourceWriteAuthority": "Purchasing/AP",
+        "rule": "Secondary surfaces link to this canonical job. Each corrective action remains in its source-domain service with server-side authorization; no analytical write authority is added.",
+        "accessVerificationPackage": "P0-06"
+      }
+    }
+  ],
+  "canonicalMetricOwners": [
+    {
+      "metric": "today_sales",
+      "surface": "business-pulse",
+      "semanticOwner": "Analytics/Business Pulse",
+      "sourceOwner": "Sales/POS",
+      "authoritativeDrillThrough": "/dashboard/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "today_transactions",
+      "surface": "business-pulse",
+      "semanticOwner": "Analytics/Business Pulse",
+      "sourceOwner": "Sales/POS",
+      "authoritativeDrillThrough": "/dashboard/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "today_average_transaction",
+      "surface": "business-pulse",
+      "semanticOwner": "Analytics/Business Pulse",
+      "sourceOwner": "Sales/POS",
+      "authoritativeDrillThrough": "/dashboard/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "week_sales",
+      "surface": "business-pulse",
+      "semanticOwner": "Analytics/Business Pulse",
+      "sourceOwner": "Sales/POS",
+      "authoritativeDrillThrough": "/dashboard/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "month_sales",
+      "surface": "business-pulse",
+      "semanticOwner": "Analytics/Business Pulse",
+      "sourceOwner": "Sales/POS",
+      "authoritativeDrillThrough": "/dashboard/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "active_sessions",
+      "surface": "business-pulse",
+      "semanticOwner": "Analytics/Business Pulse",
+      "sourceOwner": "POS",
+      "authoritativeDrillThrough": "/dashboard/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "low_stock_items",
+      "surface": "business-pulse",
+      "semanticOwner": "Analytics/Business Pulse",
+      "sourceOwner": "Inventory",
+      "authoritativeDrillThrough": "/dashboard/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "daily_change_count",
+      "surface": "daily-digest",
+      "semanticOwner": "Dashboard/Daily Digest",
+      "sourceOwner": "BI/Daily Digest composition; source domains own underlying facts",
+      "authoritativeDrillThrough": "/dashboard/daily-digest",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "daily_risk_count",
+      "surface": "daily-digest",
+      "semanticOwner": "Dashboard/Daily Digest",
+      "sourceOwner": "BI/Daily Digest composition; source domains own underlying facts",
+      "authoritativeDrillThrough": "/dashboard/daily-digest",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "daily_action_count",
+      "surface": "daily-digest",
+      "semanticOwner": "Dashboard/Daily Digest",
+      "sourceOwner": "BI/Daily Digest composition; source domains own underlying facts",
+      "authoritativeDrillThrough": "/dashboard/daily-digest",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "manager_open_actions",
+      "surface": "manager-action-center",
+      "semanticOwner": "Manager Action Center",
+      "sourceOwner": "Manager Action Center composition; location-scoped source domains own actions",
+      "authoritativeDrillThrough": "/dashboard/manager-action-center",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "manager_overdue_actions",
+      "surface": "manager-action-center",
+      "semanticOwner": "Manager Action Center",
+      "sourceOwner": "Manager Action Center composition; location-scoped source domains own actions",
+      "authoritativeDrillThrough": "/dashboard/manager-action-center",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "daily_close_state",
+      "surface": "manager-action-center",
+      "semanticOwner": "Manager Action Center",
+      "sourceOwner": "Manager Action Center composition; location-scoped source domains own actions",
+      "authoritativeDrillThrough": "/dashboard/manager-action-center",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "critical_risk_count",
+      "surface": "owner-war-room",
+      "semanticOwner": "Owner War Room",
+      "sourceOwner": "BI/Owner War Room composition; source command models own facts",
+      "authoritativeDrillThrough": "/dashboard/owner-war-room",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "blocked_domain_count",
+      "surface": "owner-war-room",
+      "semanticOwner": "Owner War Room",
+      "sourceOwner": "BI/Owner War Room composition; source command models own facts",
+      "authoritativeDrillThrough": "/dashboard/owner-war-room",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "owner_action_pressure",
+      "surface": "owner-war-room",
+      "semanticOwner": "Owner War Room",
+      "sourceOwner": "BI/Owner War Room composition; source command models own facts",
+      "authoritativeDrillThrough": "/dashboard/owner-war-room",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "historical_finance_trends",
+      "surface": "finance-analytics",
+      "semanticOwner": "Finance Analytics",
+      "sourceOwner": "Finance/Accounting",
+      "authoritativeDrillThrough": "/dashboard/finance/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "finance_period_comparison",
+      "surface": "finance-analytics",
+      "semanticOwner": "Finance Analytics",
+      "sourceOwner": "Finance/Accounting",
+      "authoritativeDrillThrough": "/dashboard/finance/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "projected_closing_cash",
+      "surface": "cash-command",
+      "semanticOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance/Cash Command composition",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-command",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "minimum_cash_week",
+      "surface": "cash-command",
+      "semanticOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance/Cash Command composition",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-command",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "funding_gap",
+      "surface": "cash-command",
+      "semanticOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance/Cash Command composition",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-command",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "collection_coverage",
+      "surface": "cash-command",
+      "semanticOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance/Cash Command composition",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-command",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "committed_outflow",
+      "surface": "cash-command",
+      "semanticOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance/Cash Command composition",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-command",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "forecast_source_coverage",
+      "surface": "cash-command",
+      "semanticOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance/Cash Command composition",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-command",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "forecast_error",
+      "surface": "cash-command",
+      "semanticOwner": "Finance/Cash Command",
+      "sourceOwner": "Finance/Cash Command composition",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-command",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "historical_cash_inflow",
+      "surface": "cash-flow",
+      "semanticOwner": "Finance/Cash Flow",
+      "sourceOwner": "Finance/Accounting",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-flow",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "historical_cash_outflow",
+      "surface": "cash-flow",
+      "semanticOwner": "Finance/Cash Flow",
+      "sourceOwner": "Finance/Accounting",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-flow",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "historical_net_cash_flow",
+      "surface": "cash-flow",
+      "semanticOwner": "Finance/Cash Flow",
+      "sourceOwner": "Finance/Accounting",
+      "authoritativeDrillThrough": "/dashboard/finance/cash-flow",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "unreconciled_exposure",
+      "surface": "payment-reconciliation",
+      "semanticOwner": "Payments/Reconciliation",
+      "sourceOwner": "Payments/Reconciliation",
+      "authoritativeDrillThrough": "/dashboard/finance/reconciliation",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "open_suspense",
+      "surface": "payment-reconciliation",
+      "semanticOwner": "Payments/Reconciliation",
+      "sourceOwner": "Payments/Reconciliation",
+      "authoritativeDrillThrough": "/dashboard/finance/reconciliation",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "aged_exception_exposure",
+      "surface": "payment-reconciliation",
+      "semanticOwner": "Payments/Reconciliation",
+      "sourceOwner": "Payments/Reconciliation",
+      "authoritativeDrillThrough": "/dashboard/finance/reconciliation",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "duplicate_exposure",
+      "surface": "payment-reconciliation",
+      "semanticOwner": "Payments/Reconciliation",
+      "sourceOwner": "Payments/Reconciliation",
+      "authoritativeDrillThrough": "/dashboard/finance/reconciliation",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "signed_run_coverage",
+      "surface": "payment-reconciliation",
+      "semanticOwner": "Payments/Reconciliation",
+      "sourceOwner": "Payments/Reconciliation",
+      "authoritativeDrillThrough": "/dashboard/finance/reconciliation",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "median_resolution_time",
+      "surface": "payment-reconciliation",
+      "semanticOwner": "Payments/Reconciliation",
+      "sourceOwner": "Payments/Reconciliation",
+      "authoritativeDrillThrough": "/dashboard/finance/reconciliation",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "inventory_cash_exposure",
+      "surface": "stock-to-cash",
+      "semanticOwner": "Finance/Stock-to-Cash",
+      "sourceOwner": "Inventory valuation and movement",
+      "authoritativeDrillThrough": "/dashboard/finance/stock-to-cash",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "stock_to_cash_blockers",
+      "surface": "stock-to-cash",
+      "semanticOwner": "Finance/Stock-to-Cash",
+      "sourceOwner": "Stock-to-Cash composition; Inventory/Purchasing/Sales/Payments/Accounting own facts",
+      "authoritativeDrillThrough": "/dashboard/finance/stock-to-cash",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "working_capital_flow_coverage",
+      "surface": "stock-to-cash",
+      "semanticOwner": "Finance/Stock-to-Cash",
+      "sourceOwner": "Stock-to-Cash composition; Inventory/Purchasing/Sales/Payments/Accounting own facts",
+      "authoritativeDrillThrough": "/dashboard/finance/stock-to-cash",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "clients_needing_action",
+      "surface": "accountant-portfolio",
+      "semanticOwner": "Accounting/Accountant Access",
+      "sourceOwner": "Accounting/Accountant Access",
+      "authoritativeDrillThrough": "/dashboard/accounting/accountant-portfolio",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "critical_blocker_count",
+      "surface": "accountant-portfolio",
+      "semanticOwner": "Accounting/Accountant Access",
+      "sourceOwner": "Accounting/Accountant Access",
+      "authoritativeDrillThrough": "/dashboard/accounting/accountant-portfolio",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "close_ready_clients",
+      "surface": "accountant-portfolio",
+      "semanticOwner": "Accounting/Accountant Access",
+      "sourceOwner": "Accounting/Accountant Access",
+      "authoritativeDrillThrough": "/dashboard/accounting/accountant-portfolio",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "stale_evidence_clients",
+      "surface": "accountant-portfolio",
+      "semanticOwner": "Accounting/Accountant Access",
+      "sourceOwner": "Accounting/Accountant Access",
+      "authoritativeDrillThrough": "/dashboard/accounting/accountant-portfolio",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "expiring_mandates",
+      "surface": "accountant-portfolio",
+      "semanticOwner": "Accounting/Accountant Access",
+      "sourceOwner": "Accounting/Accountant Access",
+      "authoritativeDrillThrough": "/dashboard/accounting/accountant-portfolio",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "delivery_rate",
+      "surface": "referral-funnel",
+      "semanticOwner": "Growth Analytics/Referrals",
+      "sourceOwner": "Growth Analytics/Referrals; invitation/delivery/access services own events",
+      "authoritativeDrillThrough": "/dashboard/analytics/referrals",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "acceptance_rate",
+      "surface": "referral-funnel",
+      "semanticOwner": "Growth Analytics/Referrals",
+      "sourceOwner": "Growth Analytics/Referrals; invitation/delivery/access services own events",
+      "authoritativeDrillThrough": "/dashboard/analytics/referrals",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "activation_rate",
+      "surface": "referral-funnel",
+      "semanticOwner": "Growth Analytics/Referrals",
+      "sourceOwner": "Growth Analytics/Referrals; invitation/delivery/access services own events",
+      "authoritativeDrillThrough": "/dashboard/analytics/referrals",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "time_to_first_trusted_value",
+      "surface": "referral-funnel",
+      "semanticOwner": "Growth Analytics/Referrals",
+      "sourceOwner": "Growth Analytics/Referrals; invitation/delivery/access services own events",
+      "authoritativeDrillThrough": "/dashboard/analytics/referrals",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "retained_activation",
+      "surface": "referral-funnel",
+      "semanticOwner": "Growth Analytics/Referrals",
+      "sourceOwner": "Growth Analytics/Referrals; invitation/delivery/access services own events",
+      "authoritativeDrillThrough": "/dashboard/analytics/referrals",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "bounded_k_factor",
+      "surface": "referral-funnel",
+      "semanticOwner": "Growth Analytics/Referrals",
+      "sourceOwner": "Growth Analytics/Referrals; invitation/delivery/access services own events",
+      "authoritativeDrillThrough": "/dashboard/analytics/referrals",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "open_commitment",
+      "surface": "purchase-order-analytics",
+      "semanticOwner": "Purchasing/Purchase Order Analytics",
+      "sourceOwner": "Purchasing/AP",
+      "authoritativeDrillThrough": "/dashboard/purchase-orders/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "overdue_commitment",
+      "surface": "purchase-order-analytics",
+      "semanticOwner": "Purchasing/Purchase Order Analytics",
+      "sourceOwner": "Purchasing/AP",
+      "authoritativeDrillThrough": "/dashboard/purchase-orders/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "acknowledgement_rate",
+      "surface": "purchase-order-analytics",
+      "semanticOwner": "Purchasing/Purchase Order Analytics",
+      "sourceOwner": "Purchasing/AP",
+      "authoritativeDrillThrough": "/dashboard/purchase-orders/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "delivery_evidence_coverage",
+      "surface": "purchase-order-analytics",
+      "semanticOwner": "Purchasing/Purchase Order Analytics",
+      "sourceOwner": "Purchasing/AP",
+      "authoritativeDrillThrough": "/dashboard/purchase-orders/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    },
+    {
+      "metric": "supplier_concentration",
+      "surface": "purchase-order-analytics",
+      "semanticOwner": "Purchasing/Purchase Order Analytics",
+      "sourceOwner": "Purchasing/AP",
+      "authoritativeDrillThrough": "/dashboard/purchase-orders/analytics",
+      "approvalStatus": "PENDING_OWNER_ACCEPTANCE"
+    }
+  ],
+  "ownershipStatus": "PROPOSED_DESIGN_PENDING_ACCOUNTABLE_ACCEPTANCE",
+  "scopeNote": "Presentation ownership for all 53 declared target KPI identifiers; these entries do not assert that future metric formulas or read models are implemented. P0-04 defines metric semantics; P0-06 verifies runtime access."
+}

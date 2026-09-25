@@ -1,7 +1,18 @@
 "use client"
 
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+
+import { RenderedDataTable } from "@/components/DataTableComponents/RenderedDataTable"
+
+import {
+  CanonicalTableBoundary,
+  createCanonicalTableQuery,
+  paymentReconciliationTableContract,
+} from "@/components/DataTableComponents"
+
 import { useLocale, useTranslations } from "next-intl"
-import { type CSSProperties, useMemo, useState } from "react"
+import { formatReconciliationAmount } from "./reconciliation-amount"
+import { type CSSProperties, useEffect, useMemo, useRef, useState } from "react"
 import type { LucideIcon } from "lucide-react"
 import {
   AlertTriangle,
@@ -33,12 +44,20 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
+import { PaymentSuspenseQueue } from "./PaymentSuspenseQueue"
+import { ReconciliationCertificateExportPanel } from "./ReconciliationCertificateExportPanel"
+import { ReconciliationCertificateHistory } from "./ReconciliationCertificateHistory"
+import { ReconciliationPreparationWorkbench } from "./ReconciliationPreparationWorkbench"
+import type { CertificateHistoryRun } from "@/services/reconciliation/reconciliation-certificate-history.contracts"
+import { ReconciliationSignReview, type SignedRunForExport } from "./ReconciliationSignReview"
+import type { ReconciliationCertificateExportCommand } from "@/services/reconciliation/reconciliation-certificate-export.contracts"
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
+import { usePermissions } from "@/hooks/usePermissions"
+import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
 import { cn } from "@/lib/utils"
 import { usePaymentReconciliationWorkbench } from "@/hooks/payments/usePaymentReconciliationWorkbench"
 import {
@@ -47,8 +66,6 @@ import {
   useManualMatchWorkflow,
   usePaymentReconciliationDashboard,
   useRunPaymentReconciliation,
-  useResolveSuspenseItem,
-  useSignReconciliationRun,
 } from "@/hooks/payments/usePaymentReconciliationDashboard"
 import type { PaymentReconciliationDashboardData } from "@/actions/payments/reconciliation.actions"
 import type {
@@ -187,7 +204,7 @@ function LoadingState() {
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
       <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4">
         <Skeleton className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
           {Array.from({ length: 5 }).map((_, index) => (
             <Skeleton key={index} className="h-32 rounded-lg bg-[var(--dash-surface-raised)]" />
           ))}
@@ -211,7 +228,6 @@ function trustSignalClass(tone: "success" | "warning" | "danger" | "info") {
 export function PaymentTrustBanner({
   dashboard,
   number,
-  money,
   formatDateTime,
 }: {
   dashboard: PaymentReconciliationDashboardData
@@ -220,6 +236,7 @@ export function PaymentTrustBanner({
   formatDateTime: (value: string | null | undefined) => string
 }) {
   const t = useTranslations("paymentReconciliationWorkbench")
+  const locale = useLocale()
   const signals: Array<{
     key: string
     label: string
@@ -253,7 +270,7 @@ export function PaymentTrustBanner({
       key: "openSuspense",
       label: t("trustBanner.openSuspense"),
       value: number(dashboard.summary.openSuspenseCount),
-      detail: dashboard.summary.openSuspenseAmount > 0 ? t("trustBanner.suspenseAmount", { amount: money(dashboard.summary.openSuspenseAmount) }) : undefined,
+      detail: dashboard.summary.openSuspenseByCurrency.map(value => `${formatReconciliationAmount(value.amount, locale)} ${value.currencyCode}`).join("; ") || undefined,
       icon: FileWarning,
       tone: dashboard.summary.openSuspenseCount > 0 ? "warning" : "success",
     },
@@ -353,7 +370,7 @@ function MetricCard({
   )
 }
 
-export default function PaymentReconciliationWorkbench() {
+export default function PaymentReconciliationWorkbench({ initialSignRunId }: { initialSignRunId?: string } = {}) {
   const t = useTranslations("paymentReconciliationWorkbench")
   const locale = useLocale()
   const notifications = useNotifications()
@@ -376,9 +393,16 @@ export default function PaymentReconciliationWorkbench() {
     [customRange.end, customRange.start, locationId, period],
   )
   const workbenchQuery = usePaymentReconciliationWorkbench(queryInput)
+  const canonicalFilters: Record<string, string[]> = {
+    ...(queryInput.locationId ? { locationId: [queryInput.locationId] } : {}),
+    period: [queryInput.period],
+    ...(queryInput.startDate && Number.isFinite(queryInput.startDate.getTime())
+      ? { startDate: [queryInput.startDate.toISOString()] } : {}),
+    ...(queryInput.endDate && Number.isFinite(queryInput.endDate.getTime())
+      ? { endDate: [queryInput.endDate.toISOString()] } : {}),
+  }
   const durableDashboardQuery = usePaymentReconciliationDashboard()
   const runReconciliation = useRunPaymentReconciliation()
-  const signReconciliation = useSignReconciliationRun()
   const exportCertificate = useExportReconciliationCertificate()
   const workbench = workbenchQuery.data
   const durableDashboard = durableDashboardQuery.data
@@ -446,7 +470,7 @@ export default function PaymentReconciliationWorkbench() {
   async function refreshWorkbench() {
     notifications.info(t("notifications.refreshTitle"), t("notifications.refreshMessage"), { category: "reconciliation" })
     try {
-      await workbenchQuery.refetch()
+      await Promise.all([workbenchQuery.refetch({ throwOnError: true }), durableDashboardQuery.refetch({ throwOnError: true })])
       notifications.success(t("notifications.refreshedTitle"), t("notifications.refreshedMessage"), { category: "reconciliation" })
     } catch (error) {
       notifications.error(
@@ -478,60 +502,32 @@ export default function PaymentReconciliationWorkbench() {
     }
   }
 
-  async function signDurableRun(runId: string) {
-    notifications.info(t("certification.notifications.signStartedTitle"), t("certification.notifications.signStartedMessage"), {
-      category: "reconciliation",
-    })
-    try {
-      await signReconciliation.mutateAsync({ runId })
-      notifications.success(t("certification.notifications.signCompleteTitle"), t("certification.notifications.signCompleteMessage"), {
-        category: "reconciliation",
-      })
-    } catch (error) {
-      notifications.error(
-        t("notifications.failedTitle"),
-        error instanceof Error ? error.message : t("notifications.failedMessage"),
-        { category: "reconciliation" },
-      )
-    }
-  }
-
-  async function exportDurableCertificate(runId: string) {
-    notifications.info(t("certification.notifications.exportStartedTitle"), t("certification.notifications.exportStartedMessage"), {
-      category: "reconciliation",
-    })
-    try {
-      const certificate = await exportCertificate.mutateAsync({ runId, fileType: "json" })
-      const blob = new Blob([certificate.content], { type: certificate.mimeType })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement("a")
-      link.href = url
-      link.download = certificate.fileName
-      link.click()
-      URL.revokeObjectURL(url)
-      notifications.success(t("certification.notifications.exportCompleteTitle"), t("certification.notifications.exportCompleteMessage"), {
-        category: "reconciliation",
-      })
-    } catch (error) {
-      notifications.error(
-        t("notifications.failedTitle"),
-        error instanceof Error ? error.message : t("notifications.failedMessage"),
-        { category: "reconciliation" },
-      )
-    }
+  function exportDurableCertificate(command: ReconciliationCertificateExportCommand) {
+    return exportCertificate.mutateAsync(command)
   }
 
   if (workbenchQuery.isLoading && !workbench) return <LoadingState />
 
   if (errorMessage && !workbench) {
-    return <DashboardErrorState error="Payment reconciliation workbench unavailable" reset={() => { void workbenchQuery.refetch() }} />
+    return <DashboardErrorState locale={locale === "fr" ? "fr" : "en"} error="Payment reconciliation workbench unavailable"
+      reset={(workbenchQuery.error as { code?: string })?.code === "FORBIDDEN" ? undefined : () => { void workbenchQuery.refetch() }} />
   }
 
+  const canonicalTableQuery = createCanonicalTableQuery(paymentReconciliationTableContract, {
+    filters: canonicalFilters,
+  })
+
   return (
+    <CanonicalTableBoundary
+      contract={paymentReconciliationTableContract}
+      locale={locale === "fr" ? "fr" : "en"}
+      query={canonicalTableQuery}
+      state={workbenchQuery.isFetching ? "refreshing" : workbench ? "ready" : "empty"}
+    >
     <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 text-[var(--dash-text)] sm:px-6 sm:py-6">
       <section className={cn(glassPanelClass, "p-4")}>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex min-w-0 flex-col gap-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]">
@@ -561,7 +557,7 @@ export default function PaymentReconciliationWorkbench() {
             ) : null}
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[190px_190px_auto] xl:min-w-[620px]">
+          <div className="grid min-w-0 gap-3 border-t border-[var(--dash-border-subtle)] pt-4 sm:grid-cols-2 lg:grid-cols-[220px_220px_auto]">
             <div>
               <div className={cn("mb-1 flex items-center gap-1.5 text-xs font-medium", mutedTextClass)}>
                 <MapPin className="h-3.5 w-3.5" />
@@ -633,6 +629,14 @@ export default function PaymentReconciliationWorkbench() {
         </Card>
       ) : null}
 
+      <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
+        { id: "reconciliation-evidence", label: t("certification.title") },
+        ...(workbench ? [
+          { id: "reconciliation-runs", label: t("sections.runs") },
+          { id: "reconciliation-alerts", label: t("sections.failureGroups") },
+          { id: "reconciliation-suspense", label: t("sections.suspense") },
+        ] : []),
+      ]} />
       {durableDashboard ? (
         <PaymentTrustBanner
           dashboard={durableDashboard}
@@ -642,25 +646,31 @@ export default function PaymentReconciliationWorkbench() {
         />
       ) : null}
 
-      <DurableEvidencePanel
-        dashboard={durableDashboard}
-        isLoading={durableDashboardQuery.isLoading}
-        error={durableDashboardQuery.error ? t("notifications.failedMessage") : null}
-        isRunning={runReconciliation.isPending}
-        isSigning={signReconciliation.isPending}
-        isExporting={exportCertificate.isPending}
-        onRun={runDurableReconciliation}
-        onSign={signDurableRun}
-        onExport={exportDurableCertificate}
-        money={money}
-        number={number}
-        formatDateTime={formatDateTime}
-        t={t}
-      />
+      <section id="reconciliation-evidence" className="min-w-0 scroll-mt-24">
+        <DurableEvidencePanel
+          initialSignRunId={initialSignRunId}
+          dashboard={durableDashboard}
+          isLoading={durableDashboardQuery.isLoading}
+          error={durableDashboardQuery.error ? t("notifications.failedMessage") : null}
+          isRunning={runReconciliation.isPending}
+          isExporting={exportCertificate.isPending}
+          onRun={runDurableReconciliation}
+          onExport={exportDurableCertificate}
+          onOpenPaymentProof={workbench ? (paymentTransactionId) => {
+            const subject = paymentTransactionProofSubject({ organizationId: workbench.organization.id, paymentTransactionId, label: t("proof.open"), unavailableReason: t("proof.unavailable") })
+            if (subject.available) void openProofSubject(subject)
+          } : undefined}
+          money={money}
+          number={number}
+          formatDateTime={formatDateTime}
+          t={t}
+        />
+
+      </section>
 
       {workbench ? (
         <>
-          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          <section className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
             <MetricCard title={t("metrics.activeRails")} value={number(workbench.summary.activeRailCount)} detail={t("details.activeRails", { count: workbench.summary.railCount })} icon={CreditCard} accent="brand" />
             <MetricCard title={t("metrics.cleanRuns")} value={number(workbench.summary.cleanRunCount)} detail={t("details.attentionRuns", { count: workbench.summary.attentionRunCount })} icon={ShieldCheck} accent={workbench.summary.criticalRunCount > 0 ? "warning" : "success"} />
             <MetricCard title={t("metrics.criticalFailures")} value={number(workbench.summary.criticalFailureCount)} detail={t("details.failures", { count: workbench.summary.failureCount })} icon={ShieldAlert} accent={workbench.summary.criticalFailureCount > 0 ? "danger" : "info"} />
@@ -668,7 +678,7 @@ export default function PaymentReconciliationWorkbench() {
             <MetricCard title={t("metrics.suspenseExposure")} value={money(workbench.summary.suspenseExposure)} detail={t("details.suspense", { count: workbench.summary.suspenseItemCount })} icon={FileWarning} accent={workbench.summary.suspenseExposure > 0 ? "warning" : "info"} />
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <section id="reconciliation-runs" className="grid min-w-0 scroll-mt-24 grid-cols-1 gap-4">
             <Card className={glassPanelClass}>
               <CardHeader className={cn(glassHeaderClass, "pb-3")}>
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -707,7 +717,7 @@ export default function PaymentReconciliationWorkbench() {
             </Card>
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-2">
+          <section id="reconciliation-alerts" className="grid min-w-0 scroll-mt-24 gap-4 2xl:grid-cols-2">
             <Card className={glassPanelClass}>
               <CardHeader className={cn(glassHeaderClass, "pb-3")}>
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -735,7 +745,7 @@ export default function PaymentReconciliationWorkbench() {
             </Card>
           </section>
 
-          <Card className={glassPanelClass}>
+          <Card id="reconciliation-suspense" className={cn(glassPanelClass, "min-w-0 scroll-mt-24")}>
             <CardHeader className={cn(glassHeaderClass, "pb-3")}>
               <CardTitle className="flex items-center gap-2 text-base">
                 <FileWarning className="h-4 w-4 text-[var(--dash-warning)]" />
@@ -764,38 +774,64 @@ export default function PaymentReconciliationWorkbench() {
       ) : null}
       </div>
     </main>
+    </CanonicalTableBoundary>
   )
 }
 
 function DurableEvidencePanel({
+  initialSignRunId,
   dashboard,
   isLoading,
   error,
   isRunning,
-  isSigning,
   isExporting,
   onRun,
-  onSign,
   onExport,
+  onOpenPaymentProof,
   money,
   number,
   formatDateTime,
   t,
 }: {
+  initialSignRunId?: string
   dashboard: PaymentReconciliationDashboardData | undefined
   isLoading: boolean
   error: string | null
   isRunning: boolean
-  isSigning: boolean
   isExporting: boolean
   onRun: (providerAccountId: string) => void
-  onSign: (runId: string) => void
-  onExport: (runId: string) => void
+  onExport: (command: ReconciliationCertificateExportCommand) => ReturnType<ReturnType<typeof useExportReconciliationCertificate>["mutateAsync"]>
+  onOpenPaymentProof?: (paymentTransactionId: string) => void
   money: (value: number | null | undefined) => string
   number: (value: number | null | undefined) => string
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>
 }) {
+  const locale = useLocale()
+  const [manualAmounts, setManualAmounts] = useState<Record<string, string>>({})
+  const manualWorkflow = useManualMatchWorkflow()
+  const authority = usePermissions()
+  const [exportRunId, setExportRunId] = useState<string | null>(null)
+  const [historicalExport, setHistoricalExport] = useState<{ organizationId: string; actorId: string; run: CertificateHistoryRun; request?: ReconciliationCertificateExportCommand } | null>(null)
+  const exportOpener = useRef<HTMLButtonElement | null>(null)
+  const [signRunId, setSignRunId] = useState<string | null>(null)
+  const [signedForExport, setSignedForExport] = useState<(SignedRunForExport & { organizationId: string; actorId: string }) | null>(null)
+  const signOpener = useRef<HTMLButtonElement | null>(null)
+  const signSelectionKey = dashboard ? `stoquify:sign-review-selection:v1:${dashboard.scope.organizationId}:${dashboard.scope.actorId}` : null
+  useEffect(() => {
+    setSignRunId(null)
+    if (!signSelectionKey) return
+    if (initialSignRunId) { setSignRunId(initialSignRunId); return }
+    try { const id = sessionStorage.getItem(signSelectionKey); if (id && id.length <= 191) setSignRunId(id) } catch { /* Pending request recovery remains scoped in the review. */ }
+  }, [signSelectionKey, initialSignRunId])
+  function openSign(id: string | null) {
+    if (id) signOpener.current = document.activeElement instanceof HTMLButtonElement ? document.activeElement : null
+    setSignRunId(id)
+    if (signSelectionKey) try { if (id) sessionStorage.setItem(signSelectionKey, id); else sessionStorage.removeItem(signSelectionKey) } catch { /* Optional selection only. */ }
+    if (!id) requestAnimationFrame(() => signOpener.current?.focus())
+  }
+  const exportScopeReady = authority.permissionState === "ready" && authority.user?.id === dashboard?.scope.actorId && authority.organizationId === dashboard?.scope.organizationId
+  const selectedHistory = historicalExport?.organizationId === dashboard?.scope.organizationId && historicalExport?.actorId === dashboard?.scope.actorId ? historicalExport : null
   if (isLoading && !dashboard) {
     return <Skeleton className="h-52 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
   }
@@ -805,7 +841,7 @@ function DurableEvidencePanel({
       <Card className={warningPanelClass}>
         <CardContent className="flex items-center gap-3 p-4">
           <AlertTriangle className="h-5 w-5" />
-          <span className="text-sm font-medium">{error}</span>
+          <span role="alert" className="text-sm font-medium">{error}</span>
         </CardContent>
       </Card>
     )
@@ -835,12 +871,12 @@ function DurableEvidencePanel({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
           <SummaryLine label={t("certification.summary.providerAccounts")} value={number(dashboard.summary.activeProviderAccountCount)} />
           <SummaryLine label={t("certification.summary.recentRuns")} value={number(dashboard.summary.recentRunCount)} />
           <SummaryLine label={t("certification.summary.readyForSignoff")} value={number(dashboard.summary.readyForSignoffCount)} />
           <SummaryLine label={t("certification.summary.openExceptions")} value={number(dashboard.summary.openExceptionCount)} />
-          <SummaryLine label={t("certification.summary.openSuspense")} value={money(dashboard.summary.openSuspenseAmount)} />
+          <SummaryLine label={t("certification.summary.openSuspense")} value={dashboard.summary.openSuspenseByCurrency.map(value => `${formatReconciliationAmount(value.amount, locale)} ${value.currencyCode}`).join("; ") || t("overviewScope.empty")} />
         </div>
 
         {dashboard.summary.closeBlockerCount > 0 ? (
@@ -852,7 +888,7 @@ function DurableEvidencePanel({
           </div>
         ) : null}
 
-        <div className="grid gap-3 xl:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-4">
           <StatementImportLane
             accounts={dashboard.providerAccounts}
             files={dashboard.statementFiles}
@@ -862,13 +898,17 @@ function DurableEvidencePanel({
           <ManualMatchLane
             candidates={dashboard.manualMatchCandidates}
             proposals={dashboard.manualMatchProposals}
-            money={money}
+            preparation={dashboard.manualMatchPreparation}
+            amounts={manualAmounts}
+            onAmountChange={(id, value) => setManualAmounts(current => ({ ...current, [id]: value }))}
+            workflow={manualWorkflow}
             formatDateTime={formatDateTime}
             t={t}
+            onOpenPaymentProof={onOpenPaymentProof}
           />
         </div>
 
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid min-w-0 grid-cols-1 gap-4">
           <div className="grid gap-3 lg:grid-cols-2">
             <div className="space-y-2">
               <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
@@ -939,12 +979,12 @@ function DurableEvidencePanel({
                           type="button"
                           variant="outline"
                           size="sm"
-                          disabled={isSigning}
-                          onClick={() => onSign(run.id)}
+                          disabled={!exportScopeReady || !authority.hasPermission("payments.reconciliation.sign") || !authority.hasPermission("payments.reconciliation.read")}
+                          onClick={() => openSign(run.id)}
                           className="dashboard-button-secondary rounded-lg"
                         >
                           <ShieldCheck className="h-4 w-4" />
-                          {t("certification.actions.sign")}
+                          {t("signReview.open")}
                         </Button>
                       ) : null}
                       {run.status === "SIGNED" ? (
@@ -953,7 +993,7 @@ function DurableEvidencePanel({
                           variant="outline"
                           size="sm"
                           disabled={isExporting}
-                          onClick={() => onExport(run.id)}
+                          onClick={event => { exportOpener.current = event.currentTarget; setSignedForExport(null); setHistoricalExport(null); setExportRunId(run.id) }}
                           className="dashboard-button-secondary rounded-lg"
                         >
                           <Download className="h-4 w-4" />
@@ -975,8 +1015,39 @@ function DurableEvidencePanel({
           </div>
         </div>
 
-        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <ReconciliationPreparationWorkbench
+          key={`preparation:${dashboard.scope.organizationId}:${dashboard.scope.actorId}`}
+          scope={dashboard.scope}
+          canRead={exportScopeReady && authority.hasPermission("payments.reconciliation.read")}
+          canReadPreparation={exportScopeReady && authority.hasPermission("payments.reconciliation.read") && authority.hasPermission("accounting.journal.read")}
+          canPrepare={exportScopeReady && authority.hasPermission("payments.reconciliation.read") && authority.hasPermission("accounting.journal.read") && authority.hasPermission("payments.reconciliation.run")}
+          onSign={openSign}
+          canSign={exportScopeReady && authority.hasPermission("payments.reconciliation.sign")}
+        />
+        {signRunId && exportScopeReady && <ReconciliationSignReview key={`${dashboard.scope.organizationId}:${dashboard.scope.actorId}:${signRunId}`} scope={dashboard.scope} runId={signRunId}
+          canSign={authority.hasPermission("payments.reconciliation.sign") && authority.hasPermission("payments.reconciliation.read")}
+          onClose={() => openSign(null)} onExport={run => { exportOpener.current = document.activeElement instanceof HTMLButtonElement ? document.activeElement : null; setHistoricalExport(null); setExportRunId(null); setSignedForExport({ ...run, ...dashboard.scope }) }} />}
+        <ReconciliationCertificateHistory
+          key={`history:${dashboard.scope.organizationId}:${dashboard.scope.actorId}`}
+          scope={dashboard.scope}
+          canRead={exportScopeReady && authority.hasPermission("payments.reconciliation.read")}
+          canExport={exportScopeReady && authority.hasPermission("payments.reconciliation.certificate.export")}
+          onReview={(run, request) => { exportOpener.current = document.activeElement instanceof HTMLButtonElement ? document.activeElement : null; setSignedForExport(null); setHistoricalExport({ ...dashboard.scope, run, request: request ? { ...request } : undefined }); setExportRunId(null) }}
+        />
+        <ReconciliationCertificateExportPanel
+          key={`${dashboard.scope.organizationId}:${dashboard.scope.actorId}`}
+          scope={dashboard.scope}
+          run={(signedForExport?.organizationId === dashboard.scope.organizationId && signedForExport?.actorId === dashboard.scope.actorId ? signedForExport : null) ?? selectedHistory?.run ?? dashboard.recentRuns.find(run => run.id === exportRunId) ?? null}
+          recoveryRequest={selectedHistory?.request}
+          canRead={exportScopeReady && authority.hasPermission("payments.reconciliation.read")}
+          canExport={exportScopeReady && authority.hasPermission("payments.reconciliation.certificate.export")}
+          onExport={onExport}
+          onClose={() => { setSignedForExport(null); setHistoricalExport(null); setExportRunId(null); requestAnimationFrame(() => exportOpener.current?.focus()) }}
+        />
+
+        <div className="grid min-w-0 grid-cols-1 gap-4">
           <DurableSuspensePostingQueue
+            scope={dashboard.scope}
             items={dashboard.suspenseQueue}
             money={money}
             formatDateTime={formatDateTime}
@@ -984,7 +1055,7 @@ function DurableEvidencePanel({
           />
           <DurableNotificationInbox
             notifications={dashboard.notificationQueue}
-            money={money}
+            scan={dashboard.alertScan}
             formatDateTime={formatDateTime}
             t={t}
           />
@@ -1142,58 +1213,106 @@ function StatementImportLane({
 function ManualMatchLane({
   candidates,
   proposals,
-  money,
+  preparation,
+  amounts,
+  onAmountChange,
+  workflow,
   formatDateTime,
   t,
+  onOpenPaymentProof,
 }: {
   candidates: PaymentReconciliationDashboardData["manualMatchCandidates"]
   proposals: PaymentReconciliationDashboardData["manualMatchProposals"]
-  money: (value: number | null | undefined) => string
+  preparation: PaymentReconciliationDashboardData["manualMatchPreparation"]
+  amounts: Record<string, string>
+  onAmountChange: (id: string, value: string) => void
+  workflow: ReturnType<typeof useManualMatchWorkflow>
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>
+  onOpenPaymentProof?: (paymentTransactionId: string) => void
 }) {
-  const notifications = useNotifications()
-  const workflow = useManualMatchWorkflow()
-  const [amounts, setAmounts] = useState<Record<string, string>>({})
+  const locale = useLocale()
+  const manualAmountFormatter = useMemo(() => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 }), [locale])
+  const decimalSeparator = useMemo(() => new Intl.NumberFormat(locale).formatToParts(1.1).find(part => part.type === "decimal")?.value ?? ".", [locale])
+  const manualMoney = (value: string | null, currencyCode: string | null) => {
+    const parts = typeof value === "string" ? /^(-?)(\d+)\.(\d{2})$/.exec(value) : null
+    if (!parts || !currencyCode) return t("common.notAvailable")
+    const integer = BigInt(parts[2]), signed = parts[1] ? integer === BigInt(0) ? -0 : -integer : integer
+    return `${manualAmountFormatter.format(signed)}${decimalSeparator}${parts[3]} ${currencyCode}`
+  }
+  const minorUnits = (value: string | null) => {
+    const parts = typeof value === "string" ? /^(\d+)(?:[.,](\d{1,2}))?$/.exec(value) : null
+    return parts ? BigInt(parts[1]) * BigInt(100) + BigInt((parts[2] ?? "").padEnd(2, "0")) : null
+  }
+  const { hasPermission, user, permissionState, refreshPermissions } = usePermissions()
+  const [feedback, setFeedback] = useState<{ error: boolean; text: string } | null>(null)
+  const [authProposalId, setAuthProposalId] = useState<string | null>(null)
+  const [verifying, setVerifying] = useState(false)
+  const writeAllowed = preparation?.writeAllowed === true
+  const hasProposalPermission = hasPermission("payments.reconciliation.match")
+  const hasApprovalPermission = hasPermission("payments.reconciliation.override")
+  const canPropose = permissionState === "ready" && hasProposalPermission && writeAllowed
 
   const candidateAmount = (candidate: PaymentReconciliationDashboardData["manualMatchCandidates"][number]) =>
-    amounts[candidate.exceptionId] ?? String(Math.min(candidate.internalAmount, candidate.externalAmount))
+    amounts[candidate.exceptionId] ?? (candidate.availableAmount?.replace(".", decimalSeparator) ?? "")
 
   async function propose(candidate: PaymentReconciliationDashboardData["manualMatchCandidates"][number]) {
+    setFeedback(null)
     try {
-      await workflow.propose.mutateAsync({
+      const result = await workflow.propose.mutateAsync({
         providerAccountId: candidate.providerAccountId,
         paymentTransactionId: candidate.paymentTransactionId,
         providerEventId: candidate.providerEventId ?? undefined,
-        statementLineId: candidate.statementLineId ?? undefined,
-        amountMatched: candidateAmount(candidate),
+        statementLineId: candidate.providerEventId ? undefined : candidate.statementLineId ?? undefined,
+        amountMatched: candidateAmount(candidate).replace(",", "."),
         currencyCode: candidate.currencyCode,
       })
-      notifications.success(t("manualMatch.notifications.proposedTitle"), t("manualMatch.notifications.proposedMessage"), {
-        category: "reconciliation",
-      })
+      const text = t(result.alreadyApplied ? "manualMatch.notifications.alreadyRecorded" : "manualMatch.notifications.proposedMessage")
+      setFeedback({ error: false, text })
     } catch (error) {
-      notifications.error(t("notifications.failedTitle"), error instanceof Error ? error.message : t("notifications.failedMessage"), {
-        category: "reconciliation",
-      })
+      setFeedback({ error: true, text: error instanceof Error ? error.message : t("manualMatch.recovery.unknown") })
     }
   }
 
-  async function approve(proposedMatchId: string) {
+  async function approve(proposal: PaymentReconciliationDashboardData["manualMatchProposals"][number]) {
+    if (!proposal.evidenceRevision) return
+    setFeedback(null)
     try {
-      await workflow.approve.mutateAsync({ proposedMatchId })
-      notifications.success(t("manualMatch.notifications.approvedTitle"), t("manualMatch.notifications.approvedMessage"), {
-        category: "reconciliation",
-      })
+      const result = await workflow.approve.mutateAsync({ proposedMatchId: proposal.id, expectedEvidenceRevision: proposal.evidenceRevision })
+      setAuthProposalId(null)
+      const text = t(result.alreadyApplied ? "manualMatch.notifications.alreadyRecorded" : "manualMatch.notifications.approvedMessage")
+      setFeedback({ error: false, text })
     } catch (error) {
-      notifications.error(t("notifications.failedTitle"), error instanceof Error ? error.message : t("notifications.failedMessage"), {
-        category: "reconciliation",
-      })
+      if (error && typeof error === "object" && "code" in error && error.code === "FRESH_AUTH_REQUIRED") setAuthProposalId(proposal.id)
+      setFeedback({ error: true, text: error instanceof Error ? error.message : t("manualMatch.recovery.unknown") })
     }
+  }
+
+  async function verifyAndApprove(form: HTMLFormElement, proposal: PaymentReconciliationDashboardData["manualMatchProposals"][number]) {
+    const password = String(new FormData(form).get("password") ?? "")
+    form.reset()
+    setVerifying(true)
+    try {
+      const result = await stepUpWithPasswordAction({ password })
+      if (!result.success) { setFeedback({ error: true, text: t("manualMatch.recovery.verifyFailed") }); return }
+      await approve(proposal)
+    } catch { setFeedback({ error: true, text: t("manualMatch.recovery.verifyFailed") }) }
+    finally { setVerifying(false) }
+  }
+
+  async function renew(proposal: PaymentReconciliationDashboardData["manualMatchProposals"][number]) {
+    if (!proposal.providerAccountId || !proposal.paymentTransactionId || !proposal.amountMatched) return
+    setFeedback(null)
+    try {
+      await workflow.propose.mutateAsync({ providerAccountId: proposal.providerAccountId, paymentTransactionId: proposal.paymentTransactionId,
+        providerEventId: proposal.providerEventId ?? undefined, statementLineId: proposal.statementLineId ?? undefined,
+        amountMatched: String(proposal.amountMatched), currencyCode: proposal.currencyCode, supersedesProposalId: proposal.id })
+      setFeedback({ error: false, text: t("manualMatch.notifications.renewed") })
+    } catch (error) { setFeedback({ error: true, text: error instanceof Error ? error.message : t("manualMatch.recovery.unknown") }) }
   }
 
   return (
-    <div className={cn(rowSurfaceClass, "space-y-3")}>
+    <div className={cn(rowSurfaceClass, "space-y-3")} data-testid="manual-match-lane">
       <div>
         <div className={cn("flex items-center gap-2 text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
           <UserCheck className="h-4 w-4 text-[var(--dash-warning)]" />
@@ -1201,40 +1320,58 @@ function ManualMatchLane({
         </div>
         <p className={cn("mt-1 text-xs leading-5", mutedTextClass)}>{t("manualMatch.description")}</p>
       </div>
+      {feedback && <p role={feedback.error ? "alert" : "status"} className={cn("text-sm", feedback.error ? "text-[var(--dash-warning)]" : mutedTextClass)}>{feedback.text}</p>}
+      {permissionState === "loading" && <p role="status" className={cn("text-xs", mutedTextClass)}>{t("manualMatch.recovery.accessLoading")}</p>}
+      {(permissionState === "error" || permissionState === "signed_out") && <div role="alert" className="space-y-2 text-sm text-[var(--dash-warning)]"><p>{t(permissionState === "signed_out" ? "manualMatch.recovery.sessionUnavailable" : "manualMatch.recovery.accessFailed")}</p>{permissionState === "error" ? <Button type="button" variant="outline" className="dashboard-button-secondary h-auto whitespace-normal" onClick={() => { void refreshPermissions() }}>{t("manualMatch.recovery.retryAccess")}</Button> : <Button asChild variant="outline" className="dashboard-button-secondary h-auto whitespace-normal"><a href={locale === "fr" ? "/fr/login-v2" : "/en/login-v2"} target="_blank" rel="noopener noreferrer">{t("manualMatch.recovery.signIn")}</a></Button>}</div>}
+      {permissionState === "ready" && !hasProposalPermission && <p className={cn("text-xs", mutedTextClass)}>{t("manualMatch.recovery.proposeDenied")}</p>}
+      {!writeAllowed && <p className={cn("text-xs", mutedTextClass)}>{t("manualMatch.moduleUnavailable")}</p>}
+      {preparation?.checkedAt && <p className={cn("text-xs", mutedTextClass)}>{t("manualMatch.checkedAt", { time: formatDateTime(preparation.checkedAt) })}</p>}
+      {preparation?.hasMore && <p className={cn("text-xs", mutedTextClass)}>{t("manualMatch.moreCandidates", { limit: preparation.limit })}</p>}
 
       {candidates.length === 0 ? (
         <EmptyState icon={CheckCircle2} label={t("manualMatch.emptyCandidates")} />
       ) : (
         <div className="space-y-2">
-          {candidates.slice(0, 4).map((candidate) => {
+          {candidates.map((candidate) => {
             const amount = candidateAmount(candidate)
-            const invalidAmount = !Number.isFinite(Number(amount)) || Number(amount) <= 0
+            const entered = minorUnits(amount), available = minorUnits(candidate.availableAmount)
+            const invalidAmount = entered === null || available === null || entered <= BigInt(0) || entered > available
+            const ready = candidate.eligibility === "READY"
+            const amountHelpId = `manual-amount-${candidate.exceptionId}`
             return (
-              <div key={candidate.exceptionId} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3">
+              <div key={candidate.exceptionId} data-manual-candidate={candidate.exceptionId} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-medium">{candidate.providerAccountName}</span>
-                      <Badge variant="outline" className={cn("shrink-0", severityClass(candidate.severity))}>{candidate.severity}</Badge>
-                      <Badge variant="outline" className={filterChipClass}>{candidate.exceptionType}</Badge>
+                      <span className="font-medium">{candidate.providerAccountName || t("common.notAvailable")}</span>
+                      <Badge variant="outline" className={cn("shrink-0", severityClass(candidate.severity))}>{t(`manualMatch.severity.${candidate.severity}`)}</Badge>
+                      <Badge variant="outline" className={filterChipClass}>{t(`manualMatch.exceptionTypes.${candidate.exceptionType}`)}</Badge>
                     </div>
                     <div className={cn("mt-2 grid gap-1 text-xs sm:grid-cols-2", mutedTextClass)}>
-                      <span>{t("manualMatch.internalEvidence", { reference: candidate.internalReference ?? t("common.notAvailable"), amount: money(candidate.internalAmount) })}</span>
-                      <span>{t("manualMatch.externalEvidence", { reference: candidate.externalReference ?? t("common.notAvailable"), amount: money(candidate.externalAmount) })}</span>
+                      <span>{t("manualMatch.internalEvidence", { reference: candidate.internalReference ?? t("common.notAvailable"), amount: manualMoney(candidate.internalAmount, candidate.currencyCode) })}</span>
+                      <span>{t("manualMatch.externalEvidence", { reference: candidate.externalReference ?? t("common.notAvailable"), amount: manualMoney(candidate.externalAmount, candidate.externalCurrencyCode) })}</span>
+                      <span>{t("manualMatch.internalRemaining", { amount: manualMoney(candidate.internalRemaining, candidate.currencyCode) })}</span>
+                      <span>{t("manualMatch.externalRemaining", { amount: manualMoney(candidate.externalRemaining, candidate.externalCurrencyCode) })}</span>
                     </div>
+                    <p id={amountHelpId} className={cn("mt-2 text-xs", !ready || invalidAmount ? "text-[var(--dash-warning)]" : mutedTextClass)}>
+                      {!ready ? t(`manualMatch.eligibility.${candidate.eligibility}`) : invalidAmount ? t("manualMatch.amountLimit", { amount: manualMoney(candidate.availableAmount, candidate.currencyCode) }) : t("manualMatch.availableAmount", { amount: manualMoney(candidate.availableAmount, candidate.currencyCode) })}
+                    </p>
                   </div>
-                  <div className="flex shrink-0 items-center gap-2">
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
                     <Input
                       inputMode="decimal"
                       value={amount}
-                      onChange={(event) => setAmounts((current) => ({ ...current, [candidate.exceptionId]: event.target.value }))}
+                      onChange={(event) => onAmountChange(candidate.exceptionId, event.target.value)}
                       aria-label={t("manualMatch.amountLabel")}
+                      aria-describedby={amountHelpId}
+                      aria-invalid={ready && invalidAmount}
+                      disabled={!canPropose || !ready}
                       className="dashboard-control h-9 w-28 rounded-lg text-right tabular-nums"
                     />
                     <Button
                       type="button"
                       size="sm"
-                      disabled={workflow.propose.isPending || invalidAmount}
+                      disabled={!canPropose || !ready || workflow.propose.isPending || invalidAmount}
                       onClick={() => { void propose(candidate) }}
                       className="dashboard-button-primary rounded-lg"
                     >
@@ -1255,27 +1392,54 @@ function ManualMatchLane({
           <p className={cn("mt-2 text-xs", mutedTextClass)}>{t("manualMatch.emptyApprovals")}</p>
         ) : (
           <div className="mt-2 space-y-2">
-            {proposals.slice(0, 4).map((proposal) => (
-              <div key={proposal.id} className="flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3 sm:flex-row sm:items-center sm:justify-between">
+            {proposals.map((proposal) => {
+              const proposedAmount = minorUnits(proposal.amountMatched)
+              const unavailable = permissionState !== "ready" ? t(permissionState === "loading" ? "manualMatch.recovery.accessLoading" : "manualMatch.recovery.accessFailed")
+                : !hasApprovalPermission ? t("manualMatch.recovery.approveDenied")
+                : !writeAllowed ? t("manualMatch.moduleUnavailable")
+                : !user?.id || user.id === proposal.matchedById ? t("manualMatch.recovery.independent")
+                  : !proposal.evidenceRevision || !proposal.evidenceSummary || proposedAmount === null || proposedAmount <= BigInt(0) ? t("manualMatch.recovery.legacy") : null
+              return (
+              <div key={proposal.id} data-manual-proposal={proposal.id} className="flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0">
                   <div className="font-medium">{proposal.providerAccountName ?? t("common.notAvailable")}</div>
                   <div className={cn("mt-1 text-xs", mutedTextClass)}>
-                    {t("manualMatch.proposalFacts", { id: compactId(proposal.id) ?? t("common.notAvailable"), amount: money(proposal.amountMatched), time: formatDateTime(proposal.createdAt) })}
+                    {t("manualMatch.proposalFacts", { id: compactId(proposal.id) ?? t("common.notAvailable"), amount: manualMoney(proposal.amountMatched, proposal.currencyCode), time: formatDateTime(proposal.createdAt) })}
                   </div>
+                  {proposal.evidenceSummary && <p className={cn("mt-1 text-xs", mutedTextClass)}>{t("manualMatch.reviewEvidence", {
+                    internal: proposal.evidenceSummary.internalAmount, external: proposal.evidenceSummary.externalAmount,
+                    currency: proposal.currencyCode, direction: t(`manualMatch.directions.${proposal.evidenceSummary.direction}`),
+                    source: t(`manualMatch.sources.${proposal.evidenceSummary.externalSource}`),
+                  })}</p>}
+                  {unavailable && <p className={cn("mt-1 text-xs", mutedTextClass)}>{unavailable}</p>}
+                  {proposal.paymentTransactionId && onOpenPaymentProof && <Button type="button" variant="ghost" size="sm" className="dashboard-button-secondary mt-2" onClick={() => onOpenPaymentProof(proposal.paymentTransactionId!)}>{t("proof.open")}</Button>}
+                  {canPropose && user?.id === proposal.matchedById && proposal.providerAccountId && proposal.paymentTransactionId && <div className="mt-2 space-y-1">
+                    <p className={cn("text-xs", mutedTextClass)}>{t("manualMatch.renewHint")}</p>
+                    <Button type="button" variant="outline" size="sm" disabled={workflow.propose.isPending || proposedAmount === null || proposedAmount <= BigInt(0)} onClick={() => { void renew(proposal) }} className="dashboard-button-secondary">{t("manualMatch.actions.renew")}</Button>
+                  </div>}
                 </div>
+                {authProposalId === proposal.id && !unavailable ? (
+                  <form className="flex flex-col gap-2 sm:max-w-xs" onSubmit={event => { event.preventDefault(); void verifyAndApprove(event.currentTarget, proposal) }}>
+                    <label className="text-xs">{t("manualMatch.passwordLabel")}
+                      <Input name="password" type="password" autoComplete="current-password" required autoFocus className="dashboard-control mt-1" />
+                    </label>
+                    <Button type="submit" disabled={verifying || workflow.approve.isPending} className="dashboard-button-primary">{t("manualMatch.actions.verifyAndApprove")}</Button>
+                  </form>
+                ) : (
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  disabled={workflow.approve.isPending}
-                  onClick={() => { void approve(proposal.id) }}
+                  disabled={Boolean(unavailable) || workflow.approve.isPending || verifying}
+                  onClick={() => { void approve(proposal) }}
                   className="dashboard-button-secondary shrink-0 rounded-lg"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   {t("manualMatch.actions.approve")}
                 </Button>
+                )}
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>
@@ -1283,219 +1447,66 @@ function ManualMatchLane({
   )
 }
 
-function DurableSuspensePostingQueue({
-  items,
-  money,
-  formatDateTime,
-  t,
-}: {
+function DurableSuspensePostingQueue(props: {
+  scope: PaymentReconciliationDashboardData["scope"]
   items: PaymentReconciliationDashboardData["suspenseQueue"]
   money: (value: number | null | undefined) => string
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>
 }) {
-  const notifications = useNotifications()
-  const workflow = useResolveSuspenseItem()
-  const [drafts, setDrafts] = useState<Record<string, { targetType: string; reason: string }>>({})
-
-  const draftFor = (item: PaymentReconciliationDashboardData["suspenseQueue"][number]) =>
-    drafts[item.id] ?? { targetType: item.type || "OTHER", reason: item.resolutionNotes ?? "" }
-
-  const setDraft = (itemId: string, patch: Partial<{ targetType: string; reason: string }>) => {
-    setDrafts((current) => ({
-      ...current,
-      [itemId]: {
-        targetType: patch.targetType ?? current[itemId]?.targetType ?? "OTHER",
-        reason: patch.reason ?? current[itemId]?.reason ?? "",
-      },
-    }))
-  }
-
-  async function assign(itemId: string) {
-    try {
-      await workflow.assign.mutateAsync({ suspenseItemId: itemId })
-      notifications.success(t("suspenseWorkflow.notifications.assignedTitle"), t("suspenseWorkflow.notifications.assignedMessage"), {
-        category: "reconciliation",
-      })
-    } catch (error) {
-      notifications.error(t("notifications.failedTitle"), error instanceof Error ? error.message : t("notifications.failedMessage"), {
-        category: "reconciliation",
-      })
-    }
-  }
-
-  async function propose(item: PaymentReconciliationDashboardData["suspenseQueue"][number]) {
-    const draft = draftFor(item)
-    try {
-      await workflow.propose.mutateAsync({
-        suspenseItemId: item.id,
-        targetType: draft.targetType,
-        reason: draft.reason,
-        suspenseLedgerAccountId: item.suspenseLedgerAccountId,
-      })
-      notifications.success(t("suspenseWorkflow.notifications.proposedTitle"), t("suspenseWorkflow.notifications.proposedMessage"), {
-        category: "reconciliation",
-      })
-    } catch (error) {
-      notifications.error(t("notifications.failedTitle"), error instanceof Error ? error.message : t("notifications.failedMessage"), {
-        category: "reconciliation",
-      })
-    }
-  }
-
-  async function approve(itemId: string) {
-    try {
-      await workflow.approve.mutateAsync({ suspenseItemId: itemId })
-      notifications.success(t("suspenseWorkflow.notifications.approvedTitle"), t("suspenseWorkflow.notifications.approvedMessage"), {
-        category: "reconciliation",
-      })
-    } catch (error) {
-      notifications.error(t("notifications.failedTitle"), error instanceof Error ? error.message : t("notifications.failedMessage"), {
-        category: "reconciliation",
-      })
-    }
-  }
-
-  return (
-    <div className={cn(rowSurfaceClass, "space-y-3")}>
-      <div>
-        <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
-          {t("suspenseWorkflow.title")}
-        </div>
-        <p className={cn("mt-1 text-xs leading-5", mutedTextClass)}>{t("suspenseWorkflow.description")}</p>
-      </div>
-
-      {items.length === 0 ? (
-        <EmptyState icon={ShieldCheck} label={t("suspenseWorkflow.empty")} />
-      ) : (
-        <div className="space-y-3">
-          {items.slice(0, 6).map((item) => {
-            const draft = draftFor(item)
-            const canApprove = item.status === "RESOLUTION_PROPOSED"
-            const isBusy = workflow.assign.isPending || workflow.propose.isPending || workflow.approve.isPending
-
-            return (
-              <div key={item.id} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="outline" className={filterChipClass}>{item.status}</Badge>
-                      <Badge variant="outline" className={cn("shrink-0", severityClass(item.severity))}>{item.severity}</Badge>
-                      {item.ownerId ? <Badge variant="outline" className={filterChipClass}>{t("suspenseWorkflow.assigned")}</Badge> : null}
-                    </div>
-                    <div className="mt-2 font-semibold tabular-nums">{money(item.amount)}</div>
-                    <div className={cn("mt-1 text-xs", mutedTextClass)}>
-                      {item.type} / {formatDateTime(item.slaDeadline)}
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={isBusy}
-                      onClick={() => assign(item.id)}
-                      className="dashboard-button-secondary rounded-lg"
-                    >
-                      <UserCheck className="h-4 w-4" />
-                      {t("suspenseWorkflow.actions.assign")}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={isBusy || !canApprove}
-                      onClick={() => approve(item.id)}
-                      className="dashboard-button-secondary rounded-lg"
-                    >
-                      <ShieldCheck className="h-4 w-4" />
-                      {t("suspenseWorkflow.actions.approve")}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="mt-3 grid gap-2 md:grid-cols-[220px_minmax(0,1fr)_auto]">
-                  <Select value={draft.targetType} onValueChange={(value) => setDraft(item.id, { targetType: value })}>
-                    <SelectTrigger className="dashboard-control h-10 rounded-lg">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                      {suspenseTypeOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {t(`durableSuspenseTypes.${option}`)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Textarea
-                    value={draft.reason}
-                    onChange={(event) => setDraft(item.id, { reason: event.target.value })}
-                    placeholder={t("suspenseWorkflow.reasonPlaceholder")}
-                    className="dashboard-control min-h-10 rounded-lg text-sm"
-                  />
-                  <Button
-                    type="button"
-                    disabled={isBusy || draft.reason.trim().length < 3}
-                    onClick={() => propose(item)}
-                    className="dashboard-button-primary h-10 rounded-lg"
-                  >
-                    <Send className="h-4 w-4" />
-                    {t("suspenseWorkflow.actions.propose")}
-                  </Button>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
+  return <PaymentSuspenseQueue {...props} typeOptions={suspenseTypeOptions} />
 }
 
 function DurableNotificationInbox({
   notifications,
-  money,
+  scan,
   formatDateTime,
   t,
 }: {
   notifications: PaymentReconciliationDashboardData["notificationQueue"]
-  money: (value: number | null | undefined) => string
+  scan: PaymentReconciliationDashboardData["alertScan"]
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>
 }) {
+  const locale = useLocale()
   return (
-    <div className={cn(rowSurfaceClass, "space-y-3")}>
+    <section aria-label={t("inbox.title")} className={cn(rowSurfaceClass, "space-y-3")}>
       <div>
         <div className={cn("text-xs font-semibold uppercase tracking-normal", faintTextClass)}>
           {t("inbox.title")}
         </div>
         <p className={cn("mt-1 text-xs leading-5", mutedTextClass)}>{t("inbox.description")}</p>
       </div>
+      <div role="status" className={cn("rounded-lg border border-[var(--dash-border-subtle)] p-3 text-xs", scan?.state === "FAILED" ? "text-[var(--dash-warning)]" : mutedTextClass)}>
+        <p>{t(`inbox.scan.states.${scan?.state ?? "NONE"}`)}</p>
+        <p className="mt-1">{t("inbox.scan.description")}</p>
+        {scan && <p className="mt-1">{t("inbox.scan.detail", { started: formatDateTime(scan.startedAt), updated: formatDateTime(scan.updatedAt), examined: scan.examined, created: scan.created })}</p>}
+      </div>
       {notifications.length === 0 ? (
         <EmptyState icon={CheckCircle2} label={t("inbox.empty")} />
       ) : (
         <div className="space-y-2">
-          {notifications.slice(0, 8).map((item) => (
+          {notifications.map((item) => (
             <div key={item.id} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.32)] p-3">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline" className={cn("shrink-0", severityClass(item.severity ?? "MEDIUM"))}>
-                  {item.severity ?? "INFO"}
+                  {t(`inbox.severities.${["LOW", "MEDIUM", "HIGH", "CRITICAL"].includes(item.severity ?? "") ? item.severity : "INFO"}`)}
                 </Badge>
                 <Badge variant="outline" className={filterChipClass}>
-                  {item.status}
+                  {t("inbox.recorded")}
                 </Badge>
               </div>
               <div className="mt-2 text-sm font-medium">{t(`inbox.types.${notificationTypeKey(item.type)}`)}</div>
               <div className={cn("mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs", mutedTextClass)}>
                 <span>{formatDateTime(item.createdAt)}</span>
                 {item.dueAt ? <span>{t("inbox.due", { time: formatDateTime(item.dueAt) })}</span> : null}
-                {item.amount ? <span>{money(Number(item.amount))}</span> : null}
+                {item.amount !== null ? <span>{/^-?\d+\.\d{2}$/.test(item.amount) && item.currency ? `${formatReconciliationAmount(item.amount, locale)} ${item.currency}` : t("inbox.amountUnavailable")}</span> : null}
               </div>
             </div>
           ))}
         </div>
       )}
-    </div>
+    </section>
   )
 }
 
@@ -1521,56 +1532,77 @@ function RunSummaryTable({
   formatDateTime: (value: string | null | undefined) => string
   t: ReturnType<typeof useTranslations>
 }) {
+  const locale = useLocale() === "fr" ? "fr" : "en"
   return (
-    <ScrollArea className="w-full">
-      <table className="dashboard-table-base w-full min-w-[920px] text-sm">
-        <thead className={cn("text-left text-xs", mutedTextClass)}>
-          <tr className="border-b border-[var(--dash-border-subtle)]">
-            <th className="py-2 pr-3 font-medium">{t("table.rail")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.status")}</th>
-            <th className="py-2 pr-3 text-right font-medium">{t("table.payments")}</th>
-            <th className="py-2 pr-3 text-right font-medium">{t("table.matched")}</th>
-            <th className="py-2 pr-3 text-right font-medium">{t("table.failures")}</th>
-            <th className="py-2 pr-3 text-right font-medium">{t("table.suspense")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.lastSeen")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {runs.map((run) => (
-            <tr key={run.rail} className="border-b border-[var(--dash-border-subtle)] last:border-0 hover:bg-[rgba(37,57,67,0.28)]">
-              <td className="py-3 pr-3">
-                <div className="font-medium">{t(`rails.${run.rail}`)}</div>
-                <div className={cn("mt-1 max-w-[260px] truncate text-xs", mutedTextClass)}>{run.settlementReference}</div>
-              </td>
-              <td className="py-3 pr-3">
-                <Badge variant="outline" className={cn("shrink-0", statusClass(run.status))}>
-                  {run.status === "clean" ? <CheckCircle2 className="mr-1 h-3 w-3" /> : run.status === "critical" ? <AlertTriangle className="mr-1 h-3 w-3" /> : null}
-                  {t(`statuses.${run.status}`)}
-                </Badge>
-              </td>
-              <td className="py-3 pr-3 text-right tabular-nums">
-                <div className="font-semibold">{number(run.paymentCount)}</div>
-                <div className={cn("text-xs", mutedTextClass)}>{money(run.totalAmount)}</div>
-              </td>
-              <td className="py-3 pr-3 text-right tabular-nums">
-                <div className="font-semibold">{number(run.matchedCount)}</div>
-                <div className={cn("text-xs", mutedTextClass)}>{money(run.matchedGrossAmount)}</div>
-              </td>
-              <td className="py-3 pr-3 text-right tabular-nums">
-                <div className={cn("font-semibold", run.criticalFailureCount > 0 && "text-[var(--dash-danger)]")}>{number(run.failureCount)}</div>
-                <div className={cn("text-xs", mutedTextClass)}>{t("table.criticalCount", { count: run.criticalFailureCount })}</div>
-              </td>
-              <td className="py-3 pr-3 text-right tabular-nums">
-                <div className="font-semibold">{money(run.suspenseAmount)}</div>
-                <div className={cn("text-xs", mutedTextClass)}>{number(run.suspenseCount)}</div>
-              </td>
-              <td className={cn("py-3 pr-3 text-xs", mutedTextClass)}>{formatDateTime(run.lastPaymentAt)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    <RenderedDataTable
+      className="p-0"
+      tableClassName="min-w-[920px]"
+      locale={locale}
+      caption={t("sections.runs")}
+      columns={[
+        { label: t("table.rail") },
+        { label: t("table.status") },
+        { label: t("table.payments"), className: "text-right" },
+        { label: t("table.matched"), className: "text-right" },
+        { label: t("table.failures"), className: "text-right" },
+        { label: t("table.suspense"), className: "text-right" },
+        { label: t("table.lastSeen") },
+      ]}
+      rows={runs.map((run) => {
+        return {
+          id: run.rail,
+          searchText: [
+            t("rails." + run.rail),
+            t("statuses." + run.status),
+            run.settlementReference,
+            number(run.paymentCount),
+            money(run.totalAmount),
+            number(run.matchedCount),
+            money(run.matchedGrossAmount),
+            number(run.failureCount),
+            money(run.suspenseAmount),
+            formatDateTime(run.lastPaymentAt),
+          ].join(" "),
+          cells: [
+            <div key="0">
+              <div className="font-medium">{t(`rails.${run.rail}`)}</div>
+              <div className={cn("mt-1 max-w-[260px] truncate text-xs", mutedTextClass)}>{run.settlementReference}</div>
+            </div>,
+            <div key="1">
+              <Badge variant="outline" className={cn("shrink-0", statusClass(run.status))}>
+                {run.status === "clean" ? (
+                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                ) : run.status === "critical" ? (
+                  <AlertTriangle className="mr-1 h-3 w-3" />
+                ) : null}
+                {t(`statuses.${run.status}`)}
+              </Badge>
+            </div>,
+            <div key="2" className="text-right tabular-nums">
+              <div className="font-semibold">{number(run.paymentCount)}</div>
+              <div className={cn("text-xs", mutedTextClass)}>{money(run.totalAmount)}</div>
+            </div>,
+            <div key="3" className="text-right tabular-nums">
+              <div className="font-semibold">{number(run.matchedCount)}</div>
+              <div className={cn("text-xs", mutedTextClass)}>{money(run.matchedGrossAmount)}</div>
+            </div>,
+            <div key="4" className="text-right tabular-nums">
+              <div className={cn("font-semibold", run.criticalFailureCount > 0 && "text-[var(--dash-danger)]")}>
+                {number(run.failureCount)}
+              </div>
+              <div className={cn("text-xs", mutedTextClass)}>{t("table.criticalCount", { count: run.criticalFailureCount })}</div>
+            </div>,
+            <div key="5" className="text-right tabular-nums">
+              <div className="font-semibold">{money(run.suspenseAmount)}</div>
+              <div className={cn("text-xs", mutedTextClass)}>{number(run.suspenseCount)}</div>
+            </div>,
+            <div key="6" className={cn("text-xs", mutedTextClass)}>
+              {formatDateTime(run.lastPaymentAt)}
+            </div>,
+          ],
+        }
+      })}
+    />
   )
 }
 
@@ -1686,79 +1718,101 @@ function SuspenseFailures({
   onProofOpenChange: (open: boolean) => void
   onOpenProofSubject: (subject: AvailableProofSubject) => void
 }) {
-  if (failures.length === 0) {
-    return <EmptyState icon={CheckCircle2} label={t("empty.suspense")} />
-  }
+  const locale = useLocale() === "fr" ? "fr" : "en"
 
   return (
-    <ScrollArea className="w-full">
-      <table className="dashboard-table-base w-full min-w-[1120px] text-sm">
-        <thead className={cn("text-left text-xs", mutedTextClass)}>
-          <tr className="border-b border-[var(--dash-border-subtle)]">
-            <th className="py-2 pr-3 font-medium">{t("table.failure")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.rail")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.reference")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.counterparty")}</th>
-            <th className="py-2 pr-3 text-right font-medium">{t("table.amount")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.suspenseType")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.time")}</th>
-            <th className="py-2 pr-3 font-medium">{t("table.proof")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {failures.slice(0, 25).map((failure) => {
-            const proofSubject = paymentTransactionProofSubject({
-              organizationId,
-              paymentTransactionId: failure.paymentTransactionId,
-              label: t("proof.open"),
-              unavailableReason: t("proof.unavailable"),
-            })
-            const isActiveProof = proofSubject.available && activeProofSubjectId === proofSubject.subjectId
-
-            return (
-            <tr key={failure.id} className="border-b border-[var(--dash-border-subtle)] last:border-0 hover:bg-[rgba(37,57,67,0.28)]">
-              <td className="py-3 pr-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge variant="outline" className={cn("shrink-0", severityClass(failure.severity))}>
-                    {t(`severity.${failure.severity}`)}
-                  </Badge>
-                  <span className="font-medium">{t(`failureTypes.${failure.type}`)}</span>
-                </div>
-                <div className={cn("mt-1 line-clamp-2 text-xs", mutedTextClass)}>{failure.message}</div>
-              </td>
-              <td className="py-3 pr-3">{t(`rails.${failure.rail}`)}</td>
-              <td className="py-3 pr-3">
-                <div className="font-mono text-xs">{failure.providerReference ?? t("common.notAvailable")}</div>
-                <div className={cn("mt-1 text-xs", mutedTextClass)}>{failure.paymentNumber ?? failure.paymentId ?? t("common.notAvailable")}</div>
-              </td>
-              <td className="py-3 pr-3">{failure.counterparty}</td>
-              <td className="py-3 pr-3 text-right font-semibold tabular-nums">{money(failure.amount)}</td>
-              <td className="py-3 pr-3">
-                <Badge variant="outline" className="rounded-lg border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]">
-                  {failure.suspenseAccountHint} / {t(`suspenseTypes.${failure.suspenseType}`)}
+    <RenderedDataTable
+      className="p-0"
+      tableClassName="min-w-[1120px]"
+      locale={locale}
+      caption={t("sections.suspense")}
+      emptyMessage={t("empty.suspense")}
+      columns={[
+        { label: t("table.failure") },
+        { label: t("table.rail") },
+        { label: t("table.reference") },
+        { label: t("table.counterparty") },
+        { label: t("table.amount"), className: "text-right" },
+        { label: t("table.suspenseType") },
+        { label: t("table.time") },
+        { label: t("table.proof") },
+      ]}
+      rows={failures.map((failure) => {
+        const proofSubject = paymentTransactionProofSubject({
+          organizationId,
+          paymentTransactionId: failure.paymentTransactionId,
+          label: t("proof.open"),
+          unavailableReason: t("proof.unavailable"),
+        })
+        const isActiveProof = proofSubject.available && activeProofSubjectId === proofSubject.subjectId
+        return {
+          id: failure.id,
+          searchText: [
+            t("failureTypes." + failure.type),
+            t("severity." + failure.severity),
+            failure.message,
+            t("rails." + failure.rail),
+            failure.providerReference,
+            failure.paymentNumber ?? failure.paymentId,
+            failure.counterparty,
+            money(failure.amount),
+            failure.suspenseAccountHint,
+            t("suspenseTypes." + failure.suspenseType),
+            formatDateTime(failure.occurredAt),
+          ].join(" "),
+          cells: [
+            <div key="0">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className={cn("shrink-0", severityClass(failure.severity))}>
+                  {t(`severity.${failure.severity}`)}
                 </Badge>
-              </td>
-              <td className={cn("py-3 pr-3 text-xs", mutedTextClass)}>{formatDateTime(failure.occurredAt)}</td>
-              <td className="py-3 pr-3">
-                <BIProofDrawerHost
-                  subject={proofSubject}
-                  proofTrail={isActiveProof ? proofTrail : null}
-                  open={isActiveProof && proofOpen}
-                  onOpenChange={onProofOpenChange}
-                  onOpenSubject={onOpenProofSubject}
-                  loadingLabel={t("proof.loading")}
-                  isLoading={proofSubject.available && proofLoadingSubjectId === proofSubject.subjectId}
-                  error={isActiveProof ? proofError : null}
-                  className="h-9"
-                />
-              </td>
-            </tr>
-            )
-          })}
-        </tbody>
-      </table>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+                <span className="font-medium">{t(`failureTypes.${failure.type}`)}</span>
+              </div>
+              <div className={cn("mt-1 line-clamp-2 text-xs", mutedTextClass)}>{failure.message}</div>
+            </div>,
+            <div key="1">
+              {t(`rails.${failure.rail}`)}
+            </div>,
+            <div key="2">
+              <div className="font-mono text-xs">{failure.providerReference ?? t("common.notAvailable")}</div>
+              <div className={cn("mt-1 text-xs", mutedTextClass)}>
+                {failure.paymentNumber ?? failure.paymentId ?? t("common.notAvailable")}
+              </div>
+            </div>,
+            <div key="3">
+              {failure.counterparty}
+            </div>,
+            <div key="4" className="text-right font-semibold tabular-nums">
+              {money(failure.amount)}
+            </div>,
+            <div key="5">
+              <Badge
+                variant="outline"
+                className="rounded-lg border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]"
+              >
+                {failure.suspenseAccountHint} / {t(`suspenseTypes.${failure.suspenseType}`)}
+              </Badge>
+            </div>,
+            <div key="6" className={cn("text-xs", mutedTextClass)}>
+              {formatDateTime(failure.occurredAt)}
+            </div>,
+            <div key="7">
+              <BIProofDrawerHost
+                subject={proofSubject}
+                proofTrail={isActiveProof ? proofTrail : null}
+                open={isActiveProof && proofOpen}
+                onOpenChange={onProofOpenChange}
+                onOpenSubject={onOpenProofSubject}
+                loadingLabel={t("proof.loading")}
+                isLoading={proofSubject.available && proofLoadingSubjectId === proofSubject.subjectId}
+                error={isActiveProof ? proofError : null}
+                className="h-9"
+              />
+            </div>,
+          ],
+        }
+      })}
+    />
   )
 }
 

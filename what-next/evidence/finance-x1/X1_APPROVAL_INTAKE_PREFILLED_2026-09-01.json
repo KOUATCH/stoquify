@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "classification": "PREFILLED_APPROVAL_INTAKE_NOT_YET_EFFECTIVE",
+  "status": "AWAITING_HUMAN_DECISIONS",
+  "generatedAt": "2026-09-01T15:04:04.297Z",
+  "validityDaysProposed": 30,
+  "sourceBindings": {
+    "readinessReport": {
+      "path": "what-next/evidence/finance-x1/x1-approval-automation-readiness-2026-08-31.json",
+      "sha256": "312e483e946e22c5078b100649f19a903b5be60ba41ce894db393f4f5cf3f38a"
+    },
+    "contractManifest": {
+      "uri": "repository://stoquify/docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+      "path": "docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+      "sha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4"
+    },
+    "localAuthenticatedBaseline": {
+      "path": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/manifest.local-simulation.json",
+      "sha256": "4d540d077479567c22ed6a485f029b6ab1cffb5e31250c7870c7dc047e69c256",
+      "runId": "LOCAL-X1-20260901144339",
+      "artifactCount": 42,
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false
+    }
+  },
+  "tenantScope": {
+    "database": "stoquify_replay_next_20260830",
+    "authorizedFixtureTenantId": "rds_org_001",
+    "organizationName": "Wilkinson - Feeney 001",
+    "tradeName": "Stoquify",
+    "countryCode": "CM",
+    "currency": "XAF",
+    "timezone": "Africa/Douala",
+    "defaultLocale": "EN",
+    "foreignIsolationProbeTenantId": "rds_org_002",
+    "foreignIsolationProbeOrganizationName": "McDermott, Greenholt and Johnson 002"
+  },
+  "personas": {
+    "productApproverCandidate": {
+      "name": "Kouatchoua Mark",
+      "email": "product.approver.rds-org001@stockflow.test",
+      "userId": "rds_org_001_compliance_user_product_approver",
+      "roleCode": "product_approver",
+      "roleId": "rds_org_001_compliance_role_product_approver",
+      "permissionCount": 32,
+      "formalAuthorityVerified": false
+    },
+    "evidenceAuthorizerCandidate": {
+      "name": "Yonga Springfield",
+      "email": "security.owner.rds-org001@stockflow.test",
+      "userId": "rds_org_001_compliance_user_security_owner",
+      "roleCode": "security_owner",
+      "roleId": "rds_org_001_compliance_role_security_owner",
+      "permissionCount": 5,
+      "formalAuthorityVerified": false
+    },
+    "evidencePersona": {
+      "name": "Carine Manga",
+      "email": "external.accountant.rds-org001@stockflow.test",
+      "userId": "rds_org_001_compliance_user_external_accountant",
+      "roleCode": "external_accountant",
+      "roleId": "rds_org_001_compliance_role_external_accountant",
+      "permissionCount": 24,
+      "authenticatedLocalFixtureVerified": true
+    }
+  },
+  "productBudgetApproval": {
+    "status": "PENDING_HUMAN_DECISION",
+    "budgetContractVersion": 1,
+    "scope": "X1-finance-accounting-performance-budgets",
+    "proposedApproverUserId": "rds_org_001_compliance_user_product_approver",
+    "requiredApproverRole": "product_approver",
+    "budgets": [
+      {
+        "id": "bounded-client-sort-filter-p75",
+        "target": "Interaction response under 100 ms at p75 test hardware"
+      },
+      {
+        "id": "server-filter-sort-loading",
+        "target": "Loading indication under 150 ms"
+      },
+      {
+        "id": "server-filter-sort-result-p75",
+        "target": "Useful result under 1,000 ms at p75"
+      },
+      {
+        "id": "page-navigation-p75",
+        "target": "Useful rows under 750 ms at p75 after cached shell"
+      },
+      {
+        "id": "bulk-action-acknowledgement",
+        "target": "Immediate job receipt with progress and partial result available"
+      },
+      {
+        "id": "preference-view-hydration",
+        "target": "No visible column-layout flash after initial shell"
+      },
+      {
+        "id": "browser-row-dom",
+        "target": "Bounded by pagination or proven virtualization strategy"
+      }
+    ],
+    "decision": null,
+    "approvalReference": null,
+    "approvedAt": null,
+    "signatureReference": null
+  },
+  "evidenceAuthorization": {
+    "status": "PENDING_HUMAN_DECISION",
+    "environment": "non-production",
+    "proposedAuthorizerUserId": "rds_org_001_compliance_user_security_owner",
+    "authorizedFixtureTenantId": "rds_org_001",
+    "foreignIsolationProbeTenantId": "rds_org_002",
+    "evidencePersonaUserId": "rds_org_001_compliance_user_external_accountant",
+    "evidencePersonaRole": "external_accountant",
+    "applicationOrigin": "http://127.0.0.1:3000",
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "viewports": [
+      "desktop",
+      "tablet",
+      "mobile"
+    ],
+    "routes": [
+      "/dashboard/finance/receivables/history",
+      "/dashboard/finance/payables",
+      "/dashboard/finance/cash-flow",
+      "/dashboard/accounting/journals",
+      "/dashboard/accounting/reports/trial-balance",
+      "/dashboard/accounting/reports/financial-statements",
+      "/dashboard/accounting/accountant-portal"
+    ],
+    "readOnly": true,
+    "redactionRequired": true,
+    "decision": null,
+    "credentialApprovalReference": null,
+    "seededDataApprovalReference": null,
+    "approvedAt": null,
+    "signatureReference": null
+  },
+  "remainingHumanInputs": [
+    {
+      "field": "productBudgetApproval.decision",
+      "requiredValue": "APPROVE, REJECT, or REVISE",
+      "reason": "Automation cannot choose the product decision."
+    },
+    {
+      "field": "productBudgetApproval.approvalReference",
+      "requiredValue": "Immutable approval record ID",
+      "reason": "Only an authoritative approval register can issue it."
+    },
+    {
+      "field": "productBudgetApproval.approvedAt",
+      "requiredValue": "Signed ISO-8601 decision timestamp",
+      "reason": "It must be generated when the approver acts."
+    },
+    {
+      "field": "productBudgetApproval.signatureReference",
+      "requiredValue": "Verifiable signature or approval-event reference",
+      "reason": "A database role is not a signature."
+    },
+    {
+      "field": "evidenceAuthorization.decision",
+      "requiredValue": "APPROVE, REJECT, or REVISE",
+      "reason": "Automation cannot infer security authorization."
+    },
+    {
+      "field": "evidenceAuthorization.credentialApprovalReference",
+      "requiredValue": "Immutable credential-use approval record ID",
+      "reason": "The local credential preparation record is not control-owner approval."
+    },
+    {
+      "field": "evidenceAuthorization.seededDataApprovalReference",
+      "requiredValue": "Immutable seeded-data authorization record ID",
+      "reason": "Database existence does not authorize evidence use."
+    },
+    {
+      "field": "evidenceAuthorization.approvedAt",
+      "requiredValue": "Signed ISO-8601 decision timestamp",
+      "reason": "A fresh evidence run must occur after this timestamp."
+    },
+    {
+      "field": "evidenceAuthorization.signatureReference",
+      "requiredValue": "Verifiable signature or approval-event reference",
+      "reason": "Automation cannot sign for the security/control owner."
+    }
+  ],
+  "automationAfterHumanCompletion": {
+    "updateEvidenceManifestTo": "approved-awaiting-evidence",
+    "generateFreshRunId": true,
+    "requireCaptureAfterLatestApprovalTimestamp": true,
+    "rerunAuthenticatedMatrix": true,
+    "expectedArtifactCount": 42,
+    "aggregateAndHash": true,
+    "certificationClaimedBeforeReview": false
+  }
+}

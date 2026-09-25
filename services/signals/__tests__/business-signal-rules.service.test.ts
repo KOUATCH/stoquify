@@ -2,6 +2,7 @@ import type {
   BranchOperatingMetrics,
   CloseReadinessMetrics,
   InventoryLossMetrics,
+  InventoryCashMetrics,
   PaymentTruthMetrics,
   SnapshotResult,
   TenantOperatingMetrics,
@@ -13,6 +14,29 @@ import {
 } from "../business-signal-rules.service";
 
 describe("Kontava business signal rules", () => {
+  it.each([0, 1, 100])("does not infer dead stock from a quiet period with %s adjustments/transfers", activity => {
+    const source = tenantOperatingSnapshot()
+    const inventory: SnapshotResult<InventoryCashMetrics> = {
+      ...source, kind: "inventory.cash", sourceModules: ["inventory"],
+      metrics: { ...source.metrics.inventoryCash, trackedItemCount: 1, inventoryLevelCount: 1, inventoryValue: 2_000_000, periodTransactionCount: 0, periodAdjustmentCount: activity, periodTransferCount: activity },
+    }
+    expect(buildBusinessSignalsFromSnapshots({ organizationId: "org-1", snapshots: [inventory], now: source.generatedAt })).toEqual([])
+    const signals = buildBusinessSignalsFromSnapshots({ organizationId: "org-1", snapshots: [{ ...inventory, metrics: { ...inventory.metrics, zeroStockLevelCount: 1 } }], now: source.generatedAt })
+    expect(signals).toHaveLength(1)
+    expect(signals[0]).toMatchObject({ signalType: "stockout_risk", requiredPermission: "inventory.items.read", actionPath: "/dashboard/inventory/items", sourceHash: inventory.sourceHash })
+  })
+  it.each([undefined, null, 0])("does not infer receiving delay from pending orders without a positive overdue count (%s)", overduePurchaseOrderCount => {
+    for (const snapshot of [tenantOperatingSnapshot({ pendingPurchaseOrderCount: 99, overduePurchaseOrderCount }), branchOperatingSnapshot({ pendingPurchaseOrderCount: 99, overduePurchaseOrderCount })]) {
+      expect(buildBusinessSignalsFromSnapshots({ organizationId: "org-1", snapshots: [snapshot], now: snapshot.generatedAt }).filter(signal => signal.signalType === "purchase_order_receiving_delay")).toEqual([])
+    }
+  })
+  it("bases receiving severity on overdue counts and retains source evidence", () => {
+    for (const snapshot of [tenantOperatingSnapshot({ pendingPurchaseOrderCount: 99, overduePurchaseOrderCount: 1 }), branchOperatingSnapshot({ pendingPurchaseOrderCount: 99, overduePurchaseOrderCount: 1 })]) {
+      const signal = buildBusinessSignalsFromSnapshots({ organizationId: "org-1", snapshots: [snapshot], now: snapshot.generatedAt }).find(value => value.signalType === "purchase_order_receiving_delay")!
+      expect(signal).toMatchObject({ severity: "medium", sourceHash: snapshot.sourceHash, payload: { pendingPurchaseOrderCount: 99, overduePurchaseOrderCount: 1 } })
+      expect(signal.detail).toBe("1 pending purchase order(s) have passed their recorded expected delivery time.")
+    }
+  })
   it("dedupes repeated facts by stable key and keeps the strongest signal", () => {
     const signals = buildBusinessSignalsFromFacts(
       [
@@ -152,6 +176,7 @@ describe("Kontava business signal rules", () => {
           signalType: "close_blocker",
           severity: "critical",
           requiredPermission: "accounting.close.read",
+          actionPath: "/dashboard/accounting/close",
         }),
       ]),
     );
@@ -248,7 +273,8 @@ describe("Kontava business signal rules", () => {
       subjectId: "active-employee-balance",
       severity: "high",
       actionPath: "/dashboard/payroll/payments",
-      requiredPermission: "payroll.payments.reconcile",
+      requiredPermission: "payments.reconciliation.read",
+      additionalRequiredPermissions: ["payroll.command.read"],
       payload: expect.objectContaining({
         activeEmployeeBalanceCaseCount: 3,
         employeeBalanceOutstandingAmount: 600000,
@@ -313,7 +339,8 @@ describe("Kontava business signal rules", () => {
       severity: "high",
       evidenceGrade: "blocked",
       actionPath: "/dashboard/payroll/payments",
-      requiredPermission: "payroll.payments.reconcile",
+      requiredPermission: "payments.reconciliation.read",
+      additionalRequiredPermissions: ["payroll.command.read"],
       blockers: [expect.objectContaining({ gate: "payroll_finance_forecast" })],
       payload: expect.objectContaining({
         blockerCodes: ["PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING"],
@@ -739,3 +766,17 @@ function payrollForecastMetrics(
     ...overrides,
   };
 }
+
+
+it.each([
+  ["PAYROLL_FORECAST_DECLARATION_EVIDENCE_MISSING", "/dashboard/payroll/declarations", "payroll.command.read"],
+  ["PAYROLL_FORECAST_PAYMENT_EVIDENCE_MISSING", "/dashboard/payroll/payments", "payments.reconciliation.read"],
+  ["PAYROLL_FORECAST_PROVIDER_EVIDENCE_MISSING", "/dashboard/payroll/payments", "payments.reconciliation.read"],
+  ["PAYROLL_FORECAST_REGISTER_EVIDENCE_MISSING", "/dashboard/payroll/register", "payroll.reports.read"],
+])("links %s to the current destination read contract", (code, actionPath, requiredPermission) => {
+  const source = tenantOperatingSnapshot({ approvedOrPaidPayrollRunCount: 0, payrollFinanceForecast: payrollForecastMetrics({ authoritative: false, blockerCodes: [code] }) })
+  const signal = buildBusinessSignalsFromSnapshots({ organizationId: "org-1", snapshots: [source], now: source.generatedAt }).find(item => item.subjectType === "payroll.forecast")!
+  expect(signal).toMatchObject({ actionPath, requiredPermission, additionalRequiredPermissions: ["payroll.command.read"] })
+  const { payrollRouteByRoute } = require("@/app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access")
+  expect(payrollRouteByRoute[actionPath].permissions).toContain(requiredPermission)
+})

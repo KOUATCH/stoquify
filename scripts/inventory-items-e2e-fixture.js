@@ -238,6 +238,15 @@ async function hashPassword(password) {
 async function cleanupInventoryItemsFixture(prisma) {
   assertLocalFixtureAllowed()
 
+  // Delete only this fixture's provider objects, never unrelated account files.
+  const pictures = await prisma.pictureAsset.findMany({ where: { organizationId: { in: [ORGANIZATION_ID, FOREIGN_ORGANIZATION_ID] }, status: { not: "deleted" } }, select: { id: true } })
+  if (pictures.length) {
+    const { UTApi } = require("uploadthing/server")
+    const result = await new UTApi({ logLevel: "None" }).deleteFiles(pictures.map(picture => picture.id), { keyType: "customId" })
+    if (!result.success) throw new Error("Fixture picture cleanup failed; retry cleanup before removing metadata")
+  }
+  await prisma.pictureAsset.deleteMany({ where: { organizationId: { in: [ORGANIZATION_ID, FOREIGN_ORGANIZATION_ID] } } })
+
   await prisma.organization.deleteMany({
     where: {
       id: { in: [ORGANIZATION_ID, FOREIGN_ORGANIZATION_ID] },

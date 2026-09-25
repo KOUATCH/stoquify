@@ -1,0 +1,35 @@
+{
+  "mode": "prepare",
+  "attempt": "1b614c6f",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "organizationId": "org_modules_legacy_en_desktop",
+  "startedAt": "2026-09-05T17:23:03.689Z",
+  "sourcesBefore": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "e1acb966d1ab94e3e9c44e151a14db2c3ca26120aeded0b9c13bbd3221087d41",
+    "services/purchase-order/purchase-order.service.ts": "2dfd6a121b171b17b5cce93ca694e8bf46d3f9ead8158e032fdd53811cbb3495",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "5298914a883468cb6946e0b014fae20de9d087fbb7b07945d4162fecf1d2f34a",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "messages/en.json": "2ace6fd20e92e92cb0c6848840e80c0b334d7c10b6bc437dbd71c06d7ae2375a",
+    "messages/fr.json": "c6e39abc132313292cf137ff624ed0f86b8f18e6a67b617338029813cc636599",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [],
+  "blockedExternalOrigins": [],
+  "fatal": "Existing purchasing grant required; runner never creates grants",
+  "sourcesAfter": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "e1acb966d1ab94e3e9c44e151a14db2c3ca26120aeded0b9c13bbd3221087d41",
+    "services/purchase-order/purchase-order.service.ts": "2dfd6a121b171b17b5cce93ca694e8bf46d3f9ead8158e032fdd53811cbb3495",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "5298914a883468cb6946e0b014fae20de9d087fbb7b07945d4162fecf1d2f34a",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "messages/en.json": "2ace6fd20e92e92cb0c6848840e80c0b334d7c10b6bc437dbd71c06d7ae2375a",
+    "messages/fr.json": "c6e39abc132313292cf137ff624ed0f86b8f18e6a67b617338029813cc636599",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverHash": "9ba403ab0b18af2ab4beb30f7974026c055c1844152377b45b0ccbede65348b7",
+  "completedAt": "2026-09-05T17:23:04.241Z",
+  "passed": 0,
+  "failed": 1
+}

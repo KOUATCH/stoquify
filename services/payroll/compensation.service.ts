@@ -435,7 +435,7 @@ async function recordCompensationEvent(
     actorId?: string | null
     eventType: string
     idempotencyKey: string
-    sourceType: string
+    sourceEntityType: string
     sourceId: string
     payload: Record<string, unknown>
     documentHash?: string | null
@@ -450,7 +450,7 @@ async function recordCompensationEvent(
     idempotencyKey: input.idempotencyKey,
     payload: input.payload,
     actorId: input.actorId ?? undefined,
-    sourceType: input.sourceType,
+    sourceEntityType: input.sourceEntityType,
     sourceId: input.sourceId,
     documentHash: input.documentHash ?? undefined,
     metadata: input.metadata,
@@ -847,7 +847,7 @@ export async function upsertPayrollRubrique(
       actorId: parsed.actorId,
       eventType,
       idempotencyKey: parsed.idempotencyKey ?? `${eventType}:${parsed.organizationId}:${code}`,
-      sourceType: "PAYROLL_RUBRIQUE",
+      sourceEntityType: "PAYROLL_RUBRIQUE",
       sourceId: rubrique.id,
       payload: {
         rubriqueId: rubrique.id,
@@ -955,7 +955,7 @@ export async function assignEmployeeRubrique(
         parsed.organizationId,
         assignment.id,
       ].join(":"),
-      sourceType: "PAYROLL_RUBRIQUE_ASSIGNMENT",
+      sourceEntityType: "PAYROLL_RUBRIQUE_ASSIGNMENT",
       sourceId: assignment.id,
       documentHash: parsed.evidenceDocumentHash,
       payload: {
@@ -1106,7 +1106,7 @@ export async function approveEmployeeRubriqueAssignment(
         parsed.organizationId,
         approved.id,
       ].join(":"),
-      sourceType: "PAYROLL_RUBRIQUE_ASSIGNMENT",
+      sourceEntityType: "PAYROLL_RUBRIQUE_ASSIGNMENT",
       sourceId: approved.id,
       documentHash: parsed.approvalEvidenceHash,
       payload: {
@@ -1246,7 +1246,7 @@ export async function requestSalaryChange(
       actorId: parsed.actorId,
       eventType: "payroll.salary_change.requested",
       idempotencyKey: parsed.idempotencyKey ?? `payroll-salary-change-request:${parsed.organizationId}:${salaryChange.id}`,
-      sourceType: "PAYROLL_SALARY_CHANGE",
+      sourceEntityType: "PAYROLL_SALARY_CHANGE",
       sourceId: salaryChange.id,
       documentHash: parsed.evidenceDocumentHash,
       payload: salaryChangePayload(salaryChange, "requested"),
@@ -1327,7 +1327,7 @@ export async function approveSalaryChange(
       actorId: parsed.actorId,
       eventType: "payroll.salary_change.approved",
       idempotencyKey: parsed.idempotencyKey ?? `payroll-salary-change-approve:${parsed.organizationId}:${approved.id}`,
-      sourceType: "PAYROLL_SALARY_CHANGE",
+      sourceEntityType: "PAYROLL_SALARY_CHANGE",
       sourceId: approved.id,
       documentHash: parsed.approvalEvidenceHash,
       payload: salaryChangePayload(approved, "approved"),
@@ -1392,7 +1392,7 @@ export async function rejectSalaryChange(
       actorId: parsed.actorId,
       eventType: "payroll.salary_change.rejected",
       idempotencyKey: parsed.idempotencyKey ?? `payroll-salary-change-reject:${parsed.organizationId}:${rejected.id}`,
-      sourceType: "PAYROLL_SALARY_CHANGE",
+      sourceEntityType: "PAYROLL_SALARY_CHANGE",
       sourceId: rejected.id,
       payload: salaryChangePayload(rejected, "rejected"),
       metadata: {
@@ -1512,7 +1512,7 @@ export async function applyApprovedSalaryChange(
       actorId: parsed.actorId,
       eventType: "payroll.salary_change.applied",
       idempotencyKey: parsed.idempotencyKey ?? `payroll-salary-change-apply:${parsed.organizationId}:${applied.id}`,
-      sourceType: "PAYROLL_SALARY_CHANGE",
+      sourceEntityType: "PAYROLL_SALARY_CHANGE",
       sourceId: applied.id,
       documentHash: existing.approvalEvidenceHash,
       payload: {

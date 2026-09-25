@@ -1,0 +1,110 @@
+{
+  "run": "fe856e5e-db8",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T12:56:20.390Z",
+  "sourcesBefore": {
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/users/user-deactivation-input.ts": "05608dcd80012423167e6794f3fb1177f35d005d13d19df408b9d12aab01b47b",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "actions/users/deleteUser.ts": "9da69cb55c5a83bad6c4b2eb0cec1a33d6e61839e65c860a093105f980eb64d4",
+    "actions/users/getOrgUsers.ts": "fbf600c4f408f935b817fe73e09a8ced9c8fa28275508d2cf3ebfb3d07dfa716",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "d0acd9b750a709995bd8225d34ed51f6971219b789271932fdc756df348ee6e3",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "3607d28919ccf258624dfa20bf02bddbb293e4d0b0d68a1a6023ff0fc804c838",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "9546d4d1bbffd87ae8186b426e8ffba637eb532287ccb8a99ff524df9f70d5a1",
+    "components/settings/UserDeactivation.tsx": "1bd3b52af32d8fd767d5059e6e0551df20cd82fa09c478656f0f18bb4dfde2df",
+    "components/settings/user-directory-copy.ts": "285611a1d96f3038f45e676d633d91e8871894262b7cb3f578ea155e69c051c3",
+    "lib/security/rbac-permissions.ts": "986f09b3f63ad522ef4a9e803fc96ff0d7b07a295c785cc6fb70ce3b23df02d5",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-member-reader-fe856e5e-db8.png",
+        "en-member-review-mobile-fe856e5e-db8.png",
+        "en-member-review-desktop-fe856e5e-db8.png",
+        "en-member-receipt-fe856e5e-db8.png",
+        "en-member-retained-member-fe856e5e-db8.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 10875,
+      "readerCannotDeactivate": true,
+      "deactivationReceiptMs": 2812,
+      "cachedSessionStillPresent": true,
+      "newPasswordSignInStatus": 403,
+      "newPasswordSignInRejected": true,
+      "actualPasswordStepUp": true,
+      "explicitResubmission": true,
+      "sessionsRevoked": 1,
+      "retainedRoles": 1,
+      "deactivationAudits": 1,
+      "revokedSessionRejected": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "keyboardFocusReturn": true
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-member-reader-fe856e5e-db8.png",
+        "fr-member-review-mobile-fe856e5e-db8.png",
+        "fr-member-review-desktop-fe856e5e-db8.png",
+        "fr-member-receipt-fe856e5e-db8.png",
+        "fr-member-retained-member-fe856e5e-db8.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 6607,
+      "readerCannotDeactivate": true,
+      "deactivationReceiptMs": 4781,
+      "cachedSessionStillPresent": true,
+      "newPasswordSignInStatus": 403,
+      "newPasswordSignInRejected": true,
+      "actualPasswordStepUp": true,
+      "explicitResubmission": true,
+      "sessionsRevoked": 1,
+      "retainedRoles": 1,
+      "deactivationAudits": 1,
+      "revokedSessionRejected": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "keyboardFocusReturn": true
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Only fresh synthetic member accounts are deactivated. Existing administrators and scoped directory readers are reused without changing their grants or credentials.",
+    "No email, migration, original member deactivation, production action or external call.",
+    "Keyboard, responsive and reduced-motion browser evidence is not native screen-reader certification.",
+    "Default cached get-session display may retain old identity for five minutes. Fresh session checks and password sign-in are tested separately. Broad cache/provider-hook changes were rejected and remain unapplied."
+  ],
+  "originalAuthorityBefore": "4edb347c13d83656f947c502b6dd2891379b3013979065a6ef82f23ae4a50303",
+  "originalAuthorityAfter": "4edb347c13d83656f947c502b6dd2891379b3013979065a6ef82f23ae4a50303",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T12:58:22.632Z",
+  "sourcesAfter": {
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/users/user-deactivation-input.ts": "05608dcd80012423167e6794f3fb1177f35d005d13d19df408b9d12aab01b47b",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "actions/users/deleteUser.ts": "9da69cb55c5a83bad6c4b2eb0cec1a33d6e61839e65c860a093105f980eb64d4",
+    "actions/users/getOrgUsers.ts": "fbf600c4f408f935b817fe73e09a8ced9c8fa28275508d2cf3ebfb3d07dfa716",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "d0acd9b750a709995bd8225d34ed51f6971219b789271932fdc756df348ee6e3",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "3607d28919ccf258624dfa20bf02bddbb293e4d0b0d68a1a6023ff0fc804c838",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "9546d4d1bbffd87ae8186b426e8ffba637eb532287ccb8a99ff524df9f70d5a1",
+    "components/settings/UserDeactivation.tsx": "1bd3b52af32d8fd767d5059e6e0551df20cd82fa09c478656f0f18bb4dfde2df",
+    "components/settings/user-directory-copy.ts": "285611a1d96f3038f45e676d633d91e8871894262b7cb3f578ea155e69c051c3",
+    "lib/security/rbac-permissions.ts": "986f09b3f63ad522ef4a9e803fc96ff0d7b07a295c785cc6fb70ce3b23df02d5",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267"
+  },
+  "sourceStable": true,
+  "driverSha256": "0e28c4f329ce6201ac1dcb560f3e22da2da4368c4c1236f488ba204daa6bdc4e",
+  "passed": 2,
+  "failed": 0
+}

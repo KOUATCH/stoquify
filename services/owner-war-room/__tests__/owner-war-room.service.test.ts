@@ -88,6 +88,12 @@ import {
 const generatedAt = "2026-06-20T10:00:00.000Z"
 
 describe("owner war room service", () => {
+  it("does not turn an unavailable currency total into zero cash risk", () => {
+    const data = composeOwnerWarRoomData({ organizationId: "org-1", organizationName: "Owned", generatedAt, snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot({ openSuspenseAmount: null, openSuspenseCount: 2 }), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() }, actionQueue: actionQueue(), moduleControl: moduleControl({ wouldBlockCount: 0, dependencyGapCount: 0 }) })
+    expect(data.cards.find(card => card.id === "cash_at_risk")).toMatchObject({ value: null, tone: "danger" })
+    expect(data.morningBrief.headlineMetrics.cashAtRisk).toBeNull()
+    expect(data.morningBrief.commandBrief.summary).toContain("total unavailable")
+  })
   beforeEach(() => {
     jest.clearAllMocks()
   })

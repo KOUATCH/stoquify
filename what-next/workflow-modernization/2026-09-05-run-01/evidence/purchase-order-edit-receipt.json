@@ -1,0 +1,750 @@
+{
+  "recordedAt": "2026-09-07T13:23:03.511Z",
+  "source": {
+    "branch": "codex/migration-control-plane-release-2026-08-29",
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "dirtyEntries": 694,
+    "hashes": {
+      "services/purchase-order/purchase-order.service.ts": "af336a52624a3b0bfd11d5776f796b85b555786aa30e57aeec32ce03a56ec91b",
+      "services/purchase-order/purchase-order.schemas.ts": "66665cbe749324de4775a5e062e65ed5db34701aab91d71cde09dd5457488b9b",
+      "services/purchase-order/purchase-order-edit-record.ts": "320e8a461d4b0385a1b5cd527b21e95b7dd91f17940ff5279585bdf8c47a3938",
+      "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+      "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+      "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "afb08213aa5a8f56165f1cd3331aba221ac733689462da543d299b3369b05631",
+      "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+      "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+      "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+      "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+      "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+      "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+      "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+      "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+      "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+      "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+      "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+      "messages/en.json": "0fdcbbb7345aefc1965a4a86c1818a4752146ef507388fb6a6a4024fcc52f8c5",
+      "messages/fr.json": "12ed23a1a4674862538c062c59d22c80437c5de12b6ed24d42576faade7f1597",
+      "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+      "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+      "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+      "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+      "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+      "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+      "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+      "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+      "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+      "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+      "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+      "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "45f9e64907823a6ca1b354ddde55268b862e93e7164b4af209905d151e2be1b9",
+      "components/purchase-orders/purchase-order-edit-draft.ts": "31b7504818f11424200ec015c9a122b620b178a43a8526f355682dc1ba4c04d2",
+      "components/purchase-orders/purchase-order-edit-model.ts": "9a24a0a36c6146db2a65334ba5c31729f15c9cd63eff3bf423f65e2000adc024",
+      "hooks/useRecentPurchaseOrderQueries.ts": "242cee7d2ef4de6062a9c4fb5ee5e615236af17b35de953a97cd5add676a52e6",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "d7c4a98b98e9d4383abeabc5967551ba5c8c9d9e8a8f4f27c26a9bdb46037306",
+      "types/purchase-orders-system-types.ts": "b19ef47ff30b1e263f8fea518077ada09183d6b0f35f58b84176d2ac9d2a9dd8",
+      "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx": "352c8c0680f3e05fc1576d24c3705c2f85c0a8565e1891718580d7950b920e50",
+      "services/purchase-order/__tests__/purchase-order.service.test.ts": "ef3f0d5eb40641381f283145736e7934aaf2f7a1194bfce4cd2a25bb1e215bce",
+      "services/purchase-order/__tests__/purchase-order-capabilities.test.ts": "52efb94129997493844e5656f256b56eef5579f6c0e1121a3c7065098f98a211",
+      "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts": "e7eb5896b7e7933018f9aef622274fba9666a9bd54e3210dec4fa0852e3c6b11",
+      "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "b1a987358c074d966b45cbcf9da283e13f0f8538b707e1c61ddce17e3467b20e",
+      "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts": "5a3151a3c8c3ea59b0232e3da077cf1d4b43bfcbc4b76e97c6f69043ef653878",
+      "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts": "a11ab9a15199ff319781eb3b77102d492e699e37d6c940ef54ceedd39d037326",
+      "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+      "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+      "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+      "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+      "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+      "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+      "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+      "services/_shared/action-errors.ts": "4cbfb642bddb1472c256ddf2ad952fe713982d91c872022f87730c05db89f2e6"
+    }
+  },
+  "filesChanged": [
+    "services/purchase-order/purchase-order-edit-record.ts",
+    "services/purchase-order/purchase-order.schemas.ts",
+    "services/purchase-order/purchase-order.service.ts",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx",
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx",
+    "components/purchase-orders/purchase-order-edit-model.ts",
+    "components/purchase-orders/purchase-order-edit-draft.ts",
+    "types/purchase-orders-system-types.ts",
+    "messages/en.json",
+    "messages/fr.json",
+    "services/purchase-order/__tests__/purchase-order.service.test.ts",
+    "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+    "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+    "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts",
+    "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts"
+  ],
+  "workflows": [
+    "PA-002",
+    "PA-006"
+  ],
+  "completeWorkflowVerified": false,
+  "paths": {
+    "baseline": "evidence/source-baseline-v51.json",
+    "tests": "evidence/purchase-edit-tests-04.json",
+    "postgres": "lanes/environment/purchase-order-edit-after-400f7557-27d.json",
+    "browser": "lanes/environment/purchase-order-edit-browser-0c20aed5-ecd.json",
+    "before": "lanes/environment/purchase-order-edit-before-2c58b290-0b9.json",
+    "archiveBefore": "lanes/environment/purchase-order-archive-before-e341b255-2fb.json",
+    "archiveAfter": "lanes/environment/purchase-order-archive-after-48180150-492.json",
+    "attempts": "evidence/purchase-order-edit-attempts.md",
+    "visual": "lanes/environment/purchase-order-edit-visual-22535790-11b.json"
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-independent-comparison-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-independent-comparison-0c20aed5-ecd.png",
+      "sha256": "885826b6e42e535ed34cc33cc270e6b2960c5d2bdb17041faebd9c0605b31a4c"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-overlap-choice-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-overlap-choice-0c20aed5-ecd.png",
+      "sha256": "6457c51010a2da67821e2f761f8bc1914e7d4440a10291bdd8136dd626c6c8c6"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-comparison-mobile-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-comparison-mobile-0c20aed5-ecd.png",
+      "sha256": "6b7a33cf62640e0744adb320c8505ff579a4f54b72706d6964771142d9abebb9"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-comparison-text-resize-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-comparison-text-resize-0c20aed5-ecd.png",
+      "sha256": "be2bca5fac4db978e1c9c553ee7240e50fb18895d71c96b76bf68c15458f0567"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-unknown-outcome-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-unknown-outcome-0c20aed5-ecd.png",
+      "sha256": "4444fd4c3c2292cb59d7f450352c399fda3104ec031030053ea3671674ac05ec"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-reload-recovery-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-reload-recovery-0c20aed5-ecd.png",
+      "sha256": "1bebf7af7c9deb91ce59e69f300391003aef3063ea584a8aaed73dc9873adf90"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-authority-denied-retained-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-authority-denied-retained-0c20aed5-ecd.png",
+      "sha256": "b3c91fb71c62ef74b2ccb926a687d76dca248182678db1fbe02ce1f8fcb0f107"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/purchase-edit-en-authority-restored-draft-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-en-authority-restored-draft-0c20aed5-ecd.png",
+      "sha256": "74fa35771429d0c1b7d9facf9a92e971d40c5602bc11d997468a6587e36d9eec"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-independent-comparison-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-independent-comparison-0c20aed5-ecd.png",
+      "sha256": "366801057c6b2cf7c5aab1bff6f370c44dfc42cef05aafaf82c4bd6da5fcd51c"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-overlap-choice-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-overlap-choice-0c20aed5-ecd.png",
+      "sha256": "fcfc469a725fa06dab17a3bde0ea5308481c7f3aef46c93ccd0ccd99c0670abc"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-comparison-mobile-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-comparison-mobile-0c20aed5-ecd.png",
+      "sha256": "c5d1dae566ab103e26e9774b889f502823ecd99afc8a2532fd8d39ce2a0e066f"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-comparison-text-resize-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-comparison-text-resize-0c20aed5-ecd.png",
+      "sha256": "edadf30b9643d2f09990c448b451417c6c47375b5ea482d168a2152964fb7362"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-unknown-outcome-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-unknown-outcome-0c20aed5-ecd.png",
+      "sha256": "be99158cc6f5c8244048d64db5ace1a4a62d8f49776cca5e3d5e639332a12ccc"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-reload-recovery-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-reload-recovery-0c20aed5-ecd.png",
+      "sha256": "063ade72c7e9032d531eac2ba89b33689c4f211725ae9dacb6e75c82b7f94b82"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-authority-denied-retained-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-authority-denied-retained-0c20aed5-ecd.png",
+      "sha256": "5fc68aa3b70674c6bdc3046d06c33285351bb64ecdc6e921178ad7329c998067"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/purchase-edit-fr-authority-restored-draft-0c20aed5-ecd.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-fr-authority-restored-draft-0c20aed5-ecd.png",
+      "sha256": "e08c99508e7776c3aa15914f6f04e72a91561bed5f38133d91f3c9846f1ddf94"
+    },
+    {
+      "locale": "en",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-en-desktop-top-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-en-desktop-top-22535790-11b.png",
+      "sha256": "e0390cd0aca90622627343d5a723a209ef54475200b3397f937ed2b594e5da6a"
+    },
+    {
+      "locale": "en",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-en-mobile-top-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-en-mobile-top-22535790-11b.png",
+      "sha256": "84fd8c96d5d70ce8faaa0142b43e3ee5c8bf515c5922e63b88131846a9db2494"
+    },
+    {
+      "locale": "en",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-en-mobile-notes-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-en-mobile-notes-22535790-11b.png",
+      "sha256": "a32a9da574546c76d35fbb69e640d561fe2b63b8ec81eeeb7eed29d1b6692516"
+    },
+    {
+      "locale": "en",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-en-mobile-actions-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-en-mobile-actions-22535790-11b.png",
+      "sha256": "bacb250bdc42c5009ef0cc0de027fdedd01557dbb04f39db661ed37e17866e07"
+    },
+    {
+      "locale": "fr",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-fr-desktop-top-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-fr-desktop-top-22535790-11b.png",
+      "sha256": "edcde5ea7191cc4a7d14ad44b91d6722a5524392cb65d351b41d6a4dfad5a506"
+    },
+    {
+      "locale": "fr",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-fr-mobile-top-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-fr-mobile-top-22535790-11b.png",
+      "sha256": "20dfeec4b060cfee06b1ff6f5d4373cab4cf786fcd87f3b3539591d9a903ae81"
+    },
+    {
+      "locale": "fr",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-fr-mobile-notes-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-fr-mobile-notes-22535790-11b.png",
+      "sha256": "61e1b79cc83df59f02a66d4d0cc1d673beb25cd607f74dd5bf12d83d864edd95"
+    },
+    {
+      "locale": "fr",
+      "kind": "unmodified viewport capture",
+      "source": "lanes/environment/purchase-edit-viewport-fr-mobile-actions-22535790-11b.png",
+      "file": "evidence/purchase-order-edit-screenshots/purchase-edit-viewport-fr-mobile-actions-22535790-11b.png",
+      "sha256": "c7e15f83a6b6f062f5a2644f49b7b7b5dff556393b7f1e82572956829e5bfd49"
+    }
+  ],
+  "guide": "lanes/purchasing-ap/PURCHASE_ORDER_DRAFT_RECOVERY.md",
+  "remaining": [
+    "Ordinary submit/approve/cancel/complete/archive commands still require current service authority, revision/request identity and durable transition recovery/history.",
+    "Safe archive handling of continuing obligations and authorized historical access remains broader than the positive draft/event correction.",
+    "Accepted supplier proposals still require controlled approved-order amendment; current integer order/receiving inputs remain incompatible with three-decimal proposed quantities.",
+    "Full receiving/inspection/inventory/AP/ledger/reconciliation and retention handoffs remain unfinished.",
+    "French protected-route denial remains partly English; actual native AT/zoom, comprehensive contrast, production build, production performance and release evidence remain incomplete."
+  ],
+  "scope": "Actual owned local database and authenticated Next application on 127.0.0.1:3110. No live customer activation, deployment, migration, payment, external message or simulated approval.",
+  "results": {
+    "tests": 91,
+    "suites": 7,
+    "postgresGroups": 14,
+    "additionalArchiveCase": 1,
+    "browserJourneys": 2,
+    "screenshots": 24,
+    "typecheckExit": 0,
+    "lintExit": 0,
+    "productionBuild": "not run in this checkpoint",
+    "nativeScreenReader": "unverified",
+    "nativeZoom": "unverified",
+    "textResize": "CSS 200% at 320px; comparison and document reflow checked",
+    "workflowScreenshots": 16,
+    "supplementalViewportScreenshots": 8
+  },
+  "commands": {
+    "tests": {
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "services/purchase-order/__tests__/purchase-order-capabilities.test.ts",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts",
+        "--json",
+        "--outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/purchase-edit-tests-04.json"
+      ],
+      "exit": 0,
+      "output": "67384d"
+    },
+    "postgres": {
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-edit-postgres.cjs"
+      ],
+      "exit": 0,
+      "output": "0302e7"
+    },
+    "archive": {
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-archive-postgres.cjs"
+      ],
+      "exit": 0,
+      "output": "ed03b8"
+    },
+    "browser": {
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-edit-browser.cjs"
+      ],
+      "exit": 0
+    },
+    "typecheck": {
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "exit": 0,
+      "output": "656d76"
+    },
+    "lint": {
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchase-order/purchase-order-edit-record.ts",
+        "services/purchase-order/purchase-order.schemas.ts",
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx",
+        "components/purchase-orders/ModernEditPurchaseOrderForm.tsx",
+        "components/purchase-orders/purchase-order-edit-model.ts",
+        "components/purchase-orders/purchase-order-edit-draft.ts",
+        "types/purchase-orders-system-types.ts",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+        "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts"
+      ],
+      "exit": 0,
+      "output": "c54f52"
+    },
+    "visual": {
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-edit-visual.cjs"
+      ],
+      "exit": 0,
+      "output": "5678ed"
+    }
+  },
+  "performance": {
+    "meaning": "Local development observations, including page setup and browser/network cancellation; not production performance certification. Earlier timeout/interruption attempts retained.",
+    "final": [
+      {
+        "locale": "en",
+        "twoEditorsReadyMs": 60274,
+        "actionRequests": [
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:12:39.129Z",
+            "startedMs": 1788786759129,
+            "state": "failed",
+            "elapsedMs": 3225,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:12:53.034Z",
+            "startedMs": 1788786773034,
+            "state": "failed",
+            "elapsedMs": 9246,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:12:53.550Z",
+            "startedMs": 1788786773551,
+            "state": "failed",
+            "elapsedMs": 9728,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:13:01.291Z",
+            "startedMs": 1788786781291,
+            "state": "failed",
+            "elapsedMs": 2143,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:02.843Z",
+            "startedMs": 1788786782843,
+            "state": "failed",
+            "elapsedMs": 1466,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:06.233Z",
+            "startedMs": 1788786786233,
+            "state": "finished",
+            "elapsedMs": 969
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:08.362Z",
+            "startedMs": 1788786788362,
+            "state": "pending"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:13:22.046Z",
+            "startedMs": 1788786802047,
+            "state": "failed",
+            "elapsedMs": 2772,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:13:25.618Z",
+            "startedMs": 1788786805618,
+            "state": "failed",
+            "elapsedMs": 2730,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:25.997Z",
+            "startedMs": 1788786805997,
+            "state": "failed",
+            "elapsedMs": 4641,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:13:27.641Z",
+            "startedMs": 1788786807641,
+            "state": "failed",
+            "elapsedMs": 3005,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:29.832Z",
+            "startedMs": 1788786809832,
+            "state": "failed",
+            "elapsedMs": 2116,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:38.509Z",
+            "startedMs": 1788786818509,
+            "state": "failed",
+            "elapsedMs": 2021,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:42.119Z",
+            "startedMs": 1788786822119,
+            "state": "pending"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:13:51.392Z",
+            "startedMs": 1788786831392,
+            "state": "failed",
+            "elapsedMs": 1266,
+            "reason": "net::ERR_FAILED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:14:05.090Z",
+            "startedMs": 1788786845090,
+            "state": "failed",
+            "elapsedMs": 1106,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:14:07.184Z",
+            "startedMs": 1788786847185,
+            "state": "pending"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:14:14.925Z",
+            "startedMs": 1788786854925,
+            "state": "failed",
+            "elapsedMs": 949,
+            "reason": "net::ERR_ABORTED"
+          }
+        ],
+        "layouts": [
+          {
+            "width": 1440,
+            "height": 1000,
+            "scrollWidth": 974,
+            "clientWidth": 974,
+            "documentWidth": 1440,
+            "viewport": 1440
+          },
+          {
+            "width": 768,
+            "height": 1024,
+            "scrollWidth": 498,
+            "clientWidth": 498,
+            "documentWidth": 768,
+            "viewport": 768
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 356,
+            "clientWidth": 356,
+            "documentWidth": 390,
+            "viewport": 390
+          },
+          {
+            "width": 320,
+            "height": 800,
+            "scrollWidth": 286,
+            "clientWidth": 286,
+            "documentWidth": 320,
+            "viewport": 320
+          },
+          {
+            "textResize": "200%",
+            "scrollWidth": 254,
+            "clientWidth": 254,
+            "documentWidth": 320,
+            "viewport": 320
+          }
+        ],
+        "deniedPresentation": "inline"
+      },
+      {
+        "locale": "fr",
+        "twoEditorsReadyMs": 9882,
+        "actionRequests": [
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:14:36.818Z",
+            "startedMs": 1788786876818,
+            "state": "failed",
+            "elapsedMs": 1229,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:14:38.785Z",
+            "startedMs": 1788786878785,
+            "state": "failed",
+            "elapsedMs": 3641,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:14:39.133Z",
+            "startedMs": 1788786879133,
+            "state": "failed",
+            "elapsedMs": 4441,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:14:41.599Z",
+            "startedMs": 1788786881599,
+            "state": "failed",
+            "elapsedMs": 2064,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:14:43.547Z",
+            "startedMs": 1788786883547,
+            "state": "failed",
+            "elapsedMs": 1270,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:14:46.743Z",
+            "startedMs": 1788786886743,
+            "state": "finished",
+            "elapsedMs": 1372
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:14:49.304Z",
+            "startedMs": 1788786889304,
+            "state": "pending"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:15:01.651Z",
+            "startedMs": 1788786901651,
+            "state": "finished",
+            "elapsedMs": 1268
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:15:03.684Z",
+            "startedMs": 1788786903684,
+            "state": "failed",
+            "elapsedMs": 2446,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:03.833Z",
+            "startedMs": 1788786903833,
+            "state": "failed",
+            "elapsedMs": 3280,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "other",
+            "startedAt": "2026-09-07T13:15:05.230Z",
+            "startedMs": 1788786905230,
+            "state": "failed",
+            "elapsedMs": 2079,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:06.559Z",
+            "startedMs": 1788786906559,
+            "state": "failed",
+            "elapsedMs": 1901,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:14.666Z",
+            "startedMs": 1788786914666,
+            "state": "failed",
+            "elapsedMs": 1640,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:17.294Z",
+            "startedMs": 1788786917294,
+            "state": "pending"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:24.049Z",
+            "startedMs": 1788786924049,
+            "state": "failed",
+            "elapsedMs": 1097,
+            "reason": "net::ERR_FAILED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:32.176Z",
+            "startedMs": 1788786932176,
+            "state": "failed",
+            "elapsedMs": 1693,
+            "reason": "net::ERR_ABORTED"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:35.183Z",
+            "startedMs": 1788786935183,
+            "state": "pending"
+          },
+          {
+            "tab": "primary",
+            "startedAt": "2026-09-07T13:15:42.751Z",
+            "startedMs": 1788786942751,
+            "state": "failed",
+            "elapsedMs": 866,
+            "reason": "net::ERR_ABORTED"
+          }
+        ],
+        "layouts": [
+          {
+            "width": 1440,
+            "height": 1000,
+            "scrollWidth": 974,
+            "clientWidth": 974,
+            "documentWidth": 1440,
+            "viewport": 1440
+          },
+          {
+            "width": 768,
+            "height": 1024,
+            "scrollWidth": 498,
+            "clientWidth": 498,
+            "documentWidth": 768,
+            "viewport": 768
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 356,
+            "clientWidth": 356,
+            "documentWidth": 390,
+            "viewport": 390
+          },
+          {
+            "width": 320,
+            "height": 800,
+            "scrollWidth": 286,
+            "clientWidth": 286,
+            "documentWidth": 320,
+            "viewport": 320
+          },
+          {
+            "textResize": "200%",
+            "scrollWidth": 254,
+            "clientWidth": 254,
+            "documentWidth": 320,
+            "viewport": 320
+          }
+        ],
+        "deniedPresentation": "inline"
+      }
+    ]
+  },
+  "environment": {
+    "database": "stoquify_local_registration_20260906_01",
+    "currentApp": "http://127.0.0.1:3110",
+    "externalTraffic": "blocked by inspected runtime/browser fences",
+    "previousCustomerApp3109": "stopped when no longer needed for this batch",
+    "finalApp": "restarted after an interrupted run; uses same owned database and source"
+  },
+  "visualReview": "A full-page mobile capture omitted a painted region. Unmodified viewport screenshots at the comparison heading, notes and actions show the content correctly. Viewport visibility/hit checks pass in both languages; direct visual inspection confirms the French top/middle/actions and English top. Full-page captures remain retained with this limitation.",
+  "verificationScripts": {
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-fixtures.cjs": "d31a92f0e49c9a923b72e54af93c0178126400b2f6d07aba86bc858bf7f96b10",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-edit-postgres.cjs": "ace724cfe5244c561566cdb0186913a20e900d94de86174922bb523b6bd0ae27",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-archive-postgres.cjs": "ec835d11bb2f6333aef9ef5628baeafb222a30f404141291f31c744fc2d5b50a",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-edit-browser.cjs": "1dbfdb64e69ed063c3972445a048927780842eeafa9eeadbf4e556dc850c46bf",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-order-edit-visual.cjs": "1f7f3f3427e386c300ea2347e9df83de3f4fe90b2fba8acaa2329a839d12c9e8"
+  }
+}

@@ -1,0 +1,45 @@
+const f = require('./supplier-ack-fixtures.cjs'), {db, fs, path, crypto, assert} = f;
+const service = require(path.join(f.root, 'services/purchase-order/purchase-order.service.ts'));
+const baseline = process.argv.includes('--baseline'), run = crypto.randomUUID().slice(0,12);
+const files = ['services/purchase-order/purchase-order.service.ts','services/purchase-order/purchase-order-approval.ts','actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts'];
+files.push('services/purchase-order/purchase-order-approval-contracts.ts','services/purchase-order/purchase-order-edit-record.ts','services/modules/module-entitlement.service.ts','prisma/schema.prisma','lib/security/rbac-permissions.ts','services/roles/role-custodian-policy.ts');
+const sources = () => Object.fromEntries(files.filter(p => fs.existsSync(path.join(f.root,p))).map(p => [p, f.hash(fs.readFileSync(path.join(f.root,p),'utf8'))]));
+const report = {run, mode: baseline?'before':'after', at:new Date().toISOString(), sourcesBefore:sources(), checks:[]};
+async function fixture(name) {
+  const x = await f.fixture('en','approval-'+run+'-'+name,{skipInvite:true});
+  const requester = await db.user.create({data:{organizationId:x.organizationId,name:'Owned separate requester',email:'requester-'+run+'-'+name+'@example.invalid',isActive:true,isVerified:true}});
+  await db.purchaseOrder.update({where:{id:x.purchaseOrderId},data:{status:'SUBMITTED',createdById:requester.id,approvedById:null,approvedAt:null}});
+  await db.role.update({where:{id:x.roleId},data:{permissions:['purchases.orders.read','purchases.orders.approve']}});
+  const session = await db.session.findUniqueOrThrow({where:{id:x.sessionId}});
+  const scope = {organizationId:x.organizationId,actorId:x.actorId,sessionId:x.sessionId,sessionToken:session.token};
+  const preview = baseline ? null : await service.getPurchaseOrderApprovalPreview(x.purchaseOrderId,scope);
+  return {...x, scope, command:{expectedRevision:preview?.revision||'0'.repeat(64),idempotencyKey:crypto.randomUUID(),...scope}};
+}
+const approve = x => service.approvePurchaseOrder(x.purchaseOrderId,x.organizationId,x.actorId,x.command);
+const state = x => f.orderState(x);
+async function check(name,work){try{report.checks.push({name,status:'passed',...await work()})}catch(e){report.checks.push({name,status:'failed',error:f.safe(e)});throw e}}
+(async()=>{
+  await f.local.withClient(f.target,f.local.assertOwned);const stable=await f.stable();
+  for(const kind of ['role','session','stale-line','freshness']) await check(kind+' change after review',async()=>{
+    const x=await fixture(kind);
+    if(kind==='role')await db.role.update({where:{id:x.roleId},data:{permissions:['purchases.orders.read']}});
+    if(kind==='session')await db.session.delete({where:{id:x.sessionId}});
+    if(kind==='stale-line')await db.purchaseOrderLine.update({where:{id:x.lineId},data:{notes:'Changed after review'}});
+    if(kind==='freshness')await db.session.update({where:{id:x.sessionId},data:{assuranceVerifiedAt:new Date(Date.now()-600000)}});
+    const before=await state(x);let error;try{await approve(x)}catch(e){error=e}
+    if(!baseline){assert.equal(error?.code,kind==='stale-line'?'CONFLICT':kind==='freshness'?'FRESH_AUTH_REQUIRED':'FORBIDDEN');assert.equal(await state(x),before)}
+    return{rejected:!!error,code:error?.code,unchanged:await state(x)===before};
+  });
+  await check('Exact retry recovers one approval',async()=>{const x=await fixture('retry'),first=await approve(x),before=await state(x);let second,error;try{second=await approve(x)}catch(e){error=e}const audits=await db.auditLog.count({where:{organizationId:x.organizationId,action:'APPROVE_PURCHASE_ORDER'}});if(!baseline){assert.ok(second.approvalReceipt.replayed);assert.equal(second.approvalReceipt.approvedAt,first.approvalReceipt.approvedAt);assert.equal(audits,1);assert.equal(await state(x),before)}return{recovered:!!second?.approvalReceipt,code:error?.code,audits,unchanged:await state(x)===before}});
+  if(!baseline){
+    await check('Unknown requester, self approval and cross-tenant records remain denied',async()=>{
+      for(const kind of ['unknown','self']){const x=await fixture(kind);await db.purchaseOrder.update({where:{id:x.purchaseOrderId},data:{createdById:kind==='self'?x.actorId:null}});const before=await state(x);await assert.rejects(service.getPurchaseOrderApprovalPreview(x.purchaseOrderId,x.scope),e=>e.code==='SOD_VIOLATION');assert.equal(await state(x),before)}
+      const x=await fixture('tenant-a'),y=await fixture('tenant-b'),before=await state(y);await assert.rejects(service.getPurchaseOrderApprovalPreview(y.purchaseOrderId,x.scope),e=>e.code==='NOT_FOUND');await assert.rejects(service.approvePurchaseOrder(y.purchaseOrderId,x.organizationId,x.actorId,x.command),e=>e.code==='NOT_FOUND');assert.equal(await state(y),before);return{deniedCases:4};
+    });
+    await check('Concurrent identical approvals return one event and one audit',async()=>{const x=await fixture('concurrent');const outcomes=await Promise.all([approve(x),approve(x)]);assert.equal(outcomes.filter(r=>r.approvalReceipt.replayed).length,1);assert.equal(await db.auditLog.count({where:{organizationId:x.organizationId,action:'APPROVE_PURCHASE_ORDER'}}),1);assert.equal(await db.businessEvent.count({where:{organizationId:x.organizationId,eventType:'purchase_order.approved',status:'APPLIED'}}),1);return{oneEffect:true}});
+    await check('Request binding and recovery preserve later order state and omit credentials',async()=>{const x=await fixture('binding');await approve(x);await assert.rejects(approve({...x,command:{...x.command,expectedRevision:'b'.repeat(64)}}),e=>e.code==='IDEMPOTENCY_CONFLICT');await db.purchaseOrder.update({where:{id:x.purchaseOrderId},data:{status:'CANCELLED',deletedAt:new Date()}});const before=await state(x);await db.session.update({where:{id:x.sessionId},data:{assuranceVerifiedAt:new Date(0)}});assert.ok((await approve(x)).approvalReceipt.replayed);assert.equal(await state(x),before);const evidence=JSON.stringify({events:await db.businessEvent.findMany({where:{organizationId:x.organizationId}}),audits:await db.auditLog.findMany({where:{organizationId:x.organizationId}})});for(const secret of [x.command.sessionId,x.command.sessionToken])assert.ok(!evidence.includes(secret));await db.role.update({where:{id:x.roleId},data:{permissions:['purchases.orders.read']}});await assert.rejects(approve(x),e=>e.code==='FORBIDDEN');return{laterStatePreserved:true,replayAfterRevocationDenied:true,credentialsRetained:false}});
+    await check('Missing protocol fields and stopped, expired or suspended grants cannot approve',async()=>{const x=await fixture('access');for(const key of ['expectedRevision','idempotencyKey','sessionToken','sessionId']){const command={...x.command};delete command[key];await assert.rejects(approve({...x,command}),e=>e.name==='ZodError')};await db.tenantModuleConfiguration.create({data:{organizationId:x.organizationId,manifestHash:'owned-'+run}});await assert.rejects(approve(x),e=>e.code==='FORBIDDEN');const grant=await db.tenantModuleGrant.create({data:{organizationId:x.organizationId,moduleSlug:'purchasing',status:'active',source:'manual_override',readOnly:true}});for(const patch of [{readOnly:true},{readOnly:false,endsAt:new Date(0)},{endsAt:null,status:'suspended'}]){await db.tenantModuleGrant.update({where:{id:grant.id},data:patch});await assert.rejects(approve(x),e=>e.code==='FORBIDDEN')};assert.equal(await db.auditLog.count({where:{organizationId:x.organizationId}}),0);return{missingFields:4,deniedGrants:4}});
+    await check('Evidence write failures roll back the approval and exact retry succeeds',async()=>{const transaction=db.$transaction.bind(db);for(const model of ['auditLog','businessEvent']){const x=await fixture('fault-'+model),before=await state(x);db.$transaction=(callback,settings)=>transaction(tx=>callback(new Proxy(tx,{get(target,property){if(property!==model)return target[property];return new Proxy(target[property],{get(delegate,method){return method==='create'?()=>{throw Error('Owned evidence failure')}:delegate[method]}})}})),settings);try{await assert.rejects(approve(x))}finally{db.$transaction=transaction};assert.equal(await state(x),before);assert.equal(await db.auditLog.count({where:{organizationId:x.organizationId}}),0);assert.equal(await db.businessEvent.count({where:{organizationId:x.organizationId}}),0);assert.equal((await approve(x)).approvalReceipt.replayed,false)}return{rolledBackCases:2}});
+  }
+  report.originalUnchanged=stable===await f.stable();assert.ok(report.originalUnchanged);report.sourcesAfter=sources();assert.deepEqual(report.sourcesBefore,report.sourcesAfter);
+})().catch(e=>{report.error=f.safe(e);process.exitCode=1}).finally(async()=>{await db.$disconnect();const file='purchase-approval-'+report.mode+'-'+run+'.json';fs.writeFileSync(path.join(__dirname,file),JSON.stringify(report,null,2),{flag:'wx'});console.log(JSON.stringify({file,...report, sourcesBefore:undefined,sourcesAfter:undefined}));});

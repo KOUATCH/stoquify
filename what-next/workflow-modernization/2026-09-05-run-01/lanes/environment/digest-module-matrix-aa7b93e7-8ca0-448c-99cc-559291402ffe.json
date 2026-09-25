@@ -1,0 +1,259 @@
+{
+  "at": "2026-09-19T11:14:05.996Z",
+  "sourceBefore": {
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "c1da2f038f6ec68fd603653c0ba5581ca59116dbcdbd997ea3f55a4f2bccf008",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "allowed": false,
+      "decision": "deny",
+      "reason": "Tenant is not entitled to this module.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "errors": [],
+          "screenshot": "digest-module-matrix-aa7b93e7-8ca0-448c-99cc-559291402ffe-explicit-empty-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "errors": [],
+          "screenshot": "digest-module-matrix-aa7b93e7-8ca0-448c-99cc-559291402ffe-explicit-empty-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "allowed": true,
+      "decision": "allow",
+      "reason": "Tenant module entitlement is available.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "future-start",
+      "allowed": false,
+      "decision": "deny",
+      "reason": "Tenant module grant is not yet effective.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": false,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": false,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "expired",
+      "allowed": false,
+      "decision": "deny",
+      "reason": "Tenant module grant has expired.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "suspended",
+      "allowed": false,
+      "decision": "deny",
+      "reason": "Tenant module entitlement is suspended.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": false,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": false,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "missing",
+      "allowed": false,
+      "decision": "deny",
+      "reason": "Tenant is not entitled to this module.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": false,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": false,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "read-only-status",
+      "allowed": true,
+      "decision": "allow",
+      "reason": "Tenant module entitlement is available.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "errors": [],
+          "screenshot": "digest-module-matrix-aa7b93e7-8ca0-448c-99cc-559291402ffe-read-only-status-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "errors": [],
+          "screenshot": "digest-module-matrix-aa7b93e7-8ca0-448c-99cc-559291402ffe-read-only-status-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "read-only-flag",
+      "allowed": true,
+      "decision": "allow",
+      "reason": "Tenant module entitlement is available.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": false,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": false,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "new-work-stopped-retained-read",
+      "allowed": true,
+      "decision": "allow",
+      "reason": "Tenant module entitlement is available.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "recommended-accounting-suspended",
+      "allowed": true,
+      "decision": "allow",
+      "reason": "Tenant module entitlement is available.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": false,
+          "errors": []
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": false,
+          "errors": []
+        }
+      ]
+    },
+    {
+      "name": "reactivated",
+      "allowed": true,
+      "decision": "allow",
+      "reason": "Tenant module entitlement is available.",
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "errors": [],
+          "screenshot": "digest-module-matrix-aa7b93e7-8ca0-448c-99cc-559291402ffe-reactivated-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "errors": [],
+          "screenshot": "digest-module-matrix-aa7b93e7-8ca0-448c-99cc-559291402ffe-reactivated-fr.png"
+        }
+      ]
+    }
+  ],
+  "rawEvidenceUnchanged": true,
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "c1da2f038f6ec68fd603653c0ba5581ca59116dbcdbd997ea3f55a4f2bccf008",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+  },
+  "sourceStable": true
+}

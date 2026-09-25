@@ -1,0 +1,221 @@
+{
+  "run": "46b47c81-e1d",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T09:30:11.003Z",
+  "sourcesBefore": {
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "services/referrals/referral-attribution.service.ts": "50bf6b94547b11f290bd2c41d2aa941f78ab9ac11bf027434d52c10eab9ff3fd",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "en guided creation commits only local owner, context and verification handoff",
+      "passed": true,
+      "durationMs": 221,
+      "detail": {
+        "tenantScopedRole": true,
+        "unverified": true,
+        "synchronizedCredential": true,
+        "history": 1,
+        "audit": 1,
+        "sessionCount": 0,
+        "explicitModuleGrants": 0,
+        "verificationSentAudit": 0
+      }
+    },
+    {
+      "name": "fr guided creation commits only local owner, context and verification handoff",
+      "passed": true,
+      "durationMs": 155,
+      "detail": {
+        "tenantScopedRole": true,
+        "unverified": true,
+        "synchronizedCredential": true,
+        "history": 1,
+        "audit": 1,
+        "sessionCount": 0,
+        "explicitModuleGrants": 0,
+        "verificationSentAudit": 0
+      }
+    },
+    {
+      "name": "legacy owner action retains canonical creation contract",
+      "passed": true,
+      "durationMs": 165,
+      "detail": {
+        "tenantScopedRole": true,
+        "unverified": true,
+        "synchronizedCredential": true,
+        "history": 1,
+        "audit": 1,
+        "sessionCount": 0,
+        "explicitModuleGrants": 0,
+        "verificationSentAudit": 0
+      }
+    },
+    {
+      "name": "consent rejected without business effects",
+      "passed": true,
+      "durationMs": 32,
+      "detail": {
+        "businessEffects": 0
+      }
+    },
+    {
+      "name": "oversized rejected without business effects",
+      "passed": true,
+      "durationMs": 24,
+      "detail": {
+        "businessEffects": 0
+      }
+    },
+    {
+      "name": "context rejected without business effects",
+      "passed": true,
+      "durationMs": 20,
+      "detail": {
+        "businessEffects": 0
+      }
+    },
+    {
+      "name": "guided audit failure rolls back all creation; retry commits once",
+      "passed": true,
+      "durationMs": 339,
+      "detail": {
+        "rolledBack": true,
+        "tenantScopedRole": true,
+        "unverified": true,
+        "synchronizedCredential": true,
+        "history": 1,
+        "audit": 1,
+        "sessionCount": 0,
+        "explicitModuleGrants": 0,
+        "verificationSentAudit": 0
+      }
+    },
+    {
+      "name": "guided credential failure rolls back all creation; retry commits once",
+      "passed": true,
+      "durationMs": 319,
+      "detail": {
+        "rolledBack": true,
+        "tenantScopedRole": true,
+        "unverified": true,
+        "synchronizedCredential": true,
+        "history": 1,
+        "audit": 1,
+        "sessionCount": 0,
+        "explicitModuleGrants": 0,
+        "verificationSentAudit": 0
+      }
+    },
+    {
+      "name": "legacy audit failure rolls back all creation; retry commits once",
+      "passed": true,
+      "durationMs": 309,
+      "detail": {
+        "rolledBack": true,
+        "tenantScopedRole": true,
+        "unverified": true,
+        "synchronizedCredential": true,
+        "history": 1,
+        "audit": 1,
+        "sessionCount": 0,
+        "explicitModuleGrants": 0,
+        "verificationSentAudit": 0
+      }
+    },
+    {
+      "name": "legacy credential failure rolls back all creation; retry commits once",
+      "passed": true,
+      "durationMs": 261,
+      "detail": {
+        "rolledBack": true,
+        "tenantScopedRole": true,
+        "unverified": true,
+        "synchronizedCredential": true,
+        "history": 1,
+        "audit": 1,
+        "sessionCount": 0,
+        "explicitModuleGrants": 0,
+        "verificationSentAudit": 0
+      }
+    },
+    {
+      "name": "concurrent duplicate email never leaves orphan creation",
+      "passed": true,
+      "durationMs": 241,
+      "detail": {
+        "committed": 1,
+        "rolledBackOrDenied": 1,
+        "noOrphans": true
+      }
+    },
+    {
+      "name": "concurrent duplicate phone never leaves orphan creation",
+      "passed": true,
+      "durationMs": 171,
+      "detail": {
+        "committed": 1,
+        "rolledBackOrDenied": 1,
+        "noOrphans": true
+      }
+    },
+    {
+      "name": "concurrent duplicate companyName never leaves orphan creation",
+      "passed": true,
+      "durationMs": 126,
+      "detail": {
+        "committed": 1,
+        "rolledBackOrDenied": 1,
+        "noOrphans": true
+      }
+    },
+    {
+      "name": "explicit empty capability intent remains empty in organization and audit",
+      "passed": true,
+      "durationMs": 94,
+      "detail": {
+        "explicitSelection": [],
+        "auditedSelection": []
+      }
+    },
+    {
+      "name": "referral conversion rolls back with creation audit and retries once without foreign authority",
+      "passed": false,
+      "durationMs": 92,
+      "error": "\nInvalid `real.referralAttribution.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-registration-postgres.cjs:23:332\n\n  20 for(const legacy of [false,true])for(const fault of [\"audit\",\"credential\"])await check((legacy?\"legacy \":\"guided \")+fault+\" failure rolls back all creation; retry commits once\",async()=>{const data=input((legacy?\"legacy-\":\"\")+fault),before=await counts();await assert.rejects(call(data,fault,legacy),new RegExp(\"OWNED_REGISTRATION_\"+fault.toUpperCase()+\"_FAILURE\"));assert.deepEqual(await counts(),before);return{rolledBack:true,...await committed(data,await call(data,null,legacy),lega"
+    }
+  ],
+  "limitations": [
+    "Real PostgreSQL and production services in a separate owned synthetic database; global fetch blocked and email key empty. No migration, live email or customer creation.",
+    "Existing password breach lookup fails open when offline; this is not proof of breach detection or delivery.",
+    "Service calls use actual subject abuse limits without fabricated IP context. Browser IP limits are verified separately."
+  ],
+  "originalAuthorityBefore": "3a82bb57dfa73793757984598beeabbdb43a8d8d210c5c29bed251a711a3abc7",
+  "originalAuthorityAfter": "3a82bb57dfa73793757984598beeabbdb43a8d8d210c5c29bed251a711a3abc7",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T09:30:14.138Z",
+  "sourcesAfter": {
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "services/referrals/referral-attribution.service.ts": "50bf6b94547b11f290bd2c41d2aa941f78ab9ac11bf027434d52c10eab9ff3fd",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "network": {
+    "externalActual": 0,
+    "externalAttemptsBlocked": 18,
+    "emailKeyAbsent": true
+  },
+  "passed": 14,
+  "failed": 1,
+  "driverSha256": "1d5adfda973712b8bc44bd16c55abd5729a8c8f59d6b7b5096c4594606314ced"
+}

@@ -1,0 +1,65 @@
+{
+  "at": "2026-09-08T13:00:23.471Z",
+  "run": "0505de1b-ee3",
+  "checks": [
+    {
+      "name": "exact original replay observes current source without changing preparation evidence",
+      "status": "passed"
+    },
+    {
+      "name": "correction and independent posting are observed separately from the old recorded total",
+      "status": "passed"
+    },
+    {
+      "name": "stale current evidence is explicitly unverified",
+      "status": "passed"
+    },
+    {
+      "name": "missing-pointer current evidence is explicitly unverified",
+      "status": "passed"
+    },
+    {
+      "name": "archived cancelled invoice is not reopened by recovery",
+      "status": "passed"
+    },
+    {
+      "name": "foreign isolation still applies to retained recovery",
+      "status": "passed"
+    },
+    {
+      "name": "role isolation still applies to retained recovery",
+      "status": "passed"
+    },
+    {
+      "name": "session isolation still applies to retained recovery",
+      "status": "passed"
+    },
+    {
+      "name": "maker isolation still applies to retained recovery",
+      "status": "passed"
+    },
+    {
+      "name": "new preparation plus concurrent exact recovery create one invoice and event",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6"
+  },
+  "originalBefore": "5fa5aa6ba3992c5f4b86fcd423678f5df3dc76f124212dbba32d34466f55463b",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6"
+  },
+  "sourceStable": true
+}

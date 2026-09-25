@@ -1,0 +1,394 @@
+{
+  "recordedAt": "2026-09-05T10:39:02.527Z",
+  "status": "passed",
+  "requiredDocuments": [
+    "BLUEPRINT.md",
+    "CURRENT_STATE.md",
+    "MODULE_CATALOG.md",
+    "CONTRACTS.md",
+    "LIFECYCLE_AND_CONTROLS.md",
+    "EXPERIENCE.md",
+    "IMPLEMENTATION_ROADMAP.md",
+    "DECISIONS_NEEDED.md"
+  ],
+  "localLinkChecks": 55,
+  "uniqueRepositorySources": 25,
+  "diagrams": [
+    "blueprint-1.mmd",
+    "module_catalog-2.mmd",
+    "lifecycle_and_controls-3.mmd",
+    "lifecycle_and_controls-4.mmd",
+    "lifecycle_and_controls-5.mmd",
+    "lifecycle_and_controls-6.mmd",
+    "lifecycle_and_controls-7.mmd"
+  ],
+  "sourceBaseline": [
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+      "currentSha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c",
+      "unchanged": true
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+      "currentSha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+      "unchanged": true
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "137108e7b599d4bc6b8caa7d9d05838696940ffc2e4dc88b467248495ae7f9d2",
+      "currentSha256": "137108e7b599d4bc6b8caa7d9d05838696940ffc2e4dc88b467248495ae7f9d2",
+      "unchanged": true
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4",
+      "currentSha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4",
+      "unchanged": true
+    },
+    {
+      "path": "components/modules/TenantModuleActivationButton.tsx",
+      "sha256": "5c7512eae51f34bf1162c666d46fffed8fcf5eabecb1da5a03913c450ccf65ca",
+      "currentSha256": "5c7512eae51f34bf1162c666d46fffed8fcf5eabecb1da5a03913c450ccf65ca",
+      "unchanged": true
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "7897b968d88039ad16b5be1d6617b87949aea3b3ea6c5d61675bb01cdd894742",
+      "currentSha256": "7897b968d88039ad16b5be1d6617b87949aea3b3ea6c5d61675bb01cdd894742",
+      "unchanged": true
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+      "currentSha256": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+      "unchanged": true
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "currentSha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5",
+      "unchanged": true
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "99b35157477444da109683770f78965720e3f0151ea9450bfa3910d54f07d200",
+      "currentSha256": "99b35157477444da109683770f78965720e3f0151ea9450bfa3910d54f07d200",
+      "unchanged": true
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "f4b0b0d62933a0e4f29d86d96743eda7c6941a0a4dc8224c842cd83be8635f20",
+      "currentSha256": "f4b0b0d62933a0e4f29d86d96743eda7c6941a0a4dc8224c842cd83be8635f20",
+      "unchanged": true
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "e7fb0b6195946077eca67e18829826021f3637fbb1967af5e52dc132f3e9e143",
+      "currentSha256": "e7fb0b6195946077eca67e18829826021f3637fbb1967af5e52dc132f3e9e143",
+      "unchanged": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde",
+      "currentSha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/module-surface-inventory.js",
+      "sha256": "30a34339263b766e64d25ec7b78503b87b7291e02606ea9a38b432f62b855d93",
+      "currentSha256": "30a34339263b766e64d25ec7b78503b87b7291e02606ea9a38b432f62b855d93",
+      "unchanged": true
+    },
+    {
+      "path": "scripts/api-route-guard-inventory.js",
+      "sha256": "f39b0ae02ec4e26085d670a39e45f31611086aa6b08688e8b1c4097de1e47c75",
+      "currentSha256": "f39b0ae02ec4e26085d670a39e45f31611086aa6b08688e8b1c4097de1e47c75",
+      "unchanged": true
+    },
+    {
+      "path": "services/events/business-event-outbox.service.ts",
+      "sha256": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+      "currentSha256": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+      "unchanged": true
+    },
+    {
+      "path": "services/accounting/posting.service.ts",
+      "sha256": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2",
+      "currentSha256": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2",
+      "unchanged": true
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "8d2b1e4f2453202fa3d96c95f087cd46638518331c1817f5bacdb4a075169f46",
+      "currentSha256": "8d2b1e4f2453202fa3d96c95f087cd46638518331c1817f5bacdb4a075169f46",
+      "unchanged": true
+    },
+    {
+      "path": "services/pos/offline-sync.service.ts",
+      "sha256": "1f145c236c445cea8ea34c37f49e0bcd9a1aed4dcc5a24c5c8503b1aa6bd0eb4",
+      "currentSha256": "1f145c236c445cea8ea34c37f49e0bcd9a1aed4dcc5a24c5c8503b1aa6bd0eb4",
+      "unchanged": true
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "7734ddb412e80dc9fc100c6f3256d20a5e1c73b1f9ce3711219cf95bde57a0b8",
+      "currentSha256": "7734ddb412e80dc9fc100c6f3256d20a5e1c73b1f9ce3711219cf95bde57a0b8",
+      "unchanged": true
+    },
+    {
+      "path": "services/agents/agent-policy.service.ts",
+      "sha256": "b9c4bf645f1a7805df82389b7d6b6433ee41e43668ce42f5664b8bb31244991f",
+      "currentSha256": "b9c4bf645f1a7805df82389b7d6b6433ee41e43668ce42f5664b8bb31244991f",
+      "unchanged": true
+    },
+    {
+      "path": "services/agents/agent-tool-registry.service.ts",
+      "sha256": "a3ed573fdc3bda492db632ca9dd5b03717bcdd96597de123a0c8e2238ce702a5",
+      "currentSha256": "a3ed573fdc3bda492db632ca9dd5b03717bcdd96597de123a0c8e2238ce702a5",
+      "unchanged": true
+    },
+    {
+      "path": "services/hris/self-service.service.ts",
+      "sha256": "cd9cab82d3e146e88ecc73b2edff41ee25dc3ce537e824de7a4ff46f767dcdc9",
+      "currentSha256": "cd9cab82d3e146e88ecc73b2edff41ee25dc3ce537e824de7a4ff46f767dcdc9",
+      "unchanged": true
+    },
+    {
+      "path": "services/regulatory/country-packs/resolve.ts",
+      "sha256": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac",
+      "currentSha256": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac",
+      "unchanged": true
+    },
+    {
+      "path": "services/security/export-safety.service.ts",
+      "sha256": "ec19538e6277c4cb047e935b5a74828143c884c978c3bd5866015cf0334dda8a",
+      "currentSha256": "ec19538e6277c4cb047e935b5a74828143c884c978c3bd5866015cf0334dda8a",
+      "unchanged": true
+    }
+  ],
+  "newWorkingTreeStatusLines": [],
+  "model": {
+    "recordedAt": "2026-09-05T10:39:00.857Z",
+    "scope": "Isolated proposed model; no production authorization, database test or approved pricing.",
+    "total": 52,
+    "passed": 52,
+    "results": [
+      {
+        "name": "All proposed manifests satisfy the isolated registry contract",
+        "status": "passed"
+      },
+      {
+        "name": "Compatible customer configuration: retailer",
+        "status": "passed"
+      },
+      {
+        "name": "Compatible customer configuration: wholesaler",
+        "status": "passed"
+      },
+      {
+        "name": "Compatible customer configuration: services",
+        "status": "passed"
+      },
+      {
+        "name": "Compatible customer configuration: multisite",
+        "status": "passed"
+      },
+      {
+        "name": "Compatible customer configuration: accountant",
+        "status": "passed"
+      },
+      {
+        "name": "Service invoicing does not acquire inventory or POS",
+        "status": "passed"
+      },
+      {
+        "name": "Required dependencies precede consumers",
+        "status": "passed"
+      },
+      {
+        "name": "Required dependencies are explained without purchase",
+        "status": "passed"
+      },
+      {
+        "name": "Missing dependency cannot silently pass",
+        "status": "passed"
+      },
+      {
+        "name": "Unknown module is rejected",
+        "status": "passed"
+      },
+      {
+        "name": "Two ledger authorities conflict",
+        "status": "passed"
+      },
+      {
+        "name": "Absent payroll setup is explicit",
+        "status": "passed"
+      },
+      {
+        "name": "A selected module is not a commercial grant",
+        "status": "passed"
+      },
+      {
+        "name": "Duplicate module identifiers fail",
+        "status": "passed"
+      },
+      {
+        "name": "Unsupported schema fails",
+        "status": "passed"
+      },
+      {
+        "name": "Dependency cycle fails",
+        "status": "passed"
+      },
+      {
+        "name": "Incompatible dependency major fails",
+        "status": "passed"
+      },
+      {
+        "name": "Duplicate data writer fails",
+        "status": "passed"
+      },
+      {
+        "name": "Duplicate route fails",
+        "status": "passed"
+      },
+      {
+        "name": "Prerelease ranges are not guessed by simplified parser",
+        "status": "passed"
+      },
+      {
+        "name": "Authorized read succeeds",
+        "status": "passed"
+      },
+      {
+        "name": "Missing tenant",
+        "status": "passed"
+      },
+      {
+        "name": "Cross-tenant actor",
+        "status": "passed"
+      },
+      {
+        "name": "Cross-tenant object",
+        "status": "passed"
+      },
+      {
+        "name": "Revoked session",
+        "status": "passed"
+      },
+      {
+        "name": "Missing permission",
+        "status": "passed"
+      },
+      {
+        "name": "Missing code",
+        "status": "passed"
+      },
+      {
+        "name": "Missing domain control",
+        "status": "passed"
+      },
+      {
+        "name": "Security suspension",
+        "status": "passed"
+      },
+      {
+        "name": "Unknown grants",
+        "status": "passed"
+      },
+      {
+        "name": "Future grant",
+        "status": "passed"
+      },
+      {
+        "name": "Expired grant",
+        "status": "passed"
+      },
+      {
+        "name": "Malformed grant date",
+        "status": "passed"
+      },
+      {
+        "name": "Not selected",
+        "status": "passed"
+      },
+      {
+        "name": "Suspended dependency",
+        "status": "passed"
+      },
+      {
+        "name": "Incomplete setup",
+        "status": "passed"
+      },
+      {
+        "name": "Read-only write",
+        "status": "passed"
+      },
+      {
+        "name": "Provider unavailable for write",
+        "status": "passed"
+      },
+      {
+        "name": "Unavailable read without cached view",
+        "status": "passed"
+      },
+      {
+        "name": "Read-only API read uses operation policy, not UI surface",
+        "status": "passed"
+      },
+      {
+        "name": "Degraded read is labeled stale",
+        "status": "passed"
+      },
+      {
+        "name": "Authorized retained history survives commercial expiry",
+        "status": "passed"
+      },
+      {
+        "name": "Retention does not override security suspension",
+        "status": "passed"
+      },
+      {
+        "name": "Retention does not override object scope",
+        "status": "passed"
+      },
+      {
+        "name": "Retention does not permit new writes",
+        "status": "passed"
+      },
+      {
+        "name": "Retention requires known source history",
+        "status": "passed"
+      },
+      {
+        "name": "Validated revision can provision",
+        "status": "passed"
+      },
+      {
+        "name": "Stale preview cannot apply",
+        "status": "passed"
+      },
+      {
+        "name": "Open obligations prevent final deactivation",
+        "status": "passed"
+      },
+      {
+        "name": "Failed provisioning has an explicit retry",
+        "status": "passed"
+      },
+      {
+        "name": "Retired record cannot resume directly",
+        "status": "passed"
+      }
+    ]
+  },
+  "browser": {
+    "passed": 19,
+    "failed": 0,
+    "errors": []
+  },
+  "errors": []
+}

@@ -13,10 +13,7 @@ import { hasAnyRbacPermission } from "../../lib/security/rbac-permissions";
 import { db } from "../../prisma/db";
 import { BusinessRuleError } from "../_shared/action-errors";
 import { DEFAULT_PAYROLL_POSTING_RULES } from "../accounting/default-posting-rules";
-import {
-  getModuleCatalogEntry,
-  normalizeRequestedModuleSlugs,
-} from "../modules/module-catalog.service";
+import { evaluateModuleEntitlement, getManagedModuleState } from "../modules/module-entitlement.service";
 import {
   getCountryPack,
   resolveRegulatoryParameter,
@@ -282,37 +279,6 @@ function addIssue(target: PayrollSetupReadinessIssue[], input: IssueInput) {
   });
 }
 
-function evaluatePayrollModuleReadiness(
-  requestedModules: readonly string[] | null | undefined,
-) {
-  const catalogEntry = getModuleCatalogEntry("payroll");
-  const normalized = normalizeRequestedModuleSlugs(requestedModules);
-  const hasRequestedModules = (requestedModules?.length ?? 0) > 0;
-  const entitlementPresent = Boolean(
-    catalogEntry &&
-    (!hasRequestedModules || normalized.slugs.includes("payroll")),
-  );
-  const requestedSet = new Set(normalized.slugs);
-  const missingDependencies =
-    !catalogEntry || !entitlementPresent
-      ? []
-      : catalogEntry.dependencies
-          .filter((dependency) => dependency.dependencyType === "required")
-          .filter(
-            (dependency) =>
-              hasRequestedModules &&
-              !requestedSet.has(dependency.dependsOnSlug),
-          )
-          .map((dependency) => dependency.dependsOnSlug);
-
-  return {
-    entitled: entitlementPresent && missingDependencies.length === 0,
-    accountingDependencyPresent:
-      !hasRequestedModules || requestedSet.has("accounting"),
-    missingDependencies,
-  };
-}
-
 function isEffectiveOn(
   rule: { effectiveFrom: Date | null; effectiveTo: Date | null },
   date: Date,
@@ -447,9 +413,16 @@ export async function getPayrollSetupReadiness(
     normalizeCountryCode(organization.country);
   normalizedInput.countryCode = countryCode;
 
-  const moduleDecision = evaluatePayrollModuleReadiness(
-    organization.requestedModules,
-  );
+  const managed = await getManagedModuleState(input.organizationId, client);
+  const evaluate = (moduleSlug: "payroll" | "accounting") => evaluateModuleEntitlement({
+    organizationId: input.organizationId, userId: input.actorId ?? null, moduleSlug,
+    requestedModules: organization.requestedModules, explicitEntitlements: managed.explicitEntitlements,
+    actorPermissions: input.actorPermissions ?? [], surfaceType: "action", surface: "payroll-setup-readiness",
+    accessIntent: "write", mode: "enforce",
+  });
+  const payrollDecision = evaluate("payroll");
+  const moduleDecision = { entitled: payrollDecision.allowed, accountingDependencyPresent: evaluate("accounting").allowed,
+    missingDependencies: payrollDecision.missingDependencies.map(dependency => dependency.dependsOnSlug) };
   if (!moduleDecision.entitled) {
     addIssue(blockers, {
       code: "PAYROLL_MODULE_NOT_READY",

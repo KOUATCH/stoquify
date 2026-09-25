@@ -1,0 +1,26 @@
+{
+  "date": "2026-09-19",
+  "method": "Exact source-block comparison against the files read before this implementation (line endings normalized). Existing user edits are part of that baseline, not git HEAD.",
+  "assertions": [
+    {
+      "name": "Login submission, error handling and redirect",
+      "file": "components/auth/EnhancedLoginForm.tsx",
+      "identicalToPreImplementation": true
+    },
+    {
+      "name": "Registration step validation, navigation and submission",
+      "file": "components/auth/BeautifulRegisterForm.tsx",
+      "identicalToPreImplementation": true
+    },
+    {
+      "name": "Referral/invitation inputs and registration defaults",
+      "file": "components/auth/BeautifulRegisterForm.tsx",
+      "identicalToPreImplementation": true
+    },
+    {
+      "name": "Login return URL policy",
+      "file": "components/auth/EnhancedLoginForm.tsx",
+      "identicalToPreImplementation": true
+    }
+  ]
+}

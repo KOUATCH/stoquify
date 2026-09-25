@@ -1,0 +1,125 @@
+{
+  "mode": "prepare",
+  "attempt": "358c9b1e",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "organizationId": "org_modules_legacy_en_desktop",
+  "startedAt": "2026-09-05T17:24:30.360Z",
+  "sourcesBefore": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "e1acb966d1ab94e3e9c44e151a14db2c3ca26120aeded0b9c13bbd3221087d41",
+    "components/purchase-orders/purchase-order-edit-model.ts": "2925b4bf34ce9793691716fb593a18fe2e5c2ca272a9a8b2f9544ff84b6b8423",
+    "services/purchase-order/purchase-order.service.ts": "2dfd6a121b171b17b5cce93ca694e8bf46d3f9ead8158e032fdd53811cbb3495",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "5298914a883468cb6946e0b014fae20de9d087fbb7b07945d4162fecf1d2f34a",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "hooks/useRecentPurchaseOrderQueries.ts": "5ee6a672fdd523203d09354b493b3a1fee754572b76da399e440a553bf334a1f",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "c78a6a89bba8919a94a38f79705f3059aa0159edd2b1c061ae965a9f41282351",
+    "messages/en.json": "2ace6fd20e92e92cb0c6848840e80c0b334d7c10b6bc437dbd71c06d7ae2375a",
+    "messages/fr.json": "c6e39abc132313292cf137ff624ed0f86b8f18e6a67b617338029813cc636599",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "real service created two exact draft orders",
+      "passed": true
+    }
+  ],
+  "blockedExternalOrigins": [],
+  "originalAuthorityHashBefore": "0eadc769147ff9203883d67ab5ec35a4f6715edcbbf470456a26b87c4374f531",
+  "fixture": {
+    "userId": "workflow_po_20260905_f21e43788c_editor",
+    "roleId": "workflow_po_20260905_f21e43788c_role",
+    "supplierId": "workflow_po_20260905_f21e43788c_supplier",
+    "locationId": "workflow_po_20260905_f21e43788c_location",
+    "itemId": "workflow_po_20260905_f21e43788c_item",
+    "permissions": [
+      "dashboard.read",
+      "purchases.orders.read",
+      "purchases.orders.create",
+      "purchases.orders.update",
+      "purchases.orders.cancel"
+    ],
+    "orderIds": {
+      "en": "cmtonkgag0007mabkqj4poqea",
+      "fr": "cmtonkgdb000dmabkhof76ego"
+    },
+    "totals": {
+      "en": {
+        "id": "cmtonkgag0007mabkqj4poqea",
+        "orderNumber": "PO-000001",
+        "supplierId": "workflow_po_20260905_f21e43788c_supplier",
+        "locationId": "workflow_po_20260905_f21e43788c_location",
+        "orderDate": "2026-09-05T00:00:00.000Z",
+        "expectedDeliveryDate": "2026-09-12T00:00:00.000Z",
+        "paymentTerms": "Net 30 days",
+        "notes": "Synthetic en order notes to preserve",
+        "shippingCost": "15.00",
+        "subtotal": "200.00",
+        "taxAmount": "38.50",
+        "discount": "10.00",
+        "total": "243.50",
+        "lines": [
+          {
+            "id": "cmtonkgag0009mabkb3lhlr7z",
+            "itemId": "workflow_po_20260905_f21e43788c_item",
+            "quantity": "2",
+            "unitCost": "100.00",
+            "taxRate": "19.25",
+            "taxAmount": "38.50",
+            "discount": "10.00",
+            "total": "228.50",
+            "notes": "Synthetic en line notes to preserve"
+          }
+        ]
+      },
+      "fr": {
+        "id": "cmtonkgdb000dmabkhof76ego",
+        "orderNumber": "PO-000002",
+        "supplierId": "workflow_po_20260905_f21e43788c_supplier",
+        "locationId": "workflow_po_20260905_f21e43788c_location",
+        "orderDate": "2026-09-05T00:00:00.000Z",
+        "expectedDeliveryDate": "2026-09-12T00:00:00.000Z",
+        "paymentTerms": "Net 30 days",
+        "notes": "Synthetic fr order notes to preserve",
+        "shippingCost": "15.00",
+        "subtotal": "200.00",
+        "taxAmount": "38.50",
+        "discount": "10.00",
+        "total": "243.50",
+        "lines": [
+          {
+            "id": "cmtonkgdc000fmabkxin34uf1",
+            "itemId": "workflow_po_20260905_f21e43788c_item",
+            "quantity": "2",
+            "unitCost": "100.00",
+            "taxRate": "19.25",
+            "taxAmount": "38.50",
+            "discount": "10.00",
+            "total": "228.50",
+            "notes": "Synthetic fr line notes to preserve"
+          }
+        ]
+      }
+    },
+    "sessionsCreated": 0
+  },
+  "originalAuthorityHashAfter": "0eadc769147ff9203883d67ab5ec35a4f6715edcbbf470456a26b87c4374f531",
+  "existingUsersRolesOrganizationAndConfigurationUnchanged": true,
+  "sourcesAfter": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "e1acb966d1ab94e3e9c44e151a14db2c3ca26120aeded0b9c13bbd3221087d41",
+    "components/purchase-orders/purchase-order-edit-model.ts": "2925b4bf34ce9793691716fb593a18fe2e5c2ca272a9a8b2f9544ff84b6b8423",
+    "services/purchase-order/purchase-order.service.ts": "2dfd6a121b171b17b5cce93ca694e8bf46d3f9ead8158e032fdd53811cbb3495",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "5298914a883468cb6946e0b014fae20de9d087fbb7b07945d4162fecf1d2f34a",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "hooks/useRecentPurchaseOrderQueries.ts": "5ee6a672fdd523203d09354b493b3a1fee754572b76da399e440a553bf334a1f",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "c78a6a89bba8919a94a38f79705f3059aa0159edd2b1c061ae965a9f41282351",
+    "messages/en.json": "2ace6fd20e92e92cb0c6848840e80c0b334d7c10b6bc437dbd71c06d7ae2375a",
+    "messages/fr.json": "c6e39abc132313292cf137ff624ed0f86b8f18e6a67b617338029813cc636599",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverHash": "c6832f095174609130797cb0976113045d6e89d5379ec52154143801456ae70d",
+  "completedAt": "2026-09-05T17:24:31.668Z",
+  "passed": 1,
+  "failed": 0
+}

@@ -544,6 +544,19 @@ describe("module surface inventory", () => {
     expect(contract.classification).not.toContain("enforcement candidate")
   })
 
+  it("maps composition ownership without hiding guards or exempting unknown module services", () => {
+    const root = makeTempRepo()
+    writeFile(root, "services/modules/module-catalog.service.ts", 'export const MODULE_CATALOG = [{ slug: "settings", routePrefixes: ["/dashboard/settings"], dependencies: [] }]')
+    writeFile(root, "config/sidebar.ts", "export const sidebarLinks = []")
+    writeFile(root, "actions/modules/module-composition.actions.ts", 'const read = protect({ permission: "MANAGE_SYSTEM_SETTINGS" }, async () => null)')
+    writeFile(root, "services/modules/module-lifecycle.service.ts", 'import "server-only"; const orderBy = { moduleSlug: "asc" }; export async function read() { return orderBy }')
+    writeFile(root, "services/modules/module-future.service.ts", 'export async function unsafe() { return 1 }')
+    const report = buildModuleSurfaceInventory(root, { mode: "report" })
+    expect(report.records.find(record => record.file === "actions/modules/module-composition.actions.ts")).toMatchObject({ moduleSlug: "settings", permission: "MANAGE_SYSTEM_SETTINGS", guard: "protect", moduleApplicability: "required" })
+    expect(report.records.find(record => record.file === "services/modules/module-lifecycle.service.ts")).toMatchObject({ moduleSlug: "settings", guard: "none", classification: "mapped, enforcement candidate", moduleApplicability: "required" })
+    expect(report.records.find(record => record.file === "services/modules/module-future.service.ts")).toMatchObject({ moduleSlug: null, classification: "unmapped, enforcement candidate", moduleApplicability: "required" })
+  })
+
   it("includes API route guard inventory records in the module surface registry", () => {
     const root = makeTempRepo()
     writeFile(

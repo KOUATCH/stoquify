@@ -1,0 +1,28 @@
+{
+  "inspectedAt": "2026-09-24T03:42:55.981Z",
+  "file": ".next-pos-enterprise-build-20260924/server/app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.js",
+  "sha256": "87581c14deccbd204589d04afb70cd1ce22581cbdc885514acb5831e562b9439",
+  "method": "Read generated server code only; no code execution, request, or database access.",
+  "markers": [
+    {
+      "marker": "salesOrderId:null,purchaseOrder:{is:{locationId:",
+      "found": false,
+      "excerpt": null
+    },
+    {
+      "marker": "purchaseOrder:{is:{locationId:",
+      "found": false,
+      "excerpt": null
+    },
+    {
+      "marker": "payment.findMany",
+      "found": true,
+      "excerpt": ",sessionNumber:!0,organizationId:!0}},user:{select:{id:!0,firstName:!0,lastName:!0,email:!0}}},orderBy:[{createdAt:\"desc\"},{id:\"desc\"}],take:g.pageSize+1}):Promise.resolve([]),P?d.payment.findMany({where:N,include:{processedBy:{select:{id:!0,firstName:!0,lastName:!0,email:!0}},salesOrder:{select:{id:!0,locationId:!0}},purchaseOrder:{select:{id:!0,locationId:!0}},reconciliationTransaction:{select:{id:!0,state:!0,providerReference:!0,ledgerPostingBatchId:!0,settledAt:!0,confirmedAt:!0}}},orderBy:[{processedAt:\"desc\"},{createdAt:\"desc\"},{id:\"desc\"}],take:g.pageSize+1}):Promise"
+    },
+    {
+      "marker": "payment.aggregate",
+      "found": false,
+      "excerpt": null
+    }
+  ]
+}

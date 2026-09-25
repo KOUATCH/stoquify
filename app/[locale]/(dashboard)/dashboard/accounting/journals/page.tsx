@@ -1,4 +1,7 @@
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+
 import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { BookOpenCheck, FilePlus2, RotateCcw, Scale } from "lucide-react"
 
 import {
@@ -8,6 +11,10 @@ import {
   reverseJournalEntryAction,
 } from "@/actions/accounting/journals.actions"
 import { checkPermission } from "@/config/useAuth"
+import {
+  accountingDraftJournalEntriesTableContract,
+  accountingPostedJournalEntriesTableContract,
+} from "@/components/DataTableComponents"
 import {
   AccountingLinkButton,
   AccountingMessage,
@@ -24,6 +31,7 @@ type JournalEntryRow = {
   entryNumber: string
   entryDate: Date
   status: string
+  sourceType?: string
   memo: string | null
   journal: { code: string; nameEn: string }
   period: { name: string }
@@ -50,10 +58,123 @@ function resultPath(locale: string, ok: boolean, text: string) {
   return `/${locale}/dashboard/accounting/journals?${key}=${encodeURIComponent(text)}`
 }
 
+type JournalAction = (formData: FormData) => Promise<void>
+
+function JournalEntriesTable({
+  entries,
+  locale,
+  mode,
+  postEntry,
+  reverseEntry,
+  suspenseReversalNotice,
+}: {
+  entries: JournalEntryRow[]
+  locale: string
+  mode: "draft" | "posted"
+  postEntry: JournalAction
+  reverseEntry: JournalAction
+  suspenseReversalNotice: string
+}) {
+  const contract = mode === "draft" ? accountingDraftJournalEntriesTableContract : accountingPostedJournalEntriesTableContract
+
+  return (
+    <div data-journal-scope={mode}>
+      <AccountingDataTable
+        caption={mode === "draft" ? "Draft journal entries" : "Posted journal evidence"}
+        locale={locale === "fr" ? "fr" : "en"}
+        emptyMessage={mode === "draft" ? "No journal entries yet." : "No posted journal entries yet."}
+        contract={contract}
+        scopeFilters={{ status: mode === "draft" ? ["DRAFT"] : ["POSTED", "REVERSED"] }}
+        columns={[
+          { label: "Entry" },
+          { label: "Date" },
+          { label: "Journal" },
+          { label: "Period" },
+          { label: "Debit", className: "text-right" },
+          { label: "Credit", className: "text-right" },
+          { label: "Status" },
+          { label: "Action", className: "text-right" },
+        ]}
+        rows={entries.map((entry) => {
+          return {
+            id: entry.id,
+            searchText: [
+              entry.entryNumber,
+              entry.memo,
+              accountingDate(entry.entryDate),
+              entry.journal.code,
+              entry.period.name,
+              sumLines(entry.lines, "debit"),
+              sumLines(entry.lines, "credit"),
+              entry.status,
+            ]
+              .filter((value) => value !== null && value !== undefined)
+              .join(" "),
+            cells: [
+              <div key="cell-0">
+                <div className="font-medium text-[var(--dash-text)]">{entry.entryNumber}</div>
+                <div className="mt-1 max-w-[18rem] truncate text-xs text-[var(--dash-text-faint)]">
+                  {entry.memo || "No memo"}
+                </div>
+              </div>,
+              <div key="cell-1" className="text-[var(--dash-text-soft)]">
+                {accountingDate(entry.entryDate)}
+              </div>,
+              <div key="cell-2" className="text-[var(--dash-text-soft)]">
+                {entry.journal.code}
+              </div>,
+              <div key="cell-3" className="text-[var(--dash-text-soft)]">
+                {entry.period.name}
+              </div>,
+              <div key="cell-4" className="text-right text-[var(--dash-text)]">
+                {formatAccountingMoney(sumLines(entry.lines, "debit"))}
+              </div>,
+              <div key="cell-5" className="text-right text-[var(--dash-text)]">
+                {formatAccountingMoney(sumLines(entry.lines, "credit"))}
+              </div>,
+              <div key="cell-6" className="text-[var(--dash-text-soft)]">
+                {entry.status}
+              </div>,
+              <div key="cell-7">
+                <div className="flex justify-end gap-2">
+                  {mode === "draft" && entry.status === "DRAFT" ? (
+                    <form action={postEntry}>
+                      <input type="hidden" name="journalEntryId" value={entry.id} />
+                      <button className="dashboard-button-create h-9 rounded-lg px-3 text-xs font-medium">
+                        Post
+                      </button>
+                    </form>
+                  ) : null}
+                  {mode === "posted" && entry.status === "POSTED" && entry.sourceType === "PAYMENT_SUSPENSE" ? (
+                    <p className="max-w-64 whitespace-normal text-xs text-[var(--dash-warning)]">
+                      {suspenseReversalNotice}
+                    </p>
+                  ) : null}
+                  {mode === "posted" && entry.status === "POSTED" && entry.sourceType !== "PAYMENT_SUSPENSE" ? (
+                    <form action={reverseEntry}>
+                      <input type="hidden" name="journalEntryId" value={entry.id} />
+                      <input type="hidden" name="reason" value="Manual reversal" />
+                      <button className="dashboard-button-secondary inline-flex h-9 items-center gap-2 rounded-lg px-3 text-xs font-medium">
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Reverse
+                      </button>
+                    </form>
+                  ) : null}
+                </div>
+              </div>,
+            ],
+          }
+        })}
+      />
+    </div>
+  )
+}
+
 async function AccountingJournalsPageImpl({ params, searchParams }: PageProps) {
   await checkPermission("accounting.journal.read")
 
   const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "paymentReconciliationWorkbench.suspenseWorkflow" })
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const [journalsResponse, entriesResponse] = await Promise.all([
     listJournalsAction({}),
@@ -96,7 +217,7 @@ async function AccountingJournalsPageImpl({ params, searchParams }: PageProps) {
     >
       <AccountingMessage error={resolvedSearchParams.error} notice={resolvedSearchParams.notice} />
 
-      <div className="mb-6 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mb-6 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3" data-finance-result="journals" data-finance-result-state={journalsResponse.success && entriesResponse.success ? "ready" : "error"}>
         <AccountingStatCard
           label="Journals"
           value={journals.filter((journal) => journal.isActive).length.toString()}
@@ -123,65 +244,32 @@ async function AccountingJournalsPageImpl({ params, searchParams }: PageProps) {
         />
       </div>
 
-      <AccountingPanel title="Journal queue" description={entriesResponse.success ? "Draft, posted, and reversed manual ledger entries." : entriesResponse.error || "Entries unavailable."}>
-        <div className="overflow-x-auto">
-          <table className="dashboard-table-base w-full min-w-[980px] text-sm">
-            <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-              <tr>
-                <th className="px-4 py-3">Entry</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3">Journal</th>
-                <th className="px-4 py-3">Period</th>
-                <th className="px-4 py-3 text-right">Debit</th>
-                <th className="px-4 py-3 text-right">Credit</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entries.length ? (
-                entries.map((entry) => (
-                  <tr key={entry.id} className="border-b border-[var(--dash-border-subtle)]">
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-[var(--dash-text)]">{entry.entryNumber}</div>
-                      <div className="mt-1 max-w-[18rem] truncate text-xs text-[var(--dash-text-faint)]">{entry.memo || "No memo"}</div>
-                    </td>
-                    <td className="px-4 py-3 text-[var(--dash-text-soft)]">{accountingDate(entry.entryDate)}</td>
-                    <td className="px-4 py-3 text-[var(--dash-text-soft)]">{entry.journal.code}</td>
-                    <td className="px-4 py-3 text-[var(--dash-text-soft)]">{entry.period.name}</td>
-                    <td className="px-4 py-3 text-right text-[var(--dash-text)]">{formatAccountingMoney(sumLines(entry.lines, "debit"))}</td>
-                    <td className="px-4 py-3 text-right text-[var(--dash-text)]">{formatAccountingMoney(sumLines(entry.lines, "credit"))}</td>
-                    <td className="px-4 py-3 text-[var(--dash-text-soft)]">{entry.status}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex justify-end gap-2">
-                        {entry.status === "DRAFT" ? (
-                          <form action={postEntry}>
-                            <input type="hidden" name="journalEntryId" value={entry.id} />
-                            <button className="dashboard-button-create h-9 rounded-lg px-3 text-xs font-medium">Post</button>
-                          </form>
-                        ) : null}
-                        {entry.status === "POSTED" ? (
-                          <form action={reverseEntry}>
-                            <input type="hidden" name="journalEntryId" value={entry.id} />
-                            <input type="hidden" name="reason" value="Manual reversal" />
-                            <button className="dashboard-button-secondary inline-flex h-9 items-center gap-2 rounded-lg px-3 text-xs font-medium">
-                              <RotateCcw className="h-3.5 w-3.5" />
-                              Reverse
-                            </button>
-                          </form>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-[var(--dash-text-soft)]">No journal entries yet.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      <AccountingPanel
+        title="Draft journal entries"
+        description={entriesResponse.success ? "Editable drafts awaiting controlled post." : entriesResponse.error || "Entries unavailable."}
+      >
+        <JournalEntriesTable
+          entries={entries.filter((entry) => entry.status === "DRAFT")}
+          locale={locale}
+          mode="draft"
+          suspenseReversalNotice={t("reversalUnavailable")}
+          postEntry={postEntry}
+          reverseEntry={reverseEntry}
+        />
+      </AccountingPanel>
+
+      <AccountingPanel
+        title="Posted journal evidence"
+        description="Posted and reversed entries remain evidence-backed; reversal is a protected action."
+      >
+        <JournalEntriesTable
+          entries={entries.filter((entry) => entry.status === "POSTED" || entry.status === "REVERSED")}
+          locale={locale}
+          mode="posted"
+          suspenseReversalNotice={t("reversalUnavailable")}
+          postEntry={postEntry}
+          reverseEntry={reverseEntry}
+        />
       </AccountingPanel>
     </AccountingPageShell>
   )

@@ -1,0 +1,441 @@
+{
+  "publishedAt": "2026-09-08T14:59:52.754Z",
+  "publisher": "node .agents/skills/docs-report-publisher/scripts/publish_reports.mjs plan-of-action",
+  "publisherExitCode": 0,
+  "reportPairs": 47,
+  "newModulePackages": 21,
+  "tailoredPrompts": 21,
+  "tasks": 84,
+  "findings": 6,
+  "catalogEntries": 19,
+  "nonAccountingEntriesCovered": 18,
+  "checkedLinks": 747,
+  "csvMatchesJson": true,
+  "originalTemplatePreserved": true,
+  "accountingSourcesPreserved": true,
+  "pairs": [
+    {
+      "markdown": "accounting-correction-execution-roadmap-2026-09-08.md",
+      "pdf": "accounting-correction-execution-roadmap-2026-09-08.pdf",
+      "pages": 16,
+      "textCharacters": 41521,
+      "markdownSha256": "0b89f73427432b32a3745bc01fb574b2bcc763200cfa32661ed96ea6662daace",
+      "pdfSha256": "0bf7b94214ecb55ef1e89ebdf26a4c5d0b3e57f81d02c87ceeeed1fe544348ae",
+      "pdfBytes": 151506
+    },
+    {
+      "markdown": "ai-agent-governance-audit-execution-prompt-2026-09-08.md",
+      "pdf": "ai-agent-governance-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11068,
+      "markdownSha256": "c5843693a37794408b3c088152f216e2192213d4874623cf2b5374e3a0b3fb28",
+      "pdfSha256": "870bc0dcd1a306196978f17f76d1bfdc5777973d87e1ee21dc2881fd740eefa6",
+      "pdfBytes": 71911
+    },
+    {
+      "markdown": "ai-agent-governance-review-and-action-plan-2026-09-08.md",
+      "pdf": "ai-agent-governance-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 14555,
+      "markdownSha256": "d90508cd63ecc0bcf9c81a3790ad357d3b673f2deeb19484f9d40bcb9884b8fc",
+      "pdfSha256": "f094b5b928a0b0a91d204d74c6b81d95062681bc95f043db316efeb729bdef47",
+      "pdfBytes": 98763
+    },
+    {
+      "markdown": "close-assurance-audit-execution-prompt-2026-09-08.md",
+      "pdf": "close-assurance-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11255,
+      "markdownSha256": "f4de806e9cb331369d7fbb4220f40b3b5e3a04023668acab9d990363223bc303",
+      "pdfSha256": "580e58fc8e81950a55b7c3ee67d73b7d7c0f724c804b0a8ac50d7627ecee8965",
+      "pdfBytes": 73060
+    },
+    {
+      "markdown": "close-assurance-review-and-action-plan-2026-09-08.md",
+      "pdf": "close-assurance-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 15156,
+      "markdownSha256": "29f7512dd6e5c9de2b2750b192498bc3464c3bb54b1a573c8658a2b13ee27c7d",
+      "pdfSha256": "a91b9cf3c6a70d0cdd656952bee6358925a31112ae3b9f4ae6d48e9d4111a45c",
+      "pdfBytes": 100456
+    },
+    {
+      "markdown": "commercial-agents-audit-execution-prompt-2026-09-08.md",
+      "pdf": "commercial-agents-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 10818,
+      "markdownSha256": "93e0b7e6ffe6e31054a5fbe837e2ddf209cd3dfc91e4128ea5b63762bed1863f",
+      "pdfSha256": "72028a2e2517cb7480a2406fd5451ae95682db2a8a378f7b2f3497bde366fffe",
+      "pdfBytes": 69158
+    },
+    {
+      "markdown": "commercial-agents-review-and-action-plan-2026-09-08.md",
+      "pdf": "commercial-agents-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 13675,
+      "markdownSha256": "dd2d4e2623e31ceb2a3646ec793d7abf7a1535eb5902a11ce501b4c052b09d82",
+      "pdfSha256": "a4b8666c62682aecd16ae175d894c41eb2f0f04d1860f5c0d239ccff8a63b3b5",
+      "pdfBytes": 90164
+    },
+    {
+      "markdown": "communications-referrals-audit-execution-prompt-2026-09-08.md",
+      "pdf": "communications-referrals-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11015,
+      "markdownSha256": "1f7ec16a9d9812927f26396e6cb81cba5d3120be61d22c0e62858435344b2a7e",
+      "pdfSha256": "aedff29238a6e53bdd7d6816859e39262e64c1904c7db798a658b110afeca3f0",
+      "pdfBytes": 70848
+    },
+    {
+      "markdown": "communications-referrals-review-and-action-plan-2026-09-08.md",
+      "pdf": "communications-referrals-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 14668,
+      "markdownSha256": "45e8defb55aac3618b20bd2fdfacf28f7f404a4f5fc0830fdcfca282f205ec2f",
+      "pdfSha256": "59332655af1fe57cf57b14ca17e9fcee7efad5de834c783097699adf479f0a92",
+      "pdfBytes": 98360
+    },
+    {
+      "markdown": "compliance-country-packs-audit-execution-prompt-2026-09-08.md",
+      "pdf": "compliance-country-packs-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 10976,
+      "markdownSha256": "97a25db1d1b901816c7eebde7a147d087a3c656f82e08069700a3f967e20e159",
+      "pdfSha256": "870e3dd16a9a64e31f09956c79d07c148a367b324b61db694549d94e3f9085a5",
+      "pdfBytes": 71461
+    },
+    {
+      "markdown": "compliance-country-packs-review-and-action-plan-2026-09-08.md",
+      "pdf": "compliance-country-packs-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 14884,
+      "markdownSha256": "e1accebee734c78a12d84381ef9cbff1217751f4b1e3f948c05bb021a8a4d26c",
+      "pdfSha256": "bf740e6908f7b11645d4b314b8e62947682324873a3999e5fbc211ae02e42dc8",
+      "pdfBytes": 98676
+    },
+    {
+      "markdown": "content-public-experience-audit-execution-prompt-2026-09-08.md",
+      "pdf": "content-public-experience-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 10802,
+      "markdownSha256": "a69fe38e72222ce361aef3aea9944b6ad4327d208ef803859b4eea231bf201df",
+      "pdfSha256": "5157035daf1b36198dab9a484cb2683b90238f7460eace8e98561dde4a2ea955",
+      "pdfBytes": 70102
+    },
+    {
+      "markdown": "content-public-experience-review-and-action-plan-2026-09-08.md",
+      "pdf": "content-public-experience-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 13966,
+      "markdownSha256": "d3a08f15a18e25c917f2f2aff48498c772458f9fd66175de57f163f0f7c9b14d",
+      "pdfSha256": "0261429c25580a434bcef4f2cefaf3cc4feae0d19282c130dffdd2139c892bc3",
+      "pdfBytes": 94420
+    },
+    {
+      "markdown": "customers-receivables-audit-execution-prompt-2026-09-08.md",
+      "pdf": "customers-receivables-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11179,
+      "markdownSha256": "7a2e40348217e00cc89ab69f0aae4de093d15fc2a70d6bb6851bbe030f9b4651",
+      "pdfSha256": "a0fffb3b1ab574bb5bff05cec6f692a6166761061ffa31da7274c8c77088d2d7",
+      "pdfBytes": 72864
+    },
+    {
+      "markdown": "customers-receivables-review-and-action-plan-2026-09-08.md",
+      "pdf": "customers-receivables-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 15392,
+      "markdownSha256": "ccca921d38f7e689c7fb5f1b16c8c1d3227085383dff7e49a6549cace683c336",
+      "pdfSha256": "33c0cc44c0293e45ec3007a037ac4efba7d88aaf8d7c3afe451aa5d4a42d0811",
+      "pdfBytes": 101952
+    },
+    {
+      "markdown": "dashboards-analytics-reports-audit-execution-prompt-2026-09-08.md",
+      "pdf": "dashboards-analytics-reports-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11282,
+      "markdownSha256": "adc867c1692d23d261b60eb80b6e0b01da3859f68d2d60252c71051143b2c53c",
+      "pdfSha256": "4048610e751df50ff7b74b11f9e975c12a7f4769e09b67a2bd87516bf5b50181",
+      "pdfBytes": 74115
+    },
+    {
+      "markdown": "dashboards-analytics-reports-review-and-action-plan-2026-09-08.md",
+      "pdf": "dashboards-analytics-reports-review-and-action-plan-2026-09-08.pdf",
+      "pages": 7,
+      "textCharacters": 17099,
+      "markdownSha256": "bf8343f525bef175e13ec3493feb141ac2ec308809c18c3c807f17f7a5d86582",
+      "pdfSha256": "2280342590083a075508ea19fcd6fd0d1f9e734501ad6a37e9b3aee0f2de4cd2",
+      "pdfBytes": 103731
+    },
+    {
+      "markdown": "events-platform-reliability-audit-execution-prompt-2026-09-08.md",
+      "pdf": "events-platform-reliability-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 10912,
+      "markdownSha256": "49de2785a4465413c0c8e6b8914959b4cad29b1ee9b9c493dc0bfd3efd08f926",
+      "pdfSha256": "3061f18e3e3d4ae5cf4c246b721e98216e1968e22838d1ed875a7a416c52d3cd",
+      "pdfBytes": 72098
+    },
+    {
+      "markdown": "events-platform-reliability-review-and-action-plan-2026-09-08.md",
+      "pdf": "events-platform-reliability-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 15185,
+      "markdownSha256": "cad9cf1e831e67b783c536bd2a72ff89899ffa37dee4597d82319e321236196f",
+      "pdfSha256": "5ce9f7ffa102b3a0e9632369b9b481a57b629dcbb42394509bff72528179daa9",
+      "pdfBytes": 95899
+    },
+    {
+      "markdown": "finance-cash-treasury-audit-execution-prompt-2026-09-08.md",
+      "pdf": "finance-cash-treasury-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11019,
+      "markdownSha256": "5926cb059612d9fdc0fac24e2014ab4e82f45b488cde4ed517ebed9c0bf26a09",
+      "pdfSha256": "39ca0728940acdf4fb6717e3648c1187bc99d3bde9ea67c5396c40f185709683",
+      "pdfBytes": 72719
+    },
+    {
+      "markdown": "finance-cash-treasury-review-and-action-plan-2026-09-08.md",
+      "pdf": "finance-cash-treasury-review-and-action-plan-2026-09-08.pdf",
+      "pages": 8,
+      "textCharacters": 19988,
+      "markdownSha256": "28943db03befff458634ecd18e191801403dcf10e696324ea8debac9f0f26bd9",
+      "pdfSha256": "caf0fc815b4f6de8b6c5ddd7058e65d660c74eee9e85a145581763a0ebd35635",
+      "pdfBytes": 111841
+    },
+    {
+      "markdown": "hris-presence-audit-execution-prompt-2026-09-08.md",
+      "pdf": "hris-presence-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11020,
+      "markdownSha256": "078962aa8ba4c64412481f4278977d1f78cfec1ff719a9d966ef0e62ed853618",
+      "pdfSha256": "0d732c5b5bf736a20c31c20e9a815b1d7a1e5858ca534b3752efcccd3c2764d1",
+      "pdfBytes": 71370
+    },
+    {
+      "markdown": "hris-presence-review-and-action-plan-2026-09-08.md",
+      "pdf": "hris-presence-review-and-action-plan-2026-09-08.pdf",
+      "pages": 7,
+      "textCharacters": 19730,
+      "markdownSha256": "b2cbb46fe8ce8230d7de148d6b6e3fc50bdb80ae185437e7bc3f12d6b537fd7b",
+      "pdfSha256": "cda1cfb36edb989f4b94d9e644490c5648eaa35a36aca85a9aa6b3685e6eefc6",
+      "pdfBytes": 109980
+    },
+    {
+      "markdown": "identity-settings-admin-audit-execution-prompt-2026-09-08.md",
+      "pdf": "identity-settings-admin-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11008,
+      "markdownSha256": "71f03a7f32264ec74100409c0c959d8d2685e22affbcdbe32bb9315594826c77",
+      "pdfSha256": "7771f88b350a0e0c59f50d12ccf324518745e3b017ab23f4d0ab082a616cd781",
+      "pdfBytes": 74317
+    },
+    {
+      "markdown": "identity-settings-admin-review-and-action-plan-2026-09-08.md",
+      "pdf": "identity-settings-admin-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 15738,
+      "markdownSha256": "a823b96b5c4cf81ca0a0cb64ba1e4fabdf170de85fbb05a29be8598c8fa6d919",
+      "pdfSha256": "495e4fb066cc0fa820c76c99793ece4931f8f7fb18cfdf515ad192bb4b402ba1",
+      "pdfBytes": 99390
+    },
+    {
+      "markdown": "inventory-valuation-audit-execution-prompt-2026-09-08.md",
+      "pdf": "inventory-valuation-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11064,
+      "markdownSha256": "1ac556dacd5b5b14ba708afea52991de3925561bfb10c71e7c642975666c6bd7",
+      "pdfSha256": "382236a13af7465f496f9d049b82ac8b8f22c58cd360e1b857ca86cf33bd8f26",
+      "pdfBytes": 73648
+    },
+    {
+      "markdown": "inventory-valuation-review-and-action-plan-2026-09-08.md",
+      "pdf": "inventory-valuation-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 16806,
+      "markdownSha256": "6986e953e00afc7c278ba6cfed1d66ed308cdbede4cfcf18bb9d2a785e8e3ab7",
+      "pdfSha256": "3968277909d3a6126b06557b7fc891799b2c23b4877327eb7c89a7dc8bd1143f",
+      "pdfBytes": 106304
+    },
+    {
+      "markdown": "module-lifecycle-billing-audit-execution-prompt-2026-09-08.md",
+      "pdf": "module-lifecycle-billing-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11057,
+      "markdownSha256": "2bd96e048c0397ce0b1ab315f185a1f59530597bf177ac0057c364bc75fd569e",
+      "pdfSha256": "3bda9a2ae2167fa253b9b1a5a8afb750aeb4420ac467f9dcfb413cf05a84803b",
+      "pdfBytes": 72180
+    },
+    {
+      "markdown": "module-lifecycle-billing-review-and-action-plan-2026-09-08.md",
+      "pdf": "module-lifecycle-billing-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 16443,
+      "markdownSha256": "32016b19fd06741eb21632c7237245193227ab4c5f4448ee87c3a5e40cf9fad9",
+      "pdfSha256": "9d309bf6642ad116d448bda5b4cc58594d6fb81faf21a92baa99d8c552eda7d7",
+      "pdfBytes": 102447
+    },
+    {
+      "markdown": "offline-pos-audit-execution-prompt-2026-09-08.md",
+      "pdf": "offline-pos-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 10903,
+      "markdownSha256": "7d1964c578130ddaa99459cd6d2f051b0d3e26c9661fac0dfcbf2ed566e98c90",
+      "pdfSha256": "5df7ce359ab5539f6386c105cab183baf9234e1f7dc3d09917dd86f17d3173d3",
+      "pdfBytes": 70793
+    },
+    {
+      "markdown": "offline-pos-review-and-action-plan-2026-09-08.md",
+      "pdf": "offline-pos-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 15921,
+      "markdownSha256": "b983020664155513815435b0775cefaa533f0ebae139e3d4b2fdbc1b2733f852",
+      "pdfSha256": "fc24b512e5f73065173bed0a18902122b2b2a522b4265c91b8fc4605912850af",
+      "pdfBytes": 100776
+    },
+    {
+      "markdown": "onboarding-master-data-audit-execution-prompt-2026-09-08.md",
+      "pdf": "onboarding-master-data-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11131,
+      "markdownSha256": "062ac5ca0e4f2820202b04539b90690ca4a9411dd5ac9edc3ed9d113cab08b43",
+      "pdfSha256": "9c95c0a36165aafbd03151d50aaa001a353cb4c3d3b001904ea8fb2256dcac39",
+      "pdfBytes": 72598
+    },
+    {
+      "markdown": "onboarding-master-data-review-and-action-plan-2026-09-08.md",
+      "pdf": "onboarding-master-data-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 14275,
+      "markdownSha256": "a5498afa8cb6a151291ee9091cad79c589d5fb24454d85c470d608d15b596062",
+      "pdfSha256": "cd29635da90a2858b6b189babb2df095fcc13aea7d919bcefc1cf8c13024e293",
+      "pdfBytes": 97174
+    },
+    {
+      "markdown": "payments-reconciliation-audit-execution-prompt-2026-09-08.md",
+      "pdf": "payments-reconciliation-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11170,
+      "markdownSha256": "66b57e7d0590f53bcf1622d97c0547c1cc34762f2fba6745b93e1ba010e5afd7",
+      "pdfSha256": "eb75a01b56f4edc726f726676f31ca2de827670c52e42834bbd6a9bad91fb8e8",
+      "pdfBytes": 72353
+    },
+    {
+      "markdown": "payments-reconciliation-review-and-action-plan-2026-09-08.md",
+      "pdf": "payments-reconciliation-review-and-action-plan-2026-09-08.pdf",
+      "pages": 7,
+      "textCharacters": 17842,
+      "markdownSha256": "31c6a2fe8944b1e29db6cd0e0f30dbe3c1be94614e6655b366f3b22fcca02975",
+      "pdfSha256": "6006b441ff3ea5fd9f2849d62913cbf55937e5b75af34aa7a8e9800f22d12a0b",
+      "pdfBytes": 107951
+    },
+    {
+      "markdown": "payroll-audit-execution-prompt-2026-09-08.md",
+      "pdf": "payroll-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11133,
+      "markdownSha256": "6986d36ecaed8e691808f68a9987220aca6bf6f333c4480ab5c38e90b1271635",
+      "pdfSha256": "34ddd3d16ba526d64947246dea4eaf0ac880a3466423ff8bb78b88fe346cf51d",
+      "pdfBytes": 71396
+    },
+    {
+      "markdown": "payroll-review-and-action-plan-2026-09-08.md",
+      "pdf": "payroll-review-and-action-plan-2026-09-08.pdf",
+      "pages": 7,
+      "textCharacters": 18148,
+      "markdownSha256": "c2c7bf24c671e8650c2d5eb5133894e71c8e48ea53b0548f13956d85a68267e0",
+      "pdfSha256": "13d509834da42e11e0bee24af3abe95d61d9dd64a314756808cd3f947e49dc02",
+      "pdfBytes": 108992
+    },
+    {
+      "markdown": "platform-module-audit-source-template-2026-09-08.md",
+      "pdf": "platform-module-audit-source-template-2026-09-08.pdf",
+      "pages": 7,
+      "textCharacters": 19467,
+      "markdownSha256": "471e1bc2c76962ba2e5e751c1eeefedcb0fea778428a2beee683ba5a308c648c",
+      "pdfSha256": "70cf7b02dcb04dfd2b519e3b4e3afa57ece104e5a75b81356cb3331350c3fe8b",
+      "pdfBytes": 80360
+    },
+    {
+      "markdown": "platform-module-evidence-index-2026-09-08.md",
+      "pdf": "platform-module-evidence-index-2026-09-08.pdf",
+      "pages": 2,
+      "textCharacters": 3607,
+      "markdownSha256": "2ac2b2eeefdbd1514b1126967989f89251294fb2fb9ffddc6a151afee04b7177",
+      "pdfSha256": "9dbfcfe87f9238cea96c08ce81a87db2da8fd35a7f89bc1920ab89d489f650ad",
+      "pdfBytes": 49971
+    },
+    {
+      "markdown": "platform-module-reviews-and-execution-roadmap-2026-09-08.md",
+      "pdf": "platform-module-reviews-and-execution-roadmap-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 8785,
+      "markdownSha256": "ac766e8524834c0436b54b49505f86510f6d9eb5a568424df1e3290cd18ebea0",
+      "pdfSha256": "f65ad247d6b197c1c4e8f9f35a1ab0a19da013d24721770a78041f5174540c4f",
+      "pdfBytes": 72277
+    },
+    {
+      "markdown": "platform-module-risk-register-2026-09-08.md",
+      "pdf": "platform-module-risk-register-2026-09-08.pdf",
+      "pages": 5,
+      "textCharacters": 12944,
+      "markdownSha256": "2d49c92cec0f60cb707bf98d9011e7eb10e55bd2b7128f7c4a35c893141d3427",
+      "pdfSha256": "c5f80e5afdf32b773075514d6b80ae132fc3fd9ff53876554d05d39acd1cc509",
+      "pdfBytes": 65502
+    },
+    {
+      "markdown": "pos-sales-audit-execution-prompt-2026-09-08.md",
+      "pdf": "pos-sales-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 10885,
+      "markdownSha256": "b5b6541c6f04e83fc99735ae2153f106df73a6a54845cc2bb5f0e4f857b7919a",
+      "pdfSha256": "773e3dc21abac7ddac7858a7a34c591a13e857ebc18d113d47ad66f0b2f60374",
+      "pdfBytes": 70346
+    },
+    {
+      "markdown": "pos-sales-review-and-action-plan-2026-09-08.md",
+      "pdf": "pos-sales-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 15774,
+      "markdownSha256": "c29c9b2694d3653776c8e8436e95649a4a0f3de86c5a4afd66d007a899d34748",
+      "pdfSha256": "a1aa4fcd58bc6642dc22aab142b6f59693417b5223492cf76fff04b0df0fda52",
+      "pdfBytes": 103337
+    },
+    {
+      "markdown": "purchasing-suppliers-ap-audit-execution-prompt-2026-09-08.md",
+      "pdf": "purchasing-suppliers-ap-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11398,
+      "markdownSha256": "deeee917903452e4de185069261858c894b1f3844c0e6ebfea746ca753f2e722",
+      "pdfSha256": "cf98861e0afab69377d16bdb9627c713788046f0fd1464d03de970b80d766806",
+      "pdfBytes": 74785
+    },
+    {
+      "markdown": "purchasing-suppliers-ap-review-and-action-plan-2026-09-08.md",
+      "pdf": "purchasing-suppliers-ap-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 16874,
+      "markdownSha256": "0511f51f6181a2ecdccdca19e9e38be00e4ece58aba68a18b0b4a165627859b5",
+      "pdfSha256": "e90e853716d978c822ec0c84b60e702e0ef9c3cdd886bbeafad88546e92f95ae",
+      "pdfBytes": 106938
+    },
+    {
+      "markdown": "sales-fulfillment-audit-execution-prompt-2026-09-08.md",
+      "pdf": "sales-fulfillment-audit-execution-prompt-2026-09-08.pdf",
+      "pages": 4,
+      "textCharacters": 11166,
+      "markdownSha256": "6bae2eafb7b77a33aa996ede299df7fad637fd30ac336ff321cfa63d0bc894ce",
+      "pdfSha256": "975c8250609fef0ccf37c79a81f3b1f50b8dfa53bd006ebd425ac7b9af4e949c",
+      "pdfBytes": 71394
+    },
+    {
+      "markdown": "sales-fulfillment-review-and-action-plan-2026-09-08.md",
+      "pdf": "sales-fulfillment-review-and-action-plan-2026-09-08.pdf",
+      "pages": 6,
+      "textCharacters": 14372,
+      "markdownSha256": "a2d37f87591c8bab56b7ff3c0ed473ac9c13e9718b382031c0fcbcbd5eee11b6",
+      "pdfSha256": "334bb5b4dc29585bd381f1611c9c453f7e573e3ba0e5ffab5e15b6756a9095af",
+      "pdfBytes": 99359
+    }
+  ]
+}

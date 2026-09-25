@@ -12,7 +12,7 @@ export type StockToCashFlowSummary = {
   quantityOnOrder: number
   completedSalesRevenue: number
   cashCollected: number
-  unresolvedSuspenseAmount: number
+  unresolvedSuspenseAmount: number | null
   sourceLinkCount: number
   blockedStepCount: number
   unavailableProofCount: number

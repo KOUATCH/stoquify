@@ -1,0 +1,118 @@
+{
+  "run": "9b114a07-ed1",
+  "mode": "browser",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T11:09:58.906Z",
+  "sourcesBefore": {
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "services/roles/role-write.service.ts": "8285f804f041634e0189e32f7c5b61e1c24ef617654ff3c0c93011ac2d46d6ca",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/roles/role-permission-policy.ts": "6032136d22d3e512a3ba40e8b9ce2e916c62fa018de052d489014d44908a5b01",
+    "services/roles/role-editor.service.ts": "968c4ffe3bb88318c352481c86731d4a439e5e8ce42f619a3b71efa82ed65251",
+    "actions/roles/createRole.ts": "975bda73763e8ed1635a6b792afe60a3b5176f937387a3833aabc78ca9c2e6c5",
+    "actions/roles/updateRole.ts": "b117ab151a5048a5d19fa73c279c1db84f98625ea0b05ce6e449534cc4e77b36",
+    "actions/roles/getRoleEditor.ts": "5065ead28b91412149f465d503336ab3721e1eaf034475d21f2f9d3a8c583852",
+    "hooks/useRoleEditor.ts": "5ab52edd6d1950242d5bc14439acc299492ba21840da90f95255a671de5a70dc",
+    "components/Forms/RoleForm.tsx": "62d6d82f0e8ed378463dc6e6d752078d24edb15a78ba98fcd08458648802a1f4",
+    "components/Forms/RoleHistory.tsx": "f1eadf683f56f3d2fc973dc220ec9ff2174f439899b54f9a5dd5494dc2c0b222",
+    "components/Forms/role-editor-copy.ts": "39f697fb44cbedf414bd69fb9f2a2e9a17c654ce9a8dde7cc7303d11165573df",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx": "46d73de978cc9bab23c2e9ebbf456488afdba46d6b138d977f398cc3bc957c2e",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx": "f0ea83103b432e2190badd345b3972e7102faa04b022a2ca828cdc6ccd9d4606",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "components/NotAuthorized.tsx": "acb12472fe0de37e97de279688847dc436feaaa6b8e878e99112e3df3f2210cd",
+    "app/[locale]/(auth)/unauthorized/page.tsx": "e5c0f909ea17f4ac61a275ee2b72a8ed342294f9383dc9d3f7b2f9c6f97a2d65"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-role-editor-denied-9b114a07-ed1.png",
+        "en-role-editor-ready-9b114a07-ed1.png",
+        "en-role-editor-review-9b114a07-ed1.png",
+        "en-role-editor-created-9b114a07-ed1.png",
+        "en-role-editor-stale-draft-9b114a07-ed1.png",
+        "en-role-editor-merged-9b114a07-ed1.png",
+        "en-role-editor-lost-acknowledgement-9b114a07-ed1.png",
+        "en-role-editor-recovered-9b114a07-ed1.png",
+        "en-role-editor-history-9b114a07-ed1.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 7926,
+      "auditedHistoryRows": 4,
+      "newAudits": 4,
+      "keyboardSelectionAndSubmit": true,
+      "staleDraftMerge": true,
+      "lostResponseAfterCommitRecovery": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-role-editor-denied-9b114a07-ed1.png",
+        "fr-role-editor-ready-9b114a07-ed1.png",
+        "fr-role-editor-review-9b114a07-ed1.png",
+        "fr-role-editor-created-9b114a07-ed1.png",
+        "fr-role-editor-stale-draft-9b114a07-ed1.png",
+        "fr-role-editor-merged-9b114a07-ed1.png",
+        "fr-role-editor-lost-acknowledgement-9b114a07-ed1.png",
+        "fr-role-editor-recovered-9b114a07-ed1.png",
+        "fr-role-editor-history-9b114a07-ed1.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 7690,
+      "auditedHistoryRows": 4,
+      "newAudits": 4,
+      "keyboardSelectionAndSubmit": true,
+      "staleDraftMerge": true,
+      "lostResponseAfterCommitRecovery": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Only owned role fixtures in the isolated registration database. No throttle resets, existing credentials, baseline authority or production changes.",
+    "Actual browser authentication and password step-up, no seeded assurance. Nonlocal browser requests are blocked and the isolated app retains its server network fence.",
+    "These checks cover the role create/edit surface. Member deactivation, assignment, complete audit browsing and platform-wide last-admin guarantees are separate work.",
+    "Viewport and keyboard checks do not establish native zoom, screen-reader or comprehensive contrast certification."
+  ],
+  "originalAuthorityBefore": "a340af1664fe43b4f0f0e1a9f6fb1089c1a5868cada598abfec7aff6b9c2cdc1",
+  "originalAuthorityAfter": "a340af1664fe43b4f0f0e1a9f6fb1089c1a5868cada598abfec7aff6b9c2cdc1",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T11:12:32.136Z",
+  "sourcesAfter": {
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "services/roles/role-write.service.ts": "8285f804f041634e0189e32f7c5b61e1c24ef617654ff3c0c93011ac2d46d6ca",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/roles/role-permission-policy.ts": "6032136d22d3e512a3ba40e8b9ce2e916c62fa018de052d489014d44908a5b01",
+    "services/roles/role-editor.service.ts": "968c4ffe3bb88318c352481c86731d4a439e5e8ce42f619a3b71efa82ed65251",
+    "actions/roles/createRole.ts": "975bda73763e8ed1635a6b792afe60a3b5176f937387a3833aabc78ca9c2e6c5",
+    "actions/roles/updateRole.ts": "b117ab151a5048a5d19fa73c279c1db84f98625ea0b05ce6e449534cc4e77b36",
+    "actions/roles/getRoleEditor.ts": "5065ead28b91412149f465d503336ab3721e1eaf034475d21f2f9d3a8c583852",
+    "hooks/useRoleEditor.ts": "5ab52edd6d1950242d5bc14439acc299492ba21840da90f95255a671de5a70dc",
+    "components/Forms/RoleForm.tsx": "62d6d82f0e8ed378463dc6e6d752078d24edb15a78ba98fcd08458648802a1f4",
+    "components/Forms/RoleHistory.tsx": "f1eadf683f56f3d2fc973dc220ec9ff2174f439899b54f9a5dd5494dc2c0b222",
+    "components/Forms/role-editor-copy.ts": "39f697fb44cbedf414bd69fb9f2a2e9a17c654ce9a8dde7cc7303d11165573df",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx": "46d73de978cc9bab23c2e9ebbf456488afdba46d6b138d977f398cc3bc957c2e",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx": "f0ea83103b432e2190badd345b3972e7102faa04b022a2ca828cdc6ccd9d4606",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "components/NotAuthorized.tsx": "acb12472fe0de37e97de279688847dc436feaaa6b8e878e99112e3df3f2210cd",
+    "app/[locale]/(auth)/unauthorized/page.tsx": "e5c0f909ea17f4ac61a275ee2b72a8ed342294f9383dc9d3f7b2f9c6f97a2d65"
+  },
+  "sourceStable": true,
+  "driverSha256": "b57035eed2f748340103afca703f6c77f77e69a2ddf8bd457be79f3bfcdb87f0",
+  "passed": 2,
+  "failed": 0
+}

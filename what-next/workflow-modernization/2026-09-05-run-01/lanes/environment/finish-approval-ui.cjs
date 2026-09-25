@@ -1,0 +1,13 @@
+const fs=require('fs');const file='components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx';let s=fs.readFileSync(file,'utf8');
+const replace=(a,b)=>{if(!s.includes(a))throw Error('Missing anchor: '+a);s=s.replace(a,b)};
+replace('import { useSession } from "@/lib/auth-client"','import { useSession } from "@/lib/auth-client"\nimport { useTranslations } from "next-intl"');
+replace('  localizedHref: (href: string) => string','  localizedHref: (href: string) => string,\n  approvalLabel: string');
+replace('Approve Order','{approvalLabel}');
+replace('const { data: approvalSession } = useSession()','const { data: approvalSession } = useSession()\n  const approvalLabel = useTranslations("purchaseOrderApproval")("open")');
+s=s.replace(/      localizedHref\r?\n/g,'      localizedHref,\n      approvalLabel\n');
+replace('<DropdownMenuContent align="end" className="w-40">','<DropdownMenuContent align="end" className="w-64">');
+replace('text-emerald-700 focus:text-emerald-700 dark:text-emerald-300 dark:focus:text-emerald-300','text-[var(--dash-brand-strong)]');
+fs.writeFileSync(file,s);
+const test='components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx';fs.appendFileSync(test,'\njest.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }))\n');
+const dialog='components/purchase-orders/PurchaseOrderApprovalDialog.tsx';fs.writeFileSync(dialog,fs.readFileSync(dialog,'utf8').replaceAll('--dash-text-muted','--dash-text-soft'));
+console.log('Localized approval entry and aligned its review color and portal labels.');

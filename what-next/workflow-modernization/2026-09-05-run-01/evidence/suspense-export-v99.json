@@ -1,0 +1,87 @@
+{
+  "at": "2026-09-09T11:36:44.475Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v99-final.json",
+  "sources": {
+    "services/reconciliation/payment-suspense-correction-export.service.ts": "e1b348c4134c2cf9f39361a8c97cd3ee7ade61edd0c6c59c8abe1570c155e9c3",
+    "services/reconciliation/payment-suspense-correction-record.ts": "33f0bf41936af45123921d1097fe38d82b4fc3f8f620f12db8916140ad614acc",
+    "services/reconciliation/payment-suspense-correction.service.ts": "1d71db7a73885a2751f3977743e65e5bce59a05bcd27b56fe0e0e61a4a2b9e41",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "ac0fd1f2bef44c07835c7047f456bafaf7b9636d15b70696b09b031f2f5176ff",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "5e18f358c5d62585f1f6ea933ac9660090e4d3e92b858224695517a7fd0e60fc",
+    "components/finance/PaymentSuspenseQueue.tsx": "8b1f48cf76d657b4317753ca25bb8eb227db901934bcd96c8add26a07396544c",
+    "hooks/payments/correction-export-download.ts": "169dbdac44a6f45e2c5791c570e315828036da3d2ecdea412a9e28bb1fa5ba1b",
+    "actions/payments/reconciliation.actions.ts": "0d9787cce983bed5168f18d5d075808ca1445d1906d798c78be652c09fdf0fd2",
+    "messages/en.json": "7cf3de5c047ea81c325f8f0c5bff8d39adef24948585cd1a9945e9c02ecd367f",
+    "messages/fr.json": "bba51df8b5d528935afdd83ad9358a934d271a1afea030d5552126a01a684efa",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "28de8e481a302c204d2cb7bb68d2aecf73e46a8e28937d29893eaacfd9236b8d",
+    "components/finance/__tests__/PaymentSuspenseCorrectionPanel.test.tsx": "c2c8e441bc53565bb5e382f18cbab8bbca982ad956f1982991dc8ad438be89e0",
+    "services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts": "729d7f8b92dda05d932174c106c86192b6871e10bc841d497645c7a31522553e",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "c940fc92e41945b6b0eff4612729910d235aabc62ae4398615f22347ee1603b4",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "9a3ddb010df80c2bc93b1edce391711219f8c84ce547bb2f528ce26521c6ce28",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "a08ab717f55d3c1b183617e0b18a68b74bafa92e7b2dcaa89e86561a8ddc8415",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "8fafa147f0528a34f83d1f1f88624f7fb5d813af30682b3f80acc9ecbc90b25b",
+    "services/accounting/__tests__/posting-batch-identity.test.ts": "6472c843d0ef071cfb3497de1b26fa2e57641d238edba9546fed7eda3b4e7d60",
+    "services/accounting/__tests__/posting.service.test.ts": "a889b931cc8590897f1f9fe5e2dc60eefe5d608f7001ff2470678bd6ed35c7d1",
+    "services/reconciliation/__tests__/payment-suspense-correction-record.test.ts": "4255793c8e2d0edd3b4ef1de1550a8893d2c614560ad61e20bf73ed07ae87a0f",
+    "hooks/payments/__tests__/correction-export-download.test.ts": "ef80cc290f29ba719c2d05847e4ef020b26abb33a35db49789b20bcb48e9dec8",
+    "services/reconciliation/__tests__/payment-suspense-correction.contracts.test.ts": "535d38447c62d5f6637df7be47e8e7e1e431d2008535ca13d5ee8555ea2e57ea",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "b59fb7bd90233e21372b1fb1a462e8878deaf7d0c5344c2348a4bcef891d3061",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "6311d9727a5cf4275cf7b42c429061789d0c407f70bcda3d8573181b080d8c0e"
+  },
+  "tests": {
+    "file": "evidence/suspense-export-tests-v99-focus-final.json",
+    "session": 39310,
+    "passed": 111,
+    "suites": 11,
+    "layoutFile": "evidence/suspense-export-layout-tests-v99.json",
+    "layoutSession": 70380,
+    "layoutPassed": 61,
+    "layoutSuites": 2,
+    "totalPassed": 172,
+    "totalSuites": 13
+  },
+  "runtime": {
+    "file": "lanes/environment/suspense-export-v99-2c920813-e3d.json",
+    "checks": 12
+  },
+  "browser": {
+    "file": "lanes/environment/suspense-export-v99-browser-b8aadb83-d47.json",
+    "artifacts": "evidence/suspense-export-v99-files",
+    "screenshots": 16,
+    "downloads": 4
+  },
+  "typecheck": {
+    "session": 69138,
+    "exitCode": 0
+  },
+  "lint": {
+    "initialSession": 75286,
+    "files": 12,
+    "finalPanelSession": 89237,
+    "layoutSession": 6563,
+    "exitCode": 0
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 229,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2794,
+      "tests": 986,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2391,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "previousGoalTurn": "progress: correction export and source-bound verification; visual inspection discovered mobile clipping requiring further remediation"
+}

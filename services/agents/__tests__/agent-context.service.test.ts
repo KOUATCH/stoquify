@@ -13,6 +13,12 @@ import {
 } from "../agent-context.service"
 
 describe("agent trusted context resolver", () => {
+  it("uses the requested display language without changing server-derived authority", async () => {
+    const result = await resolveAgentExecutionContext({ requestedAgentKey: "command-agent", sourceRoute: "/dashboard/daily-digest", requestedModules: [], locale: "fr" }, {
+      requireContext: async () => rbacContext(), loadOrganizationSettings: async () => ({ currency: "XAF", defaultLocale: "EN" }), evaluateModule: jest.fn(), now: () => new Date("2026-09-19T12:00:00Z"),
+    })
+    expect(result).toMatchObject({ organizationId: "org-1", actorId: "user-1", locale: "fr", permissions: rbacContext().permissions, currency: "XAF" })
+  })
   it("resolves tenant, actor, settings, and enforce-mode module decisions", async () => {
     const evaluateModule = jest.fn(async (input) => moduleDecision(input.moduleSlug, true))
 
@@ -128,4 +134,3 @@ function moduleDecision(moduleSlug: "dashboard" | "inventory", allowed: boolean)
     evaluatedAt: "2026-07-22T12:00:00.000Z",
   }
 }
-

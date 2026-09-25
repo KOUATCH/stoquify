@@ -105,7 +105,7 @@ describe("POST /api/customer-statements/[statementId]/actions", () => {
     const error = new BusinessRuleError("Promise exceeds balance")
     mockSubmitAction.mockRejectedValue(error)
 
-    const response = await POST(request({ ...disputeBody, actionType: "PROMISE_TO_PAY" }), params())
+    const response = await POST(request({ ...disputeBody, actionType: "PROMISE_TO_PAY", promisedFor: "2026-12-01" }), params())
 
     expect(response.status).toBe(422)
     expect(mockJsonErrorEnvelopeResponse).toHaveBeenCalledWith(
@@ -113,5 +113,13 @@ describe("POST /api/customer-statements/[statementId]/actions", () => {
       { endpoint: "POST /api/customer-statements/[statementId]/actions" },
       { success: false },
     )
+  })
+
+  it.each([null, [], { ...disputeBody, requestedAmount: "NaN" }, { ...disputeBody, requestedAmount: "Infinity" }, { ...disputeBody, requestedAmount: "1234567890123" }, { ...disputeBody, requestedAmount: "1.001" }, { ...disputeBody, organizationId: "foreign" }])("rejects malformed or unbounded input privately: %j", async body => {
+    const response = await POST(request(body), params())
+    expect(response.status).toBe(422)
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store, max-age=0")
+    expect(response.headers.get("Referrer-Policy")).toBe("no-referrer")
+    expect(mockSubmitAction).not.toHaveBeenCalled()
   })
 })

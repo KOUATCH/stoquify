@@ -68,7 +68,9 @@ function revalidateClosePaths(periodId?: string | null) {
 }
 
 const getDashboard = protect<unknown, CloseAssuranceDashboardData>(
-  { permission: "accounting.close.read", auditResource: "CloseRun", auditAllowed: false },
+  { permission: "accounting.close.read", auditResource: "CloseRun", auditAllowed: false,
+    module: { moduleSlug: "close_assurance", surface: "close-assurance.dashboard", accessIntent: "read", mode: "enforce", audit: true },
+  },
   async (input, ctx) => {
     const parsed = closeAssuranceDashboardInputSchema.parse(input)
     return getCloseAssuranceDashboard(ctx.orgId, parsed?.periodId)
@@ -97,7 +99,9 @@ export async function runCloseAssuranceAction(input: unknown) {
 }
 
 const getEvidenceGraph = protect<unknown, CloseEvidenceGraphDto>(
-  { permission: "accounting.close.read", auditResource: "CloseEvidenceItem", auditAllowed: false },
+  { permission: "accounting.close.read", auditResource: "CloseEvidenceItem", auditAllowed: false,
+    module: { moduleSlug: "close_assurance", surface: "close-assurance.evidence-graph", accessIntent: "read", mode: "enforce", audit: true },
+  },
   async (input, ctx) => {
     const parsed = closeEvidenceGraphInputSchema.parse(input)
     return getCloseEvidenceGraph(ctx.orgId, parsed)

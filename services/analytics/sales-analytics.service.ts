@@ -1,8 +1,14 @@
 import "server-only"
 
-import { endOfDay, startOfDay, startOfMonth, startOfWeek, subDays } from "date-fns"
+import { readBusinessPulseSnapshot, type BusinessPulseSnapshot } from "./business-pulse-snapshot"
+import { resolveBusinessPulseLinks } from "./business-pulse-links"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 
 import { db } from "@/prisma/db"
+import { Prisma } from "@prisma/client"
+import { completedReportScope, completedReportSales, reportDecimal } from "./completed-sales-evidence"
+import { classifyReportCashMovement, reportCashMovements, reportCashSessions, reportSessionCount, type CashCountStatus } from "./cash-report-evidence"
+import { getCashierPerformanceReportReadModel, getItemPerformanceReportReadModel, buildReportProvenance, type ReportProvenance } from "./financial-reports.service"
 import type {
   BIActionLink,
   BIChangeDirection,
@@ -12,7 +18,7 @@ import type {
   BIKpiCard,
   BIKpiState,
   BIProvenance,
-  BIRiskRank,
+  BIUnassessedObservation,
   BISeverity,
 } from "@/services/bi/bi-contracts"
 import type {
@@ -38,6 +44,8 @@ export interface AnalyticsLocationInput {
 export interface BusinessPulseCommandInput {
   organizationId: string
   locationId?: string | null
+  permissions?: readonly string[]
+  locale?: "en" | "fr"
 }
 
 export interface SalesAnalytics {
@@ -78,12 +86,14 @@ export interface CashReconciliationReport {
   openedAt: Date
   closedAt?: Date
   openingBalance: number
-  expectedBalance: number
+  expectedBalance: number | null
   actualBalance?: number
   variance?: number
   totalSales: number
-  totalCashIn: number
-  totalCashOut: number
+  totalCashIn: number | null
+  totalCashOut: number | null
+  countStatus: CashCountStatus
+  provenance: ReportProvenance
   transactionCount: number
   status: string
 }
@@ -95,8 +105,9 @@ export interface ProductPerformance {
   category: string
   quantitySold: number
   totalRevenue: number
-  averagePrice: number
-  profitMargin: number
+  averagePrice: number | null
+  profitMargin: number | null
+  provenance: ReportProvenance
   currentStock: number
   stockStatus: "in_stock" | "low_stock" | "out_of_stock"
 }
@@ -106,11 +117,15 @@ export interface UserPerformance {
   userName: string
   totalSales: number
   totalTransactions: number
-  averageTransaction: number
+  averageTransaction: number | null
   sessionsCount: number
   totalHours: number
-  averageVariance: number
-  performanceScore: number
+  averageVariance: number | null
+  performanceScore: null
+  recordedCountSessions: number
+  openCountSessions: number
+  inconsistentCountSessions: number
+  provenance: ReportProvenance
 }
 
 function throwSafeAnalyticsError(action: string, error: unknown, userMessage: string): never {
@@ -126,476 +141,98 @@ function throwSafeAnalyticsError(action: string, error: unknown, userMessage: st
   })
 }
 
-const toNumber = (value: unknown): number => {
-  if (value === null || value === undefined) return 0
-  if (typeof value === "number") return value
-  if (typeof value === "object" && "toNumber" in value && typeof value.toNumber === "function") {
-    return value.toNumber()
-  }
-  return Number(value)
-}
-
 const displayName = (user: { firstName?: string | null; lastName?: string | null; email?: string | null } | null | undefined) => {
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim()
   return fullName || user?.email || "Unknown User"
 }
 
-const BUSINESS_PULSE_CURRENCY = "XAF"
 const BUSINESS_PULSE_MODULE = "analytics" as const
 const BUSINESS_PULSE_PERMISSION = "reports.read"
 const BUSINESS_PULSE_SOURCES = ["sales", "pos", "inventory"] satisfies SnapshotSourceModule[]
 
-export async function getSalesAnalyticsReadModel(
-  input: SalesAnalyticsReadModelInput,
-): Promise<SalesAnalytics> {
-  const { organizationId, locationId, startDate, endDate } = input
-
+export async function getSalesAnalyticsReadModel(input: SalesAnalyticsReadModelInput): Promise<SalesAnalytics> {
   try {
-    const start = startOfDay(startDate)
-    const end = endOfDay(endDate)
-
-    const sales = await db.salesOrder.findMany({
-      where: {
-        organizationId,
-        locationId,
-        createdAt: {
-          gte: start,
-          lte: end,
-        },
-        status: {
-          not: "CANCELLED",
-        },
-      },
-      include: {
-        lines: {
-          include: {
-            item: {
-              select: {
-                id: true,
-                nameEn: true,
-                sku: true,
-              },
-            },
-          },
-        },
-        payments: true,
-      },
-    })
-
-    const totalSales = sales.reduce((sum, sale) => sum + toNumber(sale.total), 0)
-    const totalTransactions = sales.length
-    const averageTransaction = totalTransactions > 0 ? totalSales / totalTransactions : 0
-    const totalItems = sales.reduce(
-      (sum, sale) => sum + sale.lines.reduce((lineSum, line) => lineSum + toNumber(line.quantity), 0),
-      0,
-    )
-
-    const itemSales = new Map<string, { name: string; sku: string; quantity: number; revenue: number }>()
-
-    sales.forEach((sale) => {
-      sale.lines.forEach((line) => {
-        if (line.item) {
-          const key = line.itemId
-          const existing = itemSales.get(key) || {
-            name: line.item.nameEn,
-            sku: line.item.sku,
-            quantity: 0,
-            revenue: 0,
-          }
-          existing.quantity += toNumber(line.quantity)
-          existing.revenue += toNumber(line.lineTotal)
-          itemSales.set(key, existing)
+    return await db.$transaction(async tx => {
+      const scope = await completedReportScope(tx, input), sales = await completedReportSales(tx, scope), zero = new Prisma.Decimal(0)
+      const total = sales.reduce((sum, sale) => sum.plus(reportDecimal(sale.total)), zero)
+      const items = new Map<string, { name: string; sku: string; quantity: Prisma.Decimal; revenue: Prisma.Decimal }>()
+      const hours = Array.from({ length: 24 }, (_, hour) => ({ hour, amount: zero, transactions: 0 }))
+      const calendar = new Intl.DateTimeFormat("en-CA", { timeZone: scope.timezone, year: "numeric", month: "2-digit", day: "2-digit" })
+      const dateKey = (date: Date) => { const parts = calendar.formatToParts(date), part = (type: string) => parts.find(value => value.type === type)!.value; return part("year") + "-" + part("month") + "-" + part("day") }
+      const hour = new Intl.DateTimeFormat("en", { timeZone: scope.timezone, hour: "2-digit", hourCycle: "h23" })
+      const days = new Map<string, { amount: Prisma.Decimal; transactions: number }>()
+      const first = Date.parse(dateKey(scope.start) + "T00:00:00Z")
+      for (let i = 0; i < scope.calendarDays; i++) days.set(new Date(first + i * 86400000).toISOString().slice(0, 10), { amount: zero, transactions: 0 })
+      const tenders = new Map<string, { amount: Prisma.Decimal; count: number }>()
+      for (const sale of sales) {
+        const amount = reportDecimal(sale.total), h = hours[Number(hour.format(sale.orderDate))], day = days.get(dateKey(sale.orderDate))!
+        h.amount = h.amount.plus(amount); h.transactions++; day.amount = day.amount.plus(amount); day.transactions++
+        for (const line of sale.lines) {
+          const item = items.get(line.itemId) ?? { name: line.item.nameEn, sku: line.item.sku, quantity: zero, revenue: zero }
+          item.quantity = item.quantity.plus(reportDecimal(line.quantity)); item.revenue = item.revenue.plus(reportDecimal(line.lineTotal)); items.set(line.itemId, item)
         }
-      })
-    })
-
-    const topSellingItems = Array.from(itemSales.entries())
-      .map(([itemId, data]) => ({
-        itemId,
-        itemName: data.name,
-        itemSku: data.sku,
-        quantitySold: data.quantity,
-        totalRevenue: data.revenue,
-      }))
-      .sort((a, b) => b.quantitySold - a.quantitySold)
-      .slice(0, 10)
-
-    const salesByHour = Array.from({ length: 24 }, (_, hour) => {
-      const hourSales = sales.filter((sale) => new Date(sale.createdAt).getHours() === hour)
-      return {
-        hour,
-        sales: hourSales.reduce((sum, sale) => sum + toNumber(sale.total), 0),
-        transactions: hourSales.length,
+        for (const payment of sale.payments) {
+          const tender = tenders.get(payment.method) ?? { amount: zero, count: 0 }
+          tender.amount = tender.amount.plus(reportDecimal(payment.amount)); tender.count++; tenders.set(payment.method, tender)
+        }
       }
-    })
-
-    const salesByDay: { date: string; sales: number; transactions: number }[] = []
-    const currentDate = new Date(start)
-    while (currentDate <= end) {
-      const dayStart = startOfDay(currentDate)
-      const dayEnd = endOfDay(currentDate)
-      const daySales = sales.filter((sale) => sale.createdAt >= dayStart && sale.createdAt <= dayEnd)
-
-      salesByDay.push({
-        date: currentDate.toISOString().split("T")[0],
-        sales: daySales.reduce((sum, sale) => sum + toNumber(sale.total), 0),
-        transactions: daySales.length,
-      })
-
-      currentDate.setDate(currentDate.getDate() + 1)
-    }
-
-    const paymentMethodMap = new Map<string, { amount: number; count: number }>()
-    sales.forEach((sale) => {
-      sale.payments.forEach((payment) => {
-        const existing = paymentMethodMap.get(payment.method) || { amount: 0, count: 0 }
-        existing.amount += toNumber(payment.amount)
-        existing.count += 1
-        paymentMethodMap.set(payment.method, existing)
-      })
-    })
-
-    const paymentMethods = Array.from(paymentMethodMap.entries()).map(([method, data]) => ({
-      method,
-      amount: data.amount,
-      count: data.count,
-      percentage: totalSales > 0 ? (data.amount / totalSales) * 100 : 0,
-    }))
-
-    return {
-      totalSales,
-      totalTransactions,
-      averageTransaction,
-      totalItems,
-      topSellingItems,
-      salesByHour,
-      salesByDay,
-      paymentMethods,
-    }
+      return { totalSales: total.toNumber(), totalTransactions: sales.length, averageTransaction: sales.length ? total.div(sales.length).toNumber() : 0,
+        totalItems: [...items.values()].reduce((sum, item) => sum.plus(item.quantity), zero).toNumber(),
+        topSellingItems: [...items].map(([itemId, item]) => ({ itemId, itemName: item.name, itemSku: item.sku, quantitySold: item.quantity.toNumber(), totalRevenue: item.revenue.toNumber() })).sort((a, b) => b.quantitySold - a.quantitySold).slice(0, 10),
+        salesByHour: hours.map(row => ({ hour: row.hour, sales: row.amount.toNumber(), transactions: row.transactions })),
+        salesByDay: [...days].map(([date, row]) => ({ date, sales: row.amount.toNumber(), transactions: row.transactions })),
+        paymentMethods: [...tenders].map(([method, row]) => ({ method, amount: row.amount.toNumber(), count: row.count, percentage: total.gt(0) ? row.amount.div(total).times(100).toNumber() : 0 })),
+      }
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
   } catch (error) {
     throwSafeAnalyticsError("getSalesAnalytics", error, "Failed to get sales analytics")
   }
 }
 
-export async function getCashReconciliationReportsReadModel(
-  input: SalesAnalyticsReadModelInput,
-): Promise<CashReconciliationReport[]> {
-  const { locationId, startDate, endDate } = input
-
+export async function getCashReconciliationReportsReadModel(input: SalesAnalyticsReadModelInput): Promise<CashReconciliationReport[]> {
   try {
-    const start = startOfDay(startDate)
-    const end = endOfDay(endDate)
-
-    const sessions = await db.pOSSession.findMany({
-      where: {
-        locationId,
-        startTime: {
-          gte: start,
-          lte: end,
-        },
-      },
-      include: {
-        terminal: {
-          select: {
-            name: true,
-          },
-        },
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-        salesOrders: {
-          where: {
-            status: {
-              not: "CANCELLED",
-            },
-          },
-        },
-      },
-      orderBy: {
-        startTime: "desc",
-      },
-    })
-
-    const sessionIds = sessions.map((session) => session.id)
-    const allTransactions = await db.cashDrawerTransaction.findMany({
-      where: {
-        sessionId: {
-          in: sessionIds,
-        },
-      },
-    })
-
-    const transactionsBySession = allTransactions.reduce((acc, transaction) => {
-      if (transaction.sessionId) {
-        if (!acc[transaction.sessionId]) {
-          acc[transaction.sessionId] = []
-        }
-        acc[transaction.sessionId].push(transaction)
-      }
-      return acc
-    }, {} as Record<string, typeof allTransactions>)
-
-    return sessions.map((session) => {
-      const totalSales = session.salesOrders.reduce((sum, sale) => sum + toNumber(sale.total), 0)
-      const sessionTransactions = transactionsBySession[session.id] || []
-
-      const totalCashIn = sessionTransactions
-        .filter((transaction) => transaction.type === "CASH_IN")
-        .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-
-      const totalCashOut = sessionTransactions
-        .filter((transaction) => transaction.type === "CASH_OUT")
-        .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-
-      return {
-        sessionId: session.id,
-        sessionNumber: session.sessionNumber,
-        terminalName: session.terminal?.name || "Unknown Terminal",
-        userName: displayName(session.user),
-        openedAt: session.startTime,
-        closedAt: session.endTime || undefined,
-        openingBalance: toNumber(session.openingBalance),
-        expectedBalance: toNumber(session.expectedBalance),
-        actualBalance: session.closingBalance === null ? undefined : toNumber(session.closingBalance),
-        variance: session.variance === null ? undefined : toNumber(session.variance),
-        totalSales,
-        totalCashIn,
-        totalCashOut,
-        transactionCount: sessionTransactions.length,
-        status: session.status,
-      }
-    })
+    return await db.$transaction(async tx => {
+      const scope = await completedReportScope(tx, input), sessions = await reportCashSessions(tx, scope), movements = await reportCashMovements(tx, scope), zero = new Prisma.Decimal(0)
+      const provenance = buildReportProvenance({ ...scope, sourceTables: ["pOSSession", "cashDrawerTransaction", "salesOrder"], rowCount: sessions.length + movements.length })
+      return sessions.map(session => {
+        const count = reportSessionCount(session, scope), cash = movements.filter(row => row.sessionId === session.id).map(classifyReportCashMovement)
+        const amount = (kind: string) => cash.some(row => row.kind === "INCONSISTENT") ? null : cash.filter(row => row.kind === kind).reduce((sum, row) => sum.plus(row.amount), zero).toNumber()
+        return { sessionId: session.id, sessionNumber: session.sessionNumber, terminalName: session.terminal.name || session.terminal.terminalNumber, userName: displayName(session.user),
+          openedAt: session.startTime, closedAt: session.endTime ?? undefined, openingBalance: reportDecimal(session.openingBalance).toNumber(), expectedBalance: count.expected, actualBalance: count.counted ?? undefined, variance: count.variance ?? undefined,
+          totalSales: session.salesOrders.reduce((sum, sale) => sum.plus(reportDecimal(sale.total)), zero).toNumber(), totalCashIn: amount("INFLOW"), totalCashOut: amount("OUTFLOW"), transactionCount: session.salesOrders.length, status: session.status, countStatus: count.status, provenance }
+      })
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
   } catch (error) {
     throwSafeAnalyticsError("getCashReconciliationReports", error, "Failed to get cash reconciliation reports")
   }
 }
 
-export async function getProductPerformanceReadModel(
-  input: SalesAnalyticsReadModelInput,
-): Promise<ProductPerformance[]> {
-  const { organizationId, locationId, startDate, endDate } = input
-
+export async function getProductPerformanceReadModel(input: SalesAnalyticsReadModelInput): Promise<ProductPerformance[]> {
   try {
-    const start = startOfDay(startDate)
-    const end = endOfDay(endDate)
-
-    const items = await db.item.findMany({
-      where: {
-        organizationId,
-        isActive: true,
-      },
-      include: {
-        category: {
-          select: {
-            titleEn: true,
-          },
-        },
-        inventoryLevels: {
-          where: {
-            locationId,
-          },
-        },
-        salesOrderLines: {
-          where: {
-            salesOrder: {
-              locationId,
-              createdAt: {
-                gte: start,
-                lte: end,
-              },
-              status: {
-                not: "CANCELLED",
-              },
-            },
-          },
-        },
-      },
-    })
-
-    return items.map((item) => {
-      const quantitySold = item.salesOrderLines.reduce((sum, line) => sum + toNumber(line.quantity), 0)
-      const totalRevenue = item.salesOrderLines.reduce((sum, line) => sum + toNumber(line.lineTotal), 0)
-      const sellingPrice = toNumber(item.sellingPrice)
-      const costPrice = toNumber(item.costPrice)
-      const reorderLevel = toNumber(item.reorderLevel)
-      const averagePrice = quantitySold > 0 ? totalRevenue / quantitySold : sellingPrice
-      const profitMargin = sellingPrice > 0 ? ((sellingPrice - costPrice) / sellingPrice) * 100 : 0
-
-      const inventoryLevel = item.inventoryLevels[0]
-      const currentStock = toNumber(inventoryLevel?.quantityOnHand)
-
-      let stockStatus: ProductPerformance["stockStatus"] = "in_stock"
-      if (currentStock === 0) {
-        stockStatus = "out_of_stock"
-      } else if (currentStock <= reorderLevel) {
-        stockStatus = "low_stock"
-      }
-
-      return {
-        itemId: item.id,
-        itemName: item.nameEn,
-        itemSku: item.sku,
-        category: item.category?.titleEn || "Uncategorized",
-        quantitySold,
-        totalRevenue,
-        averagePrice,
-        profitMargin,
-        currentStock,
-        stockStatus,
-      }
-    })
+    const rows = await getItemPerformanceReportReadModel(input)
+    return rows.map(row => ({ itemId: row.itemId, itemName: row.itemName, itemSku: row.itemSku, category: row.category, quantitySold: row.quantitySold, totalRevenue: row.totalRevenue,
+      averagePrice: row.quantitySold > 0 ? row.averageSellingPrice : null, profitMargin: row.profitMargin, currentStock: row.currentStock, stockStatus: row.stockStatus, provenance: row.provenance }))
   } catch (error) {
     throwSafeAnalyticsError("getProductPerformance", error, "Failed to get product performance")
   }
 }
 
-export async function getUserPerformanceReadModel(
-  input: SalesAnalyticsReadModelInput,
-): Promise<UserPerformance[]> {
-  const { organizationId, locationId, startDate, endDate } = input
-
+export async function getUserPerformanceReadModel(input: SalesAnalyticsReadModelInput): Promise<UserPerformance[]> {
   try {
-    const start = startOfDay(startDate)
-    const end = endOfDay(endDate)
-
-    const users = await db.user.findMany({
-      where: {
-        organizationId,
-        isActive: true,
-      },
-      include: {
-        posSessions: {
-          where: {
-            locationId,
-            startTime: {
-              gte: start,
-              lte: end,
-            },
-          },
-          include: {
-            salesOrders: {
-              where: {
-                status: {
-                  not: "CANCELLED",
-                },
-              },
-            },
-          },
-        },
-      },
-    })
-
-    return users
-      .map((user) => {
-        const sessions = user.posSessions
-        const sessionSales = sessions.flatMap((session) => session.salesOrders)
-
-        const totalSales = sessionSales.reduce((sum, sale) => sum + toNumber(sale.total), 0)
-        const totalTransactions = sessionSales.length
-        const averageTransaction = totalTransactions > 0 ? totalSales / totalTransactions : 0
-        const sessionsCount = sessions.length
-
-        const totalHours = sessions.reduce((sum, session) => {
-          if (session.endTime) {
-            const hours = (session.endTime.getTime() - session.startTime.getTime()) / (1000 * 60 * 60)
-            return sum + hours
-          }
-          return sum
-        }, 0)
-
-        const sessionsWithVariance = sessions.filter((session) => session.variance !== null)
-        const averageVariance =
-          sessionsWithVariance.length > 0
-            ? sessionsWithVariance.reduce((sum, session) => sum + Math.abs(toNumber(session.variance)), 0) / sessionsWithVariance.length
-            : 0
-
-        let performanceScore = 100
-        if (averageVariance > 10) performanceScore -= 20
-        else if (averageVariance > 5) performanceScore -= 10
-        if (totalTransactions < 10) performanceScore -= 10
-        if (averageTransaction < 20) performanceScore -= 10
-
-        return {
-          userId: user.id,
-          userName: displayName(user),
-          totalSales,
-          totalTransactions,
-          averageTransaction,
-          sessionsCount,
-          totalHours,
-          averageVariance,
-          performanceScore: Math.max(0, performanceScore),
-        }
-      })
-      .filter((user) => user.sessionsCount > 0)
-      .sort((a, b) => b.totalSales - a.totalSales)
+    const rows = await getCashierPerformanceReportReadModel(input)
+    return rows.map(row => ({ userId: row.cashierId, userName: row.cashierName, totalSales: row.totalSales, totalTransactions: row.totalTransactions, averageTransaction: row.averageTransactionValue, sessionsCount: row.sessionsWorked,
+      totalHours: row.elapsedShiftHours, averageVariance: row.absoluteVariance !== null && row.recordedCountSessions > 0 ? row.absoluteVariance / row.recordedCountSessions : null, performanceScore: null,
+      recordedCountSessions: row.recordedCountSessions, openCountSessions: row.openCountSessions, inconsistentCountSessions: row.inconsistentCountSessions, provenance: row.provenance })).sort((a, b) => b.totalSales - a.totalSales)
   } catch (error) {
     throwSafeAnalyticsError("getUserPerformance", error, "Failed to get user performance")
   }
 }
 
 export async function getDashboardSummaryReadModel(input: AnalyticsLocationInput) {
-  const { organizationId, locationId } = input
-
   try {
-    const today = new Date()
-    const yesterday = subDays(today, 1)
-    const thisWeek = startOfWeek(today)
-    const thisMonth = startOfMonth(today)
-
-    const todayStats = await getSalesAnalyticsReadModel({ organizationId, locationId, startDate: today, endDate: today })
-    const yesterdayStats = await getSalesAnalyticsReadModel({ organizationId, locationId, startDate: yesterday, endDate: yesterday })
-    const weekStats = await getSalesAnalyticsReadModel({ organizationId, locationId, startDate: thisWeek, endDate: today })
-    const monthStats = await getSalesAnalyticsReadModel({ organizationId, locationId, startDate: thisMonth, endDate: today })
-
-    const activeSessions = await db.pOSSession.count({
-      where: {
-        locationId,
-        status: "ACTIVE",
-      },
-    })
-
-    const lowStockItems = await db.item.count({
-      where: {
-        organizationId,
-        isActive: true,
-        inventoryLevels: {
-          some: {
-            locationId,
-            quantityOnHand: {
-              lte: 10,
-            },
-          },
-        },
-      },
-    })
-
-    return {
-      today: {
-        sales: todayStats.totalSales,
-        transactions: todayStats.totalTransactions,
-        averageTransaction: todayStats.averageTransaction,
-        salesChange: todayStats.totalSales - yesterdayStats.totalSales,
-        transactionsChange: todayStats.totalTransactions - yesterdayStats.totalTransactions,
-      },
-      week: {
-        sales: weekStats.totalSales,
-        transactions: weekStats.totalTransactions,
-        averageTransaction: weekStats.averageTransaction,
-      },
-      month: {
-        sales: monthStats.totalSales,
-        transactions: monthStats.totalTransactions,
-        averageTransaction: monthStats.averageTransaction,
-      },
-      activeSessions,
-      lowStockItems,
-      topSellingItems: todayStats.topSellingItems.slice(0, 5),
-    }
+    const snapshot = await readBusinessPulseSnapshot(input)
+    if (!snapshot.summary) throw new BusinessRuleError("An active location is required.")
+    return snapshot.summary
   } catch (error) {
     throwSafeAnalyticsError("getDashboardSummary", error, "Failed to get dashboard summary")
   }
@@ -606,45 +243,25 @@ type ComposeBusinessPulseCommandInput = {
   organizationId: string
   locationId: string
   summary: DashboardSummaryReadModel
-  now?: Date
-  currency?: string
+  context: BusinessPulseSnapshot["context"]
 }
 
 export async function getBusinessPulseCommandReadModel(
   input: BusinessPulseCommandInput,
 ): Promise<BusinessPulseCommandData> {
   try {
-    const locationId = input.locationId ?? (await resolveBusinessPulseLocationId(input.organizationId))
-
-    if (!locationId) {
-      return composeBlockedBusinessPulseCommandData({
-        organizationId: input.organizationId,
-        now: new Date(),
-      })
-    }
-
-    const summary = await getDashboardSummaryReadModel({
-      organizationId: input.organizationId,
-      locationId,
-    })
-
-    return composeBusinessPulseCommandData({
-      organizationId: input.organizationId,
-      locationId,
-      summary,
-      now: new Date(),
-    })
+    const snapshot = await readBusinessPulseSnapshot(input)
+    const data = snapshot.summary
+      ? composeBusinessPulseCommandData({ organizationId: input.organizationId, locationId: snapshot.context.locationId!, summary: snapshot.summary, context: snapshot.context })
+      : composeBlockedBusinessPulseCommandData(snapshot.context)
+    return resolveBusinessPulseLinks(data, input.permissions, input.locale)
   } catch (error) {
     throwSafeAnalyticsError("getBusinessPulseCommand", error, "Failed to get business pulse command data")
   }
 }
 
 export function composeBusinessPulseCommandData(input: ComposeBusinessPulseCommandInput): BusinessPulseCommandData {
-  const now = input.now ?? new Date()
-  const generatedAt = now.toISOString()
-  const periodStart = startOfDay(now).toISOString()
-  const periodEnd = endOfDay(now).toISOString()
-  const currency = input.currency ?? BUSINESS_PULSE_CURRENCY
+  const { generatedAt, periodStart, periodEnd, currency, timezone } = input.context
   const freshness = buildBusinessPulseFreshness(generatedAt)
   const provenance = buildBusinessPulseProvenance({
     organizationId: input.organizationId,
@@ -662,14 +279,15 @@ export function composeBusinessPulseCommandData(input: ComposeBusinessPulseComma
   })
   const inventoryAction = actionLink({
     id: "business-pulse-open-inventory",
-    label: "Open inventory",
-    href: "/dashboard/inventory/stock",
-    requiredPermission: "inventory.read",
+    label: "Browse item records (all locations)",
+    href: "/dashboard/inventory/items",
+    requiredPermission: "inventory.items.read",
     moduleSlug: "inventory",
   })
 
   const summary = toBusinessPulseSummary(input.summary)
-  const state: BIKpiState = "ready"
+  const stockCoverage = input.summary.stockCoverage
+  const state: BIKpiState = stockCoverage.itemsWithoutRecords > 0 ? "partial" : "ready"
   const evidenceGrade = "operational" as const
   const trustState = "operational" as const
 
@@ -678,7 +296,7 @@ export function composeBusinessPulseCommandData(input: ComposeBusinessPulseComma
       id: "business-pulse-today-sales",
       organizationId: input.organizationId,
       title: "Today's revenue",
-      detail: `${formatAmount(summary.todaySales, currency)} from trusted sales orders today.`,
+      detail: `${formatAmount(summary.todaySales, currency)} from completed or delivered sales orders recorded for today.`,
       value: summary.todaySales,
       unit: currency,
       format: "currency",
@@ -710,12 +328,12 @@ export function composeBusinessPulseCommandData(input: ComposeBusinessPulseComma
       format: "number",
       freshness,
       provenance,
-      drillThrough: routeDrillThrough("Open POS", "/dashboard/pos", "pos.read"),
+      drillThrough: routeDrillThrough("Open POS", "/dashboard/pos", "OPERATE_POS"),
       actionLink: actionLink({
         id: "business-pulse-open-pos",
         label: "Open POS",
         href: "/dashboard/pos",
-        requiredPermission: "pos.read",
+        requiredPermission: "OPERATE_POS",
         moduleSlug: "pos",
       }),
     }),
@@ -723,16 +341,22 @@ export function composeBusinessPulseCommandData(input: ComposeBusinessPulseComma
       id: "business-pulse-low-stock",
       organizationId: input.organizationId,
       title: "Low-stock items",
-      detail: `${summary.lowStockItems} active item(s) are at or below the analytics stock threshold.`,
+      detail: `${summary.lowStockItems} active item(s) have available stock at or below a location’s reorder point, including out-of-stock items. Missing stock records are not counted.`,
       value: summary.lowStockItems,
       unit: "items",
       format: "number",
       freshness,
       provenance,
-      drillThrough: routeDrillThrough("Open stock", "/dashboard/inventory/stock", "inventory.read"),
+      drillThrough: routeDrillThrough("Browse item records (all locations)", "/dashboard/inventory/items", "inventory.items.read"),
       actionLink: inventoryAction,
     }),
   ]
+  const stockCard = cards.find(card => card.id === "business-pulse-low-stock")!
+  stockCard.state = stockCoverage.itemsWithoutRecords > 0 ? "partial" : stockCoverage.activeItems === 0 ? "empty" : "ready"
+  if (stockCoverage.itemsWithRecords === 0) {
+    stockCard.value = stockCoverage.activeItems === 0 ? "No inventory-tracked items" : "Unavailable"
+    stockCard.format = "text"
+  }
 
   const changes = buildBusinessPulseChanges({
     organizationId: input.organizationId,
@@ -766,14 +390,15 @@ export function composeBusinessPulseCommandData(input: ComposeBusinessPulseComma
     periodStart,
     periodEnd,
     currency,
+    timezone,
     commandBrief: {
       id: "business-pulse-command-brief",
       organizationId: input.organizationId,
       title: "Business Pulse Analytics",
       summary: `${formatAmount(summary.todaySales, currency)} in sales today, ${summary.todayTransactions} transaction(s), ${summary.activeSessions} active POS session(s), and ${summary.lowStockItems} low-stock item(s).`,
       conclusion: actionsToday.length
-        ? `${actionsToday.length} action(s) need attention before the next operating review.`
-        : "No urgent business pulse action is visible from the trusted analytics read model.",
+        ? `${actionsToday.length} suggested review(s). Urgency, owner and deadline have not been assessed.`
+        : "No review suggestion from these limited checks. This is not a health or completeness assessment.",
       mode: "brief",
       generatedAt,
       periodStart,
@@ -798,10 +423,8 @@ export function composeBusinessPulseCommandData(input: ComposeBusinessPulseComma
   }
 }
 
-function composeBlockedBusinessPulseCommandData(input: { organizationId: string; now: Date }): BusinessPulseCommandData {
-  const generatedAt = input.now.toISOString()
-  const periodStart = startOfDay(input.now).toISOString()
-  const periodEnd = endOfDay(input.now).toISOString()
+function composeBlockedBusinessPulseCommandData(input: BusinessPulseSnapshot["context"]): BusinessPulseCommandData {
+  const { generatedAt, periodStart, periodEnd } = input
   const freshness = buildBusinessPulseFreshness(generatedAt, "blocked")
   const blocker = {
     id: "business-pulse-location-blocker",
@@ -826,7 +449,8 @@ function composeBlockedBusinessPulseCommandData(input: { organizationId: string;
     generatedAt,
     periodStart,
     periodEnd,
-    currency: BUSINESS_PULSE_CURRENCY,
+    currency: input.currency,
+    timezone: input.timezone,
     commandBrief: {
       id: "business-pulse-command-brief",
       organizationId: input.organizationId,
@@ -849,10 +473,10 @@ function composeBlockedBusinessPulseCommandData(input: { organizationId: string;
         id: "business-pulse-open-locations",
         label: "Open locations",
         href: "/dashboard/settings/locations",
-        requiredPermission: "system.settings.read",
+        requiredPermission: "locations.read",
         moduleSlug: "settings",
       }),
-      drillThrough: routeDrillThrough("Open locations", "/dashboard/settings/locations", "system.settings.read"),
+      drillThrough: routeDrillThrough("Open locations", "/dashboard/settings/locations", "locations.read"),
       reviewState: null,
     },
     cards: [],
@@ -869,22 +493,9 @@ function composeBlockedBusinessPulseCommandData(input: { organizationId: string;
       monthSales: 0,
       activeSessions: 0,
       lowStockItems: 0,
+      stockCoverage: null,
     },
   }
-}
-
-async function resolveBusinessPulseLocationId(organizationId: string) {
-  const location = await db.location.findFirst({
-    where: {
-      organizationId,
-      isActive: true,
-      deletedAt: null,
-    },
-    orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }],
-    select: { id: true },
-  })
-
-  return location?.id ?? null
 }
 
 function toBusinessPulseSummary(summary: DashboardSummaryReadModel): BusinessPulseSummary {
@@ -898,6 +509,7 @@ function toBusinessPulseSummary(summary: DashboardSummaryReadModel): BusinessPul
     monthSales: summary.month.sales,
     activeSessions: summary.activeSessions,
     lowStockItems: summary.lowStockItems,
+    stockCoverage: summary.stockCoverage,
   }
 }
 
@@ -919,11 +531,11 @@ function buildBusinessPulseChanges(input: {
       organizationId: input.organizationId,
       moduleSlug: BUSINESS_PULSE_MODULE,
       requiredPermission: BUSINESS_PULSE_PERMISSION,
-      title: "Revenue movement versus yesterday",
-      detail: `${formatSignedAmount(input.summary.salesChange, input.currency)} versus yesterday.`,
+      title: "Today’s recorded sales versus yesterday’s full day",
+      detail: `${formatSignedAmount(input.summary.salesChange, input.currency)}: today’s recorded activity versus the whole of yesterday.`,
       businessImpact: salesChangeImpact(input.summary.salesChange, input.currency),
       direction: directionFromDelta(input.summary.salesChange),
-      severity: severityFromDelta(input.summary.salesChange),
+      severity: "info",
       state: "ready",
       evidenceGrade: "operational",
       trustState: "operational",
@@ -945,11 +557,11 @@ function buildBusinessPulseChanges(input: {
       organizationId: input.organizationId,
       moduleSlug: BUSINESS_PULSE_MODULE,
       requiredPermission: BUSINESS_PULSE_PERMISSION,
-      title: "Transaction movement versus yesterday",
-      detail: `${formatSignedNumber(input.summary.transactionChange)} transaction(s) versus yesterday.`,
+      title: "Today’s transactions versus yesterday’s full day",
+      detail: `${formatSignedNumber(input.summary.transactionChange)} transaction(s): today’s recorded activity versus the whole of yesterday.`,
       businessImpact: transactionChangeImpact(input.summary.transactionChange),
       direction: directionFromDelta(input.summary.transactionChange),
-      severity: input.summary.transactionChange < 0 ? "medium" : "info",
+      severity: "info",
       state: "ready",
       evidenceGrade: "operational",
       trustState: "operational",
@@ -981,16 +593,16 @@ function buildBusinessPulseActions(input: {
   if (input.summary.salesChange < 0) {
     actions.push({
       id: "business-pulse-action-revenue-drop",
-      title: "Investigate revenue drop",
-      nextStep: "Compare today's sales, cashier activity, and payment mix before the next operating review.",
-      severity: severityFromDelta(input.summary.salesChange),
+      title: "Review the sales comparison",
+      nextStep: "Today’s recorded sales are being compared with yesterday’s full day. Check opening hours and comparable trading periods before interpreting the difference.",
+      severity: "info",
       state: "ready",
       actionLink: input.analyticsAction,
       evidenceGrade: "operational",
       trustState: "operational",
       freshness: input.freshness,
-      dueLabel: "Today",
-      ownerLabel: "Sales manager",
+      dueLabel: null,
+      ownerLabel: null,
       blockers: [],
       redactions: [],
     })
@@ -1000,15 +612,15 @@ function buildBusinessPulseActions(input: {
     actions.push({
       id: "business-pulse-action-low-stock",
       title: "Review low-stock exposure",
-      nextStep: `${input.summary.lowStockItems} item(s) are at or below the stock threshold and may constrain sales.`,
-      severity: input.summary.lowStockItems >= 5 ? "high" : "medium",
+      nextStep: `${input.summary.lowStockItems} item(s) need review against their location reorder points. The item catalogue shows records across all locations.`,
+      severity: "info",
       state: "ready",
       actionLink: input.inventoryAction,
       evidenceGrade: "operational",
       trustState: "operational",
       freshness: input.freshness,
-      dueLabel: "Today",
-      ownerLabel: "Inventory lead",
+      dueLabel: null,
+      ownerLabel: null,
       blockers: [],
       redactions: [],
     })
@@ -1024,86 +636,31 @@ function buildBusinessPulseRisks(input: {
   analyticsAction: BIActionLink
   inventoryAction: BIActionLink
   currency: string
-}): BIRiskRank[] {
-  const risks: BIRiskRank[] = []
-  let rank = 1
-
-  if (input.summary.salesChange < 0) {
-    risks.push({
-      id: "business-pulse-risk-revenue-drop",
-      organizationId: input.organizationId,
-      moduleSlug: BUSINESS_PULSE_MODULE,
-      rank: rank++,
-      title: "Revenue is down versus yesterday",
-      detail: `${formatSignedAmount(input.summary.salesChange, input.currency)} against yesterday's trusted sales read model.`,
-      businessImpact: "The team may need to inspect product mix, cashier flow, stock availability, or payment friction today.",
-      severity: severityFromDelta(input.summary.salesChange),
-      severityScore: input.summary.salesChange <= -100000 ? 80 : 55,
-      moneyImpact: Math.abs(input.summary.salesChange),
-      urgency: "today",
-      state: "ready",
-      evidenceGrade: "operational",
-      trustState: "operational",
-      freshness: input.freshness,
-      sourceModules: ["sales", "pos"],
-      blockers: [],
-      redactions: [],
-      drillThrough: routeDrillThrough("Open analytics", "/dashboard/analytics", BUSINESS_PULSE_PERMISSION),
-      actionLink: input.analyticsAction,
-    })
-  }
-
-  if (input.summary.lowStockItems > 0) {
-    risks.push({
-      id: "business-pulse-risk-low-stock",
-      organizationId: input.organizationId,
-      moduleSlug: "inventory",
-      rank: rank++,
-      title: "Low-stock items can limit today's sales",
-      detail: `${input.summary.lowStockItems} item(s) are at or below the analytics stock threshold.`,
-      businessImpact: "Stock pressure can turn customer demand into missed sales if replenishment is not reviewed.",
-      severity: input.summary.lowStockItems >= 5 ? "high" : "medium",
-      severityScore: input.summary.lowStockItems >= 5 ? 75 : 50,
-      moneyImpact: null,
-      urgency: input.summary.lowStockItems >= 5 ? "today" : "soon",
-      state: "ready",
-      evidenceGrade: "operational",
-      trustState: "operational",
-      freshness: input.freshness,
-      sourceModules: ["inventory", "sales"],
-      blockers: [],
-      redactions: [],
-      drillThrough: routeDrillThrough("Open inventory", "/dashboard/inventory/stock", "inventory.read"),
-      actionLink: input.inventoryAction,
-    })
-  }
-
-  if (input.summary.todayTransactions === 0) {
-    risks.push({
-      id: "business-pulse-risk-no-transactions",
-      organizationId: input.organizationId,
-      moduleSlug: BUSINESS_PULSE_MODULE,
-      rank: rank++,
-      title: "No transaction activity today",
-      detail: "The analytics read model has no completed sales transactions for today.",
-      businessImpact: "A zero-sales day may be expected, but it should be checked against branch opening and POS readiness.",
-      severity: "low",
-      severityScore: 30,
-      moneyImpact: null,
-      urgency: "watch",
-      state: "ready",
-      evidenceGrade: "operational",
-      trustState: "operational",
-      freshness: input.freshness,
-      sourceModules: ["sales", "pos"],
-      blockers: [],
-      redactions: [],
-      drillThrough: routeDrillThrough("Open analytics", "/dashboard/analytics", BUSINESS_PULSE_PERMISSION),
-      actionLink: input.analyticsAction,
-    })
-  }
-
-  return risks
+}): BIUnassessedObservation[] {
+  const observations: BIUnassessedObservation[] = []
+  const common = { organizationId: input.organizationId, severity: "info" as const, severityScore: null, moneyImpact: null, urgency: null, state: "ready" as const, evidenceGrade: "operational" as const, trustState: "operational" as const, freshness: input.freshness, blockers: [], redactions: [] }
+  if (input.summary.salesChange < 0) observations.push({
+    ...common, id: "business-pulse-risk-revenue-drop", moduleSlug: BUSINESS_PULSE_MODULE,
+    rank: observations.length + 1,
+    title: "Sales comparison needs context",
+    detail: `${formatSignedAmount(input.summary.salesChange, input.currency)}: today’s recorded sales versus yesterday’s full day.`,
+    businessImpact: "This difference is not a measured loss or forecast. Opening hours, demand and comparable trading periods have not been assessed.",
+    sourceModules: ["sales", "pos"],
+    drillThrough: routeDrillThrough("Open analytics", "/dashboard/analytics", BUSINESS_PULSE_PERMISSION),
+    actionLink: input.analyticsAction,
+  })
+  if (input.summary.lowStockItems > 0) observations.push({
+    ...common, id: "business-pulse-risk-low-stock", moduleSlug: "inventory",
+    rank: observations.length + 1,
+    title: "Stock at or below replenishment policy",
+    detail: `${input.summary.lowStockItems} item(s) have available stock at or below a location’s reorder point, including out-of-stock items.`,
+    businessImpact: "Review demand, lead times and incoming stock before deciding when to replenish. Sales impact and urgency have not been assessed.",
+    sourceModules: ["inventory"],
+    drillThrough: routeDrillThrough("Browse item records (all locations)", "/dashboard/inventory/items", "inventory.items.read"),
+    actionLink: input.inventoryAction,
+  })
+  // Zero completed sales alone does not establish an operational risk.
+  return observations
 }
 
 function businessPulseCard(input: {
@@ -1145,7 +702,7 @@ function buildBusinessPulseFreshness(generatedAt: string, state: BIFreshness["st
   return {
     state,
     generatedAt,
-    sourceMaxUpdatedAt: generatedAt,
+    sourceMaxUpdatedAt: null,
     maxAgeMinutes: 60,
     stale: state !== "fresh",
     staleReason: state === "fresh" ? null : "Business pulse prerequisite is not satisfied.",
@@ -1191,31 +748,20 @@ function routeDrillThrough(label: string, href: string, requiredPermission: stri
 }
 
 function directionFromDelta(delta: number): BIChangeDirection {
-  if (delta > 0) return "improved"
-  if (delta < 0) return "worsened"
-  return "unchanged"
-}
-
-function severityFromDelta(delta: number): BISeverity {
-  if (delta <= -100000) return "high"
-  if (delta < 0) return "medium"
-  return "info"
+  // Movement is not a judgment of performance when the periods are not comparable.
+  return delta === 0 ? "unchanged" : "changed"
 }
 
 function salesChangeImpact(delta: number, currency: string) {
-  if (delta > 0) return `Revenue improved by ${formatAmount(delta, currency)} versus yesterday.`
-  if (delta < 0) return `Revenue dropped by ${formatAmount(Math.abs(delta), currency)} versus yesterday.`
-  return "Revenue is unchanged versus yesterday."
+  return `${formatSignedAmount(delta, currency)} comparing today’s recorded activity with yesterday’s full day. This is not a like-for-like performance comparison.`
 }
 
 function transactionChangeImpact(delta: number) {
-  if (delta > 0) return `Transaction count improved by ${delta} versus yesterday.`
-  if (delta < 0) return `Transaction count dropped by ${Math.abs(delta)} versus yesterday.`
-  return "Transaction count is unchanged versus yesterday."
+  return `${formatSignedNumber(delta)} transaction(s) comparing today’s recorded activity with yesterday’s full day. Opening hours and demand have not been assessed.`
 }
 
 function formatAmount(value: number, currency: string) {
-  return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)} ${currency}`
+  return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(value)
 }
 
 function formatSignedAmount(value: number, currency: string) {

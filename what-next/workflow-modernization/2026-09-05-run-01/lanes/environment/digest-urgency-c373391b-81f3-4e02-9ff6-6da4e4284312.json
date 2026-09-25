@@ -1,0 +1,27 @@
+{
+  "at": "2026-09-15T13:18:05.244Z",
+  "sourceBefore": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "errors": [],
+      "accessibility": []
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toHaveAttribute(expected) failed\n\nLocator:  getByRole('button', { name: 'Command', exact: true })\nExpected: \"true\"\nReceived: \"false\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.attribute.value\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Command', exact: true })\n    118 × locator resolved to <button type=\"button\" aria-pressed=\"false\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 text-xs text-[var(--dash-text-soft)]\">…</button>\n        - unexpected value \"false\"\n",
+  "failureState": "Read-only\nSignal-backed\nNo automation\nDaily Habit Digest\n\nYour permission-aware daily and weekly workspaces, built from existing operating signals.\n\nWorkflow registration Urgency c373391b-81f3-4e02-9ff6-6da4e4284312\nGenerated (Africa/Douala)\nSep 15, 02:19 PM\nPeriod\nSep 15 - Sep 16\nCurrency\nXAF\nVisible workspaces\n2\nManager\nEnd of day\nCommand Agent\n\nEvidence-backed daily priorities\n\nRead-only. No posting, approval, payment, filing, payroll, stock, cash, or permission authority.\n\nGenerate brief\nCommand Agent is disabled for this organization.\nPartial\nCommand brief\npartial\nManager run sheet digest\n\nVisible operational actions for today's branch, stock, payment, and receiving work.\n\n1 visible action(s) need review for this digest.\n\nRaw\nOperational\npartial\n10 sources\nSource hash\nBrief\nCommand\nInvestigate\n\nPeriod: Sep 15 - Sep 16\n\nGenerated: Sep 15, 02:19 PM\n\nSources: dashboard, sales, payments, inventory, purchasing, hris, payroll, accounting, close, compliance\n\nReview: not_started\n\nFollow up pending purchase orders and receiving evidence.\nSource limitations\n\nBlockers: 4 · Redactions: 1\n\nNo active provider account\nNo accounting period covers this snapshot\nNo active provider account\nNo accounting period covers this snapshot\nInspect sources\nSummary and changes\n\nReview the key figures and changes, then switch to Command for next steps.\n\nPending purchase orders\n\nPurchase orders waiting for receiving, supplier follow-up, or operational review.\n\nPartial\n\n1 POs\n\nRaw\nOperational\npartial\n1 source\nSource hash\nOpen source surface\nDigest signals\n\nBusiness signals derived from existing snapsh",
+  "sourceAfter": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a"
+  },
+  "sourceStable": true
+}

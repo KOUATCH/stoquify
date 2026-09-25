@@ -1,5 +1,9 @@
 "use client"
 
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+
 import { useEffect, useMemo, useState } from "react"
 import {
   AlertTriangle,
@@ -35,9 +39,14 @@ import {
   useUpdateAccountantReview,
 } from "@/hooks/accounting/useCloseAssurance"
 import { cn } from "@/lib/utils"
+import { usePermissions } from "@/hooks/usePermissions"
 import type { Locale } from "@/types/bilingual"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  accountingCloseEvidenceTableContract,
+  accountingCloseFindingsTableContract,
+} from "@/components/DataTableComponents/finance-accounting-contracts"
 import {
   Select,
   SelectContent,
@@ -101,6 +110,7 @@ const copy = {
     owner: "Owner",
     action: "Action",
     assignToMe: "Assign to me",
+    inspectFinding: "Inspect finding",
     requestWaiver: "Request waiver",
     addComment: "Add comment",
     commentPlaceholder: "Add source-linked review notes for this finding.",
@@ -119,6 +129,9 @@ const copy = {
     requiresFreshAuth: "Waiver approval requires fresh authentication.",
     notSet: "Not set",
     evidenceItems: "Evidence items",
+    evidenceId: "Evidence ID",
+    evidenceType: "Evidence type",
+    evidencePeriod: "Period",
     sourceTables: "Source tables",
     nodes: "Nodes",
     edges: "Edges",
@@ -202,6 +215,9 @@ const copy = {
     requiresFreshAuth: "L'approbation de derogation exige une authentification recente.",
     notSet: "Non defini",
     evidenceItems: "Preuves",
+    evidenceId: "ID de preuve",
+    evidenceType: "Type de preuve",
+    evidencePeriod: "Periode",
     sourceTables: "Tables source",
     nodes: "Noeuds",
     edges: "Liens",
@@ -215,6 +231,7 @@ const copy = {
     reviewReady: "Pret a cloturer",
     reviewChangesRequested: "Changements demandes",
     reviewNotes: "Notes de decision",
+    inspectFinding: "Examiner le constat",
     reviewPlaceholder: "Documenter la decision, les changements demandes ou la justification de readiness.",
     saveReview: "Enregistrer la revue",
     savingReview: "Enregistrement",
@@ -411,12 +428,23 @@ export function CloseAssuranceCenter({
     () => data?.findings.find((finding) => finding.id === selectedFindingId) ?? selectedOpenFinding(data?.findings ?? []),
     [data?.findings, selectedFindingId],
   )
-  const canRun = Boolean(data?.period?.id || selectedPeriodId)
-  const canComment = Boolean(selectedFinding?.id && data?.run.id && commentBody.trim().length >= 3 && !commentMutation.isPending)
-  const canRequestWaiver = Boolean(selectedFinding?.id && waiverReason.trim().length >= 10 && !waiverMutation.request.isPending)
-  const canExportDraft = Boolean(data?.controls.packExportAvailable && data.run.id && !exportMutation.draft.isPending)
-  const canExportCertified = Boolean(data?.controls.certificationAvailable && data.run.id && !exportMutation.certified.isPending)
-  const canUpdateReview = Boolean(data?.run.id && !reviewMutation.isPending)
+  const permissions = usePermissions()
+  const allowed = (permission: string) => permissions.permissionState === "ready" && permissions.hasPermission(permission)
+  const access = {
+    run: allowed("accounting.close.run"),
+    assign: allowed("accounting.close.finding.assign"),
+    comment: allowed("accounting.close.finding.comment"),
+    waiver: allowed("accounting.close.waiver.request"),
+    draftExport: allowed("accounting.close.export"),
+    certifiedExport: allowed("accounting.close.certify"),
+    review: allowed("accounting.close.accountant.review"),
+  }
+  const canRun = access.run && Boolean(data?.period?.id || selectedPeriodId)
+  const canComment = access.comment && Boolean(selectedFinding?.id && data?.run.id && commentBody.trim().length >= 3 && !commentMutation.isPending)
+  const canRequestWaiver = access.waiver && Boolean(selectedFinding?.id && waiverReason.trim().length >= 10 && !waiverMutation.request.isPending)
+  const canExportDraft = access.draftExport && Boolean(data?.controls.packExportAvailable && data.run.id && !exportMutation.draft.isPending)
+  const canExportCertified = access.certifiedExport && Boolean(data?.controls.certificationAvailable && data.run.id && !exportMutation.certified.isPending)
+  const canUpdateReview = access.review && Boolean(data?.run.id && !reviewMutation.isPending)
 
   async function withActionError(work: () => Promise<void>) {
     setActionError(null)
@@ -428,6 +456,7 @@ export function CloseAssuranceCenter({
   }
 
   async function handleRun() {
+    if (!canRun) return
     await withActionError(async () => {
       const periodId = selectedPeriodId || data?.period?.id
       if (!periodId) return
@@ -438,12 +467,14 @@ export function CloseAssuranceCenter({
   }
 
   async function handleAssign(findingId: string) {
+    if (!access.assign) return
     await withActionError(async () => {
       await assignMutation.mutateAsync({ findingId })
     })
   }
 
   async function handleComment() {
+    if (!canComment) return
     await withActionError(async () => {
       if (!selectedFinding?.id) return
       await commentMutation.mutateAsync({
@@ -456,6 +487,7 @@ export function CloseAssuranceCenter({
   }
 
   async function handleWaiverRequest() {
+    if (!canRequestWaiver) return
     await withActionError(async () => {
       if (!selectedFinding?.id) return
       await waiverMutation.request.mutateAsync({
@@ -467,6 +499,7 @@ export function CloseAssuranceCenter({
   }
 
   async function handleDraftExport() {
+    if (!canExportDraft) return
     await withActionError(async () => {
       if (!data?.run.id) return
       const result = await exportMutation.draft.mutateAsync({ closeRunId: data.run.id })
@@ -476,6 +509,7 @@ export function CloseAssuranceCenter({
   }
 
   async function handleCertifiedExport() {
+    if (!canExportCertified) return
     await withActionError(async () => {
       if (!data?.run.id) return
       const result = await exportMutation.certified.mutateAsync({ closeRunId: data.run.id })
@@ -485,6 +519,7 @@ export function CloseAssuranceCenter({
   }
 
   async function handleReviewUpdate() {
+    if (!canUpdateReview) return
     await withActionError(async () => {
       if (!data?.run.id) return
       await reviewMutation.mutateAsync({
@@ -532,8 +567,14 @@ export function CloseAssuranceCenter({
   const graph = graphQuery.data
 
   return (
-    <div className="space-y-5">
-      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-6">
+    <div className="min-w-0 space-y-6">
+      <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
+        { id: "close-readiness", label: t.checklist },
+        { id: "close-findings", label: t.blockers },
+        { id: "close-certification", label: t.controls },
+        { id: "close-evidence", label: t.evidence },
+      ]} />
+      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <MetricTile
           label={t.status}
           value={data.run.status}
@@ -607,7 +648,7 @@ export function CloseAssuranceCenter({
 
         <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
           <Select value={selectedPeriodId || data.period?.id || ""} onValueChange={setSelectedPeriodId}>
-            <SelectTrigger className="h-10 min-w-[16rem] rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.38)] text-[var(--dash-text)]">
+            <SelectTrigger aria-label={t.period} className="h-10 w-full min-w-0 rounded-lg sm:w-64 border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.38)] text-[var(--dash-text)]">
               <SelectValue placeholder={t.period} />
             </SelectTrigger>
             <SelectContent>
@@ -636,7 +677,7 @@ export function CloseAssuranceCenter({
           <Button
             type="button"
             variant="outline"
-            onClick={() => query.refetch()}
+            onClick={() => { void query.refetch(); void permissions.refreshPermissions() }}
             disabled={query.isFetching}
             className="dashboard-button-secondary h-10 rounded-lg"
           >
@@ -646,63 +687,78 @@ export function CloseAssuranceCenter({
         </div>
       </section>
 
+      {!Object.values(access).every(Boolean) ? (
+        <p role="status" className="text-sm text-[var(--dash-text-soft)]">
+          {permissions.permissionState === "loading"
+            ? locale === "fr" ? "Vérification de vos autorisations…" : "Checking your permissions…"
+            : permissions.permissionState === "error"
+              ? locale === "fr" ? "Vos autorisations n’ont pas pu être vérifiées. Actualisez la page pour réessayer." : "Your permissions could not be verified. Refresh the page to retry."
+              : locale === "fr" ? "Certaines actions ne sont pas disponibles avec vos autorisations actuelles. Un administrateur peut vérifier votre accès." : "Some actions are unavailable with your current permissions. An administrator can review your access."}
+        </p>
+      ) : null}
+
       {actionError ? <ActionErrorBanner message={actionError} locale={locale} /> : null}
 
       {hasPartialData(data) ? <PartialDataBanner data={data} locale={locale} /> : null}
 
       <div
+        id="close-readiness"
         data-testid="close-readiness-workspace"
         data-client-ready={isClientReady ? "true" : "false"}
-        className="grid min-w-0 gap-5"
+        className="grid min-w-0 scroll-mt-24 gap-5"
       >
         <ChecklistPanel data={data} locale={locale} />
-        <div data-testid="close-certification-row" className="grid min-w-0 gap-5 xl:grid-cols-3">
-          <ControlsPanel data={data} locale={locale} />
-          <AccountantReviewPanel
-            data={data}
-            locale={locale}
-            status={reviewStatus}
-            notes={reviewNotes}
-            canUpdate={canUpdateReview}
-            isSaving={reviewMutation.isPending}
-            onStatusChange={setReviewStatus}
-            onNotesChange={setReviewNotes}
-            onSave={handleReviewUpdate}
-          />
-          <ClosePackExportPanel
-            data={data}
-            locale={locale}
-            lastExport={lastExport}
-            canExportDraft={canExportDraft}
-            canExportCertified={canExportCertified}
-            isExportingDraft={exportMutation.draft.isPending}
-            isExportingCertified={exportMutation.certified.isPending}
-            onDraftExport={handleDraftExport}
-            onCertifiedExport={handleCertifiedExport}
-          />
-        </div>
       </div>
 
-      <FindingsPanel
-        data={data}
-        locale={locale}
-        selectedFindingId={selectedFinding?.id ?? null}
-        commentBody={commentBody}
-        waiverReason={waiverReason}
-        isAssigning={assignMutation.isPending}
-        isCommenting={commentMutation.isPending}
-        isRequestingWaiver={waiverMutation.request.isPending}
-        canComment={canComment}
-        canRequestWaiver={canRequestWaiver}
-        onSelectFinding={setSelectedFindingId}
-        onAssign={handleAssign}
-        onCommentBodyChange={setCommentBody}
-        onWaiverReasonChange={setWaiverReason}
-        onComment={handleComment}
-        onRequestWaiver={handleWaiverRequest}
-      />
+      <section id="close-findings" className="min-w-0 scroll-mt-24">
+        <FindingsPanel
+          data={data}
+          locale={locale}
+          selectedFindingId={selectedFinding?.id ?? null}
+          commentBody={commentBody}
+          waiverReason={waiverReason}
+          isAssigning={assignMutation.isPending}
+          isCommenting={commentMutation.isPending}
+          isRequestingWaiver={waiverMutation.request.isPending}
+          canComment={canComment}
+          canRequestWaiver={canRequestWaiver}
+          canAssign={access.assign}
+          onSelectFinding={setSelectedFindingId}
+          onAssign={handleAssign}
+          onCommentBodyChange={setCommentBody}
+          onWaiverReasonChange={setWaiverReason}
+          onComment={handleComment}
+          onRequestWaiver={handleWaiverRequest}
+        />
+      </section>
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+      <div id="close-certification" data-testid="close-certification-row" className="grid min-w-0 scroll-mt-24 gap-4 2xl:grid-cols-3">
+        <ControlsPanel data={data} locale={locale} />
+        <AccountantReviewPanel
+          data={data}
+          locale={locale}
+          status={reviewStatus}
+          notes={reviewNotes}
+          canUpdate={canUpdateReview}
+          isSaving={reviewMutation.isPending}
+          onStatusChange={setReviewStatus}
+          onNotesChange={setReviewNotes}
+          onSave={handleReviewUpdate}
+        />
+        <ClosePackExportPanel
+          data={data}
+          locale={locale}
+          lastExport={lastExport}
+          canExportDraft={canExportDraft}
+          canExportCertified={canExportCertified}
+          isExportingDraft={exportMutation.draft.isPending}
+          isExportingCertified={exportMutation.certified.isPending}
+          onDraftExport={handleDraftExport}
+          onCertifiedExport={handleCertifiedExport}
+        />
+      </div>
+
+      <div id="close-evidence" className="grid min-w-0 scroll-mt-24 gap-4">
         <EvidencePanel data={data} locale={locale} />
         <ProvenancePanel data={data} locale={locale} graph={graph} graphLoading={graphQuery.isFetching} />
       </div>
@@ -806,6 +862,7 @@ function FindingsPanel({
   isRequestingWaiver,
   canComment,
   canRequestWaiver,
+  canAssign,
   onSelectFinding,
   onAssign,
   onCommentBodyChange,
@@ -823,6 +880,7 @@ function FindingsPanel({
   isRequestingWaiver: boolean
   canComment: boolean
   canRequestWaiver: boolean
+  canAssign: boolean
   onSelectFinding: (findingId: string | null) => void
   onAssign: (findingId: string) => Promise<void>
   onCommentBodyChange: (value: string) => void
@@ -835,78 +893,102 @@ function FindingsPanel({
 
   return (
     <Panel title={t.blockers} description={t.blockersDescription}>
-      {data.findings.length ? (
-        <div className="overflow-x-auto">
-          <table className="dashboard-table-base w-full min-w-[980px] text-sm">
-            <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-              <tr>
-                <th className="px-4 py-3">{t.status}</th>
-                <th className="px-4 py-3">{t.detail}</th>
-                <th className="px-4 py-3">{t.source}</th>
-                <th className="px-4 py-3">{t.owner}</th>
-                <th className="px-4 py-3">{t.action}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.findings.map((finding) => (
-                <tr key={finding.id ?? `${finding.sourceType}-${finding.title}`} className="border-b border-[var(--dash-border-subtle)] align-top">
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1.5">
-                      <Badge variant="outline" className={cn("rounded-md", statusClass(finding.status))}>
-                        {finding.status}
-                      </Badge>
-                      <Badge variant="outline" className={cn("rounded-md", statusClass(finding.severity))}>
-                        {finding.severity}
-                      </Badge>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-[var(--dash-text)]">{finding.title}</p>
-                    <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">{finding.detail}</p>
-                  </td>
-                  <td className="px-4 py-3 text-xs leading-5 text-[var(--dash-text-soft)]">
-                    {finding.domain}
-                    <span className="block max-w-[16rem] truncate text-[var(--dash-text-faint)]">{finding.sourceService}</span>
-                    <span className="block max-w-[16rem] truncate text-[var(--dash-text-faint)]">{finding.sourceType || "-"}</span>
-                  </td>
-                  <td className="px-4 py-3 max-w-[12rem] truncate text-[var(--dash-text-soft)]">
-                    {finding.ownerId || t.notSet}
-                    {finding.assignedAt ? <span className="block text-xs text-[var(--dash-text-faint)]">{formatDate(finding.assignedAt, locale)}</span> : null}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        disabled={!finding.id || isAssigning || ["RESOLVED", "WAIVED_WITH_APPROVAL"].includes(finding.status)}
-                        onClick={() => finding.id && onAssign(finding.id)}
-                        className="dashboard-button-secondary rounded-lg"
-                      >
-                        {isAssigning ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserCheck className="h-4 w-4" />}
-                        {t.assignToMe}
-                      </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        disabled={!finding.id}
-                        onClick={() => onSelectFinding(finding.id)}
-                        className="dashboard-button-secondary rounded-lg"
-                      >
-                        <MessageSquarePlus className="h-4 w-4" />
-                        {t.addComment}
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="p-5 text-sm text-[var(--dash-text-soft)]">{t.noBlockers}</div>
-      )}
+      <AccountingDataTable
+        caption={t.blockers}
+        locale={locale === "fr" ? "fr" : "en"}
+        emptyMessage={t.noBlockers}
+        contract={accountingCloseFindingsTableContract}
+        scopeFilters={data.period?.id ? { periodId: [data.period.id] } : {}}
+        columns={[
+          { label: t.status },
+          { label: t.detail },
+          { label: t.source },
+          { label: t.owner },
+          { label: t.action },
+        ]}
+        rows={data.findings.map((finding) => {
+          return {
+            id: finding.id ?? `${finding.sourceType}-${finding.title}`,
+            searchText: [
+              finding.status,
+              finding.severity,
+              finding.title,
+              finding.detail,
+              finding.domain,
+              finding.sourceService,
+              finding.sourceType,
+              finding.ownerId,
+              finding.assignedAt,
+            ]
+              .filter((value) => value !== null && value !== undefined)
+              .join(" "),
+            cells: [
+              <div key="cell-0">
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant="outline" className={cn("rounded-md", statusClass(finding.status))}>
+                    {finding.status}
+                  </Badge>
+                  <Badge variant="outline" className={cn("rounded-md", statusClass(finding.severity))}>
+                    {finding.severity}
+                  </Badge>
+                </div>
+              </div>,
+              <div key="cell-1">
+                <p className="font-medium text-[var(--dash-text)]">{finding.title}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">{finding.detail}</p>
+              </div>,
+              <div key="cell-2" className="text-xs leading-5 text-[var(--dash-text-soft)]">
+                {finding.domain}
+                <span className="block max-w-[16rem] truncate text-[var(--dash-text-faint)]">
+                  {finding.sourceService}
+                </span>
+                <span className="block max-w-[16rem] truncate text-[var(--dash-text-faint)]">
+                  {finding.sourceType || "-"}
+                </span>
+              </div>,
+              <div key="cell-3" className="max-w-[12rem] truncate text-[var(--dash-text-soft)]">
+                {finding.ownerId || t.notSet}
+                {finding.assignedAt ? (
+                  <span className="block text-xs text-[var(--dash-text-faint)]">
+                    {formatDate(finding.assignedAt, locale)}
+                  </span>
+                ) : null}
+              </div>,
+              <div key="cell-4">
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={
+                      !canAssign ||
+                      !finding.id ||
+                      isAssigning ||
+                      ["RESOLVED", "WAIVED_WITH_APPROVAL"].includes(finding.status)
+                    }
+                    onClick={() => finding.id && onAssign(finding.id)}
+                    className="dashboard-button-secondary rounded-lg"
+                  >
+                    {isAssigning ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserCheck className="h-4 w-4" />}
+                    {t.assignToMe}
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={!finding.id}
+                    onClick={() => onSelectFinding(finding.id)}
+                    className="dashboard-button-secondary rounded-lg"
+                  >
+                    <MessageSquarePlus className="h-4 w-4" />
+                    {t.inspectFinding}
+                  </Button>
+                </div>
+              </div>,
+            ],
+          }
+        })}
+      />
 
       <div className="grid gap-4 border-t border-[var(--dash-border-subtle)] p-4 lg:grid-cols-2">
         <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.28)] p-4">
@@ -920,6 +1002,7 @@ function FindingsPanel({
             </Badge>
           </div>
           <Textarea
+            aria-label={t.comments}
             value={commentBody}
             onChange={(event) => onCommentBodyChange(event.target.value)}
             placeholder={t.commentPlaceholder}
@@ -948,6 +1031,7 @@ function FindingsPanel({
             </Badge>
           </div>
           <Textarea
+            aria-label={t.requestWaiver}
             value={waiverReason}
             onChange={(event) => onWaiverReasonChange(event.target.value)}
             placeholder={t.waivePlaceholder}
@@ -992,35 +1076,79 @@ function EvidencePanel({ data, locale }: { data: CloseAssuranceDashboardData; lo
 
   return (
     <Panel title={t.evidence} description={t.evidenceDescription}>
-      {data.evidenceItems.length ? (
-        <div className="max-h-[34rem] overflow-y-auto">
-          <div className="divide-y divide-[var(--dash-border-subtle)]">
-            {data.evidenceItems.map((item, index) => (
-              <div key={item.id ?? `${item.evidenceType}-${index}`} className="grid gap-3 px-4 py-3 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-start">
-                <Badge variant="outline" className={cn("w-fit rounded-md", evidenceClass(item.available))}>
-                  {item.available ? t.available : t.unavailable}
-                </Badge>
-                <div className="min-w-0">
-                  <p className="font-medium text-[var(--dash-text)]">{item.sourceLabel}</p>
-                  <p className="mt-1 text-xs leading-5 text-[var(--dash-text-soft)]">
-                    {item.evidenceType} - {item.sourceTable || t.notSet}
-                  </p>
-                  {item.unavailableReason ? <p className="mt-1 text-xs leading-5 text-[var(--dash-warning)]">{item.unavailableReason}</p> : null}
-                  {item.sourceHash ? <p className="mt-1 max-w-full truncate text-xs text-[var(--dash-text-faint)]">Hash: {item.sourceHash}</p> : null}
-                </div>
-                <div className="text-left lg:text-right">
+      <AccountingDataTable
+        caption={t.evidence}
+        locale={locale === "fr" ? "fr" : "en"}
+        emptyMessage={t.noEvidence}
+        contract={accountingCloseEvidenceTableContract}
+        scopeFilters={data.period?.id ? { periodId: [data.period.id] } : {}}
+        columns={[
+          { label: t.evidenceId },
+          { label: t.evidenceType },
+          { label: t.source },
+          { label: t.evidencePeriod },
+          { label: t.status },
+          { label: t.evidenceItems, className: "text-right" },
+          { label: t.hash },
+        ]}
+        rows={data.evidenceItems.map((item, index) => {
+          const evidenceId =
+            item.id ?? item.sourceId ?? `${item.evidenceType}-${item.sourceTable ?? "source"}-${index}`
+          return {
+            id: evidenceId,
+            searchText: [
+              evidenceId,
+              item.evidenceType,
+              item.sourceLabel,
+              item.sourceTable,
+              item.sourceType,
+              item.unavailableReason,
+              formatDate(item.sourceDate, locale),
+              item.available ? t.available : t.unavailable,
+              item.provenance,
+              item.sourceHash,
+            ]
+              .filter((value) => value !== null && value !== undefined)
+              .join(" "),
+            cells: [
+              <div key="cell-0" className="font-medium text-[var(--dash-text)]">
+                {evidenceId}
+              </div>,
+              <div key="cell-1" className="text-[var(--dash-text-soft)]">
+                {item.evidenceType}
+              </div>,
+              <div key="cell-2" className="max-w-[22rem] text-[var(--dash-text-soft)]">
+                <p className="font-medium text-[var(--dash-text)]">{item.sourceLabel}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--dash-text-faint)]">
+                  {item.sourceTable || item.sourceType || t.notSet}
+                </p>
+                {item.unavailableReason ? (
+                  <p className="mt-1 text-xs leading-5 text-[var(--dash-warning)]">{item.unavailableReason}</p>
+                ) : null}
+              </div>,
+              <div key="cell-3" className="whitespace-nowrap text-[var(--dash-text-soft)]">
+                {formatDate(item.sourceDate, locale)}
+              </div>,
+              <div key="cell-4">
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant="outline" className={cn("rounded-md", evidenceClass(item.available))}>
+                    {item.available ? t.available : t.unavailable}
+                  </Badge>
                   <Badge variant="outline" className={cn("rounded-md", provenanceClass(item.provenance))}>
                     {item.provenance}
                   </Badge>
-                  <p className="mt-2 text-xs text-[var(--dash-text-faint)]">{formatDate(item.sourceDate, locale)}</p>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="p-5 text-sm text-[var(--dash-text-soft)]">{t.noEvidence}</div>
-      )}
+              </div>,
+              <div key="cell-5" className="text-right tabular-nums text-[var(--dash-text-soft)]">
+                1
+              </div>,
+              <div key="cell-6" className="max-w-[16rem] text-xs text-[var(--dash-text-faint)]">
+                <span className="block truncate">{item.sourceHash || t.notSet}</span>
+              </div>,
+            ],
+          }
+        })}
+      />
     </Panel>
   )
 }
@@ -1126,11 +1254,11 @@ function AccountantReviewPanel({
         </div>
 
         <div className="grid gap-2">
-          <label className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]" htmlFor="close-review-notes">
+          <label className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]" htmlFor="close-review-status">
             {t.reviewStatus}
           </label>
           <Select value={status} onValueChange={(value) => onStatusChange(value as PortalReviewStatus)} disabled={!data.run.id || isSaving}>
-            <SelectTrigger aria-label={t.reviewStatus} className="h-10 rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.38)] text-[var(--dash-text)]">
+            <SelectTrigger id="close-review-status" aria-label={t.reviewStatus} className="h-10 rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.38)] text-[var(--dash-text)]">
               <SelectValue placeholder={t.reviewStatus} />
             </SelectTrigger>
             <SelectContent>
@@ -1140,6 +1268,9 @@ function AccountantReviewPanel({
           </Select>
         </div>
 
+        <label htmlFor="close-review-notes" className="text-xs font-semibold uppercase text-[var(--dash-text-faint)]">
+          {t.reviewNotes}
+        </label>
         <Textarea
           id="close-review-notes"
           value={notes}

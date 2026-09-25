@@ -1,0 +1,102 @@
+{
+  "at": "2026-09-08T17:07:04.395Z",
+  "run": "000c93fa-534",
+  "scope": "Owned localhost fixture organizations, actual authenticated browser maker/checker and password assurance. Approved destination is an explicit setup fixture. No payment release, external bank rail or live customer mutation.",
+  "sourcesBefore": {
+    "components/purchasing/PaymentRequestWorkbench.tsx": "323fa761de0606c9554779e3ec9ed6e4485c43d6ca813acbdaa9ee38537bda0f",
+    "services/purchasing/payment-request-read.service.ts": "04c581eb4e62372b63bad1b2a359f272765eb664eaa3df8b54caafffa11cbfc2",
+    "services/purchasing/payment-request-contracts.ts": "4542c8b894bfb016e90c7ffb0fe4b8df791a6a4abc5e621e6dd99f29d8ae16a4",
+    "services/purchasing/payment-request.service.ts": "a990f4b39fb06fb98ea24bc72be4370beabfc31b0e2b9e704eb044a2c5e4987f",
+    "services/purchasing/payment-request-authority.ts": "b857f5fc4dc0270255df808acf682d9a29db48744c479c9181a7f0dabeb66bfe",
+    "services/purchasing/payment-request-evidence.ts": "c8d17217471e860a17175cc7fbbbb45f2009c8664a3c441cb80492c17f3f767b",
+    "actions/purchasing/payment-request.actions.ts": "5781766a150686ddda353f9efac90f1274c04cf28d7ca48a7e3c51856bd3ba8b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/request/page.tsx": "df54ade3181083871b534865c092651f4ed8f9588dc5040c756e9bbb8f0a0e7e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/approve/page.tsx": "b34e8c8e5a16c575b2e1ac2587573187cf1ffaa9c2b1f18c9f2b81f2d4691791",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "6be67aa573a806209ef2f6f13124125fe246161f768543a0b296a5680e0ef498",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "99aed7de47120dba42a9cc69ecd1d2916df4ade954d83cde2a014721957b9ff2",
+    "i18n/request.ts": "76b60eae3d037b7814c0c6e92aeaae10d0361a3ccb6a878bffb243593d947527",
+    "messages/payment-request/en.json": "7c7a4287197406dbd216d81cef66672774c6eb3c5dd585343f4b722d28e1d5e2",
+    "messages/payment-request/fr.json": "3b0d03f4f1e6a8ab90f9b54d50bde04bc0857cba2dd006d7c1f6fb8b09b9cc76",
+    "app/[locale]/layout.tsx": "96560ce5c2087b16d7c6c086d2f1a1078575372b525977d133ef3498bfed16bc"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Request sources, reviewed amounts, EN/FR layout, mobile/tablet reflow and dialog keyboard containment/return",
+        "Incorrect password and stale-source confirmation are rejected; entered draft remains available",
+        "Actual response loss recovered after reload with one authenticated DRAFT and one retained request event",
+        "Different authenticated user approves the original request; retained history is visible and no release/settlement is fabricated",
+        "Identity mismatch is denied by read authority; revoked current role denies the direct approval route"
+      ],
+      "screenshots": [
+        "payment-workspace-en-request-desktop-000c93fa-534.png",
+        "payment-workspace-en-request-mobile-000c93fa-534.png",
+        "payment-workspace-en-request-review-000c93fa-534.png",
+        "payment-workspace-en-stale-draft-preserved-000c93fa-534.png",
+        "payment-workspace-en-request-recovered-000c93fa-534.png",
+        "payment-workspace-en-independent-review-000c93fa-534.png",
+        "payment-workspace-en-approved-desktop-000c93fa-534.png",
+        "payment-workspace-en-approved-mobile-text200-000c93fa-534.png",
+        "payment-workspace-en-denied-000c93fa-534.png"
+      ],
+      "timings": [
+        {
+          "name": "AP to payment source load, development baseline",
+          "ms": 30292
+        }
+      ],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Request sources, reviewed amounts, EN/FR layout, mobile/tablet reflow and dialog keyboard containment/return",
+        "Incorrect password and stale-source confirmation are rejected; entered draft remains available",
+        "Actual response loss recovered after reload with one authenticated DRAFT and one retained request event",
+        "Different authenticated user approves the original request; retained history is visible and no release/settlement is fabricated",
+        "Identity mismatch is denied by read authority; revoked current role denies the direct approval route"
+      ],
+      "screenshots": [
+        "payment-workspace-fr-request-desktop-000c93fa-534.png",
+        "payment-workspace-fr-request-mobile-000c93fa-534.png",
+        "payment-workspace-fr-request-review-000c93fa-534.png",
+        "payment-workspace-fr-stale-draft-preserved-000c93fa-534.png",
+        "payment-workspace-fr-request-recovered-000c93fa-534.png",
+        "payment-workspace-fr-independent-review-000c93fa-534.png",
+        "payment-workspace-fr-approved-desktop-000c93fa-534.png",
+        "payment-workspace-fr-approved-mobile-text200-000c93fa-534.png",
+        "payment-workspace-fr-denied-000c93fa-534.png"
+      ],
+      "timings": [
+        {
+          "name": "AP to payment source load, development baseline",
+          "ms": 43800
+        }
+      ],
+      "pageErrors": [],
+      "passed": true
+    }
+  ],
+  "originalBefore": "0b2dceb9990629d3cd3d66fffff5765863ac6214f024d2124c9436dbf893d808",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/PaymentRequestWorkbench.tsx": "323fa761de0606c9554779e3ec9ed6e4485c43d6ca813acbdaa9ee38537bda0f",
+    "services/purchasing/payment-request-read.service.ts": "04c581eb4e62372b63bad1b2a359f272765eb664eaa3df8b54caafffa11cbfc2",
+    "services/purchasing/payment-request-contracts.ts": "4542c8b894bfb016e90c7ffb0fe4b8df791a6a4abc5e621e6dd99f29d8ae16a4",
+    "services/purchasing/payment-request.service.ts": "a990f4b39fb06fb98ea24bc72be4370beabfc31b0e2b9e704eb044a2c5e4987f",
+    "services/purchasing/payment-request-authority.ts": "b857f5fc4dc0270255df808acf682d9a29db48744c479c9181a7f0dabeb66bfe",
+    "services/purchasing/payment-request-evidence.ts": "c8d17217471e860a17175cc7fbbbb45f2009c8664a3c441cb80492c17f3f767b",
+    "actions/purchasing/payment-request.actions.ts": "5781766a150686ddda353f9efac90f1274c04cf28d7ca48a7e3c51856bd3ba8b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/request/page.tsx": "df54ade3181083871b534865c092651f4ed8f9588dc5040c756e9bbb8f0a0e7e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/approve/page.tsx": "b34e8c8e5a16c575b2e1ac2587573187cf1ffaa9c2b1f18c9f2b81f2d4691791",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "6be67aa573a806209ef2f6f13124125fe246161f768543a0b296a5680e0ef498",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "99aed7de47120dba42a9cc69ecd1d2916df4ade954d83cde2a014721957b9ff2",
+    "i18n/request.ts": "76b60eae3d037b7814c0c6e92aeaae10d0361a3ccb6a878bffb243593d947527",
+    "messages/payment-request/en.json": "7c7a4287197406dbd216d81cef66672774c6eb3c5dd585343f4b722d28e1d5e2",
+    "messages/payment-request/fr.json": "3b0d03f4f1e6a8ab90f9b54d50bde04bc0857cba2dd006d7c1f6fb8b09b9cc76",
+    "app/[locale]/layout.tsx": "96560ce5c2087b16d7c6c086d2f1a1078575372b525977d133ef3498bfed16bc"
+  },
+  "sourceStable": true
+}

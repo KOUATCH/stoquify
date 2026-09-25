@@ -1,0 +1,77 @@
+{
+  "run": "72fb30a3-20c",
+  "at": "2026-09-08T08:09:20.367Z",
+  "before": {
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "services/purchasing/ap-control.service.ts": "54ba7d6afb127d1647623b1bc1727a740acfcadffa645aa13e624de9d5eef32f",
+    "services/_shared/action-errors.ts": "b69a295070b6fe6a922574db15c9dccad62da26810bbd48a41c9275a15cdd7eb",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "5eefacc3de1f9a72679151a3862317a45b0595c7d24abcc300fbdf8248b608d9",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "eccbc3e874ddba1b3cda57eadc4289e8ecb7f8d71cbb82428fbff0de65feeb38",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "28706a09649516fdc039cdcde97cdd49b632ad2c3d6957bad0a95960d3f25c3d",
+    "services/purchasing/__tests__/invoice-preparation-contracts.test.ts": "30f46200d1036e8076beeaa9678d25386029ddacb592484d63b7cedb9dc843f8",
+    "actions/purchasing/__tests__/invoice-preparation.actions.test.ts": "f35191435e85b4cbbc923bf64096b0083ea085ebcf541d6380cad19700a28844",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "fea76b7b96eaa5788d0da1335fdaf6804d70ff93a23ab50ac4b0952293896ece"
+  },
+  "checks": [
+    {
+      "name": "typecheck",
+      "command": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 231184,
+      "output": ""
+    },
+    {
+      "name": "lint",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchasing/invoice-preparation.service.ts",
+        "services/purchasing/invoice-preparation-authority.ts",
+        "services/purchasing/invoice-preparation-contracts.ts",
+        "services/purchasing/ap-control.service.ts",
+        "services/_shared/action-errors.ts",
+        "actions/purchasing/invoice-preparation.actions.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "components/purchasing/InvoicePreparationWorkbench.tsx",
+        "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+        "services/purchasing/__tests__/invoice-preparation-contracts.test.ts",
+        "actions/purchasing/__tests__/invoice-preparation.actions.test.ts",
+        "actions/purchasing/__tests__/ap-control.actions.test.ts"
+      ],
+      "exitCode": 0,
+      "status": "passed",
+      "durationMs": 13433,
+      "output": ""
+    }
+  ],
+  "after": {
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "services/purchasing/ap-control.service.ts": "54ba7d6afb127d1647623b1bc1727a740acfcadffa645aa13e624de9d5eef32f",
+    "services/_shared/action-errors.ts": "b69a295070b6fe6a922574db15c9dccad62da26810bbd48a41c9275a15cdd7eb",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "5eefacc3de1f9a72679151a3862317a45b0595c7d24abcc300fbdf8248b608d9",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "eccbc3e874ddba1b3cda57eadc4289e8ecb7f8d71cbb82428fbff0de65feeb38",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "28706a09649516fdc039cdcde97cdd49b632ad2c3d6957bad0a95960d3f25c3d",
+    "services/purchasing/__tests__/invoice-preparation-contracts.test.ts": "30f46200d1036e8076beeaa9678d25386029ddacb592484d63b7cedb9dc843f8",
+    "actions/purchasing/__tests__/invoice-preparation.actions.test.ts": "f35191435e85b4cbbc923bf64096b0083ea085ebcf541d6380cad19700a28844",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "fea76b7b96eaa5788d0da1335fdaf6804d70ff93a23ab50ac4b0952293896ece"
+  }
+}

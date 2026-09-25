@@ -7394,3305 +7394,1489 @@ export function buildPosCashShortageProductionActivationSlice299EvidenceStrut(
     activationAuthorized: false,
   };
 }
-export type PosCashShortageProductionActivationSlice300EvidenceGirder = {
-  girderName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceStrut: PosCashShortageProductionActivationSlice299EvidenceStrut;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice300EvidenceGirder = EvidenceLayer<
+  "girderName", "sourceStrut",
+  PosCashShortageProductionActivationSlice299EvidenceStrut
+>;
 
 export function buildPosCashShortageProductionActivationSlice300EvidenceGirder(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice300EvidenceGirder {
-  const sourceStrut = buildPosCashShortageProductionActivationSlice299EvidenceStrut(input);
-  const items = [sourceStrut.strutName, ...sourceStrut.items] as const;
-  const ready = sourceStrut.status === "ready";
-
-  return {
-    girderName: "Slice 300 production activation evidence girder",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceStrut,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 300 production activation evidence girder is clear: ${sourceStrut.text}`
-      : `Slice 300 production activation evidence girder needs attention: ${sourceStrut.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice299EvidenceStrut(input);
+  return buildEvidenceLayer(
+    "girderName", "Slice 300 production activation evidence girder",
+    "sourceStrut", source, source.strutName,
+  );
 }
-export type PosCashShortageProductionActivationSlice301EvidenceTruss = {
-  trussName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceGirder: PosCashShortageProductionActivationSlice300EvidenceGirder;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice301EvidenceTruss = EvidenceLayer<
+  "trussName", "sourceGirder",
+  PosCashShortageProductionActivationSlice300EvidenceGirder
+>;
 
 export function buildPosCashShortageProductionActivationSlice301EvidenceTruss(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice301EvidenceTruss {
-  const sourceGirder = buildPosCashShortageProductionActivationSlice300EvidenceGirder(input);
-  const items = [sourceGirder.girderName, ...sourceGirder.items] as const;
-  const ready = sourceGirder.status === "ready";
-
-  return {
-    trussName: "Slice 301 production activation evidence truss",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceGirder,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 301 production activation evidence truss is clear: ${sourceGirder.text}`
-      : `Slice 301 production activation evidence truss needs attention: ${sourceGirder.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice300EvidenceGirder(input);
+  return buildEvidenceLayer(
+    "trussName", "Slice 301 production activation evidence truss",
+    "sourceGirder", source, source.girderName,
+  );
 }
-export type PosCashShortageProductionActivationSlice302EvidenceBrace = {
-  braceName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceTruss: PosCashShortageProductionActivationSlice301EvidenceTruss;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice302EvidenceBrace = EvidenceLayer<
+  "braceName", "sourceTruss",
+  PosCashShortageProductionActivationSlice301EvidenceTruss
+>;
 
 export function buildPosCashShortageProductionActivationSlice302EvidenceBrace(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice302EvidenceBrace {
-  const sourceTruss = buildPosCashShortageProductionActivationSlice301EvidenceTruss(input);
-  const items = [sourceTruss.trussName, ...sourceTruss.items] as const;
-  const ready = sourceTruss.status === "ready";
-
-  return {
-    braceName: "Slice 302 production activation evidence brace",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceTruss,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 302 production activation evidence brace is clear: ${sourceTruss.text}`
-      : `Slice 302 production activation evidence brace needs attention: ${sourceTruss.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice301EvidenceTruss(input);
+  return buildEvidenceLayer(
+    "braceName", "Slice 302 production activation evidence brace",
+    "sourceTruss", source, source.trussName,
+  );
 }
-export type PosCashShortageProductionActivationSlice303EvidenceSupport = {
-  supportName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBrace: PosCashShortageProductionActivationSlice302EvidenceBrace;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice303EvidenceSupport = EvidenceLayer<
+  "supportName", "sourceBrace",
+  PosCashShortageProductionActivationSlice302EvidenceBrace
+>;
 
 export function buildPosCashShortageProductionActivationSlice303EvidenceSupport(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice303EvidenceSupport {
-  const sourceBrace = buildPosCashShortageProductionActivationSlice302EvidenceBrace(input);
-  const items = [sourceBrace.braceName, ...sourceBrace.items] as const;
-  const ready = sourceBrace.status === "ready";
-
-  return {
-    supportName: "Slice 303 production activation evidence support",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBrace,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 303 production activation evidence support is clear: ${sourceBrace.text}`
-      : `Slice 303 production activation evidence support needs attention: ${sourceBrace.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice302EvidenceBrace(input);
+  return buildEvidenceLayer(
+    "supportName", "Slice 303 production activation evidence support",
+    "sourceBrace", source, source.braceName,
+  );
 }
-export type PosCashShortageProductionActivationSlice304EvidenceButtress = {
-  buttressName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceSupport: PosCashShortageProductionActivationSlice303EvidenceSupport;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice304EvidenceButtress = EvidenceLayer<
+  "buttressName", "sourceSupport",
+  PosCashShortageProductionActivationSlice303EvidenceSupport
+>;
 
 export function buildPosCashShortageProductionActivationSlice304EvidenceButtress(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice304EvidenceButtress {
-  const sourceSupport = buildPosCashShortageProductionActivationSlice303EvidenceSupport(input);
-  const items = [sourceSupport.supportName, ...sourceSupport.items] as const;
-  const ready = sourceSupport.status === "ready";
-
-  return {
-    buttressName: "Slice 304 production activation evidence buttress",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceSupport,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 304 production activation evidence buttress is clear: ${sourceSupport.text}`
-      : `Slice 304 production activation evidence buttress needs attention: ${sourceSupport.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice303EvidenceSupport(input);
+  return buildEvidenceLayer(
+    "buttressName", "Slice 304 production activation evidence buttress",
+    "sourceSupport", source, source.supportName,
+  );
 }
-export type PosCashShortageProductionActivationSlice305EvidenceKeystone = {
-  keystoneName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceButtress: PosCashShortageProductionActivationSlice304EvidenceButtress;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice305EvidenceKeystone = EvidenceLayer<
+  "keystoneName", "sourceButtress",
+  PosCashShortageProductionActivationSlice304EvidenceButtress
+>;
 
 export function buildPosCashShortageProductionActivationSlice305EvidenceKeystone(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice305EvidenceKeystone {
-  const sourceButtress = buildPosCashShortageProductionActivationSlice304EvidenceButtress(input);
-  const items = [sourceButtress.buttressName, ...sourceButtress.items] as const;
-  const ready = sourceButtress.status === "ready";
-
-  return {
-    keystoneName: "Slice 305 production activation evidence keystone",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceButtress,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 305 production activation evidence keystone is clear: ${sourceButtress.text}`
-      : `Slice 305 production activation evidence keystone needs attention: ${sourceButtress.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice304EvidenceButtress(input);
+  return buildEvidenceLayer(
+    "keystoneName", "Slice 305 production activation evidence keystone",
+    "sourceButtress", source, source.buttressName,
+  );
 }
-export type PosCashShortageProductionActivationSlice306EvidenceCapstone = {
-  capstoneName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceKeystone: PosCashShortageProductionActivationSlice305EvidenceKeystone;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice306EvidenceCapstone = EvidenceLayer<
+  "capstoneName", "sourceKeystone",
+  PosCashShortageProductionActivationSlice305EvidenceKeystone
+>;
 
 export function buildPosCashShortageProductionActivationSlice306EvidenceCapstone(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice306EvidenceCapstone {
-  const sourceKeystone = buildPosCashShortageProductionActivationSlice305EvidenceKeystone(input);
-  const items = [sourceKeystone.keystoneName, ...sourceKeystone.items] as const;
-  const ready = sourceKeystone.status === "ready";
-
-  return {
-    capstoneName: "Slice 306 production activation evidence capstone",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceKeystone,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 306 production activation evidence capstone is clear: ${sourceKeystone.text}`
-      : `Slice 306 production activation evidence capstone needs attention: ${sourceKeystone.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice305EvidenceKeystone(input);
+  return buildEvidenceLayer(
+    "capstoneName", "Slice 306 production activation evidence capstone",
+    "sourceKeystone", source, source.keystoneName,
+  );
 }
-export type PosCashShortageProductionActivationSlice307EvidenceCornice = {
-  corniceName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCapstone: PosCashShortageProductionActivationSlice306EvidenceCapstone;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice307EvidenceCornice = EvidenceLayer<
+  "corniceName", "sourceCapstone",
+  PosCashShortageProductionActivationSlice306EvidenceCapstone
+>;
 
 export function buildPosCashShortageProductionActivationSlice307EvidenceCornice(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice307EvidenceCornice {
-  const sourceCapstone = buildPosCashShortageProductionActivationSlice306EvidenceCapstone(input);
-  const items = [sourceCapstone.capstoneName, ...sourceCapstone.items] as const;
-  const ready = sourceCapstone.status === "ready";
-
-  return {
-    corniceName: "Slice 307 production activation evidence cornice",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCapstone,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 307 production activation evidence cornice is clear: ${sourceCapstone.text}`
-      : `Slice 307 production activation evidence cornice needs attention: ${sourceCapstone.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice306EvidenceCapstone(input);
+  return buildEvidenceLayer(
+    "corniceName", "Slice 307 production activation evidence cornice",
+    "sourceCapstone", source, source.capstoneName,
+  );
 }
-export type PosCashShortageProductionActivationSlice308EvidenceParapet = {
-  parapetName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCornice: PosCashShortageProductionActivationSlice307EvidenceCornice;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice308EvidenceParapet = EvidenceLayer<
+  "parapetName", "sourceCornice",
+  PosCashShortageProductionActivationSlice307EvidenceCornice
+>;
 
 export function buildPosCashShortageProductionActivationSlice308EvidenceParapet(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice308EvidenceParapet {
-  const sourceCornice = buildPosCashShortageProductionActivationSlice307EvidenceCornice(input);
-  const items = [sourceCornice.corniceName, ...sourceCornice.items] as const;
-  const ready = sourceCornice.status === "ready";
-
-  return {
-    parapetName: "Slice 308 production activation evidence parapet",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCornice,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 308 production activation evidence parapet is clear: ${sourceCornice.text}`
-      : `Slice 308 production activation evidence parapet needs attention: ${sourceCornice.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice307EvidenceCornice(input);
+  return buildEvidenceLayer(
+    "parapetName", "Slice 308 production activation evidence parapet",
+    "sourceCornice", source, source.corniceName,
+  );
 }
-export type PosCashShortageProductionActivationSlice309EvidenceRampart = {
-  rampartName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceParapet: PosCashShortageProductionActivationSlice308EvidenceParapet;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice309EvidenceRampart = EvidenceLayer<
+  "rampartName", "sourceParapet",
+  PosCashShortageProductionActivationSlice308EvidenceParapet
+>;
 
 export function buildPosCashShortageProductionActivationSlice309EvidenceRampart(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice309EvidenceRampart {
-  const sourceParapet = buildPosCashShortageProductionActivationSlice308EvidenceParapet(input);
-  const items = [sourceParapet.parapetName, ...sourceParapet.items] as const;
-  const ready = sourceParapet.status === "ready";
-
-  return {
-    rampartName: "Slice 309 production activation evidence rampart",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceParapet,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 309 production activation evidence rampart is clear: ${sourceParapet.text}`
-      : `Slice 309 production activation evidence rampart needs attention: ${sourceParapet.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice308EvidenceParapet(input);
+  return buildEvidenceLayer(
+    "rampartName", "Slice 309 production activation evidence rampart",
+    "sourceParapet", source, source.parapetName,
+  );
 }
-export type PosCashShortageProductionActivationSlice310EvidenceBastion = {
-  bastionName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRampart: PosCashShortageProductionActivationSlice309EvidenceRampart;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice310EvidenceBastion = EvidenceLayer<
+  "bastionName", "sourceRampart",
+  PosCashShortageProductionActivationSlice309EvidenceRampart
+>;
 
 export function buildPosCashShortageProductionActivationSlice310EvidenceBastion(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice310EvidenceBastion {
-  const sourceRampart = buildPosCashShortageProductionActivationSlice309EvidenceRampart(input);
-  const items = [sourceRampart.rampartName, ...sourceRampart.items] as const;
-  const ready = sourceRampart.status === "ready";
-
-  return {
-    bastionName: "Slice 310 production activation evidence bastion",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRampart,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 310 production activation evidence bastion is clear: ${sourceRampart.text}`
-      : `Slice 310 production activation evidence bastion needs attention: ${sourceRampart.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice309EvidenceRampart(input);
+  return buildEvidenceLayer(
+    "bastionName", "Slice 310 production activation evidence bastion",
+    "sourceRampart", source, source.rampartName,
+  );
 }
-export type PosCashShortageProductionActivationSlice311EvidenceCitadel = {
-  citadelName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBastion: PosCashShortageProductionActivationSlice310EvidenceBastion;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice311EvidenceCitadel = EvidenceLayer<
+  "citadelName", "sourceBastion",
+  PosCashShortageProductionActivationSlice310EvidenceBastion
+>;
 
 export function buildPosCashShortageProductionActivationSlice311EvidenceCitadel(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice311EvidenceCitadel {
-  const sourceBastion = buildPosCashShortageProductionActivationSlice310EvidenceBastion(input);
-  const items = [sourceBastion.bastionName, ...sourceBastion.items] as const;
-  const ready = sourceBastion.status === "ready";
-
-  return {
-    citadelName: "Slice 311 production activation evidence citadel",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBastion,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 311 production activation evidence citadel is clear: ${sourceBastion.text}`
-      : `Slice 311 production activation evidence citadel needs attention: ${sourceBastion.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice310EvidenceBastion(input);
+  return buildEvidenceLayer(
+    "citadelName", "Slice 311 production activation evidence citadel",
+    "sourceBastion", source, source.bastionName,
+  );
 }
-export type PosCashShortageProductionActivationSlice312EvidenceFortress = {
-  fortressName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCitadel: PosCashShortageProductionActivationSlice311EvidenceCitadel;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice312EvidenceFortress = EvidenceLayer<
+  "fortressName", "sourceCitadel",
+  PosCashShortageProductionActivationSlice311EvidenceCitadel
+>;
 
 export function buildPosCashShortageProductionActivationSlice312EvidenceFortress(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice312EvidenceFortress {
-  const sourceCitadel = buildPosCashShortageProductionActivationSlice311EvidenceCitadel(input);
-  const items = [sourceCitadel.citadelName, ...sourceCitadel.items] as const;
-  const ready = sourceCitadel.status === "ready";
-
-  return {
-    fortressName: "Slice 312 production activation evidence fortress",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCitadel,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 312 production activation evidence fortress is clear: ${sourceCitadel.text}`
-      : `Slice 312 production activation evidence fortress needs attention: ${sourceCitadel.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice311EvidenceCitadel(input);
+  return buildEvidenceLayer(
+    "fortressName", "Slice 312 production activation evidence fortress",
+    "sourceCitadel", source, source.citadelName,
+  );
 }
-export type PosCashShortageProductionActivationSlice313EvidenceBulwark = {
-  bulwarkName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceFortress: PosCashShortageProductionActivationSlice312EvidenceFortress;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice313EvidenceBulwark = EvidenceLayer<
+  "bulwarkName", "sourceFortress",
+  PosCashShortageProductionActivationSlice312EvidenceFortress
+>;
 
 export function buildPosCashShortageProductionActivationSlice313EvidenceBulwark(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice313EvidenceBulwark {
-  const sourceFortress = buildPosCashShortageProductionActivationSlice312EvidenceFortress(input);
-  const items = [sourceFortress.fortressName, ...sourceFortress.items] as const;
-  const ready = sourceFortress.status === "ready";
-
-  return {
-    bulwarkName: "Slice 313 production activation evidence bulwark",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceFortress,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 313 production activation evidence bulwark is clear: ${sourceFortress.text}`
-      : `Slice 313 production activation evidence bulwark needs attention: ${sourceFortress.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice312EvidenceFortress(input);
+  return buildEvidenceLayer(
+    "bulwarkName", "Slice 313 production activation evidence bulwark",
+    "sourceFortress", source, source.fortressName,
+  );
 }
-export type PosCashShortageProductionActivationSlice314EvidenceRedoubt = {
-  redoubtName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBulwark: PosCashShortageProductionActivationSlice313EvidenceBulwark;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice314EvidenceRedoubt = EvidenceLayer<
+  "redoubtName", "sourceBulwark",
+  PosCashShortageProductionActivationSlice313EvidenceBulwark
+>;
 
 export function buildPosCashShortageProductionActivationSlice314EvidenceRedoubt(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice314EvidenceRedoubt {
-  const sourceBulwark = buildPosCashShortageProductionActivationSlice313EvidenceBulwark(input);
-  const items = [sourceBulwark.bulwarkName, ...sourceBulwark.items] as const;
-  const ready = sourceBulwark.status === "ready";
-
-  return {
-    redoubtName: "Slice 314 production activation evidence redoubt",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBulwark,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 314 production activation evidence redoubt is clear: ${sourceBulwark.text}`
-      : `Slice 314 production activation evidence redoubt needs attention: ${sourceBulwark.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice313EvidenceBulwark(input);
+  return buildEvidenceLayer(
+    "redoubtName", "Slice 314 production activation evidence redoubt",
+    "sourceBulwark", source, source.bulwarkName,
+  );
 }
-export type PosCashShortageProductionActivationSlice315EvidenceOutwork = {
-  outworkName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRedoubt: PosCashShortageProductionActivationSlice314EvidenceRedoubt;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice315EvidenceOutwork = EvidenceLayer<
+  "outworkName", "sourceRedoubt",
+  PosCashShortageProductionActivationSlice314EvidenceRedoubt
+>;
 
 export function buildPosCashShortageProductionActivationSlice315EvidenceOutwork(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice315EvidenceOutwork {
-  const sourceRedoubt = buildPosCashShortageProductionActivationSlice314EvidenceRedoubt(input);
-  const items = [sourceRedoubt.redoubtName, ...sourceRedoubt.items] as const;
-  const ready = sourceRedoubt.status === "ready";
-
-  return {
-    outworkName: "Slice 315 production activation evidence outwork",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRedoubt,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 315 production activation evidence outwork is clear: ${sourceRedoubt.text}`
-      : `Slice 315 production activation evidence outwork needs attention: ${sourceRedoubt.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice314EvidenceRedoubt(input);
+  return buildEvidenceLayer(
+    "outworkName", "Slice 315 production activation evidence outwork",
+    "sourceRedoubt", source, source.redoubtName,
+  );
 }
-export type PosCashShortageProductionActivationSlice316EvidenceGlacis = {
-  glacisName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceOutwork: PosCashShortageProductionActivationSlice315EvidenceOutwork;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice316EvidenceGlacis = EvidenceLayer<
+  "glacisName", "sourceOutwork",
+  PosCashShortageProductionActivationSlice315EvidenceOutwork
+>;
 
 export function buildPosCashShortageProductionActivationSlice316EvidenceGlacis(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice316EvidenceGlacis {
-  const sourceOutwork = buildPosCashShortageProductionActivationSlice315EvidenceOutwork(input);
-  const items = [sourceOutwork.outworkName, ...sourceOutwork.items] as const;
-  const ready = sourceOutwork.status === "ready";
-
-  return {
-    glacisName: "Slice 316 production activation evidence glacis",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceOutwork,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 316 production activation evidence glacis is clear: ${sourceOutwork.text}`
-      : `Slice 316 production activation evidence glacis needs attention: ${sourceOutwork.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice315EvidenceOutwork(input);
+  return buildEvidenceLayer(
+    "glacisName", "Slice 316 production activation evidence glacis",
+    "sourceOutwork", source, source.outworkName,
+  );
 }
-export type PosCashShortageProductionActivationSlice317EvidenceRavelin = {
-  ravelinName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceGlacis: PosCashShortageProductionActivationSlice316EvidenceGlacis;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice317EvidenceRavelin = EvidenceLayer<
+  "ravelinName", "sourceGlacis",
+  PosCashShortageProductionActivationSlice316EvidenceGlacis
+>;
 
 export function buildPosCashShortageProductionActivationSlice317EvidenceRavelin(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice317EvidenceRavelin {
-  const sourceGlacis = buildPosCashShortageProductionActivationSlice316EvidenceGlacis(input);
-  const items = [sourceGlacis.glacisName, ...sourceGlacis.items] as const;
-  const ready = sourceGlacis.status === "ready";
-
-  return {
-    ravelinName: "Slice 317 production activation evidence ravelin",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceGlacis,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 317 production activation evidence ravelin is clear: ${sourceGlacis.text}`
-      : `Slice 317 production activation evidence ravelin needs attention: ${sourceGlacis.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice316EvidenceGlacis(input);
+  return buildEvidenceLayer(
+    "ravelinName", "Slice 317 production activation evidence ravelin",
+    "sourceGlacis", source, source.glacisName,
+  );
 }
-export type PosCashShortageProductionActivationSlice318EvidenceCounterscarp = {
-  counterscarpName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRavelin: PosCashShortageProductionActivationSlice317EvidenceRavelin;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice318EvidenceCounterscarp = EvidenceLayer<
+  "counterscarpName", "sourceRavelin",
+  PosCashShortageProductionActivationSlice317EvidenceRavelin
+>;
 
 export function buildPosCashShortageProductionActivationSlice318EvidenceCounterscarp(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice318EvidenceCounterscarp {
-  const sourceRavelin = buildPosCashShortageProductionActivationSlice317EvidenceRavelin(input);
-  const items = [sourceRavelin.ravelinName, ...sourceRavelin.items] as const;
-  const ready = sourceRavelin.status === "ready";
-
-  return {
-    counterscarpName: "Slice 318 production activation evidence counterscarp",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRavelin,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 318 production activation evidence counterscarp is clear: ${sourceRavelin.text}`
-      : `Slice 318 production activation evidence counterscarp needs attention: ${sourceRavelin.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice317EvidenceRavelin(input);
+  return buildEvidenceLayer(
+    "counterscarpName", "Slice 318 production activation evidence counterscarp",
+    "sourceRavelin", source, source.ravelinName,
+  );
 }
-export type PosCashShortageProductionActivationSlice319EvidenceTerreplein = {
-  terrepleinName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCounterscarp: PosCashShortageProductionActivationSlice318EvidenceCounterscarp;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice319EvidenceTerreplein = EvidenceLayer<
+  "terrepleinName", "sourceCounterscarp",
+  PosCashShortageProductionActivationSlice318EvidenceCounterscarp
+>;
 
 export function buildPosCashShortageProductionActivationSlice319EvidenceTerreplein(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice319EvidenceTerreplein {
-  const sourceCounterscarp = buildPosCashShortageProductionActivationSlice318EvidenceCounterscarp(input);
-  const items = [sourceCounterscarp.counterscarpName, ...sourceCounterscarp.items] as const;
-  const ready = sourceCounterscarp.status === "ready";
-
-  return {
-    terrepleinName: "Slice 319 production activation evidence terreplein",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCounterscarp,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 319 production activation evidence terreplein is clear: ${sourceCounterscarp.text}`
-      : `Slice 319 production activation evidence terreplein needs attention: ${sourceCounterscarp.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice318EvidenceCounterscarp(input);
+  return buildEvidenceLayer(
+    "terrepleinName", "Slice 319 production activation evidence terreplein",
+    "sourceCounterscarp", source, source.counterscarpName,
+  );
 }
-export type PosCashShortageProductionActivationSlice320EvidenceBanquette = {
-  banquetteName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceTerreplein: PosCashShortageProductionActivationSlice319EvidenceTerreplein;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice320EvidenceBanquette = EvidenceLayer<
+  "banquetteName", "sourceTerreplein",
+  PosCashShortageProductionActivationSlice319EvidenceTerreplein
+>;
 
 export function buildPosCashShortageProductionActivationSlice320EvidenceBanquette(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice320EvidenceBanquette {
-  const sourceTerreplein = buildPosCashShortageProductionActivationSlice319EvidenceTerreplein(input);
-  const items = [sourceTerreplein.terrepleinName, ...sourceTerreplein.items] as const;
-  const ready = sourceTerreplein.status === "ready";
-
-  return {
-    banquetteName: "Slice 320 production activation evidence banquette",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceTerreplein,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 320 production activation evidence banquette is clear: ${sourceTerreplein.text}`
-      : `Slice 320 production activation evidence banquette needs attention: ${sourceTerreplein.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice319EvidenceTerreplein(input);
+  return buildEvidenceLayer(
+    "banquetteName", "Slice 320 production activation evidence banquette",
+    "sourceTerreplein", source, source.terrepleinName,
+  );
 }
-export type PosCashShortageProductionActivationSlice321EvidenceEscarp = {
-  escarpName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBanquette: PosCashShortageProductionActivationSlice320EvidenceBanquette;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice321EvidenceEscarp = EvidenceLayer<
+  "escarpName", "sourceBanquette",
+  PosCashShortageProductionActivationSlice320EvidenceBanquette
+>;
 
 export function buildPosCashShortageProductionActivationSlice321EvidenceEscarp(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice321EvidenceEscarp {
-  const sourceBanquette = buildPosCashShortageProductionActivationSlice320EvidenceBanquette(input);
-  const items = [sourceBanquette.banquetteName, ...sourceBanquette.items] as const;
-  const ready = sourceBanquette.status === "ready";
-
-  return {
-    escarpName: "Slice 321 production activation evidence escarp",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBanquette,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 321 production activation evidence escarp is clear: ${sourceBanquette.text}`
-      : `Slice 321 production activation evidence escarp needs attention: ${sourceBanquette.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice320EvidenceBanquette(input);
+  return buildEvidenceLayer(
+    "escarpName", "Slice 321 production activation evidence escarp",
+    "sourceBanquette", source, source.banquetteName,
+  );
 }
-export type PosCashShortageProductionActivationSlice322EvidenceRevetment = {
-  revetmentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceEscarp: PosCashShortageProductionActivationSlice321EvidenceEscarp;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice322EvidenceRevetment = EvidenceLayer<
+  "revetmentName", "sourceEscarp",
+  PosCashShortageProductionActivationSlice321EvidenceEscarp
+>;
 
 export function buildPosCashShortageProductionActivationSlice322EvidenceRevetment(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice322EvidenceRevetment {
-  const sourceEscarp = buildPosCashShortageProductionActivationSlice321EvidenceEscarp(input);
-  const items = [sourceEscarp.escarpName, ...sourceEscarp.items] as const;
-  const ready = sourceEscarp.status === "ready";
-
-  return {
-    revetmentName: "Slice 322 production activation evidence revetment",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceEscarp,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 322 production activation evidence revetment is clear: ${sourceEscarp.text}`
-      : `Slice 322 production activation evidence revetment needs attention: ${sourceEscarp.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice321EvidenceEscarp(input);
+  return buildEvidenceLayer(
+    "revetmentName", "Slice 322 production activation evidence revetment",
+    "sourceEscarp", source, source.escarpName,
+  );
 }
-export type PosCashShortageProductionActivationSlice323EvidenceEmbankment = {
-  embankmentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRevetment: PosCashShortageProductionActivationSlice322EvidenceRevetment;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice323EvidenceEmbankment = EvidenceLayer<
+  "embankmentName", "sourceRevetment",
+  PosCashShortageProductionActivationSlice322EvidenceRevetment
+>;
 
 export function buildPosCashShortageProductionActivationSlice323EvidenceEmbankment(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice323EvidenceEmbankment {
-  const sourceRevetment = buildPosCashShortageProductionActivationSlice322EvidenceRevetment(input);
-  const items = [sourceRevetment.revetmentName, ...sourceRevetment.items] as const;
-  const ready = sourceRevetment.status === "ready";
-
-  return {
-    embankmentName: "Slice 323 production activation evidence embankment",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRevetment,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 323 production activation evidence embankment is clear: ${sourceRevetment.text}`
-      : `Slice 323 production activation evidence embankment needs attention: ${sourceRevetment.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice322EvidenceRevetment(input);
+  return buildEvidenceLayer(
+    "embankmentName", "Slice 323 production activation evidence embankment",
+    "sourceRevetment", source, source.revetmentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice324EvidenceLevee = {
-  leveeName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceEmbankment: PosCashShortageProductionActivationSlice323EvidenceEmbankment;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice324EvidenceLevee = EvidenceLayer<
+  "leveeName", "sourceEmbankment",
+  PosCashShortageProductionActivationSlice323EvidenceEmbankment
+>;
 
 export function buildPosCashShortageProductionActivationSlice324EvidenceLevee(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice324EvidenceLevee {
-  const sourceEmbankment = buildPosCashShortageProductionActivationSlice323EvidenceEmbankment(input);
-  const items = [sourceEmbankment.embankmentName, ...sourceEmbankment.items] as const;
-  const ready = sourceEmbankment.status === "ready";
-
-  return {
-    leveeName: "Slice 324 production activation evidence levee",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceEmbankment,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 324 production activation evidence levee is clear: ${sourceEmbankment.text}`
-      : `Slice 324 production activation evidence levee needs attention: ${sourceEmbankment.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice323EvidenceEmbankment(input);
+  return buildEvidenceLayer(
+    "leveeName", "Slice 324 production activation evidence levee",
+    "sourceEmbankment", source, source.embankmentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice325EvidenceCauseway = {
-  causewayName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceLevee: PosCashShortageProductionActivationSlice324EvidenceLevee;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice325EvidenceCauseway = EvidenceLayer<
+  "causewayName", "sourceLevee",
+  PosCashShortageProductionActivationSlice324EvidenceLevee
+>;
 
 export function buildPosCashShortageProductionActivationSlice325EvidenceCauseway(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice325EvidenceCauseway {
-  const sourceLevee = buildPosCashShortageProductionActivationSlice324EvidenceLevee(input);
-  const items = [sourceLevee.leveeName, ...sourceLevee.items] as const;
-  const ready = sourceLevee.status === "ready";
-
-  return {
-    causewayName: "Slice 325 production activation evidence causeway",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceLevee,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 325 production activation evidence causeway is clear: ${sourceLevee.text}`
-      : `Slice 325 production activation evidence causeway needs attention: ${sourceLevee.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice324EvidenceLevee(input);
+  return buildEvidenceLayer(
+    "causewayName", "Slice 325 production activation evidence causeway",
+    "sourceLevee", source, source.leveeName,
+  );
 }
-export type PosCashShortageProductionActivationSlice326EvidenceFord = {
-  fordName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCauseway: PosCashShortageProductionActivationSlice325EvidenceCauseway;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice326EvidenceFord = EvidenceLayer<
+  "fordName", "sourceCauseway",
+  PosCashShortageProductionActivationSlice325EvidenceCauseway
+>;
 
 export function buildPosCashShortageProductionActivationSlice326EvidenceFord(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice326EvidenceFord {
-  const sourceCauseway = buildPosCashShortageProductionActivationSlice325EvidenceCauseway(input);
-  const items = [sourceCauseway.causewayName, ...sourceCauseway.items] as const;
-  const ready = sourceCauseway.status === "ready";
-
-  return {
-    fordName: "Slice 326 production activation evidence ford",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCauseway,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 326 production activation evidence ford is clear: ${sourceCauseway.text}`
-      : `Slice 326 production activation evidence ford needs attention: ${sourceCauseway.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice325EvidenceCauseway(input);
+  return buildEvidenceLayer(
+    "fordName", "Slice 326 production activation evidence ford",
+    "sourceCauseway", source, source.causewayName,
+  );
 }
-export type PosCashShortageProductionActivationSlice327EvidenceCrossing = {
-  crossingName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceFord: PosCashShortageProductionActivationSlice326EvidenceFord;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice327EvidenceCrossing = EvidenceLayer<
+  "crossingName", "sourceFord",
+  PosCashShortageProductionActivationSlice326EvidenceFord
+>;
 
 export function buildPosCashShortageProductionActivationSlice327EvidenceCrossing(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice327EvidenceCrossing {
-  const sourceFord = buildPosCashShortageProductionActivationSlice326EvidenceFord(input);
-  const items = [sourceFord.fordName, ...sourceFord.items] as const;
-  const ready = sourceFord.status === "ready";
-
-  return {
-    crossingName: "Slice 327 production activation evidence crossing",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceFord,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 327 production activation evidence crossing is clear: ${sourceFord.text}`
-      : `Slice 327 production activation evidence crossing needs attention: ${sourceFord.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice326EvidenceFord(input);
+  return buildEvidenceLayer(
+    "crossingName", "Slice 327 production activation evidence crossing",
+    "sourceFord", source, source.fordName,
+  );
 }
-export type PosCashShortageProductionActivationSlice328EvidenceSpan = {
-  spanName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCrossing: PosCashShortageProductionActivationSlice327EvidenceCrossing;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice328EvidenceSpan = EvidenceLayer<
+  "spanName", "sourceCrossing",
+  PosCashShortageProductionActivationSlice327EvidenceCrossing
+>;
 
 export function buildPosCashShortageProductionActivationSlice328EvidenceSpan(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice328EvidenceSpan {
-  const sourceCrossing = buildPosCashShortageProductionActivationSlice327EvidenceCrossing(input);
-  const items = [sourceCrossing.crossingName, ...sourceCrossing.items] as const;
-  const ready = sourceCrossing.status === "ready";
-
-  return {
-    spanName: "Slice 328 production activation evidence span",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCrossing,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 328 production activation evidence span is clear: ${sourceCrossing.text}`
-      : `Slice 328 production activation evidence span needs attention: ${sourceCrossing.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice327EvidenceCrossing(input);
+  return buildEvidenceLayer(
+    "spanName", "Slice 328 production activation evidence span",
+    "sourceCrossing", source, source.crossingName,
+  );
 }
-export type PosCashShortageProductionActivationSlice329EvidenceArch = {
-  archName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceSpan: PosCashShortageProductionActivationSlice328EvidenceSpan;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice329EvidenceArch = EvidenceLayer<
+  "archName", "sourceSpan",
+  PosCashShortageProductionActivationSlice328EvidenceSpan
+>;
 
 export function buildPosCashShortageProductionActivationSlice329EvidenceArch(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice329EvidenceArch {
-  const sourceSpan = buildPosCashShortageProductionActivationSlice328EvidenceSpan(input);
-  const items = [sourceSpan.spanName, ...sourceSpan.items] as const;
-  const ready = sourceSpan.status === "ready";
-
-  return {
-    archName: "Slice 329 production activation evidence arch",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceSpan,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 329 production activation evidence arch is clear: ${sourceSpan.text}`
-      : `Slice 329 production activation evidence arch needs attention: ${sourceSpan.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice328EvidenceSpan(input);
+  return buildEvidenceLayer(
+    "archName", "Slice 329 production activation evidence arch",
+    "sourceSpan", source, source.spanName,
+  );
 }
-export type PosCashShortageProductionActivationSlice330EvidencePier = {
-  pierName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceArch: PosCashShortageProductionActivationSlice329EvidenceArch;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice330EvidencePier = EvidenceLayer<
+  "pierName", "sourceArch",
+  PosCashShortageProductionActivationSlice329EvidenceArch
+>;
 
 export function buildPosCashShortageProductionActivationSlice330EvidencePier(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice330EvidencePier {
-  const sourceArch = buildPosCashShortageProductionActivationSlice329EvidenceArch(input);
-  const items = [sourceArch.archName, ...sourceArch.items] as const;
-  const ready = sourceArch.status === "ready";
-
-  return {
-    pierName: "Slice 330 production activation evidence pier",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceArch,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 330 production activation evidence pier is clear: ${sourceArch.text}`
-      : `Slice 330 production activation evidence pier needs attention: ${sourceArch.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice329EvidenceArch(input);
+  return buildEvidenceLayer(
+    "pierName", "Slice 330 production activation evidence pier",
+    "sourceArch", source, source.archName,
+  );
 }
-export type PosCashShortageProductionActivationSlice331EvidenceAbutment = {
-  abutmentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourcePier: PosCashShortageProductionActivationSlice330EvidencePier;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice331EvidenceAbutment = EvidenceLayer<
+  "abutmentName", "sourcePier",
+  PosCashShortageProductionActivationSlice330EvidencePier
+>;
 
 export function buildPosCashShortageProductionActivationSlice331EvidenceAbutment(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice331EvidenceAbutment {
-  const sourcePier = buildPosCashShortageProductionActivationSlice330EvidencePier(input);
-  const items = [sourcePier.pierName, ...sourcePier.items] as const;
-  const ready = sourcePier.status === "ready";
-
-  return {
-    abutmentName: "Slice 331 production activation evidence abutment",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourcePier,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 331 production activation evidence abutment is clear: ${sourcePier.text}`
-      : `Slice 331 production activation evidence abutment needs attention: ${sourcePier.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice330EvidencePier(input);
+  return buildEvidenceLayer(
+    "abutmentName", "Slice 331 production activation evidence abutment",
+    "sourcePier", source, source.pierName,
+  );
 }
-export type PosCashShortageProductionActivationSlice332EvidenceKeel = {
-  keelName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAbutment: PosCashShortageProductionActivationSlice331EvidenceAbutment;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice332EvidenceKeel = EvidenceLayer<
+  "keelName", "sourceAbutment",
+  PosCashShortageProductionActivationSlice331EvidenceAbutment
+>;
 
 export function buildPosCashShortageProductionActivationSlice332EvidenceKeel(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice332EvidenceKeel {
-  const sourceAbutment = buildPosCashShortageProductionActivationSlice331EvidenceAbutment(input);
-  const items = [sourceAbutment.abutmentName, ...sourceAbutment.items] as const;
-  const ready = sourceAbutment.status === "ready";
-
-  return {
-    keelName: "Slice 332 production activation evidence keel",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAbutment,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 332 production activation evidence keel is clear: ${sourceAbutment.text}`
-      : `Slice 332 production activation evidence keel needs attention: ${sourceAbutment.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice331EvidenceAbutment(input);
+  return buildEvidenceLayer(
+    "keelName", "Slice 332 production activation evidence keel",
+    "sourceAbutment", source, source.abutmentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice333EvidenceHull = {
-  hullName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceKeel: PosCashShortageProductionActivationSlice332EvidenceKeel;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice333EvidenceHull = EvidenceLayer<
+  "hullName", "sourceKeel",
+  PosCashShortageProductionActivationSlice332EvidenceKeel
+>;
 
 export function buildPosCashShortageProductionActivationSlice333EvidenceHull(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice333EvidenceHull {
-  const sourceKeel = buildPosCashShortageProductionActivationSlice332EvidenceKeel(input);
-  const items = [sourceKeel.keelName, ...sourceKeel.items] as const;
-  const ready = sourceKeel.status === "ready";
-
-  return {
-    hullName: "Slice 333 production activation evidence hull",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceKeel,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 333 production activation evidence hull is clear: ${sourceKeel.text}`
-      : `Slice 333 production activation evidence hull needs attention: ${sourceKeel.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice332EvidenceKeel(input);
+  return buildEvidenceLayer(
+    "hullName", "Slice 333 production activation evidence hull",
+    "sourceKeel", source, source.keelName,
+  );
 }
-export type PosCashShortageProductionActivationSlice334EvidenceRib = {
-  ribName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceHull: PosCashShortageProductionActivationSlice333EvidenceHull;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice334EvidenceRib = EvidenceLayer<
+  "ribName", "sourceHull",
+  PosCashShortageProductionActivationSlice333EvidenceHull
+>;
 
 export function buildPosCashShortageProductionActivationSlice334EvidenceRib(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice334EvidenceRib {
-  const sourceHull = buildPosCashShortageProductionActivationSlice333EvidenceHull(input);
-  const items = [sourceHull.hullName, ...sourceHull.items] as const;
-  const ready = sourceHull.status === "ready";
-
-  return {
-    ribName: "Slice 334 production activation evidence rib",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceHull,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 334 production activation evidence rib is clear: ${sourceHull.text}`
-      : `Slice 334 production activation evidence rib needs attention: ${sourceHull.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice333EvidenceHull(input);
+  return buildEvidenceLayer(
+    "ribName", "Slice 334 production activation evidence rib",
+    "sourceHull", source, source.hullName,
+  );
 }
-export type PosCashShortageProductionActivationSlice335EvidencePlank = {
-  plankName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRib: PosCashShortageProductionActivationSlice334EvidenceRib;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice335EvidencePlank = EvidenceLayer<
+  "plankName", "sourceRib",
+  PosCashShortageProductionActivationSlice334EvidenceRib
+>;
 
 export function buildPosCashShortageProductionActivationSlice335EvidencePlank(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice335EvidencePlank {
-  const sourceRib = buildPosCashShortageProductionActivationSlice334EvidenceRib(input);
-  const items = [sourceRib.ribName, ...sourceRib.items] as const;
-  const ready = sourceRib.status === "ready";
-
-  return {
-    plankName: "Slice 335 production activation evidence plank",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRib,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 335 production activation evidence plank is clear: ${sourceRib.text}`
-      : `Slice 335 production activation evidence plank needs attention: ${sourceRib.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice334EvidenceRib(input);
+  return buildEvidenceLayer(
+    "plankName", "Slice 335 production activation evidence plank",
+    "sourceRib", source, source.ribName,
+  );
 }
-export type PosCashShortageProductionActivationSlice336EvidenceDeck = {
-  deckName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourcePlank: PosCashShortageProductionActivationSlice335EvidencePlank;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice336EvidenceDeck = EvidenceLayer<
+  "deckName", "sourcePlank",
+  PosCashShortageProductionActivationSlice335EvidencePlank
+>;
 
 export function buildPosCashShortageProductionActivationSlice336EvidenceDeck(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice336EvidenceDeck {
-  const sourcePlank = buildPosCashShortageProductionActivationSlice335EvidencePlank(input);
-  const items = [sourcePlank.plankName, ...sourcePlank.items] as const;
-  const ready = sourcePlank.status === "ready";
-
-  return {
-    deckName: "Slice 336 production activation evidence deck",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourcePlank,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 336 production activation evidence deck is clear: ${sourcePlank.text}`
-      : `Slice 336 production activation evidence deck needs attention: ${sourcePlank.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice335EvidencePlank(input);
+  return buildEvidenceLayer(
+    "deckName", "Slice 336 production activation evidence deck",
+    "sourcePlank", source, source.plankName,
+  );
 }
-export type PosCashShortageProductionActivationSlice337EvidenceCabin = {
-  cabinName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceDeck: PosCashShortageProductionActivationSlice336EvidenceDeck;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice337EvidenceCabin = EvidenceLayer<
+  "cabinName", "sourceDeck",
+  PosCashShortageProductionActivationSlice336EvidenceDeck
+>;
 
 export function buildPosCashShortageProductionActivationSlice337EvidenceCabin(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice337EvidenceCabin {
-  const sourceDeck = buildPosCashShortageProductionActivationSlice336EvidenceDeck(input);
-  const items = [sourceDeck.deckName, ...sourceDeck.items] as const;
-  const ready = sourceDeck.status === "ready";
-
-  return {
-    cabinName: "Slice 337 production activation evidence cabin",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceDeck,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 337 production activation evidence cabin is clear: ${sourceDeck.text}`
-      : `Slice 337 production activation evidence cabin needs attention: ${sourceDeck.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice336EvidenceDeck(input);
+  return buildEvidenceLayer(
+    "cabinName", "Slice 337 production activation evidence cabin",
+    "sourceDeck", source, source.deckName,
+  );
 }
-export type PosCashShortageProductionActivationSlice338EvidenceBulkhead = {
-  bulkheadName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCabin: PosCashShortageProductionActivationSlice337EvidenceCabin;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice338EvidenceBulkhead = EvidenceLayer<
+  "bulkheadName", "sourceCabin",
+  PosCashShortageProductionActivationSlice337EvidenceCabin
+>;
 
 export function buildPosCashShortageProductionActivationSlice338EvidenceBulkhead(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice338EvidenceBulkhead {
-  const sourceCabin = buildPosCashShortageProductionActivationSlice337EvidenceCabin(input);
-  const items = [sourceCabin.cabinName, ...sourceCabin.items] as const;
-  const ready = sourceCabin.status === "ready";
-
-  return {
-    bulkheadName: "Slice 338 production activation evidence bulkhead",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCabin,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 338 production activation evidence bulkhead is clear: ${sourceCabin.text}`
-      : `Slice 338 production activation evidence bulkhead needs attention: ${sourceCabin.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice337EvidenceCabin(input);
+  return buildEvidenceLayer(
+    "bulkheadName", "Slice 338 production activation evidence bulkhead",
+    "sourceCabin", source, source.cabinName,
+  );
 }
-export type PosCashShortageProductionActivationSlice339EvidenceHold = {
-  holdName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBulkhead: PosCashShortageProductionActivationSlice338EvidenceBulkhead;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice339EvidenceHold = EvidenceLayer<
+  "holdName", "sourceBulkhead",
+  PosCashShortageProductionActivationSlice338EvidenceBulkhead
+>;
 
 export function buildPosCashShortageProductionActivationSlice339EvidenceHold(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice339EvidenceHold {
-  const sourceBulkhead = buildPosCashShortageProductionActivationSlice338EvidenceBulkhead(input);
-  const items = [sourceBulkhead.bulkheadName, ...sourceBulkhead.items] as const;
-  const ready = sourceBulkhead.status === "ready";
-
-  return {
-    holdName: "Slice 339 production activation evidence hold",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBulkhead,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 339 production activation evidence hold is clear: ${sourceBulkhead.text}`
-      : `Slice 339 production activation evidence hold needs attention: ${sourceBulkhead.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice338EvidenceBulkhead(input);
+  return buildEvidenceLayer(
+    "holdName", "Slice 339 production activation evidence hold",
+    "sourceBulkhead", source, source.bulkheadName,
+  );
 }
-export type PosCashShortageProductionActivationSlice340EvidenceBay = {
-  bayName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceHold: PosCashShortageProductionActivationSlice339EvidenceHold;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice340EvidenceBay = EvidenceLayer<
+  "bayName", "sourceHold",
+  PosCashShortageProductionActivationSlice339EvidenceHold
+>;
 
 export function buildPosCashShortageProductionActivationSlice340EvidenceBay(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice340EvidenceBay {
-  const sourceHold = buildPosCashShortageProductionActivationSlice339EvidenceHold(input);
-  const items = [sourceHold.holdName, ...sourceHold.items] as const;
-  const ready = sourceHold.status === "ready";
-
-  return {
-    bayName: "Slice 340 production activation evidence bay",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceHold,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 340 production activation evidence bay is clear: ${sourceHold.text}`
-      : `Slice 340 production activation evidence bay needs attention: ${sourceHold.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice339EvidenceHold(input);
+  return buildEvidenceLayer(
+    "bayName", "Slice 340 production activation evidence bay",
+    "sourceHold", source, source.holdName,
+  );
 }
-export type PosCashShortageProductionActivationSlice341EvidenceCompartment = {
-  compartmentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBay: PosCashShortageProductionActivationSlice340EvidenceBay;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice341EvidenceCompartment = EvidenceLayer<
+  "compartmentName", "sourceBay",
+  PosCashShortageProductionActivationSlice340EvidenceBay
+>;
 
 export function buildPosCashShortageProductionActivationSlice341EvidenceCompartment(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice341EvidenceCompartment {
-  const sourceBay = buildPosCashShortageProductionActivationSlice340EvidenceBay(input);
-  const items = [sourceBay.bayName, ...sourceBay.items] as const;
-  const ready = sourceBay.status === "ready";
-
-  return {
-    compartmentName: "Slice 341 production activation evidence compartment",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBay,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 341 production activation evidence compartment is clear: ${sourceBay.text}`
-      : `Slice 341 production activation evidence compartment needs attention: ${sourceBay.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice340EvidenceBay(input);
+  return buildEvidenceLayer(
+    "compartmentName", "Slice 341 production activation evidence compartment",
+    "sourceBay", source, source.bayName,
+  );
 }
-export type PosCashShortageProductionActivationSlice342EvidenceLocker = {
-  lockerName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCompartment: PosCashShortageProductionActivationSlice341EvidenceCompartment;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice342EvidenceLocker = EvidenceLayer<
+  "lockerName", "sourceCompartment",
+  PosCashShortageProductionActivationSlice341EvidenceCompartment
+>;
 
 export function buildPosCashShortageProductionActivationSlice342EvidenceLocker(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice342EvidenceLocker {
-  const sourceCompartment = buildPosCashShortageProductionActivationSlice341EvidenceCompartment(input);
-  const items = [sourceCompartment.compartmentName, ...sourceCompartment.items] as const;
-  const ready = sourceCompartment.status === "ready";
-
-  return {
-    lockerName: "Slice 342 production activation evidence locker",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCompartment,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 342 production activation evidence locker is clear: ${sourceCompartment.text}`
-      : `Slice 342 production activation evidence locker needs attention: ${sourceCompartment.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice341EvidenceCompartment(input);
+  return buildEvidenceLayer(
+    "lockerName", "Slice 342 production activation evidence locker",
+    "sourceCompartment", source, source.compartmentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice343EvidenceStrongbox = {
-  strongboxName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceLocker: PosCashShortageProductionActivationSlice342EvidenceLocker;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice343EvidenceStrongbox = EvidenceLayer<
+  "strongboxName", "sourceLocker",
+  PosCashShortageProductionActivationSlice342EvidenceLocker
+>;
 
 export function buildPosCashShortageProductionActivationSlice343EvidenceStrongbox(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice343EvidenceStrongbox {
-  const sourceLocker = buildPosCashShortageProductionActivationSlice342EvidenceLocker(input);
-  const items = [sourceLocker.lockerName, ...sourceLocker.items] as const;
-  const ready = sourceLocker.status === "ready";
-
-  return {
-    strongboxName: "Slice 343 production activation evidence strongbox",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceLocker,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 343 production activation evidence strongbox is clear: ${sourceLocker.text}`
-      : `Slice 343 production activation evidence strongbox needs attention: ${sourceLocker.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice342EvidenceLocker(input);
+  return buildEvidenceLayer(
+    "strongboxName", "Slice 343 production activation evidence strongbox",
+    "sourceLocker", source, source.lockerName,
+  );
 }
-export type PosCashShortageProductionActivationSlice344EvidenceVault = {
-  vaultName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceStrongbox: PosCashShortageProductionActivationSlice343EvidenceStrongbox;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice344EvidenceVault = EvidenceLayer<
+  "vaultName", "sourceStrongbox",
+  PosCashShortageProductionActivationSlice343EvidenceStrongbox
+>;
 
 export function buildPosCashShortageProductionActivationSlice344EvidenceVault(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice344EvidenceVault {
-  const sourceStrongbox = buildPosCashShortageProductionActivationSlice343EvidenceStrongbox(input);
-  const items = [sourceStrongbox.strongboxName, ...sourceStrongbox.items] as const;
-  const ready = sourceStrongbox.status === "ready";
-
-  return {
-    vaultName: "Slice 344 production activation evidence vault",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceStrongbox,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 344 production activation evidence vault is clear: ${sourceStrongbox.text}`
-      : `Slice 344 production activation evidence vault needs attention: ${sourceStrongbox.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice343EvidenceStrongbox(input);
+  return buildEvidenceLayer(
+    "vaultName", "Slice 344 production activation evidence vault",
+    "sourceStrongbox", source, source.strongboxName,
+  );
 }
-export type PosCashShortageProductionActivationSlice345EvidenceSafe = {
-  safeName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceVault: PosCashShortageProductionActivationSlice344EvidenceVault;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice345EvidenceSafe = EvidenceLayer<
+  "safeName", "sourceVault",
+  PosCashShortageProductionActivationSlice344EvidenceVault
+>;
 
 export function buildPosCashShortageProductionActivationSlice345EvidenceSafe(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice345EvidenceSafe {
-  const sourceVault = buildPosCashShortageProductionActivationSlice344EvidenceVault(input);
-  const items = [sourceVault.vaultName, ...sourceVault.items] as const;
-  const ready = sourceVault.status === "ready";
-
-  return {
-    safeName: "Slice 345 production activation evidence safe",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceVault,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 345 production activation evidence safe is clear: ${sourceVault.text}`
-      : `Slice 345 production activation evidence safe needs attention: ${sourceVault.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice344EvidenceVault(input);
+  return buildEvidenceLayer(
+    "safeName", "Slice 345 production activation evidence safe",
+    "sourceVault", source, source.vaultName,
+  );
 }
-export type PosCashShortageProductionActivationSlice346EvidenceCoffer = {
-  cofferName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceSafe: PosCashShortageProductionActivationSlice345EvidenceSafe;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice346EvidenceCoffer = EvidenceLayer<
+  "cofferName", "sourceSafe",
+  PosCashShortageProductionActivationSlice345EvidenceSafe
+>;
 
 export function buildPosCashShortageProductionActivationSlice346EvidenceCoffer(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice346EvidenceCoffer {
-  const sourceSafe = buildPosCashShortageProductionActivationSlice345EvidenceSafe(input);
-  const items = [sourceSafe.safeName, ...sourceSafe.items] as const;
-  const ready = sourceSafe.status === "ready";
-
-  return {
-    cofferName: "Slice 346 production activation evidence coffer",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceSafe,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 346 production activation evidence coffer is clear: ${sourceSafe.text}`
-      : `Slice 346 production activation evidence coffer needs attention: ${sourceSafe.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice345EvidenceSafe(input);
+  return buildEvidenceLayer(
+    "cofferName", "Slice 346 production activation evidence coffer",
+    "sourceSafe", source, source.safeName,
+  );
 }
-export type PosCashShortageProductionActivationSlice347EvidenceChest = {
-  chestName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCoffer: PosCashShortageProductionActivationSlice346EvidenceCoffer;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice347EvidenceChest = EvidenceLayer<
+  "chestName", "sourceCoffer",
+  PosCashShortageProductionActivationSlice346EvidenceCoffer
+>;
 
 export function buildPosCashShortageProductionActivationSlice347EvidenceChest(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice347EvidenceChest {
-  const sourceCoffer = buildPosCashShortageProductionActivationSlice346EvidenceCoffer(input);
-  const items = [sourceCoffer.cofferName, ...sourceCoffer.items] as const;
-  const ready = sourceCoffer.status === "ready";
-
-  return {
-    chestName: "Slice 347 production activation evidence chest",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCoffer,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 347 production activation evidence chest is clear: ${sourceCoffer.text}`
-      : `Slice 347 production activation evidence chest needs attention: ${sourceCoffer.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice346EvidenceCoffer(input);
+  return buildEvidenceLayer(
+    "chestName", "Slice 347 production activation evidence chest",
+    "sourceCoffer", source, source.cofferName,
+  );
 }
-export type PosCashShortageProductionActivationSlice348EvidenceRepository = {
-  repositoryName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceChest: PosCashShortageProductionActivationSlice347EvidenceChest;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice348EvidenceRepository = EvidenceLayer<
+  "repositoryName", "sourceChest",
+  PosCashShortageProductionActivationSlice347EvidenceChest
+>;
 
 export function buildPosCashShortageProductionActivationSlice348EvidenceRepository(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice348EvidenceRepository {
-  const sourceChest = buildPosCashShortageProductionActivationSlice347EvidenceChest(input);
-  const items = [sourceChest.chestName, ...sourceChest.items] as const;
-  const ready = sourceChest.status === "ready";
-
-  return {
-    repositoryName: "Slice 348 production activation evidence repository",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceChest,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 348 production activation evidence repository is clear: ${sourceChest.text}`
-      : `Slice 348 production activation evidence repository needs attention: ${sourceChest.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice347EvidenceChest(input);
+  return buildEvidenceLayer(
+    "repositoryName", "Slice 348 production activation evidence repository",
+    "sourceChest", source, source.chestName,
+  );
 }
-export type PosCashShortageProductionActivationSlice349EvidenceDepository = {
-  depositoryName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRepository: PosCashShortageProductionActivationSlice348EvidenceRepository;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice349EvidenceDepository = EvidenceLayer<
+  "depositoryName", "sourceRepository",
+  PosCashShortageProductionActivationSlice348EvidenceRepository
+>;
 
 export function buildPosCashShortageProductionActivationSlice349EvidenceDepository(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice349EvidenceDepository {
-  const sourceRepository = buildPosCashShortageProductionActivationSlice348EvidenceRepository(input);
-  const items = [sourceRepository.repositoryName, ...sourceRepository.items] as const;
-  const ready = sourceRepository.status === "ready";
-
-  return {
-    depositoryName: "Slice 349 production activation evidence depository",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRepository,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 349 production activation evidence depository is clear: ${sourceRepository.text}`
-      : `Slice 349 production activation evidence depository needs attention: ${sourceRepository.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice348EvidenceRepository(input);
+  return buildEvidenceLayer(
+    "depositoryName", "Slice 349 production activation evidence depository",
+    "sourceRepository", source, source.repositoryName,
+  );
 }
-export type PosCashShortageProductionActivationSlice350EvidenceTreasury = {
-  treasuryName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceDepository: PosCashShortageProductionActivationSlice349EvidenceDepository;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice350EvidenceTreasury = EvidenceLayer<
+  "treasuryName", "sourceDepository",
+  PosCashShortageProductionActivationSlice349EvidenceDepository
+>;
 
 export function buildPosCashShortageProductionActivationSlice350EvidenceTreasury(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice350EvidenceTreasury {
-  const sourceDepository = buildPosCashShortageProductionActivationSlice349EvidenceDepository(input);
-  const items = [sourceDepository.depositoryName, ...sourceDepository.items] as const;
-  const ready = sourceDepository.status === "ready";
-
-  return {
-    treasuryName: "Slice 350 production activation evidence treasury",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceDepository,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 350 production activation evidence treasury is clear: ${sourceDepository.text}`
-      : `Slice 350 production activation evidence treasury needs attention: ${sourceDepository.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice349EvidenceDepository(input);
+  return buildEvidenceLayer(
+    "treasuryName", "Slice 350 production activation evidence treasury",
+    "sourceDepository", source, source.depositoryName,
+  );
 }
-export type PosCashShortageProductionActivationSlice351EvidenceReserve = {
-  reserveName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceTreasury: PosCashShortageProductionActivationSlice350EvidenceTreasury;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice351EvidenceReserve = EvidenceLayer<
+  "reserveName", "sourceTreasury",
+  PosCashShortageProductionActivationSlice350EvidenceTreasury
+>;
 
 export function buildPosCashShortageProductionActivationSlice351EvidenceReserve(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice351EvidenceReserve {
-  const sourceTreasury = buildPosCashShortageProductionActivationSlice350EvidenceTreasury(input);
-  const items = [sourceTreasury.treasuryName, ...sourceTreasury.items] as const;
-  const ready = sourceTreasury.status === "ready";
-
-  return {
-    reserveName: "Slice 351 production activation evidence reserve",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceTreasury,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 351 production activation evidence reserve is clear: ${sourceTreasury.text}`
-      : `Slice 351 production activation evidence reserve needs attention: ${sourceTreasury.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice350EvidenceTreasury(input);
+  return buildEvidenceLayer(
+    "reserveName", "Slice 351 production activation evidence reserve",
+    "sourceTreasury", source, source.treasuryName,
+  );
 }
-export type PosCashShortageProductionActivationSlice352EvidenceFund = {
-  fundName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceReserve: PosCashShortageProductionActivationSlice351EvidenceReserve;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice352EvidenceFund = EvidenceLayer<
+  "fundName", "sourceReserve",
+  PosCashShortageProductionActivationSlice351EvidenceReserve
+>;
 
 export function buildPosCashShortageProductionActivationSlice352EvidenceFund(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice352EvidenceFund {
-  const sourceReserve = buildPosCashShortageProductionActivationSlice351EvidenceReserve(input);
-  const items = [sourceReserve.reserveName, ...sourceReserve.items] as const;
-  const ready = sourceReserve.status === "ready";
-
-  return {
-    fundName: "Slice 352 production activation evidence fund",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceReserve,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 352 production activation evidence fund is clear: ${sourceReserve.text}`
-      : `Slice 352 production activation evidence fund needs attention: ${sourceReserve.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice351EvidenceReserve(input);
+  return buildEvidenceLayer(
+    "fundName", "Slice 352 production activation evidence fund",
+    "sourceReserve", source, source.reserveName,
+  );
 }
-export type PosCashShortageProductionActivationSlice353EvidenceAccount = {
-  accountName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceFund: PosCashShortageProductionActivationSlice352EvidenceFund;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice353EvidenceAccount = EvidenceLayer<
+  "accountName", "sourceFund",
+  PosCashShortageProductionActivationSlice352EvidenceFund
+>;
 
 export function buildPosCashShortageProductionActivationSlice353EvidenceAccount(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice353EvidenceAccount {
-  const sourceFund = buildPosCashShortageProductionActivationSlice352EvidenceFund(input);
-  const items = [sourceFund.fundName, ...sourceFund.items] as const;
-  const ready = sourceFund.status === "ready";
-
-  return {
-    accountName: "Slice 353 production activation evidence account",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceFund,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 353 production activation evidence account is clear: ${sourceFund.text}`
-      : `Slice 353 production activation evidence account needs attention: ${sourceFund.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice352EvidenceFund(input);
+  return buildEvidenceLayer(
+    "accountName", "Slice 353 production activation evidence account",
+    "sourceFund", source, source.fundName,
+  );
 }
-export type PosCashShortageProductionActivationSlice354EvidenceBalance = {
-  balanceName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAccount: PosCashShortageProductionActivationSlice353EvidenceAccount;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice354EvidenceBalance = EvidenceLayer<
+  "balanceName", "sourceAccount",
+  PosCashShortageProductionActivationSlice353EvidenceAccount
+>;
 
 export function buildPosCashShortageProductionActivationSlice354EvidenceBalance(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice354EvidenceBalance {
-  const sourceAccount = buildPosCashShortageProductionActivationSlice353EvidenceAccount(input);
-  const items = [sourceAccount.accountName, ...sourceAccount.items] as const;
-  const ready = sourceAccount.status === "ready";
-
-  return {
-    balanceName: "Slice 354 production activation evidence balance",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAccount,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 354 production activation evidence balance is clear: ${sourceAccount.text}`
-      : `Slice 354 production activation evidence balance needs attention: ${sourceAccount.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice353EvidenceAccount(input);
+  return buildEvidenceLayer(
+    "balanceName", "Slice 354 production activation evidence balance",
+    "sourceAccount", source, source.accountName,
+  );
 }
-export type PosCashShortageProductionActivationSlice355EvidenceStatement = {
-  statementName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBalance: PosCashShortageProductionActivationSlice354EvidenceBalance;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice355EvidenceStatement = EvidenceLayer<
+  "statementName", "sourceBalance",
+  PosCashShortageProductionActivationSlice354EvidenceBalance
+>;
 
 export function buildPosCashShortageProductionActivationSlice355EvidenceStatement(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice355EvidenceStatement {
-  const sourceBalance = buildPosCashShortageProductionActivationSlice354EvidenceBalance(input);
-  const items = [sourceBalance.balanceName, ...sourceBalance.items] as const;
-  const ready = sourceBalance.status === "ready";
-
-  return {
-    statementName: "Slice 355 production activation evidence statement",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBalance,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 355 production activation evidence statement is clear: ${sourceBalance.text}`
-      : `Slice 355 production activation evidence statement needs attention: ${sourceBalance.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice354EvidenceBalance(input);
+  return buildEvidenceLayer(
+    "statementName", "Slice 355 production activation evidence statement",
+    "sourceBalance", source, source.balanceName,
+  );
 }
-export type PosCashShortageProductionActivationSlice356EvidenceVoucher = {
-  voucherName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceStatement: PosCashShortageProductionActivationSlice355EvidenceStatement;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice356EvidenceVoucher = EvidenceLayer<
+  "voucherName", "sourceStatement",
+  PosCashShortageProductionActivationSlice355EvidenceStatement
+>;
 
 export function buildPosCashShortageProductionActivationSlice356EvidenceVoucher(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice356EvidenceVoucher {
-  const sourceStatement = buildPosCashShortageProductionActivationSlice355EvidenceStatement(input);
-  const items = [sourceStatement.statementName, ...sourceStatement.items] as const;
-  const ready = sourceStatement.status === "ready";
-
-  return {
-    voucherName: "Slice 356 production activation evidence voucher",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceStatement,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 356 production activation evidence voucher is clear: ${sourceStatement.text}`
-      : `Slice 356 production activation evidence voucher needs attention: ${sourceStatement.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice355EvidenceStatement(input);
+  return buildEvidenceLayer(
+    "voucherName", "Slice 356 production activation evidence voucher",
+    "sourceStatement", source, source.statementName,
+  );
 }
-export type PosCashShortageProductionActivationSlice357EvidenceInstrument = {
-  instrumentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceVoucher: PosCashShortageProductionActivationSlice356EvidenceVoucher;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice357EvidenceInstrument = EvidenceLayer<
+  "instrumentName", "sourceVoucher",
+  PosCashShortageProductionActivationSlice356EvidenceVoucher
+>;
 
 export function buildPosCashShortageProductionActivationSlice357EvidenceInstrument(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice357EvidenceInstrument {
-  const sourceVoucher = buildPosCashShortageProductionActivationSlice356EvidenceVoucher(input);
-  const items = [sourceVoucher.voucherName, ...sourceVoucher.items] as const;
-  const ready = sourceVoucher.status === "ready";
-
-  return {
-    instrumentName: "Slice 357 production activation evidence instrument",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceVoucher,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 357 production activation evidence instrument is clear: ${sourceVoucher.text}`
-      : `Slice 357 production activation evidence instrument needs attention: ${sourceVoucher.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice356EvidenceVoucher(input);
+  return buildEvidenceLayer(
+    "instrumentName", "Slice 357 production activation evidence instrument",
+    "sourceVoucher", source, source.voucherName,
+  );
 }
-export type PosCashShortageProductionActivationSlice358EvidenceCertificate = {
-  certificateName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceInstrument: PosCashShortageProductionActivationSlice357EvidenceInstrument;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice358EvidenceCertificate = EvidenceLayer<
+  "certificateName", "sourceInstrument",
+  PosCashShortageProductionActivationSlice357EvidenceInstrument
+>;
 
 export function buildPosCashShortageProductionActivationSlice358EvidenceCertificate(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice358EvidenceCertificate {
-  const sourceInstrument = buildPosCashShortageProductionActivationSlice357EvidenceInstrument(input);
-  const items = [sourceInstrument.instrumentName, ...sourceInstrument.items] as const;
-  const ready = sourceInstrument.status === "ready";
-
-  return {
-    certificateName: "Slice 358 production activation evidence certificate",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceInstrument,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 358 production activation evidence certificate is clear: ${sourceInstrument.text}`
-      : `Slice 358 production activation evidence certificate needs attention: ${sourceInstrument.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice357EvidenceInstrument(input);
+  return buildEvidenceLayer(
+    "certificateName", "Slice 358 production activation evidence certificate",
+    "sourceInstrument", source, source.instrumentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice359EvidenceDocument = {
-  documentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCertificate: PosCashShortageProductionActivationSlice358EvidenceCertificate;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice359EvidenceDocument = EvidenceLayer<
+  "documentName", "sourceCertificate",
+  PosCashShortageProductionActivationSlice358EvidenceCertificate
+>;
 
 export function buildPosCashShortageProductionActivationSlice359EvidenceDocument(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice359EvidenceDocument {
-  const sourceCertificate = buildPosCashShortageProductionActivationSlice358EvidenceCertificate(input);
-  const items = [sourceCertificate.certificateName, ...sourceCertificate.items] as const;
-  const ready = sourceCertificate.status === "ready";
-
-  return {
-    documentName: "Slice 359 production activation evidence document",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCertificate,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 359 production activation evidence document is clear: ${sourceCertificate.text}`
-      : `Slice 359 production activation evidence document needs attention: ${sourceCertificate.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice358EvidenceCertificate(input);
+  return buildEvidenceLayer(
+    "documentName", "Slice 359 production activation evidence document",
+    "sourceCertificate", source, source.certificateName,
+  );
 }
-export type PosCashShortageProductionActivationSlice360EvidenceFile = {
-  fileName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceDocument: PosCashShortageProductionActivationSlice359EvidenceDocument;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice360EvidenceFile = EvidenceLayer<
+  "fileName", "sourceDocument",
+  PosCashShortageProductionActivationSlice359EvidenceDocument
+>;
 
 export function buildPosCashShortageProductionActivationSlice360EvidenceFile(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice360EvidenceFile {
-  const sourceDocument = buildPosCashShortageProductionActivationSlice359EvidenceDocument(input);
-  const items = [sourceDocument.documentName, ...sourceDocument.items] as const;
-  const ready = sourceDocument.status === "ready";
-
-  return {
-    fileName: "Slice 360 production activation evidence file",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceDocument,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 360 production activation evidence file is clear: ${sourceDocument.text}`
-      : `Slice 360 production activation evidence file needs attention: ${sourceDocument.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice359EvidenceDocument(input);
+  return buildEvidenceLayer(
+    "fileName", "Slice 360 production activation evidence file",
+    "sourceDocument", source, source.documentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice361EvidenceFolder = {
-  folderName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceFile: PosCashShortageProductionActivationSlice360EvidenceFile;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice361EvidenceFolder = EvidenceLayer<
+  "folderName", "sourceFile",
+  PosCashShortageProductionActivationSlice360EvidenceFile
+>;
 
 export function buildPosCashShortageProductionActivationSlice361EvidenceFolder(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice361EvidenceFolder {
-  const sourceFile = buildPosCashShortageProductionActivationSlice360EvidenceFile(input);
-  const items = [sourceFile.fileName, ...sourceFile.items] as const;
-  const ready = sourceFile.status === "ready";
-
-  return {
-    folderName: "Slice 361 production activation evidence folder",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceFile,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 361 production activation evidence folder is clear: ${sourceFile.text}`
-      : `Slice 361 production activation evidence folder needs attention: ${sourceFile.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice360EvidenceFile(input);
+  return buildEvidenceLayer(
+    "folderName", "Slice 361 production activation evidence folder",
+    "sourceFile", source, source.fileName,
+  );
 }
-export type PosCashShortageProductionActivationSlice362EvidenceBox = {
-  boxName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceFolder: PosCashShortageProductionActivationSlice361EvidenceFolder;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice362EvidenceBox = EvidenceLayer<
+  "boxName", "sourceFolder",
+  PosCashShortageProductionActivationSlice361EvidenceFolder
+>;
 
 export function buildPosCashShortageProductionActivationSlice362EvidenceBox(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice362EvidenceBox {
-  const sourceFolder = buildPosCashShortageProductionActivationSlice361EvidenceFolder(input);
-  const items = [sourceFolder.folderName, ...sourceFolder.items] as const;
-  const ready = sourceFolder.status === "ready";
-
-  return {
-    boxName: "Slice 362 production activation evidence box",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceFolder,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 362 production activation evidence box is clear: ${sourceFolder.text}`
-      : `Slice 362 production activation evidence box needs attention: ${sourceFolder.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice361EvidenceFolder(input);
+  return buildEvidenceLayer(
+    "boxName", "Slice 362 production activation evidence box",
+    "sourceFolder", source, source.folderName,
+  );
 }
-export type PosCashShortageProductionActivationSlice363EvidenceCase = {
-  caseName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBox: PosCashShortageProductionActivationSlice362EvidenceBox;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice363EvidenceCase = EvidenceLayer<
+  "caseName", "sourceBox",
+  PosCashShortageProductionActivationSlice362EvidenceBox
+>;
 
 export function buildPosCashShortageProductionActivationSlice363EvidenceCase(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice363EvidenceCase {
-  const sourceBox = buildPosCashShortageProductionActivationSlice362EvidenceBox(input);
-  const items = [sourceBox.boxName, ...sourceBox.items] as const;
-  const ready = sourceBox.status === "ready";
-
-  return {
-    caseName: "Slice 363 production activation evidence case",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBox,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 363 production activation evidence case is clear: ${sourceBox.text}`
-      : `Slice 363 production activation evidence case needs attention: ${sourceBox.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice362EvidenceBox(input);
+  return buildEvidenceLayer(
+    "caseName", "Slice 363 production activation evidence case",
+    "sourceBox", source, source.boxName,
+  );
 }
-export type PosCashShortageProductionActivationSlice364EvidencePacket = {
-  packetName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCase: PosCashShortageProductionActivationSlice363EvidenceCase;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice364EvidencePacket = EvidenceLayer<
+  "packetName", "sourceCase",
+  PosCashShortageProductionActivationSlice363EvidenceCase
+>;
 
 export function buildPosCashShortageProductionActivationSlice364EvidencePacket(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice364EvidencePacket {
-  const sourceCase = buildPosCashShortageProductionActivationSlice363EvidenceCase(input);
-  const items = [sourceCase.caseName, ...sourceCase.items] as const;
-  const ready = sourceCase.status === "ready";
-
-  return {
-    packetName: "Slice 364 production activation evidence packet",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCase,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 364 production activation evidence packet is clear: ${sourceCase.text}`
-      : `Slice 364 production activation evidence packet needs attention: ${sourceCase.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice363EvidenceCase(input);
+  return buildEvidenceLayer(
+    "packetName", "Slice 364 production activation evidence packet",
+    "sourceCase", source, source.caseName,
+  );
 }
-export type PosCashShortageProductionActivationSlice365EvidenceParcel = {
-  parcelName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourcePacket: PosCashShortageProductionActivationSlice364EvidencePacket;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice365EvidenceParcel = EvidenceLayer<
+  "parcelName", "sourcePacket",
+  PosCashShortageProductionActivationSlice364EvidencePacket
+>;
 
 export function buildPosCashShortageProductionActivationSlice365EvidenceParcel(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice365EvidenceParcel {
-  const sourcePacket = buildPosCashShortageProductionActivationSlice364EvidencePacket(input);
-  const items = [sourcePacket.packetName, ...sourcePacket.items] as const;
-  const ready = sourcePacket.status === "ready";
-
-  return {
-    parcelName: "Slice 365 production activation evidence parcel",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourcePacket,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 365 production activation evidence parcel is clear: ${sourcePacket.text}`
-      : `Slice 365 production activation evidence parcel needs attention: ${sourcePacket.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice364EvidencePacket(input);
+  return buildEvidenceLayer(
+    "parcelName", "Slice 365 production activation evidence parcel",
+    "sourcePacket", source, source.packetName,
+  );
 }
-export type PosCashShortageProductionActivationSlice366EvidencePackage = {
-  packageName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceParcel: PosCashShortageProductionActivationSlice365EvidenceParcel;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice366EvidencePackage = EvidenceLayer<
+  "packageName", "sourceParcel",
+  PosCashShortageProductionActivationSlice365EvidenceParcel
+>;
 
 export function buildPosCashShortageProductionActivationSlice366EvidencePackage(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice366EvidencePackage {
-  const sourceParcel = buildPosCashShortageProductionActivationSlice365EvidenceParcel(input);
-  const items = [sourceParcel.parcelName, ...sourceParcel.items] as const;
-  const ready = sourceParcel.status === "ready";
-
-  return {
-    packageName: "Slice 366 production activation evidence package",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceParcel,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 366 production activation evidence package is clear: ${sourceParcel.text}`
-      : `Slice 366 production activation evidence package needs attention: ${sourceParcel.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice365EvidenceParcel(input);
+  return buildEvidenceLayer(
+    "packageName", "Slice 366 production activation evidence package",
+    "sourceParcel", source, source.parcelName,
+  );
 }
-export type PosCashShortageProductionActivationSlice367EvidenceShipment = {
-  shipmentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourcePackage: PosCashShortageProductionActivationSlice366EvidencePackage;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice367EvidenceShipment = EvidenceLayer<
+  "shipmentName", "sourcePackage",
+  PosCashShortageProductionActivationSlice366EvidencePackage
+>;
 
 export function buildPosCashShortageProductionActivationSlice367EvidenceShipment(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice367EvidenceShipment {
-  const sourcePackage = buildPosCashShortageProductionActivationSlice366EvidencePackage(input);
-  const items = [sourcePackage.packageName, ...sourcePackage.items] as const;
-  const ready = sourcePackage.status === "ready";
-
-  return {
-    shipmentName: "Slice 367 production activation evidence shipment",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourcePackage,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 367 production activation evidence shipment is clear: ${sourcePackage.text}`
-      : `Slice 367 production activation evidence shipment needs attention: ${sourcePackage.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice366EvidencePackage(input);
+  return buildEvidenceLayer(
+    "shipmentName", "Slice 367 production activation evidence shipment",
+    "sourcePackage", source, source.packageName,
+  );
 }
-export type PosCashShortageProductionActivationSlice368EvidenceManifest = {
-  manifestName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceShipment: PosCashShortageProductionActivationSlice367EvidenceShipment;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice368EvidenceManifest = EvidenceLayer<
+  "manifestName", "sourceShipment",
+  PosCashShortageProductionActivationSlice367EvidenceShipment
+>;
 
 export function buildPosCashShortageProductionActivationSlice368EvidenceManifest(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice368EvidenceManifest {
-  const sourceShipment = buildPosCashShortageProductionActivationSlice367EvidenceShipment(input);
-  const items = [sourceShipment.shipmentName, ...sourceShipment.items] as const;
-  const ready = sourceShipment.status === "ready";
-
-  return {
-    manifestName: "Slice 368 production activation evidence manifest",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceShipment,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 368 production activation evidence manifest is clear: ${sourceShipment.text}`
-      : `Slice 368 production activation evidence manifest needs attention: ${sourceShipment.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice367EvidenceShipment(input);
+  return buildEvidenceLayer(
+    "manifestName", "Slice 368 production activation evidence manifest",
+    "sourceShipment", source, source.shipmentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice369EvidenceDocket = {
-  docketName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceManifest: PosCashShortageProductionActivationSlice368EvidenceManifest;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice369EvidenceDocket = EvidenceLayer<
+  "docketName", "sourceManifest",
+  PosCashShortageProductionActivationSlice368EvidenceManifest
+>;
 
 export function buildPosCashShortageProductionActivationSlice369EvidenceDocket(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice369EvidenceDocket {
-  const sourceManifest = buildPosCashShortageProductionActivationSlice368EvidenceManifest(input);
-  const items = [sourceManifest.manifestName, ...sourceManifest.items] as const;
-  const ready = sourceManifest.status === "ready";
-
-  return {
-    docketName: "Slice 369 production activation evidence docket",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceManifest,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 369 production activation evidence docket is clear: ${sourceManifest.text}`
-      : `Slice 369 production activation evidence docket needs attention: ${sourceManifest.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice368EvidenceManifest(input);
+  return buildEvidenceLayer(
+    "docketName", "Slice 369 production activation evidence docket",
+    "sourceManifest", source, source.manifestName,
+  );
 }
-export type PosCashShortageProductionActivationSlice370EvidenceDossier = {
-  dossierName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceDocket: PosCashShortageProductionActivationSlice369EvidenceDocket;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice370EvidenceDossier = EvidenceLayer<
+  "dossierName", "sourceDocket",
+  PosCashShortageProductionActivationSlice369EvidenceDocket
+>;
 
 export function buildPosCashShortageProductionActivationSlice370EvidenceDossier(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice370EvidenceDossier {
-  const sourceDocket = buildPosCashShortageProductionActivationSlice369EvidenceDocket(input);
-  const items = [sourceDocket.docketName, ...sourceDocket.items] as const;
-  const ready = sourceDocket.status === "ready";
-
-  return {
-    dossierName: "Slice 370 production activation evidence dossier",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceDocket,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 370 production activation evidence dossier is clear: ${sourceDocket.text}`
-      : `Slice 370 production activation evidence dossier needs attention: ${sourceDocket.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice369EvidenceDocket(input);
+  return buildEvidenceLayer(
+    "dossierName", "Slice 370 production activation evidence dossier",
+    "sourceDocket", source, source.docketName,
+  );
 }
-export type PosCashShortageProductionActivationSlice371EvidenceBrief = {
-  briefName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceDossier: PosCashShortageProductionActivationSlice370EvidenceDossier;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice371EvidenceBrief = EvidenceLayer<
+  "briefName", "sourceDossier",
+  PosCashShortageProductionActivationSlice370EvidenceDossier
+>;
 
 export function buildPosCashShortageProductionActivationSlice371EvidenceBrief(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice371EvidenceBrief {
-  const sourceDossier = buildPosCashShortageProductionActivationSlice370EvidenceDossier(input);
-  const items = [sourceDossier.dossierName, ...sourceDossier.items] as const;
-  const ready = sourceDossier.status === "ready";
-
-  return {
-    briefName: "Slice 371 production activation evidence brief",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceDossier,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 371 production activation evidence brief is clear: ${sourceDossier.text}`
-      : `Slice 371 production activation evidence brief needs attention: ${sourceDossier.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice370EvidenceDossier(input);
+  return buildEvidenceLayer(
+    "briefName", "Slice 371 production activation evidence brief",
+    "sourceDossier", source, source.dossierName,
+  );
 }
-export type PosCashShortageProductionActivationSlice372EvidenceAbstract = {
-  abstractName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBrief: PosCashShortageProductionActivationSlice371EvidenceBrief;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice372EvidenceAbstract = EvidenceLayer<
+  "abstractName", "sourceBrief",
+  PosCashShortageProductionActivationSlice371EvidenceBrief
+>;
 
 export function buildPosCashShortageProductionActivationSlice372EvidenceAbstract(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice372EvidenceAbstract {
-  const sourceBrief = buildPosCashShortageProductionActivationSlice371EvidenceBrief(input);
-  const items = [sourceBrief.briefName, ...sourceBrief.items] as const;
-  const ready = sourceBrief.status === "ready";
-
-  return {
-    abstractName: "Slice 372 production activation evidence abstract",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBrief,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 372 production activation evidence abstract is clear: ${sourceBrief.text}`
-      : `Slice 372 production activation evidence abstract needs attention: ${sourceBrief.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice371EvidenceBrief(input);
+  return buildEvidenceLayer(
+    "abstractName", "Slice 372 production activation evidence abstract",
+    "sourceBrief", source, source.briefName,
+  );
 }
-export type PosCashShortageProductionActivationSlice373EvidenceSynopsis = {
-  synopsisName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAbstract: PosCashShortageProductionActivationSlice372EvidenceAbstract;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice373EvidenceSynopsis = EvidenceLayer<
+  "synopsisName", "sourceAbstract",
+  PosCashShortageProductionActivationSlice372EvidenceAbstract
+>;
 
 export function buildPosCashShortageProductionActivationSlice373EvidenceSynopsis(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice373EvidenceSynopsis {
-  const sourceAbstract = buildPosCashShortageProductionActivationSlice372EvidenceAbstract(input);
-  const items = [sourceAbstract.abstractName, ...sourceAbstract.items] as const;
-  const ready = sourceAbstract.status === "ready";
-
-  return {
-    synopsisName: "Slice 373 production activation evidence synopsis",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAbstract,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 373 production activation evidence synopsis is clear: ${sourceAbstract.text}`
-      : `Slice 373 production activation evidence synopsis needs attention: ${sourceAbstract.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice372EvidenceAbstract(input);
+  return buildEvidenceLayer(
+    "synopsisName", "Slice 373 production activation evidence synopsis",
+    "sourceAbstract", source, source.abstractName,
+  );
 }
-export type PosCashShortageProductionActivationSlice374EvidencePrecis = {
-  precisName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceSynopsis: PosCashShortageProductionActivationSlice373EvidenceSynopsis;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice374EvidencePrecis = EvidenceLayer<
+  "precisName", "sourceSynopsis",
+  PosCashShortageProductionActivationSlice373EvidenceSynopsis
+>;
 
 export function buildPosCashShortageProductionActivationSlice374EvidencePrecis(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice374EvidencePrecis {
-  const sourceSynopsis = buildPosCashShortageProductionActivationSlice373EvidenceSynopsis(input);
-  const items = [sourceSynopsis.synopsisName, ...sourceSynopsis.items] as const;
-  const ready = sourceSynopsis.status === "ready";
-
-  return {
-    precisName: "Slice 374 production activation evidence precis",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceSynopsis,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 374 production activation evidence precis is clear: ${sourceSynopsis.text}`
-      : `Slice 374 production activation evidence precis needs attention: ${sourceSynopsis.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice373EvidenceSynopsis(input);
+  return buildEvidenceLayer(
+    "precisName", "Slice 374 production activation evidence precis",
+    "sourceSynopsis", source, source.synopsisName,
+  );
 }
-export type PosCashShortageProductionActivationSlice375EvidenceOverview = {
-  overviewName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourcePrecis: PosCashShortageProductionActivationSlice374EvidencePrecis;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice375EvidenceOverview = EvidenceLayer<
+  "overviewName", "sourcePrecis",
+  PosCashShortageProductionActivationSlice374EvidencePrecis
+>;
 
 export function buildPosCashShortageProductionActivationSlice375EvidenceOverview(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice375EvidenceOverview {
-  const sourcePrecis = buildPosCashShortageProductionActivationSlice374EvidencePrecis(input);
-  const items = [sourcePrecis.precisName, ...sourcePrecis.items] as const;
-  const ready = sourcePrecis.status === "ready";
-
-  return {
-    overviewName: "Slice 375 production activation evidence overview",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourcePrecis,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 375 production activation evidence overview is clear: ${sourcePrecis.text}`
-      : `Slice 375 production activation evidence overview needs attention: ${sourcePrecis.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice374EvidencePrecis(input);
+  return buildEvidenceLayer(
+    "overviewName", "Slice 375 production activation evidence overview",
+    "sourcePrecis", source, source.precisName,
+  );
 }
-export type PosCashShortageProductionActivationSlice376EvidenceRecap = {
-  recapName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceOverview: PosCashShortageProductionActivationSlice375EvidenceOverview;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice376EvidenceRecap = EvidenceLayer<
+  "recapName", "sourceOverview",
+  PosCashShortageProductionActivationSlice375EvidenceOverview
+>;
 
 export function buildPosCashShortageProductionActivationSlice376EvidenceRecap(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice376EvidenceRecap {
-  const sourceOverview = buildPosCashShortageProductionActivationSlice375EvidenceOverview(input);
-  const items = [sourceOverview.overviewName, ...sourceOverview.items] as const;
-  const ready = sourceOverview.status === "ready";
-
-  return {
-    recapName: "Slice 376 production activation evidence recap",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceOverview,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 376 production activation evidence recap is clear: ${sourceOverview.text}`
-      : `Slice 376 production activation evidence recap needs attention: ${sourceOverview.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice375EvidenceOverview(input);
+  return buildEvidenceLayer(
+    "recapName", "Slice 376 production activation evidence recap",
+    "sourceOverview", source, source.overviewName,
+  );
 }
-export type PosCashShortageProductionActivationSlice377EvidenceRoundup = {
-  roundupName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRecap: PosCashShortageProductionActivationSlice376EvidenceRecap;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice377EvidenceRoundup = EvidenceLayer<
+  "roundupName", "sourceRecap",
+  PosCashShortageProductionActivationSlice376EvidenceRecap
+>;
 
 export function buildPosCashShortageProductionActivationSlice377EvidenceRoundup(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice377EvidenceRoundup {
-  const sourceRecap = buildPosCashShortageProductionActivationSlice376EvidenceRecap(input);
-  const items = [sourceRecap.recapName, ...sourceRecap.items] as const;
-  const ready = sourceRecap.status === "ready";
-
-  return {
-    roundupName: "Slice 377 production activation evidence roundup",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRecap,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 377 production activation evidence roundup is clear: ${sourceRecap.text}`
-      : `Slice 377 production activation evidence roundup needs attention: ${sourceRecap.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice376EvidenceRecap(input);
+  return buildEvidenceLayer(
+    "roundupName", "Slice 377 production activation evidence roundup",
+    "sourceRecap", source, source.recapName,
+  );
 }
-export type PosCashShortageProductionActivationSlice378EvidenceBriefing = {
-  briefingName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceRoundup: PosCashShortageProductionActivationSlice377EvidenceRoundup;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice378EvidenceBriefing = EvidenceLayer<
+  "briefingName", "sourceRoundup",
+  PosCashShortageProductionActivationSlice377EvidenceRoundup
+>;
 
 export function buildPosCashShortageProductionActivationSlice378EvidenceBriefing(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice378EvidenceBriefing {
-  const sourceRoundup = buildPosCashShortageProductionActivationSlice377EvidenceRoundup(input);
-  const items = [sourceRoundup.roundupName, ...sourceRoundup.items] as const;
-  const ready = sourceRoundup.status === "ready";
-
-  return {
-    briefingName: "Slice 378 production activation evidence briefing",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceRoundup,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 378 production activation evidence briefing is clear: ${sourceRoundup.text}`
-      : `Slice 378 production activation evidence briefing needs attention: ${sourceRoundup.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice377EvidenceRoundup(input);
+  return buildEvidenceLayer(
+    "briefingName", "Slice 378 production activation evidence briefing",
+    "sourceRoundup", source, source.roundupName,
+  );
 }
-export type PosCashShortageProductionActivationSlice379EvidenceBulletin = {
-  bulletinName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBriefing: PosCashShortageProductionActivationSlice378EvidenceBriefing;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice379EvidenceBulletin = EvidenceLayer<
+  "bulletinName", "sourceBriefing",
+  PosCashShortageProductionActivationSlice378EvidenceBriefing
+>;
 
 export function buildPosCashShortageProductionActivationSlice379EvidenceBulletin(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice379EvidenceBulletin {
-  const sourceBriefing = buildPosCashShortageProductionActivationSlice378EvidenceBriefing(input);
-  const items = [sourceBriefing.briefingName, ...sourceBriefing.items] as const;
-  const ready = sourceBriefing.status === "ready";
-
-  return {
-    bulletinName: "Slice 379 production activation evidence bulletin",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBriefing,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 379 production activation evidence bulletin is clear: ${sourceBriefing.text}`
-      : `Slice 379 production activation evidence bulletin needs attention: ${sourceBriefing.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice378EvidenceBriefing(input);
+  return buildEvidenceLayer(
+    "bulletinName", "Slice 379 production activation evidence bulletin",
+    "sourceBriefing", source, source.briefingName,
+  );
 }
-export type PosCashShortageProductionActivationSlice380EvidenceDispatch = {
-  dispatchName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBulletin: PosCashShortageProductionActivationSlice379EvidenceBulletin;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice380EvidenceDispatch = EvidenceLayer<
+  "dispatchName", "sourceBulletin",
+  PosCashShortageProductionActivationSlice379EvidenceBulletin
+>;
 
 export function buildPosCashShortageProductionActivationSlice380EvidenceDispatch(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice380EvidenceDispatch {
-  const sourceBulletin = buildPosCashShortageProductionActivationSlice379EvidenceBulletin(input);
-  const items = [sourceBulletin.bulletinName, ...sourceBulletin.items] as const;
-  const ready = sourceBulletin.status === "ready";
-
-  return {
-    dispatchName: "Slice 380 production activation evidence dispatch",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBulletin,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 380 production activation evidence dispatch is clear: ${sourceBulletin.text}`
-      : `Slice 380 production activation evidence dispatch needs attention: ${sourceBulletin.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice379EvidenceBulletin(input);
+  return buildEvidenceLayer(
+    "dispatchName", "Slice 380 production activation evidence dispatch",
+    "sourceBulletin", source, source.bulletinName,
+  );
 }
-export type PosCashShortageProductionActivationSlice381EvidenceCommunique = {
-  communiqueName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceDispatch: PosCashShortageProductionActivationSlice380EvidenceDispatch;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice381EvidenceCommunique = EvidenceLayer<
+  "communiqueName", "sourceDispatch",
+  PosCashShortageProductionActivationSlice380EvidenceDispatch
+>;
 
 export function buildPosCashShortageProductionActivationSlice381EvidenceCommunique(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice381EvidenceCommunique {
-  const sourceDispatch = buildPosCashShortageProductionActivationSlice380EvidenceDispatch(input);
-  const items = [sourceDispatch.dispatchName, ...sourceDispatch.items] as const;
-  const ready = sourceDispatch.status === "ready";
-
-  return {
-    communiqueName: "Slice 381 production activation evidence communique",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceDispatch,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 381 production activation evidence communique is clear: ${sourceDispatch.text}`
-      : `Slice 381 production activation evidence communique needs attention: ${sourceDispatch.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice380EvidenceDispatch(input);
+  return buildEvidenceLayer(
+    "communiqueName", "Slice 381 production activation evidence communique",
+    "sourceDispatch", source, source.dispatchName,
+  );
 }
-export type PosCashShortageProductionActivationSlice382EvidenceNotice = {
-  noticeName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCommunique: PosCashShortageProductionActivationSlice381EvidenceCommunique;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice382EvidenceNotice = EvidenceLayer<
+  "noticeName", "sourceCommunique",
+  PosCashShortageProductionActivationSlice381EvidenceCommunique
+>;
 
 export function buildPosCashShortageProductionActivationSlice382EvidenceNotice(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice382EvidenceNotice {
-  const sourceCommunique = buildPosCashShortageProductionActivationSlice381EvidenceCommunique(input);
-  const items = [sourceCommunique.communiqueName, ...sourceCommunique.items] as const;
-  const ready = sourceCommunique.status === "ready";
-
-  return {
-    noticeName: "Slice 382 production activation evidence notice",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCommunique,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 382 production activation evidence notice is clear: ${sourceCommunique.text}`
-      : `Slice 382 production activation evidence notice needs attention: ${sourceCommunique.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice381EvidenceCommunique(input);
+  return buildEvidenceLayer(
+    "noticeName", "Slice 382 production activation evidence notice",
+    "sourceCommunique", source, source.communiqueName,
+  );
 }
-export type PosCashShortageProductionActivationSlice383EvidenceAdvisory = {
-  advisoryName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceNotice: PosCashShortageProductionActivationSlice382EvidenceNotice;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice383EvidenceAdvisory = EvidenceLayer<
+  "advisoryName", "sourceNotice",
+  PosCashShortageProductionActivationSlice382EvidenceNotice
+>;
 
 export function buildPosCashShortageProductionActivationSlice383EvidenceAdvisory(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice383EvidenceAdvisory {
-  const sourceNotice = buildPosCashShortageProductionActivationSlice382EvidenceNotice(input);
-  const items = [sourceNotice.noticeName, ...sourceNotice.items] as const;
-  const ready = sourceNotice.status === "ready";
-
-  return {
-    advisoryName: "Slice 383 production activation evidence advisory",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceNotice,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 383 production activation evidence advisory is clear: ${sourceNotice.text}`
-      : `Slice 383 production activation evidence advisory needs attention: ${sourceNotice.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice382EvidenceNotice(input);
+  return buildEvidenceLayer(
+    "advisoryName", "Slice 383 production activation evidence advisory",
+    "sourceNotice", source, source.noticeName,
+  );
 }
-export type PosCashShortageProductionActivationSlice384EvidenceMemorandum = {
-  memorandumName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAdvisory: PosCashShortageProductionActivationSlice383EvidenceAdvisory;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice384EvidenceMemorandum = EvidenceLayer<
+  "memorandumName", "sourceAdvisory",
+  PosCashShortageProductionActivationSlice383EvidenceAdvisory
+>;
 
 export function buildPosCashShortageProductionActivationSlice384EvidenceMemorandum(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice384EvidenceMemorandum {
-  const sourceAdvisory = buildPosCashShortageProductionActivationSlice383EvidenceAdvisory(input);
-  const items = [sourceAdvisory.advisoryName, ...sourceAdvisory.items] as const;
-  const ready = sourceAdvisory.status === "ready";
-
-  return {
-    memorandumName: "Slice 384 production activation evidence memorandum",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAdvisory,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 384 production activation evidence memorandum is clear: ${sourceAdvisory.text}`
-      : `Slice 384 production activation evidence memorandum needs attention: ${sourceAdvisory.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice383EvidenceAdvisory(input);
+  return buildEvidenceLayer(
+    "memorandumName", "Slice 384 production activation evidence memorandum",
+    "sourceAdvisory", source, source.advisoryName,
+  );
 }
-export type PosCashShortageProductionActivationSlice385EvidenceMinute = {
-  minuteName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceMemorandum: PosCashShortageProductionActivationSlice384EvidenceMemorandum;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice385EvidenceMinute = EvidenceLayer<
+  "minuteName", "sourceMemorandum",
+  PosCashShortageProductionActivationSlice384EvidenceMemorandum
+>;
 
 export function buildPosCashShortageProductionActivationSlice385EvidenceMinute(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice385EvidenceMinute {
-  const sourceMemorandum = buildPosCashShortageProductionActivationSlice384EvidenceMemorandum(input);
-  const items = [sourceMemorandum.memorandumName, ...sourceMemorandum.items] as const;
-  const ready = sourceMemorandum.status === "ready";
-
-  return {
-    minuteName: "Slice 385 production activation evidence minute",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceMemorandum,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 385 production activation evidence minute is clear: ${sourceMemorandum.text}`
-      : `Slice 385 production activation evidence minute needs attention: ${sourceMemorandum.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice384EvidenceMemorandum(input);
+  return buildEvidenceLayer(
+    "minuteName", "Slice 385 production activation evidence minute",
+    "sourceMemorandum", source, source.memorandumName,
+  );
 }
-export type PosCashShortageProductionActivationSlice386EvidenceNote = {
-  noteName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceMinute: PosCashShortageProductionActivationSlice385EvidenceMinute;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice386EvidenceNote = EvidenceLayer<
+  "noteName", "sourceMinute",
+  PosCashShortageProductionActivationSlice385EvidenceMinute
+>;
 
 export function buildPosCashShortageProductionActivationSlice386EvidenceNote(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice386EvidenceNote {
-  const sourceMinute = buildPosCashShortageProductionActivationSlice385EvidenceMinute(input);
-  const items = [sourceMinute.minuteName, ...sourceMinute.items] as const;
-  const ready = sourceMinute.status === "ready";
-
-  return {
-    noteName: "Slice 386 production activation evidence note",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceMinute,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 386 production activation evidence note is clear: ${sourceMinute.text}`
-      : `Slice 386 production activation evidence note needs attention: ${sourceMinute.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice385EvidenceMinute(input);
+  return buildEvidenceLayer(
+    "noteName", "Slice 386 production activation evidence note",
+    "sourceMinute", source, source.minuteName,
+  );
 }
-export type PosCashShortageProductionActivationSlice387EvidenceAnnotation = {
-  annotationName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceNote: PosCashShortageProductionActivationSlice386EvidenceNote;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice387EvidenceAnnotation = EvidenceLayer<
+  "annotationName", "sourceNote",
+  PosCashShortageProductionActivationSlice386EvidenceNote
+>;
 
 export function buildPosCashShortageProductionActivationSlice387EvidenceAnnotation(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice387EvidenceAnnotation {
-  const sourceNote = buildPosCashShortageProductionActivationSlice386EvidenceNote(input);
-  const items = [sourceNote.noteName, ...sourceNote.items] as const;
-  const ready = sourceNote.status === "ready";
-
-  return {
-    annotationName: "Slice 387 production activation evidence annotation",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceNote,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 387 production activation evidence annotation is clear: ${sourceNote.text}`
-      : `Slice 387 production activation evidence annotation needs attention: ${sourceNote.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice386EvidenceNote(input);
+  return buildEvidenceLayer(
+    "annotationName", "Slice 387 production activation evidence annotation",
+    "sourceNote", source, source.noteName,
+  );
 }
-export type PosCashShortageProductionActivationSlice388EvidenceComment = {
-  commentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAnnotation: PosCashShortageProductionActivationSlice387EvidenceAnnotation;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice388EvidenceComment = EvidenceLayer<
+  "commentName", "sourceAnnotation",
+  PosCashShortageProductionActivationSlice387EvidenceAnnotation
+>;
 
 export function buildPosCashShortageProductionActivationSlice388EvidenceComment(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice388EvidenceComment {
-  const sourceAnnotation = buildPosCashShortageProductionActivationSlice387EvidenceAnnotation(input);
-  const items = [sourceAnnotation.annotationName, ...sourceAnnotation.items] as const;
-  const ready = sourceAnnotation.status === "ready";
-
-  return {
-    commentName: "Slice 388 production activation evidence comment",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAnnotation,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 388 production activation evidence comment is clear: ${sourceAnnotation.text}`
-      : `Slice 388 production activation evidence comment needs attention: ${sourceAnnotation.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice387EvidenceAnnotation(input);
+  return buildEvidenceLayer(
+    "commentName", "Slice 388 production activation evidence comment",
+    "sourceAnnotation", source, source.annotationName,
+  );
 }
-export type PosCashShortageProductionActivationSlice389EvidenceGloss = {
-  glossName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceComment: PosCashShortageProductionActivationSlice388EvidenceComment;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice389EvidenceGloss = EvidenceLayer<
+  "glossName", "sourceComment",
+  PosCashShortageProductionActivationSlice388EvidenceComment
+>;
 
 export function buildPosCashShortageProductionActivationSlice389EvidenceGloss(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice389EvidenceGloss {
-  const sourceComment = buildPosCashShortageProductionActivationSlice388EvidenceComment(input);
-  const items = [sourceComment.commentName, ...sourceComment.items] as const;
-  const ready = sourceComment.status === "ready";
-
-  return {
-    glossName: "Slice 389 production activation evidence gloss",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceComment,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 389 production activation evidence gloss is clear: ${sourceComment.text}`
-      : `Slice 389 production activation evidence gloss needs attention: ${sourceComment.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice388EvidenceComment(input);
+  return buildEvidenceLayer(
+    "glossName", "Slice 389 production activation evidence gloss",
+    "sourceComment", source, source.commentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice390EvidenceMarginalia = {
-  marginaliaName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceGloss: PosCashShortageProductionActivationSlice389EvidenceGloss;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice390EvidenceMarginalia = EvidenceLayer<
+  "marginaliaName", "sourceGloss",
+  PosCashShortageProductionActivationSlice389EvidenceGloss
+>;
 
 export function buildPosCashShortageProductionActivationSlice390EvidenceMarginalia(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice390EvidenceMarginalia {
-  const sourceGloss = buildPosCashShortageProductionActivationSlice389EvidenceGloss(input);
-  const items = [sourceGloss.glossName, ...sourceGloss.items] as const;
-  const ready = sourceGloss.status === "ready";
-
-  return {
-    marginaliaName: "Slice 390 production activation evidence marginalia",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceGloss,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 390 production activation evidence marginalia is clear: ${sourceGloss.text}`
-      : `Slice 390 production activation evidence marginalia needs attention: ${sourceGloss.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice389EvidenceGloss(input);
+  return buildEvidenceLayer(
+    "marginaliaName", "Slice 390 production activation evidence marginalia",
+    "sourceGloss", source, source.glossName,
+  );
 }
-export type PosCashShortageProductionActivationSlice391EvidenceFootnote = {
-  footnoteName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceMarginalia: PosCashShortageProductionActivationSlice390EvidenceMarginalia;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice391EvidenceFootnote = EvidenceLayer<
+  "footnoteName", "sourceMarginalia",
+  PosCashShortageProductionActivationSlice390EvidenceMarginalia
+>;
 
 export function buildPosCashShortageProductionActivationSlice391EvidenceFootnote(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice391EvidenceFootnote {
-  const sourceMarginalia = buildPosCashShortageProductionActivationSlice390EvidenceMarginalia(input);
-  const items = [sourceMarginalia.marginaliaName, ...sourceMarginalia.items] as const;
-  const ready = sourceMarginalia.status === "ready";
-
-  return {
-    footnoteName: "Slice 391 production activation evidence footnote",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceMarginalia,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 391 production activation evidence footnote is clear: ${sourceMarginalia.text}`
-      : `Slice 391 production activation evidence footnote needs attention: ${sourceMarginalia.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice390EvidenceMarginalia(input);
+  return buildEvidenceLayer(
+    "footnoteName", "Slice 391 production activation evidence footnote",
+    "sourceMarginalia", source, source.marginaliaName,
+  );
 }
-export type PosCashShortageProductionActivationSlice392EvidenceEndnote = {
-  endnoteName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceFootnote: PosCashShortageProductionActivationSlice391EvidenceFootnote;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice392EvidenceEndnote = EvidenceLayer<
+  "endnoteName", "sourceFootnote",
+  PosCashShortageProductionActivationSlice391EvidenceFootnote
+>;
 
 export function buildPosCashShortageProductionActivationSlice392EvidenceEndnote(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice392EvidenceEndnote {
-  const sourceFootnote =
-    buildPosCashShortageProductionActivationSlice391EvidenceFootnote(input);
-  const items = [sourceFootnote.footnoteName, ...sourceFootnote.items] as const;
-  const ready = sourceFootnote.status === "ready";
-
-  return {
-    endnoteName: "Slice 392 production activation evidence endnote",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceFootnote,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 392 production activation evidence endnote is clear: ${sourceFootnote.text}`
-      : `Slice 392 production activation evidence endnote needs attention: ${sourceFootnote.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice391EvidenceFootnote(input);
+  return buildEvidenceLayer(
+    "endnoteName", "Slice 392 production activation evidence endnote",
+    "sourceFootnote", source, source.footnoteName,
+  );
 }
-export type PosCashShortageProductionActivationSlice393EvidenceAppendix = {
-  appendixName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceEndnote: PosCashShortageProductionActivationSlice392EvidenceEndnote;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice393EvidenceAppendix = EvidenceLayer<
+  "appendixName", "sourceEndnote",
+  PosCashShortageProductionActivationSlice392EvidenceEndnote
+>;
 
 export function buildPosCashShortageProductionActivationSlice393EvidenceAppendix(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice393EvidenceAppendix {
-  const sourceEndnote =
-    buildPosCashShortageProductionActivationSlice392EvidenceEndnote(input);
-  const items = [sourceEndnote.endnoteName, ...sourceEndnote.items] as const;
-  const ready = sourceEndnote.status === "ready";
-
-  return {
-    appendixName: "Slice 393 production activation evidence appendix",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceEndnote,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 393 production activation evidence appendix is clear: ${sourceEndnote.text}`
-      : `Slice 393 production activation evidence appendix needs attention: ${sourceEndnote.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice392EvidenceEndnote(input);
+  return buildEvidenceLayer(
+    "appendixName", "Slice 393 production activation evidence appendix",
+    "sourceEndnote", source, source.endnoteName,
+  );
 }
-export type PosCashShortageProductionActivationSlice394EvidenceAddendum = {
-  addendumName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAppendix: PosCashShortageProductionActivationSlice393EvidenceAppendix;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice394EvidenceAddendum = EvidenceLayer<
+  "addendumName", "sourceAppendix",
+  PosCashShortageProductionActivationSlice393EvidenceAppendix
+>;
 
 export function buildPosCashShortageProductionActivationSlice394EvidenceAddendum(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice394EvidenceAddendum {
-  const sourceAppendix =
-    buildPosCashShortageProductionActivationSlice393EvidenceAppendix(input);
-  const items = [sourceAppendix.appendixName, ...sourceAppendix.items] as const;
-  const ready = sourceAppendix.status === "ready";
-
-  return {
-    addendumName: "Slice 394 production activation evidence addendum",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAppendix,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 394 production activation evidence addendum is clear: ${sourceAppendix.text}`
-      : `Slice 394 production activation evidence addendum needs attention: ${sourceAppendix.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice393EvidenceAppendix(input);
+  return buildEvidenceLayer(
+    "addendumName", "Slice 394 production activation evidence addendum",
+    "sourceAppendix", source, source.appendixName,
+  );
 }
-export type PosCashShortageProductionActivationSlice395EvidenceSupplement = {
-  supplementName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAddendum: PosCashShortageProductionActivationSlice394EvidenceAddendum;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice395EvidenceSupplement = EvidenceLayer<
+  "supplementName", "sourceAddendum",
+  PosCashShortageProductionActivationSlice394EvidenceAddendum
+>;
 
 export function buildPosCashShortageProductionActivationSlice395EvidenceSupplement(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice395EvidenceSupplement {
-  const sourceAddendum =
-    buildPosCashShortageProductionActivationSlice394EvidenceAddendum(input);
-  const items = [sourceAddendum.addendumName, ...sourceAddendum.items] as const;
-  const ready = sourceAddendum.status === "ready";
-
-  return {
-    supplementName: "Slice 395 production activation evidence supplement",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAddendum,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 395 production activation evidence supplement is clear: ${sourceAddendum.text}`
-      : `Slice 395 production activation evidence supplement needs attention: ${sourceAddendum.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice394EvidenceAddendum(input);
+  return buildEvidenceLayer(
+    "supplementName", "Slice 395 production activation evidence supplement",
+    "sourceAddendum", source, source.addendumName,
+  );
 }
-export type PosCashShortageProductionActivationSlice396EvidenceAnnex = {
-  annexName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceSupplement: PosCashShortageProductionActivationSlice395EvidenceSupplement;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice396EvidenceAnnex = EvidenceLayer<
+  "annexName", "sourceSupplement",
+  PosCashShortageProductionActivationSlice395EvidenceSupplement
+>;
 
 export function buildPosCashShortageProductionActivationSlice396EvidenceAnnex(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice396EvidenceAnnex {
-  const sourceSupplement =
-    buildPosCashShortageProductionActivationSlice395EvidenceSupplement(input);
-  const items = [sourceSupplement.supplementName, ...sourceSupplement.items] as const;
-  const ready = sourceSupplement.status === "ready";
-
-  return {
-    annexName: "Slice 396 production activation evidence annex",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceSupplement,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 396 production activation evidence annex is clear: ${sourceSupplement.text}`
-      : `Slice 396 production activation evidence annex needs attention: ${sourceSupplement.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice395EvidenceSupplement(input);
+  return buildEvidenceLayer(
+    "annexName", "Slice 396 production activation evidence annex",
+    "sourceSupplement", source, source.supplementName,
+  );
 }
-export type PosCashShortageProductionActivationSlice397EvidenceExhibit = {
-  exhibitName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAnnex: PosCashShortageProductionActivationSlice396EvidenceAnnex;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice397EvidenceExhibit = EvidenceLayer<
+  "exhibitName", "sourceAnnex",
+  PosCashShortageProductionActivationSlice396EvidenceAnnex
+>;
 
 export function buildPosCashShortageProductionActivationSlice397EvidenceExhibit(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice397EvidenceExhibit {
-  const sourceAnnex =
-    buildPosCashShortageProductionActivationSlice396EvidenceAnnex(input);
-  const items = [sourceAnnex.annexName, ...sourceAnnex.items] as const;
-  const ready = sourceAnnex.status === "ready";
-
-  return {
-    exhibitName: "Slice 397 production activation evidence exhibit",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAnnex,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 397 production activation evidence exhibit is clear: ${sourceAnnex.text}`
-      : `Slice 397 production activation evidence exhibit needs attention: ${sourceAnnex.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice396EvidenceAnnex(input);
+  return buildEvidenceLayer(
+    "exhibitName", "Slice 397 production activation evidence exhibit",
+    "sourceAnnex", source, source.annexName,
+  );
 }
-export type PosCashShortageProductionActivationSlice398EvidenceAttachment = {
-  attachmentName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceExhibit: PosCashShortageProductionActivationSlice397EvidenceExhibit;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice398EvidenceAttachment = EvidenceLayer<
+  "attachmentName", "sourceExhibit",
+  PosCashShortageProductionActivationSlice397EvidenceExhibit
+>;
 
 export function buildPosCashShortageProductionActivationSlice398EvidenceAttachment(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice398EvidenceAttachment {
-  const sourceExhibit =
-    buildPosCashShortageProductionActivationSlice397EvidenceExhibit(input);
-  const items = [sourceExhibit.exhibitName, ...sourceExhibit.items] as const;
-  const ready = sourceExhibit.status === "ready";
-
-  return {
-    attachmentName: "Slice 398 production activation evidence attachment",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceExhibit,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 398 production activation evidence attachment is clear: ${sourceExhibit.text}`
-      : `Slice 398 production activation evidence attachment needs attention: ${sourceExhibit.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice397EvidenceExhibit(input);
+  return buildEvidenceLayer(
+    "attachmentName", "Slice 398 production activation evidence attachment",
+    "sourceExhibit", source, source.exhibitName,
+  );
 }
-export type PosCashShortageProductionActivationSlice399EvidencePacket = {
-  packetName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceAttachment: PosCashShortageProductionActivationSlice398EvidenceAttachment;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice399EvidencePacket = EvidenceLayer<
+  "packetName", "sourceAttachment",
+  PosCashShortageProductionActivationSlice398EvidenceAttachment
+>;
 
 export function buildPosCashShortageProductionActivationSlice399EvidencePacket(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice399EvidencePacket {
-  const sourceAttachment =
-    buildPosCashShortageProductionActivationSlice398EvidenceAttachment(input);
-  const items = [sourceAttachment.attachmentName, ...sourceAttachment.items] as const;
-  const ready = sourceAttachment.status === "ready";
-
-  return {
-    packetName: "Slice 399 production activation evidence packet",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceAttachment,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 399 production activation evidence packet is clear: ${sourceAttachment.text}`
-      : `Slice 399 production activation evidence packet needs attention: ${sourceAttachment.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice398EvidenceAttachment(input);
+  return buildEvidenceLayer(
+    "packetName", "Slice 399 production activation evidence packet",
+    "sourceAttachment", source, source.attachmentName,
+  );
 }
-export type PosCashShortageProductionActivationSlice400EvidencePortfolio = {
-  portfolioName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourcePacket: PosCashShortageProductionActivationSlice399EvidencePacket;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice400EvidencePortfolio = EvidenceLayer<
+  "portfolioName", "sourcePacket",
+  PosCashShortageProductionActivationSlice399EvidencePacket
+>;
 
 export function buildPosCashShortageProductionActivationSlice400EvidencePortfolio(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice400EvidencePortfolio {
-  const sourcePacket =
-    buildPosCashShortageProductionActivationSlice399EvidencePacket(input);
-  const items = [sourcePacket.packetName, ...sourcePacket.items] as const;
-  const ready = sourcePacket.status === "ready";
-
-  return {
-    portfolioName: "Slice 400 production activation evidence portfolio",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourcePacket,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 400 production activation evidence portfolio is clear: ${sourcePacket.text}`
-      : `Slice 400 production activation evidence portfolio needs attention: ${sourcePacket.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice399EvidencePacket(input);
+  return buildEvidenceLayer(
+    "portfolioName", "Slice 400 production activation evidence portfolio",
+    "sourcePacket", source, source.packetName,
+  );
 }
-export type PosCashShortageProductionActivationSlice401EvidenceCompendium = {
-  compendiumName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourcePortfolio: PosCashShortageProductionActivationSlice400EvidencePortfolio;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice401EvidenceCompendium = EvidenceLayer<
+  "compendiumName", "sourcePortfolio",
+  PosCashShortageProductionActivationSlice400EvidencePortfolio
+>;
 
 export function buildPosCashShortageProductionActivationSlice401EvidenceCompendium(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice401EvidenceCompendium {
-  const sourcePortfolio =
-    buildPosCashShortageProductionActivationSlice400EvidencePortfolio(input);
-  const items = [sourcePortfolio.portfolioName, ...sourcePortfolio.items] as const;
-  const ready = sourcePortfolio.status === "ready";
-
-  return {
-    compendiumName: "Slice 401 production activation evidence compendium",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourcePortfolio,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 401 production activation evidence compendium is clear: ${sourcePortfolio.text}`
-      : `Slice 401 production activation evidence compendium needs attention: ${sourcePortfolio.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice400EvidencePortfolio(input);
+  return buildEvidenceLayer(
+    "compendiumName", "Slice 401 production activation evidence compendium",
+    "sourcePortfolio", source, source.portfolioName,
+  );
 }
-export type PosCashShortageProductionActivationSlice402EvidenceDossier = {
-  dossierName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceCompendium: PosCashShortageProductionActivationSlice401EvidenceCompendium;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice402EvidenceDossier = EvidenceLayer<
+  "dossierName", "sourceCompendium",
+  PosCashShortageProductionActivationSlice401EvidenceCompendium
+>;
 
 export function buildPosCashShortageProductionActivationSlice402EvidenceDossier(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice402EvidenceDossier {
-  const sourceCompendium =
-    buildPosCashShortageProductionActivationSlice401EvidenceCompendium(input);
-  const items = [sourceCompendium.compendiumName, ...sourceCompendium.items] as const;
-  const ready = sourceCompendium.status === "ready";
-
-  return {
-    dossierName: "Slice 402 production activation evidence dossier",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceCompendium,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 402 production activation evidence dossier is clear: ${sourceCompendium.text}`
-      : `Slice 402 production activation evidence dossier needs attention: ${sourceCompendium.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice401EvidenceCompendium(input);
+  return buildEvidenceLayer(
+    "dossierName", "Slice 402 production activation evidence dossier",
+    "sourceCompendium", source, source.compendiumName,
+  );
 }
-export type PosCashShortageProductionActivationSlice403EvidenceBinder = {
-  binderName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceDossier: PosCashShortageProductionActivationSlice402EvidenceDossier;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice403EvidenceBinder = EvidenceLayer<
+  "binderName", "sourceDossier",
+  PosCashShortageProductionActivationSlice402EvidenceDossier
+>;
 
 export function buildPosCashShortageProductionActivationSlice403EvidenceBinder(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice403EvidenceBinder {
-  const sourceDossier =
-    buildPosCashShortageProductionActivationSlice402EvidenceDossier(input);
-  const items = [sourceDossier.dossierName, ...sourceDossier.items] as const;
-  const ready = sourceDossier.status === "ready";
-
-  return {
-    binderName: "Slice 403 production activation evidence binder",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceDossier,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 403 production activation evidence binder is clear: ${sourceDossier.text}`
-      : `Slice 403 production activation evidence binder needs attention: ${sourceDossier.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice402EvidenceDossier(input);
+  return buildEvidenceLayer(
+    "binderName", "Slice 403 production activation evidence binder",
+    "sourceDossier", source, source.dossierName,
+  );
 }
-export type PosCashShortageProductionActivationSlice404EvidenceFolder = {
-  folderName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceBinder: PosCashShortageProductionActivationSlice403EvidenceBinder;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice404EvidenceFolder = EvidenceLayer<
+  "folderName", "sourceBinder",
+  PosCashShortageProductionActivationSlice403EvidenceBinder
+>;
 
 export function buildPosCashShortageProductionActivationSlice404EvidenceFolder(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice404EvidenceFolder {
-  const sourceBinder =
-    buildPosCashShortageProductionActivationSlice403EvidenceBinder(input);
-  const items = [sourceBinder.binderName, ...sourceBinder.items] as const;
-  const ready = sourceBinder.status === "ready";
-
-  return {
-    folderName: "Slice 404 production activation evidence folder",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceBinder,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 404 production activation evidence folder is clear: ${sourceBinder.text}`
-      : `Slice 404 production activation evidence folder needs attention: ${sourceBinder.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice403EvidenceBinder(input);
+  return buildEvidenceLayer(
+    "folderName", "Slice 404 production activation evidence folder",
+    "sourceBinder", source, source.binderName,
+  );
 }
-export type PosCashShortageProductionActivationSlice405EvidenceCasefile = {
-  casefileName: string;
-  status: "ready" | "blocked";
-  tone: "clear" | "attention";
-  sourceFolder: PosCashShortageProductionActivationSlice404EvidenceFolder;
-  itemCount: number;
-  items: readonly string[];
-  text: string;
-  activationAuthorized: false;
-};
+export type PosCashShortageProductionActivationSlice405EvidenceCasefile = EvidenceLayer<
+  "casefileName", "sourceFolder",
+  PosCashShortageProductionActivationSlice404EvidenceFolder
+>;
 
 export function buildPosCashShortageProductionActivationSlice405EvidenceCasefile(
   input: PosCashShortageComposedProductionActivationPreflightResult,
 ): PosCashShortageProductionActivationSlice405EvidenceCasefile {
-  const sourceFolder =
-    buildPosCashShortageProductionActivationSlice404EvidenceFolder(input);
-  const items = [sourceFolder.folderName, ...sourceFolder.items] as const;
-  const ready = sourceFolder.status === "ready";
-
-  return {
-    casefileName: "Slice 405 production activation evidence casefile",
-    status: ready ? "ready" : "blocked",
-    tone: ready ? "clear" : "attention",
-    sourceFolder,
-    itemCount: items.length,
-    items,
-    text: ready
-      ? `Slice 405 production activation evidence casefile is clear: ${sourceFolder.text}`
-      : `Slice 405 production activation evidence casefile needs attention: ${sourceFolder.text}`,
-    activationAuthorized: false,
-  };
+  const source = buildPosCashShortageProductionActivationSlice404EvidenceFolder(input);
+  return buildEvidenceLayer(
+    "casefileName", "Slice 405 production activation evidence casefile",
+    "sourceFolder", source, source.folderName,
+  );
 }
 export function evaluatePosCashShortageProductionActivationPreflight(
   input: PosCashShortageProductionActivationPreflightInput,
@@ -10854,4 +9038,37 @@ function emptyProductionActivationEvidence(): PosCashShortageProductionActivatio
     productionPolicyReadinessCertified: false,
     sourceOwnedResolutionReadinessCertified: false,
   };
+}
+
+// Retained evidence contracts share one implementation for their repeated wrapper shape.
+// Names, nested source objects, property order, text, and activation authority stay stable.
+type EvidenceLayer<Name extends string, SourceKey extends string, Source> =
+  Record<Name, string> & Record<SourceKey, Source> & {
+    status: "ready" | "blocked";
+    tone: "clear" | "attention";
+    itemCount: number;
+    items: readonly string[];
+    text: string;
+    activationAuthorized: false;
+  };
+
+function buildEvidenceLayer<
+  Name extends string,
+  SourceKey extends string,
+  Source extends { status: "ready" | "blocked"; items: readonly string[]; text: string },
+>(nameKey: Name, name: string, sourceKey: SourceKey, source: Source, sourceName: string): EvidenceLayer<Name, SourceKey, Source> {
+  const items = [sourceName, ...source.items];
+  const ready = source.status === "ready";
+  // The internal callers supply distinct literal name/source keys; computed keys
+  // need an assertion to retain those literal property names in the return type.
+  return {
+    [nameKey]: name,
+    status: ready ? "ready" : "blocked",
+    tone: ready ? "clear" : "attention",
+    [sourceKey]: source,
+    itemCount: items.length,
+    items,
+    text: ready ? `${name} is clear: ${source.text}` : `${name} needs attention: ${source.text}`,
+    activationAuthorized: false,
+  } as EvidenceLayer<Name, SourceKey, Source>;
 }

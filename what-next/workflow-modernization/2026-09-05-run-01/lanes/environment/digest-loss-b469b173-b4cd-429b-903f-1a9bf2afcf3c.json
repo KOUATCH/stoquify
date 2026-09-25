@@ -1,0 +1,30 @@
+{
+  "at": "2026-09-19T12:00:54.096Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [],
+      "sourceHash": "sha256:8184926f35bff1f0f09e9c3dbe2a5355648a5b7fa1a77498843bd805f8b262a9"
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Recorded inventory loss needs review', { exact: true }).first()\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('Recorded inventory loss needs review', { exact: true }).first()\n",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d"
+  },
+  "sourceStable": true
+}

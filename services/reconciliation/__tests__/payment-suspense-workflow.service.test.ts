@@ -2,6 +2,7 @@ import { ExceptionSeverity, PaymentDirection, SuspenseStatus, SuspenseType, Pris
 
 import { db } from "@/prisma/db"
 import { postPaymentSuspenseToLedger } from "../payment-suspense-ledger.service"
+import { suspenseEvidenceRevision } from "../payment-suspense-evidence"
 
 import {
   approveSuspensePosting,
@@ -11,6 +12,8 @@ import {
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
+    user: { findFirst: jest.fn() },
     suspenseItem: {
       findFirst: jest.fn(),
       update: jest.fn(),
@@ -19,7 +22,8 @@ jest.mock("@/prisma/db", () => ({
       updateMany: jest.fn(),
     },
     paymentReconciliationInboxItem: {
-      upsert: jest.fn(),
+      createMany: jest.fn(),
+      create: jest.fn(),
     },
     ledgerAuditEvent: {
       create: jest.fn(),
@@ -45,9 +49,11 @@ jest.mock("../payment-suspense-ledger.service", () => ({
 
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
+  $queryRaw: jest.Mock
+  user: { findFirst: jest.Mock }
   suspenseItem: { findFirst: jest.Mock; update: jest.Mock }
   paymentException: { updateMany: jest.Mock }
-  paymentReconciliationInboxItem: { upsert: jest.Mock }
+  paymentReconciliationInboxItem: { create: jest.Mock; createMany: jest.Mock }
   ledgerAuditEvent: { create: jest.Mock }
   auditLog: { create: jest.Mock }
   accountingPeriod: { findFirst: jest.Mock }
@@ -76,6 +82,7 @@ function arrangeCertifiedCloseTarget() {
 function suspense(overrides: Record<string, unknown> = {}) {
   return {
     id: "suspense-1",
+    updatedAt: new Date("2026-06-14T11:00:00Z"),
     organizationId: "org-1",
     providerAccountId: "provider-account-1",
     paymentTransactionId: null,
@@ -105,19 +112,43 @@ function suspense(overrides: Record<string, unknown> = {}) {
       id: "run-1",
       businessDate: new Date("2026-06-14T00:00:00Z"),
     },
-    paymentExceptions: [{ id: "exception-1", status: "OPEN" }],
+    paymentExceptions: [{ id: "exception-1", status: "OPEN", metadata: null, updatedAt: new Date("2026-06-14T11:00:00Z") }],
     ...overrides,
   }
 }
 
+function reviewedProposalRevision(reason = "Bank line needs suspense handling") {
+  return suspenseEvidenceRevision(suspense({ status: SuspenseStatus.RESOLUTION_PROPOSED, metadata: { reclassification: { proposedById: "maker-1", targetType: SuspenseType.UNKNOWN_CREDIT, reason } } }), new Date("2026-06-14T12:00:00Z"))
+}
+
 describe("payment suspense workflow service", () => {
+  it.each([
+    { code: "P2034", meta: undefined },
+    { code: "P2010", meta: { code: "40001" } },
+    { code: "P2010", meta: { code: "40P01" } },
+  ])("returns a reviewable conflict after a posting transaction conflict: $code $meta", async ({ code, meta }) => {
+    mockedDb.$transaction.mockRejectedValueOnce(new Prisma.PrismaClientKnownRequestError("Synthetic transaction conflict", { code, clientVersion: "6.19.3", meta }))
+    await expect(approveSuspensePosting({ organizationId: "org-1", suspenseItemId: "suspense-1", approvedById: "checker-1",
+      expectedEvidenceRevision: `sha256:${"a".repeat(64)}`, control: { actorPermissions: ["payments.reconciliation.suspense.post"] } }))
+      .rejects.toMatchObject({ code: "CONFLICT" })
+  })
   beforeEach(() => {
     jest.clearAllMocks()
-    mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
+    mockedDb.$transaction.mockImplementation(async (callback) => {
+      const tx: Partial<typeof mockedDb> = { ...mockedDb }
+      delete tx.$transaction
+      return callback(tx)
+    })
+    mockedDb.$queryRaw.mockResolvedValue([{
+      id: "period-1", organizationId: "org-1", status: "OPEN",
+      startDate: new Date("2026-06-01"), endDate: new Date("2026-06-30T23:59:59Z"),
+    }])
     mockedDb.suspenseItem.findFirst.mockResolvedValue(suspense())
+    mockedDb.user.findFirst.mockResolvedValue({ id: "owner-2" })
     mockedDb.suspenseItem.update.mockResolvedValue({ id: "suspense-1", status: SuspenseStatus.ASSIGNED })
     mockedDb.paymentException.updateMany.mockResolvedValue({ count: 1 })
-    mockedDb.paymentReconciliationInboxItem.upsert.mockResolvedValue({ id: "inbox-1" })
+    mockedDb.paymentReconciliationInboxItem.create.mockResolvedValue({ id: "inbox-1" })
+    mockedDb.paymentReconciliationInboxItem.createMany.mockResolvedValue({ count: 1 })
     mockedDb.ledgerAuditEvent.create.mockResolvedValue({ id: "ledger-audit-1" })
     mockedDb.auditLog.create.mockResolvedValue({ id: "audit-1" })
     mockedDb.accountingPeriod.findFirst.mockResolvedValue({ id: "period-1" })
@@ -165,7 +196,53 @@ describe("payment suspense workflow service", () => {
         }),
       }),
     )
-    expect(mockedDb.paymentReconciliationInboxItem.upsert).toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.createMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ idempotencyKey: "payment-reconciliation.exception.assigned:suspense-1:assigned:ledger-audit-1" }) }))
+  })
+
+  it("preserves each open exception's evidence metadata and leaves closed exceptions unchanged", async () => {
+    const updatedAt = new Date("2026-06-14T11:00:00Z")
+    mockedDb.suspenseItem.findFirst.mockResolvedValue(suspense({ paymentExceptions: [
+      { id: "exception-1", status: "OPEN", updatedAt, metadata: { sourceReview: { hash: "original" }, assignedById: "prior-assigner" } },
+      { id: "exception-2", status: "REOPENED", updatedAt, metadata: { recoveryReceiptId: "retained-receipt" } },
+      { id: "exception-3", status: "DISMISSED", updatedAt, metadata: { retainedDecision: true } },
+    ] }))
+    const result = await assignPaymentSuspenseItem({ organizationId: "org-1", suspenseItemId: "suspense-1", assignedById: "assigner-1", assignedToId: "owner-2", control: { actorPermissions: ["payments.reconciliation.exception.assign"] } })
+    expect(result.exceptionCount).toBe(2)
+    expect(mockedDb.paymentException.updateMany).toHaveBeenCalledTimes(2)
+    expect(mockedDb.paymentException.updateMany).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      where: expect.objectContaining({ id: "exception-1", organizationId: "org-1", suspenseItemId: "suspense-1", updatedAt }),
+      data: expect.objectContaining({ metadata: expect.objectContaining({ sourceReview: { hash: "original" }, assignedById: "assigner-1" }) }),
+    }))
+    expect(mockedDb.paymentException.updateMany).toHaveBeenNthCalledWith(2, expect.objectContaining({ data: expect.objectContaining({ metadata: expect.objectContaining({ recoveryReceiptId: "retained-receipt" }) }) }))
+  })
+
+  it("rejects a concurrent exception change before recording assignment success", async () => {
+    mockedDb.paymentException.updateMany.mockResolvedValueOnce({ count: 0 })
+    await expect(assignPaymentSuspenseItem({ organizationId: "org-1", suspenseItemId: "suspense-1", assignedById: "assigner-1", control: { actorPermissions: ["payments.reconciliation.exception.assign"] } })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockedDb.ledgerAuditEvent.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.createMany).not.toHaveBeenCalled()
+  })
+
+  it("rejects unavailable or foreign assignees before changing ownership", async () => {
+    mockedDb.user.findFirst.mockResolvedValue(null)
+    await expect(assignPaymentSuspenseItem({
+      organizationId: "org-1", suspenseItemId: "suspense-1", assignedById: "assigner-1", assignedToId: "foreign-user",
+      control: { actorPermissions: ["payments.reconciliation.exception.assign"] },
+    })).rejects.toThrow(/assignee.*unavailable/i)
+    expect(mockedDb.suspenseItem.update).not.toHaveBeenCalled()
+    expect(mockedDb.paymentException.updateMany).not.toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.createMany).not.toHaveBeenCalled()
+  })
+
+  it("requires an active same-tenant assignee without disclosing foreign account details", async () => {
+    await assignPaymentSuspenseItem({
+      organizationId: "org-1", suspenseItemId: "suspense-1", assignedById: "assigner-1", assignedToId: "owner-2",
+      control: { actorPermissions: ["payments.reconciliation.exception.assign"] },
+    })
+    expect(mockedDb.user.findFirst).toHaveBeenCalledWith({
+      where: { id: "owner-2", organizationId: "org-1", isActive: true }, select: { id: true },
+    })
   })
 
   it("blocks suspense posting approval by the same maker", async () => {
@@ -184,6 +261,7 @@ describe("payment suspense workflow service", () => {
 
     await expect(
       approveSuspensePosting({
+        expectedEvidenceRevision: reviewedProposalRevision(),
         organizationId: "org-1",
         suspenseItemId: "suspense-1",
         approvedById: "maker-1",
@@ -196,6 +274,24 @@ describe("payment suspense workflow service", () => {
     ).rejects.toThrow(/independent approval/i)
 
     expect(mockedPostPaymentSuspenseToLedger).not.toHaveBeenCalled()
+  })
+
+  it("rejects a closed period before approving or posting suspense", async () => {
+    mockedDb.suspenseItem.findFirst.mockResolvedValue(suspense({
+      status: SuspenseStatus.RESOLUTION_PROPOSED,
+      metadata: { reclassification: { proposedById: "maker-1", targetType: SuspenseType.UNKNOWN_CREDIT, reason: "Review" } },
+    }))
+    mockedDb.$queryRaw.mockResolvedValue([{
+      id: "period-1", organizationId: "org-1", status: "CLOSED",
+      startDate: new Date("2026-06-01"), endDate: new Date("2026-06-30T23:59:59Z"),
+    }])
+    await expect(approveSuspensePosting({
+      expectedEvidenceRevision: reviewedProposalRevision("Review"),
+      organizationId: "org-1", suspenseItemId: "suspense-1", approvedById: "checker-1",
+      control: { actorPermissions: ["payments.reconciliation.suspense.post"], lastAuthAt: new Date("2026-06-14T12:00:00Z"), now: new Date("2026-06-14T12:00:00Z") },
+    })).rejects.toThrow(/not open/i)
+    expect(mockedPostPaymentSuspenseToLedger).not.toHaveBeenCalled()
+    expect(mockedDb.suspenseItem.update).not.toHaveBeenCalled()
   })
 
   it("approves proposed suspense posting with independent checker evidence", async () => {
@@ -214,6 +310,7 @@ describe("payment suspense workflow service", () => {
     )
 
     const result = await approveSuspensePosting({
+      expectedEvidenceRevision: reviewedProposalRevision(),
       organizationId: "org-1",
       suspenseItemId: "suspense-1",
       approvedById: "checker-1",
@@ -239,9 +336,10 @@ describe("payment suspense workflow service", () => {
         suspenseLedgerAccountId: "account-47",
         actorId: "checker-1",
       }),
-      mockedDb,
+      expect.objectContaining({ suspenseItem: mockedDb.suspenseItem }),
     )
-    expect(mockedDb.paymentReconciliationInboxItem.upsert).toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.create).toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.createMany).toHaveBeenCalled()
     expect(mockedDb.$transaction).toHaveBeenCalledWith(expect.any(Function), {
       isolationLevel: "Serializable",
     })
@@ -291,6 +389,7 @@ describe("payment suspense workflow service", () => {
 
     await expect(
       approveSuspensePosting({
+        expectedEvidenceRevision: reviewedProposalRevision(),
         organizationId: "org-1",
         suspenseItemId: "suspense-1",
         approvedById: "checker-1",
@@ -303,6 +402,7 @@ describe("payment suspense workflow service", () => {
     ).rejects.toThrow(/No active posting rule/i)
 
     expect(mockedDb.suspenseItem.update).not.toHaveBeenCalled()
-    expect(mockedDb.paymentReconciliationInboxItem.upsert).not.toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.createMany).not.toHaveBeenCalled()
   })
 })

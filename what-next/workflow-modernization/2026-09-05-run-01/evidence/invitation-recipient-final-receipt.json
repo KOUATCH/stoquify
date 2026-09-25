@@ -1,0 +1,112 @@
+{
+  "recordedAt": "2026-09-06T07:50:23.943Z",
+  "baseline": "evidence/source-baseline-v18.json",
+  "sources": {
+    "app/[locale]/(auth)/layout.tsx": "46847c8845d06d91eb61c671934bc0870a567e1ebf30c33d58df35dfdb0f3704",
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "82f57a1567780096519142f6131730774bae5ad651a73b3e0b9cc77ca90b1a73",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "da1ef0a3db2a617b715d12dd37d5610488a8d2b67d2de054599cf44278f77233",
+    "messages/fr.json": "c7984875904f8f8d50bec3be2203279a18dc7efd2762eef9efb756c7ef34a877",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "browser": [
+    {
+      "file": "lanes/environment/invitation-provenance-browser-browser-671da972-87e.json",
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "file": "lanes/environment/invitation-provenance-browser-browser-faf0e1ef-d62.json",
+      "passed": 1,
+      "failed": 0
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-unrecorded-671da972-87e.png",
+      "sha256": "c0d9882bee2bfc4eba3b06153ac7b2b7c197a76fa0304f310f190163863a903a"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-no-javascript-671da972-87e.png",
+      "sha256": "2294bde8b1d1d7e00c99b8482859ad2ed75754073365baacea2854eb85ffb4eb"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-ready-671da972-87e.png",
+      "sha256": "b61cca656a80c001e75bc3bcac06cd47157665817ae15dd39f1156479a305669"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-recovery-671da972-87e.png",
+      "sha256": "7f857ade4e2848086c07b817e7ccb3002281056571076bf4b7a4991aa8ac0c4c"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-created-671da972-87e.png",
+      "sha256": "fb45ddb9ac8aa6971ddd69c5f29350f6c43d72b26b815bb6d178d876358fad28"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-retained-link-671da972-87e.png",
+      "sha256": "c0d9882bee2bfc4eba3b06153ac7b2b7c197a76fa0304f310f190163863a903a"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-expired-671da972-87e.png",
+      "sha256": "c0d9882bee2bfc4eba3b06153ac7b2b7c197a76fa0304f310f190163863a903a"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-authority-changed-671da972-87e.png",
+      "sha256": "c0a83d3d190a419adf3f648205ea07fc894db89c02f6d6bdab04b66b0f918f8f"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/en-invitation-replacement-created-671da972-87e.png",
+      "sha256": "6c9ec354b741ef9aeb50dda2efd03812c68511304dbb76eebc77ef171031bc72"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-unrecorded-faf0e1ef-d62.png",
+      "sha256": "7fa0ed3e0cbe50a3c3541d5f9a03078dd012c761f145108ae2dbe3fd188d1519"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-no-javascript-faf0e1ef-d62.png",
+      "sha256": "d98f24d7bf3223c1510165226b3e34ec61610d4556bc4fe79bb51ca908b33774"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-ready-faf0e1ef-d62.png",
+      "sha256": "b0535874313aac65a8c3440191a5d016165cc6899dc5bdfd9a45e88217cbbc00"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-recovery-faf0e1ef-d62.png",
+      "sha256": "001cc4a340df57b9a0bb7b032fc9c039a24fbe863e4ab40ccedbf74614034735"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-created-faf0e1ef-d62.png",
+      "sha256": "d3d5dd6298a533e8be0379e9875a72566a6b7d455f0437e929fb9f4cf3d28eb8"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-retained-link-faf0e1ef-d62.png",
+      "sha256": "7fa0ed3e0cbe50a3c3541d5f9a03078dd012c761f145108ae2dbe3fd188d1519"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-expired-faf0e1ef-d62.png",
+      "sha256": "7fa0ed3e0cbe50a3c3541d5f9a03078dd012c761f145108ae2dbe3fd188d1519"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-authority-changed-faf0e1ef-d62.png",
+      "sha256": "b6c1c0c668e0831d5ab6c1f199c09f517ff64083b8de4d71de9456d2aa61988c"
+    },
+    {
+      "file": "evidence/invitation-recipient-final/fr-invitation-replacement-created-faf0e1ef-d62.png",
+      "sha256": "d92e8e52849e051ff3c59f26b28c8a930b8e566f6da251bb2c46b8fbcae26414"
+    }
+  ],
+  "ordinaryRateLimitWindows": true,
+  "counterReset": false,
+  "liveEmailsSent": 0,
+  "completeWorkflowVerified": false
+}

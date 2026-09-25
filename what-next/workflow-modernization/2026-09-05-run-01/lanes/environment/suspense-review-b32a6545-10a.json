@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-09T01:47:44.123Z",
+  "run": "b32a6545-10a",
+  "sourcesBefore": {
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8"
+  },
+  "checks": [
+    "Missing review rejected; no persisted effects",
+    "Actual proposal records maker, source revision and current review revision",
+    "Duplicate proposal returns retained evidence without another audit or notice",
+    "Changed payload cannot reuse proposal request; no persisted effects",
+    "Stale source cannot create replacement proposal; no persisted effects",
+    "Explicit current-source replacement produces a distinct review revision",
+    "Superseded proposal cannot be approved; no persisted effects",
+    "Cross-tenant item cannot be approved; no persisted effects",
+    "Concurrent approval commits one journal and approval audit; conflicted transaction safely replays on retry",
+    "Exact approval replay after synthetic period closure preserves all posting and approval evidence",
+    "Wrong review cannot reuse posted approval; no persisted effects",
+    "Posted item cannot be reset by assignment; no persisted effects",
+    "Inconsistent retained receipt cannot report replay success; no persisted effects"
+  ],
+  "scope": "Owned local PostgreSQL with actual proposal/approval services, synthetic actors and trusted control context. No public authorization or production evidence claim.",
+  "originalBefore": "5848f40ab62cc630fc5cc0a2334ad553f6e2673392b9f00abda75880401f337b",
+  "concurrentOutcomes": [
+    {
+      "status": "fulfilled",
+      "replayed": false
+    },
+    {
+      "status": "rejected",
+      "code": "P2010"
+    }
+  ],
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8"
+  },
+  "sourceStable": true
+}

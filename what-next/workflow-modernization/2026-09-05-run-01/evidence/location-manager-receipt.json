@@ -1,0 +1,53 @@
+{
+  "createdAt": "2026-09-05T18:17:03.094Z",
+  "workflowIds": [
+    "MD-LOC-03",
+    "MD-LOC-04"
+  ],
+  "before": {
+    "file": "evidence/location-manager-before.json",
+    "sha256": "a8247d69177bcd7739751345241f650e3a2be8c770bfc2a3f3290089b418c4b7",
+    "passed": 3,
+    "failed": 4,
+    "suites": 1,
+    "success": false
+  },
+  "after": {
+    "file": "evidence/location-manager-after.json",
+    "sha256": "5be66da3d86503efe363512c43c8e8f9d7755498a08de92c1059614addeabb01",
+    "passed": 11,
+    "failed": 0,
+    "suites": 2,
+    "success": true
+  },
+  "sources": [
+    {
+      "file": "services/location/location.service.ts",
+      "sha256": "8ea6c4d6c1b7b7837f252c76e5658c0b63918219148f90cc6b66b125fbbb3de2"
+    },
+    {
+      "file": "services/location/__tests__/legacy-location-manager.service.test.ts",
+      "sha256": "5bff67e4a09f5dfa4d945b7d685af082f702178e7d0f6cd7474e3c204482f1fd"
+    },
+    {
+      "file": "actions/locations/updateLocationById.ts",
+      "sha256": "51c68f5354ef0dc142e6b454c7178e33fb238b5c64275d0e9fb56ab415927139"
+    },
+    {
+      "file": "actions/locations/__tests__/update-location-by-id.test.ts",
+      "sha256": "211bc12ab57c6836287c91b3fa22dcdc8255af1a1d6fcff8538d251b39f90911"
+    }
+  ],
+  "lint": {
+    "exitCode": 0,
+    "toolChunk": "b451fc",
+    "scope": "changed service and new regression file"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "session": 66025,
+    "toolChunk": "aba48d",
+    "scope": "combined repository typecheck after PO editor/detail and location corrections"
+  },
+  "boundary": "Database collaborators mocked. This proves service decisions and action delegation, not PostgreSQL row-lock/concurrent identity-state safety or a complete browser workflow. No schema or live customer changes."
+}

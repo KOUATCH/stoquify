@@ -18,9 +18,13 @@ interface ItemFormProps {
   itemImageUrl: string
   setItemImageUrl: (url: string) => void
   organizationId: string
+  locale?: string
+  onUploadStart?: () => void
+  onUploadComplete?: () => void
+  onUploadError?: () => void
 }
 
-export const ItemForm2 = ({ form, itemImageUrl, setItemImageUrl, organizationId }: ItemFormProps) => {
+export const ItemForm2 = ({ form, itemImageUrl, setItemImageUrl, organizationId, locale, onUploadStart, onUploadComplete, onUploadError }: ItemFormProps) => {
   const copyToClipboard = useCallback(async (): Promise<void> => {
     const currentSku = form.getValues("sku")
     if (currentSku) {
@@ -187,6 +191,10 @@ export const ItemForm2 = ({ form, itemImageUrl, setItemImageUrl, organizationId 
             setImageUrl={setItemImageUrl}
             organizationId={organizationId}
             endpoint="itemImageUpload"
+            locale={locale}
+            onUploadStart={onUploadStart}
+            onUploadComplete={onUploadComplete}
+            onUploadError={onUploadError}
           />
           <FormDescription>Upload an image to help identify this item</FormDescription>
         </div>

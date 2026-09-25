@@ -1,3 +1,9 @@
+jest.mock("lucide-react", () => {
+  const React = jest.requireActual("react")
+  const Icon = (props: Record<string, unknown>) => React.createElement("svg", props)
+  return { Search: Icon, X: Icon, Check: Icon, ChevronDown: Icon, ChevronUp: Icon }
+})
+
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 import {

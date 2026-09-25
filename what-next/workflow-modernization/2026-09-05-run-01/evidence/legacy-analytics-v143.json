@@ -1,0 +1,211 @@
+{
+  "at": "2026-09-13T18:16:42.431Z",
+  "baseline": "evidence/source-baseline-v143.json",
+  "baselineReceipt": "f99b63",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/analytics/sales-analytics.service.ts": "ebeeed637be4c7119b4833863f70c13e10bac04503da559b053136e6348f40a0",
+    "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+    "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d"
+  },
+  "tests": {
+    "passed": 61,
+    "suites": 5,
+    "receipt": "af3a88",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/analytics/__tests__/legacy-sales-analytics.test.ts actions/analytics/__tests__/sales-analytics.authorization.test.ts services/analytics/__tests__/business-pulse.service.test.ts services/analytics/__tests__/cash-report-evidence.test.ts services/analytics/__tests__/completed-sales-evidence.test.ts --silent"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "0e1715",
+    "command": "node node_modules/eslint/bin/eslint.js services/analytics/sales-analytics.service.ts services/analytics/__tests__/legacy-sales-analytics.test.ts actions/analytics/__tests__/sales-analytics.authorization.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "f0fd5a",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/legacy-analytics-v143-after-5b96a75e-8ccb-4ba2-b91b-4f3d1c2e8030.json",
+    "receipt": "f7b286",
+    "at": "2026-09-13T18:14:07.432Z",
+    "phase": "after",
+    "sourceBefore": {
+      "services/analytics/sales-analytics.service.ts": "ebeeed637be4c7119b4833863f70c13e10bac04503da559b053136e6348f40a0",
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d"
+    },
+    "checks": [
+      {
+        "name": "foreign_location",
+        "allFiveDenied": true
+      },
+      {
+        "name": "draft_sale",
+        "count": 0
+      },
+      {
+        "name": "uncounted_score",
+        "score": null
+      },
+      {
+        "name": "historical_margin",
+        "before": 80,
+        "after": 80
+      },
+      {
+        "name": "void_flow",
+        "in": 100,
+        "out": 100
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "services/analytics/sales-analytics.service.ts": "ebeeed637be4c7119b4833863f70c13e10bac04503da559b053136e6348f40a0",
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d"
+    },
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/legacy-browser-v143-7319b766-2235-468c-97fa-685aef82bc1c.json",
+    "receipt": "e3a5fb",
+    "at": "2026-09-13T18:13:32.364Z",
+    "sourceBefore": "ebeeed637be4c7119b4833863f70c13e10bac04503da559b053136e6348f40a0",
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "legacy-v143-en-1440-7319b766-2235-468c-97fa-685aef82bc1c.png",
+          "legacy-v143-en-768-7319b766-2235-468c-97fa-685aef82bc1c.png",
+          "legacy-v143-en-320-7319b766-2235-468c-97fa-685aef82bc1c.png"
+        ],
+        "pageErrors": [],
+        "draftExcluded": true,
+        "readyMs": 3664,
+        "completedSaleVisible": true,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "voidRemovedFromCurrentCompletedSales": true,
+        "dashboardPermissionRemainsAuthorized": true,
+        "allAnalyticsPermissionsRevokedDenied": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "legacy-v143-fr-1440-7319b766-2235-468c-97fa-685aef82bc1c.png",
+          "legacy-v143-fr-768-7319b766-2235-468c-97fa-685aef82bc1c.png",
+          "legacy-v143-fr-320-7319b766-2235-468c-97fa-685aef82bc1c.png"
+        ],
+        "pageErrors": [],
+        "draftExcluded": true,
+        "readyMs": 3736,
+        "completedSaleVisible": true,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "voidRemovedFromCurrentCompletedSales": true,
+        "dashboardPermissionRemainsAuthorized": true,
+        "allAnalyticsPermissionsRevokedDenied": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": "ebeeed637be4c7119b4833863f70c13e10bac04503da559b053136e6348f40a0",
+    "sourceStable": true
+  },
+  "before": {
+    "file": "lanes/environment/legacy-analytics-v143-before-93ceb814-6714-4ff0-8365-efe9db508991.json",
+    "receipt": "7c5d0b",
+    "at": "2026-09-13T18:06:43.265Z",
+    "phase": "before",
+    "sourceBefore": {
+      "services/analytics/sales-analytics.service.ts": "16042faff16c1e2fcacc86a9f3d14dabb129d879a0fa0f6bbdbc7d0b4856a772",
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d"
+    },
+    "checks": [
+      {
+        "name": "foreign_location",
+        "foreignSessionsReturned": 1
+      },
+      {
+        "name": "draft_sale",
+        "count": 1
+      },
+      {
+        "name": "uncounted_score",
+        "score": 90
+      },
+      {
+        "name": "historical_margin",
+        "before": 80,
+        "after": 25
+      },
+      {
+        "name": "void_flow",
+        "in": 0,
+        "out": 0
+      }
+    ],
+    "reproduced": true,
+    "sourceAfter": {
+      "services/analytics/sales-analytics.service.ts": "16042faff16c1e2fcacc86a9f3d14dabb129d879a0fa0f6bbdbc7d0b4856a772",
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d"
+    },
+    "sourceStable": true
+  },
+  "priorAttempts": [
+    {
+      "file": "lanes/environment/legacy-browser-v143-c9a135b6-b7e8-42b8-97e7-812a6589a5cb.json",
+      "receipt": "f4a281",
+      "result": "Incorrect test expected reports.read revocation to deny a route that also accepts dashboard.read. Corrected test preserves documented policy. Source also changed during this historical run; final run is stable and uses exact amount assertions."
+    }
+  ],
+  "visualReview": {
+    "screenshots": 6,
+    "inspected": [
+      "EN mobile first run",
+      "FR mobile final run"
+    ],
+    "findings": [
+      "Main content fits recorded widths, but generated BI text remains partly English in French.",
+      "Ready and Source-owned semantic treatment needs independent review; current activity correctness is not total readiness."
+    ],
+    "latency": {
+      "enMs": 3664,
+      "frMs": 3736,
+      "basis": "Local development route-ready observations, no approved production budget."
+    }
+  },
+  "guide": "LEGACY_ANALYTICS_V143.md",
+  "coverage": {
+    "discoveredWorkflows": 256,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2917,
+      "tests": 1040,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2542,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 196,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "build": {
+    "run": false,
+    "reason": "Existing local development route exercised; migration-bearing default build not invoked."
+  }
+}

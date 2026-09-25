@@ -1,0 +1,477 @@
+{
+  "at": "2026-09-15T11:45:10.468Z",
+  "sourceBefore": {
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+    "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+    "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-en-1440-loaded.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-en-768-loaded.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-en-320-loaded.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-en-320-error.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-en-320-denied.png"
+      ],
+      "layouts": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "scrollHeight": 1856,
+          "mains": [
+            {
+              "class": "min-w-0 flex-1 overflow-x-hidden",
+              "rect": {
+                "x": 280,
+                "y": 68,
+                "width": 1160,
+                "height": 1788,
+                "top": 68,
+                "right": 1440,
+                "bottom": 1856,
+                "left": 280
+              },
+              "scrollHeight": 1788,
+              "children": [
+                {
+                  "tag": "MAIN",
+                  "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                  "rect": {
+                    "x": 280,
+                    "y": 68,
+                    "width": 1160,
+                    "height": 1788,
+                    "top": 68,
+                    "right": 1440,
+                    "bottom": 1856,
+                    "left": 280
+                  }
+                }
+              ]
+            },
+            {
+              "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+              "rect": {
+                "x": 280,
+                "y": 68,
+                "width": 1160,
+                "height": 1788,
+                "top": 68,
+                "right": 1440,
+                "bottom": 1856,
+                "left": 280
+              },
+              "scrollHeight": 1788,
+              "children": [
+                {
+                  "tag": "DIV",
+                  "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                  "rect": {
+                    "x": 280,
+                    "y": 68,
+                    "width": 1160,
+                    "height": 1788,
+                    "top": 68,
+                    "right": 1440,
+                    "bottom": 1856,
+                    "left": 280
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "scrollHeight": 2733,
+          "mains": [
+            {
+              "class": "min-w-0 flex-1 overflow-x-hidden",
+              "rect": {
+                "x": 220,
+                "y": 67,
+                "width": 548,
+                "height": 2666,
+                "top": 67,
+                "right": 768,
+                "bottom": 2733,
+                "left": 220
+              },
+              "scrollHeight": 2666,
+              "children": [
+                {
+                  "tag": "MAIN",
+                  "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                  "rect": {
+                    "x": 220,
+                    "y": 67,
+                    "width": 548,
+                    "height": 2666,
+                    "top": 67,
+                    "right": 768,
+                    "bottom": 2733,
+                    "left": 220
+                  }
+                }
+              ]
+            },
+            {
+              "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+              "rect": {
+                "x": 220,
+                "y": 67,
+                "width": 548,
+                "height": 2666,
+                "top": 67,
+                "right": 768,
+                "bottom": 2733,
+                "left": 220
+              },
+              "scrollHeight": 2666,
+              "children": [
+                {
+                  "tag": "DIV",
+                  "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                  "rect": {
+                    "x": 220,
+                    "y": 67,
+                    "width": 548,
+                    "height": 2666,
+                    "top": 67,
+                    "right": 768,
+                    "bottom": 2733,
+                    "left": 220
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "scrollHeight": 3366,
+          "mains": [
+            {
+              "class": "min-w-0 flex-1 overflow-x-hidden",
+              "rect": {
+                "x": 0,
+                "y": 64,
+                "width": 320,
+                "height": 3302,
+                "top": 64,
+                "right": 320,
+                "bottom": 3366,
+                "left": 0
+              },
+              "scrollHeight": 3302,
+              "children": [
+                {
+                  "tag": "MAIN",
+                  "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                  "rect": {
+                    "x": 0,
+                    "y": 64,
+                    "width": 320,
+                    "height": 3302,
+                    "top": 64,
+                    "right": 320,
+                    "bottom": 3366,
+                    "left": 0
+                  }
+                }
+              ]
+            },
+            {
+              "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+              "rect": {
+                "x": 0,
+                "y": 64,
+                "width": 320,
+                "height": 3302,
+                "top": 64,
+                "right": 320,
+                "bottom": 3366,
+                "left": 0
+              },
+              "scrollHeight": 3302,
+              "children": [
+                {
+                  "tag": "DIV",
+                  "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                  "rect": {
+                    "x": 0,
+                    "y": 64,
+                    "width": 320,
+                    "height": 3302,
+                    "top": 64,
+                    "right": 320,
+                    "bottom": 3366,
+                    "left": 0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "consoleErrors": [
+        "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/en/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Dashboard ...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               ",
+        "%o\n\n%s RangeError: Invalid currency code : INVALID\n    at new NumberFormat (<anonymous>)\n    at formatBIValue (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:281:16)\n    at BIKpiCard (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:93:27)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23584:20)\n    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:6793:22)\n    at updateFunctionComponent (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:9247:19)\n    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:10858:18)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3",
+        "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/en/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Dashboard ...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               "
+      ],
+      "pageErrors": [
+        "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectBoundary>\n      <RedirectErrorBoundary router={{...}}>\n        <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n          <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n            <SegmentTrieNode>\n            <DailyHabitDigestPage>\n              <DailyHabitDigestDashboard data={{...}} locale=\"en\" commandAgentAccess={{mode:\"off\", ...}} ...>\n                <main className=\"dashboard-...\">\n                  <div className=\"dashboard-...\">\n                    <section className=\"dashboard-...\">\n                      <div className=\"flex flex-...\">\n                        <div>\n                        <div className=\"rounded-lg...\">\n                          <div>\n                          <dl className=\"mt-3 grid ...\">\n                            <MetaLine label=\"Generated\" value=\"Sep 15, 07...\">\n                              <d"
+      ],
+      "rscRequests": 1,
+      "initialLoadMs": 7157,
+      "failedReadHasNoDigest": true,
+      "keyboardRetryFreshServer": true,
+      "currentPermissionDenied": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-fr-1440-loaded.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-fr-768-loaded.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-fr-320-loaded.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-fr-320-error.png",
+        "digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af-fr-320-denied.png"
+      ],
+      "layouts": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "scrollHeight": 1856,
+          "mains": [
+            {
+              "class": "min-w-0 flex-1 overflow-x-hidden",
+              "rect": {
+                "x": 280,
+                "y": 68,
+                "width": 1160,
+                "height": 1788,
+                "top": 68,
+                "right": 1440,
+                "bottom": 1856,
+                "left": 280
+              },
+              "scrollHeight": 1788,
+              "children": [
+                {
+                  "tag": "MAIN",
+                  "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                  "rect": {
+                    "x": 280,
+                    "y": 68,
+                    "width": 1160,
+                    "height": 1788,
+                    "top": 68,
+                    "right": 1440,
+                    "bottom": 1856,
+                    "left": 280
+                  }
+                }
+              ]
+            },
+            {
+              "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+              "rect": {
+                "x": 280,
+                "y": 68,
+                "width": 1160,
+                "height": 1788,
+                "top": 68,
+                "right": 1440,
+                "bottom": 1856,
+                "left": 280
+              },
+              "scrollHeight": 1788,
+              "children": [
+                {
+                  "tag": "DIV",
+                  "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                  "rect": {
+                    "x": 280,
+                    "y": 68,
+                    "width": 1160,
+                    "height": 1788,
+                    "top": 68,
+                    "right": 1440,
+                    "bottom": 1856,
+                    "left": 280
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "width": 768,
+          "scrollWidth": 768,
+          "scrollHeight": 2733,
+          "mains": [
+            {
+              "class": "min-w-0 flex-1 overflow-x-hidden",
+              "rect": {
+                "x": 220,
+                "y": 67,
+                "width": 548,
+                "height": 2666,
+                "top": 67,
+                "right": 768,
+                "bottom": 2733,
+                "left": 220
+              },
+              "scrollHeight": 2666,
+              "children": [
+                {
+                  "tag": "MAIN",
+                  "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                  "rect": {
+                    "x": 220,
+                    "y": 67,
+                    "width": 548,
+                    "height": 2666,
+                    "top": 67,
+                    "right": 768,
+                    "bottom": 2733,
+                    "left": 220
+                  }
+                }
+              ]
+            },
+            {
+              "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+              "rect": {
+                "x": 220,
+                "y": 67,
+                "width": 548,
+                "height": 2666,
+                "top": 67,
+                "right": 768,
+                "bottom": 2733,
+                "left": 220
+              },
+              "scrollHeight": 2666,
+              "children": [
+                {
+                  "tag": "DIV",
+                  "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                  "rect": {
+                    "x": 220,
+                    "y": 67,
+                    "width": 548,
+                    "height": 2666,
+                    "top": 67,
+                    "right": 768,
+                    "bottom": 2733,
+                    "left": 220
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "scrollHeight": 3450,
+          "mains": [
+            {
+              "class": "min-w-0 flex-1 overflow-x-hidden",
+              "rect": {
+                "x": 0,
+                "y": 64,
+                "width": 320,
+                "height": 3386,
+                "top": 64,
+                "right": 320,
+                "bottom": 3450,
+                "left": 0
+              },
+              "scrollHeight": 3386,
+              "children": [
+                {
+                  "tag": "MAIN",
+                  "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                  "rect": {
+                    "x": 0,
+                    "y": 64,
+                    "width": 320,
+                    "height": 3386,
+                    "top": 64,
+                    "right": 320,
+                    "bottom": 3450,
+                    "left": 0
+                  }
+                }
+              ]
+            },
+            {
+              "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+              "rect": {
+                "x": 0,
+                "y": 64,
+                "width": 320,
+                "height": 3386,
+                "top": 64,
+                "right": 320,
+                "bottom": 3450,
+                "left": 0
+              },
+              "scrollHeight": 3386,
+              "children": [
+                {
+                  "tag": "DIV",
+                  "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                  "rect": {
+                    "x": 0,
+                    "y": 64,
+                    "width": 320,
+                    "height": 3386,
+                    "top": 64,
+                    "right": 320,
+                    "bottom": 3450,
+                    "left": 0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "consoleErrors": [
+        "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/fr/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/fr/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Navigation...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               ",
+        "%o\n\n%s RangeError: Invalid currency code : INVALID\n    at new NumberFormat (<anonymous>)\n    at formatBIValue (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:281:16)\n    at BIKpiCard (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:93:27)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23584:20)\n    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:6793:22)\n    at updateFunctionComponent (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:9247:19)\n    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:10858:18)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3",
+        "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/fr/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/fr/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Navigation...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               "
+      ],
+      "pageErrors": [
+        "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <RedirectBoundary>\n      <RedirectErrorBoundary router={{...}}>\n        <InnerLayoutRouter url=\"/fr/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n          <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n            <SegmentTrieNode>\n            <DailyHabitDigestPage>\n              <DailyHabitDigestDashboard data={{...}} locale=\"fr\" commandAgentAccess={{mode:\"off\", ...}} ...>\n                <main className=\"dashboard-...\">\n                  <div className=\"dashboard-...\">\n                    <section className=\"dashboard-...\">\n                      <div className=\"flex flex-...\">\n                        <div>\n                        <div className=\"rounded-lg...\">\n                          <div>\n                          <dl className=\"mt-3 grid ...\">\n                            <MetaLine label=\"Genere\" value=\"15 sept., ...\">\n                              <div "
+      ],
+      "rscRequests": 1,
+      "initialLoadMs": 4562,
+      "failedReadHasNoDigest": true,
+      "keyboardRetryFreshServer": true,
+      "currentPermissionDenied": true
+    }
+  ],
+  "scope": "Owned localhost database and credential login only. Invalid currency deliberately triggers rendering failure; no live provider, approval, proposal or financial operation.",
+  "noProposalOrFinancialEffects": true,
+  "passed": true,
+  "sourceAfter": {
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+    "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+    "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a"
+  },
+  "sourceStable": true
+}

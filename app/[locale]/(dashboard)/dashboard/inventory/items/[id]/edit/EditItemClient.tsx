@@ -31,6 +31,7 @@ export default function EditItemClient({
   return (
     <ModernItemFormForEditing
       itemData={itemData}
+      locale={locale}
       onCancel={() => router.push(itemsHref)}
       onSaved={() => {
         router.push(itemsHref)

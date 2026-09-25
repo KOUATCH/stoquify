@@ -8,6 +8,7 @@ import {
 } from "@/actions/inventory/inventoryMovementActions"
 import type { TransactionType } from "@/types/inventoryMovementTypes"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useTranslations } from "next-intl"
 // ============================================================================
 // QUERY KEYS
 // ============================================================================
@@ -97,10 +98,12 @@ export function useStockMovementSummary(
  */
 export function useInventoryReservation() {
   const queryClient = useQueryClient()
+  const t = useTranslations("inventoryReservation")
 
   return useMutation({
     meta: { operation: 'reserve', entity: 'Inventory', suppressSuccessNotification: true, suppressErrorNotification: true },
-    mutationFn: ({
+    retry: false,
+    mutationFn: async ({
       itemId,
       locationId,
       quantity,
@@ -114,14 +117,26 @@ export function useInventoryReservation() {
       reason: string
       organizationId: string
       expiresAt?: Date
-    }) => reserveInventory(itemId, locationId, quantity, reason, organizationId, expiresAt),
-    onSuccess: (response, variables) => {
-      notify.success(response.data?.message || "Inventory reserved successfully")
+    }) => {
+      let response
+      try {
+        response = await reserveInventory(itemId, locationId, quantity, reason, organizationId, expiresAt)
+      } catch {
+        throw new Error(t("unknown"))
+      }
+      if (!response.success) {
+        const code = response.error?.code
+        throw new Error(t(code === "FORBIDDEN" ? "denied" : code === "AUTH_REQUIRED" || code === "FRESH_AUTH_REQUIRED" ? "auth" : "unknown"))
+      }
+      return response
+    },
+    onSuccess: () => {
+      notify.success(t("success"))
       queryClient.invalidateQueries({ queryKey: InventoryMovementKeys.all })
       queryClient.invalidateQueries({ queryKey: ["inventory"] })
     },
     onError: (error: Error) => {
-      notify.error(error.message || "Failed to reserve inventory")
+      notify.error(error.message || t("unknown"))
     },
   })
 }

@@ -1,0 +1,362 @@
+{
+  "checkedAt": "2026-09-22T21:06:53.245Z",
+  "baseUrl": "http://127.0.0.1:3011",
+  "mode": "fail",
+  "ok": true,
+  "routeCount": 8,
+  "screenshotTool": "playwright",
+  "auth": {
+    "storageState": null,
+    "protectedRouteScreenshotMode": "unauthenticated-or-redirect-safe"
+  },
+  "routes": [
+    {
+      "route": {
+        "id": "workflows",
+        "path": "/en/workflows",
+        "surface": "Public workflow guide",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/en/workflows",
+        "durationMs": 6685,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "workflows-fr",
+        "path": "/fr/workflows",
+        "surface": "Guide public des parcours",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/fr/workflows",
+        "durationMs": 5408,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "public-home",
+        "path": "/en",
+        "surface": "Public first impression",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/en",
+        "durationMs": 3773,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "login",
+        "path": "/en/login",
+        "surface": "Authentication",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/en/login",
+        "durationMs": 1822,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "register",
+        "path": "/en/register",
+        "surface": "Account registration",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/en/register",
+        "durationMs": 1328,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "public-home-fr",
+        "path": "/fr",
+        "surface": "Premiere impression publique",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/fr",
+        "durationMs": 3171,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "login-fr",
+        "path": "/fr/login",
+        "surface": "Authentification",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/fr/login",
+        "durationMs": 1401,
+        "errorMarkers": []
+      }
+    },
+    {
+      "route": {
+        "id": "register-fr",
+        "path": "/fr/register",
+        "surface": "Creation de compte",
+        "requiresAuth": false,
+        "viewports": [
+          "mobile",
+          "desktop"
+        ]
+      },
+      "http": {
+        "ok": true,
+        "status": 200,
+        "finalUrl": "http://127.0.0.1:3011/fr/register",
+        "durationMs": 1346,
+        "errorMarkers": []
+      }
+    }
+  ],
+  "warmup": {
+    "enabled": true,
+    "skipped": false,
+    "timeoutMs": 60000,
+    "routes": [
+      {
+        "routeId": "workflows",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/en/workflows",
+        "durationMs": 6317,
+        "authenticated": null
+      },
+      {
+        "routeId": "workflows-fr",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/fr/workflows",
+        "durationMs": 13655,
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/en",
+        "durationMs": 9176,
+        "authenticated": null
+      },
+      {
+        "routeId": "login",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/en/login",
+        "durationMs": 5787,
+        "authenticated": null
+      },
+      {
+        "routeId": "register",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/en/register",
+        "durationMs": 4398,
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/fr",
+        "durationMs": 6247,
+        "authenticated": null
+      },
+      {
+        "routeId": "login-fr",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/fr/login",
+        "durationMs": 4606,
+        "authenticated": null
+      },
+      {
+        "routeId": "register-fr",
+        "ok": true,
+        "finalUrl": "http://127.0.0.1:3011/fr/register",
+        "durationMs": 3787,
+        "authenticated": null
+      }
+    ]
+  },
+  "screenshots": {
+    "available": true,
+    "captures": [
+      {
+        "routeId": "workflows",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/workflows-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/en/workflows",
+        "authenticated": null
+      },
+      {
+        "routeId": "workflows-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/workflows-fr-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/fr/workflows",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/public-home-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/en",
+        "authenticated": null
+      },
+      {
+        "routeId": "login",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/login-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/en/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/register-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/en/register",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/public-home-fr-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/fr",
+        "authenticated": null
+      },
+      {
+        "routeId": "login-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/login-fr-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/fr/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register-fr",
+        "viewport": "mobile",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/register-fr-mobile.png",
+        "finalUrl": "http://127.0.0.1:3011/fr/register",
+        "authenticated": null
+      },
+      {
+        "routeId": "workflows",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/workflows-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/en/workflows",
+        "authenticated": null
+      },
+      {
+        "routeId": "workflows-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/workflows-fr-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/fr/workflows",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/public-home-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/en",
+        "authenticated": null
+      },
+      {
+        "routeId": "login",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/login-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/en/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/register-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/en/register",
+        "authenticated": null
+      },
+      {
+        "routeId": "public-home-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/public-home-fr-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/fr",
+        "authenticated": null
+      },
+      {
+        "routeId": "login-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/login-fr-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/fr/login",
+        "authenticated": null
+      },
+      {
+        "routeId": "register-fr",
+        "viewport": "desktop",
+        "ok": true,
+        "file": "what-next/public-product-communication/2026-09-22/route-smoke/register-fr-desktop.png",
+        "finalUrl": "http://127.0.0.1:3011/fr/register",
+        "authenticated": null
+      }
+    ]
+  }
+}

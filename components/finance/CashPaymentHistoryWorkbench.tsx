@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { AlertTriangle, Banknote, CalendarClock, Database, Filter, Landmark, ReceiptText, UserRound } from "lucide-react"
 
@@ -13,6 +14,9 @@ import {
   type TransactionHistoryKpi,
 } from "@/components/dashboard/history/TransactionHistoryWorkbenchShell"
 import { Badge } from "@/components/ui/badge"
+import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
+import { financeCashHistoryTableContract } from "@/components/DataTableComponents/finance-accounting-contracts"
+import { createCanonicalTableQuery } from "@/components/DataTableComponents/table-system-contract"
 import { useCashPaymentHistoryWorkbench, type CashPaymentHistoryUrlFilters } from "@/hooks/useCashPaymentHistoryWorkbench"
 import type { CashPaymentHistoryResult, CashPaymentHistoryRow } from "@/services/pos/cash-payment-history.service"
 
@@ -32,7 +36,10 @@ export function CashPaymentHistoryWorkbench() {
     rows,
     selectedRowId,
     isLoading,
+    isFetching,
     isError,
+    permissionDenied,
+    noOrganization,
     error,
     refetch,
     hasMore,
@@ -43,16 +50,60 @@ export function CashPaymentHistoryWorkbench() {
     exportHistory,
     exportStatus,
     isExporting,
+    canExport,
   } = useCashPaymentHistoryWorkbench()
   const timezone = result?.snapshot.timezone ?? result?.appliedFilters.timezone ?? "UTC"
+  const [search, setSearch] = useState("")
+  const [previousCursors, setPreviousCursors] = useState<(string | undefined)[]>([])
+  const visibleRows = rows.filter((row) => [
+    row.reference.paymentNumber ?? row.sourceId, row.reference.reason, laneLabel(row.lane, t), businessLabel(row.sourceType, t),
+    formatMoney(row.amount, row.currency, locale), row.cashier.name ?? row.cashier.id,
+    controlLabel(row.controlState, t), formatHistoryDate(row.effectiveAt, locale, timezone),
+  ].join(" ").toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()))
   const selectedRow = rows.find((row) => row.id === selectedRowId) ?? null
   const partialSources = sourceNames(result)
   const isPartial = result?.completeness.state === "partial"
   const typeOptions = buildTypeOptions(t, filters.lane)
+  const canonicalQuery = createCanonicalTableQuery(financeCashHistoryTableContract, {
+    search,
+    filters: {
+      ...(filters.lane && filters.lane !== "all" ? { lane: [filters.lane] } : {}),
+      ...(filters.locationId ? { locationId: [filters.locationId] } : {}),
+      ...(filters.cashierId ? { cashierId: [filters.cashierId] } : {}),
+      ...(filters.paymentMethod ? { paymentMethod: [filters.paymentMethod] } : {}),
+      ...(filters.paymentStatus ? { paymentStatus: [filters.paymentStatus] } : {}),
+      ...(filters.cashType ? { cashType: [filters.cashType] } : {}),
+      ...(filters.effectiveAsOf ? { effectiveAsOf: [filters.effectiveAsOf] } : {}),
+      ...(filters.dateFrom ? { startDate: [filters.dateFrom] } : {}),
+      ...(filters.dateTo ? { endDate: [filters.dateTo] } : {}),
+    },
+    sort: [{ id: "transactionDate", desc: true }],
+    pageIndex: previousCursors.length,
+    pageSize: filters.pageSize,
+    cursor: filters.cursor,
+  })
+  const canonicalState = isError
+    ? "error"
+    : isLoading && rows.length === 0
+      ? "loading"
+      : visibleRows.length === 0
+        ? Boolean(search || filters.type || filters.dateFrom || filters.dateTo || (filters.lane && filters.lane !== "all") || filters.locationId || filters.cashierId || filters.paymentMethod || filters.paymentStatus || filters.cashType)
+          ? "no-results"
+          : "empty"
+        : isLoading
+          ? "refreshing"
+          : "ready"
 
   return (
-    <TransactionHistoryWorkbenchShell
+    <CanonicalTableBoundary
+      contract={financeCashHistoryTableContract}
       locale={locale === "fr" ? "fr" : "en"}
+      query={canonicalQuery}
+      state={canonicalState}
+    >
+      <TransactionHistoryWorkbenchShell
+        tableVariant="system"
+        locale={locale === "fr" ? "fr" : "en"}
       labels={{
         eyebrow: t("eyebrow"),
         title: t("title"),
@@ -60,8 +111,8 @@ export function CashPaymentHistoryWorkbench() {
         scopeLabel: t("scopeLabel"),
         filtersTitle: t("filters.title"),
         filtersDetail: t("filters.detail"),
-        searchPlaceholder: t("filters.searchPlaceholder"),
-        searchLabel: t("filters.searchLabel"),
+        searchPlaceholder: locale === "fr" ? "Rechercher dans la page chargée..." : "Search loaded page...",
+        searchLabel: locale === "fr" ? "Rechercher dans la page chargée" : "Search loaded page",
         typeLabel: t("filters.type"),
         allTypesLabel: t("filters.allTypes"),
         dateFromLabel: t("filters.dateFrom"),
@@ -93,12 +144,12 @@ export function CashPaymentHistoryWorkbench() {
         mobileCardAction: t("table.mobileCardAction"),
         resultCount: (count) => t("table.resultCount", { count }),
       }}
-      filters={{ ...filters, type: filterTypeValue(filters) }}
+      filters={{ ...filters, search, type: filterTypeValue(filters) }}
       typeOptions={typeOptions}
       kpis={buildCashPaymentKpis(result, t)}
       actionItems={buildActionItems(result, t, partialSources, isPartial)}
       columns={buildColumns(t, locale, timezone)}
-      rows={rows}
+      rows={visibleRows}
       rowIdentity={{
         id: (row) => row.id,
         title: (row) => row.reference.paymentNumber ?? row.reference.reason ?? row.sourceId,
@@ -116,14 +167,35 @@ export function CashPaymentHistoryWorkbench() {
       renderDrawer={(row) => <CashPaymentDrawer row={row} locale={locale} timezone={timezone} t={t} />}
       selectedRow={selectedRow}
       selectedRowId={selectedRowId}
-      onFilterChange={(patch: Partial<TransactionHistoryFilters>) => updateFilters(mapShellFilterPatch(patch, filters.lane))}
-      onResetFilters={resetFilters}
+      onFilterChange={(patch: Partial<TransactionHistoryFilters>) => {
+        if ("search" in patch) setSearch(patch.search ?? "")
+        const { search: _search, ...serverPatch } = patch
+        if (Object.keys(serverPatch).length) {
+          setPreviousCursors([])
+          updateFilters(mapShellFilterPatch(serverPatch, filters.lane))
+        }
+      }}
+      onResetFilters={() => { setSearch(""); setPreviousCursors([]); resetFilters() }}
       onSelectRow={selectRow}
-      onNextPage={nextPage}
+      pageIndex={previousCursors.length}
+      canPreviousPage={previousCursors.length > 0}
+      onFirstPage={() => { setPreviousCursors([]); updateFilters({ cursor: undefined, selected: undefined }) }}
+      onPreviousPage={() => {
+        const cursor = previousCursors[previousCursors.length - 1]
+        setPreviousCursors((current) => current.slice(0, -1))
+        updateFilters({ cursor, selected: undefined })
+      }}
+      onNextPage={() => {
+        if (hasMore) { setPreviousCursors((current) => [...current, filters.cursor]); nextPage() }
+      }}
       onRetry={() => refetch()}
       onExport={exportHistory}
+      exportInHeader={canExport}
       isLoading={isLoading}
+      isFetching={isFetching}
       isError={isError}
+      permissionDenied={permissionDenied}
+      noOrganization={noOrganization}
       errorMessage={error instanceof Error ? error.message : undefined}
       hasMore={hasMore}
       isPartial={isPartial}
@@ -135,7 +207,8 @@ export function CashPaymentHistoryWorkbench() {
         { label: t("snapshot.recordedThrough"), value: formatHistoryDate(result?.snapshot.recordedThrough, locale, timezone), icon: CalendarClock },
         { label: t("snapshot.generatedAt"), value: formatHistoryDate(result?.snapshot.generatedAt, locale, timezone), icon: Database },
       ]}
-    />
+      />
+    </CanonicalTableBoundary>
   )
 }
 

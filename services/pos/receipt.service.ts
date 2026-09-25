@@ -600,7 +600,7 @@ async function recordDeliveryAudit(
         retryable: result.retryable,
         message: result.message,
         orderNumber: receipt.receipt.orderNumber,
-        digitalReceiptUrl: receipt.digitalReceiptUrl,
+        digitalReceiptPath: `/digital-receipt/${encodeURIComponent(input.salesOrderId)}`,
       }),
     },
   })
@@ -633,11 +633,24 @@ export async function getPublicSalesReceipt(rawInput: unknown): Promise<SalesRec
     salesOrderId: input.salesOrderId,
   })
 
-  return findSalesReceipt(input.salesOrderId, access.organizationId, {
+  const payload = await findSalesReceipt(input.salesOrderId, access.organizationId, {
     includeCustomerContact: false,
     receiptAccessToken: input.receiptAccessToken,
     issuePublicReceiptToken: false,
   })
+
+  // Provider rejection and outbox error text are operational diagnostics, not
+  // customer receipt content. Preserve the public status without exposing them.
+  return {
+    ...payload,
+    certification: {
+      ...payload.certification,
+      rejectionReason: null,
+      legalDeliveryBlockReason: payload.certification.legalDeliveryBlocked
+        ? "The fiscal document is not available for delivery. Contact the store."
+        : null,
+    },
+  }
 }
 
 export async function sendReceipt(

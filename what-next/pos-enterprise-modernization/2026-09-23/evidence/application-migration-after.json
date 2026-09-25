@@ -1,0 +1,960 @@
+{
+  "checkedAt": "2026-09-24T04:42:12.190Z",
+  "target": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "stoquify_replay_next_20260830",
+    "schema": "public"
+  },
+  "method": "Verified BEGIN READ ONLY; catalog and migration metadata only, no business rows",
+  "columns": [
+    {
+      "column_name": "id",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "organizationId",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "periodId",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "sourceType",
+      "data_type": "USER-DEFINED",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "sourceId",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "postingPurpose",
+      "data_type": "USER-DEFINED",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "idempotencyKey",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "sourceVersion",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "status",
+      "data_type": "USER-DEFINED",
+      "is_nullable": "NO",
+      "column_default": "'PENDING'::\"LedgerPostingBatchStatus\""
+    },
+    {
+      "column_name": "errorMessage",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "metadata",
+      "data_type": "jsonb",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "postedAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "reversedAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "postingCycle",
+      "data_type": "integer",
+      "is_nullable": "NO",
+      "column_default": "1"
+    }
+  ],
+  "indexes": [
+    {
+      "index_name": "ledger_posting_batches_organizationId_idempotencyKey_key",
+      "is_unique": true,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE UNIQUE INDEX \"ledger_posting_batches_organizationId_idempotencyKey_key\" ON public.ledger_posting_batches USING btree (\"organizationId\", \"idempotencyKey\")"
+    },
+    {
+      "index_name": "ledger_posting_batches_organizationId_status_createdAt_idx",
+      "is_unique": false,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE INDEX \"ledger_posting_batches_organizationId_status_createdAt_idx\" ON public.ledger_posting_batches USING btree (\"organizationId\", status, \"createdAt\")"
+    },
+    {
+      "index_name": "ledger_posting_batches_periodId_idx",
+      "is_unique": false,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE INDEX \"ledger_posting_batches_periodId_idx\" ON public.ledger_posting_batches USING btree (\"periodId\")"
+    },
+    {
+      "index_name": "ledger_posting_batches_pkey",
+      "is_unique": true,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE UNIQUE INDEX ledger_posting_batches_pkey ON public.ledger_posting_batches USING btree (id)"
+    },
+    {
+      "index_name": "ledger_posting_batches_source_cycle_key",
+      "is_unique": true,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE UNIQUE INDEX ledger_posting_batches_source_cycle_key ON public.ledger_posting_batches USING btree (\"organizationId\", \"sourceType\", \"sourceId\", \"postingPurpose\", \"postingCycle\")"
+    }
+  ],
+  "constraints": [
+    {
+      "constraint_name": "ledger_posting_batches_cycle_scope_check",
+      "type": "c",
+      "validated": true,
+      "deferrable": false,
+      "definition": "CHECK (\"postingCycle\" >= 1 AND (\"postingCycle\" = 1 OR \"sourceType\" = 'PAYMENT_SUSPENSE'::\"AccountingSourceType\" AND (\"postingPurpose\" = ANY (ARRAY['SUSPENSE_RECLASSIFICATION'::\"AccountingPostingPurpose\", 'REVERSAL'::\"AccountingPostingPurpose\"]))))"
+    },
+    {
+      "constraint_name": "ledger_posting_batches_organizationId_fkey",
+      "type": "f",
+      "validated": true,
+      "deferrable": false,
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "constraint_name": "ledger_posting_batches_periodId_fkey",
+      "type": "f",
+      "validated": true,
+      "deferrable": false,
+      "definition": "FOREIGN KEY (\"periodId\") REFERENCES accounting_periods(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "constraint_name": "ledger_posting_batches_pkey",
+      "type": "p",
+      "validated": true,
+      "deferrable": false,
+      "definition": "PRIMARY KEY (id)"
+    }
+  ],
+  "migrations": [
+    {
+      "id": "01332a36-9603-4cd1-8249-f176ed69cfda",
+      "migration_name": "20260808133000_customer_settlement_compensating_reversal_foundation",
+      "checksum": "3eed50d1c697abbe30492208f46361fa312b6f67c2195e40faa65bbcaaeebea5",
+      "started_at": "2026-08-30T19:51:28.323Z",
+      "finished_at": "2026-08-30T19:51:28.336Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "0171bce1-bb4b-4f1b-8e8d-1f4794b0ef31",
+      "migration_name": "20260727143000_country_adapter_pilot_foundation",
+      "checksum": "da49e87bd903ba3130b4ad2782338f72ddd002ecf988c8789a66bd09400fad61",
+      "started_at": "2026-08-30T19:51:28.037Z",
+      "finished_at": "2026-08-30T19:51:28.183Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "0365bc40-9be0-4a46-be21-b87382ad10f5",
+      "migration_name": "20260722160000_agent_runtime_phase_2a_provenance",
+      "checksum": "b17cfa95100676b20853918337b295859e3790fba99e07ba988936ca511c9831",
+      "started_at": "2026-08-30T19:51:27.545Z",
+      "finished_at": "2026-08-30T19:51:27.555Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "051f9569-f0b9-467d-b6aa-7436bf40b531",
+      "migration_name": "20260801153000_certified_fiscal_evidence_immutability",
+      "checksum": "fb2349ba0a80398ca18d53fc756d84f55948d114b1ba4791f81cad3727939073",
+      "started_at": "2026-08-30T19:51:28.250Z",
+      "finished_at": "2026-08-30T19:51:28.255Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "057c0f9f-f3aa-49c2-96bf-25f80bb2996c",
+      "migration_name": "20260711133000_public_identity_abuse_limits",
+      "checksum": "53e55fb881f552ab9f54b8d69ca92cf3554f690b149d890d60d7ce9e5d5bb258",
+      "started_at": "2026-08-30T19:51:26.890Z",
+      "finished_at": "2026-08-30T19:51:26.906Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "0dc4d373-d835-4789-a3c6-bd67b1130a5c",
+      "migration_name": "20260724193000_agent_reconciler_invocation_ledger",
+      "checksum": "d152473fcdf0b5379ad2d18a18681d6597b7a21f654a395a4022ee9fb8c67b8a",
+      "started_at": "2026-08-30T19:51:27.671Z",
+      "finished_at": "2026-08-30T19:51:27.685Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "113d7f30-feb2-4325-b61a-1fc5622d78dd",
+      "migration_name": "20260723100000_agent_runtime_release_control",
+      "checksum": "36cfeaca10404bdecb900e04b6c6059b3f0b1525742601c376d78f4edf158410",
+      "started_at": "2026-08-30T19:51:27.590Z",
+      "finished_at": "2026-08-30T19:51:27.657Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "13dedb98-fffd-4485-863c-1c6223b370f8",
+      "migration_name": "20260905200100_add_module_lifecycle",
+      "checksum": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c",
+      "started_at": "2026-09-05T14:30:45.713Z",
+      "finished_at": "2026-09-05T14:30:45.821Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "15e4ef93-560b-4c2a-a644-b61ada39ff48",
+      "migration_name": "20260726140000_business_event_foundation_bridge",
+      "checksum": "62c534a5d0abda2d256ff28cfa82017593375fea4fa776f9d5e907653fe3299e",
+      "started_at": "2026-08-30T19:51:27.686Z",
+      "finished_at": "2026-08-30T19:51:27.727Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "1735492a-2e0c-483f-a173-bd3b1fb2ca4a",
+      "migration_name": "20260719203000_workflow_assurance_stable_case_identity",
+      "checksum": "cb88d079e9ee8ea2b360cbacfa711df8aef6892e672b8b7e72abd76e3065c2ec",
+      "started_at": "2026-08-30T19:51:27.171Z",
+      "finished_at": "2026-08-30T19:51:27.186Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "17e8c17b-bab6-48d3-b1b6-09de0d5aac95",
+      "migration_name": "20260819100000_purchase_receiving_inspection_control",
+      "checksum": "a407a1fe586934c9066dad7e2e0f1cf4ad4a692e50dce9964e92076d7fb48451",
+      "started_at": "2026-08-30T19:51:29.186Z",
+      "finished_at": "2026-08-30T19:51:29.227Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "1820f579-3ce2-4574-bd84-3fd606cbcc32",
+      "migration_name": "20260625110000_payroll_kernel_immutability",
+      "checksum": "d3bb80305c4d130c7533bdee5a75dd88da3da103ca885f7d14dc73b7167ee8d4",
+      "started_at": "2026-08-30T19:51:26.370Z",
+      "finished_at": "2026-08-30T19:51:26.376Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "19e0fbba-f4fc-43a3-bca8-cc4683388fc9",
+      "migration_name": "20260621102500_workflow_assurance_enum_bridge",
+      "checksum": "da34bc1196e951830980419a3e5f6f98600054a2a1f136e633a7301406c9cb35",
+      "started_at": "2026-08-30T19:51:26.253Z",
+      "finished_at": "2026-08-30T19:51:26.258Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "1aa20907-a799-4989-894a-466d361c6231",
+      "migration_name": "20260724100000_agent_runtime_release_hardening",
+      "checksum": "1b49cff8f3465d4d82d8684f0f990843c9800a9371c178d0ac5066f317adfc60",
+      "started_at": "2026-08-30T19:51:27.658Z",
+      "finished_at": "2026-08-30T19:51:27.665Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "1c4572eb-c459-41e5-8bf0-c63c52d9b2d1",
+      "migration_name": "20260820100000_supplier_invoice_match_exception_boundary",
+      "checksum": "126bc799c1885856f23a8d768c1f7fe8808841ec8382f9e2c20e52b870e9ed76",
+      "started_at": "2026-08-30T19:51:29.351Z",
+      "finished_at": "2026-08-30T19:51:29.382Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "21765250-6f23-42aa-8e9e-959ecd8be35a",
+      "migration_name": "20260726213000_hris_operational_time_management",
+      "checksum": "b48051b1fb971666933f6f915966cdf184b936add25402075243b3731800ab9d",
+      "started_at": "2026-08-30T19:51:27.738Z",
+      "finished_at": "2026-08-30T19:51:27.870Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "22c53069-06bf-4d62-aa97-869ef9a1ff0a",
+      "migration_name": "20260726143000_regulatory_isolation_outbox",
+      "checksum": "cb4891823eb8473d01ff1323890383bef0a49d87a8a82a638ccf175a5a2e6fbb",
+      "started_at": "2026-08-30T19:51:27.728Z",
+      "finished_at": "2026-08-30T19:51:27.731Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "23703351-a96b-4429-8631-750487def0fa",
+      "migration_name": "20260909093000_add_suspense_posting_cycles",
+      "checksum": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+      "started_at": "2026-09-24T04:42:12.099Z",
+      "finished_at": "2026-09-24T04:42:12.099Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 0
+    },
+    {
+      "id": "25bad3b7-16b4-4b99-bd17-81d5e61c0f13",
+      "migration_name": "20260722161000_agent_runtime_phase_2a_operational_controls",
+      "checksum": "e6da3e097a6ec88d4015202be95fa06183a3f1051dd9d63d4a1b3ea0bd794d7c",
+      "started_at": "2026-08-30T19:51:27.558Z",
+      "finished_at": "2026-08-30T19:51:27.572Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "29db02ad-aff9-4a10-8bc4-2a08ce59f859",
+      "migration_name": "20260828190000_align_onboarding_risk_reasons_default",
+      "checksum": "ee40069dd6ca75c79161d721d297f1140b9508ed22f90be836cbe3640225459e",
+      "started_at": "2026-08-30T19:51:29.478Z",
+      "finished_at": "2026-08-30T19:51:29.480Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "2c603154-15ba-4d81-b0a2-52594a216a95",
+      "migration_name": "20260809130000_customer_statement_external_access",
+      "checksum": "ba745969c795572cd9f7692f519e56781bce463356a8720e91d0d3b57d826b97",
+      "started_at": "2026-08-30T19:51:28.441Z",
+      "finished_at": "2026-08-30T19:51:28.538Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "2fef2f5d-16c5-4eab-bf43-d20869f0f86f",
+      "migration_name": "20260621113000_workflow_assurance_incident_spine",
+      "checksum": "cfa1cb1cb7242c9717e8aeedc95c7424591aa78b799ea381d2bd40c199bf1664",
+      "started_at": "2026-08-30T19:51:26.297Z",
+      "finished_at": "2026-08-30T19:51:26.369Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "321a478f-ee8a-4bd9-8280-1170927c65a0",
+      "migration_name": "20260809100000_customer_receivable_document_foundation",
+      "checksum": "f5e4f34f6b0a7fc9389ec07131330def4aa645fc4d30dc19b9c944fda130e84c",
+      "started_at": "2026-08-30T19:51:28.336Z",
+      "finished_at": "2026-08-30T19:51:28.400Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "333a18b9-047b-4531-b127-39d791372b09",
+      "migration_name": "20260815120000_supplier_po_acknowledgement_pilot",
+      "checksum": "6ba2d60a539d4daa6396a5398648dc15310bb146513ad5b8db7a4c40012d6e99",
+      "started_at": "2026-08-30T19:51:28.733Z",
+      "finished_at": "2026-08-30T19:51:28.865Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "336b73ab-fa4e-4bc9-bed9-39d10d76990d",
+      "migration_name": "20260703110000_public_receipt_access_tokens",
+      "checksum": "2097ae01e00361195610fcbf2cf06748bef7e190054d030a5983acb68b1f66f8",
+      "started_at": "2026-08-30T19:51:26.872Z",
+      "finished_at": "2026-08-30T19:51:26.889Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "33962d68-1677-41bf-a62c-225c83bb45e6",
+      "migration_name": "20260720090000_close_assurance_schema_foundation",
+      "checksum": "d2ac0be6867203ce77f3293c778b69b7dd162213613f71be013c3e845d557100",
+      "started_at": "2026-08-30T19:51:27.188Z",
+      "finished_at": "2026-08-30T19:51:27.311Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "3f551ce0-b428-437a-84fd-1b81bada14b4",
+      "migration_name": "20260719190000_hris_org_manager_scope_foundation",
+      "checksum": "cef33045a530b51f10bd86cc42c08c1951ce2ad1eeaa096562c6b9d83ee36f0f",
+      "started_at": "2026-08-30T19:51:27.048Z",
+      "finished_at": "2026-08-30T19:51:27.170Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "40eb9fd5-287a-47dc-ad6d-6d29f4c260b6",
+      "migration_name": "20260628123000_payroll_employee_balance_lifecycle",
+      "checksum": "afc488a800240f9869faedca30229fda44ff834225839051dfbf12e8b11c8d8a",
+      "started_at": "2026-08-30T19:51:26.487Z",
+      "finished_at": "2026-08-30T19:51:26.542Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "441d078e-800e-484e-8ccb-90bb89c3ef34",
+      "migration_name": "20260630100000_payment_reconciliation_inbox_worker_leases",
+      "checksum": "176825a859d1bbc7b59a2bfa03028412f2a2de8c34a581b3b8ad5e0a122781ba",
+      "started_at": "2026-08-30T19:51:26.863Z",
+      "finished_at": "2026-08-30T19:51:26.871Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "4569c17f-3656-4882-bbc7-106bf6932fdc",
+      "migration_name": "20260626093000_payroll_compensation_approval",
+      "checksum": "69e379301a592e4fc126f72688b550d2c842bb74de785de01a732b60cc9a65e2",
+      "started_at": "2026-08-30T19:51:26.376Z",
+      "finished_at": "2026-08-30T19:51:26.440Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "48bf5bd7-b5a3-4244-8bcb-828ffcdd3ad9",
+      "migration_name": "20260630090000_payment_reconciliation_foundation",
+      "checksum": "51c342aaa93f3bc909376ecfa6359840e6fca9ad29e15cd4b18c964dc99006e5",
+      "started_at": "2026-08-30T19:51:26.543Z",
+      "finished_at": "2026-08-30T19:51:26.861Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "4918a712-836c-4cf8-904d-03da4cadd637",
+      "migration_name": "20260818120000_governed_delivery_order_to_cash",
+      "checksum": "74d1b1f491b1fc8e8a8319a21d29e957f21a362f227eacc4403ddd87df38bd78",
+      "started_at": "2026-08-30T19:51:29.041Z",
+      "finished_at": "2026-08-30T19:51:29.150Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "4b09a02f-e370-48c9-aa95-2beb0f1cc32d",
+      "migration_name": "20260809160000_accountant_client_invite_onboarding",
+      "checksum": "f1067b08aefdec02a1038767ca525bcd3ffc178008a31a18fbbf2d6667f303f6",
+      "started_at": "2026-08-30T19:51:28.652Z",
+      "finished_at": "2026-08-30T19:51:28.724Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "4eab63b2-6d1e-4cb8-b664-379bf8fa1847",
+      "migration_name": "20260619120000_backfill_purchase_receive_permission",
+      "checksum": "f64f6e4ade970f347c4db26e8dd14252e081862500a5070b45e72e8a4387dd40",
+      "started_at": "2026-08-30T19:51:26.247Z",
+      "finished_at": "2026-08-30T19:51:26.252Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "5441f4c9-dbb3-420c-a087-b0889dc36f98",
+      "migration_name": "20260618154500_repair_accounting_source_links",
+      "checksum": "aa11c0dd1e5f24a7cb9c49d900572f4f07244d4a19d3b4b6b6089effe1fe1643",
+      "started_at": "2026-08-30T19:51:25.861Z",
+      "finished_at": "2026-08-30T19:51:25.868Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "576a6141-5183-4b39-a795-c7146b67f275",
+      "migration_name": "20260611120000_payment_provider_reference_uniqueness",
+      "checksum": "e61d8f02ef48e9034cda93f6a5b7259be0a099d4861dadd25faab530dbe84eb2",
+      "started_at": "2026-08-30T19:51:25.614Z",
+      "finished_at": "2026-08-30T19:51:25.624Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "5afb1086-a59b-4de4-b5b2-f3b4a5e54bff",
+      "migration_name": "20260905170000_add_tenant_module_composition",
+      "checksum": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb",
+      "started_at": "2026-09-05T14:30:45.201Z",
+      "finished_at": "2026-09-05T14:30:45.667Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "60b19b52-72b5-4ce2-8bfb-84fb56bd224d",
+      "migration_name": "20260726190000_retire_production_bom_capability",
+      "checksum": "f8e1ed80e1e0ef53cb6c7cfed2902baa3a65065e99a044ea72a62ed432d11ae5",
+      "started_at": "2026-08-30T19:51:27.732Z",
+      "finished_at": "2026-08-30T19:51:27.737Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "65ad10d5-4272-4050-ae6a-a86504c37c7e",
+      "migration_name": "20260730150000_organization_onboarding_entitlement_bridge",
+      "checksum": "939c1a58986dbe63fa005df7fac668689038287238e877ecdded43b4dc87d1fa",
+      "started_at": "2026-08-30T19:51:28.231Z",
+      "finished_at": "2026-08-30T19:51:28.243Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "6b4c0432-bf56-4485-b511-06aaedb3b8e0",
+      "migration_name": "20260730160000_pos_sales_dependency_entitlement",
+      "checksum": "60b09a3d7b59e3886483990819cb489b2cee55b2b0b5b9894d833008d91dbbf5",
+      "started_at": "2026-08-30T19:51:28.245Z",
+      "finished_at": "2026-08-30T19:51:28.249Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7c1ae7a4-02b3-4392-ad27-9223e3bab1ba",
+      "migration_name": "20260611130000_accounting_auth_baseline_bridge",
+      "checksum": "f7de8dc7ace0a5e063cdb7ecd9527e77807b7f872e474546819e9fca13a273d4",
+      "started_at": "2026-08-30T19:51:25.625Z",
+      "finished_at": "2026-08-30T19:51:25.860Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7c699f7a-ad14-48df-8abd-079fb49959d4",
+      "migration_name": "20260722143000_agent_runtime_phase_1_foundation",
+      "checksum": "94a21b2478abed9013ad91b86a3c0ca8d1be299c4c647e9d72db7060d7891422",
+      "started_at": "2026-08-30T19:51:27.354Z",
+      "finished_at": "2026-08-30T19:51:27.459Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7d0dbedd-0338-402b-bbe7-a29554e80f08",
+      "migration_name": "20260809113000_customer_statement_snapshot_foundation",
+      "checksum": "ef4f1a295873dc53a40e3376a1a83aec723fa5ab92e517d54bc4f67dd5ff467f",
+      "started_at": "2026-08-30T19:51:28.401Z",
+      "finished_at": "2026-08-30T19:51:28.440Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "7e0ea1a5-1f27-4854-907b-fa97dafa84cc",
+      "migration_name": "20260815130000_governed_master_data_onboarding",
+      "checksum": "89128f621cbde5711f6a8dde4679fc077bc34d0b3849ea0739926e07a1d475b4",
+      "started_at": "2026-08-30T19:51:28.865Z",
+      "finished_at": "2026-08-30T19:51:28.935Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "813d45f2-bd93-4d47-b265-e7620eb49769",
+      "migration_name": "20260722153000_agent_runtime_incident_cascade_consistency",
+      "checksum": "0b4b522a97016d0f3c314f2e6756be76cc6b9ea3937d17104a7bc38df256c146",
+      "started_at": "2026-08-30T19:51:27.532Z",
+      "finished_at": "2026-08-30T19:51:27.542Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "843dc999-2360-468a-a1e9-9cd06e7b143a",
+      "migration_name": "20260819120000_purchase_return_credit_evidence_boundary",
+      "checksum": "100ca778dad886f4c80e2889c67142ce37e41d194994c84a440073d3d044892c",
+      "started_at": "2026-08-30T19:51:29.228Z",
+      "finished_at": "2026-08-30T19:51:29.350Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "88add1b5-e93c-4100-b541-8335bab8333f",
+      "migration_name": "20260728100000_pos_cash_shortage_checkpoint_persistence",
+      "checksum": "dbf12970ca133f5241f8814a56102374baefa6dd155a1682b2b76543ae3be270",
+      "started_at": "2026-08-30T19:51:28.208Z",
+      "finished_at": "2026-08-30T19:51:28.230Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "8b0f85ce-7cce-465f-8511-ad6f6a36ec0f",
+      "migration_name": "20260626103000_payroll_payment_evidence_readiness",
+      "checksum": "3a75598e7fe3bdddce1ba6c4248cb08b1cd89966dbff0381d915903fa7aa0c61",
+      "started_at": "2026-08-30T19:51:26.440Z",
+      "finished_at": "2026-08-30T19:51:26.458Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "942e16a7-89b9-42a0-a9ec-499887a353bb",
+      "migration_name": "20260823100000_business_event_gateway_completion",
+      "checksum": "a9031a12fda4b925e90f52b6f510c2f65dbe4904cf6abd7c35c3a2ed4585fb3b",
+      "started_at": "2026-08-30T19:51:29.440Z",
+      "finished_at": "2026-08-30T19:51:29.477Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9661bcf5-30d8-4839-b32e-e6f139257a5d",
+      "migration_name": "20260808120000_customer_settlement_allocation_foundation",
+      "checksum": "33e11ec31c4c9e3ddca8ab7004fcefc4950e37caf559037abf32bb7c606ea81c",
+      "started_at": "2026-08-30T19:51:28.256Z",
+      "finished_at": "2026-08-30T19:51:28.322Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "986617ce-7207-47f4-85a1-3e8855b0bb24",
+      "migration_name": "20260720210000_workflow_assurance_multi_finding_persistence",
+      "checksum": "e46a97770a96a83c0c97db74aebb6644fa2eaffd9a588dd4f4b3b3cbe0739a1b",
+      "started_at": "2026-08-30T19:51:27.333Z",
+      "finished_at": "2026-08-30T19:51:27.353Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9979a74a-84b4-4fd2-8aff-cc0f753ffc68",
+      "migration_name": "20260626133000_payroll_declaration_lifecycle_evidence",
+      "checksum": "326c7a82dab1b64179bb72b422eb380affcbe1a648612eeb042384b2e7dc3a7f",
+      "started_at": "2026-08-30T19:51:26.465Z",
+      "finished_at": "2026-08-30T19:51:26.483Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9a51fd13-3c93-49dc-b419-e5790fb20d0f",
+      "migration_name": "20260727090000_accountant_access_portfolio",
+      "checksum": "92eb7d70aec20347911f3b6ae3b6197bedf1a85e0cac0117974627fd682ffd41",
+      "started_at": "2026-08-30T19:51:27.871Z",
+      "finished_at": "2026-08-30T19:51:27.908Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9becd5e6-7b6a-4b34-b695-1095356df933",
+      "migration_name": "20260714203000_session_assurance",
+      "checksum": "b30c2a40ecdc2b82e631dea157ac2a2b6fa3078a7837f311a4b7052a259f1fa2",
+      "started_at": "2026-08-30T19:51:26.936Z",
+      "finished_at": "2026-08-30T19:51:26.944Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9eb08863-f16b-4ce0-9614-28a12bab82de",
+      "migration_name": "20260727170000_ai_copilot_proposal_guardrails",
+      "checksum": "755aef868ddba0f420b6b728a23b50f2097a8054b1fbd090716207f76461e439",
+      "started_at": "2026-08-30T19:51:28.183Z",
+      "finished_at": "2026-08-30T19:51:28.208Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "9f752e49-e221-458e-8f85-df1442e5a2ba",
+      "migration_name": "20260722150000_agent_runtime_tenant_consistency",
+      "checksum": "60120afc396082326a0028d6b4f5be8c0056d92b2df53d9bc43c5d924e2cec5d",
+      "started_at": "2026-08-30T19:51:27.465Z",
+      "finished_at": "2026-08-30T19:51:27.529Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "a0fc0bb1-5dde-43ed-bdb8-122aa2614224",
+      "migration_name": "20260720130000_cash_shortage_policy_governance",
+      "checksum": "3cef5f9080d5bf58359a3e7ec569b86dfddfa16e0a7355de52d1dd6cf52f7805",
+      "started_at": "2026-08-30T19:51:27.313Z",
+      "finished_at": "2026-08-30T19:51:27.332Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "aed89f69-28ff-421f-9bc7-da750cdf4ef1",
+      "migration_name": "20260528124341_refine_item_barcode",
+      "checksum": "038f2cd31f028f9725ac5ec4d91ace9bed34ab05de98bf0600162118aaaa1eb2",
+      "started_at": "2026-08-30T19:51:24.901Z",
+      "finished_at": "2026-08-30T19:51:25.613Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b00856aa-9180-408d-8789-b9afbb770480",
+      "migration_name": "20260626123000_payroll_cnps_country_pack_expansion",
+      "checksum": "da6c26b20c8572648ea6d82da2e8c4b6b71ee0b82c6ed1181d1b27a351a092a6",
+      "started_at": "2026-08-30T19:51:26.459Z",
+      "finished_at": "2026-08-30T19:51:26.463Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b0466a5d-f99e-465c-83c2-c4806e65dea2",
+      "migration_name": "20260621103000_workflow_assurance_registry_foundation",
+      "checksum": "ba6bc0fca858e4a9b599c30ccd32f288235857a736d6c6afc186e8e54f79f473",
+      "started_at": "2026-08-30T19:51:26.258Z",
+      "finished_at": "2026-08-30T19:51:26.289Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "b42ba898-cc22-4c9d-9d7c-a87bd73369fa",
+      "migration_name": "20260920060000_pos_checkout_lifecycle",
+      "checksum": "f09015253f4479d62404f1ddd840687173854508aca058fc2d0a7589396f020c",
+      "started_at": "2026-09-20T11:56:54.247Z",
+      "finished_at": "2026-09-20T11:56:54.247Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 0
+    },
+    {
+      "id": "b93c2c14-401f-4d85-8385-7970f998bbc2",
+      "migration_name": "20260722162000_agent_runtime_tenant_scoped_correlation",
+      "checksum": "cd9373debc557762912be2b0185eb3c1e5a63be563ca7414ce928acc66d6fd0d",
+      "started_at": "2026-08-30T19:51:27.575Z",
+      "finished_at": "2026-08-30T19:51:27.588Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "bf19ee04-d248-404b-9a4f-17d6d4209ecd",
+      "migration_name": "20260727110100_offline_pos_sync_foundation_reconciliation",
+      "checksum": "035a01b974be882877669107d4e7c68b939097c6e49cb6273c9daf5b458d584d",
+      "started_at": "2026-08-30T19:51:28.030Z",
+      "finished_at": "2026-08-30T19:51:28.036Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "c0c403c4-beda-4a28-bd49-25704440202a",
+      "migration_name": "20260818100000_purchase_receiving_integrity",
+      "checksum": "df4aa75d35f09d856b8f4eb75fd2c283ec333b519e99a3ed4579ffc513d9ba8f",
+      "started_at": "2026-08-30T19:51:29.014Z",
+      "finished_at": "2026-08-30T19:51:29.040Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d168d46b-82b5-4937-a630-d5515250e51b",
+      "migration_name": "20260815190000_payment_reconciliation_evidence_immutability",
+      "checksum": "317a58d31e5247b999c95cc27832891a8f10784f9ac79a2906ce13ce386d085e",
+      "started_at": "2026-08-30T19:51:28.961Z",
+      "finished_at": "2026-08-30T19:51:28.968Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d218e8f8-62bd-424c-8054-125669db37eb",
+      "migration_name": "20260809170000_referral_accounting_source_types",
+      "checksum": "0790760cb0ed07251063090db06bfd315f525039d9398cc0efbd03da8b11d41e",
+      "started_at": "2026-08-30T19:51:28.725Z",
+      "finished_at": "2026-08-30T19:51:28.729Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d39b2c1e-b965-460d-9402-fecb1c95481b",
+      "migration_name": "20260618160000_payroll_foundation_bridge",
+      "checksum": "77c4c1bbd5618e5d01d7416e2f304014890a843785280ccca8aeb0c8c1f4ada8",
+      "started_at": "2026-08-30T19:51:25.869Z",
+      "finished_at": "2026-08-30T19:51:26.050Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "d5533869-6260-4f27-b7d0-034abd07f0df",
+      "migration_name": "20260809143000_customer_statement_delivery_referral",
+      "checksum": "7fb1b45b6f599c661e7831ed282185331b263f82ad430c2f465f1d547bd3fb06",
+      "started_at": "2026-08-30T19:51:28.539Z",
+      "finished_at": "2026-08-30T19:51:28.651Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "de09b637-3c10-456a-bc8d-18c242b022f3",
+      "migration_name": "20260815143000_pos_customer_location_scope",
+      "checksum": "a4a5fc37cc0d405ad567a3ea87d846ed8f9dfc528aa2139d38f7a8d739022c0a",
+      "started_at": "2026-08-30T19:51:28.936Z",
+      "finished_at": "2026-08-30T19:51:28.958Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "de3e358e-6dad-449f-a4f4-d67c5f2b574c",
+      "migration_name": "20260621112500_workflow_assurance_incident_enum_bridge",
+      "checksum": "8fa08137b6d785ddc812391ce212aa411c4e777bf453bfbf4c450b31cedac0e4",
+      "started_at": "2026-08-30T19:51:26.290Z",
+      "finished_at": "2026-08-30T19:51:26.295Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "df4cf450-4948-4d0d-b9c5-b48ce8f56285",
+      "migration_name": "20260817120000_pos_commit_result_registry",
+      "checksum": "991a1508f73aa75c2331316d019dbf4abc505097dd2d60d7d108a85e24d7f056",
+      "started_at": "2026-08-30T19:51:28.976Z",
+      "finished_at": "2026-08-30T19:51:29.013Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e28e8e84-3beb-40bc-a7c0-d0b43794904d",
+      "migration_name": "20260618161000_ap_stock_count_foundation_bridge",
+      "checksum": "b6c29029961c7080ff75cf1dbd7f918f2b4c4335befe487dcc89ce2d325ccacc",
+      "started_at": "2026-08-30T19:51:26.051Z",
+      "finished_at": "2026-08-30T19:51:26.245Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e28f4e85-1fd8-4688-acfc-2d2608259135",
+      "migration_name": "20260727110000_offline_pos_sync_foundation",
+      "checksum": "4a8896360a554d94707dbf86495b2e4e0bbb80e1cae4e8ec9343463c2e30d725",
+      "started_at": "2026-08-30T19:51:27.909Z",
+      "finished_at": "2026-08-30T19:51:28.029Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e2d490c1-2815-46ad-b889-fbeeeb98aaa8",
+      "migration_name": "20260714194500_inventory_history_accounting_time_controls",
+      "checksum": "bdff0414f9046d566dcb03bb3b59fbefa28f3570af51bd6b527cdcb1c881ab72",
+      "started_at": "2026-08-30T19:51:26.908Z",
+      "finished_at": "2026-08-30T19:51:26.933Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e3c24900-1a99-464b-8303-20d3ac0a7803",
+      "migration_name": "20260919110000_managed_picture_assets",
+      "checksum": "ed1cc1ee182cbd119abfd2cbb5953ca96cad6fc9ca08f380153e917692fab5ae",
+      "started_at": "2026-09-19T11:14:14.201Z",
+      "finished_at": "2026-09-19T11:14:14.201Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e4290710-48f1-4f9d-9bbd-6710e8037797",
+      "migration_name": "20260809180000_accounting_enum_completion",
+      "checksum": "e89b4380a5ee50ddf6f587c40d9da9d987e0b79bdf41cc4f3a42b4339f464043",
+      "started_at": "2026-08-30T19:51:28.730Z",
+      "finished_at": "2026-08-30T19:51:28.732Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e87e5383-02ed-4161-9a7c-3da07b71c441",
+      "migration_name": "20260718100000_branch_daily_close_review_foundation",
+      "checksum": "2d2fb6276b5bc5a8a1cbcab774c39c1ee2fb67b6c7f2f82afc3f06c7cb6804ec",
+      "started_at": "2026-08-30T19:51:26.971Z",
+      "finished_at": "2026-08-30T19:51:27.001Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "e9910fd7-11c7-41f6-aa3a-c06530def696",
+      "migration_name": "20260724113000_agent_runtime_retirement_alert_dead_letter",
+      "checksum": "e6e436d7b9b70a3dc4d1acdabff9309c68b3e55d0e74a74c3575a5f8e2f1f7e2",
+      "started_at": "2026-08-30T19:51:27.666Z",
+      "finished_at": "2026-08-30T19:51:27.670Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ea432f93-8fdd-40e2-b60c-1484de2e54e6",
+      "migration_name": "20260718130000_branch_daily_close_sign_off_foundation",
+      "checksum": "ba8c880bdde4c432cf8171f4da91716ce8738a0e2639cf6dcf6758f613fd1984",
+      "started_at": "2026-08-30T19:51:27.003Z",
+      "finished_at": "2026-08-30T19:51:27.046Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ea6bb655-70ee-451b-8923-2cd0d70ad6b5",
+      "migration_name": "20260818120000_pos_electronic_tender_authority",
+      "checksum": "3451178f2323b8c8d96fb0f38e01fc2cc3c82e3a89c917c68b980253ef503d3f",
+      "started_at": "2026-08-30T19:51:29.150Z",
+      "finished_at": "2026-08-30T19:51:29.172Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ed00bf72-3741-476f-9613-690bd1f99ec9",
+      "migration_name": "20260905173000_protect_module_configuration_authority",
+      "checksum": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66",
+      "started_at": "2026-09-05T14:30:45.668Z",
+      "finished_at": "2026-09-05T14:30:45.707Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f249a9d9-e722-4fbd-a475-1300544524d5",
+      "migration_name": "20260905200000_add_module_lifecycle_command_state",
+      "checksum": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73",
+      "started_at": "2026-09-05T14:30:45.708Z",
+      "finished_at": "2026-09-05T14:30:45.712Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f279f3cd-4ae6-403e-a606-d87afa55ebe9",
+      "migration_name": "20260816100000_master_data_onboarding_risk_tier",
+      "checksum": "c67d33b36703ba1815bf8d9d2d19c5ddc6c9757985741d3e5941de12d3a8af27",
+      "started_at": "2026-08-30T19:51:28.969Z",
+      "finished_at": "2026-08-30T19:51:28.975Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f32ca8da-b82b-4e7b-a87c-963749afa9fb",
+      "migration_name": "20260818130000_sales_order_reporting_schema_repair",
+      "checksum": "eed41a06bff7999be0bc41dc88ca46c13bed08ed5ed8791c8e6406179a0d32ca",
+      "started_at": "2026-08-30T19:51:29.173Z",
+      "finished_at": "2026-08-30T19:51:29.185Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "f945d013-45aa-4d11-9736-3ef71c8adc7a",
+      "migration_name": "20260715090000_inventory_correction_reversal_lineage",
+      "checksum": "c3e8c220f522f6b26b86f9e794f4e9fe6f44ca80f9b1d808f9d9fa5e199eb69f",
+      "started_at": "2026-08-30T19:51:26.947Z",
+      "finished_at": "2026-08-30T19:51:26.970Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "fce3f08f-678c-4485-b072-7b9b8d107cdb",
+      "migration_name": "20260821210000_payroll_trust_spine_transition_ledger",
+      "checksum": "98a4907bb72cbb99c2919df3ef975c3c5924e70b19c9b34a536c9b3a77915a52",
+      "started_at": "2026-08-30T19:51:29.383Z",
+      "finished_at": "2026-08-30T19:51:29.439Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    },
+    {
+      "id": "ff092297-6aab-4ac8-9b17-e51de7d7e5a9",
+      "migration_name": "20260626143000_payroll_payment_reconciliation_lifecycle",
+      "checksum": "b3fbfc15e09fd15c0692397004f22746f1dee8d865fa5d0ed411c133ec3bc900",
+      "started_at": "2026-08-30T19:51:26.484Z",
+      "finished_at": "2026-08-30T19:51:26.486Z",
+      "rolled_back_at": null,
+      "applied_steps_count": 1
+    }
+  ]
+}

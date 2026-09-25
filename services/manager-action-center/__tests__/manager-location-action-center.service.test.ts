@@ -290,7 +290,7 @@ describe("manager location action center service", () => {
           ? branchSnapshot("location-b", {
               status: "blocked",
               blockers: [branchBlocker],
-              metrics: { pendingPurchaseOrderCount: 2 },
+              metrics: { pendingPurchaseOrderCount: 2, overduePurchaseOrderCount: 2 },
             })
           : branchSnapshot("location-a", {
               metrics: {

@@ -1,0 +1,25 @@
+Selected observed development server lines after the scoped config correction.
+Not a complete log; parameterized database query lines intentionally omitted.
+No production performance inference. Duplicate delivery lines are retained.
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 4.1s (119 modules)
+ ○ Compiling /api/auth/[...all] ...
+ ✓ Compiled /api/auth/[...all] in 22.2s (897 modules)
+ POST /api/auth/sign-in/email 200 in 30701ms
+ GET /api/auth/get-session 200 in 331ms
+ ○ Compiling /api/me/permissions ...
+ ✓ Compiled /api/me/permissions in 5.6s (916 modules)
+ ○ Compiling /[locale]/dashboard/inventory/transfers ...
+ ✓ Compiled /[locale]/dashboard/inventory/transfers in 177.8s (5177 modules)
+ ✓ Compiled in 5.2s (1455 modules)
+ ○ Compiling /[locale]/dashboard/settings/modules ...
+ ✓ Compiled /[locale]/dashboard/settings/modules in 29.4s (4319 modules)
+ ○ Compiling /[locale]/dashboard/inventory/transfers ...
+ ✓ Compiled /[locale]/dashboard/inventory/transfers in 5.7s (3831 modules)
+ ⨯ [TypeError: __webpack_modules__[moduleId] is not a function] {
+  digest: '3503754040'
+}
+ GET /en/dashboard/settings/modules 200 in 72157ms
+ GET /fr/dashboard/inventory/transfers 200 in 40197ms
+ GET /en/dashboard/settings/modules 200 in 72157ms
+ GET /fr/dashboard/inventory/transfers 200 in 40197ms

@@ -39,6 +39,7 @@ import {
   replayPendingOfflineSaleEnvelope,
 } from "@/services/pos/offline-sync.service"
 import { protect } from "@/services/_shared/protect"
+import { revalidateTag } from "next/cache"
 import {
   getOfflineSyncDashboardAction,
   registerOfflineDeviceAction,
@@ -62,6 +63,17 @@ describe("POS offline sync actions", () => {
     mockRegisterDevice.mockResolvedValue({ id: "device-1" })
     mockIngestBatch.mockResolvedValue({ batchId: "batch-1", acceptedCount: 1, conflictCount: 0 })
     mockReplaySale.mockResolvedValue({ offlineEventId: "event-1", status: "REPLAYED" })
+  })
+
+  it.each([
+    [registerOfflineDeviceAction, mockRegisterDevice],
+    [syncOfflineEventsAction, mockIngestBatch],
+    [replayOfflineSaleEnvelopeAction, mockReplaySale],
+  ] as const)("preserves completed offline work when cache invalidation fails", async (action, service) => {
+    ;(revalidateTag as jest.Mock).mockImplementationOnce(() => { throw new Error("Cache unavailable") })
+    const result = await action({})
+    expect(result).toMatchObject({ success: true, ok: true })
+    expect(service).toHaveBeenCalledTimes(1)
   })
 
   it("derives dashboard tenant scope from RBAC context", async () => {

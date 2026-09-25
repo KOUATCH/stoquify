@@ -1,0 +1,2360 @@
+{
+  "status": "proposed examples; names of owned entities are conceptual, not assertions of current Prisma model names",
+  "modules": [
+    {
+      "schemaVersion": 1,
+      "id": "platform",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Workspace foundation",
+        "fr": "Socle commun"
+      },
+      "summary": {
+        "en": "One identity, one working environment, consistent access.",
+        "fr": "Une identité et un environnement de travail cohérent."
+      },
+      "owner": "Platform",
+      "category": "foundation",
+      "legacySlugs": [
+        "dashboard",
+        "settings",
+        "administration"
+      ],
+      "commercial": {
+        "kind": "included",
+        "meter": null
+      },
+      "requires": [],
+      "optionalDependencies": [],
+      "provides": [
+        "identity",
+        "configuration",
+        "audit",
+        "navigation"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "Organization",
+          "writeOwner": "platform",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "User",
+          "writeOwner": "platform",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "Role",
+          "writeOwner": "platform",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "ConfigurationRevision",
+          "writeOwner": "platform",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "configuration.saveDraft",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "configuration.preview",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "configuration.revised",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "platform.read",
+        "write": "platform.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "platform.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "ledger_core",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Financial integrity",
+        "fr": "Intégrité financière"
+      },
+      "summary": {
+        "en": "Balanced, traceable financial records, included where needed.",
+        "fr": "Des écritures équilibrées et traçables, incluses si nécessaire."
+      },
+      "owner": "Accounting",
+      "category": "foundation",
+      "legacySlugs": [],
+      "commercial": {
+        "kind": "included",
+        "meter": null
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "ledger.authority",
+        "posting",
+        "period-locks"
+      ],
+      "exclusiveCapabilities": [
+        "ledger.authority"
+      ],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "JournalEntry",
+          "writeOwner": "ledger_core",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "PostingBatch",
+          "writeOwner": "ledger_core",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "AccountingSourceLink",
+          "writeOwner": "ledger_core",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "ledger.postBalancedJournal",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "ledger.readSourcePosting",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "ledger.posted",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "ledger_core.read",
+        "write": "ledger_core.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "ledger_core.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "inventory",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Inventory",
+        "fr": "Stocks"
+      },
+      "summary": {
+        "en": "Know what is available, where it is and what it costs.",
+        "fr": "Suivez les quantités, les emplacements et les coûts."
+      },
+      "owner": "Inventory",
+      "category": "operations",
+      "legacySlugs": [
+        "inventory"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "ledger_core",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "stock",
+        "valuation",
+        "transfers"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "Item",
+          "writeOwner": "inventory",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "StockMovement",
+          "writeOwner": "inventory",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "InventoryValuation",
+          "writeOwner": "inventory",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "inventory.recordMovement",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "inventory.readAvailability",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "inventory.movementRecorded",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "inventory.read",
+        "write": "inventory.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "inventory.home",
+          "path": "/workspace/inventory",
+          "slot": "operations",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "inventory.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "sales",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Sales & invoicing",
+        "fr": "Ventes et facturation"
+      },
+      "summary": {
+        "en": "Turn customer orders into invoices and receivables.",
+        "fr": "Transformez les commandes en factures et créances."
+      },
+      "owner": "Revenue",
+      "category": "operations",
+      "legacySlugs": [
+        "sales"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "ledger_core",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "invoicing",
+        "receivables"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "SalesOrder",
+          "writeOwner": "sales",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "SalesInvoice",
+          "writeOwner": "sales",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "sales.issueInvoice",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "sales.readReceivable",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "sales.invoiceIssued",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "sales.read",
+        "write": "sales.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "sales.home",
+          "path": "/workspace/sales",
+          "slot": "operations",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "sales.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "pos",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Point of sale",
+        "fr": "Point de vente"
+      },
+      "summary": {
+        "en": "Sell in store with connected stock and reliable receipts.",
+        "fr": "Vendez en magasin avec des stocks et reçus cohérents."
+      },
+      "owner": "Revenue",
+      "category": "operations",
+      "legacySlugs": [
+        "pos"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "active-terminal-month"
+      },
+      "requires": [
+        {
+          "moduleId": "sales",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "inventory",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "checkout",
+        "offline-sales",
+        "receipts"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "PosSession",
+          "writeOwner": "pos",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "OfflineSyncBatch",
+          "writeOwner": "pos",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "pos.captureSale",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "pos.readShift",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "pos.saleCaptured",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "pos.read",
+        "write": "pos.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "pos.home",
+          "path": "/workspace/pos",
+          "slot": "operations",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "pos.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "cash_drawer",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Cash accountability",
+        "fr": "Contrôle de caisse"
+      },
+      "summary": {
+        "en": "Account for every shift, tender and cash difference.",
+        "fr": "Suivez chaque service, encaissement et écart."
+      },
+      "owner": "Finance",
+      "category": "operations",
+      "legacySlugs": [
+        "cash_drawer"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "pos",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "finance",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "cash-shifts",
+        "cash-variance"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "CashDrawerSession",
+          "writeOwner": "cash_drawer",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "CashMovement",
+          "writeOwner": "cash_drawer",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "cash.closeShift",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "cash.readVariance",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "cash.shiftClosed",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "cash_drawer.read",
+        "write": "cash_drawer.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "cash_drawer.home",
+          "path": "/workspace/cash-drawer",
+          "slot": "operations",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "cash_drawer.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "purchasing",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Purchasing & payables",
+        "fr": "Achats et fournisseurs"
+      },
+      "summary": {
+        "en": "Connect orders, receipts, supplier invoices and payment controls.",
+        "fr": "Reliez commandes, réceptions, factures et contrôles de paiement."
+      },
+      "owner": "Procurement",
+      "category": "operations",
+      "legacySlugs": [
+        "purchasing"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "ledger_core",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "purchase-orders",
+        "supplier-invoices",
+        "payment-release"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "PurchaseOrder",
+          "writeOwner": "purchasing",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "SupplierInvoice",
+          "writeOwner": "purchasing",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "SupplierPayment",
+          "writeOwner": "purchasing",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "purchasing.approveSupplierInvoice",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "purchasing.readPayable",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "purchasing.invoiceApproved",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "purchasing.read",
+        "write": "purchasing.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "purchasing.home",
+          "path": "/workspace/purchasing",
+          "slot": "operations",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "purchasing.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "finance",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Cash & payments",
+        "fr": "Trésorerie et paiements"
+      },
+      "summary": {
+        "en": "See cash positions and manage payment evidence.",
+        "fr": "Suivez la trésorerie et les preuves de paiement."
+      },
+      "owner": "Finance",
+      "category": "finance",
+      "legacySlugs": [
+        "finance"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "ledger_core",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "cash-ledgers",
+        "payment-evidence"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "PaymentAccount",
+          "writeOwner": "finance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "PaymentTransaction",
+          "writeOwner": "finance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "finance.recordPaymentEvidence",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "finance.readCashPosition",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "finance.paymentRecorded",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "finance.read",
+        "write": "finance.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "finance.home",
+          "path": "/workspace/finance",
+          "slot": "finance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "finance.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "accounting",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Accounting workspace",
+        "fr": "Comptabilité"
+      },
+      "summary": {
+        "en": "Review journals, financial statements and period activity.",
+        "fr": "Consultez les journaux, états et activités de période."
+      },
+      "owner": "Accounting",
+      "category": "finance",
+      "legacySlugs": [
+        "accounting"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "ledger_core",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "journal-workspace",
+        "statements"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [],
+      "commands": [
+        {
+          "id": "accounting.requestJournalReversal",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "accounting.readTrialBalance",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "accounting.reviewRecorded",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "accounting.read",
+        "write": "accounting.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "accounting.home",
+          "path": "/workspace/accounting",
+          "slot": "finance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "accounting.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "payment_reconciliation",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Reconciliation",
+        "fr": "Rapprochement"
+      },
+      "summary": {
+        "en": "Match statements, resolve exceptions and substantiate cash.",
+        "fr": "Rapprochez les relevés et justifiez la trésorerie."
+      },
+      "owner": "Finance",
+      "category": "finance",
+      "legacySlugs": [
+        "payment_reconciliation"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "finance",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "accounting",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "matching",
+        "suspense",
+        "signoff"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "ReconciliationRun",
+          "writeOwner": "payment_reconciliation",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "ReconciliationMatch",
+          "writeOwner": "payment_reconciliation",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "reconciliation.confirmMatch",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "reconciliation.readExceptions",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "reconciliation.matchConfirmed",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "payment_reconciliation.read",
+        "write": "payment_reconciliation.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "payment_reconciliation.home",
+          "path": "/workspace/payment-reconciliation",
+          "slot": "finance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "payment_reconciliation.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "close_assurance",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Period close",
+        "fr": "Clôture"
+      },
+      "summary": {
+        "en": "Know what remains before a period can close.",
+        "fr": "Identifiez les éléments nécessaires à la clôture."
+      },
+      "owner": "Accounting",
+      "category": "finance",
+      "legacySlugs": [
+        "close_assurance"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "accounting",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [
+        "payment_reconciliation"
+      ],
+      "provides": [
+        "close-review",
+        "close-evidence"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "CloseReview",
+          "writeOwner": "close_assurance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "CloseEvidence",
+          "writeOwner": "close_assurance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "close.submitReview",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "close.readReadiness",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "close.reviewSubmitted",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "close_assurance.read",
+        "write": "close_assurance.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "close_assurance.home",
+          "path": "/workspace/close-assurance",
+          "slot": "finance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "close_assurance.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "hris",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "People & contracts",
+        "fr": "Personnel et contrats"
+      },
+      "summary": {
+        "en": "Keep employee identity and contract history in one place.",
+        "fr": "Centralisez les dossiers et l'historique des contrats."
+      },
+      "owner": "People",
+      "category": "people",
+      "legacySlugs": [],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "employee-records",
+        "contracts"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "Employee",
+          "writeOwner": "hris",
+          "tenantKey": "organizationId",
+          "classification": "restricted"
+        },
+        {
+          "entity": "EmploymentContract",
+          "writeOwner": "hris",
+          "tenantKey": "organizationId",
+          "classification": "restricted"
+        }
+      ],
+      "commands": [
+        {
+          "id": "hris.activateContract",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "hris.readEmployee",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "hris.contractActivated",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "hris.read",
+        "write": "hris.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "hris.home",
+          "path": "/workspace/hris",
+          "slot": "people",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "hris.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "presence",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Time & attendance",
+        "fr": "Temps et présence"
+      },
+      "summary": {
+        "en": "Collect time and absence inputs for your people processes.",
+        "fr": "Collectez les temps et absences pour vos processus RH."
+      },
+      "owner": "People",
+      "category": "people",
+      "legacySlugs": [
+        "presence"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "hris",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "attendance",
+        "leave"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "AttendanceEvent",
+          "writeOwner": "presence",
+          "tenantKey": "organizationId",
+          "classification": "restricted"
+        },
+        {
+          "entity": "LeaveRequest",
+          "writeOwner": "presence",
+          "tenantKey": "organizationId",
+          "classification": "restricted"
+        }
+      ],
+      "commands": [
+        {
+          "id": "presence.approveTimeInput",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "presence.readApprovedInputs",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "presence.inputApproved",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "presence.read",
+        "write": "presence.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "presence.home",
+          "path": "/workspace/presence",
+          "slot": "people",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "presence.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "payroll",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Payroll",
+        "fr": "Paie"
+      },
+      "summary": {
+        "en": "Prepare controlled payroll from approved people inputs.",
+        "fr": "Préparez une paie contrôlée à partir de données validées."
+      },
+      "owner": "People",
+      "category": "people",
+      "legacySlugs": [
+        "payroll"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "processed-employee-month"
+      },
+      "requires": [
+        {
+          "moduleId": "hris",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        },
+        {
+          "moduleId": "ledger_core",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [
+        "presence"
+      ],
+      "provides": [
+        "payroll-calculation",
+        "payroll-approval",
+        "payslips"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "PayrollRun",
+          "writeOwner": "payroll",
+          "tenantKey": "organizationId",
+          "classification": "restricted"
+        },
+        {
+          "entity": "PayrollPaymentBatch",
+          "writeOwner": "payroll",
+          "tenantKey": "organizationId",
+          "classification": "restricted"
+        }
+      ],
+      "commands": [
+        {
+          "id": "payroll.approveRun",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "payroll.readRun",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "payroll.runApproved",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "payroll.read",
+        "write": "payroll.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "payroll.home",
+          "path": "/workspace/payroll",
+          "slot": "people",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [
+        "country_pack_verified",
+        "responsible_owner"
+      ],
+      "provisioning": {
+        "handler": "payroll.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "compliance",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Country compliance",
+        "fr": "Conformité pays"
+      },
+      "summary": {
+        "en": "Apply reviewed country rules and retain filing evidence.",
+        "fr": "Appliquez les règles pays validées et conservez les preuves."
+      },
+      "owner": "Compliance",
+      "category": "assurance",
+      "legacySlugs": [
+        "compliance"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "ledger_core",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "declarations",
+        "fiscal-evidence"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "FiscalDocument",
+          "writeOwner": "compliance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "Declaration",
+          "writeOwner": "compliance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "compliance.prepareDeclaration",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "compliance.readFilingStatus",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "compliance.declarationPrepared",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "compliance.read",
+        "write": "compliance.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "compliance.home",
+          "path": "/workspace/compliance",
+          "slot": "assurance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [
+        "country_pack_verified",
+        "responsible_owner"
+      ],
+      "provisioning": {
+        "handler": "compliance.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "reports",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Reports & exports",
+        "fr": "Rapports et exports"
+      },
+      "summary": {
+        "en": "Share scoped reports with traceable export controls.",
+        "fr": "Partagez des rapports selon les droits et contrôles d'export."
+      },
+      "owner": "Data",
+      "category": "assurance",
+      "legacySlugs": [
+        "reports"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "report-workspace",
+        "governed-exports"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "ReportDefinition",
+          "writeOwner": "reports",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "reports.requestExport",
+          "version": 1,
+          "accessIntent": "export",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "reports.readAuthorizedReport",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "reports.exportReady",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "reports.read",
+        "write": "reports.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "reports.home",
+          "path": "/workspace/reports",
+          "slot": "assurance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "reports.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "analytics",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Decision insights",
+        "fr": "Aide à la décision"
+      },
+      "summary": {
+        "en": "Explain trends using permitted, reconciled business facts.",
+        "fr": "Expliquez les tendances avec des données autorisées."
+      },
+      "owner": "Data",
+      "category": "assurance",
+      "legacySlugs": [
+        "analytics"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [
+        "reports"
+      ],
+      "provides": [
+        "metrics",
+        "management-insights"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "MetricDefinition",
+          "writeOwner": "analytics",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "analytics.refreshProjection",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "analytics.readMetric",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "analytics.projectionUpdated",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "analytics.read",
+        "write": "analytics.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "analytics.home",
+          "path": "/workspace/analytics",
+          "slot": "assurance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "analytics.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "commercial_agents",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Sales channels",
+        "fr": "Réseau commercial"
+      },
+      "summary": {
+        "en": "Manage commercial partners and commission rules.",
+        "fr": "Gérez les partenaires et règles de commission."
+      },
+      "owner": "Revenue",
+      "category": "specialist",
+      "legacySlugs": [
+        "commercial_agents"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "sales",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "channel-commissions"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "CommercialAgentAgreement",
+          "writeOwner": "commercial_agents",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "channels.approveCommission",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "channels.readAgreement",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "channels.commissionApproved",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "commercial_agents.read",
+        "write": "commercial_agents.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "commercial_agents.home",
+          "path": "/workspace/commercial-agents",
+          "slot": "specialist",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "commercial_agents.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "content",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Content management",
+        "fr": "Gestion des contenus"
+      },
+      "summary": {
+        "en": "Maintain organization content with publishing controls.",
+        "fr": "Gérez les contenus avec des contrôles de publication."
+      },
+      "owner": "Growth",
+      "category": "specialist",
+      "legacySlugs": [
+        "content"
+      ],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "content-publishing"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "ContentArticle",
+          "writeOwner": "content",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "content.publishArticle",
+          "version": 1,
+          "accessIntent": "write",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "content.readArticle",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "content.articlePublished",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "content.read",
+        "write": "content.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "content.home",
+          "path": "/workspace/content",
+          "slot": "specialist",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [],
+      "provisioning": {
+        "handler": "content.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    },
+    {
+      "schemaVersion": 1,
+      "id": "agent_assistance",
+      "version": "1.0.0",
+      "status": "proposed",
+      "name": {
+        "en": "Assisted work",
+        "fr": "Assistance intelligente"
+      },
+      "summary": {
+        "en": "Explain evidence and prepare suggestions within user rights.",
+        "fr": "Expliquez les preuves et préparez des suggestions autorisées."
+      },
+      "owner": "AI",
+      "category": "assurance",
+      "legacySlugs": [],
+      "commercial": {
+        "kind": "selectable",
+        "meter": "organization-month"
+      },
+      "requires": [
+        {
+          "moduleId": "platform",
+          "min": "1.0.0",
+          "maxExclusive": "2.0.0",
+          "reason": "Required for the declared operating capability"
+        }
+      ],
+      "optionalDependencies": [],
+      "provides": [
+        "read-only-assistance"
+      ],
+      "exclusiveCapabilities": [],
+      "conflicts": [],
+      "dataOwnership": [
+        {
+          "entity": "AgentRun",
+          "writeOwner": "agent_assistance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        },
+        {
+          "entity": "AgentToolInvocation",
+          "writeOwner": "agent_assistance",
+          "tenantKey": "organizationId",
+          "classification": "tenant-private"
+        }
+      ],
+      "commands": [
+        {
+          "id": "agents.requestSuggestion",
+          "version": 1,
+          "accessIntent": "read",
+          "idempotency": "tenant + command + clientRequestId",
+          "authority": "server-derived",
+          "contractStatus": "proposed logical interface; not an existing callable endpoint"
+        }
+      ],
+      "queries": [
+        {
+          "id": "agents.readSuggestion",
+          "version": 1,
+          "accessIntent": "read",
+          "scope": "authorized organization and object"
+        }
+      ],
+      "events": [
+        {
+          "id": "agents.suggestionPrepared",
+          "version": 1,
+          "delivery": "at-least-once",
+          "partitionKey": "organizationId:aggregateId"
+        }
+      ],
+      "permissions": {
+        "read": "agent_assistance.read",
+        "write": "agent_assistance.write",
+        "mappingStatus": "proposed; map to current known permission registry before use"
+      },
+      "surfaces": [
+        {
+          "id": "agent_assistance.home",
+          "path": "/workspace/agent-assistance",
+          "slot": "assurance",
+          "intent": "read",
+          "routeStatus": "prototype only; production adapters retain current routes"
+        }
+      ],
+      "prerequisites": [
+        "agent_policy"
+      ],
+      "provisioning": {
+        "handler": "agent_assistance.provision.v1",
+        "idempotency": "configurationRevision:moduleId:step",
+        "schemaMigration": "deployment-managed; never per-click SQL",
+        "desiredObservedSeparate": true
+      },
+      "jobs": {
+        "policy": "snapshot-scoped authorization; recheck before irreversible execution",
+        "healthSignals": [
+          "lag",
+          "failed-attempts",
+          "stale-read-model"
+        ]
+      },
+      "lifecycle": {
+        "policy": "retain-v1",
+        "deactivation": "drain new commands; reconcile obligations; retain history",
+        "reactivation": "validate current grants, dependencies and schema",
+        "retention": "organization policy and applicable obligations; no invented period"
+      },
+      "rollback": {
+        "policy": "disable new writes; preserve immutable history; restore compatible configuration revision"
+      }
+    }
+  ]
+}

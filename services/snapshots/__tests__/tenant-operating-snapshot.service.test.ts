@@ -84,6 +84,14 @@ const mockInventoryCash = getInventoryCashSnapshot as jest.Mock
 const mockCloseReadiness = getCloseReadinessSnapshot as jest.Mock
 
 describe("tenant operating snapshot service", () => {
+  it("counts overdue pending orders at the supplied snapshot time within the tenant", async () => {
+    setupTenantData(); setupChildSnapshots()
+    const now = new Date("2026-06-21T10:00:00.000Z")
+    mockDb.purchaseOrder.count.mockImplementation(({ where }) => Promise.resolve(where.expectedDeliveryDate ? 2 : 7))
+    const result = await getTenantOperatingSnapshot({ organizationId: "org-1", now })
+    expect(mockDb.purchaseOrder.count).toHaveBeenCalledWith({ where: { organizationId: "org-1", deletedAt: null, status: { in: ["SUBMITTED", "APPROVED", "PARTIALLY_RECEIVED"] }, expectedDeliveryDate: { lt: now } } })
+    expect(result.metrics).toMatchObject({ pendingPurchaseOrderCount: 7, overduePurchaseOrderCount: 2 })
+  })
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -424,6 +432,7 @@ function expectLocationScopeBlockedResult(
         completedSalesRevenue: 0,
         cashCollected: 0,
         pendingPurchaseOrderCount: 0,
+        overduePurchaseOrderCount: null,
         approvedOrPaidPayrollRunCount: 0,
         activeEmployeeBalanceCaseCount: 0,
         openEmployeeBalanceCaseCount: 0,

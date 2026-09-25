@@ -1,0 +1,101 @@
+{
+  "at": "2026-09-13T10:58:35.455Z",
+  "sourcesBefore": {
+    "components/manager-action-center/PaymentReconciliationSignOffCommand.tsx": "b4f5cebab7ee6ff0d2a728f08a8454f8283c32a9ca0ad13c3d139a647bb9e736",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts": "4cb0f4ee413aa537c52aa26f3d892f794c66a30b29142da0ecef5923b1e29e1f",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state-contracts.ts": "91cfa47bb50a0f3639d0667866ce672512b78a1b9f05838e687d7d355afa3bc4",
+    "services/manager-action-center/manager-action-center.service.ts": "678a321e4266fa49e6b73d8dacf6b28553d9786aa867afdb896bb76d8e6c55ae",
+    "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx": "6ea265b88e3ab868b6ccaff873e847b89d8640c4b9670ef28d088c8091fbba0f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "aa890a14119fbb495ef6a694caae72181bdcaf495f1a0aaac8ba8e07be803fc2",
+    "services/reconciliation/reconciliation-sign-review.contracts.ts": "df2299715cd83c1e0f35968953160b04fb1754aca297c0812fce7b24f14eabac",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "93879e25f6644ef8ed8696ccc63fc14c5ac45cb6eb2b2423e3cddcc8a2f8836e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "573ed626ac299b5d727d5590261fb0ef4828bbc48bd84efe2ec7e072a6ac52b0",
+    "messages/en.json": "3c03e9900a598e174aba8eaaf879af708af8d0312eba7ca7e93720f8b6d31d9d",
+    "messages/fr.json": "daee10cd79fc62be7a74387c4b3a536aabbbfef9a17eae1e59bfb9fd0cc8274b"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "manager-sign-v117-en-review-320-01c79679-b20.png",
+        "manager-sign-v117-en-review-768-01c79679-b20.png",
+        "manager-sign-v117-en-review-1440-01c79679-b20.png",
+        "manager-sign-v117-en-signed-320-01c79679-b20.png",
+        "manager-sign-v117-en-export-320-01c79679-b20.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789297163582 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ],
+      "routeLoadMs": 8564,
+      "browserReadOnlyDenied": true,
+      "serviceMakerAndTenantDenied": true,
+      "retainedPreparerDenied": true,
+      "managerLoadMs": 58961,
+      "managerHandoff": true,
+      "actualCommittedResponseLoss": true,
+      "passwordReloadAndBoundSignature": true,
+      "actualDownload": {
+        "fileName": "recon-cert-cmtzpazmv002umascjix6l2je-362263b143b0-7959af4b-69e9-4b43-aae7-228be5241977.json",
+        "sha256": "17ec6e16dbebe91fea69b1ea39672d7e2c70bdda8dedbb4fe228faedbc296bd0",
+        "receiptId": "7959af4b-69e9-4b43-aae7-228be5241977"
+      },
+      "financialUnchanged": true,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "manager-sign-v117-fr-review-320-01c79679-b20.png",
+        "manager-sign-v117-fr-review-768-01c79679-b20.png",
+        "manager-sign-v117-fr-review-1440-01c79679-b20.png",
+        "manager-sign-v117-fr-signed-320-01c79679-b20.png",
+        "manager-sign-v117-fr-export-320-01c79679-b20.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789297279469 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ],
+      "routeLoadMs": 7210,
+      "browserReadOnlyDenied": true,
+      "serviceMakerAndTenantDenied": true,
+      "retainedPreparerDenied": true,
+      "managerLoadMs": 5382,
+      "managerHandoff": true,
+      "actualCommittedResponseLoss": true,
+      "passwordReloadAndBoundSignature": true,
+      "actualDownload": {
+        "fileName": "recon-cert-cmtzpe4pj008emasclsgeslk4-b4af5a63bc9e-65d7aebf-24f5-4d68-9e62-f7e75afc8db7.json",
+        "sha256": "a0ab135a93f1c27fdbf62d1ef2c6b38e9efda3348cb60b285e4f86ec3b3cbffd",
+        "receiptId": "65d7aebf-24f5-4d68-9e62-f7e75afc8db7"
+      },
+      "financialUnchanged": true,
+      "passed": true
+    }
+  ],
+  "scope": "Owned real EN/FR manager entry, independent preparer denial, full review, password, deliberately lost committed response, exact retry and actual certificate download. Synthetic original provider fixture, genuine domain closure/preparation. No provider or professional approval claim.",
+  "sourcesAfter": {
+    "components/manager-action-center/PaymentReconciliationSignOffCommand.tsx": "b4f5cebab7ee6ff0d2a728f08a8454f8283c32a9ca0ad13c3d139a647bb9e736",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts": "4cb0f4ee413aa537c52aa26f3d892f794c66a30b29142da0ecef5923b1e29e1f",
+    "services/reconciliation/payment-reconciliation-sign-off-command-state-contracts.ts": "91cfa47bb50a0f3639d0667866ce672512b78a1b9f05838e687d7d355afa3bc4",
+    "services/manager-action-center/manager-action-center.service.ts": "678a321e4266fa49e6b73d8dacf6b28553d9786aa867afdb896bb76d8e6c55ae",
+    "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx": "6ea265b88e3ab868b6ccaff873e847b89d8640c4b9670ef28d088c8091fbba0f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "aa890a14119fbb495ef6a694caae72181bdcaf495f1a0aaac8ba8e07be803fc2",
+    "services/reconciliation/reconciliation-sign-review.contracts.ts": "df2299715cd83c1e0f35968953160b04fb1754aca297c0812fce7b24f14eabac",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "actions/payments/reconciliation.actions.ts": "7f6135bed3132c880e5d936fcbbae2d96bab6733c7e907e8070acee1adcde0cf",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "93879e25f6644ef8ed8696ccc63fc14c5ac45cb6eb2b2423e3cddcc8a2f8836e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "573ed626ac299b5d727d5590261fb0ef4828bbc48bd84efe2ec7e072a6ac52b0",
+    "messages/en.json": "3c03e9900a598e174aba8eaaf879af708af8d0312eba7ca7e93720f8b6d31d9d",
+    "messages/fr.json": "daee10cd79fc62be7a74387c4b3a536aabbbfef9a17eae1e59bfb9fd0cc8274b"
+  },
+  "sourceStable": true
+}

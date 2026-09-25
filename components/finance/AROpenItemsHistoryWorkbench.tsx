@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import { CalendarClock, Database, HandCoins, UserRound } from "lucide-react"
 
@@ -12,6 +13,9 @@ import {
   type TransactionHistoryKpi,
 } from "@/components/dashboard/history/TransactionHistoryWorkbenchShell"
 import { Badge } from "@/components/ui/badge"
+import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
+import { financeReceivablesHistoryTableContract } from "@/components/DataTableComponents/finance-accounting-contracts"
+import { createCanonicalTableQuery } from "@/components/DataTableComponents/table-system-contract"
 import { useAROpenItemsHistoryWorkbench } from "@/hooks/useAROpenItemsHistoryWorkbench"
 import type { AROpenItem, AROpenItemResult } from "@/services/accounting/ar-open-item.service"
 
@@ -36,12 +40,46 @@ export function AROpenItemsHistoryWorkbench() {
     exportStatus,
     isExporting,
   } = useAROpenItemsHistoryWorkbench()
-  const selectedRow = rows.find((row) => row.referenceId === selectedRowId) ?? null
+  const [search, setSearch] = useState("")
+  const [pageIndex, setPageIndex] = useState(0)
+  const loadedRows = result?.items ?? rows
+  const filteredRows = loadedRows.filter((row) => [
+    row.documentNumber, row.customerName, formatDate(row.dueDate, locale), row.status, row.currency,
+    formatMoney(row.openingAmount, locale, row.currency), formatMoney(row.openAmount, locale, row.currency), row.evidenceGrade,
+  ].join(" ").toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()))
+  const currentPage = Math.min(pageIndex, Math.max(0, Math.ceil(filteredRows.length / filters.pageSize) - 1))
+  const visibleRows = filteredRows.slice(currentPage * filters.pageSize, (currentPage + 1) * filters.pageSize)
+  const selectedRow = loadedRows.find((row) => row.referenceId === selectedRowId) ?? null
   const exportStatusLabel = exportStatus === "ready" ? t("exportStatus.ready") : exportStatus
+  const canonicalQuery = createCanonicalTableQuery(financeReceivablesHistoryTableContract, {
+    search,
+    filters: filters.dateTo ? { asOf: [filters.dateTo] } : {},
+    sort: [{ id: "dueDate", desc: false }],
+    pageIndex: currentPage,
+    pageSize: filters.pageSize,
+  })
+  const canonicalState = isError
+    ? "error"
+    : isLoading && rows.length === 0
+      ? "loading"
+      : filteredRows.length === 0
+        ? search || filters.dateTo
+          ? "no-results"
+          : "empty"
+        : isLoading
+          ? "refreshing"
+          : "ready"
 
   return (
-    <TransactionHistoryWorkbenchShell
+    <CanonicalTableBoundary
+      contract={financeReceivablesHistoryTableContract}
       locale={locale === "fr" ? "fr" : "en"}
+      query={canonicalQuery}
+      state={canonicalState}
+    >
+      <TransactionHistoryWorkbenchShell
+        tableVariant="system"
+        locale={locale === "fr" ? "fr" : "en"}
       labels={{
         eyebrow: t("eyebrow"),
         title: t("title"),
@@ -82,12 +120,12 @@ export function AROpenItemsHistoryWorkbench() {
         mobileCardAction: t("table.mobileCardAction"),
         resultCount: (count) => t("table.resultCount", { count }),
       }}
-      filters={filters}
+      filters={{ ...filters, search }}
       typeOptions={[]}
       kpis={buildKpis(result, t, locale)}
       actionItems={[]}
       columns={buildColumns(t, locale)}
-      rows={rows}
+      rows={visibleRows}
       rowIdentity={{
         id: (row) => row.referenceId,
         title: (row) => row.orderNumber ?? row.referenceId,
@@ -105,16 +143,24 @@ export function AROpenItemsHistoryWorkbench() {
       renderDrawer={(row) => <ARDrawer row={row} locale={locale} t={t} />}
       selectedRow={selectedRow}
       selectedRowId={selectedRowId}
-      onFilterChange={(patch) => updateFilters(mapPatch(patch))}
-      onResetFilters={resetFilters}
+      onFilterChange={(patch) => {
+        setPageIndex(0)
+        if ("search" in patch) setSearch(patch.search ?? "")
+        if ("dateTo" in patch || "pageSize" in patch) updateFilters(mapPatch(patch))
+      }}
+      onResetFilters={() => { setSearch(""); setPageIndex(0); resetFilters() }}
       onSelectRow={selectRow}
-      onNextPage={() => undefined}
+      pageIndex={currentPage}
+      canPreviousPage={currentPage > 0}
+      onFirstPage={() => setPageIndex(0)}
+      onPreviousPage={() => setPageIndex(Math.max(0, currentPage - 1))}
+      onNextPage={() => setPageIndex(currentPage + 1)}
       onRetry={() => refetch()}
       onExport={exportHistory}
       isLoading={isLoading}
       isError={isError}
       errorMessage={error instanceof Error ? error.message : undefined}
-      hasMore={false}
+      hasMore={(currentPage + 1) * filters.pageSize < filteredRows.length}
       isPartial={false}
       isExporting={isExporting}
       exportStatus={exportStatusLabel}
@@ -122,7 +168,8 @@ export function AROpenItemsHistoryWorkbench() {
         { label: t("snapshot.asOf"), value: formatDate(result?.asOf, locale), icon: CalendarClock },
         { label: t("snapshot.recordedThrough"), value: formatDate(result?.recordedThrough, locale), icon: Database },
       ]}
-    />
+      />
+    </CanonicalTableBoundary>
   )
 }
 
@@ -183,19 +230,20 @@ function buildKpis(result: AROpenItemResult | undefined, t: ARHistoryT, locale: 
 
 function buildColumns(t: ARHistoryT, locale: string): TransactionHistoryColumn<AROpenItem>[] {
   return [
-    { id: "customer", header: t("table.customer"), cell: (row) => row.customerName },
-    { id: "reference", header: t("table.reference"), cell: (row) => row.orderNumber ?? row.referenceId },
-    { id: "currency", header: t("table.currency"), cell: (row) => row.currency },
-    { id: "opened", header: t("table.opened"), cell: (row) => formatMoney(row.openingAmount, locale, row.currency) },
-    { id: "allocated", header: t("table.allocated"), cell: (row) => formatMoney(row.allocatedAmount, locale, row.currency) },
-    { id: "open", header: t("table.open"), cell: (row) => formatMoney(row.openAmount, locale, row.currency) },
+    { id: "documentNumber", header: t("table.reference"), cell: (row) => row.documentNumber },
+    { id: "counterparty", header: t("table.customer"), cell: (row) => row.customerName },
+    { id: "dueDate", header: t("drawer.dueDate"), cell: (row) => formatDate(row.dueDate, locale) },
     { id: "status", header: t("table.status"), cell: (row) => <StateBadge state={row.status} /> },
+    { id: "currency", header: t("table.currency"), cell: (row) => row.currency },
+    { id: "amount", header: t("table.opened"), cell: (row) => formatMoney(row.openingAmount, locale, row.currency) },
+    { id: "balance", header: t("table.open"), cell: (row) => formatMoney(row.openAmount, locale, row.currency) },
+    { id: "evidence", header: t("drawer.evidenceGrade"), cell: (row) => row.evidenceGrade },
   ]
 }
 
 function mapPatch(patch: Partial<TransactionHistoryFilters>) {
   return {
-    ...(patch.dateTo !== undefined ? { dateTo: patch.dateTo } : {}),
+    ...("dateTo" in patch ? { dateTo: patch.dateTo } : {}),
     ...(patch.pageSize !== undefined ? { pageSize: patch.pageSize } : {}),
     selected: undefined,
   }

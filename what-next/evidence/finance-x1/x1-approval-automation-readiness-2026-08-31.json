@@ -1,0 +1,698 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-01T15:19:01.274Z",
+  "mode": "report",
+  "status": "BLOCKED_AWAITING_EXTERNAL_CONFIGURATION_AND_SIGNATURE",
+  "decision": "Repository automation is prepared, but authoritative record creation is blocked.",
+  "externalRecordsCreated": false,
+  "databaseMutated": false,
+  "blockers": [
+    {
+      "code": "MISSING_APPROVALPLATFORM",
+      "description": "approvalPlatform is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_APPROVALWORKSPACEID",
+      "description": "approvalWorkspaceId is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_APPROVALTEMPLATEID",
+      "description": "approvalTemplateId is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_PROVIDERADAPTERMODULE",
+      "description": "providerAdapterModule is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_IDENTITYPROVIDER",
+      "description": "identityProvider is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_GOVERNANCEREGISTERURI",
+      "description": "governanceRegisterUri is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SECRETMANAGERREFERENCE",
+      "description": "secretManagerReference is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_CALLBACKURL",
+      "description": "callbackUrl is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_EVIDENCESTOREURI",
+      "description": "evidenceStoreUri is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_RETENTIONPOLICYREFERENCE",
+      "description": "retentionPolicyReference is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SERVICEPRINCIPALS_APPROVALORCHESTRATION",
+      "description": "servicePrincipals.approvalOrchestration is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SERVICEPRINCIPALS_EVIDENCECAPTURE",
+      "description": "servicePrincipals.evidenceCapture is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SERVICEPRINCIPALS_INDEPENDENTVERIFIER",
+      "description": "servicePrincipals.independentVerifier is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SERVICEPRINCIPALS_IMPLEMENTATIONCI",
+      "description": "servicePrincipals.implementationCi is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SIGNEDDELEGATION_APPROVALRECORDID",
+      "description": "signedDelegation.approvalRecordId is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SIGNEDDELEGATION_SIGNATUREREFERENCE",
+      "description": "signedDelegation.signatureReference is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SIGNEDDELEGATION_SIGNEDARTIFACTURI",
+      "description": "signedDelegation.signedArtifactUri is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SIGNEDDELEGATION_SIGNEDARTIFACTSHA256",
+      "description": "signedDelegation.signedArtifactSha256 is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SIGNEDDELEGATION_SIGNEDAT",
+      "description": "signedDelegation.signedAt is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SIGNEDDELEGATION_EXPIRESAT",
+      "description": "signedDelegation.expiresAt is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "MISSING_SIGNEDDELEGATION_SIGNINGMODEL",
+      "description": "signedDelegation.signingModel is required.",
+      "source": "X1 approval automation configuration"
+    },
+    {
+      "code": "DELEGATION_POLICY_NOT_APPROVED",
+      "description": "STOQ-X1-POL-004 is not signed and approved in an authoritative system.",
+      "source": "Approval/e-signature system"
+    }
+  ],
+  "database": {
+    "status": "RETRIEVED_READ_ONLY",
+    "target": {
+      "safe": true,
+      "databaseName": "stoquify_replay_next_20260830"
+    },
+    "organizations": [
+      {
+        "id": "rds_org_001",
+        "name": "Wilkinson - Feeney 001",
+        "tradeName": "Stoquify",
+        "countryCode": "CM",
+        "currency": "XAF",
+        "timezone": "Africa/Douala",
+        "defaultLocale": "EN",
+        "requestedModules": [
+          "POS",
+          "Sales",
+          "Inventory",
+          "Accounting",
+          "Finance",
+          "Payment reconciliation",
+          "Payroll",
+          "Compliance"
+        ],
+        "isActive": true
+      },
+      {
+        "id": "rds_org_002",
+        "name": "McDermott, Greenholt and Johnson 002",
+        "tradeName": "AqStoq Market 002",
+        "countryCode": "CM",
+        "currency": "XAF",
+        "timezone": "Africa/Douala",
+        "defaultLocale": "FR",
+        "requestedModules": [
+          "POS",
+          "Sales",
+          "Inventory",
+          "Accounting",
+          "Finance",
+          "Payment reconciliation",
+          "Payroll",
+          "Compliance"
+        ],
+        "isActive": true
+      }
+    ],
+    "roles": [
+      {
+        "id": "rds_org_001_compliance_role_external_accountant",
+        "code": "external_accountant",
+        "nameEn": "External Accountant",
+        "nameFr": "Comptable externe",
+        "description": "Read-only external finance review. Export is limited to server-finalized, audited and redacted financial reports. Posting, editing, approving, deleting, reversing and period close or reopen are prohibited. Synthetic development RBAC coverage only; this row is not a statutory appointment, signature, qualification, or production authorization.",
+        "permissions": [
+          "FINANCIAL_READ",
+          "FINANCIAL_DASHBOARD_ACCESS",
+          "CUSTOMER_RECEIVABLES_READ",
+          "CUSTOMER_AGING_REPORT",
+          "SUPPLIER_PAYABLES_READ",
+          "CASH_FLOW_READ",
+          "CASH_POSITION_READ",
+          "CASH_PROJECTIONS_READ",
+          "FINANCIAL_REPORTS_READ",
+          "FINANCIAL_REPORTS_EXPORT",
+          "FINANCIAL_ALERTS_READ",
+          "FINANCIAL_KPI_READ",
+          "FINANCE_READ",
+          "VIEW_FINANCIAL_REPORTS",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "VIEW_GENERAL_LEDGER",
+          "VIEW_CHART_OF_ACCOUNTS",
+          "VIEW_JOURNAL_ENTRIES",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "VIEW_FINANCIAL_AUDIT_TRAIL",
+          "VIEW_COMPLIANCE_STATUS",
+          "VIEW_CASH_MANAGEMENT"
+        ],
+        "users": [
+          {
+            "id": "rds_org_001_compliance_user_external_accountant",
+            "name": "Carine Manga",
+            "accountIdentifier": "external.accountant.rds-org001@stockflow.test"
+          }
+        ]
+      },
+      {
+        "id": "rds_org_001_compliance_role_owner",
+        "code": "owner",
+        "nameEn": "Owner",
+        "nameFr": "Proprietaire",
+        "description": "Synthetic tenant owner for authenticated non-production control testing. Synthetic development RBAC coverage only; this row is not a statutory appointment, signature, qualification, or production authorization.",
+        "permissions": [
+          "*",
+          "MANAGE_ORGANIZATION",
+          "VIEW_ORGANIZATION_SETTINGS",
+          "CREATE_USERS",
+          "READ_USERS",
+          "UPDATE_USERS",
+          "DELETE_USERS",
+          "DEACTIVATE_USERS",
+          "CREATE_ROLES",
+          "READ_ROLES",
+          "UPDATE_ROLES",
+          "DELETE_ROLES",
+          "ASSIGN_ROLES",
+          "CREATE_LOCATIONS",
+          "READ_LOCATIONS",
+          "UPDATE_LOCATIONS",
+          "DELETE_LOCATIONS",
+          "MANAGE_LOCATION_SETTINGS",
+          "CREATE_ITEMS",
+          "READ_ITEMS",
+          "UPDATE_ITEMS",
+          "DELETE_ITEMS",
+          "MANAGE_INVENTORY_LEVELS",
+          "VIEW_INVENTORY_REPORTS",
+          "CREATE_CATEGORIES",
+          "READ_CATEGORIES",
+          "UPDATE_CATEGORIES",
+          "DELETE_CATEGORIES",
+          "CREATE_BRANDS",
+          "BRANDS_READ",
+          "UPDATE_BRANDS",
+          "DELETE_BRANDS",
+          "CREATE_UNITS",
+          "UNITS_READ",
+          "UPDATE_UNITS",
+          "DELETE_UNITS",
+          "STOCK_READ",
+          "SERIAL_NUMBERS_READ",
+          "TRANSFERS_READ",
+          "TRANSFERS_CREATE",
+          "ADJUSTMENTS_READ",
+          "ADJUSTMENTS_CREATE",
+          "DASHBOARD_READ",
+          "TAX_RATES_READ",
+          "CREATE_TAX_RATES",
+          "UPDATE_TAX_RATES",
+          "DELETE_TAX_RATES",
+          "PROFILE_READ",
+          "COMPANY_READ",
+          "PASSWORD_READ",
+          "RETURNS_READ",
+          "ORDERS_READ",
+          "BLOGS_READ",
+          "FINANCIAL_READ",
+          "FINANCIAL_DASHBOARD_ACCESS",
+          "CUSTOMER_RECEIVABLES_READ",
+          "CUSTOMER_RECEIVABLES_MANAGE",
+          "CUSTOMER_PAYMENTS_PROCESS",
+          "CUSTOMER_CREDIT_MANAGE",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_ANALYTICS_READ",
+          "SALES_PERFORMANCE_READ",
+          "REVENUE_REPORTS",
+          "SALES_TRENDS_READ",
+          "COST_ANALYTICS_READ",
+          "PURCHASE_ANALYTICS_READ",
+          "COMMERCIAL_AGENTS_READ",
+          "COMMERCIAL_AGENTS_CREATE",
+          "COMMERCIAL_AGENTS_UPDATE",
+          "COMMERCIAL_AGENTS_DELETE",
+          "AGENT_TRANSACTIONS_READ",
+          "AGENT_TRANSACTIONS_CREATE",
+          "AGENT_TRANSACTIONS_RECONCILE",
+          "AGENT_SETTLEMENTS_READ",
+          "AGENT_SETTLEMENTS_CREATE",
+          "INVENTORY_COST_READ",
+          "SUPPLIER_PAYMENTS_READ",
+          "SUPPLIER_PAYMENTS_MANAGE",
+          "SUPPLIER_PAYABLES_READ",
+          "PROFIT_ANALYTICS_READ",
+          "PROFITABILITY_ANALYTICS_READ",
+          "MARGIN_ANALYSIS_READ",
+          "PROFITABILITY_REPORTS",
+          "BREAK_EVEN_ANALYSIS",
+          "CASH_FLOW_READ",
+          "CASH_POSITION_READ",
+          "CASH_PROJECTIONS_READ",
+          "FINANCIAL_REPORTS_READ",
+          "FINANCIAL_REPORTS_EXPORT",
+          "FINANCIAL_ALERTS_READ",
+          "FINANCIAL_KPI_READ",
+          "ANALYTICS_READ",
+          "FINANCE_READ",
+          "CASH_DRAWER_READ",
+          "CASH_SYSTEM_READ",
+          "NEW_POS_SESSION_READ",
+          "POS_STATION_READ",
+          "SESSION_POS_SYNC_READ",
+          "PURCHASE_ORDER_WORKFLOW_READ",
+          "RECENT_INVENTORY_READ",
+          "ADMIN_READ",
+          "SUPPLIERS_SYSTEM_READ",
+          "CREATE_PURCHASE_ORDERS",
+          "READ_PURCHASE_ORDERS",
+          "UPDATE_PURCHASE_ORDERS",
+          "DELETE_PURCHASE_ORDERS",
+          "APPROVE_PURCHASE_ORDERS",
+          "VIEW_PURCHASE_REPORTS",
+          "CREATE_SALES_ORDERS",
+          "READ_SALES_ORDERS",
+          "UPDATE_SALES_ORDERS",
+          "DELETE_SALES_ORDERS",
+          "PROCESS_SALES",
+          "VIEW_SALES_REPORTS",
+          "CREATE_STOCK_ADJUSTMENTS",
+          "APPROVE_STOCK_ADJUSTMENTS",
+          "CREATE_STOCK_TRANSFERS",
+          "APPROVE_STOCK_TRANSFERS",
+          "PURCHASES_ORDERS_RECEIVE",
+          "CREATE_SUPPLIERS",
+          "READ_SUPPLIERS",
+          "UPDATE_SUPPLIERS",
+          "DELETE_SUPPLIERS",
+          "CREATE_CUSTOMERS",
+          "READ_CUSTOMERS",
+          "UPDATE_CUSTOMERS",
+          "DELETE_CUSTOMERS",
+          "OPERATE_POS",
+          "MANAGE_POS_SESSIONS",
+          "MANAGE_CASH_DRAWER",
+          "PROCESS_PAYMENTS",
+          "PROCESS_REFUNDS",
+          "VIEW_POS_REPORTS",
+          "VIEW_FINANCIAL_REPORTS",
+          "VIEW_ANALYTICS",
+          "EXPORT_DATA",
+          "VIEW_INCOME_STATEMENT",
+          "VIEW_BALANCE_SHEET",
+          "VIEW_CASH_FLOW_STATEMENT",
+          "GENERATE_FINANCIAL_STATEMENTS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "PUBLISH_FINANCIAL_STATEMENTS",
+          "VIEW_GENERAL_LEDGER",
+          "VIEW_CHART_OF_ACCOUNTS",
+          "CREATE_JOURNAL_ENTRIES",
+          "VIEW_JOURNAL_ENTRIES",
+          "APPROVE_JOURNAL_ENTRIES",
+          "POST_JOURNAL_ENTRIES",
+          "REVERSE_JOURNAL_ENTRIES",
+          "VIEW_FINANCIAL_RATIOS",
+          "VIEW_FINANCIAL_TRENDS",
+          "VIEW_FINANCIAL_FORECASTS",
+          "GENERATE_FINANCIAL_FORECASTS",
+          "VIEW_DUPONT_ANALYSIS",
+          "VIEW_BUDGETS",
+          "CREATE_BUDGETS",
+          "APPROVE_BUDGETS",
+          "VIEW_BUDGET_VARIANCE",
+          "VIEW_FINANCIAL_AUDIT_TRAIL",
+          "VIEW_COMPLIANCE_STATUS",
+          "MANAGE_FINANCIAL_CONTROLS",
+          "PERFORM_SOX_TESTING",
+          "CONFIGURE_FINANCIAL_SYSTEM",
+          "MANAGE_FINANCIAL_PERMISSIONS",
+          "VIEW_FINANCIAL_DASHBOARD",
+          "MANAGE_FINANCIAL_PERIODS",
+          "CLOSE_FINANCIAL_PERIODS",
+          "VIEW_CASH_MANAGEMENT",
+          "MANAGE_CASH_TRANSACTIONS",
+          "MANAGE_SYSTEM_SETTINGS",
+          "VIEW_AUDIT_LOGS",
+          "MANAGE_INTEGRATIONS",
+          "hris.self_service.read",
+          "hris.self_service.request",
+          "hris.people.read",
+          "hris.people.manage",
+          "PAYROLL_READ",
+          "PAYROLL_CREATE",
+          "PAYROLL_UPDATE",
+          "PAYROLL_DELETE",
+          "PAYROLL_PROCESS",
+          "PAYROLL_APPROVE",
+          "PAYROLL_REPORTS_READ",
+          "PAYROLL_ANALYTICS_READ",
+          "EMPLOYEE_SALARY_READ",
+          "EMPLOYEE_SALARY_UPDATE",
+          "PAYROLL_EXPORT",
+          "PRESENCE_READ",
+          "PRESENCE_CLOCK",
+          "PRESENCE_REPORTS_READ",
+          "PRESENCE_ALERTS_READ",
+          "PRESENCE_TEAM_READ",
+          "VIEW_OWN_PRESENCE",
+          "CLOCK_IN_OUT",
+          "MANAGE_OWN_BREAKS",
+          "VIEW_OWN_SCHEDULE",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_OWN_PRESENCE_ALERTS",
+          "VIEW_TEAM_PRESENCE",
+          "VIEW_TEAM_OVERVIEW",
+          "MANAGE_TEAM_ALERTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_PRESENCE_ALERTS",
+          "RESOLVE_PRESENCE_ALERTS",
+          "VIEW_SCHEDULES",
+          "CREATE_SCHEDULES",
+          "UPDATE_SCHEDULES",
+          "DELETE_SCHEDULES",
+          "MANAGE_ALL_SCHEDULES",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "MANAGE_ATTENDANCE_REPORTS",
+          "OVERRIDE_CLOCK_ACTIONS",
+          "EDIT_PRESENCE_SESSIONS",
+          "EXPORT_PRESENCE_DATA",
+          "MANAGE_PRESENCE_SYSTEM_SETTINGS",
+          "MANAGE_ALL_PRESENCE_ALERTS"
+        ],
+        "users": [
+          {
+            "id": "rds_org_001_compliance_user_owner",
+            "name": "Mireille Nkoa",
+            "accountIdentifier": "owner.rds-org001@stockflow.test"
+          }
+        ]
+      },
+      {
+        "id": "rds_org_001_compliance_role_product_approver",
+        "code": "product_approver",
+        "nameEn": "Product Approver",
+        "nameFr": "Approbateur produit",
+        "description": "Development product approval persona; no signature or production approval is implied. Synthetic development RBAC coverage only; this row is not a statutory appointment, signature, qualification, or production authorization.",
+        "permissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_ANALYTICS_READ",
+          "REVENUE_REPORTS",
+          "COST_ANALYTICS_READ",
+          "PURCHASE_ANALYTICS_READ",
+          "PROFIT_ANALYTICS_READ",
+          "PROFITABILITY_ANALYTICS_READ",
+          "PROFITABILITY_REPORTS",
+          "FINANCIAL_REPORTS_READ",
+          "FINANCIAL_REPORTS_EXPORT",
+          "ANALYTICS_READ",
+          "APPROVE_PURCHASE_ORDERS",
+          "VIEW_PURCHASE_REPORTS",
+          "VIEW_SALES_REPORTS",
+          "APPROVE_STOCK_ADJUSTMENTS",
+          "APPROVE_STOCK_TRANSFERS",
+          "VIEW_POS_REPORTS",
+          "VIEW_FINANCIAL_REPORTS",
+          "VIEW_ANALYTICS",
+          "APPROVE_FINANCIAL_STATEMENTS",
+          "APPROVE_JOURNAL_ENTRIES",
+          "APPROVE_BUDGETS",
+          "PAYROLL_APPROVE",
+          "PAYROLL_REPORTS_READ",
+          "PAYROLL_ANALYTICS_READ",
+          "PRESENCE_REPORTS_READ",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "MANAGE_ATTENDANCE_REPORTS"
+        ],
+        "users": [
+          {
+            "id": "rds_org_001_compliance_user_product_approver",
+            "name": "Kouatchoua Mark",
+            "accountIdentifier": "product.approver.rds-org001@stockflow.test"
+          }
+        ]
+      },
+      {
+        "id": "rds_org_001_compliance_role_qa_owner",
+        "code": "qa_owner",
+        "nameEn": "QA Owner",
+        "nameFr": "Responsable qualite",
+        "description": "Quality and support-matrix evidence persona. Synthetic development RBAC coverage only; this row is not a statutory appointment, signature, qualification, or production authorization.",
+        "permissions": [
+          "VIEW_INVENTORY_REPORTS",
+          "CUSTOMER_AGING_REPORT",
+          "SALES_ANALYTICS_READ",
+          "REVENUE_REPORTS",
+          "COST_ANALYTICS_READ",
+          "PURCHASE_ANALYTICS_READ",
+          "PROFIT_ANALYTICS_READ",
+          "PROFITABILITY_ANALYTICS_READ",
+          "PROFITABILITY_REPORTS",
+          "FINANCIAL_REPORTS_READ",
+          "FINANCIAL_REPORTS_EXPORT",
+          "ANALYTICS_READ",
+          "VIEW_PURCHASE_REPORTS",
+          "VIEW_SALES_REPORTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_FINANCIAL_REPORTS",
+          "VIEW_ANALYTICS",
+          "VIEW_FINANCIAL_AUDIT_TRAIL",
+          "VIEW_AUDIT_LOGS",
+          "PAYROLL_REPORTS_READ",
+          "PAYROLL_ANALYTICS_READ",
+          "PRESENCE_REPORTS_READ",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "MANAGE_ATTENDANCE_REPORTS"
+        ],
+        "users": [
+          {
+            "id": "rds_org_001_compliance_user_qa_owner",
+            "name": "Sonkeng Steve",
+            "accountIdentifier": "qa.owner.rds-org001@stockflow.test"
+          }
+        ]
+      },
+      {
+        "id": "rds_org_001_compliance_role_security_owner",
+        "code": "security_owner",
+        "nameEn": "Security Owner",
+        "nameFr": "Responsable securite",
+        "description": "Security governance persona; administrator access alone does not establish authority. Synthetic development RBAC coverage only; this row is not a statutory appointment, signature, qualification, or production authorization.",
+        "permissions": [
+          "READ_USERS",
+          "READ_ROLES",
+          "VIEW_FINANCIAL_AUDIT_TRAIL",
+          "VIEW_COMPLIANCE_STATUS",
+          "VIEW_AUDIT_LOGS"
+        ],
+        "users": [
+          {
+            "id": "rds_org_001_compliance_user_security_owner",
+            "name": "Yonga Springfield",
+            "accountIdentifier": "security.owner.rds-org001@stockflow.test"
+          }
+        ]
+      },
+      {
+        "id": "rds_org_001_compliance_role_sre_owner",
+        "code": "sre_owner",
+        "nameEn": "SRE Owner",
+        "nameFr": "Responsable fiabilite",
+        "description": "Reliability, SLO and error-budget ownership persona. Synthetic development RBAC coverage only; this row is not a statutory appointment, signature, qualification, or production authorization.",
+        "permissions": [
+          "VIEW_ORGANIZATION_SETTINGS",
+          "VIEW_INVENTORY_REPORTS",
+          "CUSTOMER_AGING_REPORT",
+          "REVENUE_REPORTS",
+          "PROFITABILITY_REPORTS",
+          "FINANCIAL_REPORTS_READ",
+          "FINANCIAL_REPORTS_EXPORT",
+          "VIEW_PURCHASE_REPORTS",
+          "VIEW_SALES_REPORTS",
+          "VIEW_POS_REPORTS",
+          "VIEW_FINANCIAL_REPORTS",
+          "VIEW_FINANCIAL_AUDIT_TRAIL",
+          "VIEW_AUDIT_LOGS",
+          "PAYROLL_REPORTS_READ",
+          "PRESENCE_REPORTS_READ",
+          "VIEW_OWN_ATTENDANCE_REPORTS",
+          "VIEW_TEAM_ATTENDANCE_REPORTS",
+          "VIEW_ORG_ATTENDANCE_REPORTS",
+          "GENERATE_ATTENDANCE_REPORTS",
+          "MANAGE_ATTENDANCE_REPORTS"
+        ],
+        "users": [
+          {
+            "id": "rds_org_001_compliance_user_sre_owner",
+            "name": "Ronald Djakou",
+            "accountIdentifier": "sre.owner.rds-org001@stockflow.test"
+          }
+        ]
+      }
+    ],
+    "existingX1ActivationPackages": 0
+  },
+  "artifacts": {
+    "contractArtifactUri": "repository://stoquify/docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+    "contractManifestSha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4",
+    "checks": [
+      {
+        "artifact": "components/DataTableComponents/table-system-contract.ts",
+        "expectedSha256": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2",
+        "actualSha256": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2",
+        "valid": true
+      },
+      {
+        "artifact": "components/DataTableComponents/finance-accounting-contracts.ts",
+        "expectedSha256": "15f33ee14c2039e2c924707d1fbf053e5d0400a88f742e5d08d9741f8cc44f9b",
+        "actualSha256": "15f33ee14c2039e2c924707d1fbf053e5d0400a88f742e5d08d9741f8cc44f9b",
+        "valid": true
+      },
+      {
+        "artifact": "components/DataTableComponents/next-phase-contracts.ts",
+        "expectedSha256": "825bee313616523f0b96992d1fd8c85d9619e149a4eaeb9e686fd3d9a7d2f633",
+        "actualSha256": "825bee313616523f0b96992d1fd8c85d9619e149a4eaeb9e686fd3d9a7d2f633",
+        "valid": true
+      },
+      {
+        "artifact": "components/DataTableComponents/finance-x1-evidence-binding.ts",
+        "expectedSha256": "3114dec10ee0fbcd84af7e217434b48d16ad4ae86fa3901eebb4fc993eb94d40",
+        "actualSha256": "3114dec10ee0fbcd84af7e217434b48d16ad4ae86fa3901eebb4fc993eb94d40",
+        "valid": true
+      },
+      {
+        "artifact": "docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+        "expectedSha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4",
+        "actualSha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4",
+        "valid": true
+      },
+      {
+        "artifact": "docs/blockers-docs/STOQ-X1-POL-001_PRODUCT_PERFORMANCE_BUDGET_DELEGATION_DRAFT.docx",
+        "expectedSha256": "ea1873b12e8d6070ebbc19f9cadb3c8b02080003e71facbe05c4cf29d62514e2",
+        "actualSha256": "ea1873b12e8d6070ebbc19f9cadb3c8b02080003e71facbe05c4cf29d62514e2",
+        "valid": true
+      },
+      {
+        "artifact": "docs/blockers-docs/STOQ-X1-POL-002_NONPRODUCTION_CREDENTIAL_TENANT_EVIDENCE_DELEGATION_DRAFT.docx",
+        "expectedSha256": "add6694ba90b62742fa6bb44224a98bc6c8d61d9332595f5b0eebd6c33da3728",
+        "actualSha256": "add6694ba90b62742fa6bb44224a98bc6c8d61d9332595f5b0eebd6c33da3728",
+        "valid": true
+      },
+      {
+        "artifact": "docs/blockers-docs/STOQ-X1-POL-003_TECHNICAL_EVIDENCE_GATE_PROMOTION_DELEGATION_DRAFT.docx",
+        "expectedSha256": "e40b1d069cc77a5788a6eb5c2635622ecbeabc90776ab712dfefb9f57b882b25",
+        "actualSha256": "e40b1d069cc77a5788a6eb5c2635622ecbeabc90776ab712dfefb9f57b882b25",
+        "valid": true
+      },
+      {
+        "artifact": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+        "expectedSha256": "74d494820edecab96e53e4b3e083bd1628ab008b958a9631ba393fa617dcae9c",
+        "actualSha256": "74d494820edecab96e53e4b3e083bd1628ab008b958a9631ba393fa617dcae9c",
+        "valid": true
+      },
+      {
+        "artifact": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.pdf",
+        "expectedSha256": "7d18c51746e6a8b9aef4a140b7987747b44e7fd1a731704d7a9afc0bfdaf7a65",
+        "actualSha256": "7d18c51746e6a8b9aef4a140b7987747b44e7fd1a731704d7a9afc0bfdaf7a65",
+        "valid": true
+      }
+    ],
+    "valid": true,
+    "policyDocuments": [
+      {
+        "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-001_PRODUCT_PERFORMANCE_BUDGET_DELEGATION_DRAFT.docx",
+        "path": "docs/blockers-docs/STOQ-X1-POL-001_PRODUCT_PERFORMANCE_BUDGET_DELEGATION_DRAFT.docx",
+        "sha256": "ea1873b12e8d6070ebbc19f9cadb3c8b02080003e71facbe05c4cf29d62514e2",
+        "artifactType": "unsigned-policy-docx"
+      },
+      {
+        "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-002_NONPRODUCTION_CREDENTIAL_TENANT_EVIDENCE_DELEGATION_DRAFT.docx",
+        "path": "docs/blockers-docs/STOQ-X1-POL-002_NONPRODUCTION_CREDENTIAL_TENANT_EVIDENCE_DELEGATION_DRAFT.docx",
+        "sha256": "add6694ba90b62742fa6bb44224a98bc6c8d61d9332595f5b0eebd6c33da3728",
+        "artifactType": "unsigned-policy-docx"
+      },
+      {
+        "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-003_TECHNICAL_EVIDENCE_GATE_PROMOTION_DELEGATION_DRAFT.docx",
+        "path": "docs/blockers-docs/STOQ-X1-POL-003_TECHNICAL_EVIDENCE_GATE_PROMOTION_DELEGATION_DRAFT.docx",
+        "sha256": "e40b1d069cc77a5788a6eb5c2635622ecbeabc90776ab712dfefb9f57b882b25",
+        "artifactType": "unsigned-policy-docx"
+      }
+    ],
+    "delegationArtifacts": [
+      {
+        "path": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+        "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+        "mediaType": "text/markdown",
+        "byteLength": 13585,
+        "sha256": "74d494820edecab96e53e4b3e083bd1628ab008b958a9631ba393fa617dcae9c"
+      },
+      {
+        "path": "docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.pdf",
+        "uri": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.pdf",
+        "mediaType": "application/pdf",
+        "byteLength": 107695,
+        "sha256": "7d18c51746e6a8b9aef4a140b7987747b44e7fd1a731704d7a9afc0bfdaf7a65"
+      }
+    ]
+  },
+  "safeNextAction": "Complete the non-secret configuration, sign POL-004, and add the approved provider adapter."
+}

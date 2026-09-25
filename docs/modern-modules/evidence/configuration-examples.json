@@ -1,0 +1,629 @@
+{
+  "retailer": {
+    "name": {
+      "en": "Neighbourhood retailer",
+      "fr": "Commerce de proximité"
+    },
+    "organization": {
+      "en": "Marché Amani",
+      "fr": "Marché Amani"
+    },
+    "selected": [
+      "inventory",
+      "sales",
+      "pos",
+      "cash_drawer"
+    ],
+    "goal": {
+      "en": "Sell confidently. Keep stock and cash in step.",
+      "fr": "Vendre sereinement. Relier stocks et trésorerie."
+    },
+    "plan": {
+      "requested": [
+        "inventory",
+        "sales",
+        "pos",
+        "cash_drawer"
+      ],
+      "resolved": [
+        "platform",
+        "ledger_core",
+        "inventory",
+        "sales",
+        "pos",
+        "finance",
+        "cash_drawer"
+      ],
+      "automatic": [
+        "platform",
+        "ledger_core",
+        "finance"
+      ],
+      "reasons": {
+        "platform": [
+          "inventory",
+          "ledger_core",
+          "sales",
+          "finance"
+        ],
+        "ledger_core": [
+          "inventory",
+          "sales",
+          "finance"
+        ],
+        "sales": [
+          "pos"
+        ],
+        "inventory": [
+          "pos"
+        ],
+        "pos": [
+          "cash_drawer"
+        ],
+        "finance": [
+          "cash_drawer"
+        ]
+      },
+      "edges": [
+        {
+          "from": "inventory",
+          "to": "platform"
+        },
+        {
+          "from": "inventory",
+          "to": "ledger_core"
+        },
+        {
+          "from": "ledger_core",
+          "to": "platform"
+        },
+        {
+          "from": "sales",
+          "to": "platform"
+        },
+        {
+          "from": "sales",
+          "to": "ledger_core"
+        },
+        {
+          "from": "pos",
+          "to": "sales"
+        },
+        {
+          "from": "pos",
+          "to": "inventory"
+        },
+        {
+          "from": "cash_drawer",
+          "to": "pos"
+        },
+        {
+          "from": "cash_drawer",
+          "to": "finance"
+        },
+        {
+          "from": "finance",
+          "to": "platform"
+        },
+        {
+          "from": "finance",
+          "to": "ledger_core"
+        }
+      ],
+      "issues": [],
+      "compatible": true,
+      "quoteRequired": [
+        "inventory",
+        "sales",
+        "pos",
+        "finance",
+        "cash_drawer"
+      ],
+      "pricing": "No approved prices; quote and explicit acceptance required before purchase"
+    }
+  },
+  "wholesaler": {
+    "name": {
+      "en": "Growing wholesaler",
+      "fr": "Grossiste en croissance"
+    },
+    "organization": {
+      "en": "Amani Distribution",
+      "fr": "Amani Distribution"
+    },
+    "selected": [
+      "inventory",
+      "sales",
+      "purchasing",
+      "finance",
+      "accounting",
+      "payment_reconciliation"
+    ],
+    "goal": {
+      "en": "Connect purchasing, stock, credit and cash.",
+      "fr": "Relier achats, stocks, crédit et trésorerie."
+    },
+    "plan": {
+      "requested": [
+        "inventory",
+        "sales",
+        "purchasing",
+        "finance",
+        "accounting",
+        "payment_reconciliation"
+      ],
+      "resolved": [
+        "platform",
+        "ledger_core",
+        "inventory",
+        "sales",
+        "purchasing",
+        "finance",
+        "accounting",
+        "payment_reconciliation"
+      ],
+      "automatic": [
+        "platform",
+        "ledger_core"
+      ],
+      "reasons": {
+        "platform": [
+          "inventory",
+          "ledger_core",
+          "sales",
+          "purchasing",
+          "finance"
+        ],
+        "ledger_core": [
+          "inventory",
+          "sales",
+          "purchasing",
+          "finance",
+          "accounting"
+        ],
+        "finance": [
+          "payment_reconciliation"
+        ],
+        "accounting": [
+          "payment_reconciliation"
+        ]
+      },
+      "edges": [
+        {
+          "from": "inventory",
+          "to": "platform"
+        },
+        {
+          "from": "inventory",
+          "to": "ledger_core"
+        },
+        {
+          "from": "ledger_core",
+          "to": "platform"
+        },
+        {
+          "from": "sales",
+          "to": "platform"
+        },
+        {
+          "from": "sales",
+          "to": "ledger_core"
+        },
+        {
+          "from": "purchasing",
+          "to": "platform"
+        },
+        {
+          "from": "purchasing",
+          "to": "ledger_core"
+        },
+        {
+          "from": "finance",
+          "to": "platform"
+        },
+        {
+          "from": "finance",
+          "to": "ledger_core"
+        },
+        {
+          "from": "accounting",
+          "to": "ledger_core"
+        },
+        {
+          "from": "payment_reconciliation",
+          "to": "finance"
+        },
+        {
+          "from": "payment_reconciliation",
+          "to": "accounting"
+        }
+      ],
+      "issues": [],
+      "compatible": true,
+      "quoteRequired": [
+        "inventory",
+        "sales",
+        "purchasing",
+        "finance",
+        "accounting",
+        "payment_reconciliation"
+      ],
+      "pricing": "No approved prices; quote and explicit acceptance required before purchase"
+    }
+  },
+  "services": {
+    "name": {
+      "en": "Service organization",
+      "fr": "Entreprise de services"
+    },
+    "organization": {
+      "en": "Atelier Conseil",
+      "fr": "Atelier Conseil"
+    },
+    "selected": [
+      "sales",
+      "finance",
+      "accounting",
+      "reports"
+    ],
+    "goal": {
+      "en": "Invoice services without an inventory workflow.",
+      "fr": "Facturer des services sans gestion de stock."
+    },
+    "plan": {
+      "requested": [
+        "sales",
+        "finance",
+        "accounting",
+        "reports"
+      ],
+      "resolved": [
+        "platform",
+        "ledger_core",
+        "sales",
+        "finance",
+        "accounting",
+        "reports"
+      ],
+      "automatic": [
+        "platform",
+        "ledger_core"
+      ],
+      "reasons": {
+        "platform": [
+          "sales",
+          "ledger_core",
+          "finance",
+          "reports"
+        ],
+        "ledger_core": [
+          "sales",
+          "finance",
+          "accounting"
+        ]
+      },
+      "edges": [
+        {
+          "from": "sales",
+          "to": "platform"
+        },
+        {
+          "from": "sales",
+          "to": "ledger_core"
+        },
+        {
+          "from": "ledger_core",
+          "to": "platform"
+        },
+        {
+          "from": "finance",
+          "to": "platform"
+        },
+        {
+          "from": "finance",
+          "to": "ledger_core"
+        },
+        {
+          "from": "accounting",
+          "to": "ledger_core"
+        },
+        {
+          "from": "reports",
+          "to": "platform"
+        }
+      ],
+      "issues": [],
+      "compatible": true,
+      "quoteRequired": [
+        "sales",
+        "finance",
+        "accounting",
+        "reports"
+      ],
+      "pricing": "No approved prices; quote and explicit acceptance required before purchase"
+    }
+  },
+  "multisite": {
+    "name": {
+      "en": "Multi-location organization",
+      "fr": "Entreprise multisite"
+    },
+    "organization": {
+      "en": "Groupe Amani",
+      "fr": "Groupe Amani"
+    },
+    "selected": [
+      "inventory",
+      "sales",
+      "pos",
+      "purchasing",
+      "finance",
+      "accounting",
+      "payment_reconciliation",
+      "hris",
+      "presence",
+      "payroll",
+      "compliance",
+      "close_assurance",
+      "analytics"
+    ],
+    "goal": {
+      "en": "Coordinate operations with shared financial and people controls.",
+      "fr": "Coordonner les opérations, les finances et les équipes."
+    },
+    "plan": {
+      "requested": [
+        "inventory",
+        "sales",
+        "pos",
+        "purchasing",
+        "finance",
+        "accounting",
+        "payment_reconciliation",
+        "hris",
+        "presence",
+        "payroll",
+        "compliance",
+        "close_assurance",
+        "analytics"
+      ],
+      "resolved": [
+        "platform",
+        "ledger_core",
+        "inventory",
+        "sales",
+        "pos",
+        "purchasing",
+        "finance",
+        "accounting",
+        "payment_reconciliation",
+        "hris",
+        "presence",
+        "payroll",
+        "compliance",
+        "close_assurance",
+        "analytics"
+      ],
+      "automatic": [
+        "platform",
+        "ledger_core"
+      ],
+      "reasons": {
+        "platform": [
+          "inventory",
+          "ledger_core",
+          "sales",
+          "purchasing",
+          "finance",
+          "hris",
+          "analytics"
+        ],
+        "ledger_core": [
+          "inventory",
+          "sales",
+          "purchasing",
+          "finance",
+          "accounting",
+          "payroll",
+          "compliance"
+        ],
+        "sales": [
+          "pos"
+        ],
+        "inventory": [
+          "pos"
+        ],
+        "finance": [
+          "payment_reconciliation"
+        ],
+        "accounting": [
+          "payment_reconciliation",
+          "close_assurance"
+        ],
+        "hris": [
+          "presence",
+          "payroll"
+        ]
+      },
+      "edges": [
+        {
+          "from": "inventory",
+          "to": "platform"
+        },
+        {
+          "from": "inventory",
+          "to": "ledger_core"
+        },
+        {
+          "from": "ledger_core",
+          "to": "platform"
+        },
+        {
+          "from": "sales",
+          "to": "platform"
+        },
+        {
+          "from": "sales",
+          "to": "ledger_core"
+        },
+        {
+          "from": "pos",
+          "to": "sales"
+        },
+        {
+          "from": "pos",
+          "to": "inventory"
+        },
+        {
+          "from": "purchasing",
+          "to": "platform"
+        },
+        {
+          "from": "purchasing",
+          "to": "ledger_core"
+        },
+        {
+          "from": "finance",
+          "to": "platform"
+        },
+        {
+          "from": "finance",
+          "to": "ledger_core"
+        },
+        {
+          "from": "accounting",
+          "to": "ledger_core"
+        },
+        {
+          "from": "payment_reconciliation",
+          "to": "finance"
+        },
+        {
+          "from": "payment_reconciliation",
+          "to": "accounting"
+        },
+        {
+          "from": "hris",
+          "to": "platform"
+        },
+        {
+          "from": "presence",
+          "to": "hris"
+        },
+        {
+          "from": "payroll",
+          "to": "hris"
+        },
+        {
+          "from": "payroll",
+          "to": "ledger_core"
+        },
+        {
+          "from": "compliance",
+          "to": "ledger_core"
+        },
+        {
+          "from": "close_assurance",
+          "to": "accounting"
+        },
+        {
+          "from": "analytics",
+          "to": "platform"
+        }
+      ],
+      "issues": [],
+      "compatible": true,
+      "quoteRequired": [
+        "inventory",
+        "sales",
+        "pos",
+        "purchasing",
+        "finance",
+        "accounting",
+        "payment_reconciliation",
+        "hris",
+        "presence",
+        "payroll",
+        "compliance",
+        "close_assurance",
+        "analytics"
+      ],
+      "pricing": "No approved prices; quote and explicit acceptance required before purchase"
+    }
+  },
+  "accountant": {
+    "name": {
+      "en": "Accountant workspace",
+      "fr": "Espace comptable"
+    },
+    "organization": {
+      "en": "Cabinet Horizon · Client A",
+      "fr": "Cabinet Horizon · Client A"
+    },
+    "selected": [
+      "accounting",
+      "close_assurance",
+      "reports"
+    ],
+    "goal": {
+      "en": "Review one authorized client at a time.",
+      "fr": "Consulter un client autorisé à la fois."
+    },
+    "plan": {
+      "requested": [
+        "accounting",
+        "close_assurance",
+        "reports"
+      ],
+      "resolved": [
+        "platform",
+        "ledger_core",
+        "accounting",
+        "close_assurance",
+        "reports"
+      ],
+      "automatic": [
+        "platform",
+        "ledger_core"
+      ],
+      "reasons": {
+        "ledger_core": [
+          "accounting"
+        ],
+        "platform": [
+          "ledger_core",
+          "reports"
+        ],
+        "accounting": [
+          "close_assurance"
+        ]
+      },
+      "edges": [
+        {
+          "from": "accounting",
+          "to": "ledger_core"
+        },
+        {
+          "from": "ledger_core",
+          "to": "platform"
+        },
+        {
+          "from": "close_assurance",
+          "to": "accounting"
+        },
+        {
+          "from": "reports",
+          "to": "platform"
+        }
+      ],
+      "issues": [],
+      "compatible": true,
+      "quoteRequired": [
+        "accounting",
+        "close_assurance",
+        "reports"
+      ],
+      "pricing": "No approved prices; quote and explicit acceptance required before purchase"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+"use strict";
+const fs = require("node:fs");
+const path = require("node:path");
+const assert = require("node:assert/strict");
+const ROOT = path.resolve(__dirname, "../../../../..");
+process.chdir(ROOT);
+const helper = require(path.join(ROOT, "scripts/modern-modules-local-verification.js"));
+const { PrismaClient } = require("@prisma/client");
+const target = helper.targetUrl();
+assert.equal(target.pathname.slice(1), helper.DATABASE_NAME);
+assert.ok(["localhost", "127.0.0.1", "::1", "[::1]"].includes(target.hostname));
+const db = new PrismaClient({ datasources: { db: { url: target.toString() } }, log: [] });
+(async () => {
+  assert.equal((await db.$queryRaw`SELECT current_database() AS name`)[0].name, helper.DATABASE_NAME);
+  const org = await db.organization.findUniqueOrThrow({ where: { id: "org_modules_legacy_en_desktop" } });
+  assert.equal(org.onboardingSource, helper.FIXTURE_SOURCE);
+  const users = await db.user.findMany({ where: { organizationId: org.id, id: { startsWith: "workflow_otp_20260905_48b21da20a_" } }, select: { id: true, isVerified: true, emailVerified: true, verificationToken: true, verificationTokenExpires: true } });
+  const identities = [];
+  for (const user of users) identities.push({ id: user.id, isVerified: user.isVerified, emailVerified: user.emailVerified, tokenPresent: Boolean(user.verificationToken), tokenExpired: Boolean(user.verificationTokenExpires && user.verificationTokenExpires < new Date()), successAuditCount: await db.auditLog.count({ where: { organizationId: org.id, userId: user.id, action: "AUTH_EMAIL_VERIFIED" } }), sessionCount: await db.session.count({ where: { userId: user.id } }) });
+  const orders = await db.purchaseOrder.findMany({ where: { organizationId: org.id, createdById: "workflow_po_20260905_f21e43788c_editor" }, select: { id: true, orderNumber: true, status: true, total: true, notes: true }, orderBy: { orderNumber: "asc" } });
+  const receipt = { checkedAt: new Date().toISOString(), readOnly: true, database: helper.DATABASE_NAME, identities, orders };
+  const file = path.join(__dirname, "browser-partial-outcomes-ef30b99c-48b21da20a.json");
+  fs.writeFileSync(file, JSON.stringify(receipt, null, 2) + "\n", { flag: "wx" });
+  console.log(JSON.stringify(receipt));
+})().catch(error => { console.error(error.name); process.exitCode = 1; }).finally(() => db.$disconnect());

@@ -1,0 +1,3258 @@
+{
+  "at": "2026-09-13T11:52:23.633Z",
+  "baseline": "evidence/source-baseline-v120.json",
+  "sources": {
+    "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "c0860ad7f3ac92b4b99956aaf57d51589e7407f70a975098c31645e10067b5e0",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "services/payments/payment-reconciliation-workbench.service.ts": "bc4bf84c6b9aa2b78c2056fd1d42c37e3a28a71d7a380fa86fdd91ba939f1939",
+    "actions/payments/reconciliation-workbench.actions.ts": "d733540a46ed1a1eb3358ce5b8c5c14bd21fbefe55e0bcb141e0319f039e47a3",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+  },
+  "tests": {
+    "distinctPassed": 57,
+    "suites": 5,
+    "beforeFailures": 6,
+    "beforeReceipt": "47540a",
+    "receipts": [
+      "e4c0d5:action2 and overlapping prior checks",
+      "4a8e0c:hooks15",
+      "258f20:root40"
+    ]
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "08ded9"
+  },
+  "lint": {
+    "passed": true,
+    "files": 5,
+    "receipt": "0803eb"
+  },
+  "beforeProfile": {
+    "file": "lanes/environment/reconciliation-profile-v120-0e286769-7b85-405a-9e85-6c876af2590c.json",
+    "receipt": "3f1cb0",
+    "at": "2026-09-13T11:35:30.305Z",
+    "sourcesBefore": {
+      "hooks/payments/usePaymentReconciliationWorkbench.ts": "382c709c44337e5e85130e6faed1e7ce87ea989194e61e2fbc3ebfae1d52b2b8",
+      "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+      "components/finance/PaymentReconciliationWorkbench.tsx": "440925e59dfe4de01310c7a16d35daf5a2a34574022df143b6bc7c5b8c99160e",
+      "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+      "services/payments/payment-reconciliation-workbench.service.ts": "bc4bf84c6b9aa2b78c2056fd1d42c37e3a28a71d7a380fa86fdd91ba939f1939",
+      "actions/payments/reconciliation-workbench.actions.ts": "5dd107a1431dc5c9b9e9635e3350e6440074870b0571d8b091515bd857b6bdab",
+      "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+    },
+    "services": [
+      {
+        "name": "durable-dashboard",
+        "iteration": 1,
+        "queries": [
+          {
+            "model": "PaymentException",
+            "operation": "count",
+            "ms": 15.39
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "findMany",
+            "ms": 131.59
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "findMany",
+            "ms": 134.64
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "count",
+            "ms": 137.42
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "count",
+            "ms": 141
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 8.53
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 8.72
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.01
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.04
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.16
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.63
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.74
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.82
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.79
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 9.88
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 10.77
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 11.01
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 11.13
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 11.18
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 11.25
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 11.84
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 11.9
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 12.01
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 12.16
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 126.72
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 130.05
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 133.88
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 190.89
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "findFirst",
+            "ms": 25.71
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "findMany",
+            "ms": 25.83
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "findMany",
+            "ms": 26.42
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "findMany",
+            "ms": 27.15
+          },
+          {
+            "model": "StatementFile",
+            "operation": "findMany",
+            "ms": 27.7
+          },
+          {
+            "model": "ProviderAccount",
+            "operation": "findMany",
+            "ms": 27.84
+          },
+          {
+            "model": "Organization",
+            "operation": "findFirst",
+            "ms": 9.19
+          },
+          {
+            "model": "TenantModuleConfiguration",
+            "operation": "findUnique",
+            "ms": 9.26
+          },
+          {
+            "model": "TenantModuleGrant",
+            "operation": "findMany",
+            "ms": 9.25
+          },
+          {
+            "model": "TenantModuleConfigurationCommand",
+            "operation": "count",
+            "ms": 5.44
+          },
+          {
+            "model": "PaymentException",
+            "operation": "findMany",
+            "ms": 15.16
+          },
+          {
+            "model": "ProviderAccount",
+            "operation": "groupBy",
+            "ms": 50.04
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "groupBy",
+            "ms": 50
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "groupBy",
+            "ms": 49.93
+          },
+          {
+            "model": "PaymentException",
+            "operation": "groupBy",
+            "ms": 49.88
+          },
+          {
+            "model": "ProviderEvent",
+            "operation": "count",
+            "ms": 49.86
+          },
+          {
+            "model": "StatementLine",
+            "operation": "count",
+            "ms": 49.86
+          }
+        ],
+        "ms": 417
+      },
+      {
+        "name": "payment-workbench",
+        "iteration": 1,
+        "queries": [
+          {
+            "model": "Organization",
+            "operation": "findFirst",
+            "ms": 9.92
+          },
+          {
+            "model": "Location",
+            "operation": "findMany",
+            "ms": 11.35
+          },
+          {
+            "model": "Payment",
+            "operation": "findMany",
+            "ms": 17.77
+          }
+        ],
+        "ms": 26
+      },
+      {
+        "name": "durable-dashboard",
+        "iteration": 2,
+        "queries": [
+          {
+            "model": "PaymentException",
+            "operation": "count",
+            "ms": 2.23
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "count",
+            "ms": 2.31
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "findMany",
+            "ms": 13.69
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "findMany",
+            "ms": 13.89
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "count",
+            "ms": 14.63
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 6.49
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.09
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 6.99
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.1
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.2
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.17
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.13
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.5
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.49
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.21
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.15
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.25
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.39
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.28
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.53
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.37
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.52
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.59
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.57
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.96
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.74
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 7.89
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 8.3
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "findMany",
+            "ms": 13.79
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "findMany",
+            "ms": 14.91
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "findMany",
+            "ms": 15.62
+          },
+          {
+            "model": "Organization",
+            "operation": "findFirst",
+            "ms": 4.72
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "findFirst",
+            "ms": 16.5
+          },
+          {
+            "model": "TenantModuleConfiguration",
+            "operation": "findUnique",
+            "ms": 2.31
+          },
+          {
+            "model": "TenantModuleGrant",
+            "operation": "findMany",
+            "ms": 2.3
+          },
+          {
+            "model": "ProviderAccount",
+            "operation": "findMany",
+            "ms": 19.63
+          },
+          {
+            "model": "TenantModuleConfigurationCommand",
+            "operation": "count",
+            "ms": 1.13
+          },
+          {
+            "model": "StatementFile",
+            "operation": "findMany",
+            "ms": 20.77
+          },
+          {
+            "model": "PaymentException",
+            "operation": "findMany",
+            "ms": 3.82
+          },
+          {
+            "model": "ProviderAccount",
+            "operation": "groupBy",
+            "ms": 39.21
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "groupBy",
+            "ms": 39.21
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "groupBy",
+            "ms": 39.18
+          },
+          {
+            "model": "PaymentException",
+            "operation": "groupBy",
+            "ms": 39.17
+          },
+          {
+            "model": "ProviderEvent",
+            "operation": "count",
+            "ms": 39.16
+          },
+          {
+            "model": "StatementLine",
+            "operation": "count",
+            "ms": 39.15
+          }
+        ],
+        "ms": 79
+      },
+      {
+        "name": "payment-workbench",
+        "iteration": 2,
+        "queries": [
+          {
+            "model": "Organization",
+            "operation": "findFirst",
+            "ms": 7.78
+          },
+          {
+            "model": "Location",
+            "operation": "findMany",
+            "ms": 7.93
+          },
+          {
+            "model": "Payment",
+            "operation": "findMany",
+            "ms": 12.85
+          }
+        ],
+        "ms": 16
+      },
+      {
+        "name": "durable-dashboard",
+        "iteration": 3,
+        "queries": [
+          {
+            "model": "SuspenseItem",
+            "operation": "findMany",
+            "ms": 2.09
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "count",
+            "ms": 2.12
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "findMany",
+            "ms": 2.32
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "count",
+            "ms": 10.36
+          },
+          {
+            "model": "PaymentException",
+            "operation": "count",
+            "ms": 11
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 3.38
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 3.7
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 3.74
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 3.8
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 3.83
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 3.99
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.07
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.25
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.36
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.43
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.5
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.63
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.67
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.73
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.74
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.79
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.86
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 5.94
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 6.02
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 6.25
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 6.29
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 6.32
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "createMany",
+            "ms": 6.57
+          },
+          {
+            "model": "ProviderAccount",
+            "operation": "findMany",
+            "ms": 11.4
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "findMany",
+            "ms": 11.76
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "findMany",
+            "ms": 12.23
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "findMany",
+            "ms": 12.32
+          },
+          {
+            "model": "StatementFile",
+            "operation": "findMany",
+            "ms": 12.48
+          },
+          {
+            "model": "PaymentReconciliationInboxItem",
+            "operation": "findFirst",
+            "ms": 13.76
+          },
+          {
+            "model": "Organization",
+            "operation": "findFirst",
+            "ms": 3.4
+          },
+          {
+            "model": "TenantModuleConfiguration",
+            "operation": "findUnique",
+            "ms": 8.28
+          },
+          {
+            "model": "TenantModuleGrant",
+            "operation": "findMany",
+            "ms": 8.26
+          },
+          {
+            "model": "TenantModuleConfigurationCommand",
+            "operation": "count",
+            "ms": 6.61
+          },
+          {
+            "model": "PaymentException",
+            "operation": "findMany",
+            "ms": 12.58
+          },
+          {
+            "model": "ProviderAccount",
+            "operation": "groupBy",
+            "ms": 44.03
+          },
+          {
+            "model": "ReconciliationRun",
+            "operation": "groupBy",
+            "ms": 44.02
+          },
+          {
+            "model": "SuspenseItem",
+            "operation": "groupBy",
+            "ms": 44.01
+          },
+          {
+            "model": "PaymentException",
+            "operation": "groupBy",
+            "ms": 43.99
+          },
+          {
+            "model": "ProviderEvent",
+            "operation": "count",
+            "ms": 43.99
+          },
+          {
+            "model": "StatementLine",
+            "operation": "count",
+            "ms": 43.98
+          }
+        ],
+        "ms": 70
+      },
+      {
+        "name": "payment-workbench",
+        "iteration": 3,
+        "queries": [
+          {
+            "model": "Organization",
+            "operation": "findFirst",
+            "ms": 3.54
+          },
+          {
+            "model": "Location",
+            "operation": "findMany",
+            "ms": 7.61
+          },
+          {
+            "model": "Payment",
+            "operation": "findMany",
+            "ms": 12.63
+          }
+        ],
+        "ms": 16
+      }
+    ],
+    "browser": [
+      {
+        "locale": "en",
+        "requests": [
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 1436,
+            "elapsedMs": 220,
+            "responseStartMs": 115.764,
+            "responseEndMs": 224.756
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1471,
+            "elapsedMs": 194,
+            "responseStartMs": 103.157,
+            "responseEndMs": 204.915
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1666,
+            "elapsedMs": 789,
+            "responseStartMs": 96.925,
+            "responseEndMs": 1032.066
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1746,
+            "elapsedMs": 865,
+            "responseStartMs": 697.014,
+            "responseEndMs": 1188.114
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1740,
+            "elapsedMs": 891,
+            "responseStartMs": 657.664,
+            "responseEndMs": 1197.782
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1699,
+            "elapsedMs": 932,
+            "responseStartMs": 656.087,
+            "responseEndMs": 1203.311
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1722,
+            "elapsedMs": 913,
+            "responseStartMs": 656.78,
+            "responseEndMs": 1213.39
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1798,
+            "elapsedMs": 977,
+            "responseStartMs": 25.931,
+            "responseEndMs": 1350.403
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1759,
+            "elapsedMs": 1044,
+            "responseStartMs": 199.736,
+            "responseEndMs": 1379.539
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1777,
+            "elapsedMs": 1113,
+            "responseStartMs": 34.656,
+            "responseEndMs": 1458.678
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 45,
+            "elapsedMs": 2903,
+            "responseStartMs": 982.986,
+            "responseEndMs": 2911.057
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 2924,
+            "elapsedMs": 914,
+            "responseStartMs": 17.078,
+            "responseEndMs": 881.534
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1636,
+            "elapsedMs": 2278,
+            "responseStartMs": 97.574,
+            "responseEndMs": 2430.882
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 2911,
+            "elapsedMs": 2093,
+            "responseStartMs": 34.422,
+            "responseEndMs": 1365.527
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 5669,
+            "elapsedMs": 528,
+            "responseStartMs": 5.975,
+            "responseEndMs": 176.348
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 6200,
+            "elapsedMs": 592,
+            "responseStartMs": 575.337,
+            "responseEndMs": 587.125
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 6811,
+            "elapsedMs": 579,
+            "responseStartMs": 567.205,
+            "responseEndMs": 582.143
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 7919,
+            "elapsedMs": 689,
+            "responseStartMs": 667.879,
+            "responseEndMs": 914.332
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 9964,
+            "elapsedMs": 165,
+            "responseStartMs": 73.603,
+            "responseEndMs": 164.731
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 9838,
+            "elapsedMs": 370,
+            "responseStartMs": 354.654,
+            "responseEndMs": 593.594
+          }
+        ],
+        "pageErrors": [],
+        "navigationResolvedMs": 5323,
+        "durableReadyMs": 10503,
+        "navigation": [
+          {
+            "requestStart": 48.39999997615814,
+            "responseStart": 1009.8999999761581,
+            "responseEnd": 2912.199999988079,
+            "domInteractive": 2917,
+            "domContentLoadedEventEnd": 2917.199999988079,
+            "loadEventEnd": 5276.899999976158
+          }
+        ]
+      },
+      {
+        "locale": "en",
+        "requests": [
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 592,
+            "elapsedMs": 278,
+            "responseStartMs": 257.518,
+            "responseEndMs": 284.029
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 588,
+            "elapsedMs": 301,
+            "responseStartMs": 258.966,
+            "responseEndMs": 297.47
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 882,
+            "elapsedMs": 101,
+            "responseStartMs": 21.623,
+            "responseEndMs": 354.565
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 895,
+            "elapsedMs": 215,
+            "responseStartMs": 14.239,
+            "responseEndMs": 487.131
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 906,
+            "elapsedMs": 258,
+            "responseStartMs": 107.852,
+            "responseEndMs": 576.705
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 898,
+            "elapsedMs": 315,
+            "responseStartMs": 77.947,
+            "responseEndMs": 597.65
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 903,
+            "elapsedMs": 310,
+            "responseStartMs": 98.774,
+            "responseEndMs": 598.821
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 908,
+            "elapsedMs": 371,
+            "responseStartMs": 196.931,
+            "responseEndMs": 688.558
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 12,
+            "elapsedMs": 1278,
+            "responseStartMs": 430.741,
+            "responseEndMs": 1272.314
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 929,
+            "elapsedMs": 540,
+            "responseStartMs": 59.177,
+            "responseEndMs": 805.231
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 919,
+            "elapsedMs": 698,
+            "responseStartMs": 110.029,
+            "responseEndMs": 940.715
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1234,
+            "elapsedMs": 737,
+            "responseStartMs": 66.899,
+            "responseEndMs": 718.244
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 873,
+            "elapsedMs": 1360,
+            "responseStartMs": 9.784,
+            "responseEndMs": 1598.457
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1213,
+            "elapsedMs": 1967,
+            "responseStartMs": 64.219,
+            "responseEndMs": 1031.24
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3852,
+            "elapsedMs": 1229,
+            "responseStartMs": 1131.115,
+            "responseEndMs": 1232.689
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 4585,
+            "elapsedMs": 5427,
+            "responseStartMs": 5393.173,
+            "responseEndMs": 5426.18
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 10029,
+            "elapsedMs": 3275,
+            "responseStartMs": 3255.552,
+            "responseEndMs": 3278.675
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 13857,
+            "elapsedMs": 1125,
+            "responseStartMs": 1109.092,
+            "responseEndMs": 1401.994
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 17185,
+            "elapsedMs": 511,
+            "responseStartMs": 302.188,
+            "responseEndMs": 510.412
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 17051,
+            "elapsedMs": 1194,
+            "responseStartMs": 870.281,
+            "responseEndMs": 1173.851
+          }
+        ],
+        "pageErrors": [],
+        "navigationResolvedMs": 3462,
+        "durableReadyMs": 18487,
+        "navigation": [
+          {
+            "requestStart": 8.799999952316284,
+            "responseStart": 438.7999999523163,
+            "responseEnd": 1272.699999988079,
+            "domInteractive": 1277.2999999523163,
+            "domContentLoadedEventEnd": 1277.5,
+            "loadEventEnd": 3451.699999988079
+          }
+        ]
+      },
+      {
+        "locale": "fr",
+        "requests": [
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1121,
+            "elapsedMs": 670,
+            "responseStartMs": 647.528,
+            "responseEndMs": 683.859
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 1112,
+            "elapsedMs": 706,
+            "responseStartMs": 634.086,
+            "responseEndMs": 694.569
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1805,
+            "elapsedMs": 79,
+            "responseStartMs": 16.141,
+            "responseEndMs": 753.089
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1828,
+            "elapsedMs": 182,
+            "responseStartMs": 53.807,
+            "responseEndMs": 900.662
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1825,
+            "elapsedMs": 201,
+            "responseStartMs": 53.111,
+            "responseEndMs": 913.453
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1821,
+            "elapsedMs": 215,
+            "responseStartMs": 49.616,
+            "responseEndMs": 928.118
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1818,
+            "elapsedMs": 227,
+            "responseStartMs": 35.245,
+            "responseEndMs": 936.787
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1831,
+            "elapsedMs": 318,
+            "responseStartMs": 185.715,
+            "responseEndMs": 1040.603
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1844,
+            "elapsedMs": 323,
+            "responseStartMs": 38.643,
+            "responseEndMs": 1051.203
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 76,
+            "elapsedMs": 2115,
+            "responseStartMs": 783.718,
+            "responseEndMs": 2118.612
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1837,
+            "elapsedMs": 412,
+            "responseStartMs": 46.264,
+            "responseEndMs": 1131.741
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 2175,
+            "elapsedMs": 570,
+            "responseStartMs": 22.98,
+            "responseEndMs": 542.249
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1793,
+            "elapsedMs": 1094,
+            "responseStartMs": 28.297,
+            "responseEndMs": 1726.303
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 2159,
+            "elapsedMs": 1463,
+            "responseStartMs": 21.145,
+            "responseEndMs": 771.417
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 4021,
+            "elapsedMs": 445,
+            "responseStartMs": 4.574,
+            "responseEndMs": 11.844
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 4498,
+            "elapsedMs": 791,
+            "responseStartMs": 766.77,
+            "responseEndMs": 787.244
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 5314,
+            "elapsedMs": 1772,
+            "responseStartMs": 1380.642,
+            "responseEndMs": 1416.194
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 7074,
+            "elapsedMs": 202,
+            "responseStartMs": 6.911,
+            "responseEndMs": 116.479
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 9651,
+            "elapsedMs": 416,
+            "responseStartMs": 230.124,
+            "responseEndMs": 415.833
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 9532,
+            "elapsedMs": 1277,
+            "responseStartMs": 776.235,
+            "responseEndMs": 1018.577
+          }
+        ],
+        "pageErrors": [],
+        "navigationResolvedMs": 3820,
+        "durableReadyMs": 11325,
+        "navigation": [
+          {
+            "requestStart": 21.600000023841858,
+            "responseStart": 804.5,
+            "responseEnd": 2119.800000011921,
+            "domInteractive": 2126.100000023842,
+            "domContentLoadedEventEnd": 2126.300000011921,
+            "loadEventEnd": 3755.800000011921
+          }
+        ]
+      }
+    ],
+    "scope": "Owned local development app. Service timings exclude HTTP guards and compilation. Query extension records model/operation/time only. Browser trace excludes bodies, cookies, headers and query strings. Dashboard alert trigger retained.",
+    "passed": true,
+    "sourcesAfter": {
+      "hooks/payments/usePaymentReconciliationWorkbench.ts": "382c709c44337e5e85130e6faed1e7ce87ea989194e61e2fbc3ebfae1d52b2b8",
+      "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+      "components/finance/PaymentReconciliationWorkbench.tsx": "440925e59dfe4de01310c7a16d35daf5a2a34574022df143b6bc7c5b8c99160e",
+      "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+      "services/payments/payment-reconciliation-workbench.service.ts": "bc4bf84c6b9aa2b78c2056fd1d42c37e3a28a71d7a380fa86fdd91ba939f1939",
+      "actions/payments/reconciliation-workbench.actions.ts": "5dd107a1431dc5c9b9e9635e3350e6440074870b0571d8b091515bd857b6bdab",
+      "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+    },
+    "sourceStable": true
+  },
+  "failedBrowser": {
+    "file": "lanes/environment/reconciliation-profile-v120-db60efae-0037-4467-a92b-fb9c46ac69f1.json",
+    "terminalReceipt": "9d0cf1",
+    "reason": "Reload recovery timed out amid concurrent verification load; explicit navigation wait added before rechecking"
+  },
+  "afterProfile": {
+    "file": "lanes/environment/reconciliation-profile-v120-54990ba0-e5b6-4e85-9f57-e71a74f318f8.json",
+    "receipt": "a7bf02",
+    "at": "2026-09-13T11:48:49.070Z",
+    "sourcesBefore": {
+      "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+      "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+      "components/finance/PaymentReconciliationWorkbench.tsx": "c0860ad7f3ac92b4b99956aaf57d51589e7407f70a975098c31645e10067b5e0",
+      "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+      "services/payments/payment-reconciliation-workbench.service.ts": "bc4bf84c6b9aa2b78c2056fd1d42c37e3a28a71d7a380fa86fdd91ba939f1939",
+      "actions/payments/reconciliation-workbench.actions.ts": "d733540a46ed1a1eb3358ce5b8c5c14bd21fbefe55e0bcb141e0319f039e47a3",
+      "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+    },
+    "services": [],
+    "browser": [
+      {
+        "locale": "en",
+        "requests": [
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 37,
+            "elapsedMs": 1281,
+            "responseStartMs": 582.45,
+            "responseEndMs": 1274.245
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 995,
+            "elapsedMs": 333,
+            "responseStartMs": 283.126,
+            "responseEndMs": 337.335
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 998,
+            "elapsedMs": 333,
+            "responseStartMs": 284.058,
+            "responseEndMs": 321.073
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1331,
+            "elapsedMs": 129,
+            "responseStartMs": 7.01,
+            "responseEndMs": 392.672
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1363,
+            "elapsedMs": 209,
+            "responseStartMs": 32.313,
+            "responseEndMs": 508.931
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1358,
+            "elapsedMs": 214,
+            "responseStartMs": 30.168,
+            "responseEndMs": 537.23
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1366,
+            "elapsedMs": 207,
+            "responseStartMs": 31.195,
+            "responseEndMs": 546.774
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1355,
+            "elapsedMs": 230,
+            "responseStartMs": 27.641,
+            "responseEndMs": 551.944
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1360,
+            "elapsedMs": 227,
+            "responseStartMs": 31.472,
+            "responseEndMs": 555.778
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1371,
+            "elapsedMs": 251,
+            "responseStartMs": 34.495,
+            "responseEndMs": 633.778
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1368,
+            "elapsedMs": 300,
+            "responseStartMs": 24.071,
+            "responseEndMs": 680.051
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1387,
+            "elapsedMs": 750,
+            "responseStartMs": 33.637,
+            "responseEndMs": 737.992
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1321,
+            "elapsedMs": 1005,
+            "responseStartMs": 4.929,
+            "responseEndMs": 1306.717
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1383,
+            "elapsedMs": 1671,
+            "responseStartMs": 28.364,
+            "responseEndMs": 1407.646
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3425,
+            "elapsedMs": 431,
+            "responseStartMs": 3.473,
+            "responseEndMs": 17.214
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 3873,
+            "elapsedMs": 214,
+            "responseStartMs": 194.758,
+            "responseEndMs": 201.193
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 4098,
+            "elapsedMs": 287,
+            "responseStartMs": 279.694,
+            "responseEndMs": 287.409
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 5607,
+            "elapsedMs": 1660,
+            "responseStartMs": 1197.652,
+            "responseEndMs": 1457.097
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 7244,
+            "elapsedMs": 285,
+            "responseStartMs": 23.889,
+            "responseEndMs": 84.463
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 9698,
+            "elapsedMs": 63,
+            "responseStartMs": 13.491,
+            "responseEndMs": 46.226
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 10460,
+            "elapsedMs": 384,
+            "responseStartMs": 7.921,
+            "responseEndMs": 9.25
+          },
+          {
+            "path": "/__nextjs_original-stack-frames",
+            "method": "POST",
+            "kind": "fetch",
+            "startedMs": 10840,
+            "elapsedMs": 298,
+            "responseStartMs": 280.381,
+            "responseEndMs": 306.64
+          },
+          {
+            "path": "/__nextjs_font/geist-latin.woff2",
+            "method": "GET",
+            "kind": "font",
+            "startedMs": 10824,
+            "elapsedMs": 343,
+            "responseStartMs": 313.991,
+            "responseEndMs": 372.153
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 10764,
+            "elapsedMs": 549,
+            "responseStartMs": 536.833,
+            "responseEndMs": 597.357
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12088,
+            "elapsedMs": 74,
+            "responseStartMs": 52.597,
+            "responseEndMs": 71.129
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 12065,
+            "elapsedMs": 179,
+            "responseStartMs": 76.375,
+            "responseEndMs": 195.705
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12237,
+            "elapsedMs": 1099,
+            "responseStartMs": 884.137,
+            "responseEndMs": 1241.431
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12275,
+            "elapsedMs": 1194,
+            "responseStartMs": 953.215,
+            "responseEndMs": 1362.981
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12280,
+            "elapsedMs": 1293,
+            "responseStartMs": 963.736,
+            "responseEndMs": 1442.418
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12296,
+            "elapsedMs": 1290,
+            "responseStartMs": 967.347,
+            "responseEndMs": 1460.492
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12300,
+            "elapsedMs": 1292,
+            "responseStartMs": 1091.231,
+            "responseEndMs": 1501.526
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12309,
+            "elapsedMs": 1447,
+            "responseStartMs": 224.555,
+            "responseEndMs": 1658.954
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12320,
+            "elapsedMs": 1573,
+            "responseStartMs": 80.975,
+            "responseEndMs": 1775.556
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 10896,
+            "elapsedMs": 3290,
+            "responseStartMs": 1094.31,
+            "responseEndMs": 3212.862
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12312,
+            "elapsedMs": 1881,
+            "responseStartMs": 158.347,
+            "responseEndMs": 2031.924
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 14070,
+            "elapsedMs": 1015,
+            "responseStartMs": 84.954,
+            "responseEndMs": 978.026
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 12162,
+            "elapsedMs": 3026,
+            "responseStartMs": 75.661,
+            "responseEndMs": 3019.891
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 14043,
+            "elapsedMs": 1992,
+            "responseStartMs": 89.428,
+            "responseEndMs": 1413.992
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 16361,
+            "elapsedMs": 498,
+            "responseStartMs": 5.259,
+            "responseEndMs": 31.821
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 16878,
+            "elapsedMs": 271,
+            "responseStartMs": 256.434,
+            "responseEndMs": 274.893
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 17160,
+            "elapsedMs": 454,
+            "responseStartMs": 443.503,
+            "responseEndMs": 456.468
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 18935,
+            "elapsedMs": 1152,
+            "responseStartMs": 1142.95,
+            "responseEndMs": 1376.165
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 20899,
+            "elapsedMs": 240,
+            "responseStartMs": 111.931,
+            "responseEndMs": 241.799
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 20751,
+            "elapsedMs": 504,
+            "responseStartMs": 478.716,
+            "responseEndMs": 752.806
+          }
+        ],
+        "responses": [
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 815
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1299
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1330
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1456
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1562
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1572
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1573
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1581
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1586
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1622
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1667
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 2120
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 2315
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3048
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3856
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 4087
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 4385
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 4887
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 6225
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 7238
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 7528
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 9363
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 9725
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 403,
+            "headersAtMs": 10769
+          },
+          {
+            "path": "/__nextjs_original-stack-frames",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 11128
+          },
+          {
+            "path": "/__nextjs_font/geist-latin.woff2",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 11166
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 11313
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 11997
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 12152
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 12162
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 13336
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 13468
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 13561
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 13585
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 13591
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 13755
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 13887
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 14186
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 15071
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 15180
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 16025
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 16859
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 17149
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 17614
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 18128
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 19754
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 20086
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 21059
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 21244
+          }
+        ],
+        "screenshots": [
+          "reconciliation-cache-v120-en-54990ba0-e5b6-4e85-9f57-e71a74f318f8.png"
+        ],
+        "pageErrors": [],
+        "navigationResolvedMs": 3256,
+        "durableReadyMs": 7597,
+        "navigation": [
+          {
+            "requestStart": 38.09999996423721,
+            "responseStart": 575.7999999523163,
+            "responseEnd": 1275.199999988079,
+            "domInteractive": 1534.5,
+            "domContentLoadedEventEnd": 1534.5999999642372,
+            "loadEventEnd": 3227.199999988079
+          }
+        ],
+        "permissionFailureHidesCache": true,
+        "permissionFailureHidesCacheAndReloadRecovers": true
+      },
+      {
+        "locale": "en",
+        "requests": [
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 812,
+            "elapsedMs": 506,
+            "responseStartMs": 486.59,
+            "responseEndMs": 520.893
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 806,
+            "elapsedMs": 531,
+            "responseStartMs": 489.519,
+            "responseEndMs": 534.133
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1326,
+            "elapsedMs": 104,
+            "responseStartMs": 17.677,
+            "responseEndMs": 626.443
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1359,
+            "elapsedMs": 211,
+            "responseStartMs": 108.865,
+            "responseEndMs": 744.997
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1351,
+            "elapsedMs": 219,
+            "responseStartMs": 64.618,
+            "responseEndMs": 757.057
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1342,
+            "elapsedMs": 253,
+            "responseStartMs": 81.708,
+            "responseEndMs": 794.424
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1354,
+            "elapsedMs": 242,
+            "responseStartMs": 67.426,
+            "responseEndMs": 794.599
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1368,
+            "elapsedMs": 350,
+            "responseStartMs": 192.784,
+            "responseEndMs": 913.054
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 14,
+            "elapsedMs": 1711,
+            "responseStartMs": 582.583,
+            "responseEndMs": 1709.975
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1378,
+            "elapsedMs": 374,
+            "responseStartMs": 72.292,
+            "responseEndMs": 935.773
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1371,
+            "elapsedMs": 501,
+            "responseStartMs": 73.984,
+            "responseEndMs": 1036.285
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1688,
+            "elapsedMs": 776,
+            "responseStartMs": 51.775,
+            "responseEndMs": 740.454
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1318,
+            "elapsedMs": 1342,
+            "responseStartMs": 8.75,
+            "responseEndMs": 1808.461
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1667,
+            "elapsedMs": 1896,
+            "responseStartMs": 43.751,
+            "responseEndMs": 1085.62
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 4190,
+            "elapsedMs": 571,
+            "responseStartMs": 5.35,
+            "responseEndMs": 21.394
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 4774,
+            "elapsedMs": 303,
+            "responseStartMs": 277.614,
+            "responseEndMs": 292.237
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 5089,
+            "elapsedMs": 327,
+            "responseStartMs": 313.064,
+            "responseEndMs": 331.124
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 6714,
+            "elapsedMs": 1419,
+            "responseStartMs": 1407.524,
+            "responseEndMs": 1679.455
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 9131,
+            "elapsedMs": 1275,
+            "responseStartMs": 290.123,
+            "responseEndMs": 670.93
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 8963,
+            "elapsedMs": 1467,
+            "responseStartMs": 1046.767,
+            "responseEndMs": 1378.779
+          }
+        ],
+        "responses": [
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 610
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1306
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1317
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1429
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1569
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1570
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1594
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1596
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1718
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1750
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1864
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 2458
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 2652
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3559
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 4761
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 5077
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 5415
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 5969
+          },
+          {
+            "path": "/en/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 7691
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 8133
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 10406
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 10429
+          }
+        ],
+        "screenshots": [],
+        "pageErrors": [],
+        "navigationResolvedMs": 3849,
+        "durableReadyMs": 10978,
+        "navigation": [
+          {
+            "requestStart": 9.899999976158142,
+            "responseStart": 591.6999999880791,
+            "responseEnd": 1710.300000011921,
+            "domInteractive": 1713.6000000238419,
+            "domContentLoadedEventEnd": 1713.699999988079,
+            "loadEventEnd": 3838.199999988079
+          }
+        ]
+      },
+      {
+        "locale": "fr",
+        "requests": [
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 1760,
+            "elapsedMs": 1128,
+            "responseStartMs": 1086.592,
+            "responseEndMs": 1140.137
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 1754,
+            "elapsedMs": 1257,
+            "responseStartMs": 1088.722,
+            "responseEndMs": 1207.127
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 2943,
+            "elapsedMs": 428,
+            "responseStartMs": 203.87,
+            "responseEndMs": 1627.412
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3077,
+            "elapsedMs": 634,
+            "responseStartMs": 266.017,
+            "responseEndMs": 1935.063
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3038,
+            "elapsedMs": 699,
+            "responseStartMs": 193.244,
+            "responseEndMs": 1956.913
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3028,
+            "elapsedMs": 709,
+            "responseStartMs": 193.499,
+            "responseEndMs": 1965.398
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3049,
+            "elapsedMs": 706,
+            "responseStartMs": 230.055,
+            "responseEndMs": 2008.529
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3202,
+            "elapsedMs": 821,
+            "responseStartMs": 83.411,
+            "responseEndMs": 2269.591
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3140,
+            "elapsedMs": 886,
+            "responseStartMs": 416.294,
+            "responseEndMs": 2276.634
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 3172,
+            "elapsedMs": 1082,
+            "responseStartMs": 93.203,
+            "responseEndMs": 2505.911
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 143,
+            "elapsedMs": 4135,
+            "responseStartMs": 1299.189,
+            "responseEndMs": 4132.359
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 4237,
+            "elapsedMs": 1539,
+            "responseStartMs": 58.059,
+            "responseEndMs": 1473.204
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 2888,
+            "elapsedMs": 3122,
+            "responseStartMs": 148.687,
+            "responseEndMs": 4161.674
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 4212,
+            "elapsedMs": 2929,
+            "responseStartMs": 77.661,
+            "responseEndMs": 2620.219
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 8225,
+            "elapsedMs": 613,
+            "responseStartMs": 5.527,
+            "responseEndMs": 287.82
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 8853,
+            "elapsedMs": 595,
+            "responseStartMs": 581.075,
+            "responseEndMs": 593.164
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 9468,
+            "elapsedMs": 738,
+            "responseStartMs": 723.694,
+            "responseEndMs": 743.154
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 13089,
+            "elapsedMs": 1438,
+            "responseStartMs": 1417.936,
+            "responseEndMs": 1704.349
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 16219,
+            "elapsedMs": 959,
+            "responseStartMs": 100.018,
+            "responseEndMs": 341.96
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 16066,
+            "elapsedMs": 1133,
+            "responseStartMs": 645.242,
+            "responseEndMs": 917.465
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 19547,
+            "elapsedMs": 66,
+            "responseStartMs": 10.292,
+            "responseEndMs": 43.778
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 20377,
+            "elapsedMs": 470,
+            "responseStartMs": 7.609,
+            "responseEndMs": 9.17
+          },
+          {
+            "path": "/__nextjs_original-stack-frames",
+            "method": "POST",
+            "kind": "fetch",
+            "startedMs": 20830,
+            "elapsedMs": 360,
+            "responseStartMs": 348.772,
+            "responseEndMs": 367.968
+          },
+          {
+            "path": "/__nextjs_font/geist-latin.woff2",
+            "method": "GET",
+            "kind": "font",
+            "startedMs": 20810,
+            "elapsedMs": 405,
+            "responseStartMs": 373.607,
+            "responseEndMs": 404.154
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 20744,
+            "elapsedMs": 592,
+            "responseStartMs": 582.25,
+            "responseEndMs": 598.148
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 22275,
+            "elapsedMs": 161,
+            "responseStartMs": 108.032,
+            "responseEndMs": 158.22
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 22125,
+            "elapsedMs": 1177,
+            "responseStartMs": 221.571,
+            "responseEndMs": 1135.996
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23258,
+            "elapsedMs": 294,
+            "responseStartMs": 197.566,
+            "responseEndMs": 1272.937
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23454,
+            "elapsedMs": 269,
+            "responseStartMs": 122.003,
+            "responseEndMs": 1445.554
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23309,
+            "elapsedMs": 430,
+            "responseStartMs": 76.636,
+            "responseEndMs": 1454.11
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23305,
+            "elapsedMs": 447,
+            "responseStartMs": 78.284,
+            "responseEndMs": 1472.589
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23442,
+            "elapsedMs": 395,
+            "responseStartMs": 79.957,
+            "responseEndMs": 1523.536
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23486,
+            "elapsedMs": 466,
+            "responseStartMs": 65.03,
+            "responseEndMs": 1655.999
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23462,
+            "elapsedMs": 528,
+            "responseStartMs": 244.8,
+            "responseEndMs": 1692.08
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "GET",
+            "kind": "document",
+            "startedMs": 20892,
+            "elapsedMs": 3263,
+            "responseStartMs": 1184.933,
+            "responseEndMs": 3240.081
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 23479,
+            "elapsedMs": 695,
+            "responseStartMs": 68.837,
+            "responseEndMs": 1872.094
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 24136,
+            "elapsedMs": 1038,
+            "responseStartMs": 49.949,
+            "responseEndMs": 1017.615
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 22439,
+            "elapsedMs": 3364,
+            "responseStartMs": 861.935,
+            "responseEndMs": 3451.581
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 24109,
+            "elapsedMs": 2733,
+            "responseStartMs": 52.612,
+            "responseEndMs": 2553.052
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "kind": "script",
+            "startedMs": 26986,
+            "elapsedMs": 562,
+            "responseStartMs": 115.18,
+            "responseEndMs": 140.728
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 27556,
+            "elapsedMs": 3362,
+            "responseStartMs": 3339.819,
+            "responseEndMs": 3362.834
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 30930,
+            "elapsedMs": 340,
+            "responseStartMs": 331.245,
+            "responseEndMs": 343.296
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 32677,
+            "elapsedMs": 1608,
+            "responseStartMs": 1579.67,
+            "responseEndMs": 1846.45
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "kind": "stylesheet",
+            "startedMs": 35142,
+            "elapsedMs": 342,
+            "responseStartMs": 153.238,
+            "responseEndMs": 346.743
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "kind": "fetch",
+            "startedMs": 35054,
+            "elapsedMs": 710,
+            "responseStartMs": 565.983,
+            "responseEndMs": 883.778
+          }
+        ],
+        "responses": [
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 1460
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 2873
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 2883
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3369
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3705
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3729
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3730
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 3754
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 4021
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 4023
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 4253
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 5760
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 5987
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 7129
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 8838
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 9448
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 10202
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 11801
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 14526
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 15103
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 17177
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 17194
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 19251
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 19572
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 403,
+            "headersAtMs": 20744
+          },
+          {
+            "path": "/__nextjs_original-stack-frames",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 21185
+          },
+          {
+            "path": "/__nextjs_font/geist-latin.woff2",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 21214
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 21336
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 22085
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 22361
+          },
+          {
+            "path": "/_next/static/chunks/webpack.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 22436
+          },
+          {
+            "path": "/_next/static/chunks/app-pages-internals.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 23552
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 23723
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 23738
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 23748
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 23825
+          },
+          {
+            "path": "/_next/static/chunks/app/not-found.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 23952
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/error.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 23989
+          },
+          {
+            "path": "/_next/static/chunks/app/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 24172
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/layout.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 25161
+          },
+          {
+            "path": "/_next/static/chunks/main-app.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 25789
+          },
+          {
+            "path": "/_next/static/chunks/app/%5Blocale%5D/(dashboard)/dashboard/finance/reconciliation/page.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 26811
+          },
+          {
+            "path": "/_next/static/chunks/_app-pages-browser_node_modules_pnpm_next_15_5_23__babel_core_7__dc4baac3ef98eb3bf027ff9111b3-f60e35.js",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 27546
+          },
+          {
+            "path": "/api/auth/get-session",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 30918
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 31269
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 31973
+          },
+          {
+            "path": "/fr/dashboard/finance/reconciliation",
+            "method": "POST",
+            "status": 200,
+            "headersAtMs": 33795
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 34285
+          },
+          {
+            "path": "/_next/static/css/app/layout.css",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 35332
+          },
+          {
+            "path": "/api/me/permissions",
+            "method": "GET",
+            "status": 200,
+            "headersAtMs": 35744
+          }
+        ],
+        "screenshots": [
+          "reconciliation-cache-v120-fr-54990ba0-e5b6-4e85-9f57-e71a74f318f8.png"
+        ],
+        "pageErrors": [],
+        "navigationResolvedMs": 7526,
+        "durableReadyMs": 17744,
+        "navigation": [
+          {
+            "requestStart": 14.800000011920929,
+            "responseStart": 1312.7000000476837,
+            "responseEnd": 4132.600000023842,
+            "domInteractive": 4137.800000011921,
+            "domContentLoadedEventEnd": 4137.900000035763,
+            "loadEventEnd": 7388.300000011921
+          }
+        ],
+        "permissionFailureHidesCache": true,
+        "permissionFailureHidesCacheAndReloadRecovers": true
+      }
+    ],
+    "scope": "Owned local development app. Service timings exclude HTTP guards and compilation. Query extension records model/operation/time only. Browser trace excludes bodies, cookies, headers and query strings. Dashboard alert trigger retained.",
+    "passed": true,
+    "sourcesAfter": {
+      "hooks/payments/usePaymentReconciliationWorkbench.ts": "8abef8e62167c28f6156a2908373865c8274f07e2cf9ca6ba936faa511650840",
+      "hooks/payments/usePaymentReconciliationDashboard.ts": "90f33855dd942f9a7622c2563194b6a3490b5a71bef2e256478339f10896f279",
+      "components/finance/PaymentReconciliationWorkbench.tsx": "c0860ad7f3ac92b4b99956aaf57d51589e7407f70a975098c31645e10067b5e0",
+      "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+      "services/payments/payment-reconciliation-workbench.service.ts": "bc4bf84c6b9aa2b78c2056fd1d42c37e3a28a71d7a380fa86fdd91ba939f1939",
+      "actions/payments/reconciliation-workbench.actions.ts": "d733540a46ed1a1eb3358ce5b8c5c14bd21fbefe55e0bcb141e0319f039e47a3",
+      "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757"
+    },
+    "sourceStable": true,
+    "phase": "after-cache-fix"
+  },
+  "performanceImprovementProven": false,
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat",
+  "remaining": [
+    "Full notification-on-read lifecycle, all period/country/provider contexts and screen-reader/contrast evidence remain incomplete.",
+    "Summary snapshot and detail lists are distinct reads; no cross-view atomic snapshot or production performance certification.",
+    "Profile the repeated permission-request and authentication/layout/action chain with a controlled workload; direct service timing alone does not explain browser delay."
+  ],
+  "coverage": {
+    "discoveredWorkflows": 235,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2872,
+      "tests": 1015,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 174,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2509,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 211,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

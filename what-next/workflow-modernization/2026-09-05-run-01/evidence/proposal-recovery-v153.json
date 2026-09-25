@@ -1,0 +1,129 @@
+{
+  "at": "2026-09-15T11:36:33.444Z",
+  "baseline": "evidence/source-baseline-v153.json",
+  "baselineReceipt": "325fdf",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/ai/copilot-proposal.service.ts": "db04968c2ff404c48ea770f4ee16ff5d92a69577de3de5197b0b350d794c8c6b",
+    "services/ai/copilot-proposal-release.service.ts": "7664e53690f374b7863b9b9feee90da8fb042da1ad485c489832217de4193d60",
+    "components/copilot/CopilotProposalControls.tsx": "1eefe402e2f8a187bfc1fbe555607a74b7dacb5fc1273e02e15d90d20153a381",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "e69c7008e6693c8afcd6426dddb40ef14327337c43d96d9619daf75e5471be31",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "f4ea2785cfb4a2c8333276524d037b2e11806f4d26516022dd33f026843f566a"
+  },
+  "tests": {
+    "passed": 73,
+    "suites": 8,
+    "receipt": "462dc9",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/ai/__tests__/copilot-proposal.service.test.ts\" \"services/ai/__tests__/copilot-proposal-release.service.test.ts\" \"actions/ai/__tests__/copilot-proposal.actions.test.ts\" \"components/copilot/__tests__/CopilotProposalControls.test.tsx\" \"components/agents/__tests__/AgentCommandPanel.test.tsx\" \"components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/proposal-availability.test.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/route-audit.test.ts\""
+  },
+  "lint": {
+    "passed": true,
+    "files": 10,
+    "receipt": "c2c43c",
+    "command": "node node_modules/eslint/bin/eslint.js \"services/ai/copilot-proposal.service.ts\" \"services/ai/copilot-proposal-release.service.ts\" \"services/ai/__tests__/copilot-proposal.service.test.ts\" \"services/ai/__tests__/copilot-proposal-release.service.test.ts\" \"components/copilot/CopilotProposalControls.tsx\" \"components/copilot/__tests__/CopilotProposalControls.test.tsx\" \"components/daily-habit/DailyHabitDigestDashboard.tsx\" \"components/agents/__tests__/AgentCommandPanel.test.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/proposal-availability.test.tsx\""
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "239f36",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af.json",
+    "receipt": "f7acc7",
+    "at": "2026-09-15T11:32:33.489Z",
+    "sourceBefore": {
+      "services/ai/copilot-proposal.service.ts": "db04968c2ff404c48ea770f4ee16ff5d92a69577de3de5197b0b350d794c8c6b",
+      "services/ai/copilot-proposal-release.service.ts": "7664e53690f374b7863b9b9feee90da8fb042da1ad485c489832217de4193d60",
+      "components/copilot/CopilotProposalControls.tsx": "1eefe402e2f8a187bfc1fbe555607a74b7dacb5fc1273e02e15d90d20153a381",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "e69c7008e6693c8afcd6426dddb40ef14327337c43d96d9619daf75e5471be31",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "f4ea2785cfb4a2c8333276524d037b2e11806f4d26516022dd33f026843f566a"
+    },
+    "checks": {
+      "creationReplayAndIdenticalDecisionRecovery": true,
+      "otherActorChangedReasonLostPermissionDenied": true,
+      "noReleaseDisplayDenied": true,
+      "browserReadsNoProposalOrFinancialEffects": true
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "route": "/en/dashboard/daily-digest",
+        "disabledAgent": true,
+        "proposalControlAbsent": true,
+        "loadMs": 24435,
+        "screenshots": [
+          "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-en-1440.png",
+          "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-en-768.png",
+          "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-en-320.png"
+        ],
+        "pageErrors": []
+      },
+      {
+        "locale": "fr",
+        "route": "/fr/dashboard/daily-digest",
+        "disabledAgent": true,
+        "proposalControlAbsent": true,
+        "loadMs": 4430,
+        "screenshots": [
+          "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-fr-1440.png",
+          "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-fr-768.png",
+          "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-fr-320.png"
+        ],
+        "pageErrors": []
+      }
+    ],
+    "scope": "Owned localhost database/application. Direct proposal service fixtures; actual browser visits cover disabled default agent only. No release approval fabricated, no live provider dispatch.",
+    "passed": true,
+    "sourceAfter": {
+      "services/ai/copilot-proposal.service.ts": "db04968c2ff404c48ea770f4ee16ff5d92a69577de3de5197b0b350d794c8c6b",
+      "services/ai/copilot-proposal-release.service.ts": "7664e53690f374b7863b9b9feee90da8fb042da1ad485c489832217de4193d60",
+      "components/copilot/CopilotProposalControls.tsx": "1eefe402e2f8a187bfc1fbe555607a74b7dacb5fc1273e02e15d90d20153a381",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "e69c7008e6693c8afcd6426dddb40ef14327337c43d96d9619daf75e5471be31",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "f4ea2785cfb4a2c8333276524d037b2e11806f4d26516022dd33f026843f566a"
+    },
+    "sourceStable": true
+  },
+  "intermediate": {
+    "tests": {
+      "passed": 72,
+      "receipt": "4674a6"
+    },
+    "server": {
+      "session": 32685,
+      "liveReceipt": "eea364",
+      "restarted": false
+    }
+  },
+  "visualReview": {
+    "inspected": "French 320px full-page screenshot",
+    "screenshots": 6,
+    "open": [
+      "Mixed English/French digest content",
+      "Large blank lower area",
+      "Development issue badge; cause unclassified"
+    ]
+  },
+  "browserScope": "Default-disabled agent only. Enabled proposal flow not verified.",
+  "migrations": false,
+  "wholeWorkflowComplete": false,
+  "guide": "PROPOSAL_RECOVERY_V153.md",
+  "coverage": {
+    "discoveredWorkflows": 270,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2927,
+      "tests": 1045,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 191,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

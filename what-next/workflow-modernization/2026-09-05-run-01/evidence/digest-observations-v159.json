@@ -1,0 +1,114 @@
+{
+  "at": "2026-09-15T12:37:01.818Z",
+  "baseline": "evidence/source-baseline-v159.json",
+  "baselineReceipt": "1674c0",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/bi/bi-contracts.ts": "0ff28dcae389379b64103bc4b06fd26c16b2ff6331ceb62b1f4e0d8ab2863528",
+    "services/daily-habit/daily-habit-digest.service.ts": "eb5c159b16d4715012d00a4e47d030b6398b3ce9576ddbe86187a2a94b0cf73f",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+    "components/bi/BIWhatChangedStrip.tsx": "6f2a1d8b5e035835cee3af91579b98ac185fb4d21e45e5abd79d0151ad279e2d",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "d2d1423d6e8661b0bf4cd748fd5fbb22b59055090aa2bb77f7235bb316e40c44"
+  },
+  "tests": {
+    "passed": 28,
+    "suites": 3,
+    "receipt": "461fc4",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/daily-habit/__tests__/daily-habit-digest.service.test.ts components/bi/__tests__/bi-command-primitives.test.tsx components/daily-habit/__tests__/modes.test.tsx"
+  },
+  "lint": {
+    "passed": true,
+    "files": 5,
+    "receipt": "1872a4",
+    "command": "node node_modules/eslint/bin/eslint.js services/bi/bi-contracts.ts services/daily-habit/daily-habit-digest.service.ts services/daily-habit/__tests__/daily-habit-digest.service.test.ts components/bi/BIWhatChangedStrip.tsx components/bi/__tests__/bi-command-primitives.test.tsx"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "ca94a7",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/digest-observations-v159-09c64205-942a-47b9-964f-315257c6f639.json",
+    "receipt": "5bfeb3",
+    "at": "2026-09-15T12:35:02.924Z",
+    "sourceBefore": {
+      "services/bi/bi-contracts.ts": "0ff28dcae389379b64103bc4b06fd26c16b2ff6331ceb62b1f4e0d8ab2863528",
+      "services/daily-habit/daily-habit-digest.service.ts": "eb5c159b16d4715012d00a4e47d030b6398b3ce9576ddbe86187a2a94b0cf73f",
+      "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+      "components/bi/BIWhatChangedStrip.tsx": "6f2a1d8b5e035835cee3af91579b98ac185fb4d21e45e5abd79d0151ad279e2d",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "d2d1423d6e8661b0bf4cd748fd5fbb22b59055090aa2bb77f7235bb316e40c44"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "digest-observations-v159-09c64205-942a-47b9-964f-315257c6f639-en-1440.png",
+          "digest-observations-v159-09c64205-942a-47b9-964f-315257c6f639-en-768.png",
+          "digest-observations-v159-09c64205-942a-47b9-964f-315257c6f639-en-320.png"
+        ],
+        "pageErrors": [],
+        "hydrationErrors": [],
+        "repeatedObservation": true,
+        "authorizedSourceLink": true,
+        "permissionFiltered": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "digest-observations-v159-09c64205-942a-47b9-964f-315257c6f639-fr-1440.png",
+          "digest-observations-v159-09c64205-942a-47b9-964f-315257c6f639-fr-768.png",
+          "digest-observations-v159-09c64205-942a-47b9-964f-315257c6f639-fr-320.png"
+        ],
+        "pageErrors": [],
+        "hydrationErrors": [],
+        "repeatedObservation": true,
+        "authorizedSourceLink": true,
+        "permissionFiltered": true
+      }
+    ],
+    "scope": "Owned localhost fixture; one submitted purchase order for a current source observation. No approval, dispatch, receipt or payment.",
+    "noBusinessEffects": true,
+    "passed": true,
+    "sourceAfter": {
+      "services/bi/bi-contracts.ts": "0ff28dcae389379b64103bc4b06fd26c16b2ff6331ceb62b1f4e0d8ab2863528",
+      "services/daily-habit/daily-habit-digest.service.ts": "eb5c159b16d4715012d00a4e47d030b6398b3ce9576ddbe86187a2a94b0cf73f",
+      "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+      "components/bi/BIWhatChangedStrip.tsx": "6f2a1d8b5e035835cee3af91579b98ac185fb4d21e45e5abd79d0151ad279e2d",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "d2d1423d6e8661b0bf4cd748fd5fbb22b59055090aa2bb77f7235bb316e40c44"
+    },
+    "sourceStable": true
+  },
+  "visualReview": {
+    "screenshots": 6,
+    "inspected": [
+      "French 320px populated observation"
+    ]
+  },
+  "remaining": [
+    "Investigate absent close-readiness score converted to zero and source-specific metric readiness/freshness.",
+    "KPI status badge clipped at 320px; dynamic signal text and technical source names remain untranslated.",
+    "Review pending-order receiving-delay classification and risk urgency provenance; all signal types, complete tenant/role/query-failure/accessibility/governed-agent and full lifecycle cases remain incomplete."
+  ],
+  "migrations": false,
+  "wholeWorkflowComplete": false,
+  "guide": "DAILY_DIGEST_OBSERVATIONS_V159.md",
+  "coverage": {
+    "discoveredWorkflows": 270,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2934,
+      "tests": 1049,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2544,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 191,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

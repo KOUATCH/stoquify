@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-19T10:45:07.521Z",
+  "runtimeReceipt": "lanes/environment/digest-payroll-handoff-c5fea5e9-20d8-47ba-b6ae-bb5e402f2002.json",
+  "runtimeSignInTimeout": "lanes/environment/digest-payroll-handoff-2b7d3a22-9cb6-4405-8809-d5c9794035fc.json",
+  "sourceHashes": {
+    "services/signals/business-signal-contracts.ts": "78d2d2cb487b963e447919f147f0e0ca85578bac7082f2f0feb63418a87800f2",
+    "services/signals/business-signal-rules.service.ts": "0b0a0762f2598025f89e820908269dd78c95a13a2f6b046ac11cf069a09fa527",
+    "services/signals/business-signal.service.ts": "e1dea6604cdfb30cbcbcae8c2c80f0e898c5f474d65ec4cf51e919bd976f3af0",
+    "services/signals/action-queue.service.ts": "1f0f2c2bbfc5f474dd4474a3a53541d19eb728ca3b35d49b40e8cc700dc97002",
+    "services/bi/bi-contracts.ts": "82a31dc9c85153995b497a991cd3cd4c9d0a0f7b599a56aa14b870d864d73178",
+    "services/bi/bi-evidence-adapter.service.ts": "930f408239d00219cf0cdb87c0252efdd379545fed77a84857d5370b6e4a66df",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "9ff7a07a1d00ec785db3e9b6084a2b6e206eac1cbfe4ce6a83c8cfe4d631e8c5",
+    "services/signals/__tests__/payroll-action-access.test.ts": "0daab085a13885753f856c9a09e83cf6cc44453da48ef8d6420a6d088fbc8d06",
+    "services/signals/__tests__/business-signal-rules.service.test.ts": "b171069dfc850e45954d93024166a16bccd8458536e6a21cb541cd3f4b9704f5",
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts": "2c22c7aa18d7151532f58c8283f8bd265445b4ea841ac5f41c84462a6f0e082f",
+    "services/daily-habit/__tests__/daily-habit-signal-presentation.test.ts": "446e7a2936ee3004e1e35aef7c426a092f4127d577e92fc0ccf30fb133cf353a",
+    "services/manager-action-center/__tests__/manager-action-center.service.test.ts": "86cacf6c35d75316ee9ff223e2ffd5ca7789bdac82fe972b4445b4b0bdf9cbe3",
+    "services/manager-action-center/__tests__/manager-location-action-center.service.test.ts": "88873654e8b9e12e6eb10a938ef98c982ce404be99861b4faf41a9b1a503f427"
+  },
+  "priorFocused": {
+    "chunk": "382d73",
+    "suites": 7,
+    "passed": 89
+  },
+  "finalAffected": {
+    "chunk": "fc961e",
+    "suites": 6,
+    "passed": 111
+  },
+  "sharedConsumerAttempt": {
+    "chunk": "7c7757",
+    "passed": 67,
+    "failed": 2
+  },
+  "correctedFixtureAttempt": {
+    "chunk": "9e9c2e",
+    "passed": 29,
+    "failed": 1
+  },
+  "staticChecks": [
+    "ESLint passed fceeb6 (14 files)",
+    "git diff --check passed 74cc9e",
+    "Final typecheck failed 25f00a: four errors in two unrelated files changed during compilation; stable-tree rerun required"
+  ],
+  "note": "Overlapping runs must not be added as unique test counts. This is a bounded correction, not full workflow completion.",
+  "unrelatedTypecheckFiles": [
+    {
+      "file": "app/api/uploadthing/core.ts",
+      "observedAfterCheckSha256": "0d655961fb7b8183bcda56cd21e5f82abea59e7d36e8a16c5f9a0810d31dfe5c",
+      "lastModified": "2026-09-19T10:44:20.587Z"
+    },
+    {
+      "file": "components/dashboard/items/ModernItemFormForEditing.tsx",
+      "observedAfterCheckSha256": "dc6419937ae02e562af75e0f62b5a115edd84774563354e7fef0806f7aed9e72",
+      "lastModified": "2026-09-19T10:44:20.589Z"
+    }
+  ]
+}

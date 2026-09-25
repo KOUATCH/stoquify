@@ -4,15 +4,10 @@ const path = require("path")
 const root = path.resolve(__dirname, "../..")
 
 const navigation = [
+  ["platform", "problem", "landing-message-sections.tsx", "LandingBenefits"],
+  ["workflow", "workflow", "landing-message-sections.tsx", "SaleWorkflow"],
   ["product", "product", "product-gallery.tsx", "ProductGallery"],
-  ["workflow", "workflow", "connected-workflow.tsx", "ConnectedWorkflow"],
-  ["platform", "modules", "operations-map.tsx", "OperationsMap"],
-  ["people", "people-to-pay", "people-to-pay.tsx", "PeopleToPay"],
-  ["controls", "daily-control", "module-deep-dives.tsx", "ModuleDeepDives"],
-  ["automation", "automation", "automation-section.tsx", "AutomationSection"],
-  ["trust", "trust", "trust-section.tsx", "TrustSection"],
-  ["useCases", "use-cases", "use-cases.tsx", "UseCases"],
-  ["pricing", "pricing", "pricing-section.tsx", "PricingSection"],
+  ["pricing", "pricing", "landing-message-sections.tsx", "GettingStarted"],
 ]
 
 const headerKeys = [
@@ -94,7 +89,7 @@ const bannedFrenchWords = [
   "gerez",
   "rentabilite",
   "clarte",
-  "enregistre",
+  // "enregistre" is also a valid present-tense verb, not necessarily a missing accent.
   "resolution",
   "createur",
   "renforces",
@@ -170,8 +165,8 @@ describe("landing navigation and French public localization contract", () => {
   const authSource = read("components/auth/auth-copy.ts")
 
   it("keeps the bilingual navigation catalog complete and ordered", () => {
-    expect(Object.keys(en.landing.header)).toEqual(headerKeys)
-    expect(Object.keys(fr.landing.header)).toEqual(headerKeys)
+    expect(Object.keys(en.landing.header)).toEqual(Object.keys(fr.landing.header))
+    for (const key of headerKeys) expect(en.landing.header[key]).toEqual(expect.any(String))
 
     let previousPosition = -1
     for (const [key, id] of navigation) {
@@ -197,12 +192,12 @@ describe("landing navigation and French public localization contract", () => {
     }
   })
 
-  it("provides compact desktop disclosure, complete mobile links, and scrollspy state", () => {
+  it("provides four direct desktop links, complete mobile links, and scrollspy state", () => {
     expect(headerSource).toContain("data-landing-header")
     expect(headerSource).toContain("data-landing-mobile-menu")
     expect(navigationSource).toContain('data-landing-nav="desktop"')
     expect(navigationSource).toContain('data-landing-nav="mobile"')
-    expect(navigationSource).toContain("data-landing-nav-more")
+    expect(navigationSource).not.toContain("data-landing-nav-more")
     expect(navigationSource).toContain("aria-current={active ? \"location\" : undefined}")
     expect(navigationSource).toContain('window.addEventListener("scroll"')
     expect(navigationSource).toContain('window.addEventListener("hashchange"')
@@ -221,7 +216,7 @@ describe("landing navigation and French public localization contract", () => {
 
     expect(fr.landing.header.controls).toBe("Contrôle quotidien")
     expect(fr.landing.header.useCases).toBe("Scénarios")
-    expect(fr.landing.header.startFree).toBe("Planifier")
+    expect(fr.landing.header.startFree).toBe("Créer un compte")
     expect(publicFrench).toContain("Système opérationnel OHADA")
     expect(publicFrench).toContain("synchronisation hors ligne")
     expect(publicFrench).not.toMatch(/Ã|Â|�|synchronisationhronisation/)

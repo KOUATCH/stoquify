@@ -65,6 +65,13 @@ export const activeCartSchema = z.object({
   sessionId: z.string().min(1).optional(),
 })
 
+export const checkoutLeaseSchema = z.object({ checkoutLeaseId: z.string().uuid() })
+export const checkoutWorkspaceSchema = activeCartSchema.extend({ sessionId: z.string().min(1), checkoutLeaseId: z.string().uuid() })
+export const checkoutCartCommandSchema = checkoutWorkspaceSchema.extend({
+  command: z.enum(["RESUME", "PARK"]),
+  salesOrderId: z.string().min(1),
+})
+
 export const addCartLineSchema = activeCartSchema.extend({
   itemId: z.string().min(1, "Item is required"),
   quantity: z.coerce.number().positive("Quantity must be positive").default(1),
@@ -157,6 +164,8 @@ export const commitSaleReceiptSchema = z.object({
 }).superRefine(validateReceiptDestination)
 
 export const commitSaleSchema = z.object({
+  // Optional only so already-recorded legacy requests remain readable/replayable.
+  expectedCartRevision: z.string().regex(/^[a-f0-9]{64}$/).optional(),
   clientCommitId: z.string()
     .trim()
     .min(8, "Commit identifier must be at least 8 characters")

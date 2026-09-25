@@ -4,6 +4,11 @@ import DashboardLayout from "../layout"
 import { getSession } from "@/lib/auth-server"
 import { RbacError, requireRbacContext } from "@/lib/security/rbac"
 import { redirect } from "next/navigation"
+import { headers } from "next/headers"
+import { DASHBOARD_REQUEST_PATH_HEADER } from "@/lib/security/dashboard-session-recovery"
+jest.mock("next/headers", () => ({ headers: jest.fn() }))
+import { getModuleNavigationSnapshot } from "@/services/modules/module-navigation.service"
+jest.mock("@/services/modules/module-navigation.service", () => ({ getModuleNavigationSnapshot: jest.fn() }))
 
 jest.mock("@/i18n/routing", () => ({
   localizePath: (href: string, locale: string) => `/${locale}${href}`,
@@ -92,6 +97,8 @@ function rbacContext() {
 describe("dashboard layout RBAC shell", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(headers as jest.Mock).mockResolvedValue(new Headers())
+    ;(getModuleNavigationSnapshot as jest.Mock).mockResolvedValue({ visibleModules: ["dashboard"], routes: [] })
   })
 
   it("redirects unauthenticated requests to the localized login page", async () => {
@@ -116,6 +123,15 @@ describe("dashboard layout RBAC shell", () => {
     expect(screen.queryByText("protected child")).not.toBeInTheDocument()
   })
 
+  it.each([false, true])("retains the selected view when a session is expired (cached session: %s)", async cached => {
+    const target = "/fr/dashboard/daily-digest?digest=finance-cash&mode=command"
+    ;(headers as jest.Mock).mockResolvedValue(new Headers({ [DASHBOARD_REQUEST_PATH_HEADER]: target }))
+    mockGetSession.mockResolvedValue(cached ? session() : null)
+    mockRequireRbacContext.mockRejectedValue(new RbacError("Expired", "UNAUTHENTICATED", 401))
+    await expect(DashboardLayout({ children: <div>protected child</div>, params: Promise.resolve({ locale: "fr" }) })).rejects.toThrow(`REDIRECT:/fr/login?callbackUrl=${encodeURIComponent(target)}`)
+    expect(getModuleNavigationSnapshot).not.toHaveBeenCalled()
+  })
+
   it("renders the shell from RBAC context instead of raw BetterAuth claims", async () => {
     mockGetSession.mockResolvedValue(session())
     mockRequireRbacContext.mockResolvedValue(rbacContext())
@@ -126,5 +142,13 @@ describe("dashboard layout RBAC shell", () => {
     expect(screen.getByTestId("navbar")).toHaveTextContent("RBAC Org")
     expect(screen.getByText("protected child")).toBeInTheDocument()
     expect(screen.queryByText("raw-org")).not.toBeInTheDocument()
+    expect(getModuleNavigationSnapshot).toHaveBeenCalledWith("org-1")
+  })
+  it("does not fabricate a navigation snapshot when the service read fails", async () => {
+    mockGetSession.mockResolvedValue(session())
+    mockRequireRbacContext.mockResolvedValue(rbacContext())
+    ;(getModuleNavigationSnapshot as jest.Mock).mockRejectedValue(new Error("navigation unavailable"))
+    await expect(DashboardLayout({ children: <div>protected child</div>, params: Promise.resolve({ locale: "en" }) })).rejects.toThrow("navigation unavailable")
+    expect(screen.queryByText("protected child")).not.toBeInTheDocument()
   })
 })

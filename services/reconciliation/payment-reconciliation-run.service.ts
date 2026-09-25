@@ -9,6 +9,7 @@ import {
   ProviderEventStatus,
   ReconciliationRunStatus,
   SettlementAccountApprovalStatus,
+  StatementLineDirection,
   StatementLineStatus,
   SuspenseStatus,
   SuspenseType,
@@ -18,7 +19,9 @@ import { randomUUID } from "node:crypto"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
+import { loadProviderOperationIntent } from "@/services/payments/provider-operation-evidence"
 
 import { assertProviderAccountReconciliationReady } from "./payment-reconciliation-evidence.service"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
@@ -29,6 +32,7 @@ export type RunPaymentReconciliationInput = {
   businessDate: Date
   runById?: string
   correlationId?: string
+  providerOperationId?: string
 }
 
 export type RunPaymentReconciliationResult = {
@@ -39,25 +43,6 @@ export type RunPaymentReconciliationResult = {
   suspenseCount: number
   suspenseAmount: string
   correlationId: string
-}
-
-export type ProposeManualMatchInput = {
-  organizationId: string
-  providerAccountId: string
-  paymentTransactionId: string
-  providerEventId?: string
-  statementLineId?: string
-  proposedById: string
-  amountMatched: Prisma.Decimal.Value
-  currencyCode?: string
-  correlationId?: string
-}
-
-export type ApproveManualMatchInput = {
-  organizationId: string
-  proposedMatchId: string
-  approvedById: string
-  correlationId?: string
 }
 
 function money(value: Prisma.Decimal.Value | null | undefined) {
@@ -88,17 +73,28 @@ function key(value: string | null | undefined) {
 }
 
 function mapByKey<T>(records: T[], pick: (record: T) => string | null | undefined) {
-  const map = new Map<string, T>()
+  const map = new Map<string, T[]>()
   for (const record of records) {
     const recordKey = key(pick(record))
-    if (recordKey && !map.has(recordKey)) map.set(recordKey, record)
+    if (recordKey) map.set(recordKey, [...(map.get(recordKey) ?? []), record])
   }
   return map
 }
 
-function getByMaybeKey<T>(map: Map<string, T>, value: string | null | undefined) {
+function getByMaybeKey<T>(map: Map<string, T[]>, value: string | null | undefined) {
   const recordKey = key(value)
-  return recordKey ? map.get(recordKey) : undefined
+  return (recordKey ? map.get(recordKey) : undefined) ?? []
+}
+
+function candidatesFor<T extends { id: string }>(
+  byTransactionId: Map<string, T[]>,
+  byReference: Map<string, T[]>,
+  transaction: { providerTransactionId: string | null; providerReference: string | null },
+) {
+  return [...new Map([
+    ...getByMaybeKey(byTransactionId, transaction.providerTransactionId),
+    ...getByMaybeKey(byReference, transaction.providerReference),
+  ].map(record => [record.id, record])).values()].sort((left, right) => left.id.localeCompare(right.id))
 }
 
 function addDays(date: Date, days: number) {
@@ -200,6 +196,13 @@ async function createExceptionAndSuspense(
     select: { id: true },
   })
 
+  // Both directions are needed by assignment, review and source-owned recovery.
+  // Keep the relational link in the same transaction as the two records.
+  await tx.paymentException.update({
+    where: { id: exception.id, organizationId: input.organizationId },
+    data: { suspenseItemId: suspense.id },
+  })
+
   await publishPaymentReconciliationNotification({
     type: "payment-reconciliation.exception.created",
     organizationId: input.organizationId,
@@ -287,6 +290,12 @@ export async function runPaymentReconciliation(
 
       if (!providerAccount) throw new NotFoundError("Provider account not found")
       assertProviderAccountReconciliationReady(providerAccount)
+      if (input.providerOperationId) {
+        const { intent } = await loadProviderOperationIntent(tx, input.organizationId, input.providerOperationId)
+        if (intent.actorId !== input.runById || intent.providerAccountId !== input.providerAccountId || intent.businessDate !== periodStart.toISOString()
+          || input.correlationId !== input.providerOperationId || !await tx.statementFile.findFirst({ where: { organizationId: input.organizationId, providerAccountId: input.providerAccountId, fileHash: intent.fileHash }, select: { id: true } }))
+          throw new ConflictError("The provider operation does not match current run sources.")
+      }
 
       const existingRun = await tx.reconciliationRun.findFirst({
         where: {
@@ -306,6 +315,12 @@ export async function runPaymentReconciliation(
         throw new ConflictError(duplicateRunMessage(existingRun.status))
       }
 
+      await assertModuleNewWorkInTx(tx, {
+        organizationId: input.organizationId,
+        moduleSlug: "payment_reconciliation",
+        operation: "payment.reconciliation.run.create",
+      })
+
       let run: { id: string }
       try {
         run = await tx.reconciliationRun.create({
@@ -320,6 +335,7 @@ export async function runPaymentReconciliation(
           runById: input.runById,
           correlationId,
           metadata: {
+            ...(input.providerOperationId ? { providerOperationId: input.providerOperationId } : {}),
             runDedupeKey,
             concurrencyGuard: "same_provider_business_date",
           },
@@ -367,23 +383,54 @@ export async function runPaymentReconciliation(
       const matchedEventIds = new Set<string>()
       const matchedLineIds = new Set<string>()
       const matchedTransactionIds = new Set<string>()
+      // Resolve all claims before choosing a match: query order must not decide
+      // which internal payment receives shared external evidence.
+      const candidates = transactions.map(transaction => ({
+        transaction,
+        events: candidatesFor(eventByTransactionId, eventByReference, transaction),
+        lines: candidatesFor(lineByTransactionId, lineByReference, transaction),
+      }))
+      const eventClaims = new Map<string, number>()
+      const lineClaims = new Map<string, number>()
+      for (const candidate of candidates) {
+        for (const event of candidate.events) eventClaims.set(event.id, (eventClaims.get(event.id) ?? 0) + 1)
+        for (const line of candidate.lines) lineClaims.set(line.id, (lineClaims.get(line.id) ?? 0) + 1)
+      }
+      const priorMatches = await tx.matchRecord.findMany({
+        where: {
+          organizationId: input.organizationId,
+          providerAccountId: providerAccount.id,
+          status: { in: [MatchStatus.AUTO_MATCHED, MatchStatus.APPROVED, MatchStatus.CORRECTED] },
+          OR: [
+            { paymentTransactionId: { in: transactions.map(transaction => transaction.id) } },
+            { providerEventId: { in: providerEvents.map(event => event.id) } },
+            { statementLineId: { in: statementLines.map(line => line.id) } },
+          ],
+        },
+        select: { id: true, paymentTransactionId: true, providerEventId: true, statementLineId: true },
+      })
+      if (priorMatches.length > 0) {
+        // A new suspense row would itself duplicate an existing allocation.
+        // Roll back this run and require review of the retained match instead.
+        throw new ConflictError("Payment evidence is already allocated to an existing match. Review the existing reconciliation before starting another run.")
+      }
 
       let matchCount = 0
       let exceptionCount = 0
       let suspenseCount = 0
       let suspenseAmount = new Prisma.Decimal(0)
 
-      for (const transaction of transactions) {
-        const event =
-          getByMaybeKey(eventByTransactionId, transaction.providerTransactionId) ??
-          getByMaybeKey(eventByReference, transaction.providerReference)
-        const line =
-          getByMaybeKey(lineByTransactionId, transaction.providerTransactionId) ??
-          getByMaybeKey(lineByReference, transaction.providerReference)
+      for (const { transaction, events, lines } of candidates) {
+        const event = events.length === 1 ? events[0] : undefined
+        const line = lines.length === 1 ? lines[0] : undefined
+        const ambiguous = events.length > 1 || lines.length > 1
+          || events.some(candidate => eventClaims.get(candidate.id)! > 1)
+          || lines.some(candidate => lineClaims.get(candidate.id)! > 1)
 
         const externalAmount = event?.amount ?? line?.amount
         const externalCurrency = event?.currencyCode ?? line?.currencyCode ?? transaction.currencyCode
         const mismatchReasons = [
+          ambiguous ? "AMBIGUOUS_EXTERNAL_EVIDENCE" : null,
           event?.amount !== null && event?.amount !== undefined && !sameAmount(transaction.amount, event.amount)
             ? "PROVIDER_EVENT_AMOUNT"
             : null,
@@ -396,20 +443,30 @@ export async function runPaymentReconciliation(
           line && line.currencyCode !== transaction.currencyCode
             ? "STATEMENT_LINE_CURRENCY"
             : null,
-          event && (event.amount === null || event.amount === undefined) && !line
+          event && (event.amount === null || event.amount === undefined)
             ? "PROVIDER_EVENT_AMOUNT_MISSING"
             : null,
+          event && event.direction !== transaction.direction ? "PROVIDER_EVENT_DIRECTION" : null,
+          line && !(
+            (transaction.direction === PaymentDirection.INBOUND && line.direction === StatementLineDirection.CREDIT)
+            || (transaction.direction === PaymentDirection.OUTBOUND && line.direction === StatementLineDirection.DEBIT)
+          ) ? "STATEMENT_LINE_DIRECTION" : null,
+          event && event.signatureValid !== true ? "PROVIDER_EVENT_SIGNATURE" : null,
         ].filter((reason): reason is string => reason !== null)
 
         if (mismatchReasons.length > 0) {
-          const suspense = await createExceptionAndSuspense(tx, {
+          const exceptionType = ambiguous ? PaymentExceptionType.DUPLICATE_PROVIDER_REFERENCE
+            : mismatchReasons.includes("PROVIDER_EVENT_SIGNATURE") ? PaymentExceptionType.SIGNATURE_FAILURE
+            : mismatchReasons.some(reason => reason.endsWith("_DIRECTION"))
+              ? PaymentExceptionType.MANUAL_REVIEW_REQUIRED : PaymentExceptionType.AMOUNT_MISMATCH
+          await createExceptionAndSuspense(tx, {
             organizationId: input.organizationId,
             providerAccountId: providerAccount.id,
             reconciliationRunId: run.id,
             paymentTransactionId: transaction.id,
             providerEventId: event?.id,
             statementLineId: line?.id,
-            type: PaymentExceptionType.AMOUNT_MISMATCH,
+            type: exceptionType,
             severity: ExceptionSeverity.HIGH,
             amount: transaction.amount,
             currencyCode: transaction.currencyCode,
@@ -423,6 +480,11 @@ export async function runPaymentReconciliation(
               providerCurrency: event?.currencyCode ?? null,
               statementAmount: line ? money(line.amount).toFixed(2) : null,
               statementCurrency: line?.currencyCode ?? null,
+              transactionDirection: transaction.direction,
+              providerDirection: event?.direction ?? null,
+              statementDirection: line?.direction ?? null,
+              providerEventIds: events.map(candidate => candidate.id),
+              statementLineIds: lines.map(candidate => candidate.id),
               mismatchReasons,
               rule: "EXTERNAL_EVIDENCE_MISMATCH",
             },
@@ -432,9 +494,10 @@ export async function runPaymentReconciliation(
           exceptionCount += 1
           suspenseCount += 1
           suspenseAmount = suspenseAmount.plus(transaction.amount)
-          if (event) matchedEventIds.add(event.id)
-          if (line) matchedLineIds.add(line.id)
-          matchedTransactionIds.add(transaction.id)
+          // These rows are explained by the exception, not successful matches.
+          // Do not count the same candidates again as orphan suspense below.
+          for (const candidate of events) matchedEventIds.add(candidate.id)
+          for (const candidate of lines) matchedLineIds.add(candidate.id)
           continue
         }
 
@@ -447,7 +510,10 @@ export async function runPaymentReconciliation(
               providerEventId: event?.id,
               statementLineId: line?.id,
               reconciliationRunId: run.id,
-              rule: event?.providerTransactionId || line?.providerTransactionId
+              rule: key(transaction.providerTransactionId) && (
+                key(transaction.providerTransactionId) === key(event?.providerTransactionId)
+                || key(transaction.providerTransactionId) === key(line?.providerTransactionId)
+              )
                 ? MatchRule.EXACT_PROVIDER_TRANSACTION_ID
                 : MatchRule.EXACT_PROVIDER_REFERENCE,
               status: MatchStatus.AUTO_MATCHED,
@@ -491,7 +557,6 @@ export async function runPaymentReconciliation(
         exceptionCount += 1
         suspenseCount += 1
         suspenseAmount = suspenseAmount.plus(transaction.amount)
-        matchedTransactionIds.add(transaction.id)
       }
 
       for (const event of providerEvents) {
@@ -610,168 +675,5 @@ export async function runPaymentReconciliation(
   )
 }
 
-export async function proposeManualMatch(input: ProposeManualMatchInput) {
-  if (Boolean(input.providerEventId) === Boolean(input.statementLineId)) {
-    throw new BusinessRuleError("Manual match requires exactly one provider event or statement line.")
-  }
-
-  const correlationId = input.correlationId ?? randomUUID()
-  const [providerAccount, paymentTransaction, providerEvent, statementLine] = await Promise.all([
-    db.providerAccount.findFirst({
-      where: { id: input.providerAccountId, organizationId: input.organizationId },
-      select: { id: true, currencyCode: true, status: true },
-    }),
-    db.paymentTransaction.findFirst({
-      where: {
-        id: input.paymentTransactionId,
-        organizationId: input.organizationId,
-        providerAccountId: input.providerAccountId,
-      },
-      select: { id: true, amount: true, currencyCode: true },
-    }),
-    input.providerEventId
-      ? db.providerEvent.findFirst({
-          where: {
-            id: input.providerEventId,
-            organizationId: input.organizationId,
-            providerAccountId: input.providerAccountId,
-          },
-          select: { id: true, amount: true, currencyCode: true },
-        })
-      : Promise.resolve(null),
-    input.statementLineId
-      ? db.statementLine.findFirst({
-          where: {
-            id: input.statementLineId,
-            organizationId: input.organizationId,
-            providerAccountId: input.providerAccountId,
-          },
-          select: { id: true, amount: true, currencyCode: true },
-        })
-      : Promise.resolve(null),
-  ])
-
-  if (!providerAccount || providerAccount.status !== "ACTIVE") {
-    throw new NotFoundError("Active provider account not found")
-  }
-  if (!paymentTransaction) throw new NotFoundError("Payment transaction not found")
-  if (input.providerEventId && !providerEvent) throw new NotFoundError("Provider event not found")
-  if (input.statementLineId && !statementLine) throw new NotFoundError("Statement line not found")
-
-  const externalEvidence = providerEvent ?? statementLine
-  if (!externalEvidence) throw new NotFoundError("External payment evidence not found")
-
-  const amountMatched = money(input.amountMatched)
-  if (amountMatched.lte(0)) throw new BusinessRuleError("Manual match amount must be greater than zero.")
-  if (amountMatched.gt(paymentTransaction.amount) || amountMatched.gt(externalEvidence.amount ?? 0)) {
-    throw new BusinessRuleError("Manual match amount cannot exceed either evidence amount.")
-  }
-
-  const currencyCode = input.currencyCode ?? paymentTransaction.currencyCode
-  if (
-    currencyCode !== providerAccount.currencyCode
-    || currencyCode !== paymentTransaction.currencyCode
-    || currencyCode !== externalEvidence.currencyCode
-  ) {
-    throw new BusinessRuleError("Manual match evidence must use the same currency.")
-  }
-
-  const match = await db.matchRecord.create({
-    data: {
-      organizationId: input.organizationId,
-      providerAccountId: input.providerAccountId,
-      paymentTransactionId: input.paymentTransactionId,
-      providerEventId: input.providerEventId,
-      statementLineId: input.statementLineId,
-      rule: MatchRule.MANUAL,
-      status: MatchStatus.PROPOSED,
-      confidence: new Prisma.Decimal(75),
-      amountMatched,
-      currencyCode,
-      matchedById: input.proposedById,
-      matchedAt: new Date(),
-      correlationId,
-      metadata: {
-        proposedById: input.proposedById,
-        makerCheckerRequired: true,
-      },
-    },
-    select: { id: true },
-  })
-
-  await publishPaymentReconciliationNotification({
-    type: "payment-reconciliation.manual-match.proposed",
-    organizationId: input.organizationId,
-    providerAccountId: input.providerAccountId,
-    amount: amountMatched.toFixed(2),
-    currency: currencyCode,
-    evidenceRef: {
-      paymentTransactionId: input.paymentTransactionId,
-      providerEventId: input.providerEventId,
-      statementLineId: input.statementLineId,
-    },
-    correlationId,
-  })
-
-  return { matchId: match.id, correlationId }
-}
-
-export async function approveManualMatch(input: ApproveManualMatchInput) {
-  const correlationId = input.correlationId ?? randomUUID()
-  const proposed = await db.matchRecord.findFirst({
-    where: {
-      id: input.proposedMatchId,
-      organizationId: input.organizationId,
-      status: MatchStatus.PROPOSED,
-    },
-  })
-
-  if (!proposed) throw new NotFoundError("Proposed match not found")
-  if (proposed.matchedById === input.approvedById) {
-    throw new BusinessRuleError("Manual match approval requires an independent reviewer.")
-  }
-
-  const approved = await db.matchRecord.create({
-    data: {
-      organizationId: proposed.organizationId,
-      providerAccountId: proposed.providerAccountId,
-      paymentTransactionId: proposed.paymentTransactionId,
-      providerEventId: proposed.providerEventId,
-      statementLineId: proposed.statementLineId,
-      reconciliationRunId: proposed.reconciliationRunId,
-      ledgerPostingBatchId: proposed.ledgerPostingBatchId,
-      rule: MatchRule.MANUAL,
-      status: MatchStatus.APPROVED,
-      confidence: proposed.confidence,
-      amountMatched: proposed.amountMatched,
-      currencyCode: proposed.currencyCode,
-      matchedById: input.approvedById,
-      matchedAt: new Date(),
-      correctionOfId: proposed.id,
-      correctionReason: "MANUAL_MATCH_APPROVED",
-      correlationId,
-      metadata: {
-        approvedById: input.approvedById,
-        proposedById: proposed.matchedById,
-      },
-    },
-    select: { id: true },
-  })
-
-  await publishPaymentReconciliationNotification({
-    type: "payment-reconciliation.manual-match.approved",
-    organizationId: input.organizationId,
-    providerAccountId: proposed.providerAccountId,
-    amount: proposed.amountMatched?.toFixed(2) ?? null,
-    currency: proposed.currencyCode,
-    evidenceRef: {
-      paymentTransactionId: proposed.paymentTransactionId,
-      providerEventId: proposed.providerEventId,
-      statementLineId: proposed.statementLineId,
-      reconciliationRunId: proposed.reconciliationRunId,
-    },
-    correlationId,
-  })
-
-  return { matchId: approved.id, correlationId }
-}
+export { proposeManualMatch, approveManualMatch } from "./payment-reconciliation-manual-match.service"
+export type { ProposeManualMatchInput, ApproveManualMatchInput } from "./payment-reconciliation-manual-match.service"

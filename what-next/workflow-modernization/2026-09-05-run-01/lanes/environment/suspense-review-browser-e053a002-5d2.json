@@ -1,0 +1,82 @@
+{
+  "at": "2026-09-09T06:21:36.996Z",
+  "run": "e053a002-5d2",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseQueue.tsx": "ecde48c55a3b49c05f7dee43ff8c72eab8b16e4b45f396aeff2bb5645aa5200e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "ab8a95796cc5bd251ff92aa720aad81ca6d4f451e44f97d11baa55e6259429ca",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "077984a665a2bde93666b9b4063e4a6f4d649e3ab608c5f161d06b730e0d2562",
+    "actions/payments/reconciliation.actions.ts": "c14253fd1a1d0dcb0911ec0fe0db7999cdae53de7b113466bf924ab87011785f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c203e502886375517ce340da867ca6521b5e19dda5f73cee26c0f72f5b26a01f",
+    "messages/en.json": "a6c203cf9eddf26092c85903a38cbde614a30386a49032c6559c1d927041a8c5",
+    "messages/fr.json": "eb9c571ad6667b934fc35b9600537242e1cd1583957c81cce3e0dd7460ab1499"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Normal maker session proposes from actual read model; persisted proposal confirmed",
+        "Actual EN/FR review, keyboard focus return and mobile/tablet reflow",
+        "Expired assurance rejected; real password step-up does not automatically post",
+        "Changed proposal rejected with zero journals; explicit refresh and re-review recover",
+        "Lost committed response safely retried with one journal/audit; retained record and 200% text checked",
+        "Current revoked permissions deny direct route"
+      ],
+      "screenshots": [
+        "suspense-review-en-review-desktop-e053a002-5d2.png",
+        "suspense-review-en-review-320-e053a002-5d2.png",
+        "suspense-review-en-review-390-e053a002-5d2.png",
+        "suspense-review-en-review-768-e053a002-5d2.png",
+        "suspense-review-en-stale-e053a002-5d2.png",
+        "suspense-review-en-retained-desktop-e053a002-5d2.png",
+        "suspense-review-en-retained-mobile-e053a002-5d2.png",
+        "suspense-review-en-retained-text200-e053a002-5d2.png",
+        "suspense-review-en-denied-e053a002-5d2.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 103774
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Normal maker session proposes from actual read model; persisted proposal confirmed",
+        "Actual EN/FR review, keyboard focus return and mobile/tablet reflow",
+        "Expired assurance rejected; real password step-up does not automatically post",
+        "Changed proposal rejected with zero journals; explicit refresh and re-review recover",
+        "Lost committed response safely retried with one journal/audit; retained record and 200% text checked",
+        "Current revoked permissions deny direct route"
+      ],
+      "screenshots": [
+        "suspense-review-fr-review-desktop-e053a002-5d2.png",
+        "suspense-review-fr-review-320-e053a002-5d2.png",
+        "suspense-review-fr-review-390-e053a002-5d2.png",
+        "suspense-review-fr-review-768-e053a002-5d2.png",
+        "suspense-review-fr-stale-e053a002-5d2.png",
+        "suspense-review-fr-retained-desktop-e053a002-5d2.png",
+        "suspense-review-fr-retained-mobile-e053a002-5d2.png",
+        "suspense-review-fr-retained-text200-e053a002-5d2.png",
+        "suspense-review-fr-denied-e053a002-5d2.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 8360
+    }
+  ],
+  "scope": "Actual isolated app, synthetic setup and normal password sign-in/step-up. No provider or statutory approval claim.",
+  "originalBefore": "6fc190ed4eb8158480d2dae973435eee7b3dcf9a988b1780f629f755abbc5b35",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseQueue.tsx": "ecde48c55a3b49c05f7dee43ff8c72eab8b16e4b45f396aeff2bb5645aa5200e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "ab8a95796cc5bd251ff92aa720aad81ca6d4f451e44f97d11baa55e6259429ca",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "077984a665a2bde93666b9b4063e4a6f4d649e3ab608c5f161d06b730e0d2562",
+    "actions/payments/reconciliation.actions.ts": "c14253fd1a1d0dcb0911ec0fe0db7999cdae53de7b113466bf924ab87011785f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c203e502886375517ce340da867ca6521b5e19dda5f73cee26c0f72f5b26a01f",
+    "messages/en.json": "a6c203cf9eddf26092c85903a38cbde614a30386a49032c6559c1d927041a8c5",
+    "messages/fr.json": "eb9c571ad6667b934fc35b9600537242e1cd1583957c81cce3e0dd7460ab1499"
+  },
+  "sourceStable": true
+}

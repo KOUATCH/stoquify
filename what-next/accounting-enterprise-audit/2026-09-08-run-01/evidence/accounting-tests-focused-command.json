@@ -1,0 +1,19 @@
+{
+  "label": "accounting-tests-focused",
+  "executable": "node",
+  "args": [
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--roots",
+    "services/accounting",
+    "--cacheDirectory",
+    "what-next/accounting-enterprise-audit/2026-09-08-run-01/evidence/jest-cache-focused",
+    "--json",
+    "--outputFile",
+    "what-next/accounting-enterprise-audit/2026-09-08-run-01/evidence/accounting-tests-focused.json"
+  ],
+  "startedAt": "2026-09-08T11:49:27.804Z",
+  "endedAt": "2026-09-08T11:53:24.362Z",
+  "exitCode": 0,
+  "log": "accounting-tests-focused.log"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "pos.shift.open",
+  "version": "2026-09-13.1",
+  "owner": "POS domain services",
+  "source": "services/pos/shift-opening-access.ts",
+  "sourceHash": "4c89c7f9015632b0bfb96477a44ffeab5b7149ba77705b875c3f17bf3a8751b4",
+  "action": "actions/pos/session.actions.ts:openPOSShiftAction",
+  "service": "services/pos/pos.service.ts:openPOSShift",
+  "permission": "pos.session.start",
+  "moduleSlug": "pos",
+  "accessIntent": "write",
+  "effectiveMode": "enforce",
+  "scope": "New shift opening only; current tenant grants and dependency evaluator; unchanged legacy derivation.",
+  "denial": "Rollback before session/drawer effects; retained POS_SHIFT_OPEN_ENTITLEMENT_DENIED audit and localized explicit recovery.",
+  "continuation": "Existing read/closure unchanged; actual closure verified after restrictions. Other financial completion paths remain open.",
+  "rollout": "Local implementation verified; no production deployment/cohort activation.",
+  "rollback": "Forward correction or presentation rollback retaining commercial admission; reverting guard reintroduces reproduced defect. No bypass kill switch; production rollback rehearsal not completed.",
+  "evidence": [
+    "lanes/environment/shift-entitlement-v129-c7e4b062-8ca3-453b-a794-a8d3848a58e8.json",
+    "lanes/environment/shift-access-browser-v129-44c4ba16-dd94-4a4d-90bf-5156575fcdd8.json",
+    "POS_SHIFT_ACCESS_V129.md"
+  ]
+}

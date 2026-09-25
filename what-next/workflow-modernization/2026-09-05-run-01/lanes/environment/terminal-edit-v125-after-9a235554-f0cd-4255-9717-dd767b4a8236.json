@@ -1,0 +1,27 @@
+{
+  "at": "2026-09-13T12:48:50.029Z",
+  "phase": "after",
+  "sourceBefore": "bb56aa35398215db086795c078602fe9f2bb21bf1ccaa279be945b6aa2df39e2",
+  "checks": [
+    {
+      "name": "Concurrent opening aborts unsafe edit",
+      "passed": true
+    },
+    {
+      "name": "Active terminal location cannot move",
+      "passed": true
+    },
+    {
+      "name": "Omitted flags preserve inactive and drawer-disabled intent",
+      "passed": true
+    },
+    {
+      "name": "Unused drawer follows idle relocation; cross-tenant and historical relocation denied",
+      "passed": true
+    }
+  ],
+  "scope": "Actual terminal edit/open services on owned PostgreSQL, with controlled concurrency. No sale/payment or external operation.",
+  "passed": true,
+  "sourceAfter": "bb56aa35398215db086795c078602fe9f2bb21bf1ccaa279be945b6aa2df39e2",
+  "sourceStable": true
+}

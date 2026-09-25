@@ -1,0 +1,113 @@
+{
+  "capturedAt": "2026-09-05T17:53:06.023Z",
+  "source": [
+    {
+      "path": "services/users/user-identity.service.ts",
+      "sha256": "f71890bda027db78aa182c0fbbff4b06a0c94080964d25b9be6c8e7f3a739aa2"
+    },
+    {
+      "path": "services/security/public-identity-abuse.service.ts",
+      "sha256": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59"
+    },
+    {
+      "path": "actions/users/resendVerificationCode.ts",
+      "sha256": "12d54e11839bd912327fb3a6e1945945f08a7504cf2b7675bd759db26b469359"
+    },
+    {
+      "path": "components/auth/v2/VerifyV2Form.tsx",
+      "sha256": "b86bda7aa3cd1f3b60e20df2a14e181975f068802532269e0ec6b97f1c438ea3"
+    },
+    {
+      "path": "components/auth/EmailVerificationForm.tsx",
+      "sha256": "3369cf1471a9959c7bade24f68412b35685bac2f5aa4d5c56366d68cf842c1ca"
+    },
+    {
+      "path": "hooks/useRegisterWorkflow.ts",
+      "sha256": "3d46acc4674042535a8533dbcb2edfa77c9a249cbbdb9b61fcc92d2cf12d2915"
+    },
+    {
+      "path": "scripts/public-identity-abuse-gate.js",
+      "sha256": "2af10c0c6b70e2316eb58076fb420fafd00836ba11678ef3be9b94d455f33003"
+    },
+    {
+      "path": "services/users/__tests__/user-identity.service.test.ts",
+      "sha256": "ad2fa5765dc638e84e36b782a518bbba4ad419f08f091951c8f679d259b36ff1"
+    },
+    {
+      "path": "services/security/__tests__/public-identity-abuse.service.test.ts",
+      "sha256": "d793193d82aa57e0a61ab856eab6f362f937dd767c569a5aac87eec15b7e26be"
+    },
+    {
+      "path": "actions/users/__tests__/public-identity-actions.test.ts",
+      "sha256": "2eb4184c2c983693afcf54b1a014ce0dc20c7568cb080d1631ac92d75d72a00f"
+    },
+    {
+      "path": "components/auth/v2/__tests__/VerifyV2Form.recovery.test.tsx",
+      "sha256": "814af7019f39e2a78775e8d41ffed0ff3d183cf36c487a294a9e163c342272bb"
+    },
+    {
+      "path": "scripts/__tests__/public-identity-abuse-gate.test.js",
+      "sha256": "8ea9b91727781aff7f1fd550fe349e4da48dc81f2038b42c846f84455f7644cf"
+    }
+  ],
+  "before": {
+    "artifact": "evidence/identity-resend-before.json",
+    "expectedMissingFunctionFailures": 7,
+    "unselectedTests": 31,
+    "elapsedSeconds": 4.046
+  },
+  "firstAfter": {
+    "artifact": "evidence/identity-resend-after-01.json",
+    "passed": 55,
+    "failed": 1,
+    "elapsedSeconds": 22.552,
+    "failure": "Existing test expected the old registration message; expectation corrected to the implemented delivery-neutral wording."
+  },
+  "final": {
+    "artifact": "evidence/identity-resend-shared-after.json",
+    "passed": 52,
+    "suites": 3,
+    "elapsedSeconds": 12.106,
+    "composition": "38 identity service tests plus 14 required shared module/action regressions. The other 18 resend action/policy/component/gate tests passed in firstAfter with unchanged relevant sources."
+  },
+  "distinctResendBatchTestsPassed": 56,
+  "additionalSharedModuleTestsPassed": 14,
+  "lint": {
+    "changedSourceAndTests": 10,
+    "exitCode": 0,
+    "session": 90849,
+    "hookFollowup": {
+      "session": 37224,
+      "exitCode": 0
+    },
+    "legacyAdapterFollowup": {
+      "session": 82066,
+      "exitCode": 0
+    }
+  },
+  "typecheck": {
+    "initialCombinedAfterClone": {
+      "session": 36224,
+      "exitCode": 1,
+      "error": "ApplicationErrorCode was broader than the clone action FORBIDDEN discriminant."
+    },
+    "correctedCombined": {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "session": 53828,
+      "exitCode": 0,
+      "toolChunk": "51cc74"
+    }
+  },
+  "publicIdentitySourceGate": {
+    "checks": 16,
+    "status": "ready",
+    "releaseEnforcement": "off",
+    "warning": "Hash-secret warning comes from deliberately empty environment supplied to this source-shape check; it is not an assertion about the owned app secret."
+  },
+  "laterLowImpactChanges": [
+    "Registration toast selects existing local EN/FR copy instead of the English server message.",
+    "Unused legacy form delegates to the real v2 flow instead of simulating verification. Both included in final typecheck and scoped lint; legacy adapter has no current production route caller."
+  ],
+  "boundary": "Unit checks use mocked provider/database collaborators. No real mail sent. OTP component replaced by a plain input only in component tests; browser evidence exercises the actual control separately. Provider acceptance is not proof of inbox delivery.",
+  "runtime": "See environment lane for separately bound real PostgreSQL reset and actual browser outcomes; not inferred from these tests."
+}

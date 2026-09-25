@@ -1,0 +1,76 @@
+{
+  "run": "bf928cb5-0a0",
+  "startedAt": "2026-09-06T09:27:44.646Z",
+  "baseUrl": "http://127.0.0.1:3108",
+  "database": "stoquify_local_registration_20260906_01",
+  "sourcesBefore": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "0482387bd00b0d5df1e435ac9d882fb7b1ecf194ef6c68bea5c96dd5049cc747",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "fd2d9972e0c08c2413d46f3a13bd0d58b76cd691f7e132514fea9ba65111c364",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "checks": [
+    {
+      "key": "register-v2-en",
+      "passed": true,
+      "screenshots": [
+        "register-v2-en-entry-bf928cb5-0a0.png",
+        "register-v2-en-ready-bf928cb5-0a0.png",
+        "register-v2-en-recovery-bf928cb5-0a0.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2753,
+      "reviewDoesNotCreate": true,
+      "abortedRequests": 1,
+      "recoveryOnly": true
+    },
+    {
+      "key": "register-v2-fr",
+      "passed": true,
+      "screenshots": [
+        "register-v2-fr-entry-bf928cb5-0a0.png",
+        "register-v2-fr-ready-bf928cb5-0a0.png",
+        "register-v2-fr-recovery-bf928cb5-0a0.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2811,
+      "reviewDoesNotCreate": true,
+      "abortedRequests": 1,
+      "recoveryOnly": true
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Owned local application and actual registration service with external email disabled. Verification handoff is tested; no delivered code is claimed.",
+    "Three successful browser creations and a fourth denial use the ordinary shared IP registration limit; no reset, spoofing or bypass.",
+    "Browser accessibility checks cover labels, keyboard, focus and reflow; no actual screen-reader or comprehensive contrast certification.",
+    "The browser uses a separate database cloned only from owned synthetic controls; baseline tenant authority is checked unchanged."
+  ],
+  "originalAuthorityBefore": "3a82bb57dfa73793757984598beeabbdb43a8d8d210c5c29bed251a711a3abc7",
+  "originalAuthorityAfter": "3a82bb57dfa73793757984598beeabbdb43a8d8d210c5c29bed251a711a3abc7",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T09:27:58.344Z",
+  "sourcesAfter": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "0482387bd00b0d5df1e435ac9d882fb7b1ecf194ef6c68bea5c96dd5049cc747",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "fd2d9972e0c08c2413d46f3a13bd0d58b76cd691f7e132514fea9ba65111c364",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "sourceStable": true,
+  "driverSha256": "ca8bbcbbfe160bdab8f3bbd92981213dcc253ad79171181419f94ec02375289d",
+  "passed": 2,
+  "failed": 0
+}

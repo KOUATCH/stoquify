@@ -1,0 +1,289 @@
+{
+  "schema": "stoquify.suspense-resolution-evidence.v1",
+  "purpose": "Historical proposal, decision and financial evidence; not a new approval, statutory certificate or current settlement confirmation",
+  "organizationId": "workflow_supplier_ack_en_resolution-ui-ff8ffda6-f9c-en",
+  "selectedRecord": {
+    "id": "44356f3d-23f5-4ea1-86f3-9e5825fb0dd1",
+    "revision": "sha256:33fba6297579617bd5f3c5dfea62326b5eeb521561f7e0decccf715edbb77fa7",
+    "payloadHash": "d46a88b8f1bf1a8f583c5783269d160d35b8e8805c3ac5632a5df0b6107f98ed",
+    "recordedAt": "2026-09-09T14:31:47.398Z",
+    "financialHash": "sha256:f1e8d410180e8907c36fd28c24227d2fab169d7767e54a42dcb9eb295c1ce5e0",
+    "proposedById": "cmtu71s2i002amatcql4uplpt",
+    "allocationId": "78a5663a-dc1b-4dcf-8973-ec3485dccad3",
+    "clearingJournalId": "cmtu71sd7003mmatchkw15jmj",
+    "clearingJournalHash": "sha256:37ec050855162f58b19f62e04f66b2d4fd39e7291ed74e386b47218f8e65c928",
+    "suspenseItemId": "cmtu71s4i002tmatc8zrlwdcb",
+    "proposalId": "53928d79-8b9f-4ec9-a873-396546bd3a0f",
+    "decidedAt": "2026-09-09T14:31:47.215Z",
+    "reason": "Owned independent decision from actual browser",
+    "commandHash": "sha256:da3b0a54ccf6899cba246a94143c7711bf36a136d2935a38952eb6b3fef0436f",
+    "reviewedRevision": "sha256:2a4662611565bc04813339f997e37a2c3954f8256d485034e4bdab9715d628e1",
+    "approvedById": "cmtu71sga0041matcjcxkgkdk",
+    "resolutionDecisionId": "a09104a1-538c-4389-8cb8-8bea9fbea803",
+    "resolutionDecisionHash": "2db74beaab6c80151d9ca88ebf8ef0d3e62b3627838fcedbca0ea9e60e33cc54",
+    "kind": "SUSPENSE_RESOLUTION_RECOVERY_APPROVED_V1",
+    "recoveryReceiptId": "a337559c-d3f4-4967-9e79-498eab0fd32e"
+  },
+  "proposal": {
+    "id": "a9dbfe0c-4121-4adc-a87f-0baa5135a4dd",
+    "revision": "sha256:ade3367728e078cd35eecd1443952a551e8a5c3db617aa5a39a13bcec7e274e9",
+    "payloadHash": "3093b3349a0cecd349dc398629a5844ee8c43be67f6ec6af284b412489170cef",
+    "recordedAt": "2026-09-09T14:29:37.787Z",
+    "financialHash": "sha256:f32ade10344c052c7eb0a1481370351406d8c2f6b0c2d80c2317e3fffa444407",
+    "proposedById": "cmtu71ra10001matcx9jlm2cp",
+    "draft": {
+      "suspenseItemId": "cmtu71s4i002tmatc8zrlwdcb",
+      "clearingJournalId": "cmtu71sd7003mmatchkw15jmj",
+      "outcome": "RESOLVED",
+      "reason": "Owned browser proposal with complete clearing evidence"
+    },
+    "originalJournalId": "cmtu71saf0034matcn3dn0n63",
+    "cycle": 1,
+    "kind": "SUSPENSE_RESOLUTION_PROPOSED_V1",
+    "proposedAt": "2026-09-09T14:29:37.784Z",
+    "requestHash": "sha256:9b345782390715eaf9d22c2a1539f08277461552a38b912ce76ee69faf020127"
+  },
+  "financialHash": "sha256:f32ade10344c052c7eb0a1481370351406d8c2f6b0c2d80c2317e3fffa444407",
+  "originalApproval": {
+    "id": "cmtu71sbx003fmatc6kv6pyq3",
+    "payloadHash": "9a40aa6071e30a0b67cfe122f9c0b40bc57b3334520261b02b97761201c9ba26",
+    "auditId": "cmtu71sc5003hmatcs50lb6ze",
+    "approvedById": "cmtu71s2i002amatcql4uplpt",
+    "proposedById": "cmtu71ra10001matcx9jlm2cp",
+    "approvedAt": "2026-09-09T14:28:39.708Z"
+  },
+  "originalJournal": {
+    "id": "cmtu71saf0034matcn3dn0n63",
+    "number": "SP-20260909-0001",
+    "entryDate": "2026-09-09T14:28:39.708Z",
+    "periodId": "cmtu71rjd000qmatc0ph4b1h7",
+    "currency": "XAF",
+    "statusObserved": "POSTED",
+    "sourceType": "PAYMENT_SUSPENSE",
+    "sourceId": "cmtu71s4i002tmatc8zrlwdcb",
+    "postingPurpose": "SUSPENSE_RECLASSIFICATION",
+    "batchId": "cmtu71s8n0032matcobcdsp9o",
+    "cycle": 1,
+    "postedById": "cmtu71s2i002amatcql4uplpt",
+    "reversalOfEntryId": null,
+    "retainedFinancialHash": "sha256:54f41555f487016f0524ff349b5d333e41fa87d4d98dc1b127ec60e30bfe707b",
+    "lines": [
+      {
+        "lineNumber": 1,
+        "accountId": "cmtu71s34002imatct0fpex33",
+        "currency": "XAF",
+        "debit": "100.25",
+        "credit": "0",
+        "baseDebit": "100.25",
+        "baseCredit": "0",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      },
+      {
+        "lineNumber": 2,
+        "accountId": "cmtu71s3c002kmatc3z1yim25",
+        "currency": "XAF",
+        "debit": "0",
+        "credit": "100.25",
+        "baseDebit": "0",
+        "baseCredit": "100.25",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      }
+    ],
+    "sourceLinks": [
+      {
+        "id": "cmtu71sbg0039matcmbtl25t2",
+        "sourceType": "PAYMENT_SUSPENSE",
+        "sourceId": "cmtu71s4i002tmatc8zrlwdcb"
+      }
+    ]
+  },
+  "originalReversal": null,
+  "clearingJournal": {
+    "id": "cmtu71sd7003mmatchkw15jmj",
+    "number": "JE-20260909-0002",
+    "entryDate": "2026-09-09T14:28:39.708Z",
+    "periodId": "cmtu71rjd000qmatc0ph4b1h7",
+    "currency": "XAF",
+    "statusObserved": "REVERSED",
+    "sourceType": "MANUAL",
+    "sourceId": "cmtu71sd7003mmatchkw15jmj",
+    "postingPurpose": "MANUAL_JOURNAL",
+    "batchId": "cmtu71sew003vmatcz6vf0peq",
+    "cycle": 1,
+    "postedById": "cmtu71s2i002amatcql4uplpt",
+    "reversalOfEntryId": null,
+    "retainedFinancialHash": "sha256:37ec050855162f58b19f62e04f66b2d4fd39e7291ed74e386b47218f8e65c928",
+    "lines": [
+      {
+        "lineNumber": 1,
+        "accountId": "cmtu71s34002imatct0fpex33",
+        "currency": "XAF",
+        "debit": "0",
+        "credit": "100.25",
+        "baseDebit": "0",
+        "baseCredit": "100.25",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      },
+      {
+        "lineNumber": 2,
+        "accountId": "cmtu71scf003kmatc58t2wkuf",
+        "currency": "XAF",
+        "debit": "100.25",
+        "credit": "0",
+        "baseDebit": "100.25",
+        "baseCredit": "0",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      }
+    ],
+    "sourceLinks": [
+      {
+        "id": "cmtu71sfm003xmatcdd6i3l0e",
+        "sourceType": "MANUAL",
+        "sourceId": "cmtu71sd7003mmatchkw15jmj"
+      }
+    ]
+  },
+  "clearingPostingAuditId": "cmtu71sfw003zmatct12dkpre",
+  "clearingReversal": {
+    "id": "cmtu75pva011tma20jckj1lfg",
+    "number": "SR-a337559c-d3f4-4967-9e79-498eab0fd32e",
+    "entryDate": "2026-09-09T00:00:00.000Z",
+    "periodId": "cmtu71rjd000qmatc0ph4b1h7",
+    "currency": "XAF",
+    "statusObserved": "POSTED",
+    "sourceType": "MANUAL",
+    "sourceId": "cmtu71sd7003mmatchkw15jmj",
+    "postingPurpose": "REVERSAL",
+    "batchId": "cmtu75pua011rma20ikilegt1",
+    "cycle": 1,
+    "postedById": "cmtu71sga0041matcjcxkgkdk",
+    "reversalOfEntryId": "cmtu71sd7003mmatchkw15jmj",
+    "retainedFinancialHash": "sha256:aa6a3dfd135fd8813cfdc40ccba8bc3e4dc1f67b4bde093124ed78420cd6c502",
+    "lines": [
+      {
+        "lineNumber": 1,
+        "accountId": "cmtu71s34002imatct0fpex33",
+        "currency": "XAF",
+        "debit": "100.25",
+        "credit": "0",
+        "baseDebit": "100.25",
+        "baseCredit": "0",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      },
+      {
+        "lineNumber": 2,
+        "accountId": "cmtu71scf003kmatc58t2wkuf",
+        "currency": "XAF",
+        "debit": "0",
+        "credit": "100.25",
+        "baseDebit": "0",
+        "baseCredit": "100.25",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      }
+    ],
+    "sourceLinks": [
+      {
+        "id": "cmtu75pwp011yma203c1gm7k3",
+        "sourceType": "MANUAL",
+        "sourceId": "cmtu71sd7003mmatchkw15jmj"
+      }
+    ]
+  },
+  "allocation": {
+    "id": "78a5663a-dc1b-4dcf-8973-ec3485dccad3",
+    "payloadHash": "b828ed2361364d8ed576aeffa1fbd2488933034a71009b45f98623c45dc37127"
+  },
+  "recovery": {
+    "proposal": {
+      "id": "53928d79-8b9f-4ec9-a873-396546bd3a0f",
+      "revision": "sha256:14a9c460613b0071f6e8b4b9505a6f306a1bf959f1384b57f5a293d6b3e26923",
+      "payloadHash": "1fac9cb2694313bfc20656a961193fb56234c9e20204db59439b99d2f7a8e1a6",
+      "recordedAt": "2026-09-09T14:30:45.509Z",
+      "financialHash": "sha256:f1e8d410180e8907c36fd28c24227d2fab169d7767e54a42dcb9eb295c1ce5e0",
+      "proposedById": "cmtu71s2i002amatcql4uplpt",
+      "allocationId": "78a5663a-dc1b-4dcf-8973-ec3485dccad3",
+      "clearingJournalId": "cmtu71sd7003mmatchkw15jmj",
+      "clearingJournalHash": "sha256:37ec050855162f58b19f62e04f66b2d4fd39e7291ed74e386b47218f8e65c928",
+      "kind": "SUSPENSE_RESOLUTION_RECOVERY_PROPOSED_V1",
+      "draft": {
+        "suspenseItemId": "cmtu71s4i002tmatc8zrlwdcb",
+        "reason": "Owned browser reopening of reviewed clearance",
+        "reversalDate": "2026-09-09"
+      },
+      "clearingPostedById": "cmtu71s2i002amatcql4uplpt",
+      "proposedAt": "2026-09-09T14:30:45.506Z",
+      "requestHash": "sha256:001f733fa90769122604fea8aa5e053ccd3067f6a0538fa3f929cc7d01fd29d3"
+    },
+    "selectedRecord": {
+      "id": "44356f3d-23f5-4ea1-86f3-9e5825fb0dd1",
+      "revision": "sha256:33fba6297579617bd5f3c5dfea62326b5eeb521561f7e0decccf715edbb77fa7",
+      "payloadHash": "d46a88b8f1bf1a8f583c5783269d160d35b8e8805c3ac5632a5df0b6107f98ed",
+      "recordedAt": "2026-09-09T14:31:47.398Z",
+      "financialHash": "sha256:f1e8d410180e8907c36fd28c24227d2fab169d7767e54a42dcb9eb295c1ce5e0",
+      "proposedById": "cmtu71s2i002amatcql4uplpt",
+      "allocationId": "78a5663a-dc1b-4dcf-8973-ec3485dccad3",
+      "clearingJournalId": "cmtu71sd7003mmatchkw15jmj",
+      "clearingJournalHash": "sha256:37ec050855162f58b19f62e04f66b2d4fd39e7291ed74e386b47218f8e65c928",
+      "suspenseItemId": "cmtu71s4i002tmatc8zrlwdcb",
+      "proposalId": "53928d79-8b9f-4ec9-a873-396546bd3a0f",
+      "decidedAt": "2026-09-09T14:31:47.215Z",
+      "reason": "Owned independent decision from actual browser",
+      "commandHash": "sha256:da3b0a54ccf6899cba246a94143c7711bf36a136d2935a38952eb6b3fef0436f",
+      "reviewedRevision": "sha256:2a4662611565bc04813339f997e37a2c3954f8256d485034e4bdab9715d628e1",
+      "approvedById": "cmtu71sga0041matcjcxkgkdk",
+      "resolutionDecisionId": "a09104a1-538c-4389-8cb8-8bea9fbea803",
+      "resolutionDecisionHash": "2db74beaab6c80151d9ca88ebf8ef0d3e62b3627838fcedbca0ea9e60e33cc54",
+      "kind": "SUSPENSE_RESOLUTION_RECOVERY_APPROVED_V1",
+      "recoveryReceiptId": "a337559c-d3f4-4967-9e79-498eab0fd32e"
+    }
+  },
+  "sourceObservedAtExport": {
+    "suspenseItemId": "cmtu71s4i002tmatc8zrlwdcb",
+    "status": "POSTED_TO_SUSPENSE",
+    "updatedAt": "2026-09-09T14:31:47.404Z"
+  },
+  "export": {
+    "receiptId": "66b6f640-1e88-4146-96ef-c1ae57376268",
+    "exportedAt": "2026-09-09T15:01:06.713Z",
+    "exportedById": "cmtu86vd00007mam4k8f7ohll",
+    "watermarkId": "stoquify-resolution-66b6f640-1e88-4146-96ef-c1ae57376268",
+    "redactions": [
+      "Raw provider payloads",
+      "Unrelated item metadata",
+      "Prior certificate payloads",
+      "Journal descriptions",
+      "Raw dimensions (hash retained)"
+    ],
+    "verification": "File SHA-256 detects changed bytes; application audit references are not an independent signer certificate"
+  }
+}

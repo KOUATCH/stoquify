@@ -1,9 +1,8 @@
 "use server"
 
-import { getAuthenticatedUser } from "@/lib/auth-server"
 import { inventoryAction, type ServerActionResult } from "@/lib/error-handling"
 import { requirePermission } from "@/lib/security/rbac"
-import { AuthRequiredError, BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
 import { postInventoryReservation } from "@/services/inventory/inventory-stock-event.service"
 import {
   getStockMovementSummary as readStockMovementSummary,
@@ -11,7 +10,9 @@ import {
   listStockTransfers,
   toLocationTransferDTO,
 } from "@/services/inventory/inventory-read.service"
-import { createStockTransfer, postStockTransfer } from "@/services/inventory/inventory-transfer.service"
+import { createStockTransfer } from "@/services/inventory/inventory-transfer.service"
+import { executeTransferCommand } from "./transferLifecycleActions"
+import { loadTransferDetail } from "@/services/inventory/inventory-transfer-lifecycle.service"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { CreateTransferPayload, TransactionType, TransferStatus } from "@/types/inventoryMovementTypes"
 import { revalidatePath, revalidateTag } from "next/cache"
@@ -100,29 +101,13 @@ export const approveTransfer = inventoryAction(
       auditAllowed: true,
     })
 
-    const result = await postStockTransfer({
-      transferId,
-      organizationId: ctx.orgId,
-      approvedById: ctx.userId,
+    if (input.organizationId !== ctx.orgId) throw new ForbiddenError("Organization mismatch")
+    const transfer = await loadTransferDetail(ctx.orgId, transferId)
+    return executeTransferCommand({
+      transferId, organizationId: ctx.orgId, operation: "APPROVE",
+      requestId: `approve:${transferId}:${ctx.userId}`,
+      expectedUpdatedAt: transfer.updatedAt.toISOString(),
     })
-
-    revalidateTag("transfers")
-    revalidateTag(`transfers-${ctx.orgId}`)
-    revalidateTag(`transfer-${transferId}`)
-    revalidateTag("inventory")
-    revalidateTag(`inventory-${ctx.orgId}`)
-    revalidatePath("/dashboard/inventory/transfers")
-    revalidatePath("/dashboard/inventory")
-
-    return {
-      success: true,
-      data: {
-        result: toLocationTransferDTO(result.transfer),
-        message: result.replayed
-          ? `Transfer ${result.transfer.transferNumber} was already completed`
-          : `Transfer ${result.transfer.transferNumber} approved and completed successfully`,
-      },
-    }
   },
   {
     actionName: "approveTransfer",
@@ -141,6 +126,7 @@ export const getTransfers = inventoryAction(
     organizationId: string
     filters?: {
       search?: string
+      awaitingReceipt?: boolean
       status?: TransferStatus
       fromLocationId?: string
       toLocationId?: string
@@ -233,15 +219,31 @@ export const reserveInventoryMovement = inventoryAction(
     if (!organizationId) throw new BusinessRuleError("Organization ID is required")
     if (quantity <= 0) throw new BusinessRuleError("Quantity must be greater than 0")
 
-    const user = await getAuthenticatedUser()
-    if (!user?.id) throw new AuthRequiredError("Authenticated user is required to reserve inventory")
+    const ctx = await requirePermission("inventory.levels.adjust", {
+      resource: "InventoryReservation",
+      resourceId: itemId,
+      auditAllowed: true,
+    })
+    if (organizationId !== ctx.orgId) throw new ForbiddenError("Organization mismatch")
+    const moduleDecision = await observeModuleAccess({
+      organizationId: ctx.orgId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "inventory",
+      surfaceType: "action",
+      surface: "actions/inventory/inventoryMovementActions.ts:reserveInventoryMovement",
+      accessIntent: "write",
+      mode: "enforce",
+      audit: true,
+    })
+    if (!moduleDecision.allowed) throw new ForbiddenError("Inventory module is not available for this organization")
 
     const result = await postInventoryReservation({
       itemId,
       locationId,
-      organizationId,
+      organizationId: ctx.orgId,
       quantity,
-      actorId: user.id,
+      actorId: ctx.userId,
       reason,
       expiresAt,
     })

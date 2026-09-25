@@ -1,0 +1,74 @@
+{
+  "comment": "Synthetic local approval for functional testing only. This is not a human approval, signature, or release authorization.",
+  "decidedAt": null,
+  "decidedBy": "local-product-and-security-simulator",
+  "decision": "APPROVE",
+  "decisionScope": {
+    "evidenceAuthorization": {
+      "applicationOrigin": "http://127.0.0.1:3000",
+      "authenticatedEvidence": false,
+      "classification": "LOCAL_SIMULATION_ONLY",
+      "database": "stoquify_replay_next_20260830",
+      "decision": "APPROVE",
+      "evidencePersona": {
+        "email": "external.accountant.rds-org001@stockflow.test",
+        "name": "Carine Manga",
+        "roleId": "rds_org_001_compliance_role_external_accountant",
+        "userId": "rds_org_001_compliance_user_external_accountant"
+      },
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "locales": [
+        "en",
+        "fr"
+      ],
+      "primaryTenantId": "rds_org_001",
+      "readOnly": true,
+      "redactionRequired": true,
+      "routeMatrix": "playwright.finance-x1-evidence.config.ts",
+      "viewports": [
+        "desktop",
+        "tablet",
+        "mobile"
+      ]
+    },
+    "productBudgets": [
+      {
+        "decision": "APPROVE",
+        "id": "bounded-client-sort-filter-p75",
+        "target": "Interaction response under 100 ms at p75 test hardware"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "server-filter-sort-loading",
+        "target": "Loading indication under 150 ms"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "server-filter-sort-result-p75",
+        "target": "Useful result under 1,000 ms at p75"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "page-navigation-p75",
+        "target": "Useful rows under 750 ms at p75 after cached shell"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "bulk-action-acknowledgement",
+        "target": "Immediate job receipt with progress and partial result available"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "preference-view-hydration",
+        "target": "No visible column-layout flash after initial shell"
+      },
+      {
+        "decision": "APPROVE",
+        "id": "browser-row-dom",
+        "target": "Bounded by pagination or proven virtualization strategy"
+      }
+    ]
+  },
+  "recordId": "LOCAL-X1-ADA0D45231B9ACE7",
+  "schemaVersion": 1
+}

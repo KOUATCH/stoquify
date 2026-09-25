@@ -1,0 +1,310 @@
+{
+  "recordedAt": "2026-09-06T17:58:36.624Z",
+  "baseline": "evidence/source-baseline-v36.json",
+  "scope": [
+    "OA-SELF-PROFILE",
+    "associated account-menu navigation and sign-out feedback"
+  ],
+  "sources": {
+    "services/users/self-profile-input.ts": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+    "services/users/self-profile.service.ts": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+    "services/users/self-profile-http.service.ts": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+    "actions/users/self-profile.actions.ts": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+    "hooks/self-profile-draft.ts": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9",
+    "hooks/useSelfProfile.ts": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+    "components/settings/SelfProfile.tsx": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "components/dashboard/Navbar.tsx": "159e5a897611d164c019c97495d8da29fbebcfebc34a569cd48a300588de4ef9",
+    "app/[locale]/(dashboard)/dashboard/profile/page.tsx": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+    "app/[locale]/(dashboard)/dashboard/profile/loading.tsx": "4525bc0cfd3ee8d17bb105d286ee086ba0155cdc48fd0caefcdb6613da0f7934",
+    "app/[locale]/(dashboard)/dashboard/profile/error.tsx": "69d414b2d3a9ecc257a8e8de80cfa8e4f95b194b634df9a62ace05d28514a6d1",
+    "app/api/auth/[...all]/route.ts": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+    "app/api/me/profile/route.ts": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "lib/auth-client.ts": "d5dcaf05372e073b5b4f3b4c4d765e219c62f7e111bad90c3dd5fc292b903b38",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "app/api/auth/__tests__/self-profile-route.test.ts": "c02b8262e36b4fa4c15e3ebb5001849d143336341d719765388733a1a3e90fad",
+    "services/users/__tests__/self-profile-http.service.test.ts": "8b927d7b143f8878c2cb491a7f3a141ae71d051befdb6f8d3e1df7fa00380fc5",
+    "components/settings/__tests__/SelfProfile.workflow.test.tsx": "e0c02351e9dc53eaeb904f4c1c873c575ac6f64008e6b47c72dbcac4ed533692",
+    "services/users/__tests__/self-profile.service.test.ts": "20aad80c866e145777082359b8a3cf964bf15ed29b9413a3c34dee4147d29e1b",
+    "hooks/__tests__/useSelfProfile.test.tsx": "a9b49c89897435501409dd209a8149997470866a5989ab0a20e42a16fe4ffd79",
+    "hooks/__tests__/self-profile-draft.test.ts": "24c39a1939f1038854ab9e45ef3e19a0cac1dce7e66eeabffbcc9316cee40858",
+    "actions/users/__tests__/self-profile.actions.test.ts": "9286b60f6c72ec3fcb49f09232b3d434b33574a1d989161620d9c187aa7a37c3"
+  },
+  "sourceDifferences": [
+    {
+      "report": "postgres",
+      "file": "components/UserDropdownMenu.tsx",
+      "evidenceHash": "45f1a4453c39c348bace050ca25ade149d8f1d3a2b411b8dec520e067d226f2f",
+      "currentHash": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+      "reason": "Avatar changed from unavailable dashboard-local color tokens to global product brand and white text. Final display run verifies it; all other captured application hashes are unchanged."
+    },
+    {
+      "report": "http",
+      "file": "components/UserDropdownMenu.tsx",
+      "evidenceHash": "45f1a4453c39c348bace050ca25ade149d8f1d3a2b411b8dec520e067d226f2f",
+      "currentHash": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+      "reason": "Avatar changed from unavailable dashboard-local color tokens to global product brand and white text. Final display run verifies it; all other captured application hashes are unchanged."
+    },
+    {
+      "report": "browser",
+      "file": "components/UserDropdownMenu.tsx",
+      "evidenceHash": "45f1a4453c39c348bace050ca25ade149d8f1d3a2b411b8dec520e067d226f2f",
+      "currentHash": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+      "reason": "Avatar changed from unavailable dashboard-local color tokens to global product brand and white text. Final display run verifies it; all other captured application hashes are unchanged."
+    }
+  ],
+  "tests": {
+    "file": "evidence/self-profile-tests-03.json",
+    "passed": 50,
+    "failed": 0,
+    "suites": 7,
+    "chunk": "601f66"
+  },
+  "postgres": {
+    "file": "lanes/environment/self-profile-postgres-e44127ad-b3a.json",
+    "passed": 9,
+    "failed": 0,
+    "chunk": "9a4afa"
+  },
+  "http": {
+    "file": "lanes/environment/self-profile-http-ed4e482e-345.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "bfdfba"
+  },
+  "browser": {
+    "file": "lanes/environment/self-profile-browser-5e33c89d-e5d.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "347056",
+    "screenshots": 24
+  },
+  "display": {
+    "file": "lanes/environment/self-profile-display-334a6bcf-9ba.json",
+    "scriptedChecksPassed": 2,
+    "chunk": "2153bf",
+    "screenshots": 10,
+    "visualFinding": "OA-F18; CSS text enlargement root-width check passes but the shared header clips the account trigger. No full reflow, native zoom or accessibility pass."
+  },
+  "verification": {
+    "typecheck": {
+      "exitCode": 0,
+      "chunk": "3197db",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+    },
+    "lint": {
+      "exitCode": 0,
+      "chunk": "6da05c"
+    },
+    "boundaries": {
+      "file": "evidence/self-profile-boundaries.json",
+      "passed": 11,
+      "failed": 0
+    }
+  },
+  "screenshots": [
+    {
+      "source": "lanes/environment/en-self-profile-read-only-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-read-only-5e33c89d-e5d.png",
+      "sha256": "e1d67f1fd9aca6393e0fd1e54480a5882226b721ac733c6c896643dcf3180067"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-menu-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-menu-5e33c89d-e5d.png",
+      "sha256": "56c171e82db676628f5e02cac198c41ea1c1ed510b1f2695dbec457966a51a65"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-draft-390-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-draft-390-5e33c89d-e5d.png",
+      "sha256": "3d3dc1a56b60210f4e7584cf9aec8768c0af177b1af2aabf89eb286e7af411a5"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-draft-768-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-draft-768-5e33c89d-e5d.png",
+      "sha256": "1bdafba65b8b75b830d6124651416cc77cef59e0518e59fa81751bfcb4881a31"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-draft-1440-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-draft-1440-5e33c89d-e5d.png",
+      "sha256": "b9e1218f1b6add51ea766d3bfc89954205d763cb01f0be4c801495f379e7628d"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-saved-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-saved-5e33c89d-e5d.png",
+      "sha256": "9c30287cb3542aaeefd1dd97c9c6344e965d3022fdf24fc12655c76b057f441f"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-stale-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-stale-5e33c89d-e5d.png",
+      "sha256": "53b43451363045a95dfbff434c8448e725d2e87be918ba61aa8ba2794e2dc993"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-interrupted-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-interrupted-5e33c89d-e5d.png",
+      "sha256": "8b6e0717028a695ddbf580762d856b5821bac6b7a5f732d7e2bbe3cc46c47be2"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-recovered-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-recovered-5e33c89d-e5d.png",
+      "sha256": "804249b8e34167bf4cfd593389fdb4c5ea6f661f0350ceed49a638701697f251"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-read-failed-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-read-failed-5e33c89d-e5d.png",
+      "sha256": "f53f07f758dbfb9b5c023b8eab6af2684049760abf99a87ac0382c3d473bdf1b"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-recovered-mobile-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-recovered-mobile-5e33c89d-e5d.png",
+      "sha256": "8455613e46899cffcd61b1cd60465c6aab7cd9113c049546dca45c40f2177b8d"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-signout-failed-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/en-self-profile-signout-failed-5e33c89d-e5d.png",
+      "sha256": "c5d229dc541cff76057f53abe2fb781f21341cb631c4acd1b87af590373790d0"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-read-only-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-read-only-5e33c89d-e5d.png",
+      "sha256": "83da3897463d121460f04768fd77a762de685beb45d28fd384b5019669c27a20"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-menu-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-menu-5e33c89d-e5d.png",
+      "sha256": "f6260b6115971aa3fda23dda967e9866172b96e63abfe3a03ae708e37b812745"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-draft-390-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-draft-390-5e33c89d-e5d.png",
+      "sha256": "10975379c7127e47f114472fc431b14731e2abefead543c7601b1f8640cfe3a9"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-draft-768-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-draft-768-5e33c89d-e5d.png",
+      "sha256": "1d3d9dd2025b30063ebdb02732ed59e22be7e7e471299740a69a5fc762bb49e5"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-draft-1440-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-draft-1440-5e33c89d-e5d.png",
+      "sha256": "8decd0414f7dff40cbdbadabbad9d72ec15ea50bf92e0f128dfa8c5bcaa17c33"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-saved-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-saved-5e33c89d-e5d.png",
+      "sha256": "8ed8a5e907a278288e68526c6fdb7dfe18cadccebe9012258228614f3ed1bdb3"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-stale-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-stale-5e33c89d-e5d.png",
+      "sha256": "4a201396ee65b1f8d0c8ae1f078f37c30ddde9b25db6c45a148c0e580b564529"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-interrupted-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-interrupted-5e33c89d-e5d.png",
+      "sha256": "e09651daea4fee22f24627238fec16bb76cd3ad639e599e4e8ed0ee4ac794a7e"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-recovered-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-recovered-5e33c89d-e5d.png",
+      "sha256": "63808808272d8e43a3d9cbed6c98629398f49622732942e0397e03908f0b5c63"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-read-failed-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-read-failed-5e33c89d-e5d.png",
+      "sha256": "467d62e8476221b0d39c5b2dfc200d4d96ed6497fa2094ef1ff9655474579809"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-recovered-mobile-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-recovered-mobile-5e33c89d-e5d.png",
+      "sha256": "f4f487086489a6aaf12861672030e436190e297b6e4a1ce125ae2bc16fd4fdfd"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-signout-failed-5e33c89d-e5d.png",
+      "file": "evidence/self-profile/fr-self-profile-signout-failed-5e33c89d-e5d.png",
+      "sha256": "705b06602523506ed3963b8141861e180438c724745a58b5cb6b540b32402ec2"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-display-menu-320-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/en-self-profile-display-menu-320-334a6bcf-9ba.png",
+      "sha256": "5f44b83d82707d6cb73905ab292172a9d5a2b393cf2263c241ad5319501e68cd"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-display-menu-768-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/en-self-profile-display-menu-768-334a6bcf-9ba.png",
+      "sha256": "be5ed0e4b97d813aaa75c6a764dfb6d19bccfe1aea96607971f611fd34bc24d3"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-display-menu-1440-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/en-self-profile-display-menu-1440-334a6bcf-9ba.png",
+      "sha256": "525b7b1f74304c0812bc7ae04287d8a92a3ff7dc2afa453da8097e5c87a9fa9d"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-display-theme-toggled-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/en-self-profile-display-theme-toggled-334a6bcf-9ba.png",
+      "sha256": "c73de2f0f97da06794c627bfc851a4d13a24e2eb7ebf59a3fc82a8eb2db76c9e"
+    },
+    {
+      "source": "lanes/environment/en-self-profile-display-text-200-percent-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/en-self-profile-display-text-200-percent-334a6bcf-9ba.png",
+      "sha256": "617b1adbc81387a7786d6af0bcec3ba39d6e0121e0044a10d79605f337e23699"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-display-menu-320-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/fr-self-profile-display-menu-320-334a6bcf-9ba.png",
+      "sha256": "935e71c07321bf6c1abc06e9ec7bb3e4e3d8527b17c077445d489cbbb646987f"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-display-menu-768-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/fr-self-profile-display-menu-768-334a6bcf-9ba.png",
+      "sha256": "74d67388b0658aa57562686fd91cf5a038f2a2d2491690f525eefce8f27723a7"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-display-menu-1440-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/fr-self-profile-display-menu-1440-334a6bcf-9ba.png",
+      "sha256": "a5205f6ae79355ad523e3de51b969f18421d2572c8f26c9dc4ac4c4981a423c4"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-display-theme-toggled-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/fr-self-profile-display-theme-toggled-334a6bcf-9ba.png",
+      "sha256": "919a40880a1ec12587cf1949fc3187f7c0dbe7b1968f9737a2ce9837aa89013b"
+    },
+    {
+      "source": "lanes/environment/fr-self-profile-display-text-200-percent-334a6bcf-9ba.png",
+      "file": "evidence/self-profile/fr-self-profile-display-text-200-percent-334a6bcf-9ba.png",
+      "sha256": "2b96657ae43a2c380ea358026eff6af360b9b2175fa75c63b20e0e74da8613ea"
+    }
+  ],
+  "performance": {
+    "classification": "Development observations including menu interaction; no approved production budget or before/after speed claim.",
+    "routeReadyMs": [
+      {
+        "locale": "en",
+        "value": 10066
+      },
+      {
+        "locale": "fr",
+        "value": 9021
+      }
+    ]
+  },
+  "failedAttempts": "evidence/self-profile-initial-attempts.md",
+  "guide": "lanes/organization-access/SELF_PROFILE_MANAGEMENT.md",
+  "remaining": [
+    "Full platform discovery, connected workflows and final requirement audit remain incomplete.",
+    "OA-F18: shared header clips the account trigger at 390px with CSS text enlarged to 200%; scripted document-width assertion did not establish complete reflow. Native zoom/assistive technology/contrast remain unverified.",
+    "Basic display fields only; email, phone ownership, credentials, avatar upload and role changes use separate workflows.",
+    "External SDK/API consumers must migrate from generic update-user payloads to the reviewed contract before rollout.",
+    "Formal audit retention/hold and organization-delete cascade behavior remain open. Stable actor IDs, not display names, identify audit actors.",
+    "Global session/provider/cache behavior and other sign-out helper callers remain separate work. Earlier rejected global auth changes are unapplied."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

@@ -1,0 +1,41 @@
+{
+  "at": "2026-09-13T14:19:31.059Z",
+  "phase": "after",
+  "checks": [
+    {
+      "operation": "commit",
+      "restrictedWrite": "denied_all_financial_state_unchanged",
+      "authorizedExplicitRecovery": true,
+      "balancedPostedEntries": 2,
+      "stockQuantity": 19,
+      "exactServiceReplayAfterRestriction": true,
+      "foreignActorReplayDenied": true,
+      "passed": true
+    },
+    {
+      "operation": "refund",
+      "restrictedWrite": "denied_all_financial_state_unchanged",
+      "authorizedExplicitRecovery": true,
+      "balancedPostedEntries": 3,
+      "stockQuantity": 20,
+      "exactServiceReplayAfterRestriction": true,
+      "foreignActorReplayDenied": true,
+      "passed": true
+    },
+    {
+      "operation": "void",
+      "restrictedWrite": "denied_all_financial_state_unchanged",
+      "authorizedExplicitRecovery": true,
+      "balancedPostedEntries": 3,
+      "stockQuantity": 20,
+      "exactServiceReplayAfterRestriction": true,
+      "foreignActorReplayDenied": true,
+      "passed": true
+    }
+  ],
+  "scope": "Owned local PostgreSQL, actual cash sale/posting/correction services, synthetic accounts and rules; no external payment, delivery, statutory approval or live activation.",
+  "sourceBefore": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+  "passed": true,
+  "sourceAfter": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+  "sourceStable": true
+}

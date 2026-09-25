@@ -73,6 +73,7 @@ const terminalInput = {
   isActive: true,
   hasCashDrawer: true,
 }
+const updateInput = { ...terminalInput, expectedRevision: "a".repeat(64) }
 
 const terminalRow = {
   id: "terminal-1",
@@ -131,6 +132,7 @@ describe("terminal management actions", () => {
         locations: [{ id: "loc-1", name: "Main shop", code: "MAIN", type: "STORE" }],
       },
       error: null,
+      scope: { organizationId: "org-1", actorId: "manager-1" },
     })
     expect(mockRequirePermission).toHaveBeenCalledWith("pos.read", {
       resource: "POSTerminalManagement",
@@ -149,6 +151,15 @@ describe("terminal management actions", () => {
       audit: true,
     })
     expect(mockGetTerminalManagementDataForOrg).toHaveBeenCalledWith("org-1")
+  })
+
+  it.each(["tag", "path"])("preserves terminal creation success after a %s cache failure", async failure => {
+    const invalidator = failure === "tag" ? mockRevalidateTag : mockRevalidatePath
+    invalidator.mockImplementationOnce(() => { throw new Error("Cache unavailable") })
+    const result = await createManagedTerminal("org-1", terminalInput)
+    expect(result).toMatchObject({ success: true, data: { id: "terminal-1" } })
+    expect(mockCreateTerminalForManagement).toHaveBeenCalledTimes(1)
+    expect(mockRevalidatePath).toHaveBeenCalledWith("/[locale]/dashboard/pos", "page")
   })
 
   it("blocks non-superuser cross-organization terminal reads before module observation or service execution", async () => {
@@ -234,7 +245,7 @@ describe("terminal management actions", () => {
   })
 
   it("authorizes and observes terminal update before returning a blank-terminal safe error", async () => {
-    const result = await updateManagedTerminal("org-1", " ", terminalInput)
+    const result = await updateManagedTerminal("org-1", " ", updateInput)
 
     expect(result).toEqual({
       success: false,
@@ -256,7 +267,7 @@ describe("terminal management actions", () => {
   })
 
   it("updates terminal management records through audited POS write RBAC and module observe evidence", async () => {
-    const result = await updateManagedTerminal("org-1", "terminal-1", terminalInput)
+    const result = await updateManagedTerminal("org-1", "terminal-1", updateInput)
 
     expect(result).toEqual({
       success: true,
@@ -277,15 +288,27 @@ describe("terminal management actions", () => {
       mode: "observe",
       audit: true,
     }))
-    expect(mockUpdateTerminalForManagement).toHaveBeenCalledWith("org-1", "terminal-1", terminalInput)
+    expect(mockUpdateTerminalForManagement).toHaveBeenCalledWith("org-1", "terminal-1", updateInput)
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-terminals")
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-terminals-org-1")
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-terminal-terminal-1")
     expect(mockRevalidatePath).toHaveBeenCalledWith("/[locale]/dashboard/settings/terminals", "page")
   })
 
+  it("requires a displayed revision before forwarding an update", async () => {
+    const result = await updateManagedTerminal("org-1", "terminal-1", { ...terminalInput, expectedRevision: "" })
+    expect(result.success).toBe(false)
+    expect(mockUpdateTerminalForManagement).not.toHaveBeenCalled()
+  })
+
+  it("distinguishes invalid details from an outdated form", async () => {
+    const result = await updateManagedTerminal("org-1", "terminal-1", { ...updateInput, name: "x".repeat(101) })
+    expect(result).toMatchObject({ success: false, error: "Invalid terminal details; check name, location and number lengths" })
+    expect(mockUpdateTerminalForManagement).not.toHaveBeenCalled()
+  })
+
   it("authorizes and observes terminal archive before returning a blank-terminal safe error", async () => {
-    const result = await archiveManagedTerminal("org-1", "")
+    const result = await archiveManagedTerminal("org-1", "", "a".repeat(64))
 
     expect(result).toEqual({
       success: false,
@@ -307,7 +330,7 @@ describe("terminal management actions", () => {
   })
 
   it("archives terminals through audited POS write RBAC and module observe evidence", async () => {
-    const result = await archiveManagedTerminal("org-1", "terminal-1")
+    const result = await archiveManagedTerminal("org-1", "terminal-1", "a".repeat(64))
 
     expect(result).toEqual({
       success: true,
@@ -328,7 +351,12 @@ describe("terminal management actions", () => {
       mode: "observe",
       audit: true,
     }))
-    expect(mockArchiveTerminalForManagement).toHaveBeenCalledWith("org-1", "terminal-1")
+    expect(mockArchiveTerminalForManagement).toHaveBeenCalledWith("org-1", "terminal-1", "a".repeat(64))
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-terminal-terminal-1")
+  })
+  it("rejects deactivation without a reviewed revision", async () => {
+    const result = await archiveManagedTerminal("org-1", "terminal-1", "")
+    expect(result).toMatchObject({ success: false, error: "Terminal changed since this confirmation was opened; review the latest configuration" })
+    expect(mockArchiveTerminalForManagement).not.toHaveBeenCalled()
   })
 })

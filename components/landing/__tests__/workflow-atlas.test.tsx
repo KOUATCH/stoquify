@@ -6,7 +6,9 @@ import {
   getWorkflowAtlasOutcomesForRole,
   getWorkflowAtlasWorkflowsForSelection,
   workflowAtlasRoles,
+  workflowAtlasWorkflows,
 } from "@/components/landing/workflow-atlas-data"
+import { productCommunicationCopy, workflowGuidance } from "@/components/landing/public-product-copy"
 
 jest.mock("lucide-react", () => {
   const Icon = (props: Record<string, unknown>) => <svg {...props} />
@@ -14,6 +16,7 @@ jest.mock("lucide-react", () => {
 })
 
 jest.mock("next-intl", () => ({
+  useLocale: () => "en",
   useTranslations: () => (key: string, values?: Record<string, string | number>) => {
     if (key === "selectionAnnouncement") {
       return `${values?.role}|${values?.outcome}|${values?.count}`
@@ -37,6 +40,31 @@ function outcomeKeys(container: HTMLElement) {
 }
 
 describe("WorkflowAtlas role-conditioned outcomes", () => {
+  it.each(["en", "fr"] as const)("provides a responsible role and prerequisites for every %s journey", (locale) => {
+    for (const workflow of workflowAtlasWorkflows) {
+      const guidance = workflowGuidance[locale][workflow.key]
+      expect(guidance.owners).toHaveLength(workflow.stepKeys.length)
+      expect(guidance.owners.every(owner => owner.trim().length > 0)).toBe(true)
+      for (const field of ["prerequisites", "result", "handoff", "execution"] as const) {
+        expect(guidance[field].length).toBeGreaterThan(25)
+      }
+    }
+    for (const group of productCommunicationCopy[locale].groups) {
+      expect(workflowAtlasWorkflows.some(workflow => workflow.key === group.workflow)).toBe(true)
+    }
+  })
+
+  it("keeps the final payroll publication step and its owner in the detailed guide", () => {
+    const { container } = render(<WorkflowAtlas />)
+    fireEvent.click(container.querySelector('[data-workflow-atlas-role="hrPayroll"]') as HTMLButtonElement)
+    fireEvent.click(container.querySelector('[data-workflow-atlas-outcome="payPeople"]') as HTMLButtonElement)
+    const guide = container.querySelector("#workflow-peopleToPay") as HTMLElement
+    expect(guide.querySelectorAll("[data-workflow-atlas-step]")).toHaveLength(6)
+    expect(guide.querySelector('[data-workflow-atlas-step="publishPayslip"]')).toHaveTextContent("Payroll administrator")
+    expect(guide.querySelector("[data-workflow-prerequisites]")).toHaveTextContent("supported country rules")
+    expect(guide.querySelector("[data-workflow-handoff]")).toHaveTextContent("unavailable pending expert review")
+  })
+
   it("derives a non-empty outcome catalogue for every role", () => {
     for (const role of workflowAtlasRoles) {
       const outcomes = getWorkflowAtlasOutcomesForRole(role.key)

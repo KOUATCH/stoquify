@@ -1,7 +1,26 @@
 "use client"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { PurchaseOrderDecisionHistory } from "@/components/purchase-orders/PurchaseOrderDecisionHistory"
+import { PurchaseOrderLifecycleDialog } from "@/components/purchase-orders/PurchaseOrderLifecycleDialog"
+import type { PurchaseLifecycleKind } from "@/services/purchase-order/purchase-order-lifecycle-contracts"
+import { PurchaseOrderApprovalDialog } from "@/components/purchase-orders/PurchaseOrderApprovalDialog"
+import { useSession } from "@/lib/auth-client"
+import { useTranslations } from "next-intl"
+
+import {
+  buildCanonicalTableExportIntent,
+  canonicalTableExportEvidenceRows,
+  CanonicalTableBoundary,
+  CanonicalTableDensityControl,
+  createCanonicalTableQuery,
+  createCanonicalTableSelection,
+  purchaseOrdersTableContract,
+  useCanonicalTablePreferences,
+  useCanonicalTableUrlState,
+} from "@/components/DataTableComponents"
 
 import { notify } from "@/lib/notifications/notify"
-import { memo, useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import * as XLSX from "xlsx"
 
 // Import TanStack Table components
@@ -44,14 +63,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 
 import { ModernStatusBadge } from "@/components/purchase-orders/ModernStatusBadge"
 import { Button } from "@/components/ui/button"
@@ -89,9 +100,7 @@ import { usePathname, useRouter } from "next/navigation"
 
 // Import real hooks and types
 import {
-  useApprovePurchaseOrder,
-  useCancelPurchaseOrder,
-  useDeletePurchaseOrder,
+
   usePurchaseOrders,
   useReceiveItems
 } from "@/hooks/useRecentPurchaseOrderQueries"
@@ -194,7 +203,8 @@ const getColumns = (
   handleCancelClick: (po: PurchaseOrderData) => void,
   handleDeleteClick: (po: PurchaseOrderData) => void,
   handleDownloadPDF: (po: PurchaseOrderData) => void,
-  localizedHref: (href: string) => string
+  localizedHref: (href: string) => string,
+  approvalLabel: string
 ): ColumnDef<PurchaseOrderData>[] => [
     {
       id: "select",
@@ -369,7 +379,7 @@ const getColumns = (
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuContent align="end" className="w-64">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
@@ -377,10 +387,10 @@ const getColumns = (
                 {po.capabilities.approve.allowed && (
                   <DropdownMenuItem
                     onClick={() => handleApproveClick(po)}
-                    className="text-emerald-700 focus:text-emerald-700 dark:text-emerald-300 dark:focus:text-emerald-300"
+                    className="text-[var(--dash-brand-strong)]"
                   >
                     <CheckCircle className="mr-2 h-4 w-4" />
-                    Approve Order
+                    {approvalLabel}
                   </DropdownMenuItem>
                 )}
 
@@ -457,7 +467,15 @@ const ModernPurchaseOrderTable = ({
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const {
+    columnVisibility,
+    columnOrder,
+    density,
+    setColumnVisibility,
+    setColumnOrder,
+    setDensity,
+  } = useCanonicalTablePreferences(purchaseOrdersTableContract)
+  const { setSearch: setCanonicalSearch } = useCanonicalTableUrlState(purchaseOrdersTableContract)
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState("")
   const [orderDateRange, setOrderDateRange] = useState<TableDateRangeValue>({})
@@ -467,9 +485,14 @@ const ModernPurchaseOrderTable = ({
     [data, orderDateRange],
   )
 
+  useEffect(() => {
+    setCanonicalSearch(globalFilter)
+  }, [globalFilter, setCanonicalSearch])
+
   const table = useReactTable({
     data: dateFilteredData,
     columns,
+    getRowId: (row) => String(row.id),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -477,6 +500,7 @@ const ModernPurchaseOrderTable = ({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn,
@@ -484,6 +508,7 @@ const ModernPurchaseOrderTable = ({
       sorting,
       columnFilters,
       columnVisibility,
+      columnOrder,
       rowSelection,
       globalFilter,
     },
@@ -527,6 +552,23 @@ const ModernPurchaseOrderTable = ({
       </div>
     )
   }
+
+  const canonicalQuery = createCanonicalTableQuery(purchaseOrdersTableContract, {
+    search: globalFilter,
+    filters: {
+      ...(orderDateRange.from ? { orderDateFrom: [orderDateRange.from] } : {}),
+      ...(orderDateRange.to ? { orderDateTo: [orderDateRange.to] } : {}),
+    },
+    sort: sorting.map((entry) => ({ id: entry.id, desc: entry.desc })),
+    pageIndex: table.getState().pagination.pageIndex,
+    pageSize: table.getState().pagination.pageSize,
+  })
+  const canonicalSelection = createCanonicalTableSelection(
+    "explicit",
+    canonicalQuery,
+    table.getSelectedRowModel().rows.map((row) => String(row.original.id)),
+    { kind: "known", total: table.getFilteredRowModel().rows.length },
+  )
 
   return (
     <div className="min-w-0 space-y-5 text-[var(--dash-text)]">
@@ -648,7 +690,22 @@ const ModernPurchaseOrderTable = ({
       )}
 
       {/* Table */}
+      <div className="flex justify-end">
+        <CanonicalTableDensityControl
+          density={density}
+          locale={locale === "fr" ? "fr" : "en"}
+          onDensityChange={setDensity}
+        />
+      </div>
       <div className="dashboard-table-shell dashboard-data-table min-w-0 overflow-x-auto rounded-lg">
+        <CanonicalTableBoundary
+          contract={purchaseOrdersTableContract}
+          locale={locale === "fr" ? "fr" : "en"}
+          query={canonicalQuery}
+          selection={canonicalSelection}
+          state={table.getFilteredRowModel().rows.length === 0 ? (globalFilter || orderDateRange.from || orderDateRange.to ? "no-results" : "empty") : "ready"}
+          density={density}
+        >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -659,6 +716,7 @@ const ModernPurchaseOrderTable = ({
                       key={header.id}
                       colSpan={header.colSpan}
                       className="px-3"
+                      aria-sort={header.column.getCanSort() ? (header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : "none") : undefined}
                     >
                       {header.isPlaceholder
                         ? null
@@ -683,7 +741,7 @@ const ModernPurchaseOrderTable = ({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="py-4 text-[var(--dash-text-muted)]"
+                      className={density === "compact" ? "py-1.5 text-[var(--dash-text-muted)]" : "py-4 text-[var(--dash-text-muted)]"}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -705,6 +763,7 @@ const ModernPurchaseOrderTable = ({
             )}
           </TableBody>
         </Table>
+        </CanonicalTableBoundary>
       </div>
 
       {/* Pagination */}
@@ -724,7 +783,7 @@ interface PurchaseOrderManagementProps {
   locale?: Locale
 }
 
-const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
+function PurchaseOrderManagement({
   title,
   organizationId,
   initialPurchaseOrderData,
@@ -741,81 +800,13 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
 
   // Use real data hooks
   const { data: purchaseOrdersResponse, isLoading, error, refetch } = usePurchaseOrders(organizationId)
-  const deleteMutation = useDeletePurchaseOrder()
-  const approveMutation = useApprovePurchaseOrder()
-  const cancelMutation = useCancelPurchaseOrder()
+  const { data: approvalSession } = useSession()
+  const lifecycleText = useTranslations("purchaseOrderLifecycle")
+  const approvalLabel = useTranslations("purchaseOrderApproval")("open")
+  const [approvalOrderId, setApprovalOrderId] = useState<string | null>(null)
   const receiveMutation = useReceiveItems()
 
-  // Confirmation dialog state
-  const [confirmationDialog, setConfirmationDialog] = useState<{
-    isOpen: boolean
-    type: 'delete' | 'cancel' | 'approve' | null
-    purchaseOrder: PurchaseOrderData | null
-    title: string
-    description: string
-    confirmText: string
-    confirmVariant: 'default' | 'destructive'
-  }>({
-    isOpen: false,
-    type: null,
-    purchaseOrder: null,
-    title: '',
-    description: '',
-    confirmText: '',
-    confirmVariant: 'default'
-  })
-
-  // Helper function to open confirmation dialogs
-  const openConfirmationDialog = useCallback((
-    type: 'delete' | 'cancel' | 'approve',
-    purchaseOrder: PurchaseOrderData,
-    title: string,
-    description: string,
-    confirmText: string,
-    confirmVariant: 'default' | 'destructive' = 'default'
-  ) => {
-    setConfirmationDialog({
-      isOpen: true,
-      type,
-      purchaseOrder,
-      title,
-      description,
-      confirmText,
-      confirmVariant
-    })
-  }, [])
-
-  // Handle confirmation dialog actions
-  const handleConfirmAction = useCallback(() => {
-    if (!confirmationDialog.purchaseOrder || !confirmationDialog.type) return
-
-    const { purchaseOrder, type } = confirmationDialog
-
-    switch (type) {
-      case 'delete':
-        deleteMutation.mutate({
-          id: purchaseOrder.id,
-          organizationId: organizationId
-        })
-        break
-      case 'cancel':
-        cancelMutation.mutate({
-          id: purchaseOrder.id,
-          organizationId: organizationId,
-          reason: 'Cancelled by user'
-        })
-        break
-      case 'approve':
-        approveMutation.mutate({
-          id: purchaseOrder.id,
-          organizationId: organizationId,
-        })
-        break
-    }
-
-    // Close dialog
-    setConfirmationDialog(prev => ({ ...prev, isOpen: false }))
-  }, [confirmationDialog, deleteMutation, cancelMutation, approveMutation, organizationId])
+  const [lifecycle, setLifecycle] = useState<{ id: string; kind: PurchaseLifecycleKind } | null>(null)
 
   // Get purchase orders data
   const purchaseOrdersArray = useMemo(() => {
@@ -843,16 +834,7 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
     router.push(localizedHref(`/dashboard/purchase-orders/${po.id}/edit`))
   }, [localizedHref, router])
 
-  const handleApproveClick = useCallback((po: PurchaseOrderData) => {
-    openConfirmationDialog(
-      'approve',
-      po,
-      'Approve Purchase Order',
-      `Are you sure you want to approve purchase order ${po.orderNumber}? This action will mark the order as approved and allow it to proceed to the next stage.`,
-      'Approve Order',
-      'default'
-    )
-  }, [openConfirmationDialog])
+  const handleApproveClick = useCallback((po: PurchaseOrderData) => setApprovalOrderId(po.id), [])
 
   const handleReceiveClick = useCallback((po: PurchaseOrderData) => {
     // Navigate to purchase order detail page where receive functionality exists
@@ -862,34 +844,8 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
     })
   }, [localizedHref, router])
 
-  const handleCancelClick = useCallback((po: PurchaseOrderData) => {
-    openConfirmationDialog(
-      'cancel',
-      po,
-      'Cancel Purchase Order',
-      `Are you sure you want to cancel purchase order ${po.orderNumber}? This action will mark the order as cancelled and cannot be undone.`,
-      'Cancel Order',
-      'destructive'
-    )
-  }, [openConfirmationDialog])
-
-  const handleDeleteClick = useCallback((po: PurchaseOrderData) => {
-    if (!po.capabilities.archive.allowed) {
-      notify.error("Cannot archive", {
-        description: po.capabilities.archive.reason ?? "Archiving is unavailable for this purchase order."
-      })
-      return
-    }
-
-    openConfirmationDialog(
-      'delete',
-      po,
-      'Archive Purchase Order',
-      `Archive purchase order ${po.orderNumber}? It will be removed from the active register and retained with its audit evidence.`,
-      'Archive Order',
-      'destructive'
-    )
-  }, [openConfirmationDialog])
+  const handleCancelClick = useCallback((po: PurchaseOrderData) => setLifecycle({ id: po.id, kind: "cancel" }), [])
+  const handleDeleteClick = useCallback((po: PurchaseOrderData) => setLifecycle({ id: po.id, kind: "archive" }), [])
 
   const handleDownloadPDF = useCallback((po: PurchaseOrderData) => {
     window.print()
@@ -911,6 +867,22 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
 
   const handleExport = useCallback((data: PurchaseOrderData[]) => {
     try {
+      const exportQuery = createCanonicalTableQuery(purchaseOrdersTableContract, { pageSize: 100 })
+      const exportIntent = buildCanonicalTableExportIntent({
+        contract: purchaseOrdersTableContract,
+        organizationId,
+        query: exportQuery,
+        selection: createCanonicalTableSelection(
+          "explicit",
+          exportQuery,
+          data.map((purchaseOrder) => String(purchaseOrder.id)),
+          { kind: "known", total: data.length },
+        ),
+        columns: purchaseOrdersTableContract.columns.allowed.map((column) => column.id),
+        locale,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+        format: "xlsx",
+      })
       const exportData = data.map(po => ({
         'Order Number': po.orderNumber,
         'Supplier': po.supplier?.name || 'Unknown',
@@ -924,8 +896,10 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
       }))
 
       const ws = XLSX.utils.json_to_sheet(exportData)
+      const evidenceWs = XLSX.utils.json_to_sheet(canonicalTableExportEvidenceRows(exportIntent))
       const wb = XLSX.utils.book_new()
       XLSX.utils.book_append_sheet(wb, ws, "Purchase Orders")
+      XLSX.utils.book_append_sheet(wb, evidenceWs, "Export Evidence")
       XLSX.writeFile(wb, `purchase-orders-${format(new Date(), 'yyyy-MM-dd')}.xlsx`)
 
       notify.success("Export successful", {
@@ -936,7 +910,7 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
         description: "Failed to export purchase orders"
       })
     }
-  }, [])
+  }, [locale, organizationId])
 
   // Format currency helper
   const formatCurrencyValue = useCallback((amount: number) => {
@@ -960,7 +934,8 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
       handleCancelClick,
       handleDeleteClick,
       handleDownloadPDF,
-      localizedHref
+      localizedHref,
+      approvalLabel
     ),
     [
       formatCurrencyValue,
@@ -972,7 +947,8 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
       handleCancelClick,
       handleDeleteClick,
       handleDownloadPDF,
-      localizedHref
+      localizedHref,
+      approvalLabel
     ]
   )
 
@@ -1003,79 +979,14 @@ const PurchaseOrderManagement = memo(function PurchaseOrderManagement({
         locale={locale}
       />
 
+      {approvalSession?.user?.id && <Dialog><DialogTrigger asChild><Button className="dashboard-button-secondary" variant="outline">{lifecycleText("history.title")}</Button></DialogTrigger><DialogContent closeLabel={lifecycleText("close")} className="dashboard-landing-theme dark dashboard-glass-panel max-h-[90dvh] w-[calc(100%-2rem)] max-w-2xl grid-cols-[minmax(0,1fr)] overflow-y-auto p-4 text-[var(--dash-text)] [&>*]:min-w-0 sm:p-6"><DialogHeader><DialogTitle>{lifecycleText("history.title")}</DialogTitle><DialogDescription>{lifecycleText("recordMeaning")}</DialogDescription></DialogHeader><PurchaseOrderDecisionHistory organizationId={organizationId} actorId={approvalSession.user.id} /></DialogContent></Dialog>}
+      {approvalSession?.user?.id && <PurchaseOrderApprovalDialog orderId={approvalOrderId} organizationId={organizationId} actorId={approvalSession.user.id} onClose={() => setApprovalOrderId(null)} onConfirmed={() => { void refetch() }} />}
       {/* Confirmation Dialog */}
-      <Dialog
-        open={confirmationDialog.isOpen}
-        onOpenChange={(open) => setConfirmationDialog(prev => ({ ...prev, isOpen: open }))}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {confirmationDialog.type === 'delete' && <XCircle className="h-5 w-5 text-rose-500" />}
-              {confirmationDialog.type === 'cancel' && <XCircle className="h-5 w-5 text-amber-500" />}
-              {confirmationDialog.type === 'approve' && <CheckCircle className="h-5 w-5 text-emerald-500" />}
-              {confirmationDialog.title}
-            </DialogTitle>
-            <DialogDescription>
-              {confirmationDialog.description}
-            </DialogDescription>
-          </DialogHeader>
+      {approvalSession?.user?.id && <PurchaseOrderLifecycleDialog orderId={lifecycle?.id ?? null} kind={lifecycle?.kind ?? "cancel"} organizationId={organizationId} actorId={approvalSession.user.id} onClose={() => setLifecycle(null)} onConfirmed={() => { void refetch() }} />}
 
-          {confirmationDialog.purchaseOrder && (
-            <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium text-slate-600 dark:text-slate-400">Order Number:</span>
-                  <div className="font-semibold">{confirmationDialog.purchaseOrder.orderNumber}</div>
-                </div>
-                <div>
-                  <span className="font-medium text-slate-600 dark:text-slate-400">Total Amount:</span>
-                  <div className="font-semibold text-emerald-600">{formatCurrencyValue(confirmationDialog.purchaseOrder.total)}</div>
-                </div>
-                <div>
-                  <span className="font-medium text-slate-600 dark:text-slate-400">Supplier:</span>
-                  <div className="font-semibold">{confirmationDialog.purchaseOrder.supplier?.name || 'Unknown'}</div>
-                </div>
-                <div>
-                  <span className="font-medium text-slate-600 dark:text-slate-400">Current Status:</span>
-                  <div className="font-semibold">
-                    <ModernStatusBadge status={confirmationDialog.purchaseOrder.status} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setConfirmationDialog(prev => ({ ...prev, isOpen: false }))}
-              disabled={deleteMutation.isPending || cancelMutation.isPending || approveMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              variant={confirmationDialog.confirmVariant}
-              onClick={handleConfirmAction}
-              disabled={deleteMutation.isPending || cancelMutation.isPending || approveMutation.isPending}
-            >
-              {(deleteMutation.isPending || cancelMutation.isPending || approveMutation.isPending) ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                confirmationDialog.confirmText
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   )
-})
+}
 
 PurchaseOrderManagement.displayName = 'PurchaseOrderManagement'
 

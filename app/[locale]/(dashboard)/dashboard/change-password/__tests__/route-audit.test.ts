@@ -1,5 +1,6 @@
 import fs from "node:fs"
 import path from "node:path"
+import { isKnownPermission } from "@/lib/security/rbac-permissions"
 
 import { changePasswordRouteCatalog, getChangePasswordRouteSurfaceByRoute } from "../change-password-route-data-access"
 
@@ -50,6 +51,11 @@ function collectRouteByKeysFromPages(): string[] {
 }
 
 describe("change-password route catalog audit", () => {
+  it("uses the existing canonical own-password permission rather than an unknown legacy gate", () => {
+    expect(changePasswordRouteCatalog[0].permissions).toEqual(["profile.password.update"])
+    expect(changePasswordRouteCatalog[0].permissions.every(isKnownPermission)).toBe(true)
+    expect(isKnownPermission("PASSWORD_READ")).toBe(false)
+  })
   it("keeps every change-password route surface and key in one source of truth", () => {
     const routeEntries = listChangePasswordRoutePagesByPath()
     const catalogByRoute = new Map(changePasswordRouteCatalog.map((entry) => [entry.route, entry]))

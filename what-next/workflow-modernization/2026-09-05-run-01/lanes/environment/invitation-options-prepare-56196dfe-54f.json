@@ -1,0 +1,65 @@
+{
+  "mode": "prepare",
+  "run": "56196dfe-54f",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T05:45:03.169Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-options.service.ts": "7f9242f7ffc931c53d5e3d81e97cfa2f5d0c9dfd6fa59a6ff9d1e10be531b098",
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "130f7e2388ba596fac6a78f7c7db3f18d944aba3af9135b67bd0f7c15fd87a94",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "components/Forms/users/userInvitationForm.tsx": "9c32f2608866765be6cb891758fca505d8c30abdb6097e60647a0e387e092c00",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "messages/en.json": "1a9ec6a4d6ac8339199b44efca18eec84bf3b040552fc5b6a474c1fb3e5449f3",
+    "messages/fr.json": "68f2b63d80617c31ea74fc7e9e2d5f3c027392de187433c07318ae099dc65f8f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "Owned invitation-capable and role-read-denied fixtures with excluded target roles",
+      "passed": true
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "No live email: the only valid invitation submission occurs in an asserted unassured new session and stops at FRESH_AUTH_REQUIRED; after real step-up the driver never submits an invitation.",
+    "Existing invitation records, original users and permissions are retained. New actors and roles are explicitly synthetic local preconditions.",
+    "Successful email issuance/provider delivery and current issuer provenance remain open. Development timings are observations only."
+  ],
+  "authorityBefore": "95fcd21cb910502f79b9752ef0b501ddd1d264f6a5eb7c2d61b4a84f3a95ce94",
+  "invitationAuditsBefore": 0,
+  "authorityAfter": "95fcd21cb910502f79b9752ef0b501ddd1d264f6a5eb7c2d61b4a84f3a95ce94",
+  "authorityUnchanged": true,
+  "completedAt": "2026-09-06T05:45:03.427Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-options.service.ts": "7f9242f7ffc931c53d5e3d81e97cfa2f5d0c9dfd6fa59a6ff9d1e10be531b098",
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "130f7e2388ba596fac6a78f7c7db3f18d944aba3af9135b67bd0f7c15fd87a94",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "components/Forms/users/userInvitationForm.tsx": "9c32f2608866765be6cb891758fca505d8c30abdb6097e60647a0e387e092c00",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "messages/en.json": "1a9ec6a4d6ac8339199b44efca18eec84bf3b040552fc5b6a474c1fb3e5449f3",
+    "messages/fr.json": "68f2b63d80617c31ea74fc7e9e2d5f3c027392de187433c07318ae099dc65f8f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "76a275a45306bf28cc81e1e1513200d74ef95a0067d08a1e46c1202eff825095",
+  "passed": 1,
+  "failed": 0
+}

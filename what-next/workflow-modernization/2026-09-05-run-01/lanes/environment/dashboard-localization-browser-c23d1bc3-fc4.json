@@ -1,0 +1,94 @@
+{
+  "at": "2026-09-08T13:35:13.795Z",
+  "run": "c23d1bc3-fc4",
+  "sourcesBefore": {
+    "components/dashboard/Navbar.tsx": "7acdaae1d6c27b99978acae31876e7bede298823a5cf1e1b1993cdd00e21f7f7",
+    "components/dashboard/Sidebar.tsx": "b348e578a60086e78be32c69ea01b666d4955494f5e2d478224057f450f6cf71",
+    "components/dashboard/DashboardRouteState.tsx": "d7aa4e9976259df360c9a208a547159ca9cbf3eb279d7ca63a4f36e5575b5d4d",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "lib/dashboard/presentation.ts": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3",
+    "config/sidebar.ts": "beeb3d9dde8283b6897962cb3a34c6fa2971fbd9aeda8b419ea76c39bb775c8f",
+    "i18n/request.ts": "49de29ffdb37bf277484b0f7d3bf02f386303d1620afd62ad5e96a9aba0accf9",
+    "messages/dashboard-shared/en.json": "5fb5d17baf0c934ab8bcea8d9b9c4059bb091ae334865e025e5ef5d4c9a0cbe5",
+    "messages/dashboard-shared/fr.json": "723cd0ba2282d487d187072d4eb5023f120c49f76394482fb5e5be94a2338716",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "604111ca773bc32db1f34597ee6c5dc632b53a8541245cc381e7850c972a15a1",
+    "messages/fr.json": "c899c288f4af247ca9c9376eabca663b8199e737d980c8d9eb30212938d8aacb"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "dashboard-localization-en-failure-c23d1bc3-fc4.png"
+      ],
+      "pageErrors": [],
+      "timings": [],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('header').getByRole('button').filter({ hasText: 'AP Workbench' })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for locator('header').getByRole('button').filter({ hasText: 'AP Workbench' })\n"
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Localized desktop destination/search, real language-switch route, mobile destination search and keyboard containment/return",
+        "Exact original preparation recovery shows a current source observation and restores keyboard focus to the available next action",
+        "Lost recovery response after correction/posting and supplier deactivation retains the same request; old amount is historical, current amount/status separate, no duplicate liability; EN/FR mobile/tablet/zoom and focus checked",
+        "Missing current proof and archived invoice remain explicit without changing original evidence or reopening obligations",
+        "Current permission revocation denies recovery and clears private pending state"
+      ],
+      "screenshots": [
+        "dashboard-localization-fr-shell-desktop-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-shell-mobile-search-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-original-current-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-superseded-posted-desktop-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-superseded-posted-320-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-superseded-posted-390-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-superseded-posted-768-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-superseded-zoom-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-unverified-archived-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-denied-c23d1bc3-fc4.png",
+        "dashboard-localization-fr-denied-mobile-c23d1bc3-fc4.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Original preparation exact-recovery development baseline",
+          "ms": 1263
+        }
+      ]
+    }
+  ],
+  "scope": "Owned fixtures prepare an invoice through the real service. Browser session storage restores the exact original command to simulate a previously interrupted request. Real server actions recover it before and after correction/posting; the second recovery response is deliberately lost.",
+  "originalBefore": "191e4ab4b2f2bc61aa56a37a0bb19c501e55145e0788a9ef9af6d80713dabcd2",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/dashboard/Navbar.tsx": "7acdaae1d6c27b99978acae31876e7bede298823a5cf1e1b1993cdd00e21f7f7",
+    "components/dashboard/Sidebar.tsx": "b348e578a60086e78be32c69ea01b666d4955494f5e2d478224057f450f6cf71",
+    "components/dashboard/DashboardRouteState.tsx": "d7aa4e9976259df360c9a208a547159ca9cbf3eb279d7ca63a4f36e5575b5d4d",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "lib/dashboard/presentation.ts": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3",
+    "config/sidebar.ts": "beeb3d9dde8283b6897962cb3a34c6fa2971fbd9aeda8b419ea76c39bb775c8f",
+    "i18n/request.ts": "49de29ffdb37bf277484b0f7d3bf02f386303d1620afd62ad5e96a9aba0accf9",
+    "messages/dashboard-shared/en.json": "5fb5d17baf0c934ab8bcea8d9b9c4059bb091ae334865e025e5ef5d4c9a0cbe5",
+    "messages/dashboard-shared/fr.json": "723cd0ba2282d487d187072d4eb5023f120c49f76394482fb5e5be94a2338716",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "604111ca773bc32db1f34597ee6c5dc632b53a8541245cc381e7850c972a15a1",
+    "messages/fr.json": "c899c288f4af247ca9c9376eabca663b8199e737d980c8d9eb30212938d8aacb"
+  },
+  "sourceStable": true
+}

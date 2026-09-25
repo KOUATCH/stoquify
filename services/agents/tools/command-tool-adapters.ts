@@ -18,6 +18,7 @@ import type {
 import {
   READ_ROLE_DAILY_DIGEST_TOOL_KEY,
   normalizeCommandFreshness,
+  commandAgentSourcePathSchema,
 } from "../command-agent-contracts"
 
 export const commandRoleDigestInputSchema = z
@@ -46,7 +47,7 @@ export const roleDigestProjectionSchema = z
           title: z.string().min(1).max(180),
           detail: z.string().min(1).max(500),
           severity: z.enum(["info", "low", "medium", "high", "critical"]),
-          href: z.string().startsWith("/dashboard/").max(300),
+          href: commandAgentSourcePathSchema,
           requiredPermission: z.string().min(1).max(120),
           evidenceIds: z.array(z.string().min(1).max(180)).min(1).max(12),
         })
@@ -124,6 +125,7 @@ export async function readRoleDailyDigest(
     actorPermissions: context.permissions,
     actorRoleCodes: context.roleCodes,
     isSuperUser: context.isSuperUser,
+    locale: context.locale,
     periodStart: context.periodStart,
     periodEnd: context.periodEnd,
   })
@@ -160,7 +162,7 @@ function projectDigest(
   const evidence = sources.slice(0, 12).map((sourceModule, index) => ({
     id: `${digest.id}:evidence:${index + 1}`,
     subjectType: "daily-habit.digest",
-    subjectId: `${data.organizationId}:${digest.id}:${data.periodStart}:${data.periodEnd}`,
+    subjectId: `${data.organizationId}:${digest.id}:${digest.periodStart}:${digest.periodEnd}`,
     sourceModule,
     sourceHash: provenance?.sourceHash ?? null,
     evidenceGrade: digest.commandBrief.evidenceGrade,
@@ -174,12 +176,15 @@ function projectDigest(
     .filter(
       (risk) =>
         risk.drillThrough.available &&
-        hasRbacPermission(context.permissions, risk.drillThrough.requiredPermission),
+        [risk.drillThrough.requiredPermission, ...(risk.drillThrough.additionalRequiredPermissions ?? [])]
+          .every(permission => hasRbacPermission(context.permissions, permission)),
     )
     .sort((left, right) => right.severityScore - left.severityScore)
     .slice(0, 5)
     .map((risk) => {
-      if (!risk.drillThrough.available || !risk.drillThrough.href?.startsWith("/dashboard/")) {
+      const href = risk.drillThrough.available ? risk.drillThrough.href?.replace(/^\/(?:en|fr)(?=\/dashboard\/)/, "") : undefined
+      const sourcePath = commandAgentSourcePathSchema.safeParse(href)
+      if (!sourcePath.success) {
         throw new CommandToolAdapterError(
           "UNAUTHORIZED_DIGEST_FIELD",
           "A Daily Digest priority contains an unsafe source route.",
@@ -190,7 +195,7 @@ function projectDigest(
         title: risk.title,
         detail: risk.detail,
         severity: risk.severity,
-        href: risk.drillThrough.href,
+        href: sourcePath.data,
         requiredPermission: risk.drillThrough.requiredPermission,
         evidenceIds,
       }

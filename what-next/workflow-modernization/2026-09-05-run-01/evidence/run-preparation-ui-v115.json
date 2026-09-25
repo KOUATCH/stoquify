@@ -1,0 +1,122 @@
+{
+  "at": "2026-09-13T10:31:46.684Z",
+  "baseline": "evidence/source-baseline-v115.json",
+  "sources": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "9872e382eb68514c68fd14925a7f54763dc23ac21995d367324559819d999490",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts": "136ae6e194cd5d3e1f0a2e2c6ec66ffc21a99c537cd241afc651756cefb1f664",
+    "actions/payments/reconciliation-preparation.actions.ts": "211057dacb08dae00c7388fd370e4dee1a96f0fce61bcb281322cef20002e4ce",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "6b77826393524909d2de4a5990f5a0e48c7bdfca82df284a92f55bfe53adb17d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "7a529287a2989f6fcb7f9426c1544ebe034648c41fe6dbbff34a7a3cd1b38b2e",
+    "messages/en.json": "7bfc6ea3f8c531286983705172f968ebb496e1ade6abb2123ec0022088905f74",
+    "messages/fr.json": "8634629ceb4a83d943914f60cbc0670c544c29cb5339e921a329c0a2c4919e63"
+  },
+  "tests": {
+    "passed": 101,
+    "suites": 6,
+    "receipts": [
+      "f0ef71: 37 focused tests passed; separate workbench suite failed to load",
+      "06320c: 64 workbench/sign/detail tests passed after boundary correction"
+    ],
+    "finalComponentRerun": {
+      "passed": 4,
+      "receipt": "7ee66b"
+    }
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "5da123",
+    "initialFailure": "d62e05: unfinished inventory syntax outside this batch"
+  },
+  "lint": {
+    "receipts": [
+      "0679f4: eight files, one cleanup-ref warning",
+      "af54c3: component and workbench test, zero warnings after correction"
+    ]
+  },
+  "browser": {
+    "file": "lanes/environment/run-preparation-v115-browser-a0f2d0d3-bac.json",
+    "passed": true,
+    "sourceStable": true,
+    "journeys": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "run-preparation-v115-en-prerequisite-desktop-a0f2d0d3-bac.png",
+          "run-preparation-v115-en-prepared-320-a0f2d0d3-bac.png",
+          "run-preparation-v115-en-prepared-768-a0f2d0d3-bac.png",
+          "run-preparation-v115-en-prepared-1440-a0f2d0d3-bac.png",
+          "run-preparation-v115-en-reopened-320-a0f2d0d3-bac.png"
+        ],
+        "pageErrors": [],
+        "consoleIssues": [
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789295184492 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789295188223 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789295194880 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789295193005 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789295226961 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+        ],
+        "routeLoadMs": [
+          57023,
+          14997
+        ],
+        "readOnlyDenial": true,
+        "passwordReloadPreparationAndHistory": true,
+        "reopenedHistoryAndCurrentPrerequisite": true,
+        "keyboardFocusReturn": true,
+        "passed": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "run-preparation-v115-fr-prerequisite-desktop-a0f2d0d3-bac.png",
+          "run-preparation-v115-fr-prepared-320-a0f2d0d3-bac.png",
+          "run-preparation-v115-fr-prepared-768-a0f2d0d3-bac.png",
+          "run-preparation-v115-fr-prepared-1440-a0f2d0d3-bac.png",
+          "run-preparation-v115-fr-reopened-320-a0f2d0d3-bac.png"
+        ],
+        "pageErrors": [],
+        "consoleIssues": [
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789295269389 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789295274485 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+        ],
+        "routeLoadMs": [
+          10124,
+          7092
+        ],
+        "readOnlyDenial": true,
+        "passwordReloadPreparationAndHistory": true,
+        "reopenedHistoryAndCurrentPrerequisite": true,
+        "keyboardFocusReturn": true,
+        "passed": true
+      }
+    ]
+  },
+  "failedBrowserAttempt": "lanes/environment/run-preparation-v115-browser-fa3f9620-25f.json",
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat",
+  "remaining": [
+    "Verify native assistive technology/zoom and additional module/role combinations.",
+    "Verify large run/history pages in PostgreSQL, deliberate committed-response loss and conflicting reviewers in the actual preparation UI.",
+    "Complete the independent-signing/export browser handoff and source allocation/legacy investigation evidence boundaries.",
+    "Continue every remaining platform workflow; no whole-workflow completion claim."
+  ],
+  "coverage": {
+    "discoveredWorkflows": 235,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2865,
+      "tests": 1012,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 173,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2504,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 212,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

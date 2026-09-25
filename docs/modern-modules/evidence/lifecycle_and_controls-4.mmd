@@ -1,0 +1,21 @@
+sequenceDiagram
+  actor Buyer
+  participant Edge as Scoped action / policy
+  participant AP as Purchasing and AP owner
+  participant Stock as Inventory owner
+  participant Ledger as Ledger integrity
+  participant Pay as Finance / payment adapter
+  participant Recon as Reconciliation
+  participant View as Read model and audit
+  Buyer->>Edge: Receive goods and submit supplier invoice
+  Edge->>AP: Verified actor, scope and command identity
+  AP->>Stock: Record authorized goods receipt
+  Stock->>Ledger: Post source-linked valuation through owner contract
+  AP->>Ledger: Post approved supplier liability once
+  AP->>Pay: Release approved payment obligation
+  Pay-->>AP: Recorded or uncertain settlement evidence
+  Pay->>Recon: Statement / settlement facts
+  Recon->>Ledger: Only an approved adjustment if needed
+  AP-->>View: Committed domain events and source references
+  Recon-->>View: Match, exceptions and freshness
+  View-->>Buyer: Unified status and next responsible action

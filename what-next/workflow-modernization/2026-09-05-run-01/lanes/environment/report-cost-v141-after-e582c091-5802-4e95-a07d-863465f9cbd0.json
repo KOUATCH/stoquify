@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-13T17:15:29.534Z",
+  "phase": "after",
+  "sourceBefore": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36"
+  },
+  "checks": [
+    {
+      "name": "catalogue_edit",
+      "firstCost": 20,
+      "afterEditCost": 20,
+      "itemCost": 20,
+      "firstProfit": 80,
+      "afterEditProfit": 80
+    },
+    {
+      "name": "missing_cost_is_unavailable",
+      "passed": true
+    },
+    {
+      "name": "foreign_location_rejected",
+      "passed": true
+    },
+    {
+      "name": "archived_sold_item_retained",
+      "passed": true
+    },
+    {
+      "name": "pending_payment_excluded",
+      "passed": true
+    }
+  ],
+  "error": "\nInvalid `db.salesOrder.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-report-cost-v141.cjs:13:51\n\n  10 await db.inventoryTransaction.updateMany({where:{organizationId:x.ctx.organizationId,type:'SALE',referenceId:'owned-missing-evidence'},data:{referenceId:x.cartId}});\n  11 await db.item.update({where:{id:x.itemId},data:{isActive:false}});assert.equal((await reports.getItemPerformanceReportReadModel(input)).find(i=>i.itemId===x.itemId).totalCost,20);result.checks.push({name:'archived_sold_item_retained',passed:true});\n  12 await db.payment.create({data:{organizationId:x.ctx.organizationId,salesOrderId:x.cartId,paymentNumber:'OWNED-PENDING-'+stamp,method:'CASH',status:'PENDING',amount:500}});assert.equal((await reports.getFinancialSummaryReportReadModel(input)).cashSales,100);result.checks.push({name:'pending_payment_excluded',passed:true});\n→ 13 const date=new Date(),order=await db.salesOrder.create({\n       data: {\n         organizationId: \"workflow_tender_report_146e4e5d-36dc-4afd-8e58-eb8b3d6d481a\",\n         locationId: \"cmu02rnsa0003mamsxxelrvf1\",\n         createdById: \"cmu02rns10001mamsm5l00o0z\",\n         orderNumber: \"OWNED-DELIVERY-e582c091-5802-4e95-a07d-863465f9cbd0\",\n         status: \"DELIVERED\",\n         subtotal: 200,\n         taxAmount: 40,\n         total: 240,\n         orderDate: new Date(\"2026-09-13T17:15:31.580Z\"),\n         lines: {\n           create: {\n             itemId: \"cmu02rnvw000dmamssedysofp\",\n             quantity: 2,\n             unitPrice: 100,\n          ",
+  "sourceAfter": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,93 @@
+{
+  "run": "491fc376-8ed",
+  "at": "2026-09-08T08:37:27.227Z",
+  "checks": [
+    {
+      "name": "Exact retry keeps one journal and one source link",
+      "status": "passed"
+    },
+    {
+      "name": "Missing rules after success do not downgrade posted evidence",
+      "status": "passed"
+    },
+    {
+      "name": "Changed source amount is rejected after posting",
+      "status": "passed"
+    },
+    {
+      "name": "Concurrent exact submissions return one journal",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign direct account is rejected",
+      "status": "passed"
+    },
+    {
+      "name": "Direct parent account is rejected",
+      "status": "passed"
+    },
+    {
+      "name": "Closed period is rejected by posting owner",
+      "status": "passed"
+    },
+    {
+      "name": "Blocked batch can post after configuration without supplier liability changes",
+      "status": "passed"
+    },
+    {
+      "name": "Missing source-link journal proof cannot be replayed",
+      "status": "passed"
+    },
+    {
+      "name": "Changed journal lines cannot be replayed as verified",
+      "status": "passed"
+    },
+    {
+      "name": "Legacy posted batch without request evidence requires reconciliation",
+      "status": "passed"
+    },
+    {
+      "name": "Reversed journal is never silently reposted",
+      "status": "passed"
+    },
+    {
+      "name": "Failed batch with retained journal cannot create another effect",
+      "status": "passed"
+    },
+    {
+      "name": "Audit failure rolls back journal, batch and link; retry posts once",
+      "status": "passed"
+    },
+    {
+      "name": "Concurrent different sources receive distinct journal numbers",
+      "status": "passed"
+    },
+    {
+      "name": "Blocked retry rejects changed amount evidence",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned local PostgreSQL. Tests the AP posting kernel with synthetic sources and test-only rules; not an authenticated invoice recovery journey or statutory approval.",
+  "sourceBefore": "155cee3ed259024121f431d711372ef8250744a634d1048ed2dada2c476b7525",
+  "originalUnchanged": true,
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-replay",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-downgrade",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-changed",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-concurrent",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-foreign",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-other",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-parent",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-closed",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-recover",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-link-proof",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-line-proof",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-legacy-proof",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-reversed",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-partial",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-atomic",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-numbers",
+    "workflow_supplier_ack_en_ledger-retry-491fc376-8ed-blocked-change"
+  ],
+  "sourceAfter": "155cee3ed259024121f431d711372ef8250744a634d1048ed2dada2c476b7525"
+}

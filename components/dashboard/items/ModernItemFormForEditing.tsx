@@ -41,6 +41,7 @@ import { Controller, type FieldErrors, useForm } from "react-hook-form"
 export type ItemEditReference = ItemReferenceSource
 
 interface ModernItemFormForEditingProps {
+  locale?: string
   itemData: ItemEditDTO
   initialBrandData: ItemEditReference[]
   initialUnitData: ItemEditReference[]
@@ -189,6 +190,7 @@ function ToggleRow({
 
 
 export default function ModernItemFormForEditing({
+  locale = "en",
   itemData,
   initialBrandData,
   initialUnitData,
@@ -452,6 +454,7 @@ export default function ModernItemFormForEditing({
                     setImageUrl={stageImage}
                     organizationId={itemData.organizationId}
                     endpoint="itemImageUpload"
+                    locale={locale}
                     onUploadStart={() => {
                       setIsImageUploading(true)
                       setSaveError(null)

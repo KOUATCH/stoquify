@@ -1,0 +1,183 @@
+{
+  "boundAt": "2026-09-05T16:18:37.693Z",
+  "productionApproval": false,
+  "postgres": {
+    "passedObservations": 4,
+    "sourceAsTested": [
+      {
+        "path": "services/modules/module-composition.service.ts",
+        "sha256": "564b7601d243c98c1830baae5f41a97aaa76e1139877abf692f9f710fa4b4377"
+      },
+      {
+        "path": "services/modules/module-composition-contracts.ts",
+        "sha256": "e03f44cc1a38fb3df6bfe09f9484977ee09836a7ef53132e8668138557fc6fe7"
+      },
+      {
+        "path": "actions/modules/module-composition.actions.ts",
+        "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+      }
+    ],
+    "limitations": [
+      "No equal-time PostgreSQL proof:31 service-created drafts had31 different timestamps and were rolled back.",
+      "Empty restricted setup scope is observed, but nonempty-scope redaction proof comes from separately owned focused unit regressions."
+    ]
+  },
+  "browser": {
+    "passedObservations": 5,
+    "failed": false,
+    "startedAt": "2026-09-05T16:15:17.575Z",
+    "completedAt": "2026-09-05T16:16:12.255Z",
+    "sourceStable": true,
+    "sourceAsTested": [
+      {
+        "path": "next.config.mjs",
+        "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+      },
+      {
+        "path": "services/modules/module-composition.service.ts",
+        "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+      },
+      {
+        "path": "services/modules/module-composition-contracts.ts",
+        "sha256": "291bd003d161570251a54772fe38ca2e6cca9801fa1126461771caf56aaadd18"
+      },
+      {
+        "path": "actions/modules/module-composition.actions.ts",
+        "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+      },
+      {
+        "path": "components/modules/ModuleCompositionWorkbench.tsx",
+        "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+      },
+      {
+        "path": "messages/en.json",
+        "sha256": "5e10711b9dd0b4cfbc0c320d37f81e63b6f90602841b1373a0eee674df2a29cd"
+      },
+      {
+        "path": "messages/fr.json",
+        "sha256": "ba0b6ce96ef5c706fff415c93c2e8cdb6efaf215f41d9a53caf13394305b4e94"
+      }
+    ],
+    "usefulHistoryMs": 13589,
+    "sourceDeltaSincePostgres": [
+      {
+        "path": "services/modules/module-composition.service.ts",
+        "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+      },
+      {
+        "path": "services/modules/module-composition-contracts.ts",
+        "sha256": "291bd003d161570251a54772fe38ca2e6cca9801fa1126461771caf56aaadd18"
+      }
+    ],
+    "effects": "Exactly one additional DRAFT after real password step-up;113 commands now. Original command and full configuration unchanged; no activation."
+  },
+  "priorBrowserFailuresPreserved": 2,
+  "screenshotsVisuallyInspected": [
+    "history-older-applied-configuration.png",
+    "history-reopened-draft.png"
+  ],
+  "artifacts": [
+    {
+      "path": "HISTORY_VERIFICATION.md",
+      "sha256": "5d19c19b49b7a3a33bd92d91e8d199fba4daa98f83aaeb8e1e548f732c7e1c3d",
+      "bytes": 6505,
+      "modifiedAt": "2026-09-05T16:17:46.978Z"
+    },
+    {
+      "path": "history-pagination-service.cjs",
+      "sha256": "931a90f9a0a48d2c693779cbc1a2a2eda171f65bf3818dbf0775ac2fca7a9c9e",
+      "bytes": 11214,
+      "modifiedAt": "2026-09-05T14:56:57.985Z"
+    },
+    {
+      "path": "history-pagination-browser.cjs",
+      "sha256": "6a9a45b25610630f300d5fa2a6166a81d527d166ace2e81322cb6dd20e7ce801",
+      "bytes": 9907,
+      "modifiedAt": "2026-09-05T16:15:01.203Z"
+    },
+    {
+      "path": "history-pagination-inspect-initial.json",
+      "sha256": "19b14e2d5a3adba7c34cc01087df54a79429de1f0acda5b3c462dd782e2f8909",
+      "bytes": 1506,
+      "modifiedAt": "2026-09-05T14:52:52.223Z"
+    },
+    {
+      "path": "history-pagination-prepare.json",
+      "sha256": "e59df49e5ec5904952cc5e8cdf36ed8de74cead55d2f7020afb4d4ad59ce32a4",
+      "bytes": 1537,
+      "modifiedAt": "2026-09-05T14:55:53.915Z"
+    },
+    {
+      "path": "history-pagination-verify.json",
+      "sha256": "cb389037132ece517e0d0373c8825bdb2bdf03f754f754b80ff64ef4dbd71765",
+      "bytes": 2339,
+      "modifiedAt": "2026-09-05T14:57:41.811Z"
+    },
+    {
+      "path": "history-pagination-ties-fixture-failed.json",
+      "sha256": "6aeb12b5ef8c37a0ceab1062ceb7487f560260942ebaeb4f3e88a2836c766a3f",
+      "bytes": 940,
+      "modifiedAt": "2026-09-05T14:58:04.930Z"
+    },
+    {
+      "path": "history-pagination-inspect.json",
+      "sha256": "1de738616d7b801854629d3ad50b1e03606f9b567344d2883c6148114f7fa302",
+      "bytes": 1510,
+      "modifiedAt": "2026-09-05T15:37:39.550Z"
+    },
+    {
+      "path": "history-pagination-browser-reopen-locator-failed.json",
+      "sha256": "1bac8e91c47031e6dd27c8e2d604c1e86b28410afd2bb0044991c72c3640e903",
+      "bytes": 2977,
+      "modifiedAt": "2026-09-05T15:35:49.069Z"
+    },
+    {
+      "path": "history-pagination-browser-history-reset-failed.json",
+      "sha256": "de71c8661d45f1ea219bf891f73fcc86bdd24c1ccd9d8a232ce03d28d1a8cf0e",
+      "bytes": 3140,
+      "modifiedAt": "2026-09-05T15:39:11.872Z"
+    },
+    {
+      "path": "history-reopen-history-reset-context.png",
+      "sha256": "602acabc3e8058480657b9d2d46f40192e6766c8cedc8f93b6af840926935e26",
+      "bytes": 397714,
+      "modifiedAt": "2026-09-05T15:39:11.680Z"
+    },
+    {
+      "path": "history-older-applied-configuration-first.png",
+      "sha256": "7c383fb86244dd615dabd185a23f23fce27b6897f3cd21d11e1fc7d5e2e5397e",
+      "bytes": 12942,
+      "modifiedAt": "2026-09-05T15:35:18.874Z"
+    },
+    {
+      "path": "history-pagination-browser.json",
+      "sha256": "ad16917bbe4f520bb23ea79b90328689afd9261d7a96f80a91b5fbd6564052bd",
+      "bytes": 3590,
+      "modifiedAt": "2026-09-05T16:16:12.256Z"
+    },
+    {
+      "path": "history-older-applied-configuration.png",
+      "sha256": "539b8d1f0df093b701f10dfbb9f825246d1ecc79d4d4647528c9019bf91c0e88",
+      "bytes": 12934,
+      "modifiedAt": "2026-09-05T16:15:56.595Z"
+    },
+    {
+      "path": "history-reopened-draft.png",
+      "sha256": "bbeb4bf6052d8966669faae2226bdee5b97fd77da71bb5f514e553bbc0fc0dfc",
+      "bytes": 774637,
+      "modifiedAt": "2026-09-05T16:16:12.037Z"
+    },
+    {
+      "path": "isolated-dev-stop.json",
+      "sha256": "d8e0e81fa0908e3ca7a0d76173d76010fe555ff4e56e8f7de50b15b83e7e075f",
+      "bytes": 975,
+      "modifiedAt": "2026-09-05T14:54:46.077Z"
+    },
+    {
+      "path": "isolated-dev-restart.json",
+      "sha256": "a960e4e693971b68653e19f2ef2e5aae95a962874048b65880c22245c528bd36",
+      "bytes": 904,
+      "modifiedAt": "2026-09-05T15:46:27.068Z"
+    }
+  ]
+}

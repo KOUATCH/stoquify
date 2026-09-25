@@ -560,7 +560,7 @@ async function recordContractEvent(
     idempotencyKey: input.idempotencyKey,
     payload: input.payload,
     actorId: input.actorId,
-    sourceType: "PAYROLL_CONTRACT",
+    sourceEntityType: "PAYROLL_CONTRACT",
     sourceId: input.contract.id,
     documentHash: input.documentHash ?? undefined,
     metadata: input.metadata,

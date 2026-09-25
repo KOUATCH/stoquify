@@ -1,0 +1,70 @@
+{
+  "at": "2026-09-19T16:15:50.518Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceBaseline": "4c370c: 1315 working-tree entries, unrelated changes preserved",
+  "node": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+  "sourceHashes": {
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "0c3e2cd47a41d193a3863188c3c124e9024f92767956f1cac2db6875e3e015c8",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "d741e5ce50bff6e694c4497a99cf05a431711db1abd18d00b33439380a5688c6",
+    "messages/fr.json": "18108ce13ac0a3be91c662cc99e8f0e6af27e0bea44c1aa1bbf031e59071d6d7"
+  },
+  "runtime": "digest-handoff-825b1ce9-22d0-4aac-9067-c1d6d327b394.json",
+  "typecheck": "digest-handoff-typecheck-2f052f9c-2088-4a3c-915f-5c911b50537d.json",
+  "typecheckState": "passed with stable affected source hashes",
+  "commands": {
+    "serviceTests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"services/daily-habit/__tests__/daily-habit-signal-presentation.test.ts\" \"services/agents/__tests__/command-tool-adapters.test.ts\"",
+    "componentTests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/daily-habit/__tests__/modes.test.tsx\" \"components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx\"",
+    "serviceLint": "node node_modules/eslint/bin/eslint.js \"services/daily-habit/daily-habit-digest.service.ts\" \"services/daily-habit/daily-habit-digest-presentation.ts\" \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\"",
+    "componentLint": "node node_modules/eslint/bin/eslint.js \"components/daily-habit/DailyHabitDigestDashboard.tsx\" \"components/daily-habit/__tests__/modes.test.tsx\" \"components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx\"",
+    "browser": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-operating-handoff.cjs",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "results": {
+    "serviceTests": "459f8f: 112 passed / three suites",
+    "componentTests": "710dfe: 17 passed / two suites",
+    "retainedOwnerRouteTests": "000c2e: 17 passed / two suites; Owner guard and messages unchanged since that result",
+    "serviceLint": "20666c passed",
+    "componentLint": "5fc5a2 passed",
+    "diff": "c47a85 and cc43fc passed",
+    "browser": "acb2f8: ten EN/FR service cases and five EN/FR browser cases; 59e373 confirms stable source and unchanged payment/journal/business-event counts"
+  },
+  "failures": [
+    "be2c79: two expected regression failures; an expired medium stock signal yielded blockedDigestCount=1 and staleSignalCount=0 instead of 0 and 1.",
+    "ad9deb: two older empty-state copy expectations failed; navigation tests passed. Updated the full assertion to the existing role/permission/module wording. All 17 component tests subsequently passed.",
+    "f87b74: previous checker wrapper could not write its receipt (EPERM) and lost the result. No pass inferred from the generated tsbuildinfo. Recorder now checks write access before execution and prints diagnostics before saving.",
+    "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8.json: Owner cases passed, Manager navigation timed out at the unchanged 120-second load wait."
+  ],
+  "navigationBaseline": {
+    "receipt": "digest-handoff-a84cfadc-9745-437c-b469-46490b440d8b.json",
+    "result": "23f60a passed Manager-only browser retry and all ten service cases; same load/content assertions",
+    "frenchManagerWindowY": 1193,
+    "frenchManagerHeadingY": -1032
+  },
+  "navigationAfter": {
+    "frenchManagerWindowY": 0,
+    "frenchManagerHeadingY": 161,
+    "assertion": "first destination heading in viewport before inspection; selected Digest URL, role and source-link viewport restored on Back"
+  },
+  "inspectedScreenshots": [
+    "digest-handoff-825b1ce9-22d0-4aac-9067-c1d6d327b394-owner-authority-revoked-fr-denied.png",
+    "digest-handoff-825b1ce9-22d0-4aac-9067-c1d6d327b394-manager-assigned-fr-destination.png"
+  ],
+  "environment": {
+    "start": "a7b952: owned launcher 16492, log server-recovery-e1ca3154-241b-4d66-a935-e13347339e95.out.log",
+    "coldLogin": "d87e44: timeout at 60.414 seconds",
+    "trace": "2b94d1: compile-path 61.795 seconds; bb06a2: later compile-path 69.570 seconds. Development observations, not production performance certification.",
+    "warmLogin": "a07929: HTTP 200 in 18.4055837 seconds",
+    "resources": "c59f2d: verified owned server, approximately 7.5 GB free",
+    "finalServerState": "253d7d: only server 7356 / CLI 13072 / launcher 16492 stopped; generated types retained. App is stopped for typechecking."
+  },
+  "completeWorkflowVerified": false
+}

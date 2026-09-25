@@ -1,0 +1,51 @@
+{
+  "at": "2026-09-19T10:58:51.178Z",
+  "sourceBefore": {
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "7aab14bfb67eba8989e4f723fa7b256d3e2ad1197083d9f74ab9ba8ceea18b98",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65"
+  },
+  "checks": [
+    {
+      "locale": "fr",
+      "errors": [],
+      "screenshots": [],
+      "overflow": [
+        {
+          "text": "Les preuves de prévision de paie sont insuffisantes ; le blocage PAYROLL_FORECAST_POSTED_RUN_MISSING reste actif.",
+          "width": 238,
+          "contentWidth": 277
+        },
+        {
+          "text": "Les preuves de prévision de paie sont insuffisantes ; le blocage PAYROLL_FORECAST_POSTED_RUN_MISSING reste actif.",
+          "width": 254,
+          "contentWidth": 277
+        },
+        {
+          "text": "Les preuves de prévision de paie sont insuffisantes ; le blocage PAYROLL_FORECAST_POSTED_RUN_MISSING reste actif.",
+          "width": 254,
+          "contentWidth": 277
+        }
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     contentWidth: 277,\n+     text: 'Les preuves de prévision de paie sont insuffisantes ; le blocage PAYROLL_FORECAST_POSTED_RUN_MISSING reste actif.',\n+     width: 238\n+   },\n+   {\n+     contentWidth: 277,\n+     text: 'Les preuves de prévision de paie sont insuffisantes ; le blocage PAYROLL_FORECAST_POSTED_RUN_MISSING reste actif.',\n+     width: 254\n+   },\n+   {\n+     contentWidth: 277,\n+     text: 'Les preuves de prévision de paie sont insuffisantes ; le blocage PAYROLL_FORECAST_POSTED_RUN_MISSING reste actif.',\n+     width: 254\n+   }\n+ ]\n- []\n",
+  "failureState": "Lecture seule\nIssu des signaux\nSans automatisation\nDigest quotidien\n\nVos espaces quotidiens et hebdomadaires selon vos permissions, issus des signaux opérationnels existants.\n\nWorkflow registration Payroll privacy baa80cf8-1fc3-407d-a2a6-670e7645dea5\nGénéré (Africa/Douala)\n19 sept., 11:58\nPériode\n19 sept. - 20 sept.\nDevise\nXAF\nEspaces visibles\n1\nFinance\nAgent de commande\n\nPriorites quotidiennes fondees sur les preuves\n\nLecture seule. Aucun pouvoir de comptabilisation, approbation, paiement, depot, paie, stock, caisse ou permission.\n\nGenerer le brief\nL'agent de commande est desactive pour cette organisation.\nBloqué\nSynthèse de pilotage\nbloquée\nDigest de trésorerie\n\nSuspens, rapprochements, preuves des prestataires et encaissements à examiner par l’équipe financière.\n\n2 action(s) visible(s) à examiner dans ce digest.\n\npreuve:\nBloqué\nBloqué\nbloquée\n10 sources\nEmpreinte de la source\nSynthèse\nPilotage\nExaminer\n\nPériode: 19 sept. - 20 sept.\n\nGénéré: 19 sept., 11:58\n\nSources: dashboard, sales, payments, inventory, purchasing, hris, payroll, accounting, close, compliance\n\nRevue: bloquée\n\nOuvrez le registre de paie et examinez les preuves liées aux sources.\nLimites des sources\n\nBlocages: 9 · Données masquées: 4\n\nAucun compte de prestataire actif\nAucune période comptable ne couvre cet instantané\nLa prévision financière de paie est bloquée\n\nLes preuves de prévision de paie sont insuffisantes ; le blocage PAYROLL_FORECAST_POSTED_RUN_MISSING reste actif.\n\nProchaine étape: Examinez les preuves financières de paie et traitez le blocage de prévision.\n\nDes dossiers de recouvrement de soldes",
+  "sourceAfter": {
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "7aab14bfb67eba8989e4f723fa7b256d3e2ad1197083d9f74ab9ba8ceea18b98",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65"
+  },
+  "sourceStable": true
+}

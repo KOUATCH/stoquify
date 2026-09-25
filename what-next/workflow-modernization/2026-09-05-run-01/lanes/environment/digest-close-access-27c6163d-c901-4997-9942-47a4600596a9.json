@@ -1,0 +1,125 @@
+{
+  "at": "2026-09-19T13:13:39.122Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts": "eb470af69c856378f6f8946e4112250d5c8b5e4ae655b539f2a577a5d70d8d20",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "192c596cf6963987d54b663536d2f87bd7b9da11674b2d0e02444418668f8069",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-explicit-empty-en-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-explicit-empty-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-explicit-empty-fr-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-explicit-empty-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "allowed": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-active-en-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-active-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-active-fr-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-active-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "read-only",
+      "allowed": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-read-only-en-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-read-only-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-read-only-fr-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-read-only-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "permission-revoked",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-permission-revoked-en-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-permission-revoked-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "destinationReadVerified": true,
+          "destinationScreenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-permission-revoked-fr-destination.png",
+          "periodReadVerified": true,
+          "browser": true,
+          "screenshot": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9-permission-revoked-fr.png"
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "rawEvidenceUnchanged": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts": "eb470af69c856378f6f8946e4112250d5c8b5e4ae655b539f2a577a5d70d8d20",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "192c596cf6963987d54b663536d2f87bd7b9da11674b2d0e02444418668f8069",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847"
+  },
+  "sourceStable": true
+}

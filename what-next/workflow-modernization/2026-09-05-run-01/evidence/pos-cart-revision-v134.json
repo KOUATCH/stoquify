@@ -1,0 +1,163 @@
+{
+  "at": "2026-09-13T15:16:06.326Z",
+  "baseline": "evidence/source-baseline-v134.json",
+  "sources": {
+    "services/pos/cart-revision.ts": "2d885ba7ec40a05f32f8da9e64ff89056c81d075a41ce8e89af3eaebb695b9cb",
+    "services/pos/pos.service.ts": "12feea5ac960a90b8266fa7775382dc658eb41fcc38bed575465406612bd1ef1",
+    "services/pos/pos.schemas.ts": "f95e45f38dfc9d79a8f7b86fa4068ffb5c48a9fd29519992dc219c77424c4407",
+    "components/pos/ProfessionalPOSSystem.tsx": "d033d3cc0085d278e10a643136a63b6919ab381e21c9ccd91e9392adb48b2b17",
+    "messages/en.json": "8f87eea1c4d784119fa490bdbe83e854ddfbd261b87265a33494928531703161",
+    "messages/fr.json": "47b57ce5fbea5ee98a4203e19f2a977b697aca3b46bd4cb6f27bbdfd8557c8c4"
+  },
+  "reproduction": {
+    "file": "lanes/environment/cart-revision-v134-before-2de31824-3a0b-4162-89bb-f045983ce4d7.json",
+    "receipt": "db2dda"
+  },
+  "database": [
+    {
+      "file": "lanes/environment/cart-revision-v134-after-1aa4bf77-1fb3-4df2-ae51-495e0d41f864.json",
+      "at": "2026-09-13T15:06:00.016Z",
+      "phase": "after",
+      "checks": [
+        "Stale reviewed cart rejected without financial effects; recovery identifies changed cart",
+        "Missing revision cannot create new work",
+        "Explicit current review with same identifier commits once; replay has no effects; old intent conflicts"
+      ],
+      "passed": true,
+      "sourceHash": "12feea5ac960a90b8266fa7775382dc658eb41fcc38bed575465406612bd1ef1"
+    },
+    {
+      "file": "lanes/environment/cart-revision-race-v134-d2101a34-d126-42af-8944-faef2d5bcf7b.json",
+      "at": "2026-09-13T15:12:01.528Z",
+      "checks": [
+        "Real commit read old cart, concurrent edit committed, serializable retry rejected stale revision without financial effects"
+      ],
+      "passed": true,
+      "sourceHash": "12feea5ac960a90b8266fa7775382dc658eb41fcc38bed575465406612bd1ef1"
+    },
+    {
+      "file": "lanes/environment/legacy-revision-v134-37a56ff7-c013-4914-95c1-926203551191.json",
+      "at": "2026-09-13T15:10:57.458Z",
+      "checks": [
+        "Actual pre-revision immutable result remains readable and exactly replayable without effects"
+      ],
+      "passed": true,
+      "sourceHash": "12feea5ac960a90b8266fa7775382dc658eb41fcc38bed575465406612bd1ef1"
+    }
+  ],
+  "databaseReceipts": [
+    "bf959a",
+    "0f9fae",
+    "9a02a1"
+  ],
+  "browser": {
+    "file": "lanes/environment/cart-revision-browser-v134-4f1539ea-e674-4028-8f95-e42277f8b6cf.json",
+    "receipt": "e7b18c",
+    "at": "2026-09-13T15:12:38.492Z",
+    "sourcesBefore": {
+      "services/pos/cart-revision.ts": "2d885ba7ec40a05f32f8da9e64ff89056c81d075a41ce8e89af3eaebb695b9cb",
+      "services/pos/pos.service.ts": "12feea5ac960a90b8266fa7775382dc658eb41fcc38bed575465406612bd1ef1",
+      "services/pos/pos.schemas.ts": "f95e45f38dfc9d79a8f7b86fa4068ffb5c48a9fd29519992dc219c77424c4407",
+      "components/pos/ProfessionalPOSSystem.tsx": "d033d3cc0085d278e10a643136a63b6919ab381e21c9ccd91e9392adb48b2b17",
+      "messages/en.json": "8f87eea1c4d784119fa490bdbe83e854ddfbd261b87265a33494928531703161",
+      "messages/fr.json": "47b57ce5fbea5ee98a4203e19f2a977b697aca3b46bd4cb6f27bbdfd8557c8c4"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "cart-revision-v134-en-1440-4f1539ea-e674-4028-8f95-e42277f8b6cf.png",
+          "cart-revision-v134-en-768-4f1539ea-e674-4028-8f95-e42277f8b6cf.png",
+          "cart-revision-v134-en-320-4f1539ea-e674-4028-8f95-e42277f8b6cf.png"
+        ],
+        "pageErrors": [],
+        "readyMs": 14601,
+        "localizedStaleError": true,
+        "staleSubmissionHasNoEffects": true,
+        "reviewDoesNotSubmit": true,
+        "explicitReviewedConfirmationCommitsOnceWithSameIdentifier": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "cart-revision-v134-fr-1440-4f1539ea-e674-4028-8f95-e42277f8b6cf.png",
+          "cart-revision-v134-fr-768-4f1539ea-e674-4028-8f95-e42277f8b6cf.png",
+          "cart-revision-v134-fr-320-4f1539ea-e674-4028-8f95-e42277f8b6cf.png"
+        ],
+        "pageErrors": [],
+        "readyMs": 8457,
+        "localizedStaleError": true,
+        "staleSubmissionHasNoEffects": true,
+        "reviewDoesNotSubmit": true,
+        "explicitReviewedConfirmationCommitsOnceWithSameIdentifier": true
+      }
+    ],
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/cart-revision.ts": "2d885ba7ec40a05f32f8da9e64ff89056c81d075a41ce8e89af3eaebb695b9cb",
+      "services/pos/pos.service.ts": "12feea5ac960a90b8266fa7775382dc658eb41fcc38bed575465406612bd1ef1",
+      "services/pos/pos.schemas.ts": "f95e45f38dfc9d79a8f7b86fa4068ffb5c48a9fd29519992dc219c77424c4407",
+      "components/pos/ProfessionalPOSSystem.tsx": "d033d3cc0085d278e10a643136a63b6919ab381e21c9ccd91e9392adb48b2b17",
+      "messages/en.json": "8f87eea1c4d784119fa490bdbe83e854ddfbd261b87265a33494928531703161",
+      "messages/fr.json": "47b57ce5fbea5ee98a4203e19f2a977b697aca3b46bd4cb6f27bbdfd8557c8c4"
+    },
+    "sourceStable": true
+  },
+  "tests": {
+    "distinctPassed": 136,
+    "suites": 14,
+    "main": {
+      "count": 119,
+      "receipt": "e7bbd5",
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/pos/__tests__/pos.service.test.ts services/pos/__tests__/commit-recovery.service.test.ts components/pos/__tests__/ProfessionalPOSSystem.receipt-token-visibility.test.tsx components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx services/pos/__tests__/offline-sync.service.test.ts lib/pos/__tests__/pending-sale.test.ts actions/pos/__tests__/commit-recovery.actions.test.ts services/pos/__tests__/tender-write-access.test.ts actions/pos/__tests__/tender.actions.test.ts services/modules/__tests__/module-entitlement.service.test.ts actions/modules/__tests__/module-control.actions.test.ts"
+    },
+    "cartAccess": {
+      "count": 10,
+      "receipt": "6ca97d",
+      "paths": [
+        "services/pos/__tests__/pos-cart-transaction.test.ts",
+        "services/pos/__tests__/cart-write-access.test.ts"
+      ]
+    },
+    "revision": {
+      "count": 7,
+      "receipt": "17b99b",
+      "path": "services/pos/__tests__/cart-revision.test.ts"
+    },
+    "finalUiRecheck": {
+      "repeatedCount": 21,
+      "receipt": "75bc3b"
+    },
+    "initialFailure": "086529; math fixture revised to reach original math guard after new revision gate"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "75bc3b",
+    "command": "node node_modules/eslint/bin/eslint.js services/pos/cart-revision.ts services/pos/pos.schemas.ts services/pos/pos.service.ts components/pos/ProfessionalPOSSystem.tsx services/pos/__tests__/pos.service.test.ts services/pos/__tests__/cart-revision.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "70db68",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "guide": "CART_REVISION_V134.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2897,
+      "tests": 1030,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 175,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2518,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

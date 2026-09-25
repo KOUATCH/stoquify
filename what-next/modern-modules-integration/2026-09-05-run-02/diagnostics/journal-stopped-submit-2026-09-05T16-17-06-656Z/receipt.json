@@ -1,0 +1,2250 @@
+{
+  "startedAt": "2026-09-05T16:17:06.657Z",
+  "classification": "ISOLATED_SYNTHETIC_JOURNAL_STOPPED_SUBMIT",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "fixture": "service_fr_mobile",
+  "productionApproval": false,
+  "noMigration": true,
+  "noPosOfflineChanges": true,
+  "beforeSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "sha256": "0767f4638a72a8465af0855c289b104817461ee9716742fac41f4511094f2467"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+      "sha256": "1efe879fa0a6955bb738427e35100b9587d930f1bc6fe2f22a2216e32f3cc1de"
+    },
+    {
+      "path": "actions/accounting/accounts.actions.ts",
+      "sha256": "2ca2940a47151f474975e76c0e65b93bd60ec738c9945cf93fac84675c913202"
+    },
+    {
+      "path": "actions/accounting/journals.actions.ts",
+      "sha256": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+    },
+    {
+      "path": "lib/modules/module-operation-error.ts",
+      "sha256": "b61ed2a4d548d8808c851af2f05bd3712c947fa47ead7d837227cfdd7071c06f"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-operational-dependencies.ts",
+      "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "5e10711b9dd0b4cfbc0c320d37f81e63b6f90602841b1373a0eee674df2a29cd"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "ba0b6ce96ef5c706fff415c93c2e8cdb6efaf215f41d9a53caf13394305b4e94"
+    }
+  ],
+  "checks": [
+    {
+      "name": "real_review_password_step_up_and_durable_accounting_stop",
+      "passed": true,
+      "operationId": "cmtol6qou002jmac0mulksaop",
+      "state": "RETAINED",
+      "rightsPreserved": true,
+      "directPolicyWrites": false
+    },
+    {
+      "name": "actual_en_stopped_submit_preserves_all_fields_and_writes_no_journal",
+      "passed": true,
+      "locale": "en",
+      "elapsedMs": 49656,
+      "fieldCount": 29,
+      "beforeFields": [
+        {
+          "name": "journalId",
+          "value": "cmtoet39x0019mafkn40n8i1s"
+        },
+        {
+          "name": "entryDate",
+          "value": "2026-09-05"
+        },
+        {
+          "name": "currency",
+          "value": "XAF"
+        },
+        {
+          "name": "reference",
+          "value": "SYNTHETIC-STOPPED-EN"
+        },
+        {
+          "name": "memo",
+          "value": "Retained verification draft"
+        },
+        {
+          "name": "accountId-0",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-0",
+          "value": "Retained line 1"
+        },
+        {
+          "name": "debit-0",
+          "value": "100"
+        },
+        {
+          "name": "credit-0",
+          "value": ""
+        },
+        {
+          "name": "accountId-1",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-1",
+          "value": "Retained line 2"
+        },
+        {
+          "name": "debit-1",
+          "value": ""
+        },
+        {
+          "name": "credit-1",
+          "value": "100"
+        },
+        {
+          "name": "accountId-2",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-2",
+          "value": "Retained line 3"
+        },
+        {
+          "name": "debit-2",
+          "value": "100"
+        },
+        {
+          "name": "credit-2",
+          "value": ""
+        },
+        {
+          "name": "accountId-3",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-3",
+          "value": "Retained line 4"
+        },
+        {
+          "name": "debit-3",
+          "value": ""
+        },
+        {
+          "name": "credit-3",
+          "value": "100"
+        },
+        {
+          "name": "accountId-4",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-4",
+          "value": "Retained line 5"
+        },
+        {
+          "name": "debit-4",
+          "value": "100"
+        },
+        {
+          "name": "credit-4",
+          "value": ""
+        },
+        {
+          "name": "accountId-5",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-5",
+          "value": "Retained line 6"
+        },
+        {
+          "name": "debit-5",
+          "value": ""
+        },
+        {
+          "name": "credit-5",
+          "value": "100"
+        }
+      ],
+      "afterFields": [
+        {
+          "name": "journalId",
+          "value": "cmtoet39x0019mafkn40n8i1s"
+        },
+        {
+          "name": "entryDate",
+          "value": "2026-09-05"
+        },
+        {
+          "name": "currency",
+          "value": "XAF"
+        },
+        {
+          "name": "reference",
+          "value": "SYNTHETIC-STOPPED-EN"
+        },
+        {
+          "name": "memo",
+          "value": "Retained verification draft"
+        },
+        {
+          "name": "accountId-0",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-0",
+          "value": "Retained line 1"
+        },
+        {
+          "name": "debit-0",
+          "value": "100"
+        },
+        {
+          "name": "credit-0",
+          "value": ""
+        },
+        {
+          "name": "accountId-1",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-1",
+          "value": "Retained line 2"
+        },
+        {
+          "name": "debit-1",
+          "value": ""
+        },
+        {
+          "name": "credit-1",
+          "value": "100"
+        },
+        {
+          "name": "accountId-2",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-2",
+          "value": "Retained line 3"
+        },
+        {
+          "name": "debit-2",
+          "value": "100"
+        },
+        {
+          "name": "credit-2",
+          "value": ""
+        },
+        {
+          "name": "accountId-3",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-3",
+          "value": "Retained line 4"
+        },
+        {
+          "name": "debit-3",
+          "value": ""
+        },
+        {
+          "name": "credit-3",
+          "value": "100"
+        },
+        {
+          "name": "accountId-4",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-4",
+          "value": "Retained line 5"
+        },
+        {
+          "name": "debit-4",
+          "value": "100"
+        },
+        {
+          "name": "credit-4",
+          "value": ""
+        },
+        {
+          "name": "accountId-5",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-5",
+          "value": "Retained line 6"
+        },
+        {
+          "name": "debit-5",
+          "value": ""
+        },
+        {
+          "name": "credit-5",
+          "value": "100"
+        }
+      ],
+      "journalCountBefore": 0,
+      "journalCountAfter": 0,
+      "lineCountBefore": 0,
+      "lineCountAfter": 0,
+      "createAuditsBefore": 0,
+      "createAuditsAfter": 0,
+      "alertFocused": true,
+      "screenshot": "journal-stopped-submit-en.png"
+    },
+    {
+      "name": "actual_fr_stopped_submit_preserves_all_fields_and_writes_no_journal",
+      "passed": true,
+      "locale": "fr",
+      "elapsedMs": 12110,
+      "fieldCount": 29,
+      "beforeFields": [
+        {
+          "name": "journalId",
+          "value": "cmtoet39x0019mafkn40n8i1s"
+        },
+        {
+          "name": "entryDate",
+          "value": "2026-09-05"
+        },
+        {
+          "name": "currency",
+          "value": "XAF"
+        },
+        {
+          "name": "reference",
+          "value": "SYNTHETIC-STOPPED-FR"
+        },
+        {
+          "name": "memo",
+          "value": "Brouillon de vérification conservé"
+        },
+        {
+          "name": "accountId-0",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-0",
+          "value": "Ligne conservée 1"
+        },
+        {
+          "name": "debit-0",
+          "value": "100"
+        },
+        {
+          "name": "credit-0",
+          "value": ""
+        },
+        {
+          "name": "accountId-1",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-1",
+          "value": "Ligne conservée 2"
+        },
+        {
+          "name": "debit-1",
+          "value": ""
+        },
+        {
+          "name": "credit-1",
+          "value": "100"
+        },
+        {
+          "name": "accountId-2",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-2",
+          "value": "Ligne conservée 3"
+        },
+        {
+          "name": "debit-2",
+          "value": "100"
+        },
+        {
+          "name": "credit-2",
+          "value": ""
+        },
+        {
+          "name": "accountId-3",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-3",
+          "value": "Ligne conservée 4"
+        },
+        {
+          "name": "debit-3",
+          "value": ""
+        },
+        {
+          "name": "credit-3",
+          "value": "100"
+        },
+        {
+          "name": "accountId-4",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-4",
+          "value": "Ligne conservée 5"
+        },
+        {
+          "name": "debit-4",
+          "value": "100"
+        },
+        {
+          "name": "credit-4",
+          "value": ""
+        },
+        {
+          "name": "accountId-5",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-5",
+          "value": "Ligne conservée 6"
+        },
+        {
+          "name": "debit-5",
+          "value": ""
+        },
+        {
+          "name": "credit-5",
+          "value": "100"
+        }
+      ],
+      "afterFields": [
+        {
+          "name": "journalId",
+          "value": "cmtoet39x0019mafkn40n8i1s"
+        },
+        {
+          "name": "entryDate",
+          "value": "2026-09-05"
+        },
+        {
+          "name": "currency",
+          "value": "XAF"
+        },
+        {
+          "name": "reference",
+          "value": "SYNTHETIC-STOPPED-FR"
+        },
+        {
+          "name": "memo",
+          "value": "Brouillon de vérification conservé"
+        },
+        {
+          "name": "accountId-0",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-0",
+          "value": "Ligne conservée 1"
+        },
+        {
+          "name": "debit-0",
+          "value": "100"
+        },
+        {
+          "name": "credit-0",
+          "value": ""
+        },
+        {
+          "name": "accountId-1",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-1",
+          "value": "Ligne conservée 2"
+        },
+        {
+          "name": "debit-1",
+          "value": ""
+        },
+        {
+          "name": "credit-1",
+          "value": "100"
+        },
+        {
+          "name": "accountId-2",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-2",
+          "value": "Ligne conservée 3"
+        },
+        {
+          "name": "debit-2",
+          "value": "100"
+        },
+        {
+          "name": "credit-2",
+          "value": ""
+        },
+        {
+          "name": "accountId-3",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-3",
+          "value": "Ligne conservée 4"
+        },
+        {
+          "name": "debit-3",
+          "value": ""
+        },
+        {
+          "name": "credit-3",
+          "value": "100"
+        },
+        {
+          "name": "accountId-4",
+          "value": "cmtoet37l000lmafk74r0w3ag"
+        },
+        {
+          "name": "description-4",
+          "value": "Ligne conservée 5"
+        },
+        {
+          "name": "debit-4",
+          "value": "100"
+        },
+        {
+          "name": "credit-4",
+          "value": ""
+        },
+        {
+          "name": "accountId-5",
+          "value": "cmtoet36g000bmafk1z5ewcks"
+        },
+        {
+          "name": "description-5",
+          "value": "Ligne conservée 6"
+        },
+        {
+          "name": "debit-5",
+          "value": ""
+        },
+        {
+          "name": "credit-5",
+          "value": "100"
+        }
+      ],
+      "journalCountBefore": 0,
+      "journalCountAfter": 0,
+      "lineCountBefore": 0,
+      "lineCountAfter": 0,
+      "createAuditsBefore": 0,
+      "createAuditsAfter": 0,
+      "alertFocused": true,
+      "screenshot": "journal-stopped-submit-fr.png"
+    },
+    {
+      "name": "no_browser_page_errors",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "before": {
+    "configuration": {
+      "revision": 7,
+      "activeRevision": 7,
+      "selectedModules": [
+        "accounting",
+        "finance",
+        "payment_reconciliation",
+        "reports",
+        "sales"
+      ],
+      "activeModules": [
+        "accounting",
+        "administration",
+        "dashboard",
+        "finance",
+        "payment_reconciliation",
+        "reports",
+        "sales",
+        "settings"
+      ],
+      "newWorkStoppedModules": [],
+      "newWorkStoppedAt": {}
+    },
+    "grants": [
+      {
+        "id": "cmtobd3sb001ima7wq2p1ib1v",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "accounting",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001fma7wh4nzkazy",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "administration",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001kma7w5gzgdg1d",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "analytics",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001dma7w9jn0h90j",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "dashboard",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001hma7w6w01emij",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "finance",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001lma7wp03f8bgr",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "payment_reconciliation",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001jma7wlybup1o1",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "reports",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001gma7wqixa8qw6",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "sales",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001ema7wl50v2xiz",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "settings",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      }
+    ],
+    "commands": [
+      {
+        "id": "cmtobo6zk003hmau04qkzpprb",
+        "state": "ACTIVE",
+        "createdAt": "2026-09-05T10:51:30.656Z"
+      },
+      {
+        "id": "cmtobol03003tmau03uyzlfdp",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T10:51:48.819Z"
+      },
+      {
+        "id": "cmtobu51v0092mau0aca5ikvz",
+        "state": "ACTIVE",
+        "createdAt": "2026-09-05T10:56:08.083Z"
+      },
+      {
+        "id": "cmtobuets009emau0s39mq9wu",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T10:56:20.752Z"
+      },
+      {
+        "id": "cmtoc45b000asmau0qoj1d38l",
+        "state": "ACTIVE",
+        "createdAt": "2026-09-05T11:03:54.971Z"
+      },
+      {
+        "id": "cmtoc4gw500b4mau0hpcyiy71",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T11:04:09.989Z"
+      },
+      {
+        "id": "cmtoesx46007vmapcaea9gzvi",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:19:09.990Z"
+      },
+      {
+        "id": "cmtoetgea0093mapcvonmenxy",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:19:34.978Z"
+      },
+      {
+        "id": "cmtof7w8f00hlmapcq0wgravk",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:30:48.687Z"
+      },
+      {
+        "id": "cmtof8ey100itmapc72y0ocdg",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:31:12.937Z"
+      },
+      {
+        "id": "cmtofbbdl00nxmapcbqj9xevj",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:33:28.281Z"
+      },
+      {
+        "id": "cmtofbvjy00p5mapcon53hc1p",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:33:54.431Z"
+      },
+      {
+        "id": "cmtofkwxf00x1mapcl5lybp2n",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:40:56.115Z"
+      },
+      {
+        "id": "cmtofladk00y9mapchfhkufz4",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:41:13.544Z"
+      }
+    ],
+    "operations": [
+      {
+        "id": "cmtoesx4r007xmapcs31zh9ye",
+        "commandId": "cmtoesx46007vmapcaea9gzvi",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 4
+      },
+      {
+        "id": "cmtof7w8y00hnmapczm6571g4",
+        "commandId": "cmtof7w8f00hlmapcq0wgravk",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 5
+      },
+      {
+        "id": "cmtofbbe100nzmapcrwoqdyd7",
+        "commandId": "cmtofbbdl00nxmapcbqj9xevj",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 6
+      },
+      {
+        "id": "cmtofkwxz00x3mapcbtt70bxo",
+        "commandId": "cmtofkwxf00x1mapcl5lybp2n",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 7
+      }
+    ],
+    "events": [
+      {
+        "id": "cmtoesx4z007zmapchbjeq6qk",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "8e9407f88b990b500ad4df204d92f64bb01921f3d45df92a9ea585c442107e3c"
+      },
+      {
+        "id": "cmtoesx7c0087mapcgb6tlxkj",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "0a42474447be7f6357ab6160af870c64078c7ad401c221ebab70b4e16132b2f6"
+      },
+      {
+        "id": "cmtoesxa80089mapc4nu7op4n",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "7b00c086259703f0c8440ca4d013b45461abccad9e960864c91f147708a1ae8a"
+      },
+      {
+        "id": "cmtoesxak008bmapcs52n7r4w",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "9b5bd617f1c248a5be465c6078a0945583f35dd72357ffd889d726e861bc8893"
+      },
+      {
+        "id": "cmtoesxat008dmapcxr5r1hfc",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "13f97fce361d048aa7bbcdf944e11d7cf2026a465a3d4ee1a6c9f92a66069f98"
+      },
+      {
+        "id": "cmtoet6nz008lmapcpnlgjg7b",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "4b5b9037f95fe160f32ae7f70666b492effc1b2e5b39bf2ca584cfa1191f72a2"
+      },
+      {
+        "id": "cmtoet6sg008nmapcytgu2jaz",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "ae81d6e212c60591aaa4fa121e3779a2703e56cde48b0f60a5dc02ac6575e8da"
+      },
+      {
+        "id": "cmtoet6ss008pmapc57nqdncy",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "7c01d3225eb2be2980b93ec40ac38b41fd04569fdf3bfef58c65fca84e976f7a"
+      },
+      {
+        "id": "cmtoet6t6008rmapc7830itxv",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "b614440a115b5b12c7bf00d735aad7f4ca55bf5ec1b20d5a78e0239a3caa38cd"
+      },
+      {
+        "id": "cmtof7w9500hpmapcjqc3zia0",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "14f48911c614e2c5156e8ce3190023fa63f60d9d8a8e43c6e0c7620a48a510c4"
+      },
+      {
+        "id": "cmtof7wb900hxmapcrmnpfbmr",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "551e322e5146b4bb31f6f0f5f00825788f2d98fc0483ca02f06e8029c592ca37"
+      },
+      {
+        "id": "cmtof7wed00hzmapchg972u59",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "ae81d6e212c60591aaa4fa121e3779a2703e56cde48b0f60a5dc02ac6575e8da"
+      },
+      {
+        "id": "cmtof7wep00i1mapc5ye8559r",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "383e1b5da3ea1701fbcbd145322236ac0aeba2bd96405a3edb21b2353669496f"
+      },
+      {
+        "id": "cmtof7wey00i3mapchhbkirw0",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "dade0d67a9fb1984fdc89f90e139233f3a9c1723f7d8d8893a78e09258ca83de"
+      },
+      {
+        "id": "cmtof840300ibmapcxk8v4vlh",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "21567e63ad932ec90ae7b3a7b0268e2b6a8210b79254d8e30953a6bf8e2eae1f"
+      },
+      {
+        "id": "cmtof843100idmapcq4g1kas5",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "035d92846e2df65c484047dde542fe8b748a6219bcfef09ef5e0ade53dcd7e3e"
+      },
+      {
+        "id": "cmtof843d00ifmapclqfjbeyv",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "3b0b80ed7b70081621072d5ec1ffa5889a751cf352425092e2e463c75eb991a4"
+      },
+      {
+        "id": "cmtof843p00ihmapcp1tz5tuh",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "028f591f0528d3d84adcca67063d55c3ca5ac8ff6c9fc246a77045a984736af4"
+      },
+      {
+        "id": "cmtofbbe800o1mapcs545ybn2",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "905765fe1254cbe8459ca9dcab0a3c9050b7f3816863bc30c349340f6a1f50c7"
+      },
+      {
+        "id": "cmtofbbgr00o9mapc0kqlw6fq",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "6e4ae7732b7a1c5fed274ae2d331e6c4e1360f4bdf424901c3933687e976382c"
+      },
+      {
+        "id": "cmtofbbjv00obmapchnq4eab2",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "035d92846e2df65c484047dde542fe8b748a6219bcfef09ef5e0ade53dcd7e3e"
+      },
+      {
+        "id": "cmtofbbkd00odmapcxbdq5ec9",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "987ab09d4f49fa57293ed65e05632f6267ae50d30ecf8a9c1069aa6d6ac13eb0"
+      },
+      {
+        "id": "cmtofbbkl00ofmapcvv5mle6z",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "cc46080aaf32857d8747b4872e9e91a016fa801a91f0ab5a5e885266ee086eac"
+      },
+      {
+        "id": "cmtofbldk00onmapcb5n5dxgs",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "bba018681182e2989cbf4cb907635dac21328e25a1c39464c927822d5f4ce867"
+      },
+      {
+        "id": "cmtofblit00opmapcj50i57me",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "47239c27a3cd9d5354d4104c5e018a87d3a02c36ad8f6cb7a5fbc7ae7ff16c8c"
+      },
+      {
+        "id": "cmtofblj700ormapccnscxzum",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "bcf101852d89072bc6c38631e946d880fc623902eaafb3eba3e2baa694177749"
+      },
+      {
+        "id": "cmtofbljl00otmapc7qmzhks3",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "fc2d940557d81df549bcc84ac5b6c6a39b1ff18bd06c90668c10131e5c9869e8"
+      },
+      {
+        "id": "cmtofkwy500x5mapc1p7hr5h6",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "c5204e6d28c3cc9a308a2eae6b249a83f7ce98dce6815e02e3012f73a22ace3f"
+      },
+      {
+        "id": "cmtofkx0600xdmapchvwffwxo",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "cb965206c2002473dc7f5374f04ead0e8f991f571043448158cb4682c26f1d5c"
+      },
+      {
+        "id": "cmtofkx3900xfmapcbak6gkb0",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "47239c27a3cd9d5354d4104c5e018a87d3a02c36ad8f6cb7a5fbc7ae7ff16c8c"
+      },
+      {
+        "id": "cmtofkx3m00xhmapcddk6uxcb",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "de5c14ccd5040332085bc489b78e1211f95a0385739062341cfb7efabca41ac9"
+      },
+      {
+        "id": "cmtofkx3u00xjmapcvmz1rvit",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "0f71a9006f4ffa2f809066c79ac493577c2b3e1a57ad52c240b4eb5071f6719c"
+      },
+      {
+        "id": "cmtofl46m00xrmapc4sdkk4n7",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "a8bce1f04029384428477e409f46e0e871ba68eb903912a7f61f2e5bb0eac3cc"
+      },
+      {
+        "id": "cmtofl48m00xtmapcuxqkkzlu",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "4d7889a5bf77cbcdd02865692968b5f5f19aa6212f8c3dcd420a5262888f6549"
+      },
+      {
+        "id": "cmtofl48u00xvmapcrqjz086y",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "3e60dd40e25b37493f15177d5e08ca952350b4473ae05291603941673289690a"
+      },
+      {
+        "id": "cmtofl49300xxmapcggutvkh5",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "901ce74659e4fdc4e3212497d3c25a9e323b9da96d206bd8c01429a091984967"
+      }
+    ],
+    "journals": 0,
+    "lines": 0,
+    "createAudits": 0,
+    "assuranceSessions": 7,
+    "eligibleAccounts": [
+      {
+        "id": "cmtoet37l000lmafk74r0w3ag",
+        "code": "399010"
+      },
+      {
+        "id": "cmtoet36g000bmafk1z5ewcks",
+        "code": "499005"
+      },
+      {
+        "id": "cmtoet36n000dmafkmr8d9f5k",
+        "code": "499006"
+      },
+      {
+        "id": "cmtoet36v000fmafk8q3w55mq",
+        "code": "499007"
+      },
+      {
+        "id": "cmtoet376000hmafklkuwn4ti",
+        "code": "499008"
+      },
+      {
+        "id": "cmtoet37c000jmafk2bcvryz5",
+        "code": "499009"
+      },
+      {
+        "id": "cmtoet37y000pmafk7c21mkj9",
+        "code": "499012"
+      },
+      {
+        "id": "cmtoet385000rmafkg5n6ga9c",
+        "code": "499013"
+      },
+      {
+        "id": "cmtoet34m0001mafkzihiv8cf",
+        "code": "599000"
+      },
+      {
+        "id": "cmtoet35p0003mafk2fdf7egc",
+        "code": "599001"
+      },
+      {
+        "id": "cmtoet35w0005mafknexun8a4",
+        "code": "599002"
+      },
+      {
+        "id": "cmtoet3630007mafkq098e4w6",
+        "code": "599003"
+      },
+      {
+        "id": "cmtoet36a0009mafkbsburoli",
+        "code": "599004"
+      },
+      {
+        "id": "cmtoet38b000tmafk71oofal2",
+        "code": "699014"
+      },
+      {
+        "id": "cmtoet38i000vmafkyot77bj2",
+        "code": "699015"
+      },
+      {
+        "id": "cmtoet37r000nmafk8uqe70sd",
+        "code": "799011"
+      }
+    ],
+    "manualJournals": [
+      {
+        "id": "cmtoet39x0019mafkn40n8i1s",
+        "code": "TEST_ADJUSTMENT"
+      },
+      {
+        "id": "cmtoet39l0015mafk39zyh94n",
+        "code": "TEST_BANK"
+      },
+      {
+        "id": "cmtoet39g0013mafkzijd5czo",
+        "code": "TEST_CASH"
+      },
+      {
+        "id": "cmtoet38p000xmafkbjcwabvt",
+        "code": "TEST_GENERAL"
+      },
+      {
+        "id": "cmtoet39q0017mafkg4q9tv0b",
+        "code": "TEST_INVENTORY"
+      },
+      {
+        "id": "cmtoet3a1001bmafknf5gdrg6",
+        "code": "TEST_OPENING"
+      },
+      {
+        "id": "cmtoet39a0011mafk2kzyb1pw",
+        "code": "TEST_PURCHASE"
+      },
+      {
+        "id": "cmtoet395000zmafklc8g4tbw",
+        "code": "TEST_SALES"
+      }
+    ],
+    "openPeriods": [
+      {
+        "id": "cmtoet3ao001fmafkk6o661ok",
+        "startDate": "2025-12-31T23:00:00.000Z",
+        "endDate": "2026-12-31T22:59:59.999Z"
+      }
+    ]
+  },
+  "fixturePermissionChange": {
+    "fixture": "service_fr_mobile",
+    "roleId": "cmtobd3rk001ama7wj3b5unnu",
+    "before": [
+      "dashboard.read",
+      "MANAGE_SYSTEM_SETTINGS",
+      "system.settings.update",
+      "inventory.items.read",
+      "sales.read",
+      "customers.read",
+      "OPERATE_POS",
+      "finance.read",
+      "finance.dashboard.read",
+      "finance.cash-drawer.read",
+      "CASH_DRAWER_READ",
+      "accounting.reports.read",
+      "accounting.journal.read",
+      "payments.reconciliation.read",
+      "reports.read"
+    ],
+    "added": [
+      "accounting.accounts.read",
+      "accounting.journal.create"
+    ],
+    "after": [
+      "dashboard.read",
+      "MANAGE_SYSTEM_SETTINGS",
+      "system.settings.update",
+      "inventory.items.read",
+      "sales.read",
+      "customers.read",
+      "OPERATE_POS",
+      "finance.read",
+      "finance.dashboard.read",
+      "finance.cash-drawer.read",
+      "CASH_DRAWER_READ",
+      "accounting.reports.read",
+      "accounting.journal.read",
+      "payments.reconciliation.read",
+      "reports.read",
+      "accounting.accounts.read",
+      "accounting.journal.create"
+    ],
+    "source": "Authorized isolated browser fixture permission setup only",
+    "productionAuthority": false
+  },
+  "afterAuthorizedStop": {
+    "configuration": {
+      "revision": 8,
+      "activeRevision": 8,
+      "selectedModules": [
+        "accounting",
+        "finance",
+        "payment_reconciliation",
+        "reports",
+        "sales"
+      ],
+      "activeModules": [
+        "accounting",
+        "administration",
+        "dashboard",
+        "finance",
+        "payment_reconciliation",
+        "reports",
+        "sales",
+        "settings"
+      ],
+      "newWorkStoppedModules": [
+        "accounting"
+      ],
+      "newWorkStoppedAt": {
+        "accounting": "2026-09-05T16:17:50.905Z"
+      }
+    },
+    "grants": [
+      {
+        "id": "cmtobd3sb001ima7wq2p1ib1v",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "accounting",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001fma7wh4nzkazy",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "administration",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001kma7w5gzgdg1d",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "analytics",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001dma7w9jn0h90j",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "dashboard",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001hma7w6w01emij",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "finance",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001lma7wp03f8bgr",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "payment_reconciliation",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001jma7wlybup1o1",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "reports",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001gma7wqixa8qw6",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "sales",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      },
+      {
+        "id": "cmtobd3sb001ema7wl50v2xiz",
+        "organizationId": "org_modules_service_fr_mobile",
+        "moduleSlug": "settings",
+        "status": "active",
+        "source": "manual_override",
+        "startsAt": null,
+        "endsAt": null,
+        "readOnly": false,
+        "trial": false,
+        "revision": 1,
+        "metadata": {
+          "source": "local-modern-modules-verification",
+          "synthetic": true,
+          "liveCustomerApproval": false
+        },
+        "createdAt": "2026-09-05T10:42:53.291Z",
+        "updatedAt": "2026-09-05T10:42:53.291Z"
+      }
+    ],
+    "commands": [
+      {
+        "id": "cmtobo6zk003hmau04qkzpprb",
+        "state": "ACTIVE",
+        "createdAt": "2026-09-05T10:51:30.656Z"
+      },
+      {
+        "id": "cmtobol03003tmau03uyzlfdp",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T10:51:48.819Z"
+      },
+      {
+        "id": "cmtobu51v0092mau0aca5ikvz",
+        "state": "ACTIVE",
+        "createdAt": "2026-09-05T10:56:08.083Z"
+      },
+      {
+        "id": "cmtobuets009emau0s39mq9wu",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T10:56:20.752Z"
+      },
+      {
+        "id": "cmtoc45b000asmau0qoj1d38l",
+        "state": "ACTIVE",
+        "createdAt": "2026-09-05T11:03:54.971Z"
+      },
+      {
+        "id": "cmtoc4gw500b4mau0hpcyiy71",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T11:04:09.989Z"
+      },
+      {
+        "id": "cmtoesx46007vmapcaea9gzvi",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:19:09.990Z"
+      },
+      {
+        "id": "cmtoetgea0093mapcvonmenxy",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:19:34.978Z"
+      },
+      {
+        "id": "cmtof7w8f00hlmapcq0wgravk",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:30:48.687Z"
+      },
+      {
+        "id": "cmtof8ey100itmapc72y0ocdg",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:31:12.937Z"
+      },
+      {
+        "id": "cmtofbbdl00nxmapcbqj9xevj",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:33:28.281Z"
+      },
+      {
+        "id": "cmtofbvjy00p5mapcon53hc1p",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:33:54.431Z"
+      },
+      {
+        "id": "cmtofkwxf00x1mapcl5lybp2n",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T12:40:56.115Z"
+      },
+      {
+        "id": "cmtofladk00y9mapchfhkufz4",
+        "state": "DRAFT",
+        "createdAt": "2026-09-05T12:41:13.544Z"
+      },
+      {
+        "id": "cmtol6qgj002hmac0wjvsqvtb",
+        "state": "REQUESTED",
+        "createdAt": "2026-09-05T15:17:52.242Z"
+      }
+    ],
+    "operations": [
+      {
+        "id": "cmtoesx4r007xmapcs31zh9ye",
+        "commandId": "cmtoesx46007vmapcaea9gzvi",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 4
+      },
+      {
+        "id": "cmtof7w8y00hnmapczm6571g4",
+        "commandId": "cmtof7w8f00hlmapcq0wgravk",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 5
+      },
+      {
+        "id": "cmtofbbe100nzmapcrwoqdyd7",
+        "commandId": "cmtofbbdl00nxmapcbqj9xevj",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 6
+      },
+      {
+        "id": "cmtofkwxz00x3mapcbtt70bxo",
+        "commandId": "cmtofkwxf00x1mapcl5lybp2n",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 7
+      },
+      {
+        "id": "cmtol6qou002jmac0mulksaop",
+        "commandId": "cmtol6qgj002hmac0wjvsqvtb",
+        "state": "RETAINED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "desiredRevision": 8
+      }
+    ],
+    "events": [
+      {
+        "id": "cmtoesx4z007zmapchbjeq6qk",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "8e9407f88b990b500ad4df204d92f64bb01921f3d45df92a9ea585c442107e3c"
+      },
+      {
+        "id": "cmtoesx7c0087mapcgb6tlxkj",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "0a42474447be7f6357ab6160af870c64078c7ad401c221ebab70b4e16132b2f6"
+      },
+      {
+        "id": "cmtoesxa80089mapc4nu7op4n",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "7b00c086259703f0c8440ca4d013b45461abccad9e960864c91f147708a1ae8a"
+      },
+      {
+        "id": "cmtoesxak008bmapcs52n7r4w",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "9b5bd617f1c248a5be465c6078a0945583f35dd72357ffd889d726e861bc8893"
+      },
+      {
+        "id": "cmtoesxat008dmapcxr5r1hfc",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "13f97fce361d048aa7bbcdf944e11d7cf2026a465a3d4ee1a6c9f92a66069f98"
+      },
+      {
+        "id": "cmtoet6nz008lmapcpnlgjg7b",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "4b5b9037f95fe160f32ae7f70666b492effc1b2e5b39bf2ca584cfa1191f72a2"
+      },
+      {
+        "id": "cmtoet6sg008nmapcytgu2jaz",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "ae81d6e212c60591aaa4fa121e3779a2703e56cde48b0f60a5dc02ac6575e8da"
+      },
+      {
+        "id": "cmtoet6ss008pmapc57nqdncy",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "7c01d3225eb2be2980b93ec40ac38b41fd04569fdf3bfef58c65fca84e976f7a"
+      },
+      {
+        "id": "cmtoet6t6008rmapc7830itxv",
+        "operationId": "cmtoesx4r007xmapcs31zh9ye",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "b614440a115b5b12c7bf00d735aad7f4ca55bf5ec1b20d5a78e0239a3caa38cd"
+      },
+      {
+        "id": "cmtof7w9500hpmapcjqc3zia0",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "14f48911c614e2c5156e8ce3190023fa63f60d9d8a8e43c6e0c7620a48a510c4"
+      },
+      {
+        "id": "cmtof7wb900hxmapcrmnpfbmr",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "551e322e5146b4bb31f6f0f5f00825788f2d98fc0483ca02f06e8029c592ca37"
+      },
+      {
+        "id": "cmtof7wed00hzmapchg972u59",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "ae81d6e212c60591aaa4fa121e3779a2703e56cde48b0f60a5dc02ac6575e8da"
+      },
+      {
+        "id": "cmtof7wep00i1mapc5ye8559r",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "383e1b5da3ea1701fbcbd145322236ac0aeba2bd96405a3edb21b2353669496f"
+      },
+      {
+        "id": "cmtof7wey00i3mapchhbkirw0",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "dade0d67a9fb1984fdc89f90e139233f3a9c1723f7d8d8893a78e09258ca83de"
+      },
+      {
+        "id": "cmtof840300ibmapcxk8v4vlh",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "21567e63ad932ec90ae7b3a7b0268e2b6a8210b79254d8e30953a6bf8e2eae1f"
+      },
+      {
+        "id": "cmtof843100idmapcq4g1kas5",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "035d92846e2df65c484047dde542fe8b748a6219bcfef09ef5e0ade53dcd7e3e"
+      },
+      {
+        "id": "cmtof843d00ifmapclqfjbeyv",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "3b0b80ed7b70081621072d5ec1ffa5889a751cf352425092e2e463c75eb991a4"
+      },
+      {
+        "id": "cmtof843p00ihmapcp1tz5tuh",
+        "operationId": "cmtof7w8y00hnmapczm6571g4",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "028f591f0528d3d84adcca67063d55c3ca5ac8ff6c9fc246a77045a984736af4"
+      },
+      {
+        "id": "cmtofbbe800o1mapcs545ybn2",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "905765fe1254cbe8459ca9dcab0a3c9050b7f3816863bc30c349340f6a1f50c7"
+      },
+      {
+        "id": "cmtofbbgr00o9mapc0kqlw6fq",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "6e4ae7732b7a1c5fed274ae2d331e6c4e1360f4bdf424901c3933687e976382c"
+      },
+      {
+        "id": "cmtofbbjv00obmapchnq4eab2",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "035d92846e2df65c484047dde542fe8b748a6219bcfef09ef5e0ade53dcd7e3e"
+      },
+      {
+        "id": "cmtofbbkd00odmapcxbdq5ec9",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "987ab09d4f49fa57293ed65e05632f6267ae50d30ecf8a9c1069aa6d6ac13eb0"
+      },
+      {
+        "id": "cmtofbbkl00ofmapcvv5mle6z",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "cc46080aaf32857d8747b4872e9e91a016fa801a91f0ab5a5e885266ee086eac"
+      },
+      {
+        "id": "cmtofbldk00onmapcb5n5dxgs",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "bba018681182e2989cbf4cb907635dac21328e25a1c39464c927822d5f4ce867"
+      },
+      {
+        "id": "cmtofblit00opmapcj50i57me",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "47239c27a3cd9d5354d4104c5e018a87d3a02c36ad8f6cb7a5fbc7ae7ff16c8c"
+      },
+      {
+        "id": "cmtofblj700ormapccnscxzum",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "bcf101852d89072bc6c38631e946d880fc623902eaafb3eba3e2baa694177749"
+      },
+      {
+        "id": "cmtofbljl00otmapc7qmzhks3",
+        "operationId": "cmtofbbe100nzmapcrwoqdyd7",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "fc2d940557d81df549bcc84ac5b6c6a39b1ff18bd06c90668c10131e5c9869e8"
+      },
+      {
+        "id": "cmtofkwy500x5mapc1p7hr5h6",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "c5204e6d28c3cc9a308a2eae6b249a83f7ce98dce6815e02e3012f73a22ace3f"
+      },
+      {
+        "id": "cmtofkx0600xdmapchvwffwxo",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "cb965206c2002473dc7f5374f04ead0e8f991f571043448158cb4682c26f1d5c"
+      },
+      {
+        "id": "cmtofkx3900xfmapcbak6gkb0",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "47239c27a3cd9d5354d4104c5e018a87d3a02c36ad8f6cb7a5fbc7ae7ff16c8c"
+      },
+      {
+        "id": "cmtofkx3m00xhmapcddk6uxcb",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "de5c14ccd5040332085bc489b78e1211f95a0385739062341cfb7efabca41ac9"
+      },
+      {
+        "id": "cmtofkx3u00xjmapcvmz1rvit",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 4,
+        "eventType": "PREPARATION_WAITING",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "0f71a9006f4ffa2f809066c79ac493577c2b3e1a57ad52c240b4eb5071f6719c"
+      },
+      {
+        "id": "cmtofl46m00xrmapc4sdkk4n7",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 5,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "a8bce1f04029384428477e409f46e0e871ba68eb903912a7f61f2e5bb0eac3cc"
+      },
+      {
+        "id": "cmtofl48m00xtmapcuxqkkzlu",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 6,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "4d7889a5bf77cbcdd02865692968b5f5f19aa6212f8c3dcd420a5262888f6549"
+      },
+      {
+        "id": "cmtofl48u00xvmapcrqjz086y",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 7,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "3e60dd40e25b37493f15177d5e08ca952350b4473ae05291603941673289690a"
+      },
+      {
+        "id": "cmtofl49300xxmapcggutvkh5",
+        "operationId": "cmtofkwxz00x3mapcbtt70bxo",
+        "sequence": 8,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "ACTIVE",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "901ce74659e4fdc4e3212497d3c25a9e323b9da96d206bd8c01429a091984967"
+      },
+      {
+        "id": "cmtol6qq2002lmac0ep19my24",
+        "operationId": "cmtol6qou002jmac0mulksaop",
+        "sequence": 0,
+        "eventType": "REQUEST_ACCEPTED",
+        "state": "REQUESTED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "69345b322b15439d9106e507836a5ee34f85ce5bea081fefbd8857036b2b6aed"
+      },
+      {
+        "id": "cmtol6r8m002tmac0wfkrzrtf",
+        "operationId": "cmtol6qou002jmac0mulksaop",
+        "sequence": 1,
+        "eventType": "PREPARATION_STARTED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "14dc1cb032d269b1237372591a0a78cb7c894495297cdc44de468e6b7922adb3"
+      },
+      {
+        "id": "cmtol6rr5002vmac0b7pfiq85",
+        "operationId": "cmtol6qou002jmac0mulksaop",
+        "sequence": 2,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "4d7889a5bf77cbcdd02865692968b5f5f19aa6212f8c3dcd420a5262888f6549"
+      },
+      {
+        "id": "cmtol6rsk002xmac046zot8gs",
+        "operationId": "cmtol6qou002jmac0mulksaop",
+        "sequence": 3,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "3e60dd40e25b37493f15177d5e08ca952350b4473ae05291603941673289690a"
+      },
+      {
+        "id": "cmtol6rw80031mac0q1tcwp7o",
+        "operationId": "cmtol6qou002jmac0mulksaop",
+        "sequence": 4,
+        "eventType": "PREPARATION_OBSERVED",
+        "state": "PREPARING",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "e08f2f70ede86086ca8db5da7d2fbe37ff6f9d249d2577fcc97a265f3772eaf0"
+      },
+      {
+        "id": "cmtol6rzi0033mac0dpmeq33t",
+        "operationId": "cmtol6qou002jmac0mulksaop",
+        "sequence": 5,
+        "eventType": "CONFIGURATION_ACTIVATED",
+        "state": "RETAINED",
+        "actorId": "usr_modules_service_fr_mobile",
+        "evidenceHash": "efff85d8aa294b354e14b137ffceb304abad98e7ddf10c81a0bfd8d8b42fdb8b"
+      }
+    ],
+    "journals": 0,
+    "lines": 0,
+    "createAudits": 0,
+    "assuranceSessions": 8,
+    "eligibleAccounts": [
+      {
+        "id": "cmtoet37l000lmafk74r0w3ag",
+        "code": "399010"
+      },
+      {
+        "id": "cmtoet36g000bmafk1z5ewcks",
+        "code": "499005"
+      },
+      {
+        "id": "cmtoet36n000dmafkmr8d9f5k",
+        "code": "499006"
+      },
+      {
+        "id": "cmtoet36v000fmafk8q3w55mq",
+        "code": "499007"
+      },
+      {
+        "id": "cmtoet376000hmafklkuwn4ti",
+        "code": "499008"
+      },
+      {
+        "id": "cmtoet37c000jmafk2bcvryz5",
+        "code": "499009"
+      },
+      {
+        "id": "cmtoet37y000pmafk7c21mkj9",
+        "code": "499012"
+      },
+      {
+        "id": "cmtoet385000rmafkg5n6ga9c",
+        "code": "499013"
+      },
+      {
+        "id": "cmtoet34m0001mafkzihiv8cf",
+        "code": "599000"
+      },
+      {
+        "id": "cmtoet35p0003mafk2fdf7egc",
+        "code": "599001"
+      },
+      {
+        "id": "cmtoet35w0005mafknexun8a4",
+        "code": "599002"
+      },
+      {
+        "id": "cmtoet3630007mafkq098e4w6",
+        "code": "599003"
+      },
+      {
+        "id": "cmtoet36a0009mafkbsburoli",
+        "code": "599004"
+      },
+      {
+        "id": "cmtoet38b000tmafk71oofal2",
+        "code": "699014"
+      },
+      {
+        "id": "cmtoet38i000vmafkyot77bj2",
+        "code": "699015"
+      },
+      {
+        "id": "cmtoet37r000nmafk8uqe70sd",
+        "code": "799011"
+      }
+    ],
+    "manualJournals": [
+      {
+        "id": "cmtoet39x0019mafkn40n8i1s",
+        "code": "TEST_ADJUSTMENT"
+      },
+      {
+        "id": "cmtoet39l0015mafk39zyh94n",
+        "code": "TEST_BANK"
+      },
+      {
+        "id": "cmtoet39g0013mafkzijd5czo",
+        "code": "TEST_CASH"
+      },
+      {
+        "id": "cmtoet38p000xmafkbjcwabvt",
+        "code": "TEST_GENERAL"
+      },
+      {
+        "id": "cmtoet39q0017mafkg4q9tv0b",
+        "code": "TEST_INVENTORY"
+      },
+      {
+        "id": "cmtoet3a1001bmafknf5gdrg6",
+        "code": "TEST_OPENING"
+      },
+      {
+        "id": "cmtoet39a0011mafk2kzyb1pw",
+        "code": "TEST_PURCHASE"
+      },
+      {
+        "id": "cmtoet395000zmafklc8g4tbw",
+        "code": "TEST_SALES"
+      }
+    ],
+    "openPeriods": [
+      {
+        "id": "cmtoet3ao001fmafkk6o661ok",
+        "startDate": "2025-12-31T23:00:00.000Z",
+        "endDate": "2026-12-31T22:59:59.999Z"
+      }
+    ]
+  },
+  "afterSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "sha256": "0767f4638a72a8465af0855c289b104817461ee9716742fac41f4511094f2467"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+      "sha256": "1efe879fa0a6955bb738427e35100b9587d930f1bc6fe2f22a2216e32f3cc1de"
+    },
+    {
+      "path": "actions/accounting/accounts.actions.ts",
+      "sha256": "2ca2940a47151f474975e76c0e65b93bd60ec738c9945cf93fac84675c913202"
+    },
+    {
+      "path": "actions/accounting/journals.actions.ts",
+      "sha256": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+    },
+    {
+      "path": "lib/modules/module-operation-error.ts",
+      "sha256": "b61ed2a4d548d8808c851af2f05bd3712c947fa47ead7d837227cfdd7071c06f"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-operational-dependencies.ts",
+      "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "5e10711b9dd0b4cfbc0c320d37f81e63b6f90602841b1373a0eee674df2a29cd"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "ba0b6ce96ef5c706fff415c93c2e8cdb6efaf215f41d9a53caf13394305b4e94"
+    }
+  ],
+  "sourceStable": true,
+  "completedAt": "2026-09-05T16:19:05.573Z"
+}

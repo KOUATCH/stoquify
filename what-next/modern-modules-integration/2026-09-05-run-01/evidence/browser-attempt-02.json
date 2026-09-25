@@ -1,0 +1,482 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.modern-modules.config.ts"
+    ],
+    "configFile": "E:\\ohada saas\\Focused projects\\stoquify\\playwright.modern-modules.config.ts",
+    "rootDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/ohada saas/Focused projects/stoquify/what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop-en",
+        "name": "desktop-en",
+        "testDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/modern-modules\\.spec\\.ts$/"
+        ],
+        "timeout": 240000
+      },
+      {
+        "outputDir": "E:/ohada saas/Focused projects/stoquify/what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-fr",
+        "name": "mobile-fr",
+        "testDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/modern-modules\\.spec\\.ts$/"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "modern-modules.spec.ts",
+      "file": "modern-modules.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "retailer: native selection, dependencies, review, activation and durable recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 36413,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:53:23.384Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-78068a84a82602eaf628",
+          "file": "modern-modules.spec.ts",
+          "line": 131,
+          "column": 7
+        },
+        {
+          "title": "service: native selection, dependencies, review, activation and durable recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 32346,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:54:00.188Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-02bb31f81ec9e96f97e1",
+          "file": "modern-modules.spec.ts",
+          "line": 131,
+          "column": 7
+        },
+        {
+          "title": "legacy conversion preserves all existing canonical module grants",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 20806,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:54:32.583Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-fd3bcd3b3c18859f8c8e",
+          "file": "modern-modules.spec.ts",
+          "line": 176,
+          "column": 5
+        },
+        {
+          "title": "employee without configuration permission receives the native denied state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6023,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:54:53.434Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-d473c239ec5a0f27c614",
+          "file": "modern-modules.spec.ts",
+          "line": 189,
+          "column": 5
+        },
+        {
+          "title": "French tablet and narrow reflow keep configuration and review reachable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "Additional widths belong to the French project",
+                  "location": {
+                    "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                    "line": 200,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 737,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:54:59.493Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "Additional widths belong to the French project",
+                      "location": {
+                        "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                        "line": 200,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-cfe4f98f35f5368db7ea",
+          "file": "modern-modules.spec.ts",
+          "line": 199,
+          "column": 5
+        },
+        {
+          "title": "retailer: native selection, dependencies, review, activation and durable recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 40056,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:55:03.002Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-4e2345278db5faa4b7a3",
+          "file": "modern-modules.spec.ts",
+          "line": 131,
+          "column": 7
+        },
+        {
+          "title": "service: native selection, dependencies, review, activation and durable recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 38499,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:55:43.545Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-64d9abf7869bb79fc581",
+          "file": "modern-modules.spec.ts",
+          "line": 131,
+          "column": 7
+        },
+        {
+          "title": "legacy conversion preserves all existing canonical module grants",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "One isolated legacy fixture; bilingual layout covered by both customer journeys",
+                  "location": {
+                    "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                    "line": 177,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 541,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:56:22.089Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "One isolated legacy fixture; bilingual layout covered by both customer journeys",
+                      "location": {
+                        "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                        "line": 177,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-e300939b5e9f46abe3c8",
+          "file": "modern-modules.spec.ts",
+          "line": 176,
+          "column": 5
+        },
+        {
+          "title": "employee without configuration permission receives the native denied state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7940,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:56:22.665Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-9d8ea58b29bb4dec1604",
+          "file": "modern-modules.spec.ts",
+          "line": 189,
+          "column": 5
+        },
+        {
+          "title": "French tablet and narrow reflow keep configuration and review reachable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 31597,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:56:30.636Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-21409c66620579314920",
+          "file": "modern-modules.spec.ts",
+          "line": 199,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-05T11:53:20.309Z",
+    "duration": 222247.513,
+    "expected": 8,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-08T11:12:29.679Z",
+  "run": "e63661be-ee8",
+  "before": false,
+  "checks": [
+    {
+      "name": "changed source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "legacy source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "archived source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "status-changed source refusal and strict approval",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "622e5d9fc1ccc2b54754a21aec9416c0f97e571d581c7d42e7ce655a94ba2fe9",
+    "services/purchasing/invoice-match-exception.service.ts": "768845621e29022c5aa9ab160c91dddcd9161f1be01b74f77cb67759c9780d82",
+    "services/purchasing/invoice-match-exception-authority.ts": "ef58645922eb4e3dc53fe2d27d3af69bda25b06d5613606ea626f0ba13fc0ed6",
+    "services/purchasing/invoice-match-exception-contracts.ts": "798ecbd4300321d27bca9d62c9b23bafa8475d4bc9126aeda18268942e9cc13a"
+  },
+  "originalBefore": "9d2cd03e6182fa6f1eb3db7b92cf3716631aa2d2b6079f083042640dd82b5e19",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "622e5d9fc1ccc2b54754a21aec9416c0f97e571d581c7d42e7ce655a94ba2fe9",
+    "services/purchasing/invoice-match-exception.service.ts": "768845621e29022c5aa9ab160c91dddcd9161f1be01b74f77cb67759c9780d82",
+    "services/purchasing/invoice-match-exception-authority.ts": "ef58645922eb4e3dc53fe2d27d3af69bda25b06d5613606ea626f0ba13fc0ed6",
+    "services/purchasing/invoice-match-exception-contracts.ts": "798ecbd4300321d27bca9d62c9b23bafa8475d4bc9126aeda18268942e9cc13a"
+  },
+  "sourceStable": true
+}

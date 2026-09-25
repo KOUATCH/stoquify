@@ -1,0 +1,116 @@
+{
+  "checkedAt": "2026-09-05T15:15:03.405Z",
+  "status": "TEXT REVIEW ONLY / NOT APPLIED / NOT EXECUTED / NOT APPROVED",
+  "candidateSha256": "ea5faa4087e2759e84bd179ab4528b7f0901f735007d66bfd1be87733981bb87",
+  "comparisons": [
+    {
+      "file": "services/pos/pos.service.ts",
+      "expected": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22",
+      "actual": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22",
+      "unchanged": true
+    },
+    {
+      "file": "services/pos/offline-sync.service.ts",
+      "expected": "1f145c236c445cea8ea34c37f49e0bcd9a1aed4dcc5a24c5c8503b1aa6bd0eb4",
+      "actual": "1f145c236c445cea8ea34c37f49e0bcd9a1aed4dcc5a24c5c8503b1aa6bd0eb4",
+      "unchanged": true
+    },
+    {
+      "file": "services/pos/offline-sync.schemas.ts",
+      "expected": "dd23069bea183a7a20fe6efb0e6a7248b2014dcfe24addae24dcc2d4f068c1fc",
+      "actual": "dd23069bea183a7a20fe6efb0e6a7248b2014dcfe24addae24dcc2d4f068c1fc",
+      "unchanged": true
+    },
+    {
+      "file": "services/pos/pos.schemas.ts",
+      "expected": "a8cc3c322371e381bb42b3f7295dfbd753308d110590875729688c79713735fa",
+      "actual": "a8cc3c322371e381bb42b3f7295dfbd753308d110590875729688c79713735fa",
+      "unchanged": true
+    },
+    {
+      "file": "services/modules/module-admission.service.ts",
+      "expected": "2dd910be6c62d976487e8f5e7ee1e6a3685b39ed9fb0fbc22f65cb19ffebe8a1",
+      "actual": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+      "unchanged": false
+    },
+    {
+      "file": "services/modules/module-composition.service.ts",
+      "expected": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04",
+      "actual": "564b7601d243c98c1830baae5f41a97aaa76e1139877abf692f9f710fa4b4377",
+      "unchanged": false
+    },
+    {
+      "file": "services/modules/module-stop-policy.service.ts",
+      "expected": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439",
+      "actual": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038",
+      "unchanged": false
+    },
+    {
+      "file": "services/events/business-event.service.ts",
+      "expected": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+      "actual": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+      "unchanged": true
+    },
+    {
+      "file": "actions/pos/sync.actions.ts",
+      "expected": "b9d3e8f20284be72cd0334f243e902d5055d7e79cc962b47618c3eeeef400dd4",
+      "actual": "b9d3e8f20284be72cd0334f243e902d5055d7e79cc962b47618c3eeeef400dd4",
+      "unchanged": true
+    },
+    {
+      "file": "prisma/schema.prisma",
+      "expected": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+      "actual": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+      "unchanged": true
+    },
+    {
+      "file": "services/pos/__tests__/pos.service.test.ts",
+      "expected": "0f02fb15f53cb9a3c6e8d0525426a13dba81d7dab4055988618874f2da55c47d",
+      "actual": "0f02fb15f53cb9a3c6e8d0525426a13dba81d7dab4055988618874f2da55c47d",
+      "unchanged": true
+    },
+    {
+      "file": "services/pos/__tests__/offline-sync.service.test.ts",
+      "expected": "337b9259c5931f9c3b3f9a7ded70f83012c9cf5ae53d84a3361432ed40672584",
+      "actual": "337b9259c5931f9c3b3f9a7ded70f83012c9cf5ae53d84a3361432ed40672584",
+      "unchanged": true
+    },
+    {
+      "file": "services/pos/__tests__/pos-commit-result.postgres.test.ts",
+      "expected": "4445d67737b8a593910b16b41905ab1f465819cbc7e26d8b44ae4cdcb0ba5532",
+      "actual": "4445d67737b8a593910b16b41905ab1f465819cbc7e26d8b44ae4cdcb0ba5532",
+      "unchanged": true
+    },
+    {
+      "file": "jest.config.ts",
+      "expected": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+      "actual": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+      "unchanged": true
+    },
+    {
+      "file": "package.json",
+      "expected": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde",
+      "actual": "a2565504781647fd922edbad513b6c25783216b9b1dffc97d9a92ebed4dbbb4f",
+      "unchanged": false
+    }
+  ],
+  "proposedNewPaths": [
+    {
+      "file": "services/pos/offline-continuation.service.ts",
+      "exists": false
+    },
+    {
+      "file": "prisma/migrations/20260905210000_protect_offline_acceptance/migration.sql",
+      "exists": false
+    },
+    {
+      "file": "services/pos/__tests__/offline-continuation.service.test.ts",
+      "exists": false
+    }
+  ],
+  "operationalDependencySource": {
+    "file": "services/modules/module-operational-dependencies.ts",
+    "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+  },
+  "runtimeCompatibilityVerified": false
+}

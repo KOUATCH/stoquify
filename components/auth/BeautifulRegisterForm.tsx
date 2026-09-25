@@ -1,6 +1,6 @@
 "use client";
 
-import { registerUser } from "@/actions/auth";
+import { RegistrationWorkflowError, useRegisterWorkflow } from "@/hooks/useRegisterWorkflow";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +14,6 @@ import {
   ArrowRight,
   Building2,
   Check,
-  ClipboardCheck,
-  Clock3,
   Eye,
   EyeOff,
   Globe2,
@@ -26,16 +24,16 @@ import {
   Phone,
   Rocket,
   ShieldCheck,
-  Sparkles,
   User,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { Children, cloneElement, isValidElement, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthFormCard } from "./AuthLayout";
 import { authCopy, getAuthLocale } from "./auth-copy";
+import { publicAuthCopy } from "./public-auth-copy";
 import { useNotifications } from "../notifications/NotificationProvider";
 
 const inputClass =
@@ -63,6 +61,15 @@ function getPasswordScore(password: string) {
 
 export default function BeautifulRegisterForm() {
   const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [completedHref, setCompletedHref] = useState("");
+  const feedbackRef = useRef<HTMLDivElement>(null);
+  const submitting = useRef(false);
+  const navigating = useRef(false);
+  const selectId = useId();
+  useEffect(() => { setReady(true); }, []);
+  useEffect(() => { if (feedback) feedbackRef.current?.focus(); }, [feedback]);
   const [currentStep, setCurrentStep] = useState<StepId>("personal");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -70,8 +77,16 @@ export default function BeautifulRegisterForm() {
   const router = useRouter();
   const pathname = usePathname();
   const params = useSearchParams();
-  const { formError, formSuccess, warning } = useNotifications();
+  const { warning } = useNotifications();
   const locale = getAuthLocale(pathname);
+  const workflow = useRegisterWorkflow(locale);
+  const recovery = locale === "fr" ? {
+    uncertain: "Le résultat n’a pas pu être confirmé. Vos données sont conservées. Vérifiez vos emails ou essayez de vous connecter avant de créer un autre espace.",
+    field: "Vérifiez cette information.", continue: "Continuer vers la vérification de l’email", characteristics: "Caractéristiques du mot de passe",
+  } : {
+    uncertain: "The outcome could not be confirmed. Your entries are preserved. Check for a verification email or try signing in before creating another workspace.",
+    field: "Check this information.", continue: "Continue to email verification", characteristics: "Password characteristics",
+  };
   const isAccountantInvite =
     params.get("role") === "accountant" &&
     Boolean(params.get("ref")) &&
@@ -81,9 +96,9 @@ export default function BeautifulRegisterForm() {
     handleSubmit,
     formState: { errors },
     watch,
-    reset,
     trigger,
     setValue,
+    setError,
   } = useForm<RegisterUserProps>({
     defaultValues: {
       termsAccepted: false,
@@ -95,7 +110,7 @@ export default function BeautifulRegisterForm() {
       accountantInviteAccepted: isAccountantInvite ? false : undefined,
     },
   });
-  const copy = authCopy[locale].register;
+  const copy = { ...authCopy[locale].register, ...publicAuthCopy[locale].register };
   const localizedHref = (href: string) => localizePath(href, locale);
   const companySizes = [
     { value: "1-10", label: copy.companySizes.small },
@@ -104,6 +119,7 @@ export default function BeautifulRegisterForm() {
     { value: "201+", label: copy.companySizes.enterprise },
   ];
   const industries = ["Retail", "Wholesale", "Restaurant", "Pharmacy", "Manufacturing", "Services", "Distribution"];
+  const industryLabels: Record<string, string> = { Retail: "Commerce de détail", Wholesale: "Commerce de gros", Restaurant: "Restauration", Pharmacy: "Pharmacie", Manufacturing: "Fabrication", Services: "Services", Distribution: "Distribution" };
   const currencies = ["XAF", "USD", "EUR", "GBP", "CAD", "NGN", "GHS", "ZAR"];
   const timezones = ["Africa/Douala", "Africa/Lagos", "Africa/Abidjan", "Africa/Nairobi", "Europe/Paris", "UTC"];
 
@@ -135,7 +151,10 @@ export default function BeautifulRegisterForm() {
   };
 
   const goNext = async () => {
-    const valid = await trigger(stepFields[currentStep]);
+    if (!ready || submitting.current || navigating.current || completedHref) return;
+    navigating.current = true;
+    const valid = await trigger(stepFields[currentStep], { shouldFocus: true });
+    navigating.current = false;
     if (!valid) {
       warning(copy.warningTitle, copy.warningBody);
       return;
@@ -148,6 +167,7 @@ export default function BeautifulRegisterForm() {
   };
 
   const goBack = () => {
+    if (submitting.current || completedHref) return;
     const previousStep = steps[currentIndex - 1]?.id;
     if (previousStep) {
       setCurrentStep(previousStep);
@@ -155,83 +175,34 @@ export default function BeautifulRegisterForm() {
   };
 
   const onSubmit = async (data: RegisterUserProps) => {
-    const valid = await trigger(stepFields.security);
-    if (!valid) return;
-
+    if (!ready || currentStep !== "security" || submitting.current || completedHref) return;
+    submitting.current = true;
+    setLoading(true);
+    setFeedback("");
     try {
-      setLoading(true);
-      const result = await registerUser(data);
-      setLoading(false);
-
-      if (result.error) {
-        formError(copy.errorTitle, result.error, copy.errorHint);
-        return;
+      const result = await workflow.mutateAsync(data);
+      const href = `${localizedHref(`/verify/${result.data!.userId}`)}?email=${encodeURIComponent(result.data!.email)}`;
+      setCompletedHref(href);
+      router.push(href);
+    } catch (error) {
+      setFeedback(error instanceof RegistrationWorkflowError ? error.message : recovery.uncertain);
+      if (error instanceof RegistrationWorkflowError && error.fieldErrors) {
+        for (const field of Object.keys(error.fieldErrors)) setError(field as keyof RegisterUserProps, { type: "server", message: recovery.field });
+        const first = steps.find(step => stepFields[step.id].some(field => error.fieldErrors?.[field]));
+        if (first) setCurrentStep(first.id);
       }
-
-      if (result.success) {
-        formSuccess(
-          copy.successTitle,
-          result.message || copy.successBody
-        );
-        reset();
-        const userId = result.data?.userId;
-        if (userId) {
-          router.push(`${localizedHref(`/verify/${userId}`)}?email=${encodeURIComponent(data.email)}`);
-        } else {
-          router.push(`${localizedHref("/login")}?registered=true&email=${encodeURIComponent(data.email)}`);
-        }
-      }
-    } catch {
+    } finally {
       setLoading(false);
-      formError(copy.networkTitle, copy.networkBody, copy.networkHint);
+      submitting.current = false;
     }
   };
 
   return (
     <AuthFormCard className="flex flex-col">
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#10181d] text-white shadow-[0_16px_36px_rgba(16,24,29,0.16)] ring-1 ring-white/25 dark:bg-white/[0.08] dark:text-[#7de8dc] dark:ring-white/10">
-            <Rocket className="h-5 w-5" />
-          </div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#58707a] dark:text-[#8fa4ab]">
-            {copy.badge}
-          </p>
-          <h2 className="mt-2 text-2xl font-black text-[#111a20] dark:text-white">{copy.title}</h2>
-          <p className="mt-2 text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">
-            {copy.subtitle}
-          </p>
-        </div>
-        <div className="hidden shrink-0 space-y-2 sm:block">
-          <span className="flex items-center gap-2 rounded-full border border-[#2f7df6]/25 bg-[rgba(47,125,246,0.10)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-[#2f7df6] dark:text-[#8fb7ff]">
-            <Clock3 className="h-3.5 w-3.5" />
-            {copy.setupTime}
-          </span>
-          <span className="flex items-center gap-2 rounded-full border border-[#2dd4bf]/25 bg-[rgba(45,212,191,0.10)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-[#178e83] dark:text-[#7de8dc]">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            {copy.setupTrust}
-          </span>
-        </div>
-      </div>
-
-      <div className="mb-6 rounded-xl border border-[#9fb4bb]/25 bg-[#e2ecef]/78 p-4 dark:border-white/10 dark:bg-white/[0.04]">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/65 px-2.5 py-1 text-xs font-bold uppercase tracking-[0.12em] text-[#58707a] dark:bg-white/[0.06] dark:text-[#9fb4bb]">
-              <Sparkles className="h-3.5 w-3.5 text-[#a87516] dark:text-[#f0c76a]" />
-              {copy.blueprintTitle}
-            </div>
-            <p className="text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">{copy.blueprintBody}</p>
-          </div>
-          <div className="grid min-w-[220px] gap-2">
-            {Object.values(copy.blueprintItems).map((item) => (
-              <div key={item} className="flex items-center gap-2 rounded-lg bg-white/62 px-3 py-2 text-sm font-bold text-[#253943] dark:bg-white/[0.055] dark:text-[#d3ddd8]">
-                <ClipboardCheck className="h-4 w-4 text-[#2ec98a]" />
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="mb-5">
+        <h1 className="text-2xl font-bold text-[#111a20] dark:text-white">{copy.title}</h1>
+        <p className="mt-2 text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">{copy.subtitle}</p>
+        <p className="mt-3 text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">{copy.blueprintBody}</p>
       </div>
 
       <div className="mb-6">
@@ -239,9 +210,9 @@ export default function BeautifulRegisterForm() {
           <span>{copy.step} {currentIndex + 1} {copy.of} {steps.length}</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-[#cfdcdf] dark:bg-[#0f171d]">
+        <div role="progressbar" aria-label={copy.step} aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={currentIndex + 1} aria-valuetext={`${copy.step} ${currentIndex + 1} ${copy.of} ${steps.length}`} className="h-2 overflow-hidden rounded-full bg-[#cfdcdf] dark:bg-[#0f171d]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#bf7145] to-[#f0c54d] transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-[#bf7145] to-[#f0c54d] transition-all duration-500 motion-reduce:transition-none"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -254,9 +225,12 @@ export default function BeautifulRegisterForm() {
               <button
                 key={step.id}
                 type="button"
+                disabled={!ready || loading || !!completedHref || index > currentIndex}
+                aria-label={copy.steps[step.id]}
+                aria-current={active ? "step" : undefined}
                 onClick={() => index <= currentIndex && setCurrentStep(step.id)}
                 className={cn(
-                  "flex min-h-11 items-center justify-center gap-2 rounded-xl border px-2 py-2 text-xs font-bold transition-all",
+                  "flex min-h-11 flex-col items-center justify-center gap-1 rounded-xl border px-0.5 py-2 text-[11px] font-bold transition-all sm:flex-row sm:gap-2 sm:px-2 sm:text-xs",
                   active
                     ? "border-[#f0c54d]/45 bg-[rgba(240,197,77,0.16)] text-[#8b4a2f] dark:text-[#f6d574]"
                     : complete
@@ -264,15 +238,18 @@ export default function BeautifulRegisterForm() {
                       : "border-[#9fb4bb]/25 bg-white/45 text-[#7f969f] dark:border-white/10 dark:bg-white/[0.035]"
                 )}
               >
-                {complete ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
-                <span className="hidden sm:inline">{copy.steps[step.id]}</span>
+                {complete ? <Check className="h-4 w-4 shrink-0" /> : <Icon className="h-4 w-4 shrink-0" />}
+                <span className="min-w-0 break-words text-center leading-4">{copy.steps[step.id]}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      {feedback ? <div ref={feedbackRef} role="alert" tabIndex={-1} className="mb-4 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-800 dark:border-red-400/40 dark:bg-red-950/30 dark:text-red-200">{feedback}</div> : null}
+      {completedHref ? <Link className="mb-4 underline" href={completedHref}>{recovery.continue}</Link> : null}
+      <form method="post" noValidate onSubmit={event => { if (currentStep !== "security") { event.preventDefault(); void goNext(); } else void handleSubmit(onSubmit)(event); }} aria-busy={loading}>
+        <fieldset disabled={!ready || loading || !!completedHref} className="min-w-0 space-y-5">
         <input type="hidden" {...register("referralCode")} />
         <input type="hidden" {...register("accountantInviteToken")} />
         {currentStep === "personal" ? (
@@ -346,13 +323,14 @@ export default function BeautifulRegisterForm() {
             </FieldShell>
 
             <div className="space-y-2">
-              <Label className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.companySize}</Label>
+              <Label htmlFor={`${selectId}-size`} className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.companySize}</Label>
               <input type="hidden" {...register("companySize", { required: copy.errors.companySizeRequired })} />
               <Select
                 value={companySize}
                 onValueChange={(value) => setValue("companySize", value, { shouldValidate: true })}
               >
                 <SelectTrigger
+                  id={`${selectId}-size`} aria-invalid={!!errors.companySize} aria-describedby={errors.companySize ? `${selectId}-size-error` : undefined}
                   className={cn(
                     "h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white",
                     errors.companySize && "border-[#ef6a6a]"
@@ -371,18 +349,18 @@ export default function BeautifulRegisterForm() {
                   ))}
                 </SelectContent>
               </Select>
-              {errors.companySize?.message ? <ErrorText message={errors.companySize.message} /> : null}
+              {errors.companySize?.message ? <ErrorText id={`${selectId}-size-error`} message={errors.companySize.message} /> : null}
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.industry}</Label>
+                <Label htmlFor={`${selectId}-industry`} className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.industry}</Label>
                 <input type="hidden" {...register("industry")} />
                 <Select
                   value={industry}
                   onValueChange={(value) => setValue("industry", value, { shouldValidate: true })}
                 >
-                  <SelectTrigger className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
+                  <SelectTrigger id={`${selectId}-industry`} className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
                     <SelectValue placeholder={copy.fields.selectIndustry} />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -390,7 +368,7 @@ export default function BeautifulRegisterForm() {
                       <SelectItem key={item} value={item}>
                         <span className="flex items-center gap-2">
                           <Building2 className="h-4 w-4 text-[#2f7df6]" />
-                          {item}
+                          {locale === "fr" ? industryLabels[item] : item}
                         </span>
                       </SelectItem>
                     ))}
@@ -430,10 +408,10 @@ export default function BeautifulRegisterForm() {
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="space-y-2">
-                <Label className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.currency}</Label>
+                <Label htmlFor={`${selectId}-currency`} className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.currency}</Label>
                 <input type="hidden" {...register("currency")} />
                 <Select value={currency} onValueChange={(value) => setValue("currency", value, { shouldValidate: true })}>
-                  <SelectTrigger className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
+                  <SelectTrigger id={`${selectId}-currency`} className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -445,10 +423,10 @@ export default function BeautifulRegisterForm() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.timezone}</Label>
+                <Label htmlFor={`${selectId}-timezone`} className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.timezone}</Label>
                 <input type="hidden" {...register("timezone")} />
                 <Select value={timezone} onValueChange={(value) => setValue("timezone", value, { shouldValidate: true })}>
-                  <SelectTrigger className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
+                  <SelectTrigger id={`${selectId}-timezone`} className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -460,10 +438,10 @@ export default function BeautifulRegisterForm() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.defaultLocale}</Label>
+                <Label htmlFor={`${selectId}-locale`} className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{copy.fields.defaultLocale}</Label>
                 <input type="hidden" {...register("defaultLocale")} />
                 <Select value={defaultLocale} onValueChange={(value) => setValue("defaultLocale", value as "en" | "fr", { shouldValidate: true })}>
-                  <SelectTrigger className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
+                  <SelectTrigger id={`${selectId}-locale`} className="h-12 rounded-xl border-[#9fb4bb]/30 bg-white/72 text-[#132028] shadow-sm dark:border-white/10 dark:bg-[#0f171d]/72 dark:text-white">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -508,12 +486,12 @@ export default function BeautifulRegisterForm() {
             {password ? (
               <div className="rounded-xl border border-[#9fb4bb]/25 bg-white/50 p-4 dark:border-white/10 dark:bg-white/[0.035]">
                 <div className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-[0.12em] text-[#58707a] dark:text-[#8fa4ab]">
-                  <span>{copy.passwordStrength}</span>
+                  <span>{recovery.characteristics}</span>
                   <span>{passwordStrength}</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-[#d8e2e5] dark:bg-[#0f171d]">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#ef6a6a] via-[#d7a84f] to-[#2ec98a] transition-all duration-300"
+                    className="h-full rounded-full bg-gradient-to-r from-[#ef6a6a] via-[#d7a84f] to-[#2ec98a] transition-all duration-300 motion-reduce:transition-none"
                     style={{ width: `${(passwordScore / 5) * 100}%` }}
                   />
                 </div>
@@ -544,7 +522,7 @@ export default function BeautifulRegisterForm() {
               />
             </FieldShell>
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#9fb4bb]/25 bg-[#e2ecef]/70 p-4 text-sm leading-6 text-[#58707a] dark:border-white/10 dark:bg-white/[0.035] dark:text-[#9fb4bb]">
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#9fb4bb]/25 bg-[#e2ecef]/70 p-4 text-sm leading-6 text-[var(--auth-text-soft)] dark:border-white/10 dark:bg-white/[0.035] dark:text-[#9fb4bb]">
               <input
                 type="checkbox"
                 className="mt-1 h-4 w-4 rounded border-[#9fb4bb]/40 bg-white text-[#2f7df6] focus:ring-[#2f7df6]/30 dark:border-white/10 dark:bg-[#0f171d]"
@@ -552,11 +530,11 @@ export default function BeautifulRegisterForm() {
               />
               <span>
                 {copy.fields.termsPrefix}{" "}
-                <Link href={localizedHref("/terms")} className="font-bold text-[#2f7df6] dark:text-[#8fb7ff]">
+                <Link href={localizedHref("/terms")} className="font-bold text-[var(--product-brand-action-hover)] hover:underline dark:text-[#8fb7ff]">
                   {copy.fields.terms}
                 </Link>{" "}
                 {copy.fields.and}{" "}
-                <Link href={localizedHref("/privacy")} className="font-bold text-[#2f7df6] dark:text-[#8fb7ff]">
+                <Link href={localizedHref("/privacy")} className="font-bold text-[var(--product-brand-action-hover)] hover:underline dark:text-[#8fb7ff]">
                   {copy.fields.privacy}
                 </Link>
                 .
@@ -604,6 +582,7 @@ export default function BeautifulRegisterForm() {
 
           {currentStep !== "security" ? (
             <Button
+              key="continue"
               type="button"
               onClick={goNext}
               className="h-11 rounded-xl px-5 font-black"
@@ -614,12 +593,13 @@ export default function BeautifulRegisterForm() {
           ) : (
             <Button
               type="submit"
+              key="create"
               disabled={loading}
               className="h-11 rounded-xl px-5 font-black disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" />
                   {copy.creating}
                 </span>
               ) : (
@@ -631,11 +611,12 @@ export default function BeautifulRegisterForm() {
             </Button>
           )}
         </div>
+        </fieldset>
       </form>
 
       <p className="mt-auto pt-6 text-center text-sm text-[#58707a] dark:text-[#9fb4bb]">
         {copy.already}{" "}
-        <Link href={localizedHref("/login")} className="font-black text-[#2f7df6] transition hover:text-[#1f6feb] dark:text-[#8fb7ff]">
+        <Link href={localizedHref("/login")} className="font-black text-[var(--product-brand-action-hover)] transition hover:underline dark:text-[#8fb7ff]">
           {copy.signIn}
         </Link>
       </p>
@@ -652,18 +633,24 @@ function FieldShell({
   error?: string;
   children: React.ReactNode;
 }) {
+  const id = useId();
+  const limits: Record<string, number> = { firstName: 100, lastName: 100, email: 254, phone: 32, companyName: 200, country: 100, state: 100, address: 500, password: 128, confirmPassword: 128 };
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{label}</Label>
-      <div className="relative">{children}</div>
-      {error ? <ErrorText message={error} /> : null}
+      <Label htmlFor={id} className="text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">{label}</Label>
+      <div className="relative">{Children.map(children, child => {
+        if (!isValidElement<React.ComponentProps<typeof Input>>(child) || child.type !== Input) return child;
+        const name = child.props.name ?? "";
+        return cloneElement(child, { id, "aria-invalid": !!error, "aria-describedby": error ? `${id}-error` : undefined, maxLength: limits[name], autoComplete: name === "password" || name === "confirmPassword" ? "new-password" : name === "email" ? "email" : name === "phone" ? "tel" : undefined });
+      })}</div>
+      {error ? <ErrorText id={`${id}-error`} message={error} /> : null}
     </div>
   );
 }
 
-function ErrorText({ message }: { message: string }) {
+function ErrorText({ message, id }: { message: string; id?: string }) {
   return (
-    <p className="flex items-center gap-1.5 text-sm font-medium text-[#ef6a6a]">
+    <p id={id} className="flex items-center gap-1.5 text-sm font-medium text-red-700 dark:text-red-300">
       <AlertCircle className="h-4 w-4" />
       {message}
     </p>
@@ -687,6 +674,7 @@ function VisibilityButton({
       onClick={onClick}
       className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-[#7f969f] transition hover:bg-[#f0c54d]/15 hover:text-[#8b4a2f] dark:hover:bg-[#bf7145]/20 dark:hover:text-[#f6d574]"
       aria-label={show ? hideLabel : showLabel}
+      aria-pressed={show}
     >
       {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
     </button>

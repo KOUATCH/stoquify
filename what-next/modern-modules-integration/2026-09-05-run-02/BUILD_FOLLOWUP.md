@@ -1,0 +1,17 @@
+# Application build follow-up
+
+The first direct isolated build started at 15:08:46 UTC and ended at 15:17:57 UTC on 5 September 2026. Optimized compilation succeeded in 7.4 minutes. The subsequent lint/type stage exited 1 because `FinanceCommandCenterDashboard.tsx:682` returned an anonymous column-header component (`react/display-name`). Other reported findings were existing warnings.
+
+The surrounding finance table was already a working-tree change. Only its returned renderer was given the name `CashFlowColumnHeader`; its behavior, table contract, labels, sorting and other existing edits were preserved. This small adjacent change is necessary to finish the requested application build. Focused lint of that file then exited 0. No rule was disabled, and the unrelated warnings were not changed.
+
+The second build started at 15:21:25 UTC. It uses a separately retained helper, start record, raw log and result receipt. It reuses only the first attempt's isolated `.next-modern-modules-build-run02` cache, with the same verified read-only synthetic database and direct migration-free Next command. Its source binding adds the affected finance file. It is not described as a second clean-cache build.
+
+The first helper restored its generated `next-env.d.ts` change. Its conservative exact comparison did not restore `tsconfig.json`; the result records that drift. The sole generated `.next-modern-modules-build-run02/types/**/*.ts` include was subsequently removed, preserving the then-current remaining configuration. That file did not return to the first start hash, so no claim of byte-for-byte baseline restoration is made. The second build captures this current configuration separately and records its own before/after comparison.
+
+The second build completed at 15:24:55 UTC with exit 1. Compilation, lint and type validation passed. Page collection failed because `app/layout.tsx` uses a nullish fallback for `NEXT_PUBLIC_APP_URL`; the sanitized helper had set that key to an empty string, which is an invalid URL. Both generated TypeScript files were restored, and no bound source drift occurred during this attempt.
+
+The third attempt started at 15:26:57 UTC with `NEXT_PUBLIC_APP_URL` explicitly set to the owned local test address, alongside the existing base/auth URLs. This is an isolated verification-environment correction; no application metadata code, `.env`, provider account or customer setting was changed. Its separate helper/log/receipt use the `isolated-build-validated` name and retain both earlier results.
+
+The third attempt ended at 15:31:08 UTC, exit 1 without a timeout. Optimized compilation, lint and type validation passed. Collecting invitation-page data failed because the existing `services/users/user-identity.service.ts:34` constructs `Resend` at import time and requires `RESEND_API_KEY`. That provider credential was intentionally excluded from this read-only build environment. No email was sent, no fake key or successful provider readiness was supplied, and the invitation service was not refactored as part of composition. The bound source files were unchanged; both generated TypeScript references were restored.
+
+`evidence/isolated-build-validated-receipt.json` and its matching log retain this partial result. The full build is not passed. A release owner must supply the governed invitation-provider build configuration, or separately review removing that unrelated eager construction, and rerun page collection before release. Native module browser verification can continue independently on the isolated app.

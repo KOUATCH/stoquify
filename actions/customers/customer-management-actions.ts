@@ -25,12 +25,14 @@ import {
   getCustomerManagementRowForOrg,
   removeCustomerForManagement,
   updateCustomerForManagement,
+  type CustomerCreationReceipt,
   type CustomerDetailAnalytics,
   type CustomerManagementData,
   type CustomerManagementRow,
 } from "@/services/customer/customer.service"
 
 export type CustomerManagementInput = CustomerCreateInput
+export type CustomerCreationResult = CustomerCreationReceipt & { cacheStatus: "invalidated" | "deferred" }
 export type {
   CustomerDetailAnalytics,
   CustomerExportRequest,
@@ -143,7 +145,7 @@ export async function getCustomerAnalyticsData(
   return getAnalyticsData({ organizationId, customerId })
 }
 
-const createCustomer = protect<unknown, CustomerManagementRow>(
+const createCustomer = protect<unknown, CustomerCreationResult>(
   {
     permission: "customers.create",
     auditResource: "Customer",
@@ -158,8 +160,13 @@ const createCustomer = protect<unknown, CustomerManagementRow>(
   async (input, ctx) => {
     const parsed = createCustomerInputSchema.parse(input)
     const row = await createCustomerForManagement(ctx.orgId, parsed.data)
-    revalidateCustomerPaths()
-    return row
+    try {
+      revalidateCustomerPaths()
+      return { ...row, cacheStatus: "invalidated" }
+    } catch {
+      // The committed receipt remains authoritative even if route caches cannot refresh.
+      return { ...row, cacheStatus: "deferred" }
+    }
   },
 )
 

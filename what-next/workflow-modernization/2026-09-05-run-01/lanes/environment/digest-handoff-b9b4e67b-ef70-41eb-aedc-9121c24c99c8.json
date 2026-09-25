@@ -1,0 +1,122 @@
+{
+  "at": "2026-09-19T15:41:23.843Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "d741e5ce50bff6e694c4497a99cf05a431711db1abd18d00b33439380a5688c6",
+    "messages/fr.json": "18108ce13ac0a3be91c662cc99e8f0e6af27e0bea44c1aa1bbf031e59071d6d7"
+  },
+  "checks": [
+    {
+      "name": "owner-label-only",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-owner-label-only-en.png",
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-owner-label-only-fr.png",
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "administrator",
+      "owner": true,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-administrator-en.png",
+          "destinationScreenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-administrator-en-destination.png",
+          "keyboardHandoff": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-administrator-fr.png",
+          "destinationScreenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-administrator-fr-destination.png",
+          "keyboardHandoff": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "owner-authority-revoked",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "cachedRevocation": true,
+          "screenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-owner-authority-revoked-en.png",
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "cachedRevocation": true,
+          "screenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-owner-authority-revoked-fr.png",
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "manager-unassigned",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "manager-assigned",
+      "owner": false,
+      "manager": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-handoff-b9b4e67b-ef70-41eb-aedc-9121c24c99c8-manager-assigned-en.png"
+        }
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "page.waitForURL: Timeout 120000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"http://127.0.0.1:3110/en/dashboard/manager-action-center\" until \"load\"\n============================================================",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "16a656d1405d45eaeb57a151e8247284c14606eb803e859e0f47c495679aaef5",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "6ac11b60b79c70e1ef01b4f78b39bd01edc2138ebde0b48ed83c2b19c202e5b4",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "d741e5ce50bff6e694c4497a99cf05a431711db1abd18d00b33439380a5688c6",
+    "messages/fr.json": "18108ce13ac0a3be91c662cc99e8f0e6af27e0bea44c1aa1bbf031e59071d6d7"
+  },
+  "sourceStable": true
+}

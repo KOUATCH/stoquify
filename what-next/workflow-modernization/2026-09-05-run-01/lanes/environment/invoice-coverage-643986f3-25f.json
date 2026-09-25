@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-08T19:14:34.664Z",
+  "run": "643986f3-25f",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264"
+  },
+  "checks": [
+    "A real credit after a partial payment reduces the payable without changing cash records",
+    "Cash 250 plus credit 2250 closes invoice 2500 while amountPaid remains actual cash",
+    "Credit reversal reopens the retained invoice and restores payable 2250 without changing payment effects",
+    "Credit and payment retries do not overwrite the subsequently reopened invoice",
+    "Credit beyond the unpaid portion preserves the supplier credit position instead of inventing extra cash paid"
+  ],
+  "scope": "Owned localhost receiving, invoice approval, payment request/approval/execution and supplier credit/reversal services. Return/credit service actor arguments are trusted fixture scope, not proof of their public-action authority. Accounting rules and external bank evidence synthetic; no external payment or notification delivery.",
+  "originalBefore": "11aa006732917206ecd0f5d27935131512e3fe12208915a518a4ef0bdc6ef25f",
+  "fixtures": [
+    {
+      "organizationId": "workflow_supplier_ack_en_coverage-643986f3-25f",
+      "invoiceId": "cmtt1tn79001wma5osbqepojg"
+    },
+    {
+      "organizationId": "workflow_supplier_ack_en_credit-position-643986f3-25f",
+      "invoiceId": "cmtt1trxs00aqma5ohu1d7xp7",
+      "creditId": "4ed6ee82-2fff-4e9e-bee6-f5554030be00"
+    }
+  ],
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,97 @@
+{
+  "run": "3c70fd34-53a",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T13:21:45.323Z",
+  "sourcesBefore": {
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/roles/role-write.service.ts": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "checks": [
+    {
+      "name": "assignment, revocation, mandatory history and duplicate retry",
+      "passed": true,
+      "roles": 2,
+      "sessionsRevoked": 1,
+      "audits": 1,
+      "replayed": true,
+      "durationMs": 1052
+    },
+    {
+      "name": "member, role and foreign-object conflicts leave no effects",
+      "passed": true,
+      "denials": 3,
+      "noEffects": true,
+      "durationMs": 638
+    },
+    {
+      "name": "assignment cannot remove roles and cannot manufacture grant authority",
+      "passed": true,
+      "denials": 2,
+      "durationMs": 210
+    },
+    {
+      "name": "concurrent edits from one reviewed revision commit only once",
+      "passed": true,
+      "commits": 1,
+      "denials": 1,
+      "durationMs": 448
+    },
+    {
+      "name": "concurrent membership removal and role edit preserve a custodian",
+      "passed": true,
+      "commits": 1,
+      "remainingCustodians": 1,
+      "durationMs": 890
+    },
+    {
+      "name": "audited deactivation then current-role reactivation preserve credentials and history",
+      "passed": true,
+      "deactivationAudits": 1,
+      "reactivationAudits": 1,
+      "credentialsUnchanged": true,
+      "noAutomaticSession": true,
+      "durationMs": 1201
+    },
+    {
+      "name": "unexplained inactive lock cannot be cleared",
+      "passed": true,
+      "denied": true,
+      "noEffects": true,
+      "durationMs": 792
+    },
+    {
+      "name": "mandatory audit failure rolls back membership and session effects",
+      "passed": true,
+      "transactionRolledBack": true,
+      "durationMs": 468
+    }
+  ],
+  "limitations": [
+    "All mutations belong to newly created synthetic organizations; no migration or external requests.",
+    "The audit rollback case injects one sink exception inside a real PostgreSQL transaction."
+  ],
+  "originalAuthorityBefore": "220b3c0a428f19e83790ea22fb7761743dbdfce0740d3435f3dbd90cf1085a06",
+  "originalAuthorityAfter": "220b3c0a428f19e83790ea22fb7761743dbdfce0740d3435f3dbd90cf1085a06",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T13:21:51.928Z",
+  "sourcesAfter": {
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/roles/role-write.service.ts": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "sourceStable": true,
+  "driverSha256": "58ec4f55e0f0227ee921a87a1a4cee95097e890a680f94fb052187e8cc815a0e",
+  "passed": 8,
+  "failed": 0
+}

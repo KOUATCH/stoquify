@@ -1,0 +1,16 @@
+# Statement worker verification attempts
+
+- Previous turn: progress, v41 history checkpoint published. This continuation re-read the full objective (`74b5ec`), confirmed branch/head and 633 dirty entries (`0ed387`).
+- Before change: three failures reproduced on real owned PostgreSQL (`12c15b`, `statement-worker-before-8ec6bbe4-99b.json`); source stable, original financial/role hashes unchanged. The adapters did not transmit messages.
+- Initial worker/provider/CLI regressions: nine tests passed (`307a14`). Expanded worker/provider cases: 31 tests passed (`5f9909`). History/sender coverage expanded the focused run to 60 tests/six suites (`ff7956`).
+- Initial typecheck identified an incorrect hash-helper import and a status type that allowed QUEUED at outbox settlement (`743332`). Both were corrected without suppressing types or excluding source.
+- First after-change database run (`statement-worker-after-554466a9-018.json`, `338ed1`) passed four cases then failed because a concurrent processor could legitimately find the job already settled. The test now accepts that existing response while requiring exactly one adapter invocation and one outcome transition. That incomplete attempt did not reach its final original-state comparison.
+- Second run passed twelve checks (`9e52b9`, `statement-worker-after-72ccfec4-240.json`). The concurrency case was strengthened further by synchronizing both processors before reservation.
+- The strengthened run initially met an incidental due-time precision race (`37fd56`, `statement-worker-after-b18de2e4-085.json`): claim returned no rows immediately after creation. The driver now derives the due instant from the persisted availability timestamp. It does not change the machine clock or reset a counter. Original financial/role hashes were unchanged.
+- Final synchronized database run passed twelve checks (`ea7a0d`, `statement-worker-after-3344888e-14c.json`), including one invocation under concurrent reservation and post-acceptance database outage.
+- Installed SDK inspection (`7c8a9c`, `5ab0cf`) showed Resend ErrorResponse exposes `name`, not `statusCode`. The adapter and tests were corrected to this actual contract, retaining unknown outcomes conservatively.
+- Final focused result: 60 tests/six suites (`e8e025`, `statement-worker-tests-04.json`). Final database binding: twelve checks (`cd20a3`, `statement-worker-after-20bcedd1-6eb.json`), source stable and original financial/role hashes unchanged.
+- Changed-file lint passed (`754802`); the two final SDK-related files passed again (`d2a368`). Typecheck passed (`a1cf84`) before the last SDK name-only adjustment; final binding is recorded in the tool receipt.
+- First EN/FR worker-history browser run passed two journeys and sixteen width/text cases (`43955a`, `statement-worker-history-browser-ddca551a-a10.json`), 18 screenshots, source stable and original financial/role hashes unchanged. Final browser source binding is recorded separately.
+
+No live provider, production rollout, database reset, simulated approval or X1 clearance was used. The general referral worker CLI was not executed because it also dispatches accountant invitations. The isolated drivers invoked only their explicitly owned statement rows.

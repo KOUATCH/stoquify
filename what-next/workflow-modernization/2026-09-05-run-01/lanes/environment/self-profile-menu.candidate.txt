@@ -1,0 +1,86 @@
+"use client"
+
+import { useRef, useState } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
+import { useTranslations } from "next-intl"
+import { Bell, ChevronDown, CreditCard, HelpCircle, KeyRound, LogOut, Moon, Palette, Settings, Shield, User } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
+import { authClient } from "@/lib/auth-client"
+import { DEFAULT_LOCALE } from "@/types/bilingual"
+
+export const accountMenuCopy = {
+  en: { account: "Account", profile: "My profile", profileHint: "Name and job title", security: "Security", securityHint: "Review account sessions", notifications: "Notifications", notificationsHint: "Notification preferences", preferences: "Preferences", dark: "Dark mode", appearance: "Appearance", settings: "Settings", billing: "Billing and plans", help: "Help and support", signOut: "Sign out", signingOut: "Signing out…", signOutFailed: "Sign-out was not confirmed. Try again before leaving this shared device." },
+  fr: { account: "Compte", profile: "Mon profil", profileHint: "Nom et poste", security: "Sécurité", securityHint: "Consulter les sessions du compte", notifications: "Notifications", notificationsHint: "Préférences de notification", preferences: "Préférences", dark: "Mode sombre", appearance: "Apparence", settings: "Paramètres", billing: "Facturation et offres", help: "Aide et assistance", signOut: "Se déconnecter", signingOut: "Déconnexion…", signOutFailed: "La déconnexion n’est pas confirmée. Réessayez avant de quitter cet appareil partagé." },
+} as const
+
+interface UserDropdownProps {
+  username: string
+  email: string
+  avatarUrl?: string
+  organizationName?: string
+  roleNames?: string[]
+  canChangePassword?: boolean
+}
+
+export default function UserDropdownMenu({ username, email, avatarUrl, organizationName, roleNames = [], canChangePassword = false }: UserDropdownProps) {
+  const router = useRouter(), pathname = usePathname(), passwordCopy = useTranslations("passwordChange")
+  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE, t = accountMenuCopy[locale === "fr" ? "fr" : "en"]
+  const { resolvedTheme, setTheme } = useTheme()
+  const [open, setOpen] = useState(false), [busy, setBusy] = useState(false), [failed, setFailed] = useState(false)
+  const lock = useRef(false)
+  const initials = username.trim().split(/\s+/).map(word => word.charAt(0)).join("").toUpperCase().slice(0, 2)
+  const navigate = (path: string) => { setOpen(false); router.push(localizePath(path, locale)) }
+  const logout = async () => {
+    if (lock.current) return
+    lock.current = true; setBusy(true); setFailed(false)
+    try {
+      const result = await authClient.signOut()
+      if (result.error) throw new Error("Sign-out unconfirmed")
+      window.location.assign(localizePath("/login", locale))
+    } catch { setFailed(true); setOpen(true) }
+    finally { lock.current = false; setBusy(false) }
+  }
+  const itemClass = "cursor-pointer rounded-lg px-3 py-2.5"
+  return <DropdownMenu open={open} onOpenChange={value => { if (!busy) setOpen(value) }}>
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" aria-label={passwordCopy("accountMenu")} className="dashboard-top-button h-10 w-10 gap-3 rounded-xl px-0 2xl:h-12 2xl:w-auto 2xl:px-3">
+        <Avatar className="h-8 w-8"><AvatarImage src={avatarUrl} alt="" /><AvatarFallback className="bg-[var(--dash-accent-soft)] text-[var(--dash-text)]">{initials || <User aria-hidden="true" className="h-4 w-4" />}</AvatarFallback></Avatar>
+        <span className="hidden max-w-32 truncate text-sm font-semibold 2xl:block">{username}</span>
+        <ChevronDown className="hidden h-4 w-4 2xl:block" aria-hidden="true" />
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" sideOffset={8} className="w-[calc(100vw-1rem)] max-w-80 max-h-[var(--radix-dropdown-menu-content-available-height)] overflow-y-auto rounded-xl p-2 motion-reduce:animate-none">
+      <DropdownMenuLabel className="space-y-1 px-3 py-3 font-normal">
+        <span className="block break-words font-semibold">{username}</span>
+        <span className="block break-all text-xs">{email}</span>
+        {organizationName && <span className="block break-words text-xs">{organizationName}</span>}
+        {roleNames.length > 0 && <span className="block break-words text-xs">{roleNames.join(", ")}</span>}
+      </DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuLabel className="text-xs">{t.account}</DropdownMenuLabel>
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/profile")}><User aria-hidden="true" /><span>{t.profile}<span className="block text-xs font-normal">{t.profileHint}</span></span></DropdownMenuItem>
+        {canChangePassword && <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/change-password")}><KeyRound aria-hidden="true" />{passwordCopy("title")}</DropdownMenuItem>}
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/settings/security")}><Shield aria-hidden="true" /><span>{t.security}<span className="block text-xs font-normal">{t.securityHint}</span></span></DropdownMenuItem>
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/settings/notifications")}><Bell aria-hidden="true" /><span>{t.notifications}<span className="block text-xs font-normal">{t.notificationsHint}</span></span></DropdownMenuItem>
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/settings")}><Settings aria-hidden="true" />{t.settings}</DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuGroup>
+        <DropdownMenuLabel className="text-xs">{t.preferences}</DropdownMenuLabel>
+        <DropdownMenuCheckboxItem className="cursor-pointer rounded-lg py-2.5" checked={resolvedTheme === "dark"} onCheckedChange={value => setTheme(value ? "dark" : "light")} onSelect={event => event.preventDefault()}><Moon aria-hidden="true" className="mr-2 h-4 w-4" />{t.dark}</DropdownMenuCheckboxItem>
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/settings/appearance")}><Palette aria-hidden="true" />{t.appearance}</DropdownMenuItem>
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/dashboard/billing")}><CreditCard aria-hidden="true" />{t.billing}</DropdownMenuItem>
+        <DropdownMenuItem className={itemClass} onSelect={() => navigate("/help")}><HelpCircle aria-hidden="true" />{t.help}</DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem className={itemClass} disabled={busy} onSelect={event => { event.preventDefault(); void logout() }}><LogOut aria-hidden="true" />{busy ? t.signingOut : t.signOut}</DropdownMenuItem>
+      {failed && <p role="alert" className="px-3 py-2 text-sm">{t.signOutFailed}</p>}
+    </DropdownMenuContent>
+  </DropdownMenu>
+}
+

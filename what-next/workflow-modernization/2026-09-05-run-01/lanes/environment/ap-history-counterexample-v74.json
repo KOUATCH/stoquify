@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-08T13:55:51.489Z",
+  "scope": "Read-only verification of one explicitly named owned synthetic invoice from navigation browser evidence",
+  "invoice": {
+    "id": "cmtsq7hpg004dmaf8jma427er",
+    "organizationId": "workflow_supplier_ack_en_navigation-current-274dc8ce-342-fr",
+    "status": "MATCHED",
+    "total": "2500",
+    "amountPaid": "0",
+    "postedBusinessEventId": null,
+    "ledgerPostingBatchId": null
+  },
+  "ledgerRows": 0,
+  "screenshot": "navigation-current-fr-history-desktop-274dc8ce-342.png",
+  "observation": "The actual AP history screenshot labels 2500 FCFA as open debt and positive payable movement for this matched, unposted invoice with zero tenant ledger rows. Source sums all invoice totals and assigns positive movement regardless of posting status. This disproves treating the current read model as verified posted liability.",
+  "additionalFinding": "The currency column renders the untranslated apHistory.table.currency key.",
+  "sourceHashes": {
+    "services/purchasing/ap-history.service.ts": "2e8991736333beb090ea686c331a045c35ff876a7f25f3355929007faca8da99",
+    "components/purchasing/APHistoryWorkbench.tsx": "8eb8f5f11efa59d99cae76c27d7c8d93f6bf127c92b708981392ebe67632cdf0",
+    "messages/en.json": "604111ca773bc32db1f34597ee6c5dc632b53a8541245cc381e7850c972a15a1",
+    "messages/fr.json": "c899c288f4af247ca9c9376eabca663b8199e737d980c8d9eb30212938d8aacb"
+  },
+  "next": "Correct AP history status/ledger basis, currency scope, cutoff semantics and retained-record behavior with focused data and browser checks. This receipt does not certify balances."
+}

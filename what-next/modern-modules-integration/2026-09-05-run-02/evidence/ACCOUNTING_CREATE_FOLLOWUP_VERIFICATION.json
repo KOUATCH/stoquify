@@ -1,0 +1,107 @@
+{
+  "recordedAt": "2026-09-05T15:11:33.715Z",
+  "classification": "ACCOUNTING_CREATE_LOOKUP_FAILURE_AND_EN_FR_FOLLOWUP",
+  "productionApproval": false,
+  "tests": {
+    "toolSession": 43379,
+    "exitCode": 0,
+    "suitesPassed": 1,
+    "testsPassed": 13,
+    "seconds": 9.31,
+    "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx"
+  },
+  "lint": {
+    "toolSession": 77855,
+    "exitCode": 0,
+    "paths": [
+      "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+      "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx"
+    ]
+  },
+  "browser": {
+    "status": "PREPARED_NOT_EXECUTED",
+    "helper": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/journal-stopped-submit-browser.cjs",
+    "syntaxCheck": {
+      "exitCode": 0
+    }
+  },
+  "sourceHashes": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "sha256": "0767f4638a72a8465af0855c289b104817461ee9716742fac41f4511094f2467"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+      "sha256": "1efe879fa0a6955bb738427e35100b9587d930f1bc6fe2f22a2216e32f3cc1de"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx",
+      "sha256": "47a22428e6e28be2cf7881f8d0136d1167bc98723f59e33162e4232519f72ed5"
+    },
+    {
+      "path": "actions/accounting/accounts.actions.ts",
+      "sha256": "2ca2940a47151f474975e76c0e65b93bd60ec738c9945cf93fac84675c913202"
+    },
+    {
+      "path": "actions/accounting/journals.actions.ts",
+      "sha256": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "lib/modules/module-operation-error.ts",
+      "sha256": "b61ed2a4d548d8808c851af2f05bd3712c947fa47ead7d837227cfdd7071c06f"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "93c2ec82bd315ba3199a8e7fee6dceedb9ee05582fe3749d6a7697869ae39464"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "5ef8ea869f022fd85b34fa6c4b6b3e03e23db013a62a811424e44972c2e28559"
+    }
+  ],
+  "messageScope": [
+    {
+      "locale": "en",
+      "namespace": "moduleComposition.accountingCreate",
+      "keys": [
+        "loadFailedTitle",
+        "loadFailedDescription",
+        "retryLoad",
+        "emptySetup",
+        "createDraft",
+        "stoppedTitle",
+        "stoppedDescription",
+        "reviewAccess",
+        "openQueue",
+        "failedTitle",
+        "connectionFailure",
+        "creating"
+      ],
+      "sha256": "c811ba4eb4490b21315f48a0ec8bdfd521e7c4978e4bc0ea95f1fccbff842a51"
+    },
+    {
+      "locale": "fr",
+      "namespace": "moduleComposition.accountingCreate",
+      "keys": [
+        "loadFailedTitle",
+        "loadFailedDescription",
+        "retryLoad",
+        "emptySetup",
+        "createDraft",
+        "stoppedTitle",
+        "stoppedDescription",
+        "reviewAccess",
+        "openQueue",
+        "failedTitle",
+        "connectionFailure",
+        "creating"
+      ],
+      "sha256": "634bf355837c3c5751cbd1430ff53d4afb2660324ab4c2ba0c707d3f89b5ffab"
+    }
+  ]
+}

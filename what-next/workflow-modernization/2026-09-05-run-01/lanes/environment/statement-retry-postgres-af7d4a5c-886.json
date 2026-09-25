@@ -1,0 +1,85 @@
+{
+  "run": "af7d4a5c-886",
+  "startedAt": "2026-09-07T07:57:39.276Z",
+  "sourcesBefore": {
+    "services/accounting/customer-statement-retry.service.ts": "f37e56ea3e6bff61beaf7cfecb7492910ff0fc0fe8b1f0e98db3be456125dd17",
+    "services/accounting/customer-statement-history.service.ts": "337acd530edfd0a9922173cad7231bf50809b43d7df065e7cd8c5ee04a0ae7ba",
+    "services/accounting/customer-statement-delivery-recovery.ts": "4953a59aee97b05b003dba4c168093afc875895678bd8330b782c8f71f3ad97c",
+    "services/accounting/customer-statement.schemas.ts": "7fb4d93d60b164b94d8b71d074c6547db50aee34ee1c1a1fece78274398649cb",
+    "services/communication/customer-statement-delivery-worker.service.ts": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": "Owned local PostgreSQL, synthetic fixtures and injected provider outcomes; no external sends.",
+  "checks": [
+    {
+      "name": "same deferred request resumes once and replay returns its receipt without another queue effect",
+      "passed": true,
+      "attemptsPreserved": true,
+      "providerCalls": 1,
+      "oneRetryAudit": true
+    },
+    {
+      "name": "concurrent identical commands share one committed receipt",
+      "passed": true,
+      "oneReceipt": true
+    },
+    {
+      "name": "concurrent different requests against one preview accept only one",
+      "passed": true,
+      "oneAcceptedOneConflict": true
+    },
+    {
+      "name": "unknown provider outcome cannot be requeued by a current operator",
+      "passed": true,
+      "unchanged": true
+    },
+    {
+      "name": "revocation after preview prevents retry and retains the deferred evidence",
+      "passed": true,
+      "noRequeue": true
+    },
+    {
+      "name": "customer and tenant substitution cannot inspect or retry another record",
+      "passed": true,
+      "denials": 3
+    },
+    {
+      "name": "reused command identity with different reason is rejected",
+      "passed": true,
+      "noSecondRequest": true
+    },
+    {
+      "name": "an audit failure rolls back the queue transition and command event together",
+      "passed": true,
+      "atomicRollback": true
+    },
+    {
+      "name": "missing setup can pause again without pretending completion or resetting attempts",
+      "passed": true,
+      "attempts": 2,
+      "providerCalls": 0
+    },
+    {
+      "name": "attempt exhaustion blocks manual recovery even with not-sent evidence",
+      "passed": true,
+      "limitRetained": true
+    }
+  ],
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T07:57:40.874Z",
+  "sourcesAfter": {
+    "services/accounting/customer-statement-retry.service.ts": "f37e56ea3e6bff61beaf7cfecb7492910ff0fc0fe8b1f0e98db3be456125dd17",
+    "services/accounting/customer-statement-history.service.ts": "337acd530edfd0a9922173cad7231bf50809b43d7df065e7cd8c5ee04a0ae7ba",
+    "services/accounting/customer-statement-delivery-recovery.ts": "4953a59aee97b05b003dba4c168093afc875895678bd8330b782c8f71f3ad97c",
+    "services/accounting/customer-statement.schemas.ts": "7fb4d93d60b164b94d8b71d074c6547db50aee34ee1c1a1fece78274398649cb",
+    "services/communication/customer-statement-delivery-worker.service.ts": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

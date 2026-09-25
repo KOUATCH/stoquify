@@ -8,9 +8,13 @@ import {
 import type { CreateTransferPayload, LocationTransferDTO, TransferStatus } from "@/types/inventoryMovementTypes"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
+import { useTranslations } from "next-intl"
+import { getTransferDetail } from "@/actions/inventory/transferLifecycleActions"
+import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 
 type TransferFilters = {
   search?: string
+  awaitingReceipt?: boolean
   status?: TransferStatus
   fromLocationId?: string
   toLocationId?: string
@@ -20,6 +24,7 @@ type TransferFilters = {
 
 type TransfersActionData = {
   transfers: LocationTransferDTO[]
+  pagination: { page: number; limit: number; total: number; totalPages: number; hasNext: boolean; hasPrev: boolean }
 }
 
 type TransferMutationData = {
@@ -59,7 +64,7 @@ export function useTransfers(
   organizationId: string | undefined,
   filters?: TransferFilters,
 ) {
-  return useQuery<LocationTransferDTO[]>({
+  const query = useQuery<TransfersActionData>({
     queryKey: TransferKeys.list(organizationId!, filters),
     queryFn: async () => {
       const response = await getTransfers({ organizationId: organizationId!, filters })
@@ -68,11 +73,12 @@ export function useTransfers(
         throw new Error(actionErrorMessage(response.error, "Failed to fetch transfers"))
       }
 
-      return ((response.data as TransfersActionData | undefined)?.transfers ?? []) as LocationTransferDTO[]
+      return response.data as TransfersActionData
     },
     enabled: !!organizationId,
     placeholderData: (previousData) => previousData,
   })
+  return { ...query, data: query.data?.transfers, pagination: query.data?.pagination }
 }
 
 /**
@@ -82,14 +88,13 @@ export function useTransfer(transferId: string | undefined, organizationId: stri
   return useQuery<LocationTransferDTO | null>({
     queryKey: TransferKeys.detail(transferId!, organizationId!),
     queryFn: async () => {
-      const response = await getTransfers({ organizationId: organizationId!, filters: { limit: 100 } })
+      const response = await getTransferDetail({ organizationId: organizationId!, transferId: transferId! })
 
       if (!response.success) {
         throw new Error(actionErrorMessage(response.error, "Failed to fetch transfer"))
       }
 
-      const transfers = (response.data as TransfersActionData | undefined)?.transfers ?? []
-      return transfers.find((transfer) => transfer.id === transferId) ?? null
+      return response.data?.transfer ?? null
     },
     enabled: !!transferId && !!organizationId,
   })
@@ -102,16 +107,19 @@ export function useTransfer(transferId: string | undefined, organizationId: stri
 /**
  * Hook to create a new transfer
  */
-export function useCreateTransfer() {
+export function useCreateTransfer(options: { inlineStoppedWork?: boolean } = {}) {
   const queryClient = useQueryClient()
-  const { formSuccess, formError } = useNotifications()
+  const { formSuccess, formError, error: notifyError } = useNotifications()
+  const t = useTranslations("moduleComposition.stop")
 
   return useMutation({
-    meta: { operation: 'create', entity: 'Transfer' },
+    meta: { operation: 'create', entity: 'Transfer', suppressErrorNotification: true },
     mutationFn: async (data: CreateTransferPayload) => {
       const response = await createLocationTransfer({ data })
 
       if (!response.success) {
+        const reason = getModuleOperationErrorReason(response.error)
+        if (reason) throw Object.assign(new Error(t("deniedMessage")), { code: "FORBIDDEN", reason })
         throw new Error(actionErrorMessage(response.error, "Failed to create transfer"))
       }
 
@@ -123,7 +131,10 @@ export function useCreateTransfer() {
       queryClient.invalidateQueries({ queryKey: ["inventory"] })
     },
     onError: (error: Error) => {
-      formError("Create Transfer", error.message || "Failed to create transfer")
+      if (getModuleOperationErrorReason(error)) {
+        if (!options.inlineStoppedWork) notifyError(t("deniedTitle"), error.message)
+      }
+      else formError("Create Transfer", error.message || "Failed to create transfer")
     },
   })
 }

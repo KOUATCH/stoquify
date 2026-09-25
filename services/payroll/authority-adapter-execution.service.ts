@@ -720,7 +720,7 @@ export async function enqueuePayrollAuthorityAdapterExecution(
       schemaVersion: 1,
       idempotencyKey: `payroll-authority-adapter:${evidence.id}:${idempotencyKey}:queued`,
       actorId: parsed.actorId ?? undefined,
-      sourceType: "PAYROLL_DECLARATION",
+      sourceEntityType: "PAYROLL_DECLARATION",
       sourceId: evidence.declarationId,
       documentHash: evidence.evidenceHash,
       payload: {
@@ -1072,7 +1072,7 @@ export async function processPayrollAuthorityAdapterExecution(
       schemaVersion: 1,
       idempotencyKey: `payroll-authority-adapter:${evidence.id}:${execution.correlationId}:${execution.status}:${now.toISOString()}`,
       actorId: parsed.processedBy ?? undefined,
-      sourceType: "PAYROLL_DECLARATION",
+      sourceEntityType: "PAYROLL_DECLARATION",
       sourceId: evidence.declarationId,
       documentHash: execution.responseHash ?? evidence.evidenceHash,
       payload: {

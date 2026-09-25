@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-19T13:07:42.550Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts": "93eb83cf3224eac58decb2442640cf8a8b7544216a477d2c10d9d9e99c8d9af1",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "cf703743e000a88106951e5fc044b05ed2ad153c8f566af78b4c6f3d05487c04",
+    "actions/accounting/close-assurance.actions.ts": "5576796f56b0234fa2416c92f35ea20471cef95099fd09d72efc07036ade5a2e"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        }
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toHaveCount(expected) failed\n\nLocator:  getByRole('heading', { name: 'Close & Assurance Center', exact: true })\nExpected: 0\nReceived: 1\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.count\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Close & Assurance Center', exact: true })\n    119 × locator resolved to 1 element\n        - unexpected value \"1\"\n",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts": "93eb83cf3224eac58decb2442640cf8a8b7544216a477d2c10d9d9e99c8d9af1",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "cf703743e000a88106951e5fc044b05ed2ad153c8f566af78b4c6f3d05487c04",
+    "actions/accounting/close-assurance.actions.ts": "5576796f56b0234fa2416c92f35ea20471cef95099fd09d72efc07036ade5a2e"
+  },
+  "sourceStable": true
+}

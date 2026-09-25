@@ -1,0 +1,25 @@
+{
+  "at": "2026-09-19T14:15:06.518Z",
+  "sourceBefore": {
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "c0282ffe869bb13a3f4fbe571186333b8a7e677b1e1ec553839a7671e2066fb9",
+    "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx": "48477e86142b194dd82fbc2d90ea301552f103aaac08ec0789af8bf15ae99eb1",
+    "actions/owner-war-room/owner-war-room.actions.ts": "6f154950d73fa55b1fb5ef03897e829695209a780a101c5df949d63c3e8a7010",
+    "actions/manager-action-center/manager-action-center.actions.ts": "01e401ea7fcabefdbaedefe9b379ffb339f1e922c0e3230520daaa92aaa921e1",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "b370a4f4d6a957f61b97ab57439a72a7727a5cbf77b7a5ef93c6088b8ef5fdac",
+    "messages/fr.json": "38122c8ba71b191e2bca6d46f27c0d789a6b62fb4fd109b81ffc352ec3c17ee3"
+  },
+  "checks": [],
+  "passed": false,
+  "error": "expect(locator).toHaveCount(expected) failed\n\nLocator:  getByRole('heading', { name: 'Owner War Room', exact: true })\nExpected: 0\nReceived: 1\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.count\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Owner War Room', exact: true })\n    119 × locator resolved to 1 element\n        - unexpected value \"1\"\n",
+  "sourceAfter": {
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "c0282ffe869bb13a3f4fbe571186333b8a7e677b1e1ec553839a7671e2066fb9",
+    "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx": "48477e86142b194dd82fbc2d90ea301552f103aaac08ec0789af8bf15ae99eb1",
+    "actions/owner-war-room/owner-war-room.actions.ts": "6f154950d73fa55b1fb5ef03897e829695209a780a101c5df949d63c3e8a7010",
+    "actions/manager-action-center/manager-action-center.actions.ts": "01e401ea7fcabefdbaedefe9b379ffb339f1e922c0e3230520daaa92aaa921e1",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "b370a4f4d6a957f61b97ab57439a72a7727a5cbf77b7a5ef93c6088b8ef5fdac",
+    "messages/fr.json": "38122c8ba71b191e2bca6d46f27c0d789a6b62fb4fd109b81ffc352ec3c17ee3"
+  },
+  "sourceStable": true
+}

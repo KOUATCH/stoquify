@@ -1,0 +1,9 @@
+{
+  "stage": "read-only inventory before browser launch",
+  "exitCode": 1,
+  "failure": "Count model unavailable: employee",
+  "correction": "Verified actual Prisma model PayrollEmployee in current schema and changed only this diagnostic helper to payrollEmployee.",
+  "browserLaunched": false,
+  "databaseWrites": false,
+  "interpretation": "Diagnostic assumption corrected; no employee count was returned as zero. No application defect claim."
+}

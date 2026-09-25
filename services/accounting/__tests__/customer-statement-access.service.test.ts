@@ -57,7 +57,8 @@ function snapshot() {
 }
 
 describe("customer statement access service", () => {
-  it("issues only a hash-registered content-bound token with explicit scopes", async () => {
+  it.each([undefined, {}, { purpose: "CONSENTED_STATEMENT_DELIVERY", evidence: { source: "test" } }])(
+    "issues a hash-registered content-bound token with constraint-compatible metadata (%#)", async metadata => {
     const tx = {
       user: {
         findFirst: jest.fn().mockResolvedValue({ id: "user-1" }),
@@ -82,6 +83,7 @@ describe("customer statement access service", () => {
       recipientReference: "ada@example.test",
       ttlSeconds: 3600,
       now: NOW,
+      metadata,
     })
 
     expect(result.token).toBeTruthy()
@@ -105,6 +107,11 @@ describe("customer statement access service", () => {
     expect(data.tokenHash).toMatch(/^[0-9a-f]{64}$/)
     expect(data.jtiHash).toMatch(/^[0-9a-f]{64}$/)
     expect(data.recipientHash).toMatch(/^[0-9a-f]{64}$/)
+    expect(data.metadata).toEqual(metadata ?? Prisma.DbNull)
+    if (metadata === undefined) expect(data.metadata).toBe(Prisma.DbNull)
+    expect(data.metadata).not.toBe(Prisma.JsonNull)
+    expect(tx.customerStatementAccessToken.create).toHaveBeenCalledTimes(1)
+    expect(tx.auditLog.create).toHaveBeenCalledTimes(1)
     expect(JSON.stringify(data)).not.toContain(result.token)
   })
 

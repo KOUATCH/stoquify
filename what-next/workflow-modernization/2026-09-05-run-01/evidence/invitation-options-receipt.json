@@ -1,0 +1,134 @@
+{
+  "recordedAt": "2026-09-06T05:49:27.076Z",
+  "baseline": "evidence/source-baseline-v14.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 206,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2449,
+      "tests": 842,
+      "pages": 147,
+      "routeHandlers": 17,
+      "actionSources": 149,
+      "backgroundCandidates": 31,
+      "uiControlCandidates": 2024,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 214,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "guide": "lanes/environment/INVITATION_ROLE_OPTIONS.md",
+  "sources": {
+    "services/users/user-invitation-options.service.ts": "7f9242f7ffc931c53d5e3d81e97cfa2f5d0c9dfd6fa59a6ff9d1e10be531b098",
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "130f7e2388ba596fac6a78f7c7db3f18d944aba3af9135b67bd0f7c15fd87a94",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "components/Forms/users/userInvitationForm.tsx": "9c32f2608866765be6cb891758fca505d8c30abdb6097e60647a0e387e092c00",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "messages/en.json": "1a9ec6a4d6ac8339199b44efca18eec84bf3b040552fc5b6a474c1fb3e5449f3",
+    "messages/fr.json": "68f2b63d80617c31ea74fc7e9e2d5f3c027392de187433c07318ae099dc65f8f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/users/__tests__/user-invitation-options.service.test.ts": "4e38ebfb107982890aac904790985bf94351568882f0b995c103f9ad89cc5d74",
+    "components/auth/v2/__tests__/UserInvitationForm.test.tsx": "67ea580764db3adb5afc31edf129f19bc8760961ad932f443dfb8d868b96c9d6",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "da50744da01871c8161b587fdb4aab0622d907f9d978a4e659b83bed90158378",
+    "services/users/__tests__/user-identity.service.test.ts": "cb28e15e69e227b42a4fb7538fe995167c7aeab08addb158cddd74c31a479d75",
+    "actions/users/__tests__/sendInvite.authorization.test.ts": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04",
+    "actions/users/__tests__/getOrgInvites.test.ts": "4850b694209dfc2e0d0f0daed366089e6ba25e7923d4c120e3f99776947748fd"
+  },
+  "tests": {
+    "file": "evidence/invitation-options-after-02.json",
+    "passed": 108,
+    "suites": 6,
+    "chunk": "ca8084",
+    "seconds": 5.004
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "session": 86575,
+    "chunk": "e4a895",
+    "exitCode": 0
+  },
+  "lint": {
+    "runner": "node_modules/eslint/bin/eslint.js",
+    "changedFiles": 5,
+    "chunk": "e43fff",
+    "exitCode": 0
+  },
+  "diff": {
+    "command": "git diff --check -- <seven scoped paths>",
+    "chunk": "1217c0",
+    "exitCode": 0
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-options-postgres-6d4cd386-aae.json",
+    "passed": 3,
+    "failed": 0,
+    "authorityUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-options-browser-3d7177a5-536.json",
+    "passed": 2,
+    "failed": 0,
+    "authorityUnchanged": true,
+    "readyRouteMs": {
+      "en": 5718,
+      "fr": 5041
+    }
+  },
+  "screenshots": [
+    {
+      "file": "evidence/invitation-options/en-invitation-options-read-only-3d7177a5-536.png",
+      "sha256": "c4594be71c40cd740d3180aefe6a9e7c07db910ec9cd806fe17f7af7e6f1a7ef"
+    },
+    {
+      "file": "evidence/invitation-options/en-invitation-options-role-read-required-3d7177a5-536.png",
+      "sha256": "df925aba2800ccb0e15953abdb9b0a363b6121cf5ef92083210d02707b7fae15"
+    },
+    {
+      "file": "evidence/invitation-options/en-invitation-options-confirmation-required-3d7177a5-536.png",
+      "sha256": "8efb61bc0f495116e3e4ee5385354a6ea2125fe0a2980c51d538b49afe16d874"
+    },
+    {
+      "file": "evidence/invitation-options/en-invitation-options-identity-confirmed-3d7177a5-536.png",
+      "sha256": "99d0300a4c3b7b58745be38d1e6d2953b87c8a929db1eae74d39b9c044daf0f1"
+    },
+    {
+      "file": "evidence/invitation-options/fr-invitation-options-read-only-3d7177a5-536.png",
+      "sha256": "21946f9024db9b1b1225c59e073ab502cde913bdee779ddbf646539de00fd2be"
+    },
+    {
+      "file": "evidence/invitation-options/fr-invitation-options-role-read-required-3d7177a5-536.png",
+      "sha256": "75fcc893686606dec92058754f6ad7a81c50203217bff9afb15ad676b8678393"
+    },
+    {
+      "file": "evidence/invitation-options/fr-invitation-options-confirmation-required-3d7177a5-536.png",
+      "sha256": "8ff55bafc1b84e89db05286581ea0f88594b02c64c16d521e19b2ed3e5fd8247"
+    },
+    {
+      "file": "evidence/invitation-options/fr-invitation-options-identity-confirmed-3d7177a5-536.png",
+      "sha256": "6def6a174b2e135e5742d82453d0396d937ecf9fd9fa7d96a19afcce6723d591"
+    }
+  ],
+  "failedAttempts": [
+    {
+      "file": "evidence/invitation-options-attempt-01.json",
+      "passed": 106,
+      "failed": 1,
+      "reason": "Test assumed wildcard-only critical grant authority; existing stricter policy retained"
+    }
+  ],
+  "remaining": "Issuance provider calls still run inside the transaction; durable outbox, atomic issuance audit, inviter/permission provenance, revision-safe reissue and unknown-outcome recovery remain required. No successful live delivery, complete invitation lifecycle, directory-wide EN/FR/native zoom/screen reader/contrast or full release/build assurance is claimed.",
+  "completeWorkflowVerified": false
+}

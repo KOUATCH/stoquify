@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-13T17:17:20.552Z",
+  "sourceBefore": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+    "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+    "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+    "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+    "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+    "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+    "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+    "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "pageErrors": [],
+      "readyMs": 7787,
+      "catalogueEditDoesNotRepriceMargin": true,
+      "hourlyKeyboardTable": true
+    }
+  ],
+  "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Reports could not be loaded safely. Try again or adjust the filters.\"\nError: strict mode violation: getByRole('alert') resolved to 3 elements:\n    1) <div role=\"alert\" class=\"border bg-card shadow dashboard-glass-panel rounded-lg text-[var(--dash-text)]\">…</div> aka getByRole('alert').filter({ hasText: 'Reports could not loadReports' })\n    2) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').nth(1)\n    3) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n",
+  "sourceAfter": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+    "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+    "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+    "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+    "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+    "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+    "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+    "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+  },
+  "sourceStable": true
+}

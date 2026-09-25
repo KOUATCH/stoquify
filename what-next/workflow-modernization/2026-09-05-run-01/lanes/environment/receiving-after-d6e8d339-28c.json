@@ -1,0 +1,96 @@
+{
+  "run": "d6e8d339-28c",
+  "at": "2026-09-07T17:41:54.163Z",
+  "stage": "service-prerequisites",
+  "sourceBefore": {
+    "services/purchase-order/purchase-order.service.ts": "3f7212c808894772d18661436d4da11e25f87132aed8af955008a72ed5bfc06f",
+    "services/purchase-order/purchase-receiving-authority.ts": "965f4df396fab8ca74f74806204d896db20807d758d9f274aff80aea34b197eb",
+    "services/purchase-order/purchase-order.schemas.ts": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "8486fccbc8cc4325427b630d096ce6e54f291bf5fb7a889753551a754f1f607c",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84"
+  },
+  "checks": [
+    {
+      "name": "Authorized held receipt has one mandatory audit and exact concurrent replay",
+      "status": "passed",
+      "heldOnly": true
+    },
+    {
+      "name": "Reject role before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject session before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject foreign before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject duplicate before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject cost before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject reason before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject expiry before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject inactive-location before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Reject inactive-item before receiving effects",
+      "status": "passed",
+      "noReceipt": true
+    },
+    {
+      "name": "Resolution requires current authority, current password and independent acceptance",
+      "status": "passed",
+      "deniedCases": 3
+    },
+    {
+      "name": "Fractional successive receipts reach exact stock and preserve the ledger blocker",
+      "status": "passed",
+      "stockQuantity": "0.300",
+      "accounting": "FAILED_WITH_EXPLICIT_LEDGER_REVIEW_BLOCKER"
+    },
+    {
+      "name": "Accepting an existing hold preserves a cancelled order and replays one stock effect",
+      "status": "passed",
+      "orderStillCancelled": true,
+      "oneStockEffect": true
+    },
+    {
+      "name": "Receiving audit failure rolls back the held receipt",
+      "status": "passed",
+      "rolledBack": true,
+      "retrySucceeded": true
+    }
+  ],
+  "scope": "Owned isolated records; stock receipt creates the existing explicit ledger blocker, not a posted journal. No external delivery.",
+  "originalUnchanged": true,
+  "sourceAfter": {
+    "services/purchase-order/purchase-order.service.ts": "3f7212c808894772d18661436d4da11e25f87132aed8af955008a72ed5bfc06f",
+    "services/purchase-order/purchase-receiving-authority.ts": "965f4df396fab8ca74f74806204d896db20807d758d9f274aff80aea34b197eb",
+    "services/purchase-order/purchase-order.schemas.ts": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "8486fccbc8cc4325427b630d096ce6e54f291bf5fb7a889753551a754f1f607c",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "at": "2026-09-08T18:47:26.252Z",
+  "run": "11f74bf2-289",
+  "scope": "Owned localhost fixtures and real authenticated recovery actions. Synthetic execution evidence and accounting setup; no bank rail, production mutation or statutory approval.",
+  "sourcesBefore": {
+    "components/purchasing/PaymentPostingRecoveryWorkbench.tsx": "a2d072489109d6ccc085667baf8c433e928abf3f56c23e66912f5206b699944a",
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "f36966f67dd179cbbd551e3f0882a8a7fbeb819268abc0e06fda9f35acc41950",
+    "services/purchasing/payment-posting-recovery.service.ts": "65991f8dac589001bfde2729c347dee8922caf653c323e49e5a972134cb44c0c",
+    "services/purchasing/payment-posting-recovery-contracts.ts": "52204aa8e71e3fded6a0d521b308da5e802c24ccf54dee032b14eb3282aa5efb",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "782645c28ee8a60f3e435f12196fc3816a2b797ee1894a533f5dcc21401fc743",
+    "actions/purchasing/payment-release.actions.ts": "201352770e7d1e8e99543337fb005c440fd9675843b0fb6ce84b91608eb9dec3",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/recovery/page.tsx": "e4d0ac7645f12a197b5e10bfc5dc4243459b3a6a7bd67cab3519d9a20979beca",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "84d349ae026306e65e0226c2a16ce0d3be8ab6802afb98a1df2740a1da6bdfe0",
+    "i18n/request.ts": "41195f59c7713a92cf74e5b51e1377b2bab4814feeaea7da30f05872e40a7c12",
+    "app/[locale]/layout.tsx": "77033f5b5bebd94d1957fbdf7cfa669495bcfae8ef514ef445b79b788d018c98",
+    "messages/payment-posting-recovery/en.json": "50bb59bffa71a4a5df6ccc7fc0d7d3170c7e31d07a77ea223a1494a940356b1c",
+    "messages/payment-posting-recovery/fr.json": "e8bd34cd1154de8b41a53ef7351bcf247edb844342363db188bec246f0851c15"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Existing navigation reaches real scoped recovery; missing setup explains blockers without confirmation or financial effects",
+        "Mobile keyboard containment, real wrong-password denial and stale accounting preview preserve the recorded payment",
+        "Committed response loss and reload recover one journal, retain one reconciliation transaction, preserve paid effects and retain separate exception history",
+        "Retained recovery history, tablet and 200% text reflow, current-role direct-route denial"
+      ],
+      "screenshots": [
+        "payment-posting-recovery-en-blocked-desktop-11f74bf2-289.png",
+        "payment-posting-recovery-en-preview-mobile-11f74bf2-289.png",
+        "payment-posting-recovery-en-stale-mobile-11f74bf2-289.png",
+        "payment-posting-recovery-en-recorded-mobile-11f74bf2-289.png",
+        "payment-posting-recovery-en-recorded-tablet-11f74bf2-289.png",
+        "payment-posting-recovery-en-recorded-text200-11f74bf2-289.png",
+        "payment-posting-recovery-en-history-desktop-11f74bf2-289.png",
+        "payment-posting-recovery-en-denied-11f74bf2-289.png"
+      ],
+      "timings": [
+        {
+          "interaction": "Existing payment navigation to recovery preview (development server)",
+          "milliseconds": 24834
+        }
+      ],
+      "pageErrors": [],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Existing navigation reaches real scoped recovery; missing setup explains blockers without confirmation or financial effects",
+        "Mobile keyboard containment, real wrong-password denial and stale accounting preview preserve the recorded payment",
+        "Committed response loss and reload recover one journal, retain one reconciliation transaction, preserve paid effects and retain separate exception history",
+        "Retained recovery history, tablet and 200% text reflow, current-role direct-route denial"
+      ],
+      "screenshots": [
+        "payment-posting-recovery-fr-blocked-desktop-11f74bf2-289.png",
+        "payment-posting-recovery-fr-preview-mobile-11f74bf2-289.png",
+        "payment-posting-recovery-fr-stale-mobile-11f74bf2-289.png",
+        "payment-posting-recovery-fr-recorded-mobile-11f74bf2-289.png",
+        "payment-posting-recovery-fr-recorded-tablet-11f74bf2-289.png",
+        "payment-posting-recovery-fr-recorded-text200-11f74bf2-289.png",
+        "payment-posting-recovery-fr-history-desktop-11f74bf2-289.png",
+        "payment-posting-recovery-fr-denied-11f74bf2-289.png"
+      ],
+      "timings": [
+        {
+          "interaction": "Existing payment navigation to recovery preview (development server)",
+          "milliseconds": 12252
+        }
+      ],
+      "pageErrors": [],
+      "passed": true
+    }
+  ],
+  "originalBefore": "f952868cfbda5bc5dbac0fab054b6370542b6d9a8a37265d70af81081d8dc66f",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/PaymentPostingRecoveryWorkbench.tsx": "a2d072489109d6ccc085667baf8c433e928abf3f56c23e66912f5206b699944a",
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "f36966f67dd179cbbd551e3f0882a8a7fbeb819268abc0e06fda9f35acc41950",
+    "services/purchasing/payment-posting-recovery.service.ts": "65991f8dac589001bfde2729c347dee8922caf653c323e49e5a972134cb44c0c",
+    "services/purchasing/payment-posting-recovery-contracts.ts": "52204aa8e71e3fded6a0d521b308da5e802c24ccf54dee032b14eb3282aa5efb",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "782645c28ee8a60f3e435f12196fc3816a2b797ee1894a533f5dcc21401fc743",
+    "actions/purchasing/payment-release.actions.ts": "201352770e7d1e8e99543337fb005c440fd9675843b0fb6ce84b91608eb9dec3",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/recovery/page.tsx": "e4d0ac7645f12a197b5e10bfc5dc4243459b3a6a7bd67cab3519d9a20979beca",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "84d349ae026306e65e0226c2a16ce0d3be8ab6802afb98a1df2740a1da6bdfe0",
+    "i18n/request.ts": "41195f59c7713a92cf74e5b51e1377b2bab4814feeaea7da30f05872e40a7c12",
+    "app/[locale]/layout.tsx": "77033f5b5bebd94d1957fbdf7cfa669495bcfae8ef514ef445b79b788d018c98",
+    "messages/payment-posting-recovery/en.json": "50bb59bffa71a4a5df6ccc7fc0d7d3170c7e31d07a77ea223a1494a940356b1c",
+    "messages/payment-posting-recovery/fr.json": "e8bd34cd1154de8b41a53ef7351bcf247edb844342363db188bec246f0851c15"
+  },
+  "sourceStable": true
+}

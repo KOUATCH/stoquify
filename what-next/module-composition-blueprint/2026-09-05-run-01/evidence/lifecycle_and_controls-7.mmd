@@ -1,0 +1,10 @@
+flowchart LR
+  Domain[Committed owner transaction] --> Outbox[Versioned business event]
+  Outbox --> Projection[Deduplicated scoped projection]
+  Outbox --> Notify[Authorized notification]
+  Projection --> Query[Source permissions and freshness]
+  Query --> UI[Dashboard and work queue]
+  Query --> Tool[Allowlisted agent query tool]
+  Tool --> Suggestion[Evidence-linked suggestion]
+  Suggestion --> Human[Authorized human review]
+  Human --> Command[Existing domain command and controls]

@@ -1,0 +1,68 @@
+{
+  "at": "2026-09-09T09:13:43.832Z",
+  "run": "03f56319-c39",
+  "sourcesBefore": {
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8",
+    "services/accounting/posting.service.ts": "9a4ca1019d85480a4178b40ed37a275e17e03d94b9c88b8e6db82cc8f1bdfa3b",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "6a85e9b2fd864c2e74e78abeffd8a0383046c65fd549a551110375d916345f59",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735",
+    "messages/en.json": "1505eae9425cc69e78f6037932fec4796582cd37642da37dcd56636e2f73becd",
+    "messages/fr.json": "4351b35713e7f42520917b6e8153b4bc72e3b4b004ff0e95ccd6f1acf59c347f"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Actual posted suspense journal retains evidence and shows localized explanation instead of generic reversal",
+        "Existing horizontally scrollable table keeps explanation reachable on mobile/tablet and at 200% text",
+        "Read/reload does not reverse the journal or change suspense state"
+      ],
+      "screenshots": [
+        "suspense-cycle-v97-en-desktop-03f56319-c39.png",
+        "suspense-cycle-v97-en-width-320-03f56319-c39.png",
+        "suspense-cycle-v97-en-width-390-03f56319-c39.png",
+        "suspense-cycle-v97-en-width-768-03f56319-c39.png",
+        "suspense-cycle-v97-en-text200-03f56319-c39.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 42381
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Actual posted suspense journal retains evidence and shows localized explanation instead of generic reversal",
+        "Existing horizontally scrollable table keeps explanation reachable on mobile/tablet and at 200% text",
+        "Read/reload does not reverse the journal or change suspense state"
+      ],
+      "screenshots": [
+        "suspense-cycle-v97-fr-desktop-03f56319-c39.png",
+        "suspense-cycle-v97-fr-width-320-03f56319-c39.png",
+        "suspense-cycle-v97-fr-width-390-03f56319-c39.png",
+        "suspense-cycle-v97-fr-width-768-03f56319-c39.png",
+        "suspense-cycle-v97-fr-text200-03f56319-c39.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 2994
+    }
+  ],
+  "scope": "Owned app, actual synthetic suspense posting and normal sign-in; source-owned reversal explanation. No generic reversal or live financial operation performed by browser.",
+  "originalBefore": "ceb2194097e5caed8717336d6becbaeecec50a59c85fef3784e9e1e8b0ca9bbf",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8",
+    "services/accounting/posting.service.ts": "9a4ca1019d85480a4178b40ed37a275e17e03d94b9c88b8e6db82cc8f1bdfa3b",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "6a85e9b2fd864c2e74e78abeffd8a0383046c65fd549a551110375d916345f59",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735",
+    "messages/en.json": "1505eae9425cc69e78f6037932fec4796582cd37642da37dcd56636e2f73becd",
+    "messages/fr.json": "4351b35713e7f42520917b6e8153b4bc72e3b4b004ff0e95ccd6f1acf59c347f"
+  },
+  "sourceStable": true
+}

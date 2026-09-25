@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { itemImageReferenceSchema } from "@/lib/item/form-validation"
 
 const NAME_MAX = 200
 const DESC_MAX = 1000
@@ -31,7 +32,7 @@ export const ItemCreateSchema = z.object({
   slug: z.string().max(220).optional(),
   costPrice: z.coerce.number().min(0, "Cost price cannot be negative").default(0),
   sellingPrice: z.coerce.number().min(0, "Selling price cannot be negative").default(0),
-  imageUrls: z.union([z.string().url(), z.array(z.string().url())]).optional(),
+  imageUrls: z.union([itemImageReferenceSchema, z.array(itemImageReferenceSchema)]).optional(),
   thumbnail: z.string().nullable().optional(),
   categoryId: z.string().nullish(),
   brandId: z.string().nullish(),
@@ -66,7 +67,7 @@ export const ItemUpdateSchema = z.object({
   sellingPrice: z.coerce.number().min(0).optional(),
   sku: z.string().max(100).trim().optional(),
   thumbnail: z.string().nullable().optional(),
-  imageUrls: z.array(z.string().url()).optional(),
+  imageUrls: z.array(itemImageReferenceSchema).optional(),
   isActive: z.boolean().optional(),
   isDiscontinued: z.boolean().optional(),
 })

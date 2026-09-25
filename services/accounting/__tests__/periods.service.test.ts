@@ -7,9 +7,10 @@ jest.mock("@/prisma/db", () => ({
 import { Prisma } from "@prisma/client"
 import { db } from "@/prisma/db"
 
-import { closeAccountingPeriod } from "../periods.service"
+import { closeAccountingPeriod, getOpenPeriodForDate } from "../periods.service"
 
 const mockTx = {
+  $queryRaw: jest.fn(),
   accountingPeriod: {
     findFirst: jest.fn(),
     update: jest.fn(),
@@ -53,7 +54,8 @@ const openPeriod = {
 
 describe("period close preflight", () => {
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
+    mockTx.$queryRaw.mockResolvedValue([openPeriod])
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     mockTx.accountingPeriod.findFirst.mockResolvedValue(openPeriod)
     mockTx.ledgerPostingBatch.count.mockResolvedValue(0)
@@ -104,6 +106,8 @@ describe("period close preflight", () => {
     })
 
     expect(result).toMatchObject({ status: "CLOSED" })
+    expect(mockTx.$queryRaw).toHaveBeenCalled()
+    expect(mockTx.$queryRaw.mock.invocationCallOrder[0]).toBeLessThan(mockTx.ledgerPostingBatch.count.mock.invocationCallOrder[0])
     expect(mockTx.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -123,6 +127,19 @@ describe("period close preflight", () => {
         }),
       }),
     )
+  })
+
+  it("rechecks period state after acquiring the posting lock", async () => {
+    mockTx.accountingPeriod.findFirst.mockResolvedValue(openPeriod)
+    mockTx.$queryRaw.mockResolvedValueOnce([{ ...openPeriod, status: "CLOSED" }])
+    await expect(getOpenPeriodForDate("org-1", new Date("2026-06-15T12:00:00Z"), mockTx as unknown as Prisma.TransactionClient)).rejects.toThrow(/not open/)
+    expect(mockTx.$queryRaw).toHaveBeenCalled()
+  })
+
+  it("does not proceed when the period lock cannot be acquired", async () => {
+    mockTx.$queryRaw.mockRejectedValueOnce(new Error("Lock wait failed"))
+    await expect(getOpenPeriodForDate("org-1", new Date("2026-06-15T12:00:00Z"), mockTx as unknown as Prisma.TransactionClient)).rejects.toThrow("Lock wait failed")
+    expect(mockTx.accountingPeriod.update).not.toHaveBeenCalled()
   })
 
   it("audits and blocks period close without fresh control context", async () => {

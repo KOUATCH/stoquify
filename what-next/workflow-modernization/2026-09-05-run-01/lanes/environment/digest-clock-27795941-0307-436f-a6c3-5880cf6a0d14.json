@@ -1,0 +1,66 @@
+{
+  "at": "2026-09-19T11:54:49.717Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "cases": [
+    {
+      "locale": "en",
+      "early": {
+        "organizationId": "cmu8bye5d0000ma4g8k8npf6h",
+        "generatedAt": "2026-09-19T23:59:59.999Z",
+        "periodStart": "2026-09-19T00:00:00.000Z",
+        "value": 100
+      },
+      "late": {
+        "organizationId": "cmu8bye5d0000ma4g8k8npf6h",
+        "generatedAt": "2026-09-20T00:00:01.000Z",
+        "periodStart": "2026-09-20T00:00:00.000Z",
+        "value": 250
+      },
+      "foreign": {
+        "organizationId": "cmu8bye85000bma4gquhltr4j",
+        "generatedAt": "2026-09-20T00:00:01.000Z",
+        "periodStart": "2026-09-20T00:00:00.000Z",
+        "value": 1900
+      }
+    },
+    {
+      "locale": "fr",
+      "early": {
+        "organizationId": "cmu8bye5d0000ma4g8k8npf6h",
+        "generatedAt": "2026-09-19T23:59:59.999Z",
+        "periodStart": "2026-09-19T00:00:00.000Z",
+        "value": 100
+      },
+      "late": {
+        "organizationId": "cmu8bye5d0000ma4g8k8npf6h",
+        "generatedAt": "2026-09-20T00:00:01.000Z",
+        "periodStart": "2026-09-20T00:00:00.000Z",
+        "value": 250
+      },
+      "foreign": {
+        "organizationId": "cmu8bye85000bma4gquhltr4j",
+        "generatedAt": "2026-09-20T00:00:01.000Z",
+        "periodStart": "2026-09-20T00:00:00.000Z",
+        "value": 1900
+      }
+    }
+  ],
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/snapshots/snapshot-utils.ts": "dfe4045db41e1ad5c0f67fb86058077628cb05a3551f01202c91d46e545b84a4",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "sourceStable": true
+}

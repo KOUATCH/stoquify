@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-19T14:25:12.163Z",
+  "runtime": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad.json",
+  "sourceHashes": {
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "c0282ffe869bb13a3f4fbe571186333b8a7e677b1e1ec553839a7671e2066fb9",
+    "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx": "48477e86142b194dd82fbc2d90ea301552f103aaac08ec0789af8bf15ae99eb1",
+    "actions/owner-war-room/owner-war-room.actions.ts": "6f154950d73fa55b1fb5ef03897e829695209a780a101c5df949d63c3e8a7010",
+    "actions/manager-action-center/manager-action-center.actions.ts": "01e401ea7fcabefdbaedefe9b379ffb339f1e922c0e3230520daaa92aaa921e1",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "b370a4f4d6a957f61b97ab57439a72a7727a5cbf77b7a5ef93c6088b8ef5fdac",
+    "messages/fr.json": "38122c8ba71b191e2bca6d46f27c0d789a6b62fb4fd109b81ffc352ec3c17ee3",
+    "actions/end-of-day-close/branch-daily-close-completion.actions.ts": "67823fd971d22a616935f4517c817161aba025e27df00a84cdef64fa030fe0a1",
+    "services/daily-habit/__tests__/operating-route-access.test.tsx": "b4272edbbf3ef3e5e1c34e372bd21c63d2554f21479bd178a1f8184a6120a674",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx": "92b07fd8a2e2e71a1a408af2d44875c0de9f1f5c583a38641068aa661b0d4fea",
+    "app/[locale]/(dashboard)/dashboard/manager-action-center/__tests__/page.test.tsx": "4e7094c87387f78410cf55f60178b0b5405cebfdbee8969fdca1f80d7769a1ad",
+    "app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/__tests__/page.test.tsx": "814ac17969aa780777e53a81ee4c61e65f461504d73b81ac68f16b3656c9105e",
+    "actions/owner-war-room/__tests__/owner-war-room.actions.test.ts": "c3a507496aa5572b9a935f5488723bcf6c75c6033c6ac2ac23a81fc967ae55da",
+    "actions/manager-action-center/__tests__/manager-action-center.actions.test.ts": "445fcb1bf6814a4efb2b2b246478981dd4b2f442f955326b42e275e072b97842",
+    "actions/end-of-day-close/__tests__/branch-daily-close-completion.actions.test.ts": "c62461c37483d794a8cafcff3f9272cbccd38a432ba650dc77733a224e2ea211"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/daily-habit/__tests__/operating-route-access.test.tsx\" \"app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx\" \"app/[locale]/(dashboard)/dashboard/manager-action-center/__tests__/page.test.tsx\" \"app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/__tests__/page.test.tsx\" \"actions/owner-war-room/__tests__/owner-war-room.actions.test.ts\" \"actions/manager-action-center/__tests__/manager-action-center.actions.test.ts\" \"services/_shared/__tests__/protect.test.ts\" \"actions/end-of-day-close/__tests__/branch-daily-close-completion.actions.test.ts\" \"services/owner-war-room/__tests__/owner-war-room.service.test.ts\" \"services/manager-action-center/__tests__/manager-action-center-query.service.test.ts\"",
+    "lint": "node node_modules/eslint/bin/eslint.js \"app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx\" \"app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx\" \"actions/owner-war-room/owner-war-room.actions.ts\" \"actions/manager-action-center/manager-action-center.actions.ts\" \"actions/end-of-day-close/branch-daily-close-completion.actions.ts\" \"services/daily-habit/__tests__/operating-route-access.test.tsx\" \"app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx\" \"app/[locale]/(dashboard)/dashboard/manager-action-center/__tests__/page.test.tsx\" \"app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/__tests__/page.test.tsx\" \"actions/owner-war-room/__tests__/owner-war-room.actions.test.ts\" \"actions/manager-action-center/__tests__/manager-action-center.actions.test.ts\" \"actions/end-of-day-close/__tests__/branch-daily-close-completion.actions.test.ts\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "runtime": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-operating-destination-access.cjs"
+  },
+  "results": {
+    "tests": "3f5648: 43 passed / seven suites; e71985: 34 passed / three suites; total 77",
+    "lint": "c56321 and 3567f8 passed / twelve changed files",
+    "diff": "e31145 and 3567f8 passed",
+    "typecheck": "99f735 passed"
+  },
+  "failedAttempts": [
+    "8083b6: 28 passed, two suites could not parse newly imported lucide ESM; page fixture mocks now isolate the shared route state, while dedicated wrapper tests verify denial props.",
+    "operating-dest-caf9db30-f3b0-49fe-8748-2f69ec7798f4.json: denial rendered, but global heading-absence assertion also matched the shell route title. Scoped assertion to the main content."
+  ],
+  "completeWorkflowVerified": false
+}

@@ -1,0 +1,158 @@
+diff --git a/what-next/cash-drawer-command-center-redesign/evidence/baseline/CashDrawerManagementDashboard.tsx.txt b/components/pos/CashDrawerManagementDashboard.tsx
+index 8945e89..f71b88c 100644
+--- a/what-next/cash-drawer-command-center-redesign/evidence/baseline/CashDrawerManagementDashboard.tsx.txt
++++ b/components/pos/CashDrawerManagementDashboard.tsx
+@@ -26,7 +26,6 @@ import {
+   Filter,
+   Gauge,
+   LayoutDashboard,
+-  LockKeyhole,
+   MapPin,
+   Monitor,
+   ReceiptText,
+@@ -48,6 +47,7 @@ import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
+ import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+ import { useNotifications } from "@/components/notifications/NotificationProvider"
+ import { useCashDrawerDashboard } from "@/hooks/posHooks/useDrawerDashboard"
++import { DrawerCommandCenter } from "@/components/pos/DrawerCommandCenter"
+ import {
+   dashboardControlClass,
+   dashboardEmptyClass,
+@@ -79,12 +79,6 @@ const severityPriority: Record<CashDrawerDashboardDrawer["severity"], number> =
+   info: 2,
+   success: 3,
+ }
+-const severityRailClasses: Record<CashDrawerDashboardDrawer["severity"], string> = {
+-  critical: "bg-[var(--dash-danger)]",
+-  warning: "bg-[var(--dash-gold)]",
+-  info: "bg-[var(--dash-info)]",
+-  success: "bg-[var(--dash-success)]",
+-}
+ 
+ function inputDate(date: Date) {
+   return date.toISOString().slice(0, 10)
+@@ -480,35 +474,13 @@ export default function CashDrawerManagementDashboard() {
+           </section>
+ 
+           <section className="flex flex-col-reverse gap-3">
+-            <Card id="drawers" className={cn(dashboardPanelClass, "scroll-mt-24")}>
+-              <CardHeader className="pb-3">
+-                <div className="flex flex-wrap items-start justify-between gap-3">
+-                  <div>
+-                    <CardTitle className="flex items-center gap-2 text-base">
+-                      <Gauge className="h-4 w-4 text-[var(--dash-brand-strong)]" />
+-                      {t("sections.drawerHealth")}
+-                    </CardTitle>
+-                    <CardDescription className={dashboardMutedTextClass}>{t("sections.drawerHealthDescription")}</CardDescription>
+-                  </div>
+-                  <Badge variant="outline" className={dashboardFilterClass}>
+-                    {t("summary.netMovement", { amount: money(dashboard.summary.netMovement) })}
+-                  </Badge>
+-                </div>
+-              </CardHeader>
+-              <CardContent>
+-                {dashboard.drawers.length === 0 ? (
+-                  <div className={dashboardEmptyClass}>
+-                    {t("empty.drawers")}
+-                  </div>
+-                ) : (
+-                  <div className="grid gap-3 lg:grid-cols-2">
+-                    {orderedDrawers.map((drawer) => (
+-                      <DrawerCard key={drawer.id} drawer={drawer} money={money} t={t} formatDateTime={formatDateTime} />
+-                    ))}
+-                  </div>
+-                )}
+-              </CardContent>
+-            </Card>
++            <DrawerCommandCenter
++              key={`${dashboard.organization.id}:${locationId}:${period}:${period === "custom" ? `${customRange.start}:${customRange.end}` : ""}`}
++              drawers={orderedDrawers}
++              money={money}
++              formatDateTime={formatDateTime}
++              netMovement={dashboard.summary.netMovement}
++            />
+ 
+             <Card className={dashboardPanelClass}>
+               <CardHeader className="pb-3">
+@@ -697,81 +669,6 @@ export default function CashDrawerManagementDashboard() {
+   )
+ }
+ 
+-function DrawerCard({
+-  drawer,
+-  money,
+-  t,
+-  formatDateTime,
+-}: {
+-  drawer: CashDrawerDashboardDrawer
+-  money: (value: number | null | undefined) => string
+-  t: ReturnType<typeof useTranslations>
+-  formatDateTime: (value: string | null) => string
+-}) {
+-  return (
+-    <div className={cn(dashboardRowClass, "relative overflow-hidden p-3 pl-4")}>
+-      <span aria-hidden="true" className={cn("absolute inset-y-0 left-0 w-1", severityRailClasses[drawer.severity])} />
+-      <div className="flex items-start justify-between gap-3">
+-        <div className="min-w-0">
+-          <div className="flex items-center gap-2">
+-            {drawer.isOpen ? <UnlockKeyhole className="h-4 w-4 text-[var(--dash-success)]" /> : <LockKeyhole className="h-4 w-4 text-[var(--dash-text-soft)]" />}
+-            <div className="truncate text-sm font-semibold">{drawer.name}</div>
+-          </div>
+-          <div className="mt-1 truncate text-xs text-[var(--dash-text-soft)]">
+-            {drawer.locationName} / {drawer.terminalName}
+-          </div>
+-        </div>
+-        <Badge variant="outline" className={cn("shrink-0", drawer.isOpen ? dashboardSeverityClass("success") : dashboardSeverityClass("info"))}>
+-          {drawer.isOpen ? t("drawer.open") : t("drawer.closed")}
+-        </Badge>
+-      </div>
+-
+-      <div className="mt-3 grid grid-cols-3 gap-2">
+-        <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.44)] p-2">
+-          <div className="text-[11px] text-[var(--dash-text-soft)]">{t("drawer.expected")}</div>
+-          <div className="mt-1 truncate text-sm font-semibold tabular-nums">{money(drawer.expectedBalance)}</div>
+-        </div>
+-        <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.44)] p-2">
+-          <div className="text-[11px] text-[var(--dash-text-soft)]">{t("drawer.current")}</div>
+-          <div className="mt-1 truncate text-sm font-semibold tabular-nums">{money(drawer.currentBalance)}</div>
+-        </div>
+-        <div className={cn("rounded-lg border p-2", dashboardSeverityClass(drawer.severity))}>
+-          <div className="text-[11px] opacity-80">{t("drawer.variance")}</div>
+-          <div className={cn("mt-1 truncate text-sm font-semibold tabular-nums", dashboardValueTone(drawer.variance))}>{money(drawer.variance)}</div>
+-        </div>
+-      </div>
+-
+-      <div className="mt-3 grid gap-1.5 text-xs text-[var(--dash-text-soft)]">
+-        <div className="flex justify-between gap-2">
+-          <span>{t("drawer.session")}</span>
+-          <span className="truncate font-medium text-[var(--dash-text)]">
+-            {drawer.activeSessionNumber || t("common.notAvailable")}
+-          </span>
+-        </div>
+-        <div className="flex justify-between gap-2">
+-          <span>{t("drawer.cashier")}</span>
+-          <span className="truncate font-medium text-[var(--dash-text)]">
+-            {drawer.activeCashierName || t("common.notAvailable")}
+-          </span>
+-        </div>
+-        <div className="flex justify-between gap-2">
+-          <span>{t("drawer.lastEvent")}</span>
+-          <span className="truncate font-medium text-[var(--dash-text)]">{formatDateTime(drawer.lastEventAt)}</span>
+-        </div>
+-      </div>
+-
+-      <div className="mt-3 grid grid-cols-4 gap-1.5 text-[11px]">
+-        <span className="rounded-lg bg-[var(--dash-brand-soft)] px-2 py-1 text-[var(--dash-brand-strong)]">{money(drawer.periodCashSales)}</span>
+-        <span className="rounded-lg bg-[var(--dash-success-soft)] px-2 py-1 text-[var(--dash-success)]">
+-          {money(drawer.periodCashIn)}
+-        </span>
+-        <span className="rounded-lg bg-[var(--dash-gold-soft)] px-2 py-1 text-[var(--dash-gold)]">{money(drawer.periodCashOut)}</span>
+-        <span className="rounded-lg bg-[var(--dash-danger-soft)] px-2 py-1 text-[var(--dash-danger)]">{money(drawer.periodRefunds)}</span>
+-      </div>
+-    </div>
+-  )
+-}
+-
+ function TrendChart({
+   trend,
+   money,

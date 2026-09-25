@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-05T17:43:24.331Z",
+  "priorReceipt": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/clone-correction-receipt.json",
+  "reason": "Parent combined typecheck found the legacy response code is FORBIDDEN-only. Final code emits that literal only under its matching guard and otherwise carries the existing narrow failure reason.",
+  "sourceFiles": [
+    {
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "sha256": "9e73939caf841d234cda1aac42e3d52b45457b193018b142cc4a919c76d82225"
+    }
+  ],
+  "tests": {
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-clone-transport-followup.json",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts --json --outputFile what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-clone-transport-followup.json",
+    "exitCode": 0,
+    "suites": 1,
+    "passed": 21,
+    "failed": 0
+  },
+  "lint": {
+    "exitCode": 0,
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/lint-clone-transport-followup.log"
+  },
+  "typecheck": "Parent full rerun pending; initial failure retained in parent evidence.",
+  "browser": "Shared verifier pending; no browser or database operation in this receipt."
+}

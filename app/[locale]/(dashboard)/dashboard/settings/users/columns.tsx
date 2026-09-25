@@ -2,9 +2,9 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { deleteUser } from "@/actions/users/deleteUser";
-import DateColumn from "@/components/DataTableColumns/DateColumn";
-import NewActionColumn from "@/components/DataTableColumns/NewActionColumn";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { userDirectoryCopy } from "@/components/settings/user-directory-copy";
 import SortableColumn from "@/components/DataTableColumns/SortableColumn";
 import type { SafeUser } from "@/lib/security/server-authz";
 import { ColumnDef } from "@tanstack/react-table";
@@ -14,7 +14,9 @@ export type UserTableRow = SafeUser & {
   roleNames: string;
 };
 
-export const columns: ColumnDef<UserTableRow>[] = [
+export function getUserColumns(locale: "en" | "fr", actorId: string, canDeactivate: boolean, onReview: (user: UserTableRow, trigger: HTMLButtonElement) => void): ColumnDef<UserTableRow>[] {
+ const t = userDirectoryCopy[locale];
+ return [
   {
     id: "select",
     header: ({ table }) => (
@@ -24,14 +26,14 @@ export const columns: ColumnDef<UserTableRow>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label={t.selectAll}
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label={`${t.selectRow} ${row.original.name}`}
       />
     ),
     enableSorting: false,
@@ -39,38 +41,35 @@ export const columns: ColumnDef<UserTableRow>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => <SortableColumn column={column} title="Name" />,
+    header: ({ column }) => <SortableColumn column={column} title={t.name} />,
   },
   {
     accessorKey: "email",
-    header: ({ column }) => <SortableColumn column={column} title="Email" />,
+    header: ({ column }) => <SortableColumn column={column} title={t.email} />,
   },
   {
     accessorKey: "roleNames",
-    header: ({ column }) => <SortableColumn column={column} title="Roles" />,
+    header: ({ column }) => <SortableColumn column={column} title={t.roles} />,
   },
   {
     accessorKey: "createdAt",
-    header: "Date Created",
-    cell: ({ row }) => <DateColumn row={row} accessorKey="createdAt" />,
+    header: t.created,
+    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(locale, { timeZone: "UTC" }),
+  },
+  {
+    accessorKey: "isActive", header: t.status,
+    cell: ({ row }) => <span>{row.original.isActive ? t.active : t.inactive}</span>,
   },
   {
     id: "actions",
+    header: t.actions,
     cell: ({ row }) => {
       const user = row.original;
-        const handleDeleteUser = async () => {
-          const res = await deleteUser(user.id);
-          if (res?.data?.id) {
-            window.location.reload();
-          }
-        };
-      return (
-        <NewActionColumn 
-        modelName="user"
-        editEndpoint={`/dashboard/settings/users/update/${user.id}`}
-        onDelete={handleDeleteUser}
-        />
-      );
+      return <div className="flex flex-wrap items-center gap-2">
+        <Link className="rounded text-sm text-[var(--dash-brand)] underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4" href={`/${locale}/dashboard/settings/users/update/${encodeURIComponent(user.id)}`} aria-label={`${locale === "fr" ? "Accès du membre" : "Member access"} ${user.name}`}>{locale === "fr" ? "Accès du membre" : "Member access"}</Link>
+        {user.id === actorId ? <span className="text-xs">{t.self}</span> : user.isActive && canDeactivate ? <Button type="button" variant="outline" className="h-auto whitespace-normal text-[var(--dash-danger)]" aria-label={`${t.deactivate} ${user.name}`} onClick={event => onReview(user, event.currentTarget)}>{t.deactivate}</Button> : null}
+      </div>;
     },
   },
 ];
+}

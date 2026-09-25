@@ -1,0 +1,51 @@
+{
+  "at": "2026-09-13T11:20:18.217Z",
+  "sourceFile": "provider-review-v118-5d85a27d-68ef-431c-ae20-05c1e8131a38.json",
+  "sourcesBefore": {
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "573ed626ac299b5d727d5590261fb0ef4828bbc48bd84efe2ec7e072a6ac52b0",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "949adbc1ee759f8beb8153221c47651d62a660cc324c8fa1f01d35562ba18190",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx": "6ea265b88e3ab868b6ccaff873e847b89d8640c4b9670ef28d088c8091fbba0f",
+    "messages/en.json": "3c03e9900a598e174aba8eaaf879af708af8d0312eba7ca7e93720f8b6d31d9d",
+    "messages/fr.json": "daee10cd79fc62be7a74387c4b3a536aabbbfef9a17eae1e59bfb9fd0cc8274b"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "provider-review-v118-en-320-ee0e95bf-0f4e-45d4-83f5-9f498c459de5.png",
+        "provider-review-v118-en-768-ee0e95bf-0f4e-45d4-83f5-9f498c459de5.png",
+        "provider-review-v118-en-1440-ee0e95bf-0f4e-45d4-83f5-9f498c459de5.png"
+      ],
+      "pageErrors": [],
+      "routeToReviewedStateMs": 37928,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "provider-review-v118-fr-320-ee0e95bf-0f4e-45d4-83f5-9f498c459de5.png",
+        "provider-review-v118-fr-768-ee0e95bf-0f4e-45d4-83f5-9f498c459de5.png",
+        "provider-review-v118-fr-1440-ee0e95bf-0f4e-45d4-83f5-9f498c459de5.png"
+      ],
+      "pageErrors": [],
+      "routeToReviewedStateMs": 13107,
+      "passed": true
+    }
+  ],
+  "scope": "Actual EN/FR returned review route, keyboard/reflow and truthful incomplete accounting setup. No signing or fabricated approval.",
+  "intentTransplantDenied": true,
+  "noSigningOrFinancialEffects": true,
+  "passed": true,
+  "sourcesAfter": {
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "573ed626ac299b5d727d5590261fb0ef4828bbc48bd84efe2ec7e072a6ac52b0",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "949adbc1ee759f8beb8153221c47651d62a660cc324c8fa1f01d35562ba18190",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx": "6ea265b88e3ab868b6ccaff873e847b89d8640c4b9670ef28d088c8091fbba0f",
+    "messages/en.json": "3c03e9900a598e174aba8eaaf879af708af8d0312eba7ca7e93720f8b6d31d9d",
+    "messages/fr.json": "daee10cd79fc62be7a74387c4b3a536aabbbfef9a17eae1e59bfb9fd0cc8274b"
+  },
+  "sourceStable": true
+}

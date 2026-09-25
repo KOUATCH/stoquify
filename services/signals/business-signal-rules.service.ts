@@ -97,9 +97,9 @@ const TYPE_DEFAULTS: Record<
   },
   stockout_risk: {
     moduleSlug: "inventory",
-    requiredPermission: "inventory.read",
+    requiredPermission: "inventory.items.read",
     assignedRole: "stockkeeper",
-    actionPath: "/dashboard/inventory",
+    actionPath: "/dashboard/inventory/items",
     suggestedAction:
       "Review stock levels and confirm reorder or transfer action.",
     businessImpact:
@@ -108,9 +108,9 @@ const TYPE_DEFAULTS: Record<
   },
   dead_stock_cash_exposure: {
     moduleSlug: "inventory",
-    requiredPermission: "inventory.read",
+    requiredPermission: "inventory.items.read",
     assignedRole: "stockkeeper",
-    actionPath: "/dashboard/inventory",
+    actionPath: "/dashboard/inventory/items",
     suggestedAction:
       "Review slow-moving stock and decide markdown, transfer, or supplier action.",
     businessImpact:
@@ -141,7 +141,7 @@ const TYPE_DEFAULTS: Record<
   },
   payroll_exposure: {
     moduleSlug: "payroll",
-    requiredPermission: "payroll.runs.review",
+    requiredPermission: "payroll.command.read",
     assignedRole: "payroll",
     actionPath: "/dashboard/payroll",
     suggestedAction:
@@ -154,7 +154,7 @@ const TYPE_DEFAULTS: Record<
     moduleSlug: "close_assurance",
     requiredPermission: "accounting.close.read",
     assignedRole: "accountant",
-    actionPath: "/dashboard/accounting/close-assurance",
+    actionPath: "/dashboard/accounting/close",
     suggestedAction:
       "Resolve close blockers or attach missing evidence before certification.",
     businessImpact:
@@ -201,6 +201,9 @@ export function createBusinessSignalFromFact(
 ): BusinessSignal {
   const now = normalizeDate(fact.generatedAt ?? nowInput);
   const defaults = TYPE_DEFAULTS[fact.signalType];
+  const actionPath = fact.actionPath ?? defaults.actionPath;
+  const opensPayroll = fact.signalType === "payroll_exposure" &&
+    (actionPath === "/dashboard/payroll" || actionPath.startsWith("/dashboard/payroll/"));
   const severity =
     fact.severity ??
     severityFromScore(fact.severityScore ?? severityScoreForFact(fact));
@@ -253,8 +256,11 @@ export function createBusinessSignalFromFact(
     expiresAt: expiresAt.toISOString(),
     freshness,
     suggestedAction: fact.suggestedAction ?? defaults.suggestedAction,
-    actionPath: fact.actionPath ?? defaults.actionPath,
+    actionPath,
     requiredPermission: fact.requiredPermission ?? defaults.requiredPermission,
+    ...(opensPayroll || fact.additionalRequiredPermissions?.length ? {
+      additionalRequiredPermissions: [...new Set([...(opensPayroll ? ["payroll.command.read"] : []), ...(fact.additionalRequiredPermissions ?? [])])],
+    } : {}),
     assignedRole: fact.assignedRole ?? defaults.assignedRole,
     assigneeId: fact.assigneeId ?? null,
     blockers: fact.blockers ?? [],
@@ -283,7 +289,7 @@ function buildSnapshotSignals(
   if (snapshot.kind === "payment.truth") {
     const metrics = snapshot.metrics as PaymentTruthMetrics;
     return [
-      metrics.openSuspenseCount > 0 || metrics.openSuspenseAmount > 0
+      metrics.openSuspenseCount > 0 || (metrics.openSuspenseAmount !== null && metrics.openSuspenseAmount > 0)
         ? createBusinessSignalFromFact(
             {
               ...base,
@@ -294,12 +300,13 @@ function buildSnapshotSignals(
               subjectId: "open-suspense",
               severity:
                 metrics.criticalExceptionCount > 0 ||
-                metrics.openSuspenseAmount >= 500_000
+                (metrics.openSuspenseAmount !== null && metrics.openSuspenseAmount >= 500_000)
                   ? "high"
                   : "medium",
               payload: {
                 openSuspenseCount: metrics.openSuspenseCount,
                 openSuspenseAmount: metrics.openSuspenseAmount,
+                suspenseCurrencyCode: metrics.suspenseCurrencyCode ?? null,
                 openExceptionCount: metrics.openExceptionCount,
               },
               proofLink: {
@@ -335,25 +342,8 @@ function buildSnapshotSignals(
             nowInput,
           )
         : null,
-      metrics.inventoryValue > 0 && metrics.periodTransactionCount === 0
-        ? createBusinessSignalFromFact(
-            {
-              ...base,
-              signalType: "dead_stock_cash_exposure",
-              moduleSlug: "inventory",
-              sourceModule: "inventory",
-              subjectType: "inventory.cash",
-              subjectId: "dead-stock-cash-exposure",
-              severity: metrics.inventoryValue >= 1_000_000 ? "high" : "medium",
-              payload: {
-                inventoryValue: metrics.inventoryValue,
-                trackedItemCount: metrics.trackedItemCount,
-                periodTransactionCount: metrics.periodTransactionCount,
-              },
-            },
-            nowInput,
-          )
-        : null,
+      // Period activity counts do not establish stock age, demand or obsolescence.
+      // Keep inventory value in the snapshot; dead-stock facts need separate evidence.
     ].filter(Boolean) as BusinessSignal[];
   }
 
@@ -448,7 +438,7 @@ function buildSnapshotSignals(
       payrollForecast.blockerCodes,
     );
     return [
-      metrics.pendingPurchaseOrderCount > 0
+      typeof metrics.overduePurchaseOrderCount === "number" && metrics.overduePurchaseOrderCount > 0
         ? createBusinessSignalFromFact(
             {
               ...base,
@@ -458,9 +448,11 @@ function buildSnapshotSignals(
               subjectType: "purchase.order",
               subjectId: "pending-receiving",
               severity:
-                metrics.pendingPurchaseOrderCount >= 5 ? "high" : "medium",
+                metrics.overduePurchaseOrderCount >= 5 ? "high" : "medium",
+              detail: `${metrics.overduePurchaseOrderCount} pending purchase order(s) have passed their recorded expected delivery time.`,
               payload: {
                 pendingPurchaseOrderCount: metrics.pendingPurchaseOrderCount,
+                overduePurchaseOrderCount: metrics.overduePurchaseOrderCount,
               },
             },
             nowInput,
@@ -538,11 +530,11 @@ function buildSnapshotSignals(
                   : "/dashboard/payroll",
               requiredPermission:
                 metrics.activeEmployeeBalanceCaseCount > 0
-                  ? "payroll.payments.reconcile"
-                  : "payroll.runs.review",
+                  ? "payments.reconciliation.read"
+                  : "payroll.command.read",
               suggestedAction:
                 metrics.activeEmployeeBalanceCaseCount > 0
-                  ? "Settle, refund, or review employee balance recovery cases before payment and close claims are trusted."
+                  ? "Review employee balance recovery evidence before payment and close claims are trusted."
                   : "Review payroll payment and posting evidence without exposing person-level amounts.",
               redactions: [
                 ...snapshot.redactions,
@@ -583,7 +575,7 @@ function buildSnapshotSignals(
       blocker.gate.startsWith("branch_payroll"),
     );
     return [
-      metrics.pendingPurchaseOrderCount > 0
+      typeof metrics.overduePurchaseOrderCount === "number" && metrics.overduePurchaseOrderCount > 0
         ? createBusinessSignalFromFact(
             {
               ...base,
@@ -593,9 +585,11 @@ function buildSnapshotSignals(
               subjectType: "purchase.order",
               subjectId: `${snapshot.locationId ?? "tenant"}:pending-receiving`,
               severity:
-                metrics.pendingPurchaseOrderCount >= 3 ? "high" : "medium",
+                metrics.overduePurchaseOrderCount >= 3 ? "high" : "medium",
+              detail: `${metrics.overduePurchaseOrderCount} pending purchase order(s) have passed their recorded expected delivery time.`,
               payload: {
                 pendingPurchaseOrderCount: metrics.pendingPurchaseOrderCount,
+                overduePurchaseOrderCount: metrics.overduePurchaseOrderCount,
               },
             },
             nowInput,
@@ -753,7 +747,7 @@ function payrollForecastActionFor(blockerCodes: readonly string[]) {
   if (blockerCodes.some((code) => code.includes("DECLARATION"))) {
     return {
       actionPath: "/dashboard/payroll/declarations",
-      requiredPermission: "payroll.declarations.manage",
+      requiredPermission: "payroll.command.read",
       suggestedAction:
         "Open payroll declarations and repair source register, declaration, or receipt proof.",
     };
@@ -766,7 +760,7 @@ function payrollForecastActionFor(blockerCodes: readonly string[]) {
   ) {
     return {
       actionPath: "/dashboard/payroll/payments",
-      requiredPermission: "payroll.payments.reconcile",
+      requiredPermission: "payments.reconciliation.read",
       suggestedAction:
         "Open payroll payments and repair payment batch, provider, settlement, or ledger proof.",
     };
@@ -774,7 +768,7 @@ function payrollForecastActionFor(blockerCodes: readonly string[]) {
 
   return {
     actionPath: "/dashboard/payroll/register",
-    requiredPermission: "payroll.runs.review",
+    requiredPermission: "payroll.reports.read",
     suggestedAction:
       "Open payroll register proof and repair source-linked payroll evidence.",
   };

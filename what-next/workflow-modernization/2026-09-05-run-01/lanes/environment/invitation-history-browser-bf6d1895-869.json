@@ -1,0 +1,86 @@
+{
+  "run": "bf6d1895-869",
+  "mode": "browser",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T07:30:03.856Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-history.service.ts": "42e0841b739da253e30755949b783d4d353b5d4b0bd9cf6be0eef2c4c8258c81",
+    "actions/users/getInvitationHistory.ts": "26cef822d040e5ccb5a16156b738ef1ffbab8e8a40e7b6a0d5b9eee10e088363",
+    "components/Forms/users/InvitationHistory.tsx": "059df61e57f413ff6778c89ba387a5e58a311ee5883d10b06f948e6ee6bfc36a",
+    "components/dashboard/Tables/Invites.tsx": "512621d092ec92dd7f16bea8be0c9ed6f6e59fbee069e0b0d9f1697500fc10cb",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82",
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "messages/en.json": "da1ef0a3db2a617b715d12dd37d5610488a8d2b67d2de054599cf44278f77233",
+    "messages/fr.json": "c7984875904f8f8d50bec3be2203279a18dc7efd2762eef9efb756c7ef34a877"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-invitation-history-first-page-bf6d1895-869.png",
+        "en-invitation-history-retry-bf6d1895-869.png",
+        "en-invitation-history-older-decisions-bf6d1895-869.png"
+      ],
+      "pageErrors": [],
+      "routeMs": 4114,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "keyboardAndFocusReturn": true,
+      "failedPagePreserved": true,
+      "queueAttempts": 0
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-invitation-history-first-page-bf6d1895-869.png",
+        "fr-invitation-history-retry-bf6d1895-869.png",
+        "fr-invitation-history-older-decisions-bf6d1895-869.png"
+      ],
+      "pageErrors": [],
+      "routeMs": 4996,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "keyboardAndFocusReturn": true,
+      "failedPagePreserved": true,
+      "queueAttempts": 0
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Synthetic invitation decisions use the real issuance/cancellation services. No adapter is installed and all queue attempts remain zero.",
+    "History browsing is read-only; no redemption requests or public rate-limit changes occur.",
+    "Viewport, keyboard and focus checks do not establish actual screen-reader, native zoom or comprehensive contrast certification."
+  ],
+  "authorityBefore": "a6980b4afde0b135963be73c1bdbcf5bff1a7bf51a5780d1d05911283cd4a970",
+  "authorityAfter": "a6980b4afde0b135963be73c1bdbcf5bff1a7bf51a5780d1d05911283cd4a970",
+  "authorityUnchanged": true,
+  "completedAt": "2026-09-06T07:30:26.971Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-history.service.ts": "42e0841b739da253e30755949b783d4d353b5d4b0bd9cf6be0eef2c4c8258c81",
+    "actions/users/getInvitationHistory.ts": "26cef822d040e5ccb5a16156b738ef1ffbab8e8a40e7b6a0d5b9eee10e088363",
+    "components/Forms/users/InvitationHistory.tsx": "059df61e57f413ff6778c89ba387a5e58a311ee5883d10b06f948e6ee6bfc36a",
+    "components/dashboard/Tables/Invites.tsx": "512621d092ec92dd7f16bea8be0c9ed6f6e59fbee069e0b0d9f1697500fc10cb",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82",
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "messages/en.json": "da1ef0a3db2a617b715d12dd37d5610488a8d2b67d2de054599cf44278f77233",
+    "messages/fr.json": "c7984875904f8f8d50bec3be2203279a18dc7efd2762eef9efb756c7ef34a877"
+  },
+  "sourceStable": true,
+  "driverSha256": "c34a34448c7d64c75b51f94c93c6077a401fb5e7a3c9c717440f3e99182a6780",
+  "passed": 2,
+  "failed": 0
+}

@@ -46,7 +46,7 @@ describe("Kontava action queue service", () => {
     const queue = buildActionQueue({
       organizationId: "org-1",
       signals: sampleSignals(),
-      actorPermissions: ["inventory.read"],
+      actorPermissions: ["inventory.items.read"],
       now: "2026-06-20T08:30:00.000Z",
     })
 
@@ -54,6 +54,8 @@ describe("Kontava action queue service", () => {
     expect(queue.signals[0].signalType).toBe("stockout_risk")
     expect(queue.filteredOutCount).toBe(1)
     expect(JSON.stringify(queue)).not.toContain("org-2")
+    const denied = buildActionQueue({ organizationId: "org-1", signals: sampleSignals(), actorPermissions: ["inventory.read"], now: "2026-06-20T08:30:00.000Z" })
+    expect(denied.actionItems).toEqual([])
   })
 
   it("blocks cross-tenant assignment and permission-mismatched assignees", () => {

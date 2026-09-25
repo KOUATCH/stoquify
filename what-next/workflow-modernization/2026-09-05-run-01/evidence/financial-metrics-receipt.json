@@ -1,0 +1,74 @@
+{
+  "recordedAt": "2026-09-06T04:40:01.252Z",
+  "sourceBaseline": "evidence/source-baseline-v11.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "wholeWorkflowComplete": false,
+  "sourceHashes": {
+    "services/analytics/financial-order-activity.service.ts": "5748a3879309d7ac31631dda7d49903860cb9ae61274ff9650f67a38c4fee9c2",
+    "services/analytics/financial-analytics.service.ts": "2822cfe26a965da38ec089944408df5cab6d1231eebd9f84571204120465d86a",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a",
+    "services/analytics/analytical-context-contracts.ts": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+    "actions/analytics/financial-analytics.ts": "8d695d6bdbb972baea551c4443df803d240876e123e0336db073a3e507cbbc4f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "components/analytics/__tests__/daily-sales-dashboard.test.tsx": "13ce69934133a1a0193410b81bebe2154b0290a9b256f8bf8effeecbf4d1383a",
+    "services/analytics/__tests__/financial-analytics.service.test.ts": "9586beaf63ac3bd6ec951beebe50ed85f4e35d2472f0d0a47cd062c7c87fb9ab",
+    "actions/analytics/__tests__/daily-sales.actions.test.ts": "4d6bf0f7ffdafa6bbf4d2772af4be64319f65a456a0671253201a1982e14d8e3",
+    "services/analytics/__tests__/daily-sales-read.test.ts": "3c0dc87df4018ca04b0351ca43350de05e1cd4966302766395ac922ac570bd44"
+  },
+  "tests": {
+    "file": "evidence/financial-metrics-after-01.json",
+    "passed": 51,
+    "suites": 4,
+    "exitCode": 0,
+    "chunk": "d26153",
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "components/analytics/__tests__/daily-sales-dashboard.test.tsx",
+      "services/analytics/__tests__/financial-analytics.service.test.ts",
+      "actions/analytics/__tests__/daily-sales.actions.test.ts",
+      "services/analytics/__tests__/daily-sales-read.test.ts",
+      "--json",
+      "--outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/financial-metrics-after-01.json"
+    ]
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "session": 30278,
+    "chunk": "8a8404"
+  },
+  "lint": {
+    "command": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "services/analytics/financial-order-activity.service.ts",
+      "services/analytics/financial-analytics.service.ts",
+      "actions/analytics/financial-analytics.ts",
+      "services/analytics/__tests__/financial-analytics.service.test.ts",
+      "actions/analytics/__tests__/daily-sales.actions.test.ts"
+    ],
+    "exitCode": 0,
+    "chunk": "dda08d"
+  },
+  "diffCheck": {
+    "exitCode": 0,
+    "chunk": "c73808"
+  },
+  "postgres": {
+    "file": "lanes/environment/financial-order-activity-c024e2cd-4f5.json",
+    "passed": 5,
+    "failed": 0,
+    "sourceStable": true,
+    "authorityAndRecordsUnchanged": true,
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-financial-order-activity.cjs"
+  },
+  "browser": {
+    "status": "not_visited_no_production_ui_caller_found",
+    "screenshots": []
+  },
+  "limitations": "Connect authoritative financial source owners and version-aware consumers; complete payroll scope/precision/lifecycle review and authenticated transport visit if exposed. Full build still fails at Windows standalone symlink packaging. All other registered workflows and217 unmapped source entries remain in the assignment. No X1/release/professional certification."
+}

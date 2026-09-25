@@ -1,0 +1,11 @@
+
+ROUTE /en/dashboard/sales
+FILE app/[locale]/(dashboard)/dashboard/sales/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/sales/page.tsx; app/[locale]/(dashboard)/dashboard/sales/SalesClientPage.tsx; components/sales/CompleteIntegratedDailySalesDashboard.tsx; components/analytics/CompleteIntegratedDailySalesDashboard.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/sales/sales-route-access.tsx; lib/utils.ts; hooks/useClientAuth.ts; hooks/analytics/useDailySalesReport.ts; services/analytics/daily-sales-read.service.ts
+REDIRECTS []
+HEADINGS Daily sales | Recorded cash information | Top items by recorded value | Saved payment categories
+PROPS 
+CONTROLS Refresh (Button, {"type":"\"button\"","disabled":"query.isFetching || !orgId || !auth.user?.id","onClick":"() => { void query.refetch() }"}, components/analytics/CompleteIntegratedDailySalesDashboard.tsx:54)
+Reporting day (Input, {"type":"\"date\"","onChange":"event => changeScope({ date: event.target.value || undefined })"}, components/analytics/CompleteIntegratedDailySalesDashboard.tsx:60)
+[dynamic or icon-only label] (select, {"disabled":"!locations.length","onChange":"event => changeScope({ locationId: event.target.value })"}, components/analytics/CompleteIntegratedDailySalesDashboard.tsx:63)

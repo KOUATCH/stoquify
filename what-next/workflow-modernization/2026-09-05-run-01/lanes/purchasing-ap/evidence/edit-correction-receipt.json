@@ -1,0 +1,98 @@
+{
+  "recordedAt": "2026-09-05T17:16:27.1182659Z",
+  "liveBusinessMutations": false,
+  "earlierAttempts": [
+    "evidence/jest-edit-01.json",
+    "evidence/jest-edit-02.json",
+    "evidence/jest-edit-03.json"
+  ],
+  "sourceFiles": [
+    {
+      "sha256": "e1acb966d1ab94e3e9c44e151a14db2c3ca26120aeded0b9c13bbd3221087d41",
+      "path": "components/purchase-orders/ModernEditPurchaseOrderForm.tsx"
+    },
+    {
+      "sha256": "2925b4bf34ce9793691716fb593a18fe2e5c2ca272a9a8b2f9544ff84b6b8423",
+      "path": "components/purchase-orders/purchase-order-edit-model.ts"
+    },
+    {
+      "sha256": "5ee6a672fdd523203d09354b493b3a1fee754572b76da399e440a553bf334a1f",
+      "path": "hooks/useRecentPurchaseOrderQueries.ts"
+    },
+    {
+      "sha256": "5298914a883468cb6946e0b014fae20de9d087fbb7b07945d4162fecf1d2f34a",
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts"
+    },
+    {
+      "sha256": "c78a6a89bba8919a94a38f79705f3059aa0159edd2b1c061ae965a9f41282351",
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx"
+    },
+    {
+      "sha256": "2ace6fd20e92e92cb0c6848840e80c0b334d7c10b6bc437dbd71c06d7ae2375a",
+      "path": "messages/en.json"
+    },
+    {
+      "sha256": "c6e39abc132313292cf137ff624ed0f86b8f18e6a67b617338029813cc636599",
+      "path": "messages/fr.json"
+    }
+  ],
+  "stage": "PA-002 first editor correction, final Enter guard",
+  "browser": "Pending verifier-owned isolated runtime",
+  "tests": [
+    {
+      "exitCode": 0,
+      "scope": "Full focused group before final Enter guard",
+      "testsPassed": 50,
+      "receipt": "evidence/jest-edit-final.json",
+      "suitesPassed": 6
+    },
+    {
+      "exitCode": 0,
+      "scope": "Final editor component source including Enter guard",
+      "testsPassed": 9,
+      "receipt": "evidence/jest-edit-enter.json",
+      "suitesPassed": 1
+    }
+  ],
+  "typecheck": "Pending parent aggregate check",
+  "testFiles": [
+    {
+      "sha256": "8df164d8152aa78f47107cbbb56438bdd88aede19344f6367d662a5824b7f744",
+      "path": "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx"
+    },
+    {
+      "sha256": "08490a030972920b6f4fffdc1816ef47b62dd2e54e04ac5fbe037e7aac1eb1a0",
+      "path": "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts"
+    },
+    {
+      "sha256": "855b6231e5bde5344565f42e988a6560aa830048a51674a8f32502bb0304e11d",
+      "path": "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx"
+    },
+    {
+      "sha256": "05c2ee4624acc6c2fcb42466d0ddd093c51978d2e1c17f8d8682d6c57f3386a1",
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts"
+    },
+    {
+      "sha256": "8c7acd3e68ab230b9fabf2b6eec04b19f75b8f93b29abc0e16d9403ea4071d2b",
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/__tests__/page.test.tsx"
+    },
+    {
+      "sha256": "40e0798226855653966d46bac83f0889a5cef6b5aaaf755a724e0b8d1a6e442d",
+      "path": "services/purchase-order/__tests__/purchase-order.service.test.ts"
+    }
+  ],
+  "schemaChanges": false,
+  "status": "focused tests and lint passed; browser and aggregate typecheck pending",
+  "lint": [
+    {
+      "exitCode": 0,
+      "scope": "11 changed source/test files before final Enter guard",
+      "receipt": "evidence/lint-edit.log"
+    },
+    {
+      "exitCode": 0,
+      "scope": "Final2 editor component/test files",
+      "receipt": "evidence/lint-edit-enter.log"
+    }
+  ]
+}

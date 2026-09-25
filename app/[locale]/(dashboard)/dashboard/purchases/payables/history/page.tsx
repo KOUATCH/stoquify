@@ -21,10 +21,10 @@ export default async function SupplierAPHistoryPage({
   return withPurchasesSurfaceAccess({
     params: Promise.resolve({ locale: rawLocale }),
     surface,
-    onAllowed: () => (
+    onAllowed: context => (
       <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
         <div className="dashboard-landing-content min-w-0">
-          <APHistoryWorkbench />
+          <APHistoryWorkbench organizationId={context.orgId} actorId={context.userId} />
         </div>
       </div>
     ),

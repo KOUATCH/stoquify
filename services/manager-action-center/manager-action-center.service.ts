@@ -1093,6 +1093,9 @@ function paymentReconciliationReadOnlyDetail(
   if (reason === "MAKER_CHECKER_REQUIRED") {
     return "The reconciliation maker cannot sign their own run."
   }
+  if (reason === "PREPARER_CHECKER_REQUIRED") {
+    return "The reconciliation preparer cannot sign their own prepared run. An independent signer is required."
+  }
   if (reason === "MODULE_WRITE_UNAVAILABLE") {
     return "Payment reconciliation write access is unavailable for this tenant."
   }

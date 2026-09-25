@@ -86,3 +86,7 @@ A UI change is ready only when:
 - The route smoke gate does not show 500s, app-error markers, or broken redirects.
 - Screenshots are attached when the route is public/authenticated first impression, dashboard shell, or a high-value command-center surface.
 - The user can complete the primary route task with keyboard, mouse, and expected responsive viewport.
+
+## Contrast and focus evidence note — 2026-09-19
+
+Keep automated contrast `incomplete` separate from a pass when themed pseudo-elements prevent analysis. Record any supplementary rendered-background method, exclusions and remaining manual checks. Check focus outlines against scrolling/clipping ancestors, not only computed outline styles. [Daily Digest example](../../../what-next/workflow-modernization/2026-09-05-run-01/DAILY_DIGEST_ACCESSIBILITY_VERIFICATION.md).

@@ -19,6 +19,7 @@ import { db } from "@/prisma/db"
 import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
 
 import { getFinancialMetricsReadModel } from "../financial-analytics.service"
+import { getFinancialOrderActivity } from "../financial-order-activity.service"
 
 const mockDb = db as any
 const mockGetTenantOperatingSnapshot = getTenantOperatingSnapshot as jest.Mock
@@ -27,21 +28,11 @@ function decimal(value: string) {
   return new Prisma.Decimal(value)
 }
 
-function salesOrder(total: string) {
-  return {
-    total: decimal(total),
-    lines: [
-      {
-        quantity: decimal("1"),
-        item: { costPrice: decimal("0") },
-      },
-    ],
-    payments: [],
-  }
-}
-
 function resetDbMocks() {
-  mockDb.salesOrder = { findMany: jest.fn() }
+  mockDb.$transaction = jest.fn(async work => work(mockDb))
+  mockDb.organization = { findFirst: jest.fn().mockResolvedValue({ id: "org-1", currency: "XAF", timezone: "Africa/Douala" }) }
+  mockDb.location = { findFirst: jest.fn().mockResolvedValue({ id: "loc-1" }) }
+  mockDb.salesOrder = { aggregate: jest.fn() }
   mockDb.inventoryLevel = { findMany: jest.fn().mockResolvedValue([]) }
   mockDb.cashDrawerTransaction = { findMany: jest.fn().mockResolvedValue([]) }
   mockDb.payrollRun = { findMany: jest.fn().mockResolvedValue([]) }
@@ -49,9 +40,9 @@ function resetDbMocks() {
 }
 
 function mockBaseFinancialReads(currentRevenue = "200000.00") {
-  mockDb.salesOrder.findMany
-    .mockResolvedValueOnce([salesOrder(currentRevenue)])
-    .mockResolvedValueOnce([])
+  mockDb.salesOrder.aggregate
+    .mockResolvedValueOnce({ _sum: { total: decimal(currentRevenue) }, _count: { _all: 1 } })
+    .mockResolvedValueOnce({ _sum: { total: null }, _count: { _all: 0 } })
 }
 
 const periodInput = {
@@ -60,6 +51,94 @@ const periodInput = {
   startDate: new Date("2026-06-01T00:00:00.000Z"),
   endDate: new Date("2026-06-30T00:00:00.000Z"),
 }
+
+describe("financial analytics source truth", () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    resetDbMocks()
+    mockGetTenantOperatingSnapshot.mockResolvedValue(tenantOperatingSnapshot())
+  })
+
+  it("separates exact order value from unavailable financial statements and assumptions", async () => {
+    mockBaseFinancialReads("9007199254740991.93")
+    const result = await getFinancialMetricsReadModel(periodInput)
+    expect(result).toMatchObject({
+      schemaVersion: "financial-metrics.v2",
+      availability: { status: "PARTIAL" },
+      orderActivity: { source: "CONFIRMED_ORDER_TOTALS", current: { value: "9007199254740991.93", count: 1 }, valueGrowthPercent: null },
+      payrollBasis: { periodSelection: "OVERLAPPING_PAYROLL_PERIODS", forecastScope: "TENANT_AGGREGATE", financialStatementsCertified: false },
+      revenue: { total: null, forecast: null, target: null, recurring: null },
+      expenses: { cogs: null, salaries: null, rent: null },
+      assets: { fixedAssets: null, cash: null, inventory: null },
+      liabilities: { loans: null },
+      cashFlow: { investing: null, financing: null, cashOnHand: null },
+      taxes: { salesTax: null, incomeTax: null, taxRate: null },
+    })
+    expect(mockDb.inventoryLevel.findMany).not.toHaveBeenCalled()
+    expect(mockDb.cashDrawerTransaction.findMany).not.toHaveBeenCalled()
+  })
+
+  it("reports genuine zero order activity without inventing zero financial balances", async () => {
+    mockDb.salesOrder.aggregate.mockResolvedValue({ _sum: { total: null }, _count: { _all: 0 } })
+    const result = await getFinancialMetricsReadModel(periodInput)
+    expect(result.orderActivity.current).toMatchObject({ value: "0.00", count: 0 })
+    expect(result.orderActivity.valueGrowthPercent).toBeNull()
+    expect(result.assets.cash).toBeNull()
+    expect(result.taxes.totalTaxLiability).toBeNull()
+  })
+
+  it("compares adjacent calendar periods without overlap on a 23-hour day", async () => {
+    mockDb.organization.findFirst.mockResolvedValue({ id: "org-1", currency: "EUR", timezone: "Europe/Paris" })
+    mockDb.salesOrder.aggregate
+      .mockResolvedValueOnce({ _sum: { total: decimal("30.00") }, _count: { _all: 2 } })
+      .mockResolvedValueOnce({ _sum: { total: decimal("20.00") }, _count: { _all: 1 } })
+    const result = await getFinancialOrderActivity({ ...periodInput, startDate: new Date("2026-03-29T00:00:00Z"), endDate: new Date("2026-03-29T00:00:00Z") })
+    expect(result.current).toMatchObject({ periodStart: "2026-03-28T23:00:00.000Z", periodEndExclusive: "2026-03-29T22:00:00.000Z" })
+    expect(result.previous).toMatchObject({ periodStart: "2026-03-27T23:00:00.000Z", periodEndExclusive: result.current.periodStart })
+    expect(result.valueGrowthPercent).toBe("50.00")
+    expect(mockDb.salesOrder.aggregate).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ organizationId: "org-1", locationId: "loc-1", orderDate: { gte: new Date(result.current.periodStart), lt: new Date(result.current.periodEndExclusive) } }) }))
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "RepeatableRead" })
+  })
+
+  it("scopes all-location reporting by tenant and validates specific locations", async () => {
+    mockBaseFinancialReads()
+    const all = await getFinancialOrderActivity({ ...periodInput, locationId: " ALL " })
+    expect(all.context.scope).toEqual({ kind: "ORGANIZATION", locationId: null })
+    expect(mockDb.salesOrder.aggregate.mock.calls[0][0].where).toMatchObject({ organizationId: "org-1" })
+    expect(mockDb.salesOrder.aggregate.mock.calls[0][0].where).not.toHaveProperty("locationId")
+    expect(mockDb.location.findFirst).not.toHaveBeenCalled()
+    mockDb.salesOrder.aggregate.mockClear()
+    mockDb.location.findFirst.mockResolvedValue(null)
+    await expect(getFinancialOrderActivity(periodInput)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(mockDb.location.findFirst).toHaveBeenCalledWith({ where: { id: "loc-1", organizationId: "org-1" }, select: { id: true } })
+    expect(mockDb.salesOrder.aggregate).not.toHaveBeenCalled()
+  })
+
+  it("rejects a missing organization before any report or payroll read", async () => {
+    mockDb.organization.findFirst.mockResolvedValue(null)
+    await expect(getFinancialMetricsReadModel(periodInput)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(mockDb.salesOrder.aggregate).not.toHaveBeenCalled()
+    expect(mockDb.payrollRun.findMany).not.toHaveBeenCalled()
+    expect(mockGetTenantOperatingSnapshot).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { locationId: "" },
+    { startDate: new Date("invalid") },
+    { endDate: new Date("2026-05-01T00:00:00Z") },
+  ])("rejects invalid scope before database reads: %s", async invalid => {
+    await expect(getFinancialOrderActivity({ ...periodInput, ...invalid })).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("preserves query failure and unavailable nonempty aggregates as errors", async () => {
+    mockDb.salesOrder.aggregate.mockRejectedValue(new Error("database unavailable"))
+    await expect(getFinancialMetricsReadModel(periodInput)).rejects.toThrow("database unavailable")
+    mockDb.salesOrder.aggregate.mockResolvedValue({ _sum: { total: null }, _count: { _all: 1 } })
+    await expect(getFinancialMetricsReadModel(periodInput)).rejects.toThrow("Order value is unavailable")
+    expect(mockGetTenantOperatingSnapshot).not.toHaveBeenCalled()
+  })
+})
 
 const completeEffectiveComponentSnapshot = {
   payrollRubriqueGrossAmount: "0.00",
@@ -160,8 +239,8 @@ describe("financial analytics payroll facts", () => {
       actorPermissions: ["EMPLOYEE_SALARY_READ"],
     })
 
-    expect(result.expenses.salaries).toBe(0)
-    expect(result.taxes.payrollTax).toBe(0)
+    expect(result.expenses.salaries).toBeNull()
+    expect(result.taxes.payrollTax).toBeNull()
     expect(result.payrollEvidence).toMatchObject({
       status: "NON_AUTHORITATIVE",
       authoritative: false,
@@ -331,8 +410,8 @@ describe("financial analytics payroll facts", () => {
           }),
         }),
       )
-      expect(result.expenses.salaries).toBe(0)
-      expect(result.taxes.payrollTax).toBe(0)
+      expect(result.expenses.salaries).toBeNull()
+      expect(result.taxes.payrollTax).toBeNull()
       expect(result.payrollEvidence).toMatchObject({
         status: "NON_AUTHORITATIVE",
         authoritative: false,
@@ -418,8 +497,8 @@ describe("financial analytics payroll facts", () => {
       actorPermissions: ["EMPLOYEE_SALARY_READ"],
     })
 
-    expect(result.expenses.salaries).toBe(0)
-    expect(result.taxes.payrollTax).toBe(0)
+    expect(result.expenses.salaries).toBeNull()
+    expect(result.taxes.payrollTax).toBeNull()
     expect(result.payrollEvidence).toMatchObject({
       status: "NON_AUTHORITATIVE",
       authoritative: false,
@@ -509,8 +588,8 @@ describe("financial analytics payroll facts", () => {
       actorPermissions: ["reports.read"],
     })
 
-    expect(result.expenses.salaries).toBe(0)
-    expect(result.taxes.payrollTax).toBe(0)
+    expect(result.expenses.salaries).toBeNull()
+    expect(result.taxes.payrollTax).toBeNull()
     expect(result.payrollEvidence).toMatchObject({
       status: "REDACTED",
       redacted: true,

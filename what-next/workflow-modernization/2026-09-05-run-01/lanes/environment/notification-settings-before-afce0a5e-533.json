@@ -1,0 +1,52 @@
+{
+  "run": "afce0a5e-533",
+  "startedAt": "2026-09-06T18:40:56.110Z",
+  "sourcesBefore": {
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx": "4f213b600911cfbcaf9c9f51221140e570a82c3a264bb095fb68586b65ebac54",
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx": "4abc200b0bdacbca6ec994602cc904a8593bf2ebf716bb1571b502e31344c98c",
+    "components/notifications/NotificationProvider.tsx": "8d2873edf841b98c03116820be80aacded34764b58268c25b5ab69b0dc8323e7",
+    "components/notifications/NotificationSystem.tsx": "ac65dc6af7d520afba10e963d49440a101db7256684a932e80dafd0bb3c971e1",
+    "components/Providers.tsx": "a568563f7f8d6e85cb1c8e713b5863c31bacf858fdd5aa7eb9b7e44694cce6f4"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "reproduced": true,
+      "screenshots": [
+        "en-notification-settings-before-payment-claim-afce0a5e-533.png",
+        "en-notification-settings-before-security-claim-afce0a5e-533.png"
+      ],
+      "realRecordCountsUnchanged": true,
+      "claims": [
+        "Payment recorded",
+        "Privileged action queued"
+      ],
+      "originalPermissionsRestored": true
+    },
+    {
+      "locale": "fr",
+      "reproduced": true,
+      "screenshots": [
+        "fr-notification-settings-before-payment-claim-afce0a5e-533.png",
+        "fr-notification-settings-before-security-claim-afce0a5e-533.png"
+      ],
+      "realRecordCountsUnchanged": true,
+      "claims": [
+        "Payment recorded",
+        "Privileged action queued"
+      ],
+      "originalPermissionsRestored": true
+    }
+  ],
+  "scope": "Owned local settings samples only. A temporary notification-read grant on each synthetic role is restored. No real payment, approval, provider send or financial mutation.",
+  "completedAt": "2026-09-06T18:41:38.777Z",
+  "sourcesAfter": {
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx": "4f213b600911cfbcaf9c9f51221140e570a82c3a264bb095fb68586b65ebac54",
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx": "4abc200b0bdacbca6ec994602cc904a8593bf2ebf716bb1571b502e31344c98c",
+    "components/notifications/NotificationProvider.tsx": "8d2873edf841b98c03116820be80aacded34764b58268c25b5ab69b0dc8323e7",
+    "components/notifications/NotificationSystem.tsx": "ac65dc6af7d520afba10e963d49440a101db7256684a932e80dafd0bb3c971e1",
+    "components/Providers.tsx": "a568563f7f8d6e85cb1c8e713b5863c31bacf858fdd5aa7eb9b7e44694cce6f4"
+  },
+  "sourceStable": true,
+  "driverSha256": "db1a672418154ac115ab5bf2b88f868db69b55471d56f664fb825b992abc63a3"
+}

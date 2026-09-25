@@ -1,4 +1,6 @@
 import { render, screen } from "@testing-library/react"
+jest.mock("next-intl/server", () => ({ getTranslations: jest.fn() }))
+jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn(async () => ({ allowed: true })) }))
 
 jest.mock("@/components/dashboard/DashboardRouteState", () => ({
   DashboardRouteState: ({ kind }: { kind: string }) => <div>{`route:${kind}`}</div>,

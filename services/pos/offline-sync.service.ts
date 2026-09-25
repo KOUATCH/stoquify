@@ -5,11 +5,10 @@ import {
   AccountingSourceType,
   JournalEntryStatus,
   Prisma,
-  SalesOrderStatus,
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
-import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { ApplicationError, BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   hashBusinessPayload,
   recordBusinessEventInTx,
@@ -29,7 +28,7 @@ import {
   type ReplayOfflineSaleEnvelopeInput,
 } from "./offline-sync.schemas"
 import { commitSaleSchema, type CommitSaleInput } from "./pos.schemas"
-import { commitPOSSale } from "./pos.service"
+import { commitPOSSale, getPOSSaleCommitStatus } from "./pos.service"
 import { getSalesReceipt, type SalesReceiptPayload } from "./receipt.service"
 
 type OrgScoped<T extends object = Record<string, unknown>> = T & {
@@ -154,6 +153,8 @@ export type OfflineSaleReplayResult = {
   legalDeliveryBlocked: boolean | null
   blockerCode: string | null
   blockerMessage: string | null
+  currentSaleStatus?: string
+  observedAt?: string
 }
 
 function sha256(value: string) {
@@ -323,6 +324,8 @@ function replayMetadata(input: {
 }
 
 function replayBlockerCode(error: unknown) {
+  if (error instanceof ApplicationError && error.metadata?.reason === "POS_CART_REVISION_CHANGED") return "OFFLINE_REPLAY_CART_REVIEW_REQUIRED"
+  if (error instanceof ApplicationError && error.code === "DUPLICATE_KEY_CONFLICT") return "OFFLINE_REPLAY_REQUEST_CONFLICT"
   const message = error instanceof Error ? error.message : String(error)
   const normalized = message.toLowerCase()
 
@@ -917,9 +920,37 @@ async function loadOfflineSaleReplayEvent(input: {
   return event
 }
 
-function replayResultFromEventMetadata(event: Awaited<ReturnType<typeof loadOfflineSaleReplayEvent>>) {
+async function replayResultFromEventMetadata(event: Awaited<ReturnType<typeof loadOfflineSaleReplayEvent>>, userId: string) {
   const metadata = isRecord(event.metadata) ? event.metadata : {}
   const replay = isRecord(metadata.offlineReplay) ? metadata.offlineReplay : {}
+
+  const inconsistent = () => new ConflictError("Recorded offline replay evidence could not be verified; retain the event for review")
+  if (hashBusinessPayload(event.payload) !== event.payloadHash) throw inconsistent()
+  let commitInput: CommitSaleInput
+  try {
+    commitInput = extractCommitSalePayload(event.payload, `offline:${event.id}`)
+    assertReplayScope(event, commitInput)
+  } catch { throw inconsistent() }
+  const original = await getPOSSaleCommitStatus({ ...commitInput, organizationId: event.organizationId, userId })
+  if (original.kind !== "RECORDED" || replay.saleId !== original.saleId || replay.orderNumber !== original.orderNumber) throw inconsistent()
+  const evidence = await db.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: {
+    organizationId: event.organizationId, eventSource: "OFFLINE_POS", idempotencyKey: `offline-event:${event.id}:replayed`,
+  } } })
+  const payload = evidence && isRecord(evidence.payload) ? evidence.payload : {}
+  if (!evidence || evidence.eventType !== "pos.offline.event.replayed" || evidence.actorId !== userId ||
+    evidence.sourceId !== original.saleId || evidence.locationId !== event.locationId ||
+    evidence.registerId !== event.terminalId || evidence.deviceId !== event.deviceId ||
+    evidence.payloadHash !== event.payloadHash || payload.offlineEventId !== event.id ||
+    payload.salesOrderId !== original.saleId || payload.orderNumber !== original.orderNumber ||
+    typeof replay.postingBatchId !== "string" || !replay.postingBatchId ||
+    replay.postingBatchId !== event.postingBatchId || replay.postingBatchId !== evidence.postingBatchId ||
+    typeof replay.documentHash !== "string" || !replay.documentHash || replay.documentHash !== event.documentHash ||
+    ["postingBatchId", "fiscalDocumentId", "fiscalDocumentStatus", "legalDeliveryBlocked", "documentHash"].some(key => replay[key] !== payload[key])) throw inconsistent()
+  const posting = await db.journalEntry.findFirst({ where: {
+    organizationId: event.organizationId, sourceType: AccountingSourceType.POS_SALE, sourceId: original.saleId,
+    postingPurpose: AccountingPostingPurpose.SALE_COMPLETION, status: JournalEntryStatus.POSTED, postingBatchId: replay.postingBatchId,
+  }, select: { id: true } })
+  if (!posting) throw inconsistent()
 
   return {
     offlineEventId: event.id,
@@ -933,6 +964,8 @@ function replayResultFromEventMetadata(event: Awaited<ReturnType<typeof loadOffl
       typeof replay.legalDeliveryBlocked === "boolean" ? replay.legalDeliveryBlocked : null,
     blockerCode: event.blockerCode,
     blockerMessage: event.blockerMessage,
+    currentSaleStatus: original.currentStatus,
+    observedAt: original.observedAt,
   } satisfies OfflineSaleReplayResult
 }
 
@@ -951,26 +984,20 @@ function assertReplayScope(
 
 async function findCompletedReplayOutcome(input: {
   organizationId: string
+  userId: string
   event: Awaited<ReturnType<typeof loadOfflineSaleReplayEvent>>
   commitInput: CommitSaleInput
 }) {
-  const sale = await db.salesOrder.findFirst({
-    where: {
-      id: input.commitInput.salesOrderId,
-      organizationId: input.organizationId,
-      locationId: input.event.locationId,
-      terminalId: input.event.terminalId,
-      sessionId: input.commitInput.sessionId,
-      status: SalesOrderStatus.COMPLETED,
-      deletedAt: null,
-    },
-    select: {
-      id: true,
-      orderNumber: true,
-    },
+  const recorded = await getPOSSaleCommitStatus({
+    ...input.commitInput, organizationId: input.organizationId, userId: input.userId,
+  }).catch((error: unknown) => {
+    // Different intent cannot acknowledge this event. Commit will record the
+    // conflict through the existing blocked-replay path; other read errors fail.
+    if (error instanceof ApplicationError && error.code === "DUPLICATE_KEY_CONFLICT") return null
+    throw error
   })
-
-  if (!sale) return null
+  if (recorded?.kind !== "RECORDED" || recorded.currentStatus !== "COMPLETED") return null
+  const sale = { id: recorded.saleId, orderNumber: recorded.orderNumber }
 
   const [receipt, saleJournalEntry] = await Promise.all([
     getSalesReceipt({
@@ -998,6 +1025,27 @@ async function findCompletedReplayOutcome(input: {
   }
 }
 
+class OfflineReplayTransitionConflict extends ConflictError {
+  constructor() { super("Offline replay evidence is missing or changed; reload and review it before retrying.") }
+}
+
+function replayTransitionError(error: unknown): never {
+  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") throw new OfflineReplayTransitionConflict()
+  throw error
+}
+
+function replayTransitionWhere(event: Awaited<ReturnType<typeof loadOfflineSaleReplayEvent>>) {
+  return {
+    id: event.id, organizationId: event.organizationId, status: "PENDING_REPLAY",
+    deviceId: event.deviceId, terminalId: event.terminalId, locationId: event.locationId, sessionId: event.sessionId,
+    updatedAt: event.updatedAt, payloadHash: event.payloadHash,
+    payload: { equals: event.payload === null ? Prisma.AnyNull : event.payload },
+    metadata: { equals: event.metadata === null ? Prisma.AnyNull : event.metadata },
+    postingBatchId: event.postingBatchId, documentHash: event.documentHash,
+    blockerCode: event.blockerCode, blockerMessage: event.blockerMessage,
+  } satisfies Prisma.POSOfflineEventWhereInput
+}
+
 async function markOfflineSaleReplayed(input: {
   context: { organizationId: string; userId: string }
   event: Awaited<ReturnType<typeof loadOfflineSaleReplayEvent>>
@@ -1007,6 +1055,26 @@ async function markOfflineSaleReplayed(input: {
   const documentHash = receiptDocumentHash(input.receipt)
 
   await db.$transaction(async (tx) => {
+    if (!input.result.saleId || !input.result.postingBatchId) throw new OfflineReplayTransitionConflict()
+    const posting = await tx.journalEntry.findFirst({ where: {
+      organizationId: input.context.organizationId, sourceType: AccountingSourceType.POS_SALE,
+      sourceId: input.result.saleId, postingPurpose: AccountingPostingPurpose.SALE_COMPLETION,
+      status: JournalEntryStatus.POSTED, postingBatchId: input.result.postingBatchId,
+    }, select: { id: true } })
+    const device = await tx.pOSOfflineDevice.findFirst({ where: {
+      id: input.event.deviceId, organizationId: input.context.organizationId,
+      terminalId: input.event.terminalId, locationId: input.event.locationId, status: "ACTIVE",
+    }, select: { id: true } })
+    if (!posting || !device) throw new OfflineReplayTransitionConflict()
+    const changed = await tx.pOSOfflineEvent.updateMany({
+      where: replayTransitionWhere(input.event),
+      data: {
+        status: "REPLAYED", postingBatchId: input.result.postingBatchId, documentHash,
+        blockerCode: null, blockerMessage: null,
+        metadata: mergeMetadata(input.event.metadata, replayMetadata({ result: input.result, receipt: input.receipt, documentHash })),
+      },
+    })
+    if (changed.count !== 1) throw new OfflineReplayTransitionConflict()
     await recordBusinessEventInTx(tx, {
       organizationId: input.context.organizationId,
       eventType: "pos.offline.event.replayed",
@@ -1045,22 +1113,6 @@ async function markOfflineSaleReplayed(input: {
       ],
     })
 
-    await tx.pOSOfflineEvent.update({
-      where: { id: input.event.id },
-      data: {
-        status: "REPLAYED",
-        postingBatchId: input.result.postingBatchId,
-        documentHash,
-        blockerCode: null,
-        blockerMessage: null,
-        metadata: mergeMetadata(input.event.metadata, replayMetadata({
-          result: input.result,
-          receipt: input.receipt,
-          documentHash,
-        })),
-      },
-    })
-
     await tx.auditLog.create({
       data: {
         entityType: "POSOfflineEvent",
@@ -1088,7 +1140,7 @@ async function markOfflineSaleReplayed(input: {
       acceptedCount: 0,
       conflictCount: 0,
     })
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }).catch(replayTransitionError)
 
   return input.result
 }
@@ -1124,8 +1176,8 @@ async function blockOfflineSaleReplay(input: {
       },
     })
 
-    await tx.pOSOfflineEvent.update({
-      where: { id: input.event.id },
+    const changed = await tx.pOSOfflineEvent.updateMany({
+      where: replayTransitionWhere(input.event),
       data: {
         status: "BLOCKED",
         blockerCode: input.blockerCode,
@@ -1141,6 +1193,8 @@ async function blockOfflineSaleReplay(input: {
         }),
       },
     })
+
+    if (changed.count !== 1) throw new OfflineReplayTransitionConflict()
 
     await recordBusinessEventInTx(tx, {
       organizationId: input.context.organizationId,
@@ -1206,7 +1260,7 @@ async function blockOfflineSaleReplay(input: {
       acceptedCount: 0,
       conflictCount: 1,
     })
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }).catch(replayTransitionError)
 
   return result
 }
@@ -1232,7 +1286,7 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
   })
 
   if (event.status === "REPLAYED" || event.status === "DUPLICATE_REPLAY") {
-    return replayResultFromEventMetadata(event)
+    return replayResultFromEventMetadata(event, input.userId)
   }
 
   if (event.status === "BLOCKED") {
@@ -1287,6 +1341,7 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
 
   const completed = await findCompletedReplayOutcome({
     organizationId: input.organizationId,
+    userId: input.userId,
     event,
     commitInput,
   })
@@ -1316,6 +1371,7 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
     if (!committed.receipt) {
       const completedAfterCommit = await findCompletedReplayOutcome({
         organizationId: input.organizationId,
+        userId: input.userId,
         event,
         commitInput,
       })
@@ -1353,8 +1409,10 @@ export async function replayPendingOfflineSaleEnvelope(input: UserScoped<ReplayO
       }),
     })
   } catch (error) {
+    if (error instanceof OfflineReplayTransitionConflict) throw error
     const completedAfterRetry = await findCompletedReplayOutcome({
       organizationId: input.organizationId,
+      userId: input.userId,
       event,
       commitInput,
     })

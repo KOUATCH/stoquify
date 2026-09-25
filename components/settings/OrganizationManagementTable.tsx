@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState, type ReactNode } from "react"
+import { useCallback, useMemo, useRef, useState, type ReactNode } from "react"
 import {
   type ColumnDef,
   type SortingState,
@@ -20,7 +20,6 @@ import {
   ChevronDown,
   ChevronsUpDown,
   Copy,
-  Download,
   Edit3,
   ExternalLink,
   Globe2,
@@ -48,14 +47,6 @@ import { useNotifications } from "@/components/notifications/NotificationProvide
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -65,7 +56,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Table,
@@ -76,9 +66,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
-import { Textarea } from "@/components/ui/textarea"
 import type { OrganizationManagementRow } from "@/actions/organization/organization-settings-actions"
-import { useCreateOrganizationSettings, useOrganizationManagementRows } from "@/hooks/useOrganizationSettings"
+import { useOrganizationManagementRows } from "@/hooks/useOrganizationSettings"
+
+import OrganizationSetupHandoff, { organizationSetupLabel } from "./OrganizationSetupHandoff"
+import OrganizationDirectoryExport from "./OrganizationDirectoryExport"
+import { formatDirectoryPaymentTotal, matchesDirectoryFilters } from "@/services/organization/organization-directory-input"
 
 interface OrganizationManagementTableProps {
   organizationId: string
@@ -87,33 +80,10 @@ interface OrganizationManagementTableProps {
 
 type StatusFilter = "all" | "active" | "inactive"
 
-type CreateOrganizationFormState = {
-  name: string
-  industry: string
-  country: string
-  state: string
-  address: string
-  currency: string
-  timezone: string
-}
-
 const DASHBOARD_SEGMENT = "dashboard"
 
 const dashboardPath = (...segments: string[]) =>
   `/${[DASHBOARD_SEGMENT, ...segments].join("/")}`
-
-const CURRENCIES = ["XAF", "USD", "EUR", "GBP", "CAD", "NGN", "GHS", "ZAR"] as const
-
-const TIMEZONES = [
-  "Africa/Douala",
-  "Africa/Lagos",
-  "Africa/Abidjan",
-  "Africa/Nairobi",
-  "Europe/Paris",
-  "Europe/London",
-  "UTC",
-  "America/New_York",
-] as const
 
 const copy = {
   en: {
@@ -157,7 +127,7 @@ const copy = {
     items: "Items",
     locations: "Locations",
     partners: "Partners",
-    revenue: "Paid revenue",
+    paidPayments: "Gross paid payment total",
     currency: "Currency",
     language: "Language",
     timezone: "Timezone",
@@ -245,7 +215,7 @@ const copy = {
     items: "Articles",
     locations: "Lieux",
     partners: "Partenaires",
-    revenue: "Revenu paye",
+    paidPayments: "Total brut des paiements payés",
     currency: "Devise",
     language: "Langue",
     timezone: "Fuseau",
@@ -298,18 +268,6 @@ function formatNumber(value: number, locale: Locale) {
   return new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US").format(value)
 }
 
-function formatCurrency(value: number, currency: string, locale: Locale) {
-  try {
-    return new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-US", {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 0,
-    }).format(value)
-  } catch {
-    return `${currency} ${formatNumber(value, locale)}`
-  }
-}
-
 function formatDate(value: Date | string | null | undefined, locale: Locale, fallback: string) {
   if (!value) return fallback
   const date = new Date(value)
@@ -335,23 +293,6 @@ function getInitials(name: string) {
     .toUpperCase() || "SF"
 }
 
-function getDefaultCreateForm(): CreateOrganizationFormState {
-  return {
-    name: "",
-    industry: "",
-    country: "",
-    state: "",
-    address: "",
-    currency: "XAF",
-    timezone: "Africa/Douala",
-  }
-}
-
-function escapeCsv(value: string | number | boolean | null | undefined) {
-  const text = String(value ?? "")
-  return `"${text.replace(/"/g, '""')}"`
-}
-
 function SortIcon({ sorted }: { sorted: false | "asc" | "desc" }) {
   return <ChevronsUpDown className={cn("h-3.5 w-3.5", sorted ? "text-[var(--dash-brand-strong)]" : "text-[var(--dash-text-faint)]")} />
 }
@@ -367,7 +308,7 @@ export default function OrganizationManagementTable({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [createOpen, setCreateOpen] = useState(false)
-  const [createForm, setCreateForm] = useState<CreateOrganizationFormState>(getDefaultCreateForm)
+  const setupTrigger = useRef<HTMLButtonElement>(null)
 
   const {
     data = [],
@@ -377,38 +318,8 @@ export default function OrganizationManagementTable({
     error,
     refetch,
   } = useOrganizationManagementRows(organizationId)
-  const createOrganizationMutation = useCreateOrganizationSettings(organizationId, locale)
 
-  const filteredData = useMemo(() => {
-    const query = search.trim().toLowerCase()
-
-    return data.filter((row) => {
-      const matchesStatus =
-        statusFilter === "all" ||
-        (statusFilter === "active" && row.isActive) ||
-        (statusFilter === "inactive" && !row.isActive)
-
-      if (!matchesStatus) return false
-      if (!query) return true
-
-      return [
-        row.name,
-        row.slug,
-        row.industry,
-        row.country,
-        row.state,
-        row.address,
-        row.currency,
-        row.timezone,
-        row.defaultLocale,
-        row.fiscalYearStart,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-        .includes(query)
-    })
-  }, [data, search, statusFilter])
+  const filteredData = useMemo(() => data.filter(row => matchesDirectoryFilters(row, { search, status: statusFilter })), [data, search, statusFilter])
 
   const summary = useMemo(() => {
     const activeRecords = data.filter((row) => row.isActive).length
@@ -416,7 +327,7 @@ export default function OrganizationManagementTable({
     const itemsCount = data.reduce((sum, row) => sum + row.itemsCount, 0)
     const locationsCount = data.reduce((sum, row) => sum + row.locationsCount, 0)
     const partnersCount = data.reduce((sum, row) => sum + row.customersCount + row.suppliersCount, 0)
-    const paidRevenue = data.reduce((sum, row) => sum + row.paidRevenue, 0)
+    const paidPaymentsAmount = data[0]?.paidPaymentsAmount ?? "0.00"
     const currency = data[0]?.currency ?? "XAF"
 
     return {
@@ -425,7 +336,7 @@ export default function OrganizationManagementTable({
       itemsCount,
       locationsCount,
       partnersCount,
-      paidRevenue,
+      paidPaymentsAmount,
       currency,
     }
   }, [data])
@@ -435,37 +346,6 @@ export default function OrganizationManagementTable({
     notifications.info(t.profileFocusTitle, t.profileFocusBody)
   }, [notifications, t.profileFocusBody, t.profileFocusTitle])
 
-  const updateCreateField = <K extends keyof CreateOrganizationFormState>(
-    field: K,
-    value: CreateOrganizationFormState[K],
-  ) => {
-    setCreateForm((current) => ({ ...current, [field]: value }))
-  }
-
-  const submitCreateOrganization = async () => {
-    if (!createForm.name.trim()) {
-      notifications.warning(t.requiredTitle, t.requiredBody)
-      return
-    }
-
-    try {
-      await createOrganizationMutation.mutateAsync({
-        name: createForm.name,
-        industry: createForm.industry,
-        country: createForm.country,
-        state: createForm.state,
-        address: createForm.address,
-        currency: createForm.currency,
-        timezone: createForm.timezone,
-        defaultLocale: locale,
-      })
-      setCreateOpen(false)
-      setCreateForm(getDefaultCreateForm())
-    } catch {
-      // The mutation hook sends the localized notification.
-    }
-  }
-
   const copyOrganizationId = useCallback(async (row: OrganizationManagementRow) => {
     try {
       await navigator.clipboard.writeText(row.id)
@@ -474,68 +354,6 @@ export default function OrganizationManagementTable({
       notifications.error(t.copyFailedTitle, t.copyFailedBody)
     }
   }, [notifications, t.copiedBody, t.copiedTitle, t.copyFailedBody, t.copyFailedTitle])
-
-  const exportRows = () => {
-    const headers = [
-      "id",
-      "name",
-      "slug",
-      "industry",
-      "country",
-      "state",
-      "currency",
-      "timezone",
-      "defaultLocale",
-      "isActive",
-      "usersCount",
-      "itemsCount",
-      "locationsCount",
-      "suppliersCount",
-      "customersCount",
-      "purchaseOrdersCount",
-      "salesOrdersCount",
-      "paymentsCount",
-      "paidRevenue",
-      "updatedAt",
-    ]
-
-    const csv = [
-      headers.map(escapeCsv).join(","),
-      ...filteredData.map((row) =>
-        [
-          row.id,
-          row.name,
-          row.slug,
-          row.industry,
-          row.country,
-          row.state,
-          row.currency,
-          row.timezone,
-          row.defaultLocale,
-          row.isActive,
-          row.usersCount,
-          row.itemsCount,
-          row.locationsCount,
-          row.suppliersCount,
-          row.customersCount,
-          row.purchaseOrdersCount,
-          row.salesOrdersCount,
-          row.paymentsCount,
-          row.paidRevenue,
-          row.updatedAt instanceof Date ? row.updatedAt.toISOString() : row.updatedAt,
-        ].map(escapeCsv).join(","),
-      ),
-    ].join("\n")
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
-    const url = URL.createObjectURL(blob)
-    const anchor = document.createElement("a")
-    anchor.href = url
-    anchor.download = `organization-management-${new Date().toISOString().slice(0, 10)}.csv`
-    anchor.click()
-    URL.revokeObjectURL(url)
-    notifications.success(t.exportTitle, t.exportBody)
-  }
 
   const columns = useMemo<ColumnDef<OrganizationManagementRow>[]>(() => [
     {
@@ -639,7 +457,8 @@ export default function OrganizationManagementTable({
     },
     {
       id: "commerce",
-      accessorFn: (row) => row.paidRevenue,
+      accessorFn: (row) => row.paidPaymentsAmount,
+      sortingFn: (a, b) => { const left = BigInt(a.original.paidPaymentsAmount.replace(".", "")), right = BigInt(b.original.paidPaymentsAmount.replace(".", "")); return left < right ? -1 : left > right ? 1 : 0 },
       header: ({ column }) => (
         <HeaderButton onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
           {t.tableColumns.commerce}
@@ -652,7 +471,7 @@ export default function OrganizationManagementTable({
         return (
           <div className="min-w-[13rem] space-y-2">
             <div className="font-semibold text-[var(--dash-text)]">
-              {formatCurrency(organization.paidRevenue, organization.currency, locale)}
+              {formatDirectoryPaymentTotal(organization.paidPaymentsAmount, organization.currency, locale)}
             </div>
             <div className="flex flex-wrap gap-2 text-xs">
               <CountBadge icon={ShoppingCart} value={organization.salesOrdersCount} label="SO" locale={locale} />
@@ -859,13 +678,14 @@ export default function OrganizationManagementTable({
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:min-w-[32rem]">
+          <div className="grid min-w-0 grid-cols-3 gap-2 xl:min-w-[32rem]">
             <SummaryTile label={t.totalRecords} value={data.length} locale={locale} tone="brand" />
             <SummaryTile label={t.activeRecords} value={summary.activeRecords} locale={locale} tone="success" />
             <SummaryTile label={t.users} value={summary.usersCount} locale={locale} tone="spruce" />
             <SummaryTile
-              label={t.revenue}
-              value={formatCurrency(summary.paidRevenue, summary.currency, locale)}
+              className="col-span-3"
+              label={t.paidPayments}
+              value={formatDirectoryPaymentTotal(summary.paidPaymentsAmount, summary.currency, locale)}
               tone="gold"
             />
           </div>
@@ -878,7 +698,7 @@ export default function OrganizationManagementTable({
             <div className="relative min-w-0">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
               <Input
-                value={search}
+                value={search} maxLength={200}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder={t.search}
                 className="dashboard-control h-11 rounded-lg pl-10"
@@ -899,11 +719,11 @@ export default function OrganizationManagementTable({
           <div className="flex flex-wrap items-center gap-2">
             <Button
               type="button"
-              onClick={() => setCreateOpen(true)}
+              onClick={event => { setupTrigger.current = event.currentTarget; setCreateOpen(true) }}
               className="dashboard-button-primary h-11 rounded-lg"
             >
               <Plus className="h-4 w-4" />
-              {t.create}
+              {organizationSetupLabel(locale)}
             </Button>
             <Button
               type="button"
@@ -915,16 +735,7 @@ export default function OrganizationManagementTable({
               <RefreshCw className={cn("h-4 w-4", isFetching && "animate-spin")} />
               {isFetching ? t.refreshing : t.refresh}
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={exportRows}
-              disabled={filteredData.length === 0}
-              className="dashboard-button-secondary h-11 rounded-lg"
-            >
-              <Download className="h-4 w-4" />
-              {t.export}
-            </Button>
+            <OrganizationDirectoryExport key={JSON.stringify([organizationId, locale, search, statusFilter])} organizationId={organizationId} locale={locale} filters={{ search, status: statusFilter }} canExport={data[0]?.canExport === true} available={!isError && !isFetching && filteredData.length > 0} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button type="button" variant="outline" className="dashboard-button-secondary h-11 rounded-lg">
@@ -1000,11 +811,11 @@ export default function OrganizationManagementTable({
                       </div>
                       <Button
                         type="button"
-                        onClick={() => setCreateOpen(true)}
+                        onClick={event => { setupTrigger.current = event.currentTarget; setCreateOpen(true) }}
                         className="dashboard-button-primary h-10 rounded-lg"
                       >
                         <Plus className="h-4 w-4" />
-                        {t.create}
+                        {organizationSetupLabel(locale)}
                       </Button>
                     </div>
                   </TableCell>
@@ -1018,140 +829,7 @@ export default function OrganizationManagementTable({
       </div>
       </section>
 
-      <Dialog
-        open={createOpen}
-        onOpenChange={(open) => {
-          setCreateOpen(open)
-          if (!open && !createOrganizationMutation.isPending) {
-            setCreateForm(getDefaultCreateForm())
-          }
-        }}
-      >
-        <DialogContent className="dashboard-glass-panel max-h-[92vh] max-w-2xl overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[var(--dash-text)]">
-              <Building2 className="h-5 w-5 text-[var(--dash-brand-strong)]" />
-              {t.createDialogTitle}
-            </DialogTitle>
-            <DialogDescription className="text-[var(--dash-text-soft)]">
-              {t.createDialogBody}
-            </DialogDescription>
-          </DialogHeader>
-
-          <form
-            className="space-y-4"
-            onSubmit={(event) => {
-              event.preventDefault()
-              submitCreateOrganization()
-            }}
-          >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <CreateField label={t.fields.name} required>
-                <Input
-                  value={createForm.name}
-                  onChange={(event) => updateCreateField("name", event.target.value)}
-                  placeholder={t.placeholders.name}
-                  className="dashboard-control h-11 rounded-lg"
-                  autoComplete="organization"
-                />
-              </CreateField>
-              <CreateField label={t.fields.industry}>
-                <Input
-                  value={createForm.industry}
-                  onChange={(event) => updateCreateField("industry", event.target.value)}
-                  placeholder={t.placeholders.industry}
-                  className="dashboard-control h-11 rounded-lg"
-                />
-              </CreateField>
-              <CreateField label={t.fields.country}>
-                <Input
-                  value={createForm.country}
-                  onChange={(event) => updateCreateField("country", event.target.value)}
-                  placeholder={t.placeholders.country}
-                  className="dashboard-control h-11 rounded-lg"
-                  autoComplete="country-name"
-                />
-              </CreateField>
-              <CreateField label={t.fields.state}>
-                <Input
-                  value={createForm.state}
-                  onChange={(event) => updateCreateField("state", event.target.value)}
-                  placeholder={t.placeholders.state}
-                  className="dashboard-control h-11 rounded-lg"
-                  autoComplete="address-level1"
-                />
-              </CreateField>
-              <CreateField label={t.fields.currency}>
-                <Select value={createForm.currency} onValueChange={(value) => updateCreateField("currency", value)}>
-                  <SelectTrigger className="dashboard-control h-11 rounded-lg">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                    {CURRENCIES.map((currency) => (
-                      <SelectItem key={currency} value={currency}>
-                        {currency}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </CreateField>
-              <CreateField label={t.fields.timezone}>
-                <Select value={createForm.timezone} onValueChange={(value) => updateCreateField("timezone", value)}>
-                  <SelectTrigger className="dashboard-control h-11 rounded-lg">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                    {TIMEZONES.map((timezone) => (
-                      <SelectItem key={timezone} value={timezone}>
-                        {timezone}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </CreateField>
-            </div>
-
-            <CreateField label={t.fields.address}>
-              <Textarea
-                value={createForm.address}
-                onChange={(event) => updateCreateField("address", event.target.value)}
-                placeholder={t.placeholders.address}
-                className="dashboard-control min-h-24 resize-none rounded-lg"
-                autoComplete="street-address"
-              />
-            </CreateField>
-
-            <DialogFooter className="gap-2 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setCreateOpen(false)}
-                disabled={createOrganizationMutation.isPending}
-                className="dashboard-button-secondary h-10 rounded-lg"
-              >
-                {t.cancel}
-              </Button>
-              <Button
-                type="submit"
-                disabled={createOrganizationMutation.isPending}
-                className="dashboard-button-primary h-10 rounded-lg"
-              >
-                {createOrganizationMutation.isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {t.creating}
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-4 w-4" />
-                    {t.create}
-                  </>
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <OrganizationSetupHandoff open={createOpen} onOpenChange={setCreateOpen} locale={locale} returnFocus={setupTrigger} />
     </>
   )
 }
@@ -1174,32 +852,14 @@ function HeaderButton({
   )
 }
 
-function CreateField({
-  label,
-  required,
-  children,
-}: {
-  label: string
-  required?: boolean
-  children: ReactNode
-}) {
-  return (
-    <div className="space-y-2">
-      <Label className="text-sm font-semibold text-[var(--dash-text-muted)]">
-        {label}
-        {required ? <span className="ms-1 text-[var(--dash-warning)]">*</span> : null}
-      </Label>
-      {children}
-    </div>
-  )
-}
-
 function SummaryTile({
+  className,
   label,
   value,
   locale,
   tone,
 }: {
+  className?: string
   label: string
   value: number | string
   locale?: Locale
@@ -1213,10 +873,10 @@ function SummaryTile({
   }[tone]
 
   return (
-    <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.46)] p-3">
+    <div className={cn("min-w-0 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.46)] p-3", className)}>
       <div className={cn("mb-3 h-1 w-10 rounded-full", color)} />
       <p className="text-xs text-[var(--dash-text-faint)]">{label}</p>
-      <p className="mt-1 truncate text-xl font-semibold text-[var(--dash-text)]">
+      <p className="mt-1 break-words text-xl font-semibold text-[var(--dash-text)]">
         {typeof value === "number" ? formatNumber(value, locale ?? "en") : value}
       </p>
     </div>

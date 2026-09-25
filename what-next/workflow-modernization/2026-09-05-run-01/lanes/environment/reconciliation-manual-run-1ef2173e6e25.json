@@ -1,0 +1,160 @@
+{
+  "mode": "run",
+  "attempt": "1ef2173e6e25",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-05T21:00:32.540Z",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "eb3e1a13157f6be4481e86bfc8bd40581609a1f80b6078da20c8d9e0421f51d7",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "83598e664a230127bb5afae1d1e38fa05c34e075e93ddaaa7e29551ec0fbe284",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-reconciliation-obligations.service.ts": "59590b0ee05101c1723c933e9a742b264419ce067f2ce40db3f3285238c37fb5",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+  },
+  "checks": [
+    {
+      "name": "Exact proposal retry returns one durable record and one notification",
+      "passed": true,
+      "durationMs": 521,
+      "detail": {
+        "proposalId": "cmtova9mc000jmapcpdgt5jbz",
+        "duplicateEffects": 0
+      }
+    },
+    {
+      "name": "Approval rejects missing permission, self-approval, stale authentication, forged revision and foreign organization",
+      "passed": true,
+      "durationMs": 73,
+      "detail": {
+        "denied": 5,
+        "matchAndInboxEffects": 0,
+        "denialAuditRetained": 5
+      }
+    },
+    {
+      "name": "Concurrent approval commits one decision and safe retry returns its receipt",
+      "passed": true,
+      "durationMs": 137,
+      "detail": {
+        "approvalId": "cmtova9u40011mapc4wuxn36a",
+        "originalProposalRetained": true,
+        "rejectedRaces": 1,
+        "duplicateEffects": 0
+      }
+    },
+    {
+      "name": "Competing proposals cannot allocate more than the evidence and exact residual is supported",
+      "passed": true,
+      "durationMs": 275,
+      "detail": {
+        "allocated": "100.00",
+        "ceiling": "100.00",
+        "rejectedExcess": "0.01"
+      }
+    },
+    {
+      "name": "Changed payment lifecycle prevents approval against the saved snapshot",
+      "passed": true,
+      "durationMs": 159,
+      "detail": {
+        "proposalId": "cmtovaa5l0033mapczeuao1wj",
+        "staleApprovalEffects": 0,
+        "replacementProposalId": "cmtovaa6x003bmapcrrfw3g9p",
+        "originalRecordRetained": true
+      }
+    },
+    {
+      "name": "Revoked provider evidence prevents approval",
+      "passed": true,
+      "durationMs": 62,
+      "detail": {
+        "proposalId": "cmtovaa9w0045mapcezhudavv",
+        "invalidEvidenceEffects": 0
+      }
+    },
+    {
+      "name": "Pending read model excludes approved history before limiting results and respects organization",
+      "passed": true,
+      "durationMs": 879,
+      "detail": {
+        "pending": 2,
+        "approvedProposalExcluded": "cmtova9mc000jmapcpdgt5jbz",
+        "foreignRows": 0
+      }
+    },
+    {
+      "name": "Manual matching does not manufacture accounting completion",
+      "passed": true,
+      "durationMs": 13,
+      "detail": {
+        "ledgerPostingBatches": 0,
+        "signedOrReadyRuns": 0,
+        "outboundCalls": 0
+      }
+    },
+    {
+      "name": "Pending review and module obligations agree after approved replacement",
+      "passed": true,
+      "durationMs": 53,
+      "detail": {
+        "pendingReview": 2,
+        "pendingMatchObligations": 2,
+        "financialObligationsRetained": true
+      }
+    },
+    {
+      "name": "Current managed grants deny writes, retain proposals and preserve independent valid rights",
+      "passed": true,
+      "durationMs": 232,
+      "detail": {
+        "deniedModuleWrites": 16,
+        "committedDenialAudits": 16,
+        "missingOrganizationDenied": true,
+        "originalProposalRetained": true,
+        "workspaceDeselectionAndJournalStopPreserveValidApproval": true
+      }
+    }
+  ],
+  "ownedOrganizations": [
+    "org_modules_service_smoke_manual_1ef2173e6e25_main",
+    "org_modules_service_smoke_manual_1ef2173e6e25_foreign"
+  ],
+  "limitations": [
+    "CONFIRMED payments, provider setup, actor permissions and fresh-auth timestamps are synthetic test preconditions. Actual sign-in, role grants, or professional approval are not established.",
+    "Real local HMAC capture, manual service writes, serializable transactions, append-only decisions, read queue and inbox effects are exercised; no live provider or external message.",
+    "No ledger posting, suspense resolution, run sign-off, browser, legacy-proposal renewal or production readiness claimed."
+  ],
+  "targetGuardPassed": true,
+  "fixture": {
+    "main": "org_modules_service_smoke_manual_1ef2173e6e25_main",
+    "foreign": "org_modules_service_smoke_manual_1ef2173e6e25_foreign",
+    "maker": "org_modules_service_smoke_manual_1ef2173e6e25_maker",
+    "checker": "org_modules_service_smoke_manual_1ef2173e6e25_checker",
+    "providerAccountId": "cmtova9cb0003mapch74xamk4"
+  },
+  "error": "AssertionError: The expression evaluated to a falsy value:\n\n  assert.ok(raced.error && [\"FORBIDDEN\", \"CONCURRENCY_CONFLICT\"].includes(raced.error.code))\n",
+  "completedAt": "2026-09-05T21:00:35.372Z",
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "eb3e1a13157f6be4481e86bfc8bd40581609a1f80b6078da20c8d9e0421f51d7",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "83598e664a230127bb5afae1d1e38fa05c34e075e93ddaaa7e29551ec0fbe284",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-reconciliation-obligations.service.ts": "59590b0ee05101c1723c933e9a742b264419ce067f2ce40db3f3285238c37fb5",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+  },
+  "sourceStable": true,
+  "blockedOutbound": [],
+  "driverSha256": "d9563b01b8e47b297cb435145ab024b0bd6d6777b524686e5424e3ef7e74d789",
+  "passed": 10,
+  "failed": 1
+}

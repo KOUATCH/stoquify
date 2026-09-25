@@ -1,0 +1,64 @@
+{
+  "mode": "prepare",
+  "attempt": "01baa2e0-c4d",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T06:56:19.730Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "11e7bfbaf8cc8c72dd0055c4129e962db39046a3edeb6b4c7bf365baca6e9f59",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "48f049ad5257e0ef203a1d7127b6118893b1d480ba40012cc80eca928129f79e",
+    "messages/fr.json": "37df3ec7787b769540e1a08d0649456fd63bb1caeb62ff403a17f28d6e2638cc",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "Owned issued and unrecorded invitation fixtures prepared",
+      "passed": true,
+      "locales": [
+        "en",
+        "fr"
+      ]
+    }
+  ],
+  "blockedBrowserOrigins": [],
+  "limitations": [
+    "Owned synthetic issuers are test preconditions; real issuance service records approval and queue. No invitation transport exists and no email delivery is claimed.",
+    "Real application services, password policy, credential creation and sign-in; no success response body is mocked.",
+    "Browser external requests are blocked; server password-breach lookup uses the existing application configuration and is not measured by the browser interceptor."
+  ],
+  "originalAuthorityBefore": "e192a9c24f88246430955a4323bb7e80b6548265e025db89faee30c68d9af3d0",
+  "originalAuthorityAfter": "e192a9c24f88246430955a4323bb7e80b6548265e025db89faee30c68d9af3d0",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T06:56:20.036Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "11e7bfbaf8cc8c72dd0055c4129e962db39046a3edeb6b4c7bf365baca6e9f59",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "48f049ad5257e0ef203a1d7127b6118893b1d480ba40012cc80eca928129f79e",
+    "messages/fr.json": "37df3ec7787b769540e1a08d0649456fd63bb1caeb62ff403a17f28d6e2638cc",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "3e8ebd01e529ad1116fd7537088cade97a2c66b558866ea304e516cba6b84652",
+  "passed": 1,
+  "failed": 0
+}

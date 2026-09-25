@@ -1,6 +1,6 @@
 "use server"
 
-import { err, ok } from "@/services/_shared/action-response"
+import { posReadResult, posReadError as err } from "@/services/pos/pos-read-result"
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { listPOSCustomers } from "@/services/pos/pos-customer.service"
@@ -44,7 +44,7 @@ export async function getPOSLocationsAction() {
       surface: "actions/pos/catalog.actions.ts:getPOSLocationsAction",
     })
     const locations = await listPOSLocations({ organizationId: ctx.orgId })
-    return ok(locations)
+    return posReadResult(locations, ctx)
   } catch (error) {
     return err(error)
   }
@@ -64,7 +64,7 @@ export async function getPOSTerminalsAction(input: unknown) {
     })
     const parsed = posTerminalListSchema.parse(input)
     const terminals = await listPOSTerminals({ ...parsed, organizationId: ctx.orgId })
-    return ok(terminals)
+    return posReadResult(terminals, ctx)
   } catch (error) {
     return err(error)
   }
@@ -84,7 +84,7 @@ export async function getPOSCatalogAction(input: unknown) {
     })
     const parsed = posCatalogSchema.parse(input)
     const catalog = await listPOSCatalogItems({ ...parsed, organizationId: ctx.orgId })
-    return ok(catalog)
+    return posReadResult(catalog, ctx)
   } catch (error) {
     return err(error)
   }
@@ -104,7 +104,7 @@ export async function getPOSCustomersAction(input: unknown) {
     })
     const parsed = posCustomerListSchema.parse(input)
     const customers = await listPOSCustomers({ ...parsed, organizationId: ctx.orgId })
-    return ok(customers)
+    return posReadResult(customers, ctx)
   } catch (error) {
     return err(error)
   }

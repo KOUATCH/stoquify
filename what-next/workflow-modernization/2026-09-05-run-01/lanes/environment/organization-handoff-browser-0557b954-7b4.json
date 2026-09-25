@@ -1,0 +1,74 @@
+{
+  "run": "0557b954-7b4",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T14:37:50.291Z",
+  "sourcesBefore": {
+    "services/organization/organization-settings.service.ts": "5fb34c5ed712ec1d29a1cce3935c414f48233f4f06360d7f4cdd803c62d534ac",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "actions/organization/organization-settings-actions.ts": "13d47e0b96af65328378bbaa2790fcfed9dbec939f2c52cdfee237459c8dba15",
+    "components/settings/OrganizationManagementTable.tsx": "54c46bad5b748452d8998963c6295a014ac20f93005af0536afae80667e438ca",
+    "components/settings/OrganizationSetupHandoff.tsx": "ac4d26bab2d557f746af0741434c2ecf72e488da3218bc59258c54e08913da9e",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "components/auth/v2/LoginV2Form.tsx": "ebcd4ad9a2cc6b40a592bde41bf92116b4b96cb18da3d0312a3b036540ec47a4",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-organization-handoff-failure-0557b954-7b4.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 47507,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('button', { name: 'Set up another organization', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Set up another organization', exact: true })\n    118 × locator resolved to <button type=\"button\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 px-4 py-2 dashboard-button-primary h-11 rounded-lg\">…</button>\n        - unexpected value \"inactive\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-organization-handoff-failure-0557b954-7b4.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 5759,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('button', { name: 'Configurer une autre organisation', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Configurer une autre organisation', exact: true })\n    119 × locator resolved to <button type=\"button\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 px-4 py-2 dashboard-button-primary h-11 rounded-lg\">…</button>\n        - unexpected value \"inactive\"\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Only synthetic owners/organizations are registered in the owned local application. No email delivery is claimed.",
+    "Existing owned administrator credentials are used only to sign in; grants and credentials are not changed.",
+    "Separate-account sign-in is exercised; native multi-organization membership/switching remains unimplemented.",
+    "Keyboard/reflow checks do not certify actual screen-reader operation or native browser zoom."
+  ],
+  "originalAuthorityBefore": "96297ac1c87d7abe633256da4240daf100dd496433f79b816955f25b8f2396c1",
+  "legacyCreationRejectedWithoutEffects": true,
+  "originalAuthorityAfter": "75355310dc50f3e0231b583f2a7d52d6d8ffa01c2aee528a3a84680e13245699",
+  "originalAuthorityUnchanged": false,
+  "error": "Expected values to be strictly equal:\n\nfalse !== true\n",
+  "completedAt": "2026-09-06T14:41:00.849Z",
+  "sourcesAfter": {
+    "services/organization/organization-settings.service.ts": "5fb34c5ed712ec1d29a1cce3935c414f48233f4f06360d7f4cdd803c62d534ac",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "actions/organization/organization-settings-actions.ts": "13d47e0b96af65328378bbaa2790fcfed9dbec939f2c52cdfee237459c8dba15",
+    "components/settings/OrganizationManagementTable.tsx": "54c46bad5b748452d8998963c6295a014ac20f93005af0536afae80667e438ca",
+    "components/settings/OrganizationSetupHandoff.tsx": "ac4d26bab2d557f746af0741434c2ecf72e488da3218bc59258c54e08913da9e",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "components/auth/v2/LoginV2Form.tsx": "ebcd4ad9a2cc6b40a592bde41bf92116b4b96cb18da3d0312a3b036540ec47a4",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+  },
+  "sourceStable": true,
+  "driverSha256": "c7569f914baf722e2d4785ad714ad6420ddfb0fdc00ab872a7be51d635725c1e",
+  "passed": 0,
+  "failed": 3
+}

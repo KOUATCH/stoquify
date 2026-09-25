@@ -52,7 +52,7 @@ const commandAgentAction = protect<unknown, CommandAgentRunResult>(
         eventSource: "INTERNAL",
         idempotencyKey: `ai-analysis-requested:${parsed.data.requestId}`,
         actorId: ctx.userId,
-        sourceType: "AgentRun",
+        sourceEntityType: "AgentRun",
         sourceId: result.receipt.runId,
         payload: {
           requestId: parsed.data.requestId,

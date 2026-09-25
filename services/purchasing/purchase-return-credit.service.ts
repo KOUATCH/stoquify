@@ -22,6 +22,7 @@ import {
 } from "@/services/purchase-order/purchase-document-number.service"
 import { postPurchaseCorrectionLedgerInTx } from "./ap-control.service"
 import { reversePurchaseCorrectionLedgerInTx } from "./purchase-correction-ledger.service"
+import { refreshSupplierInvoiceBalanceStatus } from "./supplier-payment-balance"
 import {
   postPurchaseReturnInputSchema,
   postSupplierCreditNoteInputSchema,
@@ -309,7 +310,6 @@ export async function postPurchaseReturn(input: PostPurchaseReturnInput, client:
         postedById: parsed.postedById,
         occurredAt,
         lines: { create: plans.map((plan, index) => ({
-          organizationId: parsed.organizationId,
           sourceGoodsReceiptLineId: plan.sourceGoodsReceiptLineId,
           sourcePurchaseOrderLineId: plan.sourcePurchaseOrderLineId,
           itemId: plan.itemId,
@@ -401,6 +401,7 @@ export async function reversePurchaseReturn(input: ReversePurchaseReturnInput, c
       sourceNumber: returnNumber,
       sourceDate: occurredAt,
       originalJournalEntryId: original.journalEntryId,
+      originalSourceId: original.id,
       originalPostingBatchId: original.ledgerPostingBatchId,
       actorId: parsed.postedById,
       supplierId: original.supplierId,
@@ -452,7 +453,6 @@ export async function reversePurchaseReturn(input: ReversePurchaseReturnInput, c
         postedById: parsed.postedById,
         occurredAt,
         lines: { create: original.lines.map((line, index) => ({
-          organizationId: parsed.organizationId,
           sourceGoodsReceiptLineId: line.sourceGoodsReceiptLineId,
           sourcePurchaseOrderLineId: line.sourcePurchaseOrderLineId,
           itemId: line.itemId,
@@ -540,7 +540,9 @@ export async function postSupplierCreditNote(input: PostSupplierCreditNoteInput,
       where: {
         id: parsed.supplierInvoiceId,
         organizationId: parsed.organizationId,
-        purchaseOrderId: sourceReturn.purchaseOrderId,
+        // Receipt-based invoices can span orders and have no single header order.
+        // Every credited line is still matched to the exact returned receipt/order line below.
+        OR: [{ purchaseOrderId: sourceReturn.purchaseOrderId }, { purchaseOrderId: null }],
         supplierId: sourceReturn.supplierId,
         deletedAt: null,
       },
@@ -712,7 +714,6 @@ export async function postSupplierCreditNote(input: PostSupplierCreditNoteInput,
         postedById: parsed.postedById,
         reason: parsed.reason,
         lines: { create: plans.map((line) => ({
-          organizationId: parsed.organizationId,
           sourcePurchaseReturnLineId: line.sourcePurchaseReturnLineId,
           sourceSupplierInvoiceLineId: line.sourceSupplierInvoiceLineId,
           sourceGoodsReceiptLineId: line.sourceGoodsReceiptLineId,
@@ -736,6 +737,7 @@ export async function postSupplierCreditNote(input: PostSupplierCreditNoteInput,
       action: "SUPPLIER_CREDIT_NOTE_POSTED",
       changes: { after: { purchaseReturnId: sourceReturn.id, supplierInvoiceId: invoice.id, documentHash: parsed.documentHash, evidenceHash, total: total.toFixed(2) } },
     } })
+    await refreshSupplierInvoiceBalanceStatus(tx, parsed.organizationId, invoice)
     return { supplierCreditNote: created, replayed: false }
   })
 }
@@ -778,6 +780,14 @@ export async function reverseSupplierCreditNote(input: ReverseSupplierCreditNote
     if (original.direction !== PurchaseCorrectionDirection.CORRECTION || original.reversedBySupplierCreditNote) {
       throw new BusinessRuleError("Only an unreversed original supplier credit can be reversed.")
     }
+    // Match payment/credit lock ordering so a concurrent payment cannot observe stale coverage.
+    await lockSource(tx, "supplier_invoices", parsed.organizationId, original.supplierInvoiceId)
+    const invoice = await tx.supplierInvoice.findFirst({ where: {
+      id: original.supplierInvoiceId, organizationId: parsed.organizationId,
+      supplierId: original.supplierId, currency: original.currency,
+      status: { in: [SupplierInvoiceStatus.POSTED, SupplierInvoiceStatus.PAYMENT_PENDING, SupplierInvoiceStatus.PAID] },
+    } })
+    if (!invoice || !invoice.postedAt) throw new BusinessRuleError("The retained invoice requires review before reversing its supplier credit.")
     await lockSource(tx, "suppliers", parsed.organizationId, original.supplierId)
     const supplier = await tx.supplier.findFirst({
       where: { id: original.supplierId, organizationId: parsed.organizationId, deletedAt: null },
@@ -798,6 +808,7 @@ export async function reverseSupplierCreditNote(input: ReverseSupplierCreditNote
       sourceNumber: parsed.creditNoteNumber,
       sourceDate: creditDate,
       originalJournalEntryId: original.journalEntryId,
+      originalSourceId: original.id,
       originalPostingBatchId: original.ledgerPostingBatchId,
       actorId: parsed.postedById,
       supplierId: original.supplierId,
@@ -862,7 +873,6 @@ export async function reverseSupplierCreditNote(input: ReverseSupplierCreditNote
         postedById: parsed.postedById,
         reason: parsed.reason,
         lines: { create: original.lines.map((line) => ({
-          organizationId: parsed.organizationId,
           sourcePurchaseReturnLineId: line.sourcePurchaseReturnLineId,
           sourceSupplierInvoiceLineId: line.sourceSupplierInvoiceLineId,
           sourceGoodsReceiptLineId: line.sourceGoodsReceiptLineId,
@@ -886,6 +896,7 @@ export async function reverseSupplierCreditNote(input: ReverseSupplierCreditNote
       action: "SUPPLIER_CREDIT_NOTE_REVERSED",
       changes: { after: { reversalOfSupplierCreditNoteId: original.id, documentHash: parsed.documentHash, evidenceHash, total: original.total.toFixed(2) } },
     } })
+    await refreshSupplierInvoiceBalanceStatus(tx, parsed.organizationId, invoice)
     return { supplierCreditNote: created, replayed: false }
   })
 }

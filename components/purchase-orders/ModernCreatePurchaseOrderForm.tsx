@@ -44,6 +44,8 @@ import {
   Zap
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { getModuleOperationErrorReason, type ModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 import { useCallback, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -93,7 +95,7 @@ interface OrderLine {
 
 interface ModernCreatePurchaseOrderFormProps {
   onSubmit?: (data: PurchaseOrderFormData) => Promise<void>
-  action?: (formData: FormData) => Promise<void>
+  action?: (formData: FormData) => Promise<void | { success: false; error: string; code?: string; reason?: ModuleOperationErrorReason }>
   isLoading?: boolean
   onCancel?: () => void
   suppliers?: Array<{ id: string; name: string; email?: string; phone?: string }>
@@ -122,6 +124,7 @@ export function ModernCreatePurchaseOrderForm({
   organizationId
 }: ModernCreatePurchaseOrderFormProps) {
   const router = useRouter()
+  const t = useTranslations("moduleComposition.stop")
   const [currentStep, setCurrentStep] = useState<FormStep>('basic')
   const [completedSteps, setCompletedSteps] = useState<Set<FormStep>>(new Set())
   const [orderLines, setOrderLines] = useState<OrderLine[]>([])
@@ -360,7 +363,12 @@ export function ModernCreatePurchaseOrderForm({
 
         formData.append('orderLines', JSON.stringify(orderLinesData))
 
-        await action(formData)
+        const result = await action(formData)
+        if (result?.success === false) {
+          setIsSaving(false)
+          error(getModuleOperationErrorReason(result) ? t("deniedTitle") : "Creation Failed", getModuleOperationErrorReason(result) ? t("deniedMessage") : result.error)
+          return
+        }
 
         // If we reach here, the action completed successfully without redirect
         success("Purchase Order Created", "Purchase order has been created successfully!")
@@ -837,10 +845,11 @@ export function ModernCreatePurchaseOrderForm({
                                       <TableCell>
                                         <Input
                                           type="number"
-                                          min="1"
+                                          min="0.001"
+                                          step="0.001"
                                           value={line.quantity}
                                           onChange={(e) =>
-                                            updateOrderLine(line.id, "quantity", parseInt(e.target.value) || 1)
+                                            updateOrderLine(line.id, "quantity", Number(e.target.value) || 0)
                                           }
                                           className="text-center"
                                         />

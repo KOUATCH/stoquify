@@ -1262,6 +1262,11 @@
     --notification-accent-soft: var(--dash-success-soft, rgba(46, 201, 138, 0.14));
   }
 
+  .notification-toast--system-success {
+    --notification-accent: var(--dash-brand, #2f7df6);
+    --notification-accent-soft: var(--dash-brand-soft, rgba(47, 125, 246, 0.16));
+  }
+
   .notification-toast--error,
   .notification-toast--critical {
     --notification-accent: var(--dash-danger, #ef6a6a);
@@ -1962,4 +1967,3 @@
     left: 100%;
   }
 }
-

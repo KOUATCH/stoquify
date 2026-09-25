@@ -1,5 +1,4 @@
 import {
-  AccountingPeriodStatus,
   PaymentExceptionStatus,
   PaymentReconciliationInboxSource,
   PaymentReconciliationInboxStatus,
@@ -12,11 +11,14 @@ import {
 import { createHash, randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
 import {
   ApplicationError,
   BusinessRuleError,
   ForbiddenError,
+  ConflictError,
+  IdempotencyConflictError,
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import {
@@ -36,6 +38,9 @@ import {
   buildPaymentReconciliationSignOffSourceVersionHash,
   isPaymentReconciliationSourceVersionHash,
 } from "./payment-reconciliation-sign-off-source-version"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { assertCurrentRunPreparationInTx, preparationHash } from "./reconciliation-run-preparation-evidence"
+import { reconciliationCertificateExportSchema, retainedCertificateExportSchema, type ReconciliationCertificateExportCommand } from "./reconciliation-certificate-export.contracts"
 type ControlContext = {
   actorPermissions: readonly string[]
   lastAuthAt?: Date | number | string | null
@@ -54,6 +59,7 @@ export type SignReconciliationRunInput = {
   runId: string
   signedById: string
   expectedSourceVersionHash?: string
+  expectedEvidenceRevision?: string
   control: ControlContext
   correlationId?: string
 }
@@ -70,7 +76,7 @@ export type SignReconciliationRunResult = {
   correlationId: string
 }
 
-export type ReconciliationCertificateExportInput = {
+export type ReconciliationCertificateExportInput = ReconciliationCertificateExportCommand & {
   organizationId: string
   runId: string
   exportedById: string
@@ -89,6 +95,8 @@ export type ReconciliationCertificateExportResult = {
   rowCount: number
   inboxItemId: string
   correlationId: string
+  sha256: string
+  replayed: boolean
 }
 
 export type ReconciliationRunDetail = {
@@ -134,6 +142,12 @@ export type ReconciliationRunDetail = {
     openExceptionCount: number
     openSuspenseCount: number
   }
+  recordCoverage: {
+    limitPerCollection: number
+    matchRecords: { returned: number; total: number; truncated: boolean }
+    exceptions: { returned: number; total: number; truncated: boolean }
+    suspenseItems: { returned: number; total: number; truncated: boolean }
+  }
   matchRecords: Array<{
     id: string
     status: string
@@ -178,7 +192,7 @@ function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex")
 }
 
-function certificatePayloadHash(payload: unknown) {
+export function certificatePayloadHash(payload: unknown) {
   return sha256(stableStringify(payload))
 }
 
@@ -236,14 +250,15 @@ async function auditReconciliationCertification(
   })
 }
 
-async function loadRunForCertification(
+export async function loadRunForCertification(
   tx: Prisma.TransactionClient,
   organizationId: string,
   runId: string,
   at: Date = new Date(),
 ) {
   const run = await tx.reconciliationRun.findFirst({
-    where: { id: runId, organizationId },
+    where: { id: runId, organizationId, providerAccount: { organizationId }, paymentRail: { organizationId },
+      OR: [{ runById: null }, { runBy: { organizationId } }] },
     include: {
       accountingPeriod: { select: { id: true, status: true, startDate: true, endDate: true } },
       paymentRail: { select: { id: true, name: true, type: true, isActive: true } },
@@ -258,11 +273,13 @@ async function loadRunForCertification(
           suspenseLedgerAccountId: true,
           settlementAccounts: {
             where: {
+              organizationId,
               approvalStatus: SettlementAccountApprovalStatus.APPROVED,
               effectiveFrom: { lte: at },
               OR: [{ effectiveTo: null }, { effectiveTo: { gte: at } }],
             },
             select: { id: true },
+            orderBy: { id: "asc" },
             take: 1,
           },
         },
@@ -274,163 +291,326 @@ async function loadRunForCertification(
   return run
 }
 
-async function resolveOpenAccountingPeriod(
-  tx: Prisma.TransactionClient,
-  organizationId: string,
-  businessDate: Date,
-) {
-  return tx.accountingPeriod.findFirst({
-    where: {
-      organizationId,
-      startDate: { lte: businessDate },
-      endDate: { gte: businessDate },
-      status: AccountingPeriodStatus.OPEN,
-    },
-    select: { id: true, status: true, startDate: true, endDate: true },
-  })
-}
-
 export async function getReconciliationRunDetail(
   organizationId: string,
   runId: string,
 ): Promise<ReconciliationRunDetail> {
-  const run = await loadRunForCertification(db, organizationId, runId)
+  return db.$transaction(async (tx): Promise<ReconciliationRunDetail> => {
+    const asOf = new Date()
+    const run = await loadRunForCertification(tx, organizationId, runId, asOf)
+    const where = { organizationId, reconciliationRunId: run.id }
 
-  const [providerEventCount, statementLineCount, matchRecords, exceptions, suspenseItems] = await Promise.all([
-    db.providerEvent.count({
-      where: {
-        organizationId,
+    const [providerEventCount, statementLineCount, matchRecords, exceptions, suspenseItems,
+      matchRecordCount, exceptionCount, suspenseCount, openExceptionCount, openSuspenseCount] = await Promise.all([
+      tx.providerEvent.count({
+        where: {
+          organizationId,
+          providerAccountId: run.providerAccountId,
+          status: { in: [ProviderEventStatus.VERIFIED, ProviderEventStatus.PROCESSED] },
+          OR: [{ occurredAt: { gte: run.periodStart, lt: run.periodEnd } }, { receivedAt: { gte: run.periodStart, lt: run.periodEnd } }],
+        },
+      }),
+      tx.statementLine.count({
+        where: {
+          organizationId,
+          providerAccountId: run.providerAccountId,
+          occurredAt: { gte: run.periodStart, lt: run.periodEnd },
+        },
+      }),
+      tx.matchRecord.findMany({
+        where: { organizationId, reconciliationRunId: run.id },
+        orderBy: [{ status: "asc" }, { createdAt: "asc" }, { id: "asc" }],
+        take: 100,
+        select: {
+          id: true,
+          status: true,
+          rule: true,
+          confidence: true,
+          paymentTransactionId: true,
+          providerEventId: true,
+          statementLineId: true,
+          ledgerPostingBatchId: true,
+        },
+      }),
+      tx.paymentException.findMany({
+        where: { organizationId, reconciliationRunId: run.id },
+        orderBy: [{ severity: "desc" }, { createdAt: "asc" }, { id: "asc" }],
+        take: 100,
+        select: {
+          id: true,
+          type: true,
+          severity: true,
+          status: true,
+          sourceType: true,
+          sourceId: true,
+          suspenseItemId: true,
+        },
+      }),
+      tx.suspenseItem.findMany({
+        where: { organizationId, reconciliationRunId: run.id },
+        orderBy: [{ severity: "desc" }, { createdAt: "asc" }, { id: "asc" }],
+        take: 100,
+        select: {
+          id: true,
+          type: true,
+          status: true,
+          severity: true,
+          amount: true,
+          currencyCode: true,
+          ledgerPostingBatchId: true,
+        },
+      }),
+      tx.matchRecord.count({ where }),
+      tx.paymentException.count({ where }),
+      tx.suspenseItem.count({ where }),
+      tx.paymentException.count({ where: { ...where, status: { in: openExceptionStatuses() } } }),
+      tx.suspenseItem.count({ where: { ...where, status: { in: openSuspenseStatuses() } } }),
+    ])
+    const coverage = (returned: number, total: number) => ({ returned, total, truncated: returned < total })
+
+    return {
+      source: {
+        mode: "DURABLE_EVIDENCE_KERNEL",
+        asOf: asOf.toISOString(),
+        organizationScoped: true,
+        certificationStatus: run.status,
+      },
+      run: {
+        id: run.id,
         providerAccountId: run.providerAccountId,
-        receivedAt: { gte: run.periodStart, lt: run.periodEnd },
+        paymentRailId: run.paymentRailId,
+        businessDate: run.businessDate.toISOString(),
+        periodStart: run.periodStart.toISOString(),
+        periodEnd: run.periodEnd.toISOString(),
+        status: run.status,
+        runById: run.runById,
+        signedById: run.signedById,
+        signedAt: run.signedAt?.toISOString() ?? null,
+        certificateHash: run.certificateHash,
+        totals: {
+          internalAmount: decimalString(run.totalInternalAmount),
+          externalAmount: decimalString(run.totalExternalAmount),
+          matchedAmount: decimalString(run.matchedAmount),
+          suspenseAmount: decimalString(run.suspenseAmount),
+          matchCount: run.matchCount,
+          exceptionCount: run.exceptionCount,
+        },
       },
-    }),
-    db.statementLine.count({
-      where: {
-        organizationId,
-        providerAccountId: run.providerAccountId,
-        occurredAt: { gte: run.periodStart, lt: run.periodEnd },
+      providerAccount: {
+        id: run.providerAccount.id,
+        displayName: run.providerAccount.displayName,
+        providerCode: run.providerAccount.providerCode,
+        currencyCode: run.providerAccount.currencyCode,
+        railName: run.paymentRail.name,
+        railType: run.paymentRail.type,
       },
-    }),
-    db.matchRecord.findMany({
-      where: { organizationId, reconciliationRunId: run.id },
-      orderBy: [{ status: "asc" }, { createdAt: "asc" }],
-      take: 100,
-      select: {
-        id: true,
-        status: true,
-        rule: true,
-        confidence: true,
-        paymentTransactionId: true,
-        providerEventId: true,
-        statementLineId: true,
-        ledgerPostingBatchId: true,
+      evidence: {
+        providerEventCount,
+        statementLineCount,
+        matchRecordCount,
+        openExceptionCount,
+        openSuspenseCount,
       },
-    }),
-    db.paymentException.findMany({
-      where: { organizationId, reconciliationRunId: run.id },
-      orderBy: [{ severity: "desc" }, { createdAt: "asc" }],
-      take: 100,
-      select: {
-        id: true,
-        type: true,
-        severity: true,
-        status: true,
-        sourceType: true,
-        sourceId: true,
-        suspenseItemId: true,
+      recordCoverage: {
+        limitPerCollection: 100,
+        matchRecords: coverage(matchRecords.length, matchRecordCount),
+        exceptions: coverage(exceptions.length, exceptionCount),
+        suspenseItems: coverage(suspenseItems.length, suspenseCount),
       },
-    }),
-    db.suspenseItem.findMany({
-      where: { organizationId, reconciliationRunId: run.id },
-      orderBy: [{ severity: "desc" }, { createdAt: "asc" }],
-      take: 100,
-      select: {
-        id: true,
-        type: true,
-        status: true,
-        severity: true,
-        amount: true,
-        currencyCode: true,
-        ledgerPostingBatchId: true,
-      },
-    }),
-  ])
+      matchRecords: matchRecords.map((record) => ({
+        id: record.id,
+        status: record.status,
+        rule: record.rule,
+        confidence: decimalString(record.confidence),
+        paymentTransactionId: record.paymentTransactionId,
+        providerEventId: record.providerEventId,
+        statementLineId: record.statementLineId,
+        ledgerPostingBatchId: record.ledgerPostingBatchId,
+      })),
+      exceptions: exceptions.map((exception) => ({
+        id: exception.id,
+        type: exception.type,
+        severity: exception.severity,
+        status: exception.status,
+        sourceType: exception.sourceType,
+        sourceId: exception.sourceId,
+        suspenseItemId: exception.suspenseItemId,
+      })),
+      suspenseItems: suspenseItems.map((item) => ({
+        id: item.id,
+        type: item.type,
+        status: item.status,
+        severity: item.severity,
+        amount: decimalString(item.amount),
+        currencyCode: item.currencyCode,
+        ledgerPostingBatchId: item.ledgerPostingBatchId,
+      })),
+    }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+}
 
-  const openExceptionCount = exceptions.filter((item) => openExceptionStatuses().includes(item.status)).length
-  const openSuspenseCount = suspenseItems.filter((item) => openSuspenseStatuses().includes(item.status)).length
+export type ReconciliationPreparationBlocker = "PROVIDER_SETUP_REQUIRED" | "ACCOUNTING_PERIOD_REQUIRED" | "EXTERNAL_EVIDENCE_REQUIRED" | "OPEN_EXCEPTIONS" | "OPEN_SUSPENSE" | "MISSING_LEDGER_LINK" | "LEDGER_REVIEW_REQUIRED" | "SOURCE_EVIDENCE_REVIEW_REQUIRED"
 
-  return {
-    source: {
-      mode: "DURABLE_EVIDENCE_KERNEL",
-      asOf: new Date().toISOString(),
-      organizationScoped: true,
-      certificationStatus: run.status,
-    },
-    run: {
-      id: run.id,
-      providerAccountId: run.providerAccountId,
-      paymentRailId: run.paymentRailId,
-      businessDate: run.businessDate.toISOString(),
-      periodStart: run.periodStart.toISOString(),
-      periodEnd: run.periodEnd.toISOString(),
-      status: run.status,
-      runById: run.runById,
-      signedById: run.signedById,
-      signedAt: run.signedAt?.toISOString() ?? null,
-      certificateHash: run.certificateHash,
-      totals: {
-        internalAmount: decimalString(run.totalInternalAmount),
-        externalAmount: decimalString(run.totalExternalAmount),
-        matchedAmount: decimalString(run.matchedAmount),
-        suspenseAmount: decimalString(run.suspenseAmount),
-        matchCount: run.matchCount,
-        exceptionCount: run.exceptionCount,
-      },
-    },
-    providerAccount: {
-      id: run.providerAccount.id,
-      displayName: run.providerAccount.displayName,
-      providerCode: run.providerAccount.providerCode,
-      currencyCode: run.providerAccount.currencyCode,
-      railName: run.paymentRail.name,
-      railType: run.paymentRail.type,
-    },
-    evidence: {
+// Shared by preparation and signing. Database/infrastructure failures propagate unchanged.
+export async function validateReconciliationRunEvidenceInTx(
+  tx: Prisma.TransactionClient,
+  run: Awaited<ReturnType<typeof loadRunForCertification>>,
+  organizationId: string,
+) {
+  if (run.organizationId !== organizationId) throw new ForbiddenError("Reconciliation evidence belongs to another workspace.")
+  let blocker: ReconciliationPreparationBlocker = "PROVIDER_SETUP_REQUIRED"
+  try {
+    assertProviderAccountReconciliationReady({ ...run.providerAccount, paymentRail: run.paymentRail })
+    blocker = "ACCOUNTING_PERIOD_REQUIRED"
+    const period = await getOpenPeriodForDate(
+      organizationId,
+      run.businessDate,
+      tx,
+    ).catch((error: unknown) => {
+      // An absent setup record is actionable; a failed query remains an error.
+      if (error instanceof NotFoundError) throw new BusinessRuleError("Set up an open accounting period for this reconciliation date before signing.")
+      throw error
+    })
+    if (run.accountingPeriodId && run.accountingPeriodId !== period.id) {
+      throw new BusinessRuleError(
+        "Reconciliation accounting period changed. Review the run before signing.",
+      )
+    }
+    
+    const [
       providerEventCount,
       statementLineCount,
-      matchRecordCount: matchRecords.length,
       openExceptionCount,
       openSuspenseCount,
-    },
-    matchRecords: matchRecords.map((record) => ({
-      id: record.id,
-      status: record.status,
-      rule: record.rule,
-      confidence: decimalString(record.confidence),
-      paymentTransactionId: record.paymentTransactionId,
-      providerEventId: record.providerEventId,
-      statementLineId: record.statementLineId,
-      ledgerPostingBatchId: record.ledgerPostingBatchId,
-    })),
-    exceptions: exceptions.map((exception) => ({
-      id: exception.id,
-      type: exception.type,
-      severity: exception.severity,
-      status: exception.status,
-      sourceType: exception.sourceType,
-      sourceId: exception.sourceId,
-      suspenseItemId: exception.suspenseItemId,
-    })),
-    suspenseItems: suspenseItems.map((item) => ({
-      id: item.id,
-      type: item.type,
-      status: item.status,
-      severity: item.severity,
-      amount: decimalString(item.amount),
-      currencyCode: item.currencyCode,
-      ledgerPostingBatchId: item.ledgerPostingBatchId,
-    })),
+      suspenseWithoutLedgerCount,
+    ] = await Promise.all([
+      tx.providerEvent.count({
+        where: {
+          organizationId: organizationId,
+          providerAccountId: run.providerAccountId,
+          status: {
+            in: [
+              ProviderEventStatus.VERIFIED,
+              ProviderEventStatus.PROCESSED,
+            ],
+          },
+          OR: [{ occurredAt: { gte: run.periodStart, lt: run.periodEnd } }, { receivedAt: { gte: run.periodStart, lt: run.periodEnd } }],
+        },
+      }),
+      tx.statementLine.count({
+        where: {
+          organizationId: organizationId,
+          providerAccountId: run.providerAccountId,
+          occurredAt: { gte: run.periodStart, lt: run.periodEnd },
+        },
+      }),
+      tx.paymentException.count({
+        where: {
+          organizationId: organizationId,
+          reconciliationRunId: run.id,
+          status: { in: openExceptionStatuses() },
+        },
+      }),
+      tx.suspenseItem.count({
+        where: {
+          organizationId: organizationId,
+          reconciliationRunId: run.id,
+          status: { in: openSuspenseStatuses() },
+        },
+      }),
+      tx.suspenseItem.count({
+        where: {
+          organizationId: organizationId,
+          reconciliationRunId: run.id,
+          status: SuspenseStatus.POSTED_TO_SUSPENSE,
+          ledgerPostingBatchId: null,
+        },
+      }),
+    ])
+    
+    if (providerEventCount + statementLineCount === 0) {
+      blocker = "EXTERNAL_EVIDENCE_REQUIRED"
+      throw new BusinessRuleError(
+        "Provider events or statement lines are required before reconciliation sign-off.",
+      )
+    }
+    if (openExceptionCount > 0) {
+      blocker = "OPEN_EXCEPTIONS"
+      throw new BusinessRuleError(
+        "Open reconciliation exceptions must be resolved before sign-off.",
+      )
+    }
+    if (openSuspenseCount > 0) {
+      blocker = "OPEN_SUSPENSE"
+      throw new BusinessRuleError(
+        "Open suspense items must be resolved before sign-off.",
+      )
+    }
+    if (suspenseWithoutLedgerCount > 0) {
+      blocker = "MISSING_LEDGER_LINK"
+      throw new BusinessRuleError(
+        "Posted suspense items must include a ledger posting batch before sign-off.",
+      )
+    }
+    
+    blocker = "LEDGER_REVIEW_REQUIRED"
+    await assertPaymentSuspenseLedgerTruthInTx(tx, {
+      organizationId: organizationId,
+      reconciliationRunId: run.id,
+    })
+    
+    blocker = "SOURCE_EVIDENCE_REVIEW_REQUIRED"
+    const sourceEvidence = await buildReconciliationEvidenceManifestInTx(
+      tx,
+      {
+        organizationId: organizationId,
+        providerAccountId: run.providerAccountId,
+        reconciliationRunId: run.id,
+        periodStart: run.periodStart,
+        periodEnd: run.periodEnd,
+      },
+    )
+    if (
+      sourceEvidence.counts.providerEventCount !== providerEventCount ||
+      sourceEvidence.counts.statementLineCount !== statementLineCount
+    ) {
+      throw new BusinessRuleError(
+        "Reconciliation source evidence changed during sign-off; rerun reconciliation.",
+      )
+    }
+    return { period, providerEventCount, statementLineCount, openExceptionCount, openSuspenseCount, sourceEvidence }
+  } catch (error) {
+    if (error instanceof BusinessRuleError || error instanceof ConflictError) Object.assign(error, { preparationBlocker: blocker })
+    throw error
   }
+}
+
+export async function previewReconciliationSignOff(input: { organizationId: string; runId: string; actorId: string; actorPermissions: readonly string[] }) {
+  const now = new Date()
+  return db.$transaction(async tx => {
+    if (!["payments.reconciliation.read", "payments.reconciliation.sign"].every(p => hasRbacPermission(input.actorPermissions, p))
+      || !await tx.user.findFirst({ where: { id: input.actorId, organizationId: input.organizationId, isActive: true }, select: { id: true } }))
+      throw new ForbiddenError("Current workspace read and sign authority are required.")
+    const run = await loadRunForCertification(tx, input.organizationId, input.runId, now)
+    const summary = { runId: run.id, status: run.status, asOf: now.toISOString(), provider: run.providerAccount.displayName,
+      currencyCode: run.providerAccount.currencyCode, businessDate: run.businessDate.toISOString(),
+      totals: { internal: decimalString(run.totalInternalAmount), external: decimalString(run.totalExternalAmount), matched: decimalString(run.matchedAmount), suspense: decimalString(run.suspenseAmount) } }
+    const blocked = (blocker: string) => ({ ...summary, canSign: false as const, blocker, expectedSourceVersionHash: null, expectedEvidenceRevision: null, counts: null })
+    if (run.status !== ReconciliationRunStatus.READY_FOR_SIGNOFF || run.signedAt || run.signedById || run.certificateHash || run.certificatePayload || !run.runById?.trim()) return blocked("RUN_STATE_REQUIRED")
+    if (run.runById === input.actorId) return blocked("INDEPENDENT_SIGNER")
+    try {
+      const evidence = await validateReconciliationRunEvidenceInTx(tx, run, input.organizationId)
+      await assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, input.actorId)
+      return { ...summary, canSign: true as const, blocker: null, expectedSourceVersionHash: sourceVersionHashForRun(run),
+        expectedEvidenceRevision: preparationHash({ run, evidence }), counts: evidence.sourceEvidence.counts }
+    } catch (error) {
+      const blocker = (error as { preparationBlocker?: ReconciliationPreparationBlocker })?.preparationBlocker
+      if ((error instanceof BusinessRuleError || error instanceof ConflictError) && blocker) return blocked(blocker)
+      if (error instanceof ForbiddenError) return blocked("INDEPENDENT_SIGNER")
+      if (error instanceof ConflictError) return blocked("PREPARATION_CHANGED")
+      throw error
+    }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }
 
 export async function signReconciliationRun(
@@ -507,114 +687,12 @@ export async function signReconciliationRun(
           )
         }
 
-        const period =
-          run.accountingPeriod ??
-          (await resolveOpenAccountingPeriod(
-            tx,
-            normalized.organizationId,
-            run.businessDate,
-          ))
-        if (!period || period.status !== AccountingPeriodStatus.OPEN) {
-          throw new BusinessRuleError(
-            "An open accounting period is required before reconciliation sign-off.",
-          )
-        }
-
-        const [
-          providerEventCount,
-          statementLineCount,
-          openExceptionCount,
-          openSuspenseCount,
-          suspenseWithoutLedgerCount,
-        ] = await Promise.all([
-          tx.providerEvent.count({
-            where: {
-              organizationId: normalized.organizationId,
-              providerAccountId: run.providerAccountId,
-              status: {
-                in: [
-                  ProviderEventStatus.VERIFIED,
-                  ProviderEventStatus.PROCESSED,
-                ],
-              },
-              receivedAt: { gte: run.periodStart, lt: run.periodEnd },
-            },
-          }),
-          tx.statementLine.count({
-            where: {
-              organizationId: normalized.organizationId,
-              providerAccountId: run.providerAccountId,
-              occurredAt: { gte: run.periodStart, lt: run.periodEnd },
-            },
-          }),
-          tx.paymentException.count({
-            where: {
-              organizationId: normalized.organizationId,
-              reconciliationRunId: run.id,
-              status: { in: openExceptionStatuses() },
-            },
-          }),
-          tx.suspenseItem.count({
-            where: {
-              organizationId: normalized.organizationId,
-              reconciliationRunId: run.id,
-              status: { in: openSuspenseStatuses() },
-            },
-          }),
-          tx.suspenseItem.count({
-            where: {
-              organizationId: normalized.organizationId,
-              reconciliationRunId: run.id,
-              status: SuspenseStatus.POSTED_TO_SUSPENSE,
-              ledgerPostingBatchId: null,
-            },
-          }),
-        ])
-
-        if (providerEventCount + statementLineCount === 0) {
-          throw new BusinessRuleError(
-            "Provider events or statement lines are required before reconciliation sign-off.",
-          )
-        }
-        if (openExceptionCount > 0) {
-          throw new BusinessRuleError(
-            "Open reconciliation exceptions must be resolved before sign-off.",
-          )
-        }
-        if (openSuspenseCount > 0) {
-          throw new BusinessRuleError(
-            "Open suspense items must be resolved before sign-off.",
-          )
-        }
-        if (suspenseWithoutLedgerCount > 0) {
-          throw new BusinessRuleError(
-            "Posted suspense items must include a ledger posting batch before sign-off.",
-          )
-        }
-
-        await assertPaymentSuspenseLedgerTruthInTx(tx, {
-          organizationId: normalized.organizationId,
-          reconciliationRunId: run.id,
-        })
-
-        const sourceEvidence = await buildReconciliationEvidenceManifestInTx(
-          tx,
-          {
-            organizationId: normalized.organizationId,
-            providerAccountId: run.providerAccountId,
-            reconciliationRunId: run.id,
-            periodStart: run.periodStart,
-            periodEnd: run.periodEnd,
-          },
-        )
-        if (
-          sourceEvidence.counts.providerEventCount !== providerEventCount ||
-          sourceEvidence.counts.statementLineCount !== statementLineCount
-        ) {
-          throw new BusinessRuleError(
-            "Reconciliation source evidence changed during sign-off; rerun reconciliation.",
-          )
-        }
+        const evidence = await validateReconciliationRunEvidenceInTx(tx, run, normalized.organizationId)
+        const { period, providerEventCount, statementLineCount, openExceptionCount, openSuspenseCount, sourceEvidence } = evidence
+        await assertCurrentRunPreparationInTx(tx, run, sourceEvidence.sourceHash, normalized.signedById)
+        const reviewedEvidenceRevision = preparationHash({ run, evidence })
+        if (normalized.expectedEvidenceRevision && normalized.expectedEvidenceRevision !== reviewedEvidenceRevision)
+          throw new ConflictError("The reviewed source evidence changed. Review the current run before signing.")
 
         const certificatePayload = {
           version: 2,
@@ -629,6 +707,7 @@ export async function signReconciliationRun(
           periodEnd: run.periodEnd.toISOString(),
           accountingPeriodId: period.id,
           sourceVersionHash,
+          reviewedEvidenceRevision,
           totals: {
             internalAmount: decimalString(run.totalInternalAmount),
             externalAmount: decimalString(run.totalExternalAmount),
@@ -821,6 +900,7 @@ type NormalizedSignInput = {
   actorPermissions: readonly string[]
   lastAuthAt: Date | number | string | null | undefined
   expectedSourceVersionHash: string | null
+  expectedEvidenceRevision: string | null
   now: Date
   correlationId: string
 }
@@ -874,12 +954,18 @@ function normalizeSignInput(
     actorPermissions: input.control?.actorPermissions ?? [],
     lastAuthAt: input.control?.lastAuthAt,
     expectedSourceVersionHash,
+    expectedEvidenceRevision: input.expectedEvidenceRevision == null ? null : requiredEvidenceRevision(input.expectedEvidenceRevision),
     now,
     correlationId: input.correlationId?.trim() || randomUUID(),
   }
 }
 
-function sourceVersionHashForRun(
+function requiredEvidenceRevision(value: string) {
+  if (!/^sha256:[a-f0-9]{64}$/.test(value)) throw new BusinessRuleError("The reviewed evidence revision must be a valid SHA-256 hash.")
+  return value
+}
+
+export function sourceVersionHashForRun(
   run: Awaited<ReturnType<typeof loadRunForCertification>>,
 ) {
   return buildPaymentReconciliationSignOffSourceVersionHash({
@@ -983,6 +1069,8 @@ function signedRunResult(
 
   const completedByAnotherActor =
     run.signedById !== normalized.signedById
+  if (!completedByAnotherActor && normalized.expectedEvidenceRevision && certificatePayload.reviewedEvidenceRevision !== normalized.expectedEvidenceRevision)
+    throw new ConflictError("The retained signature belongs to a different reviewed evidence revision.")
   if (
     !completedByAnotherActor &&
     normalized.expectedSourceVersionHash &&
@@ -1038,6 +1126,9 @@ function inconsistentSignedEvidence() {
 export async function exportReconciliationCertificate(
   input: ReconciliationCertificateExportInput,
 ): Promise<ReconciliationCertificateExportResult> {
+  const command = reconciliationCertificateExportSchema.parse({ runId: input.runId, expectedCertificateHash: input.expectedCertificateHash,
+    idempotencyKey: input.idempotencyKey, fileType: input.fileType, correlationId: input.correlationId })
+  if (!hasRbacPermission(input.control.actorPermissions, "payments.reconciliation.read")) throw new ForbiddenError("Reconciliation read permission is required for certificate exports.")
   const correlationId = input.correlationId ?? randomUUID()
   const fileType = input.fileType ?? "json"
   const now = input.control.now ? new Date(input.control.now) : new Date()
@@ -1047,6 +1138,8 @@ export async function exportReconciliationCertificate(
   }
 
   const result = await db.$transaction(async (tx): Promise<CertificateExportTransactionResult> => {
+    const actor = await tx.user.findFirst({ where: { id: input.exportedById, organizationId: input.organizationId, isActive: true }, select: { id: true } })
+    if (!actor) throw new ForbiddenError("An active workspace actor is required for certificate exports.")
     const run = await loadRunForCertification(tx, input.organizationId, input.runId, now)
 
     if (run.status !== ReconciliationRunStatus.SIGNED || !run.certificateHash || !run.certificatePayload) {
@@ -1131,6 +1224,18 @@ export async function exportReconciliationCertificate(
       return { driftError: "Reconciliation source evidence drift detected; rerun reconciliation and sign-off before export." }
     }
 
+    if (run.certificateHash !== command.expectedCertificateHash) throw new ConflictError("The selected certificate changed. Reload the run before exporting.")
+    const requestHash = certificatePayloadHash({ runId: run.id, certificateHash: command.expectedCertificateHash, fileType, actorId: input.exportedById, idempotencyKey: command.idempotencyKey })
+    const exportKey = `reconciliation-certificate-export:${command.idempotencyKey}`
+    const previous = await tx.paymentReconciliationInboxItem.findFirst({ where: { organizationId: input.organizationId, source: PaymentReconciliationInboxSource.CERTIFICATE_EXPORT, idempotencyKey: exportKey } })
+    if (previous) {
+      const saved = retainedCertificateExportSchema.safeParse(previous.payloadSummary)
+      if (!saved.success || previous.status !== PaymentReconciliationInboxStatus.PROCESSED || certificatePayloadHash(previous.payloadSummary) !== previous.payloadHash) throw new ConflictError("Retained certificate export evidence requires review.")
+      if (saved.data.requestHash !== requestHash || previous.externalId !== run.id) throw new IdempotencyConflictError("The export request identity belongs to different certificate evidence or another actor.")
+      if (saved.data.result.inboxItemId !== previous.id || saved.data.result.runId !== run.id || saved.data.result.certificateHash !== run.certificateHash || sha256(saved.data.result.content) !== saved.data.result.sha256) throw new ConflictError("Retained certificate download bytes require review.")
+      return { value: { ...saved.data.result, replayed: true } }
+    }
+    const receiptId = randomUUID()
     const payload = {
       certificate: run.certificatePayload,
       export: {
@@ -1139,41 +1244,28 @@ export async function exportReconciliationCertificate(
         correlationId,
         watermarkId,
         rowCount,
+        receiptId,
+        purpose: "Retained application reconciliation certificate; export does not issue a new approval or independent signer certificate",
         redaction: "raw provider payloads and secrets excluded",
       },
     }
     const content = JSON.stringify(payload, null, 2)
     const exportHash = sha256(content)
 
-    const inbox = await tx.paymentReconciliationInboxItem.upsert({
-      where: {
-        organizationId_source_idempotencyKey: {
-          organizationId: input.organizationId,
-          source: PaymentReconciliationInboxSource.CERTIFICATE_EXPORT,
-          idempotencyKey: `${run.id}:${run.certificateHash}:${fileType}`,
-        },
-      },
-      create: {
+    const value: ReconciliationCertificateExportResult = { runId: run.id, fileName: `${watermarkId}-${receiptId}.json`, mimeType: "application/json", content,
+      certificateHash: run.certificateHash, sha256: exportHash, watermarkId, rowCount, inboxItemId: receiptId, correlationId, replayed: false }
+    const retained = asJsonObject({ kind: "RECONCILIATION_CERTIFICATE_EXPORT_V2", requestHash, result: value })
+    const inbox = await tx.paymentReconciliationInboxItem.create({
+      data: {
+        id: receiptId,
         organizationId: input.organizationId,
         providerAccountId: run.providerAccountId,
         source: PaymentReconciliationInboxSource.CERTIFICATE_EXPORT,
         status: PaymentReconciliationInboxStatus.PROCESSED,
-        idempotencyKey: `${run.id}:${run.certificateHash}:${fileType}`,
-        externalId: watermarkId,
-        payloadHash: exportHash,
-        payloadSummary: asJsonObject({
-          runId: run.id,
-          certificateHash: run.certificateHash,
-          rowCount,
-          fileType,
-          watermarkId,
-        }),
-        processedAt: now,
-        correlationId,
-      },
-      update: {
-        attempts: { increment: 1 },
-        payloadHash: exportHash,
+        idempotencyKey: exportKey,
+        externalId: run.id,
+        payloadHash: certificatePayloadHash(retained),
+        payloadSummary: retained,
         processedAt: now,
         correlationId,
       },
@@ -1185,7 +1277,7 @@ export async function exportReconciliationCertificate(
       actorId: input.exportedById,
       action: "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORT",
       runId: run.id,
-      message: `Payment reconciliation certificate ${watermarkId} exported`,
+      message: `Payment reconciliation certificate ${watermarkId} prepared for download; client storage not attested`,
       metadata: asJsonObject({
         certificateHash: run.certificateHash,
         exportHash,
@@ -1249,19 +1341,10 @@ export async function exportReconciliationCertificate(
       now,
     })
 
-    return {
-      value: {
-        runId: run.id,
-        fileName: `${watermarkId}.json`,
-        mimeType: "application/json",
-        content,
-        certificateHash: run.certificateHash,
-        watermarkId,
-        rowCount,
-        inboxItemId: inbox.id,
-        correlationId,
-      },
-    }
+    return { value }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead }).catch(error => {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && ["P2002", "P2034"].includes(error.code)) throw new ConflictError("A certificate export was issued concurrently. Retry the same request.")
+    throw error
   })
 
   if ("driftError" in result) {

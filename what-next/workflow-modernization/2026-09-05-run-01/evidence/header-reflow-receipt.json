@@ -1,0 +1,144 @@
+{
+  "recordedAt": "2026-09-06T18:05:20.487Z",
+  "baseline": "evidence/source-baseline-v37.json",
+  "finding": "OA-F18",
+  "sources": {
+    "components/dashboard/Navbar.tsx": "4694f1d5616f122969c7b47fd2acb1f10f6f3f986fa28616fb9900e9d5c3f3ad",
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "changedFromProfile": [
+    {
+      "file": "components/dashboard/Navbar.tsx",
+      "profileHash": "159e5a897611d164c019c97495d8da29fbebcfebc34a569cd48a300588de4ef9",
+      "currentHash": "4694f1d5616f122969c7b47fd2acb1f10f6f3f986fa28616fb9900e9d5c3f3ad",
+      "reason": "Only header/control flex wrapping, minimum height, padding and overflow presentation changed. Business/auth/profile/menu logic unchanged."
+    }
+  ],
+  "before": {
+    "file": "lanes/environment/header-reflow-before-599d173d-c07.json",
+    "reproduced": 2,
+    "chunk": "fd08b6"
+  },
+  "after": {
+    "file": "lanes/environment/header-reflow-after-79221f08-8e5.json",
+    "languages": 2,
+    "cases": 16,
+    "passed": 16,
+    "chunk": "e21fc0",
+    "screenshots": [
+      {
+        "source": "lanes/environment/en-header-reflow-after-320-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-320-100-79221f08-8e5.png",
+        "sha256": "8d3bd7e9c3120fe182e5b2c5a1316423b198bb149c9e611c82eff0533cc4b1fb"
+      },
+      {
+        "source": "lanes/environment/en-header-reflow-after-320-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-320-200-79221f08-8e5.png",
+        "sha256": "44c424b1481d5b86514247818ab808016aedc3d220a97c6e8d0030fedc6a7601"
+      },
+      {
+        "source": "lanes/environment/en-header-reflow-after-390-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-390-100-79221f08-8e5.png",
+        "sha256": "69a50a73d4291e266471600e2c2a87bb0ccd0586c07e0c97b409c31d18fcc328"
+      },
+      {
+        "source": "lanes/environment/en-header-reflow-after-390-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-390-200-79221f08-8e5.png",
+        "sha256": "d70b94f42552b58f95083ddefc24446d5af7121c0c561e52ca5d538394659938"
+      },
+      {
+        "source": "lanes/environment/en-header-reflow-after-768-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-768-100-79221f08-8e5.png",
+        "sha256": "d1824285f9fc88f2579827417fa8a25bdc4c253a79ed9e3cda4160983d794126"
+      },
+      {
+        "source": "lanes/environment/en-header-reflow-after-768-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-768-200-79221f08-8e5.png",
+        "sha256": "8c8c9e8d63c89e0f2ee4b62e06c15ec6e35ee192a5fa72691b12cd6d6044ecae"
+      },
+      {
+        "source": "lanes/environment/en-header-reflow-after-1440-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-1440-100-79221f08-8e5.png",
+        "sha256": "9afc46cb533d20d0c03c41962099902554c998ce9b1cc3014e39fffe7da94867"
+      },
+      {
+        "source": "lanes/environment/en-header-reflow-after-1440-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/en-header-reflow-after-1440-200-79221f08-8e5.png",
+        "sha256": "fcab0cdac960f71d2057d2fab4f87f980013d3d8e38fa05cdec08b0b14657e34"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-320-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-320-100-79221f08-8e5.png",
+        "sha256": "08d1f9ae28131bd3255ecb9a556e2440d2bdcc880db9270c2ea77e5c293cd543"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-320-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-320-200-79221f08-8e5.png",
+        "sha256": "aad94b117202cb5aeb2fdd420a89ef7b311ad67b0158becec58a55459b911a61"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-390-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-390-100-79221f08-8e5.png",
+        "sha256": "bc98a7cff85d66dedbef893ecadf150a17c647901b288ea2a6dcdf3362a9bbdd"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-390-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-390-200-79221f08-8e5.png",
+        "sha256": "28b809aa067e5a971b4a76304c1b9f6a50203c0089fcb51f4598095721e854da"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-768-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-768-100-79221f08-8e5.png",
+        "sha256": "26de03ef4a6d563ec646db52646b3836c402c8de1a922c244f39117ec1432090"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-768-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-768-200-79221f08-8e5.png",
+        "sha256": "63ff10146e7f99f1a993eeb696c92ecd3d62efa5c3ca481f7293724afe543f9c"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-1440-100-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-1440-100-79221f08-8e5.png",
+        "sha256": "d6f49f839b387510f2326dcb24b330c40642aa7aa26943c8d38685131a9868c0"
+      },
+      {
+        "source": "lanes/environment/fr-header-reflow-after-1440-200-79221f08-8e5.png",
+        "file": "evidence/header-reflow/fr-header-reflow-after-1440-200-79221f08-8e5.png",
+        "sha256": "7b9a6253c8bb04f434fe8046f4f9291e5431b01001fa042afedcded57f077378"
+      }
+    ]
+  },
+  "visualReview": [
+    "French 390px with CSS text at 200%: all account controls visible on wrapped header.",
+    "English ordinary 1440px: existing single-row header preserved."
+  ],
+  "verification": {
+    "typecheck": {
+      "exitCode": 0,
+      "chunk": "1312f4"
+    },
+    "lint": {
+      "exitCode": 0,
+      "chunk": "eccd04",
+      "files": [
+        "components/dashboard/Navbar.tsx"
+      ]
+    }
+  },
+  "initialAttempt": {
+    "file": "lanes/environment/header-reflow-before-f5fc7591-fd2.json",
+    "chunk": "9aaf93",
+    "passed": 1,
+    "failed": 1,
+    "reason": "French geometry measured while finite CSS transition was active; waited for animation/layout completion and repeated on unchanged source."
+  },
+  "remaining": [
+    "Native browser zoom, assistive technology and comprehensive contrast remain unverified.",
+    "Mobile drawer/search/localization/other sign-out callers and full shared-shell workflow remain open.",
+    "The full platform workflow assignment remains incomplete."
+  ],
+  "migration": false,
+  "deployment": false,
+  "completeWorkflowVerified": false
+}

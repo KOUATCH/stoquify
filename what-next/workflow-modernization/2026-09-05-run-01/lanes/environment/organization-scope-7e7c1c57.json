@@ -1,0 +1,163 @@
+{
+  "attempt": "7e7c1c57",
+  "startedAt": "2026-09-05T18:42:39.091Z",
+  "sourcesBefore": {
+    "services/organization/organization-settings.service.ts": "d0403ea941a6f18494ee33c75e2920313f6677f56274efd8edb35a9e1861649d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "checks": [
+    {
+      "organizationId": "org_modules_legacy_en_desktop",
+      "serviceInputPermissions": [
+        "system.organization.read"
+      ],
+      "returnedIds": [
+        "org_modules_legacy_en_desktop"
+      ],
+      "counts": {
+        "usersCount": 4,
+        "itemsCount": 1,
+        "locationsCount": 1,
+        "suppliersCount": 1,
+        "customersCount": 0,
+        "purchaseOrdersCount": 4,
+        "salesOrdersCount": 0,
+        "paymentsCount": 0,
+        "paidRevenue": 0
+      },
+      "realPaidPaymentCount": 0,
+      "passed": true
+    },
+    {
+      "organizationId": "org_modules_legacy_en_desktop",
+      "serviceInputPermissions": [
+        "COMPANY_READ"
+      ],
+      "returnedIds": [
+        "org_modules_legacy_en_desktop"
+      ],
+      "counts": {
+        "usersCount": 4,
+        "itemsCount": 1,
+        "locationsCount": 1,
+        "suppliersCount": 1,
+        "customersCount": 0,
+        "purchaseOrdersCount": 4,
+        "salesOrdersCount": 0,
+        "paymentsCount": 0,
+        "paidRevenue": 0
+      },
+      "realPaidPaymentCount": 0,
+      "passed": true
+    },
+    {
+      "organizationId": "org_modules_legacy_en_desktop",
+      "serviceInputPermissions": [
+        "*"
+      ],
+      "returnedIds": [
+        "org_modules_legacy_en_desktop"
+      ],
+      "counts": {
+        "usersCount": 4,
+        "itemsCount": 1,
+        "locationsCount": 1,
+        "suppliersCount": 1,
+        "customersCount": 0,
+        "purchaseOrdersCount": 4,
+        "salesOrdersCount": 0,
+        "paymentsCount": 0,
+        "paidRevenue": 0
+      },
+      "realPaidPaymentCount": 0,
+      "passed": true
+    },
+    {
+      "organizationId": "org_modules_retailer_en_desktop",
+      "serviceInputPermissions": [
+        "system.organization.read"
+      ],
+      "returnedIds": [
+        "org_modules_retailer_en_desktop"
+      ],
+      "counts": {
+        "usersCount": 2,
+        "itemsCount": 0,
+        "locationsCount": 1,
+        "suppliersCount": 0,
+        "customersCount": 0,
+        "purchaseOrdersCount": 0,
+        "salesOrdersCount": 0,
+        "paymentsCount": 0,
+        "paidRevenue": 0
+      },
+      "realPaidPaymentCount": 0,
+      "passed": true
+    },
+    {
+      "organizationId": "org_modules_retailer_en_desktop",
+      "serviceInputPermissions": [
+        "COMPANY_READ"
+      ],
+      "returnedIds": [
+        "org_modules_retailer_en_desktop"
+      ],
+      "counts": {
+        "usersCount": 2,
+        "itemsCount": 0,
+        "locationsCount": 1,
+        "suppliersCount": 0,
+        "customersCount": 0,
+        "purchaseOrdersCount": 0,
+        "salesOrdersCount": 0,
+        "paymentsCount": 0,
+        "paidRevenue": 0
+      },
+      "realPaidPaymentCount": 0,
+      "passed": true
+    },
+    {
+      "organizationId": "org_modules_retailer_en_desktop",
+      "serviceInputPermissions": [
+        "*"
+      ],
+      "returnedIds": [
+        "org_modules_retailer_en_desktop"
+      ],
+      "counts": {
+        "usersCount": 2,
+        "itemsCount": 0,
+        "locationsCount": 1,
+        "suppliersCount": 0,
+        "customersCount": 0,
+        "purchaseOrdersCount": 0,
+        "salesOrdersCount": 0,
+        "paymentsCount": 0,
+        "paidRevenue": 0
+      },
+      "realPaidPaymentCount": 0,
+      "passed": true
+    },
+    {
+      "name": "Missing requested tenant does not return other tenants",
+      "passed": true
+    }
+  ],
+  "readOnly": true,
+  "boundary": "Real organization-listing service and PostgreSQL queries, pinned to one READ ONLY transaction. Permission arrays are service inputs, not grants or authenticated sessions. The action/session authorization boundary is outside this proof.",
+  "connection": {
+    "database": "stoquify_local_modern_modules_20260905_01",
+    "readonly": "on",
+    "pid": 972
+  },
+  "completedAt": "2026-09-05T18:42:41.163Z",
+  "sourcesAfter": {
+    "services/organization/organization-settings.service.ts": "d0403ea941a6f18494ee33c75e2920313f6677f56274efd8edb35a9e1861649d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "042052f9f44840d4d2fc482fb57113f02c1704242f3d55664a9b452f394c2a9a",
+  "passed": 7,
+  "failed": 0
+}

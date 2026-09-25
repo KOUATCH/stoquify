@@ -1,5 +1,5 @@
 import type { SVGProps } from "react"
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 jest.mock("lucide-react", () => {
   const createIcon = (name: string) => {
@@ -106,12 +106,76 @@ describe("CopilotProposalControls", () => {
     )
     expect(await screen.findByText("Proposal accepted")).toBeInTheDocument()
   })
+
+  it.each(["en", "fr"] as const)("preserves the draft and rejection after evidence changes (%s)", async (locale) => {
+    mockCreate.mockResolvedValue({ success: true, data: proposal })
+    mockDecide.mockResolvedValue({ success: false, code: "BUSINESS_RULE_VIOLATION", error: "Internal English detail" })
+    renderControls(locale)
+    fireEvent.click(screen.getByRole("button", { name: /proposal:|proposition:/i }))
+    const accept = await screen.findByRole("button", { name: locale === "en" ? "Accept proposal" : "Accepter la proposition" })
+    fireEvent.click(accept)
+    expect(await screen.findByRole("alert")).toHaveTextContent(locale === "en" ? "Refresh the analysis" : "Actualisez l’analyse")
+    expect(screen.queryByText("Internal English detail")).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: locale === "en" ? "Reject proposal" : "Rejeter la proposition" })).toBeEnabled()
+    expect(screen.queryByText(locale === "en" ? "Proposal accepted" : "Proposition acceptee")).not.toBeInTheDocument()
+  })
+
+  it("retries exactly the same preparation after a transport failure", async () => {
+    const clock = jest.spyOn(Date, "now").mockReturnValue(1000)
+    try {
+      mockCreate.mockRejectedValueOnce(new Error("Lost response")).mockResolvedValueOnce({ success: true, data: proposal })
+      renderControls()
+      fireEvent.click(screen.getByRole("button", { name: "Prepare proposal: Review exception" }))
+      await screen.findByRole("alert")
+      const first = JSON.stringify(mockCreate.mock.calls[0][0])
+      clock.mockReturnValue(5000)
+      fireEvent.click(screen.getByRole("button", { name: "Prepare proposal: Review exception" }))
+      await screen.findByRole("button", { name: "Accept proposal" })
+      expect(JSON.stringify(mockCreate.mock.calls[1][0])).toBe(first)
+    } finally { clock.mockRestore() }
+  })
+
+  it("prevents duplicate submission while preparation is pending", async () => {
+    let resolve!: (value: unknown) => void
+    mockCreate.mockReturnValueOnce(new Promise((done) => { resolve = done }))
+    renderControls()
+    const button = screen.getByRole("button", { name: "Prepare proposal: Review exception" })
+    fireEvent.click(button)
+    fireEvent.click(button)
+    expect(mockCreate).toHaveBeenCalledTimes(1)
+    await act(async () => resolve({ success: true, data: proposal }))
+  })
+
+  it("isolates a new run from an earlier proposal and pending response", async () => {
+    let resolve!: (value: unknown) => void
+    mockCreate.mockReturnValueOnce(new Promise((done) => { resolve = done }))
+    const view = renderControls()
+    fireEvent.click(screen.getByRole("button", { name: "Prepare proposal: Review exception" }))
+    view.rerender(controls("en", "cm00000000000000000000009"))
+    await act(async () => resolve({ success: true, data: proposal }))
+    expect(screen.queryByRole("button", { name: "Accept proposal" })).not.toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Prepare proposal: Review exception" })).toBeEnabled()
+  })
+
+  it.each([
+    ["EXPIRED", "Proposal expired"], ["CANCELLED", "Proposal cancelled"],
+  ])("does not mislabel %s as a rejection", async (status, label) => {
+    mockCreate.mockResolvedValueOnce({ success: true, data: { ...proposal, status } })
+    renderControls()
+    fireEvent.click(screen.getByRole("button", { name: "Prepare proposal: Review exception" }))
+    expect(await screen.findByRole("status")).toHaveTextContent(label)
+    expect(screen.queryByText("Proposal rejected")).not.toBeInTheDocument()
+  })
 })
 
-function renderControls() {
-  return render(
+function renderControls(locale: "en" | "fr" = "en") {
+  return render(controls(locale))
+}
+
+function controls(locale: "en" | "fr" = "en", runId = "cm00000000000000000000001") {
+  return (
     <CopilotProposalControls
-      runId="cm00000000000000000000001"
+      runId={runId}
       priority={{
         id: "risk-1",
         title: "Review exception",
@@ -138,7 +202,7 @@ function renderControls() {
       periodStart="2026-07-27T00:00:00.000Z"
       periodEnd="2026-07-27T23:59:59.999Z"
       asOf="2026-07-27T12:00:00.000Z"
-      locale="en"
-    />,
+      locale={locale}
+    />
   )
 }

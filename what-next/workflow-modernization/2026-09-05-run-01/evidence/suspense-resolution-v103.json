@@ -1,0 +1,74 @@
+{
+  "at": "2026-09-09T13:30:02.429Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v103.json",
+  "sources": {
+    "services/reconciliation/payment-suspense-resolution.service.ts": "72bc6e939346df14828f85a8d91473350d688e3e9d09ac500dc88389e3b27833",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "33a6069362511b0fec4cd3d0e04a87e2dcc174dd4b3590222ab848380cd90779",
+    "services/reconciliation/payment-suspense-correction.service.ts": "44da08ea210f9ebc3f204e0b1b3ea51838183668d10a2c85a6c561d0db974d6f",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "f890155ba02e3566fe2fcbefb3443e65e5a8c32b8e9cbe680626f7e653a67c1d",
+    "services/accounting/posting.service.ts": "d7d646801ae1779b2b006954d682ccdc7c04f57d6d2fe37232021f872e53b8c7",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "a44c79bfc0e43265ed9429c7d95ac79da2f1042b7dd3278f55f81fa40390fb4f",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "1803962e3dfb14f416e24750bafadc553463138386bd94f93349276cd4fa94bc",
+    "services/reconciliation/__tests__/payment-suspense-resolution-evidence.service.test.ts": "4a6602deec6ebd57606ca8903233681e31bdc596a0b229c0d6ca422c965d6eeb",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "3c57f12034975eac0de77a63232be658b766cfa3816f9018226876d8b4b3b932",
+    "services/reconciliation/__tests__/payment-suspense-resolution.contracts.test.ts": "c86f0f6de00a5962784f5c0bf70df796187ec5c9a301ad38529bb39cda5face5",
+    "services/accounting/__tests__/posting.service.test.ts": "fbd26d9eebb5816ee26cac4a1e60b609c7de0f73b967673dc07f4a40bc1cb116",
+    "services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts": "c692855a8e5c6298ce20302b268280580eaf38785654ff7eeb2718d9a198bb19",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "23f90dfba88e77c38acd67028096df73d89ab911054c1645c09bdd6c82d5945f"
+  },
+  "verifierSources": {
+    "verify-suspense-resolution-v103.cjs": "322da22fcf199c2b252567eece6cc5ea4eaa3cb3578351de35f82910bd85a916",
+    "suspense-currency-fixtures.cjs": "f0e01349e828708138515cb02d939e7914a87bb0088cf1e1df241341ba820d9b",
+    "invoice-approval-fixtures.cjs": "ef5acff9b262f00a457c9d63b1814d379bb21fca29c2236c2884b6f756f66d63"
+  },
+  "tests": {
+    "file": "evidence/suspense-resolution-v103-tests.json",
+    "passed": 56,
+    "suites": 6,
+    "completionReceipt": "38dbc6"
+  },
+  "runtime": {
+    "file": "lanes/environment/suspense-resolution-v103-44fc8d0a-43b.json",
+    "checks": 11,
+    "receipt": "e8c39a"
+  },
+  "typecheck": {
+    "session": 59374,
+    "receipt": "fafa51",
+    "exitCode": 0
+  },
+  "lint": {
+    "files": 11,
+    "receipt": "da4be6",
+    "exitCode": 0
+  },
+  "browser": {
+    "status": "not_implemented_for_new_internal_service"
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 231,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2808,
+      "tests": 991,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2411,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat",
+  "nextNumberedSkillAfterCurrentBoundary": "010-aqstoqflow-inventory-valuation-kernel",
+  "previousTurnAssessment": "concrete progress: v102 currency prerequisite was corrected and verified; v103 adds a verified internal resolution core while retaining the full goal",
+  "nextAction": "Implement source-owned resolution recovery, then protected operator controls and complete journey verification"
+}

@@ -1,0 +1,169 @@
+{
+  "mode": "before",
+  "run": "f5fc7591-fd2",
+  "startedAt": "2026-09-06T18:00:32.696Z",
+  "sourcesBefore": {
+    "components/dashboard/Navbar.tsx": "159e5a897611d164c019c97495d8da29fbebcfebc34a569cd48a300588de4ef9",
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "cases": [
+        {
+          "width": 390,
+          "percent": 200,
+          "viewport": 390,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 128
+          },
+          "controls": [
+            {
+              "name": "Toggle navigation menu",
+              "x": 16,
+              "y": 27.5,
+              "width": 72,
+              "height": 72,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Switch language to FR",
+              "x": 104,
+              "y": 29.625,
+              "width": 67.734375,
+              "height": 67.734375,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Switch to dark theme",
+              "x": 179.734375,
+              "y": 29.625,
+              "width": 67.734375,
+              "height": 67.734375,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Disable notification sound",
+              "x": 255.46875,
+              "y": 29.625,
+              "width": 67.734375,
+              "height": 67.734375,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Open account menu",
+              "x": 331.203125,
+              "y": 23.5,
+              "width": 80,
+              "height": 80,
+              "visible": true,
+              "contained": false
+            }
+          ],
+          "clipped": [
+            {
+              "name": "Open account menu",
+              "x": 331.203125,
+              "y": 23.5,
+              "width": 80,
+              "height": 80,
+              "visible": true,
+              "contained": false
+            }
+          ]
+        }
+      ],
+      "screenshots": [
+        "en-header-reflow-before-390-200-f5fc7591-fd2.png"
+      ],
+      "defectReproduced": true
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "cases": [
+        {
+          "width": 390,
+          "percent": 200,
+          "viewport": 390,
+          "header": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 128
+          },
+          "controls": [
+            {
+              "name": "Toggle navigation menu",
+              "x": 16,
+              "y": 27.5,
+              "width": 72,
+              "height": 72,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Switch language to EN",
+              "x": 104,
+              "y": 34.34375,
+              "width": 58.296875,
+              "height": 58.296875,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Switch to dark theme",
+              "x": 170.296875,
+              "y": 34.34375,
+              "width": 58.296875,
+              "height": 58.296875,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Disable notification sound",
+              "x": 236.59375,
+              "y": 34.34375,
+              "width": 58.296875,
+              "height": 58.296875,
+              "visible": true,
+              "contained": true
+            },
+            {
+              "name": "Ouvrir le menu du compte",
+              "x": 302.890625,
+              "y": 23.5,
+              "width": 80,
+              "height": 80,
+              "visible": true,
+              "contained": true
+            }
+          ],
+          "clipped": []
+        }
+      ],
+      "screenshots": [
+        "fr-header-reflow-before-390-200-f5fc7591-fd2.png"
+      ],
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(clipped.some(c=>c.name===name))\n"
+    }
+  ],
+  "scope": "Existing shared dashboard header; owned reader sessions, real EN/FR DOM geometry/keyboard and screenshots. CSS text scaling is not native browser zoom.",
+  "completedAt": "2026-09-06T18:00:40.698Z",
+  "sourcesAfter": {
+    "components/dashboard/Navbar.tsx": "159e5a897611d164c019c97495d8da29fbebcfebc34a569cd48a300588de4ef9",
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "sourceStable": true,
+  "driverSha256": "b09741e14016f837236e0beb6ac77f42d6310d6b50d21db8a78ada54a89e0f95"
+}

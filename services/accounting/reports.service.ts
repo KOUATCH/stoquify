@@ -114,14 +114,31 @@ export async function getTrialBalance(input: TrialBalanceInput) {
   )
 
   for (const line of lines) {
-    const row = rowsByAccount.get(line.accountId)
-    if (!row) continue
+    let row = rowsByAccount.get(line.accountId)
+    if (!row) {
+      const account = line.account
+      if (!account || account.id !== line.accountId || account.organizationId !== input.organizationId) {
+        throw new BusinessRuleError("Posted journal account evidence is unavailable for this organization")
+      }
+      row = {
+        accountId: account.id,
+        code: account.code,
+        nameEn: account.nameEn,
+        nameFr: account.nameFr,
+        type: account.type,
+        normalBalance: account.normalBalance,
+        activityDebit: decimalZero(),
+        activityCredit: decimalZero(),
+      }
+      rowsByAccount.set(account.id, row)
+    }
 
     row.activityDebit = row.activityDebit.plus(line.debit)
     row.activityCredit = row.activityCredit.plus(line.credit)
   }
 
   const rows = Array.from(rowsByAccount.values())
+    .sort((left, right) => left.code.localeCompare(right.code) || left.accountId.localeCompare(right.accountId))
     .map((row) => {
       const net = row.activityDebit.minus(row.activityCredit)
       const debitBalance = net.gte(0) ? net : decimalZero()

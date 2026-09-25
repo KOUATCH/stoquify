@@ -13,6 +13,8 @@ import type {
 
 export type SupplierDTO = Supplier
 
+export type SupplierCreationReceipt = Pick<SupplierManagementRow, "id" | "organizationId" | "name" | "code">
+
 export type SupplierManagementRow = {
   id: string
   organizationId: string
@@ -911,15 +913,10 @@ async function reloadSupplierManagementRow(organizationId: string, supplierId: s
 export async function createSupplierForManagement(
   organizationId: string,
   input: SupplierCreateInput,
-): Promise<SupplierManagementRow> {
+): Promise<SupplierCreationReceipt> {
   const supplier = await createSupplier(organizationId, input)
-  const row = await reloadSupplierManagementRow(organizationId, supplier.id)
-
-  if (!row) {
-    throw new BusinessRuleError("Supplier was created but could not be reloaded")
-  }
-
-  return row
+  // Creation is committed. Aggregate reads must not turn that known result into a failure.
+  return { id: supplier.id, organizationId: supplier.organizationId, name: supplier.name, code: supplier.code }
 }
 
 export async function updateSupplierForManagement(

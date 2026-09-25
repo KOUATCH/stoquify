@@ -1,0 +1,186 @@
+{
+  "run": "c4e1e4ba-c7d",
+  "startedAt": "2026-09-07T08:40:34.116Z",
+  "sourcesBefore": {
+    "app/customer-statement/[statementId]/CustomerStatementPortal.tsx": "8487768a84e3098b2a3c3b61e4e25fccce7b5873b93ed33e759706bb2bb10021",
+    "app/customer-statement/[statementId]/page.tsx": "7ebe0e2d01f729c99bb1fec6552de836da56809ced39207cf1c7ed1996763f0e",
+    "app/api/customer-statements/[statementId]/route.ts": "e8aa985f476ba20c2a90a49b7dedf04ecd8a767e2f625c6e96c1113ab29c7e3f",
+    "app/api/customer-statements/[statementId]/actions/route.ts": "160a7db42370beb533b085eddb004662c50df9704045f366f23ab4f2027694c0",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/statement-recipient-request.ts": "1145825d21af16ba0c91e755711bc450a171814de9e2eadcfeabfc9cfaad6301",
+    "app/customer-statement/[statementId]/statement-portal-copy.ts": "4737fac1f6bce06ac72cb0956f985dd36304a13a05e693f987b4bddf9d4c2fb7",
+    "services/accounting/customer-statement.schemas.ts": "8a80048d0a8765040be5b0491012a093729aae3274e5f6b9b7acb3489f5ba602",
+    "services/accounting/customer-statement-http.ts": "624442851d2ea42453a258f840e365beae79d4091f844fe54cb6e573f58d171d",
+    "services/accounting/customer-statement-delivery.service.ts": "21e3f90d05a8996ad852853a8e6833b85c88d8430f5a17269d649dfb4f248214"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "statement-recipient-en-1440-1-c4e1e4ba-c7d.png",
+        "statement-recipient-en-1024-1-c4e1e4ba-c7d.png",
+        "statement-recipient-en-768-1-c4e1e4ba-c7d.png",
+        "statement-recipient-en-390-1-c4e1e4ba-c7d.png",
+        "statement-recipient-en-320-1-c4e1e4ba-c7d.png",
+        "statement-recipient-en-320-2-c4e1e4ba-c7d.png",
+        "statement-recipient-en-lost-response-c4e1e4ba-c7d.png",
+        "statement-recipient-en-promise-receipt-c4e1e4ba-c7d.png",
+        "statement-recipient-en-dispute-receipt-c4e1e4ba-c7d.png",
+        "statement-recipient-en-revoked-c4e1e4ba-c7d.png",
+        "statement-recipient-en-failed-c4e1e4ba-c7d.png"
+      ],
+      "reflow": [
+        {
+          "width": 1440,
+          "textScale": 1,
+          "viewport": 1440,
+          "document": 1440,
+          "body": 1440
+        },
+        {
+          "width": 1024,
+          "textScale": 1,
+          "viewport": 1024,
+          "document": 1024,
+          "body": 1024
+        },
+        {
+          "width": 768,
+          "textScale": 1,
+          "viewport": 768,
+          "document": 768,
+          "body": 768
+        },
+        {
+          "width": 390,
+          "textScale": 1,
+          "viewport": 390,
+          "document": 390,
+          "body": 390
+        },
+        {
+          "width": 320,
+          "textScale": 1,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        },
+        {
+          "width": 320,
+          "textScale": 2,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        }
+      ],
+      "requests": [
+        "45d2e28d110a7e1dcdc3554583c1b5cf8a4b444a7b006e79250bed63a13692fd",
+        "6bb6ab72733457dc62a769174c8be6375e33032f825428b07508be9762a1a205",
+        "6bb6ab72733457dc62a769174c8be6375e33032f825428b07508be9762a1a205",
+        "e101af3afd252243610a8d35e1408d2f0e0d42dd4668ad342e3f24cffe9e2682"
+      ],
+      "routeReadyMs": 2407,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'strict-origin-when-cross-origin'\n- 'no-referrer'\n",
+      "overflow": [],
+      "passed": false
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "statement-recipient-fr-1440-1-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-1024-1-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-768-1-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-390-1-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-320-1-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-320-2-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-lost-response-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-promise-receipt-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-dispute-receipt-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-revoked-c4e1e4ba-c7d.png",
+        "statement-recipient-fr-failed-c4e1e4ba-c7d.png"
+      ],
+      "reflow": [
+        {
+          "width": 1440,
+          "textScale": 1,
+          "viewport": 1440,
+          "document": 1440,
+          "body": 1440
+        },
+        {
+          "width": 1024,
+          "textScale": 1,
+          "viewport": 1024,
+          "document": 1024,
+          "body": 1024
+        },
+        {
+          "width": 768,
+          "textScale": 1,
+          "viewport": 768,
+          "document": 768,
+          "body": 768
+        },
+        {
+          "width": 390,
+          "textScale": 1,
+          "viewport": 390,
+          "document": 390,
+          "body": 390
+        },
+        {
+          "width": 320,
+          "textScale": 1,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        },
+        {
+          "width": 320,
+          "textScale": 2,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        }
+      ],
+      "requests": [
+        "40beb7bebb605742238cc07995b45dfc4e01e08161edf656db0cd1a3adbf538a",
+        "068e112cbd4c200528e995be2b68d52afc4e456e1179dc24de54e46d581325be",
+        "068e112cbd4c200528e995be2b68d52afc4e456e1179dc24de54e46d581325be",
+        "cdbcbc52bbe52f569601d00ee9717bfa1843d06d6d90e6f453a3e8babc4c999a"
+      ],
+      "routeReadyMs": 5293,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'strict-origin-when-cross-origin'\n- 'no-referrer'\n",
+      "overflow": [],
+      "passed": false
+    }
+  ],
+  "scope": "Actual local application and owned populated statement fixtures. Lost acknowledgement is deliberately injected after the real endpoint commits. CSS text resizing is not native zoom or screen-reader proof.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalAfter": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T08:41:24.049Z",
+  "sourcesAfter": {
+    "app/customer-statement/[statementId]/CustomerStatementPortal.tsx": "8487768a84e3098b2a3c3b61e4e25fccce7b5873b93ed33e759706bb2bb10021",
+    "app/customer-statement/[statementId]/page.tsx": "7ebe0e2d01f729c99bb1fec6552de836da56809ced39207cf1c7ed1996763f0e",
+    "app/api/customer-statements/[statementId]/route.ts": "e8aa985f476ba20c2a90a49b7dedf04ecd8a767e2f625c6e96c1113ab29c7e3f",
+    "app/api/customer-statements/[statementId]/actions/route.ts": "160a7db42370beb533b085eddb004662c50df9704045f366f23ab4f2027694c0",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/statement-recipient-request.ts": "1145825d21af16ba0c91e755711bc450a171814de9e2eadcfeabfc9cfaad6301",
+    "app/customer-statement/[statementId]/statement-portal-copy.ts": "4737fac1f6bce06ac72cb0956f985dd36304a13a05e693f987b4bddf9d4c2fb7",
+    "services/accounting/customer-statement.schemas.ts": "8a80048d0a8765040be5b0491012a093729aae3274e5f6b9b7acb3489f5ba602",
+    "services/accounting/customer-statement-http.ts": "624442851d2ea42453a258f840e365beae79d4091f844fe54cb6e573f58d171d",
+    "services/accounting/customer-statement-delivery.service.ts": "21e3f90d05a8996ad852853a8e6833b85c88d8430f5a17269d649dfb4f248214"
+  },
+  "sourceStable": true
+}

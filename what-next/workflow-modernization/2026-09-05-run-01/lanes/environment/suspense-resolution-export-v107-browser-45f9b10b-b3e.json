@@ -1,0 +1,104 @@
+{
+  "at": "2026-09-09T14:59:56.348Z",
+  "run": "45f9b10b-b3e",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "3179583b616b3e147ae60f7fd841cb765bd9e99c26f907f7672d1fcfe3ef7aa3",
+    "components/finance/PaymentSuspenseQueue.tsx": "60ea5deb3dca35ccb53ab15223ac48f9b9cc0588b9553dd82a20aa483abb137b",
+    "actions/payments/suspense-resolution.actions.ts": "0670bc57f7cb617d5d08862ddf6b1a54f44355d741c5e9e25f802e729656ce0d",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "35dd00a7f210d98b7abc677c8c052291979639f6af2fb14d207ba670a46f0c43",
+    "services/reconciliation/payment-suspense-resolution-record.ts": "6b5272f655a9bd35c9a754baa2256f1bf7ea51f5f4c33a71851d87e24a1ff862",
+    "services/reconciliation/payment-suspense-resolution-archive.service.ts": "fe72452bb01bbd42ba0a0f246f38eb6f7e699688c4e06ee016b983416efd9072",
+    "services/reconciliation/payment-suspense-resolution-export.service.ts": "4b5c66ccab25fe973b3905a05cca2df1a825a8b1b93663381923b9b5a74c48bd",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "0d4bdcc42c8390b1a20ac5ad447405894e99db0bed825ac72299059222a08a5e",
+    "hooks/payments/resolution-export-download.ts": "15acfb7b7c66e0b05a72db14c7e42bf49356ee41b4e864987f6f322bbadd63da",
+    "messages/en.json": "08dd6ae9ff8c107aaf88bf31dcca40aefd4b92cf0886c83e02c11bca918299e8",
+    "messages/fr.json": "b2b1e8b798b53cca1a7cc3d8774de4f8622fa36224bfde853fb4cdfd939ddc40"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "suspense-resolution-export-v107-en-step-up-320-45f9b10b-b3e.png",
+        "suspense-resolution-export-v107-en-download-320-45f9b10b-b3e.png",
+        "suspense-resolution-export-v107-en-history-768-45f9b10b-b3e.png",
+        "suspense-resolution-export-v107-en-history-1440-45f9b10b-b3e.png"
+      ],
+      "stages": [
+        "Actual read-only user sees history and export-permission explanation without export controls",
+        "Actual export requires password step-up; no export is issued before authentication; reload and explicit retry download verified bytes",
+        "Browser replay of the retained request returns identical bytes and one export receipt; keyboard focus returns to panel; no financial changes"
+      ],
+      "pageErrors": [],
+      "files": [
+        {
+          "file": "suspense-resolution-export-v107-en-download-45f9b10b-b3e.json",
+          "sha256": "1b240822c113f741227435958c1aff6bb1cc1ba388e4809c0d68c05834fe80d7",
+          "receiptId": "66b6f640-1e88-4146-96ef-c1ae57376268",
+          "kind": "SUSPENSE_RESOLUTION_RECOVERY_APPROVED_V1"
+        },
+        {
+          "file": "suspense-resolution-export-v107-en-replay-45f9b10b-b3e.json",
+          "sha256": "1b240822c113f741227435958c1aff6bb1cc1ba388e4809c0d68c05834fe80d7",
+          "receiptId": "66b6f640-1e88-4146-96ef-c1ae57376268",
+          "kind": "SUSPENSE_RESOLUTION_RECOVERY_APPROVED_V1"
+        }
+      ],
+      "routeLoadMs": [
+        25030,
+        9603
+      ],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "suspense-resolution-export-v107-fr-step-up-320-45f9b10b-b3e.png",
+        "suspense-resolution-export-v107-fr-download-320-45f9b10b-b3e.png",
+        "suspense-resolution-export-v107-fr-history-768-45f9b10b-b3e.png",
+        "suspense-resolution-export-v107-fr-history-1440-45f9b10b-b3e.png"
+      ],
+      "stages": [
+        "Actual read-only user sees history and export-permission explanation without export controls",
+        "Actual export requires password step-up; no export is issued before authentication; reload and explicit retry download verified bytes",
+        "Browser replay of the retained request returns identical bytes and one export receipt; keyboard focus returns to panel; no financial changes"
+      ],
+      "pageErrors": [],
+      "files": [
+        {
+          "file": "suspense-resolution-export-v107-fr-download-45f9b10b-b3e.json",
+          "sha256": "b52e8d4bfd3ce5ccb99b2aa81532b2a17381b3fe7a1e317aea6b40dda17138f9",
+          "receiptId": "fc91f2be-343e-4748-a12c-82144f818cde",
+          "kind": "SUSPENSE_RESOLUTION_RECOVERY_APPROVED_V1"
+        },
+        {
+          "file": "suspense-resolution-export-v107-fr-replay-45f9b10b-b3e.json",
+          "sha256": "b52e8d4bfd3ce5ccb99b2aa81532b2a17381b3fe7a1e317aea6b40dda17138f9",
+          "receiptId": "fc91f2be-343e-4748-a12c-82144f818cde",
+          "kind": "SUSPENSE_RESOLUTION_RECOVERY_APPROVED_V1"
+        }
+      ],
+      "routeLoadMs": [
+        24332,
+        10008
+      ],
+      "passed": true
+    }
+  ],
+  "scope": "Actual loopback browser export and password step-up in retained owned synthetic organizations. New local test users/roles/export receipts only; no financial changes or external delivery.",
+  "financialBefore": "c65421440b4b84590ab48acfc23e45703494c13b781015bebd997bf3a40982d2",
+  "financialUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "3179583b616b3e147ae60f7fd841cb765bd9e99c26f907f7672d1fcfe3ef7aa3",
+    "components/finance/PaymentSuspenseQueue.tsx": "60ea5deb3dca35ccb53ab15223ac48f9b9cc0588b9553dd82a20aa483abb137b",
+    "actions/payments/suspense-resolution.actions.ts": "0670bc57f7cb617d5d08862ddf6b1a54f44355d741c5e9e25f802e729656ce0d",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "35dd00a7f210d98b7abc677c8c052291979639f6af2fb14d207ba670a46f0c43",
+    "services/reconciliation/payment-suspense-resolution-record.ts": "6b5272f655a9bd35c9a754baa2256f1bf7ea51f5f4c33a71851d87e24a1ff862",
+    "services/reconciliation/payment-suspense-resolution-archive.service.ts": "fe72452bb01bbd42ba0a0f246f38eb6f7e699688c4e06ee016b983416efd9072",
+    "services/reconciliation/payment-suspense-resolution-export.service.ts": "4b5c66ccab25fe973b3905a05cca2df1a825a8b1b93663381923b9b5a74c48bd",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "0d4bdcc42c8390b1a20ac5ad447405894e99db0bed825ac72299059222a08a5e",
+    "hooks/payments/resolution-export-download.ts": "15acfb7b7c66e0b05a72db14c7e42bf49356ee41b4e864987f6f322bbadd63da",
+    "messages/en.json": "08dd6ae9ff8c107aaf88bf31dcca40aefd4b92cf0886c83e02c11bca918299e8",
+    "messages/fr.json": "b2b1e8b798b53cca1a7cc3d8774de4f8622fa36224bfde853fb4cdfd939ddc40"
+  },
+  "sourceStable": true
+}

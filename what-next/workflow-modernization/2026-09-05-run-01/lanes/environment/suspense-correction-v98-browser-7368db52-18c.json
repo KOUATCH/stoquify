@@ -1,0 +1,80 @@
+{
+  "at": "2026-09-09T10:15:14.613Z",
+  "run": "7368db52-18c",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "fd734ca76d69653456296cfa0d4694d878a00d821ba7704b8b815062815dc12e",
+    "components/finance/PaymentSuspenseQueue.tsx": "5e46159572928c02721253f8fcbe3d005383baafd7ea94728dfbaedcd6e3a93f",
+    "services/reconciliation/payment-suspense-correction.service.ts": "d03d1b1bab1d8b0550606d082c92fbb23e2abb054a81b6879e2099d95c56f59b",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "72e73a681c81f3273855aa8d21d7931a36bcdc86dd6570eae07491e206607ebf",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "actions/payments/reconciliation.actions.ts": "8b0566cb0ada11a294f78283d8b75d11f52a7987dcee5c5ec351e1f6cd225563",
+    "messages/en.json": "5de398febf8c411416df9c670759d004dc0b9a89773bea3eb2e66989eb401f6f",
+    "messages/fr.json": "30d7cd511ad90ecf49d5ef3a1c89a6b93302d64cb22fbf66d31ce45be93a5575"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Correction draft and accounting date survive actual browser reload",
+        "Original posting approver proposes correction through the real action; self-review cannot approve",
+        "EN/FR decision controls reflow at mobile/tablet widths and Escape returns keyboard focus",
+        "Expired authentication is denied; password step-up does not automatically reverse",
+        "Lost committed response and reload retain the exact request; retry yields one reversal and current reopened status with durable history",
+        "Retained correction history and 200 percent text reflow verified",
+        "Revoked current permissions deny direct route"
+      ],
+      "screenshots": [
+        "suspense-correction-v98-en-review-desktop-7368db52-18c.png",
+        "suspense-correction-v98-en-review-320-7368db52-18c.png",
+        "suspense-correction-v98-en-review-390-7368db52-18c.png",
+        "suspense-correction-v98-en-review-768-7368db52-18c.png",
+        "suspense-correction-v98-en-history-desktop-7368db52-18c.png",
+        "suspense-correction-v98-en-history-text200-7368db52-18c.png",
+        "suspense-correction-v98-en-denied-7368db52-18c.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 40391
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Correction draft and accounting date survive actual browser reload",
+        "Original posting approver proposes correction through the real action; self-review cannot approve",
+        "EN/FR decision controls reflow at mobile/tablet widths and Escape returns keyboard focus",
+        "Expired authentication is denied; password step-up does not automatically reverse",
+        "Lost committed response and reload retain the exact request; retry yields one reversal and current reopened status with durable history",
+        "Retained correction history and 200 percent text reflow verified",
+        "Revoked current permissions deny direct route"
+      ],
+      "screenshots": [
+        "suspense-correction-v98-fr-review-desktop-7368db52-18c.png",
+        "suspense-correction-v98-fr-review-320-7368db52-18c.png",
+        "suspense-correction-v98-fr-review-390-7368db52-18c.png",
+        "suspense-correction-v98-fr-review-768-7368db52-18c.png",
+        "suspense-correction-v98-fr-history-desktop-7368db52-18c.png",
+        "suspense-correction-v98-fr-history-text200-7368db52-18c.png",
+        "suspense-correction-v98-fr-denied-7368db52-18c.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 23364
+    }
+  ],
+  "scope": "Owned local app; real server actions and normal password sessions, synthetic initial accounting setup. No provider operation or certification issuance.",
+  "originalBefore": "d190b25177ec901329d3a788f7621007f9e81398de0c7bf6b7bf658b13f6d93e",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "fd734ca76d69653456296cfa0d4694d878a00d821ba7704b8b815062815dc12e",
+    "components/finance/PaymentSuspenseQueue.tsx": "5e46159572928c02721253f8fcbe3d005383baafd7ea94728dfbaedcd6e3a93f",
+    "services/reconciliation/payment-suspense-correction.service.ts": "d03d1b1bab1d8b0550606d082c92fbb23e2abb054a81b6879e2099d95c56f59b",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "72e73a681c81f3273855aa8d21d7931a36bcdc86dd6570eae07491e206607ebf",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "actions/payments/reconciliation.actions.ts": "8b0566cb0ada11a294f78283d8b75d11f52a7987dcee5c5ec351e1f6cd225563",
+    "messages/en.json": "5de398febf8c411416df9c670759d004dc0b9a89773bea3eb2e66989eb401f6f",
+    "messages/fr.json": "30d7cd511ad90ecf49d5ef3a1c89a6b93302d64cb22fbf66d31ce45be93a5575"
+  },
+  "sourceStable": true
+}

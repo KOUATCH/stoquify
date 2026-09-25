@@ -1,0 +1,41 @@
+{
+  "run": "141a2d78-73f",
+  "at": "2026-09-08T07:36:32.614Z",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "ac3e51aa39fa18fdbda79ad8570950ca97531d066e7e42f0ba7a8223707e5c06",
+    "services/purchasing/ap-control.schemas.ts": "194f6f10e5657cd53b9364abe6e5bff021ffd039d515899366d23a2bf4496484",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f"
+  },
+  "checks": [
+    {
+      "name": "Repeated receipt lines cannot consume 12 from 10 received",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Concurrent invoices without optional PO reserve quantity once",
+      "status": "passed",
+      "totalReserved": "6",
+      "rejected": 1
+    },
+    {
+      "name": "Concurrent exact retries return the same invoice",
+      "status": "failed",
+      "message": "\nInvalid `tx.supplierInvoice.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\services\\purchasing\\ap-control.service.ts:1766:46\n\n  1763 }\n  1764 const documentHash = parsed.documentHash ?? prefixedHash(evidencePayload)\n  1765 \n→ 1766 const invoice = await tx.supplierInvoice.create(\nUnique constraint failed on the fields: (`organizationId`,`supplierId`,`invoiceNumber`)"
+    },
+    {
+      "name": "Fractional split lines reserve exactly 0.3 and cannot consume more",
+      "status": "passed",
+      "quantity": "0.3",
+      "total": "750",
+      "ledgerStatus": "PENDING_APPROVAL"
+    }
+  ],
+  "scope": "Owned local PostgreSQL; real receiving and invoice services; no approval, payment or journal posting.",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "ac3e51aa39fa18fdbda79ad8570950ca97531d066e7e42f0ba7a8223707e5c06",
+    "services/purchasing/ap-control.schemas.ts": "194f6f10e5657cd53b9364abe6e5bff021ffd039d515899366d23a2bf4496484",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f"
+  }
+}

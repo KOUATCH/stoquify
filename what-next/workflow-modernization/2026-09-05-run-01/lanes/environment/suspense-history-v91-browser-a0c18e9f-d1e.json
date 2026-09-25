@@ -1,0 +1,106 @@
+{
+  "at": "2026-09-09T07:18:25.526Z",
+  "run": "a0c18e9f-d1e",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseQueue.tsx": "d885f3ac5d9dde7b97b6bb12ccc0f66ee203691f4bdf1c766718abc46218641d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "b2268ade6193460bc7e4475006fb8d8712f17f640bf3db58bc5758969806df67",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "fd081e3181770881ed1019497e020a5d3f79f9f65b6a9b5496935613847b891e",
+    "actions/payments/reconciliation.actions.ts": "ae783ed4bc3e36f9a6c0cdb4688fac28cc662dfe3fca0c922606ef101ff42092",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "a686040fd5cc85f4fb80800f0e85b5380b71e22a24714d0c26cc583a16bac9cb",
+    "messages/fr.json": "21e0331856c068ce1455f85408cdc4105dcb5e52f6f9b2a748d95a4b296a23f0",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "hooks/payments/suspense-recovery.ts": "80f5feb1ce76f4f293b0daca1865c690893d58e6e11da723d6e8ad9bbbd484da",
+    "services/reconciliation/payment-suspense-read.service.ts": "c72a4646d1b4ff1eb20b3e0ed429beefb11d9e3df62ff96266e0cc45078140be",
+    "components/finance/PaymentSuspenseHistory.tsx": "010b567a59ea5baf4960c67610a4b3704f8eff4c278c33d5c3b537583e3292cb"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Unsubmitted maker draft survives actual reload",
+        "Lost proposal response survives reload and exact retry without duplicate proposal audit",
+        "Normal maker session proposes from actual read model; persisted proposal confirmed",
+        "Actual EN/FR exact amount review, keyboard focus return and mobile/tablet reflow with reachable confirmation",
+        "Expired assurance rejected; real password step-up does not automatically post",
+        "Changed proposal rejected with zero journals; explicit refresh and re-review recover",
+        "Retained approval outside the 25-item work queue retrieved by scoped record lookup",
+        "Expired browser session and normal reauthentication retain the original pending approval; no automatic retry",
+        "Lost committed response safely retried with one journal/audit; retained record and 200% text checked",
+        "Three real history pages expose resolved and posted records with journal/account labels, read-only inspection and keyboard/mobile recovery",
+        "Current revoked permissions deny direct route"
+      ],
+      "screenshots": [
+        "suspense-history-v91-en-review-desktop-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-review-320-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-review-390-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-review-768-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-stale-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-restored-session-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-retained-desktop-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-retained-mobile-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-retained-text200-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-history-retained-desktop-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-history-retained-mobile-a0c18e9f-d1e.png",
+        "suspense-history-v91-en-denied-a0c18e9f-d1e.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 19234
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Unsubmitted maker draft survives actual reload",
+        "Lost proposal response survives reload and exact retry without duplicate proposal audit",
+        "Normal maker session proposes from actual read model; persisted proposal confirmed",
+        "Actual EN/FR exact amount review, keyboard focus return and mobile/tablet reflow with reachable confirmation",
+        "Expired assurance rejected; real password step-up does not automatically post",
+        "Changed proposal rejected with zero journals; explicit refresh and re-review recover",
+        "Retained approval outside the 25-item work queue retrieved by scoped record lookup",
+        "Expired browser session and normal reauthentication retain the original pending approval; no automatic retry",
+        "Lost committed response safely retried with one journal/audit; retained record and 200% text checked",
+        "Three real history pages expose resolved and posted records with journal/account labels, read-only inspection and keyboard/mobile recovery",
+        "Current revoked permissions deny direct route"
+      ],
+      "screenshots": [
+        "suspense-history-v91-fr-review-desktop-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-review-320-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-review-390-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-review-768-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-stale-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-restored-session-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-retained-desktop-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-retained-mobile-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-retained-text200-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-history-retained-desktop-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-history-retained-mobile-a0c18e9f-d1e.png",
+        "suspense-history-v91-fr-denied-a0c18e9f-d1e.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 10330
+    }
+  ],
+  "scope": "Actual isolated app, synthetic setup and normal password sign-in/step-up. No provider or statutory approval claim.",
+  "originalBefore": "5fcb71fe4b6d6909a2dafb2a20e28c4e4463d54bca8c35988795bd9c42eb432c",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseQueue.tsx": "d885f3ac5d9dde7b97b6bb12ccc0f66ee203691f4bdf1c766718abc46218641d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "b2268ade6193460bc7e4475006fb8d8712f17f640bf3db58bc5758969806df67",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "fd081e3181770881ed1019497e020a5d3f79f9f65b6a9b5496935613847b891e",
+    "actions/payments/reconciliation.actions.ts": "ae783ed4bc3e36f9a6c0cdb4688fac28cc662dfe3fca0c922606ef101ff42092",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "a686040fd5cc85f4fb80800f0e85b5380b71e22a24714d0c26cc583a16bac9cb",
+    "messages/fr.json": "21e0331856c068ce1455f85408cdc4105dcb5e52f6f9b2a748d95a4b296a23f0",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "hooks/payments/suspense-recovery.ts": "80f5feb1ce76f4f293b0daca1865c690893d58e6e11da723d6e8ad9bbbd484da",
+    "services/reconciliation/payment-suspense-read.service.ts": "c72a4646d1b4ff1eb20b3e0ed429beefb11d9e3df62ff96266e0cc45078140be",
+    "components/finance/PaymentSuspenseHistory.tsx": "010b567a59ea5baf4960c67610a4b3704f8eff4c278c33d5c3b537583e3292cb"
+  },
+  "sourceStable": true
+}

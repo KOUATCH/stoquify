@@ -1,0 +1,331 @@
+{
+  "updatedAt": "2026-09-06T04:31:25.289Z",
+  "discoveryComplete": false,
+  "workflows": [
+    {
+      "id": "OTC-01",
+      "name": "Create a delivery sales order",
+      "purpose": "Create a delivery sales order",
+      "domain": "sales_order_to_cash",
+      "personas": [
+        "Authorized sales, warehouse or accounting operator as dictated by operation"
+      ],
+      "authority": "sales.orders.create",
+      "entryPoints": [
+        "actions/order-to-cash/delivery-order.actions.ts#createDeliveryOrderAction"
+      ],
+      "services": [
+        "services/order-to-cash/delivery-order.service.ts#createDeliveryOrder"
+      ],
+      "records": [
+        "SalesOrder/lines",
+        "BusinessEvent/outbox",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Check replay before new-work admission",
+        "Resolve scoped customer/location/items",
+        "Snapshot selling price and tax",
+        "Create DRAFT order, command event and audit atomically"
+      ],
+      "prerequisites": [
+        "Current same-tenant permission and sales capability; domain setup and current source evidence",
+        "Inventory-tracked items without serial/batch/expiry tracking for this implemented slice"
+      ],
+      "sideEffects": [
+        "All domain writes use a database transaction and existing inventory/accounting/event owners; actual atomicity remains unverified here"
+      ],
+      "implementationStatus": "backend_only_no_production_interface_found",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "lanes/sales-order-to-cash/DISCOVERY.md"
+      ],
+      "remaining": [
+        "Customer lookup omits isActive (cross-reference CS retention plan).",
+        "No production UI caller found; bounded quantity/input limits and concurrent command identity need verification."
+      ]
+    },
+    {
+      "id": "OTC-02",
+      "name": "Confirm delivery order and reserve stock",
+      "purpose": "Confirm delivery order and reserve stock",
+      "domain": "sales_order_to_cash",
+      "personas": [
+        "Authorized sales, warehouse or accounting operator as dictated by operation"
+      ],
+      "authority": "sales.orders.update",
+      "entryPoints": [
+        "actions/order-to-cash/delivery-order.actions.ts#confirmDeliveryOrderAction"
+      ],
+      "services": [
+        "services/order-to-cash/delivery-order.service.ts#confirmDeliveryOrder"
+      ],
+      "records": [
+        "DeliveryReservation/lines",
+        "SalesOrder/lines",
+        "Inventory reservation event",
+        "BusinessEvent/audit"
+      ],
+      "transitions": [
+        "Replay exact command",
+        "Check expected version and DRAFT",
+        "Create reservation and post reservation through inventory owner",
+        "Conditionally transition to CONFIRMED in same transaction"
+      ],
+      "prerequisites": [
+        "Current same-tenant permission and sales capability; domain setup and current source evidence",
+        "Inventory-tracked items without serial/batch/expiry tracking for this implemented slice"
+      ],
+      "sideEffects": [
+        "All domain writes use a database transaction and existing inventory/accounting/event owners; actual atomicity remains unverified here"
+      ],
+      "implementationStatus": "backend_only_no_production_interface_found",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "lanes/sales-order-to-cash/DISCOVERY.md"
+      ],
+      "remaining": [
+        "No production UI caller found.",
+        "Reservation release/cancellation and concurrent confirmation need a complete recovery path; no release function found in this owner."
+      ]
+    },
+    {
+      "id": "OTC-03",
+      "name": "Issue delivered goods and post their cost",
+      "purpose": "Issue delivered goods and post their cost",
+      "domain": "sales_order_to_cash",
+      "personas": [
+        "Authorized sales, warehouse or accounting operator as dictated by operation"
+      ],
+      "authority": "inventory.levels.adjust",
+      "entryPoints": [
+        "actions/order-to-cash/delivery-order.actions.ts#postDeliveryGoodsIssueAction"
+      ],
+      "services": [
+        "services/order-to-cash/delivery-order.service.ts#postDeliveryGoodsIssue"
+      ],
+      "records": [
+        "DeliveryGoodsIssue/lines",
+        "InventoryTransaction",
+        "LedgerPostingBatch/JournalEntry",
+        "SalesOrder/Reservation",
+        "BusinessEvent/audit"
+      ],
+      "transitions": [
+        "Check CONFIRMED version and full reservation",
+        "Snapshot issue quantities/cost",
+        "Post inventory and cost accounting through existing owners",
+        "Tie valuation, consume reservation and conditionally mark DELIVERED"
+      ],
+      "prerequisites": [
+        "Current same-tenant permission and sales capability; domain setup and current source evidence",
+        "Inventory-tracked items without serial/batch/expiry tracking for this implemented slice"
+      ],
+      "sideEffects": [
+        "All domain writes use a database transaction and existing inventory/accounting/event owners; actual atomicity remains unverified here"
+      ],
+      "implementationStatus": "backend_only_no_production_interface_found",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "lanes/sales-order-to-cash/DISCOVERY.md"
+      ],
+      "remaining": [
+        "No production UI caller found.",
+        "Full-order, untracked-lot slice only; returns/reversal and partial delivery are not implemented here.",
+        "Real stock/valuation/posting rollback, contention and continuing-obligation proof required."
+      ]
+    },
+    {
+      "id": "OTC-04",
+      "name": "Bill a completed delivery into receivables",
+      "purpose": "Bill a completed delivery into receivables",
+      "domain": "sales_order_to_cash",
+      "personas": [
+        "Authorized sales, warehouse or accounting operator as dictated by operation"
+      ],
+      "authority": "accounting.journal.post plus fresh auth within 300 seconds",
+      "entryPoints": [
+        "actions/order-to-cash/delivery-order.actions.ts#createDeliveryBillingOutcomeAction"
+      ],
+      "services": [
+        "services/order-to-cash/delivery-order.service.ts#createDeliveryBillingOutcome"
+      ],
+      "records": [
+        "DeliveryBillingOutcome/lines",
+        "CustomerReceivableDocument",
+        "CustomerLedgerEntry",
+        "LedgerPostingBatch/JournalEntry",
+        "FiscalDocument when supported",
+        "BusinessEvent/audit"
+      ],
+      "transitions": [
+        "Check DELIVERED version and full unbilled lines",
+        "Persist invoice outcome and post accounting",
+        "Create receivable and customer ledger entry with credit check",
+        "Optionally create SANDBOX fiscal document",
+        "Conditionally mark COMPLETED with payment still PENDING"
+      ],
+      "prerequisites": [
+        "Current same-tenant permission and sales capability; domain setup and current source evidence",
+        "Inventory-tracked items without serial/batch/expiry tracking for this implemented slice"
+      ],
+      "sideEffects": [
+        "All domain writes use a database transaction and existing inventory/accounting/event owners; actual atomicity remains unverified here"
+      ],
+      "implementationStatus": "backend_only_no_production_interface_found",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "lanes/sales-order-to-cash/DISCOVERY.md"
+      ],
+      "remaining": [
+        "No production UI caller found.",
+        "Billing completion is not customer payment or statutory certification.",
+        "No shipping-charge billing; currency precision/country applicability and full rollback need review.",
+        "Fiscal output explicitly sandbox-only; missing authority returns no fiscal document."
+      ]
+    },
+    {
+      "id": "OTC-05",
+      "name": "Inspect a governed delivery order",
+      "purpose": "Inspect a governed delivery order",
+      "domain": "sales_order_to_cash",
+      "personas": [
+        "Authorized sales, warehouse or accounting operator as dictated by operation"
+      ],
+      "authority": "Service requires tenant ID; no public read action or route found",
+      "entryPoints": [],
+      "services": [
+        "services/order-to-cash/delivery-order.service.ts#getDeliveryOrder"
+      ],
+      "records": [
+        "SalesOrder and related snapshots"
+      ],
+      "transitions": [
+        "Resolve nondeleted tenant DELIVERY order",
+        "Include snapshot lines, reservations, issues and billing evidence"
+      ],
+      "prerequisites": [
+        "Current same-tenant permission and sales capability; domain setup and current source evidence",
+        "Inventory-tracked items without serial/batch/expiry tracking for this implemented slice"
+      ],
+      "sideEffects": [
+        "Read only"
+      ],
+      "implementationStatus": "backend_only_no_production_interface_found",
+      "reviewStatus": "selected_source_paths_traced",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "lanes/sales-order-to-cash/DISCOVERY.md"
+      ],
+      "remaining": [
+        "No production UI/read-action caller found.",
+        "API-safe decimal/date serialization, permission-specific projection and history/recovery presentation remain implementation work."
+      ]
+    },
+    {
+      "id": "SALES-DAILY-01",
+      "name": "Review daily sales and operating amounts",
+      "purpose": "Understand actual scoped daily sales with clear provenance, currency, freshness and missing-data states.",
+      "domain": "sales_analytics",
+      "personas": [
+        "Sales/reporting reader"
+      ],
+      "authority": "Both sales.read and reports.read; server tenant/object guard, existing sales module observe mode unchanged.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/sales/page.tsx",
+        "components/analytics/CompleteIntegratedDailySalesDashboard.tsx",
+        "actions/analytics/financial-analytics.ts#getDailyReportData",
+        "actions/analytics/daily-sales.actions.ts#getDailySalesReportAction",
+        "hooks/analytics/useDailySalesReport.ts"
+      ],
+      "services": [
+        "services/analytics/financial-analytics.service.ts#getDailyReportDataReadModel",
+        "services/analytics/daily-sales-read.service.ts#getDailySalesReadModel",
+        "services/analytics/daily-sales-period.ts#dailySalesPeriod"
+      ],
+      "records": [
+        "DailySalesReport/Item when present",
+        "SalesOrder/lines aggregate",
+        "Organization and same-tenant Location metadata"
+      ],
+      "prerequisites": [
+        "Current signed-in organization, both established permissions, configured currency/timezone and same-tenant location"
+      ],
+      "transitions": [
+        "Resolve current identity and actual organization/location/calendar date",
+        "Read saved report or full same-snapshot order aggregate",
+        "Render exact source-labelled amounts",
+        "Retain scope on failure; Retry; reject delayed obsolete-scope responses"
+      ],
+      "sideEffects": [
+        "Read-only; audit/observation by existing action protection"
+      ],
+      "implementationStatus": "daily_read_scope_truth_and_recovery_corrected",
+      "reviewStatus": "source_and_affected_contracts_reviewed",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "lanes/sales-order-to-cash/DISCOVERY.md",
+        "lanes/sales-order-to-cash/DAILY_SALES_CORRECTION_PLAN.md",
+        "lanes/sales-order-to-cash/DAILY_SALES_IMPLEMENTATION.md",
+        "evidence/daily-sales-receipt.json",
+        "lanes/environment/daily-sales-postgres-af424ca5-101.json",
+        "lanes/environment/daily-sales-browser-8b90ef4d-ce7.json"
+      ],
+      "remaining": [
+        "Daily report production/finalization/retention lifecycle, tablet/native zoom/screen reader/manual contrast/reduced-motion review and connected producer correctness remain open. Shared financial metrics contain unsupported estimates and need a separate correction. Full build remains failed at Windows standalone symlink packaging; no release or professional certification. Continue all registered workflows and unmapped sources."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "services/order-to-cash/delivery-order.service.ts",
+      "sha256": "f7529c1f9c3acd0080c3a8190a57bbfebf477622861e4415f7a9a45f8e71a4ec"
+    },
+    {
+      "path": "actions/order-to-cash/delivery-order.actions.ts",
+      "sha256": "36edda8e394bf3aa7997d7af34a34712c69a4fa05712039c261fd213fef26d99"
+    },
+    {
+      "path": "services/order-to-cash/delivery-order.schemas.ts",
+      "sha256": "31d6e889f136ffd55d3f88c27d282a58388fb67aaf29cf6a62831c0a4a126e68"
+    },
+    {
+      "path": "services/accounting/postings/post-delivery-order.ts",
+      "sha256": "8705f3ca1143fa83dad060846e90279a8246258caa3c999781651a88d85833e9"
+    },
+    {
+      "path": "components/analytics/CompleteIntegratedDailySalesDashboard.tsx",
+      "sha256": "614b5a682df63969c47d690f972d4d0ce05c901bc4318f49d07ba914a50f7089"
+    },
+    {
+      "path": "components/sales/CompleteIntegratedDailySalesDashboard.tsx",
+      "sha256": "7a0b62fc0b51b52be1ad8281aa9a4f61b97260a10d7e89dbc3350a455c1cf66a"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/sales/page.tsx",
+      "sha256": "57878af84c432b28b88cb2d47236741bcb4c8e29ab8e9025f86b6d902c644680"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/sales/sales-route-data-access.ts",
+      "sha256": "db4f1f26feb45de1fb552a2e13addb838168aef006788217b5243d87facded18"
+    },
+    {
+      "path": "actions/analytics/financial-analytics.ts",
+      "sha256": "a75c1941426a122f851c388441be063a4575fdbed25dd485769826b43e512371"
+    },
+    {
+      "path": "services/analytics/financial-analytics.service.ts",
+      "sha256": "c98defa1eeff3c26f8206c2d6a3a3eefafa268c89bf5002997b33253f9b7d98a"
+    }
+  ]
+}

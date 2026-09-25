@@ -1,0 +1,69 @@
+{
+  "at": "2026-09-08T08:41:01.040Z",
+  "sourceBaseline": "evidence/source-baseline-v59.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "155cee3ed259024121f431d711372ef8250744a634d1048ed2dada2c476b7525",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ffe26e3a92694cdbc036eb174585af697385b717842633838c0c12e2a1e37982",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts": "8eebbccd8a6a62a0abcd5c068d345ca262b18d605c536b57bfab52690f86eef0",
+    "services/purchasing/__tests__/purchase-correction-ledger.service.test.ts": "6b0267ffcffe7de5f7fbeab2b93f1a84813b4bcbb6930780ef82f4799384da21",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "fea76b7b96eaa5788d0da1335fdaf6804d70ff93a23ab50ac4b0952293896ece",
+    "services/accounting/posting.service.ts": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2",
+    "services/accounting/__tests__/posting.service.test.ts": "2e6e3691b836b805911065b1a552822cf909cf037ac58d297be978cbf5221463",
+    "services/accounting/posting-rules.service.ts": "bc0901046581189e1469cbb73c193c59dd03846ab27c1a3640c93a1476984af2",
+    "services/accounting/periods.service.ts": "c9fabd9a1ed2ead2ca6f17e88f53494b35190540519df1c2f027c2907e203990",
+    "services/accounting/source-link.service.ts": "75f35bf605479cba5eb3b6b05845ec446bc2633473c789fe10eef64ea4d96d81",
+    "services/purchasing/__tests__/invoice-preparation-contracts.test.ts": "30f46200d1036e8076beeaa9678d25386029ddacb592484d63b7cedb9dc843f8",
+    "actions/purchasing/__tests__/invoice-preparation.actions.test.ts": "f35191435e85b4cbbc923bf64096b0083ea085ebcf541d6380cad19700a28844",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1"
+  },
+  "verifiers": [
+    {
+      "path": "lanes/environment/verify-ap-ledger-retry.cjs",
+      "sha256": "eef5b43d58bbc80e4ad72fa3168eb5809879706124b7525163b236796116f875"
+    },
+    {
+      "path": "lanes/environment/verify-invoice-approval-integrity.cjs",
+      "sha256": "a18d0368d3126b0d6dc923441efe36d62c5ffb5623f3efc6a07a05d16c6a7c98"
+    }
+  ],
+  "before": "lanes/environment/ap-ledger-retry-d76effcc-011.json",
+  "after": "lanes/environment/ap-ledger-retry-491fc376-8ed.json",
+  "approvalRegression": "lanes/environment/invoice-approval-integrity-852006c2-90b.json",
+  "tests": "evidence/ap-ledger-retry-tests-final.json",
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/ap-control.service.ts services/purchasing/__tests__/ap-control.service.test.ts services/purchasing/__tests__/ap-ledger-retry.test.ts",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "migration": "none",
+  "browser": "not run; no changed interface",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2664,
+      "tests": 934,
+      "pages": 150,
+      "routeHandlers": 18,
+      "actionSources": 162,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2195,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "run": "b2ec1639-8c1",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T10:04:01.289Z",
+  "sourcesBefore": {
+    "services/organization/organization-profile-input.ts": "2695de2ead0eee23bf6b7ae19d98c54038dfd08707da5f1ea32b38c705111a9e",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "services/organization/organization-settings.service.ts": "1e5ca31bcb23cdda3ba0a48e2399972bb3e528716deba7db9b7d243e0f36c9bb",
+    "services/organization/organization-read.service.ts": "8b42420cf3d81fc65ba4b1d93fc8116893eb476a0a79350c8ab36751787b4ad3",
+    "actions/organization/organization-settings-actions.ts": "7fad736216e08d456329f9e5b5749a477a48cc81fac62ddbbcb56fe85ff2103b",
+    "hooks/useOrganizationSettings.ts": "eb6dad03ba640b2c3715f9e9ba077027d95ba7939c7a808c5d9bd0ec0409dac6",
+    "components/settings/OrganizationSettingsForm.tsx": "9a82d9b1120bb4d1e41293218f5cb0c9d8a80384b0e8c39ee8e3a036bca79fd4",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "en save, audit, retained defaults and stale duplicate",
+      "passed": true,
+      "durationMs": 301,
+      "detail": {
+        "audits": 1,
+        "duplicateRejected": true,
+        "monotonicRevision": true
+      }
+    },
+    {
+      "name": "fr save, audit, retained defaults and stale duplicate",
+      "passed": true,
+      "durationMs": 123,
+      "detail": {
+        "audits": 1,
+        "duplicateRejected": true,
+        "monotonicRevision": true
+      }
+    },
+    {
+      "name": "concurrent reviewed saves commit exactly one profile and audit",
+      "passed": true,
+      "durationMs": 110,
+      "detail": {
+        "committed": 1,
+        "conflicts": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "mandatory audit failure rolls back the profile, and retry commits once",
+      "passed": true,
+      "durationMs": 120,
+      "detail": {
+        "rollback": true,
+        "retryAudits": 1
+      }
+    },
+    {
+      "name": "unverified step-up and read-only role cannot change the profile",
+      "passed": true,
+      "durationMs": 162,
+      "detail": {
+        "unchanged": true
+      }
+    },
+    {
+      "name": "cross-tenant session and actor cannot change either organization",
+      "passed": true,
+      "durationMs": 196,
+      "detail": {
+        "tenantIsolation": true
+      }
+    },
+    {
+      "name": "valid-looking currency changes remain prohibited through all profile entry points",
+      "passed": true,
+      "durationMs": 105,
+      "detail": {
+        "unchanged": true
+      }
+    },
+    {
+      "name": "every retained shortcut uses the same revision and audit contract",
+      "passed": true,
+      "durationMs": 138,
+      "detail": {
+        "audits": 3
+      }
+    },
+    {
+      "name": "actor revocation before final lock rejects without profile effects",
+      "passed": true,
+      "durationMs": 105,
+      "detail": {
+        "profileUnchanged": true
+      }
+    },
+    {
+      "name": "role revocation before final lock rejects without profile effects",
+      "passed": true,
+      "durationMs": 104,
+      "detail": {
+        "profileUnchanged": true
+      }
+    },
+    {
+      "name": "membership revocation before final lock rejects without profile effects",
+      "passed": true,
+      "durationMs": 110,
+      "detail": {
+        "profileUnchanged": true
+      }
+    },
+    {
+      "name": "session revocation before final lock rejects without profile effects",
+      "passed": true,
+      "durationMs": 102,
+      "detail": {
+        "profileUnchanged": true
+      }
+    },
+    {
+      "name": "organization revocation before final lock rejects without profile effects",
+      "passed": true,
+      "durationMs": 103,
+      "detail": {
+        "profileUnchanged": true
+      }
+    },
+    {
+      "name": "actor mutation waits for profile commit",
+      "passed": true,
+      "durationMs": 298,
+      "detail": {
+        "writerBlockedUntilCommit": true
+      }
+    },
+    {
+      "name": "role mutation waits for profile commit",
+      "passed": true,
+      "durationMs": 279,
+      "detail": {
+        "writerBlockedUntilCommit": true
+      }
+    },
+    {
+      "name": "membership mutation waits for profile commit",
+      "passed": true,
+      "durationMs": 298,
+      "detail": {
+        "writerBlockedUntilCommit": true
+      }
+    },
+    {
+      "name": "session mutation waits for profile commit",
+      "passed": true,
+      "durationMs": 281,
+      "detail": {
+        "writerBlockedUntilCommit": true
+      }
+    },
+    {
+      "name": "organization mutation waits for profile commit",
+      "passed": true,
+      "durationMs": 285,
+      "detail": {
+        "writerBlockedUntilCommit": true
+      }
+    }
+  ],
+  "limitations": [
+    "All writes belong to newly created synthetic organizations under this run prefix. No migrations, source-fixture rewrites, live email or provider requests.",
+    "Real password hashing and step-up establish session assurance; assurance is never seeded.",
+    "Currency transitions are deliberately refused by the profile editor because existing readers label monetary history with Organization.currency. A controlled migration is not implemented here.",
+    "Unit, action and actual browser evidence are recorded separately. These checks do not certify other organization workflows."
+  ],
+  "originalAuthorityBefore": "09e96a1a307b010b327d1683ca36f5dd86165c539b5874c0a1c1eb1cf54ed785",
+  "originalAuthorityAfter": "09e96a1a307b010b327d1683ca36f5dd86165c539b5874c0a1c1eb1cf54ed785",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T10:04:04.764Z",
+  "sourcesAfter": {
+    "services/organization/organization-profile-input.ts": "2695de2ead0eee23bf6b7ae19d98c54038dfd08707da5f1ea32b38c705111a9e",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "services/organization/organization-settings.service.ts": "1e5ca31bcb23cdda3ba0a48e2399972bb3e528716deba7db9b7d243e0f36c9bb",
+    "services/organization/organization-read.service.ts": "8b42420cf3d81fc65ba4b1d93fc8116893eb476a0a79350c8ab36751787b4ad3",
+    "actions/organization/organization-settings-actions.ts": "7fad736216e08d456329f9e5b5749a477a48cc81fac62ddbbcb56fe85ff2103b",
+    "hooks/useOrganizationSettings.ts": "eb6dad03ba640b2c3715f9e9ba077027d95ba7939c7a808c5d9bd0ec0409dac6",
+    "components/settings/OrganizationSettingsForm.tsx": "9a82d9b1120bb4d1e41293218f5cb0c9d8a80384b0e8c39ee8e3a036bca79fd4",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "b7ae3806968200eccda9ab9cca3b7e6848b80b0827705561fa5d7a1f1aa7ef43",
+  "blockedExternalFetch": 0,
+  "passed": 18,
+  "failed": 0
+}

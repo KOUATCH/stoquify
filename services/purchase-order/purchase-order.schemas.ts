@@ -1,4 +1,6 @@
 import { z } from "zod"
+import { purchaseLifecycleRequestSchema } from "./purchase-order-lifecycle-contracts"
+import { purchaseQuantitySchema } from "./purchase-quantity"
 
 export const PurchaseOrderStatusEnum = z.enum([
   "DRAFT", "SUBMITTED", "APPROVED",
@@ -7,7 +9,7 @@ export const PurchaseOrderStatusEnum = z.enum([
 
 export const OrderLineSchema = z.object({
   itemId: z.string().min(1, "Item ID is required"),
-  quantity: z.number().int().positive("Quantity must be greater than 0"),
+  quantity: purchaseQuantitySchema,
   unitPrice: z.number().nonnegative("Unit price must be non-negative"),
   taxRate: z.number().min(0).max(100, "Tax rate must be between 0 and 100").optional().default(0),
   discount: z.number().nonnegative("Discount cannot be negative").optional().default(0),
@@ -30,7 +32,11 @@ export const CreatePurchaseOrderSchema = z.object({
 export const UpdatePurchaseOrderSchema = z.object({
   id: z.string().min(1),
   organizationId: z.string().min(1),
-  updatedById: z.string().optional(),
+  updatedById: z.string().min(1).max(191),
+  sessionId: z.string().min(1).max(191),
+  sessionToken: z.string().min(1),
+  expectedRevision: z.string().regex(/^[a-f0-9]{64}$/, "Review the current draft before saving"),
+  idempotencyKey: z.string().min(8).max(128).regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/),
   supplierId: z.string().optional(),
   locationId: z.string().optional(),
   date: z.string().optional(),
@@ -42,35 +48,36 @@ export const UpdatePurchaseOrderSchema = z.object({
 })
 
 export const GoodsReceiptItemSchema = z.object({
-  lineId: z.string().min(1, "Line ID is required"),
-  receivedQuantity: z.number().int().positive("Received quantity must be greater than 0"),
-  unitPrice: z.number().nonnegative().optional(),
-  notes: z.string().optional(),
-  serialNumbers: z.array(z.string()).optional(),
-  batchNumber: z.string().optional(),
-  expiryDate: z.string().optional(),
-})
+  lineId: z.string().min(1, "Line ID is required").max(191),
+  receivedQuantity: purchaseQuantitySchema,
+  unitPrice: z.number().finite().nonnegative().max(9999999999.99).optional(),
+  notes: z.string().max(2000).optional(),
+  serialNumbers: z.array(z.string().trim().min(1).max(191)).max(5000).optional(),
+  batchNumber: z.string().trim().max(191).optional(),
+  expiryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value, "A valid expiry date is required").optional(),
+}).strict()
 
 export const GoodsReceiptInspectionOutcomeSchema = z.enum(["PASSED", "FAILED", "INCOMPLETE"])
 
 export const GoodsReceiptInspectionResolutionDecisionSchema = z.enum(["ACCEPT", "REJECT"])
 
 export const ReceiveItemsSchema = z.object({
-  purchaseOrderId: z.string().min(1),
-  organizationId: z.string().min(1),
-  receivedById: z.string().min(1),
+  purchaseOrderId: z.string().min(1).max(191),
+  organizationId: z.string().min(1).max(191),
+  receivedById: z.string().min(1).max(191),
   idempotencyKey: z.string()
     .trim()
     .min(8, "Receipt idempotency key is required")
     .max(191)
     .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/, "Receipt idempotency key has an invalid format"),
-  locationId: z.string().optional(),
-  notes: z.string().optional(),
+  locationId: z.string().min(1).max(191).optional(),
+  notes: z.string().max(2000).optional(),
   inspectionOutcome: GoodsReceiptInspectionOutcomeSchema,
   inspectionReason: z.string().trim().max(2000).optional(),
   inspectionEvidenceNotes: z.string().trim().max(4000).optional(),
-  items: z.array(GoodsReceiptItemSchema).min(1, "At least one item must be received"),
-}).superRefine((value, context) => {
+  items: z.array(GoodsReceiptItemSchema).min(1, "At least one item must be received").max(200),
+}).strict().superRefine((value, context) => {
+  if (new Set(value.items.map(item => item.lineId)).size !== value.items.length) context.addIssue({ code: z.ZodIssueCode.custom, path: ["items"], message: "Each purchase-order line may appear only once in a receipt" })
   if (value.inspectionOutcome !== "PASSED" && !value.inspectionReason) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
@@ -81,9 +88,9 @@ export const ReceiveItemsSchema = z.object({
 })
 
 export const ResolveGoodsReceiptInspectionSchema = z.object({
-  goodsReceiptId: z.string().min(1),
-  organizationId: z.string().min(1),
-  resolvedById: z.string().min(1),
+  goodsReceiptId: z.string().min(1).max(191),
+  organizationId: z.string().min(1).max(191),
+  resolvedById: z.string().min(1).max(191),
   decision: GoodsReceiptInspectionResolutionDecisionSchema,
   reason: z.string().trim().min(1, "A resolution reason is required").max(2000),
   idempotencyKey: z.string()
@@ -91,13 +98,14 @@ export const ResolveGoodsReceiptInspectionSchema = z.object({
     .min(8, "Resolution idempotency key is required")
     .max(191)
     .regex(/^[A-Za-z0-9][A-Za-z0-9._:-]*$/, "Resolution idempotency key has an invalid format"),
-})
+}).strict()
 
 export const BulkStatusUpdateSchema = z.object({
   organizationId: z.string().min(1),
   purchaseOrderIds: z.array(z.string().min(1)).min(1, "No purchase orders specified"),
   toStatus: PurchaseOrderStatusEnum,
   reason: z.string().optional(),
+  reviewedRequests: z.array(z.object({ id: z.string().min(1), request: purchaseLifecycleRequestSchema })).optional(),
 })
 
 export const ClonePurchaseOrderSchema = z.object({

@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-09T12:06:31.716Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v100.json",
+  "sources": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "9bfc26687e655c51dca11c47b6a164a4cb4e75bdcdd941b7413c049aed980807",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "actions/payments/reconciliation.actions.ts": "07fb0f5332589b437e63297ef12e41fcef800c234c7ce53fefe93161c854d4dc",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "364ff524b6b50af2b1234927dc64734fcd14652d15f332f052ab7b0484973700",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "57bee3423fa67e1ae33555ff9564c533b80ba124763817c86e2abf455f510746",
+    "hooks/payments/verified-evidence-download.ts": "88a9129d0927e86fe3f08d2a03121216eabb85313cb82f41c8aabf035ea4dd8f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "messages/en.json": "b6a0b8651c0163a2419fe54a7b77cf707b40b7b0bad8bc00c230a6c3c52edec6",
+    "messages/fr.json": "9d58dd8b4e6dcd3a3fcac463c0977384548d275447534bbacade13b8cd5b0725",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "b59fb7bd90233e21372b1fb1a462e8878deaf7d0c5344c2348a4bcef891d3061",
+    "components/finance/__tests__/PaymentSuspenseCorrectionPanel.test.tsx": "c2c8e441bc53565bb5e382f18cbab8bbca982ad956f1982991dc8ad438be89e0",
+    "components/finance/__tests__/ReconciliationCertificateExportPanel.test.tsx": "aa20e334985bf5ead9a8e0c44225710bec731c326811ef4f9169bb4c7c08b1bb",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "7792179f296474a21cc61d71f8b68f73e0fbfd5f181fd1fe633aa26d3a5c4cd0",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "1d4e3916cb0a19f0f18b0287555cd316ec36a6a4a6a158175171eba09b3b38e0",
+    "hooks/payments/__tests__/correction-export-download.test.ts": "ef80cc290f29ba719c2d05847e4ef020b26abb33a35db49789b20bcb48e9dec8"
+  },
+  "tests": {
+    "file": "evidence/certificate-export-tests-v100.json",
+    "passed": 91,
+    "suites": 6,
+    "finalPanelFile": "evidence/certificate-export-focus-tests-v100.json",
+    "finalPanelPassed": 7,
+    "distinctTests": 92
+  },
+  "runtime": {
+    "file": "lanes/environment/certificate-export-v100-b95bf1c6-26c.json",
+    "checks": 11
+  },
+  "browser": {
+    "file": "lanes/environment/certificate-export-v100-browser-d7b4dd54-c5a.json",
+    "artifacts": "evidence/certificate-export-v100-files",
+    "screenshots": 16,
+    "downloads": 4
+  },
+  "typecheck": {
+    "exitCode": 0
+  },
+  "lint": {
+    "exitCode": 0
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 230,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2798,
+      "tests": 987,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2398,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "previousGoalTurn": "concrete progress: v99 historical correction export and responsive/focus remediation; v100 continues signed certificate export"
+}

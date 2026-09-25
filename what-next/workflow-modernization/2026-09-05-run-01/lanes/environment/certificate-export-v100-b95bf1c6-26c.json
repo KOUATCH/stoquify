@@ -1,0 +1,32 @@
+{
+  "at": "2026-09-09T11:54:54.130Z",
+  "run": "b95bf1c6-26c",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "9bfc26687e655c51dca11c47b6a164a4cb4e75bdcdd941b7413c049aed980807",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "actions/payments/reconciliation.actions.ts": "07fb0f5332589b437e63297ef12e41fcef800c234c7ce53fefe93161c854d4dc"
+  },
+  "checks": [
+    "Actual provider capture and matching produce ready run; independent sign service issues source-bound certificate",
+    "Missing read/export permission, expired auth, foreign tenant/actor/object and stale preview produce no export or financial effects",
+    "Inactive actor cannot issue an export",
+    "Actual signed certificate and immutable receipt retain exact UTF-8 bytes and SHA-256; receipt is embedded in file",
+    "Same request returns original bytes, receipt and timestamp despite new transport metadata; no repeat issuance audit/event",
+    "Another actor cannot reuse request identity; intentional new request has separate receipt and preserves prior evidence",
+    "Malformed or modified retained export is refused on retry",
+    "Late issuance audit failure rolls back the receipt and retained bytes",
+    "Concurrent duplicate submission issues one durable receipt and can replay safely",
+    "Suspended provider does not prevent authorized retained signed-evidence retrieval",
+    "Certificate tampering and changed source amount block even replay; restored evidence reuses original file"
+  ],
+  "scope": "Owned synthetic provider setup/internal payment; actual HMAC capture, matching, independent sign service and export. No external provider, payment or statutory approval.",
+  "originalBefore": "c294849d5efeb675c8c11d1a065b83d144090734958838b441f1f1db0a3617d1",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "9bfc26687e655c51dca11c47b6a164a4cb4e75bdcdd941b7413c049aed980807",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "actions/payments/reconciliation.actions.ts": "07fb0f5332589b437e63297ef12e41fcef800c234c7ce53fefe93161c854d4dc"
+  },
+  "sourceStable": true
+}

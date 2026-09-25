@@ -1,0 +1,69 @@
+{
+  "at": "2026-09-08T16:10:34.918Z",
+  "sourceBaseline": "evidence/source-baseline-v79.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "services/purchasing/ap-control.service.ts": "e00b4cab90a30b65337cc497a11eb3c6ec01b6358f05eab9bb554560ea15b4f2",
+    "services/purchasing/supplier-payment-balance.ts": "31619b663b4ec9a997524389d9d31cf445c881dd1f36e00341df06f98d6202de",
+    "services/purchasing/__tests__/supplier-payment-balance.test.ts": "e6ae42ac0f5733062bfa7c3643248111a9651bd50a25d9274698e60b1886d87b",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "22ce8f913469fb9734831d4a0f12c603fc4b9ee66363f58a2a8b0a9a7077d127",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "bde0c3bb4c5b1561154f6e91ef89b6814c039aea36451a09a7280c61adde3289"
+  },
+  "tests": {
+    "file": "evidence/payment-credit-final-v79.json",
+    "passed": 74,
+    "suites": 4,
+    "session": 27472,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 82754,
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "eslint payment helper, AP service and two affected tests",
+      "session": 93805,
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "database": "lanes/environment/payment-credit-controls-ef5749b0-fc4.json",
+  "resultInspection": "lanes/environment/payment-credit-result-ef5749b0-fc4.json",
+  "before": "evidence/payment-credit-before-v79.json",
+  "intermediate": {
+    "session": 4570,
+    "passedTests": 72,
+    "failedTests": 2,
+    "exitCode": 1,
+    "reason": "Parameterized fixture passed incorrect arguments; corrected without changing expected values"
+  },
+  "browser": "not verified: no production UI callers for approval/release actions",
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2726,
+      "tests": 960,
+      "pages": 155,
+      "routeHandlers": 18,
+      "actionSources": 166,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2284,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 207,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "next": "Durable authenticated supplier payment request and independent review/release UI, stale approval recovery and suspense reconciliation",
+  "migration": "none",
+  "externalActions": "none"
+}

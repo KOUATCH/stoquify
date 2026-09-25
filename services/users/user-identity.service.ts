@@ -1,8 +1,11 @@
 import "server-only"
+import { invitationRedemptionInput } from "./invitation-input"
+import { invitationRevision } from "./invitation-revision"
+import { passwordRecoveryEmail, passwordResetRequest } from "./password-recovery-input"
+import { guidedRegistrationInput, legacyOwnerInput } from "./registration-input"
 
 import VerifyEmail from "@/components/email-templates/verify-email"
 import { ResetPasswordEmail } from "@/components/email-templates/reset-password"
-import UserInvitation from "@/components/email-templates/user-invite"
 import { adminPermissions } from "@/config/permissions"
 import { generateOtp } from "@/lib/generateOtp"
 import { generateSlug } from "@/lib/generateSlug"
@@ -12,26 +15,24 @@ import {
   hashPolicyCompliantPassword,
   syncUserCredentialPassword,
   upsertCredentialAccount,
-  verifyUserCredentialPassword,
 } from "@/lib/security/auth-credentials"
 import { logSecurityEvent, SecurityEventType } from "@/lib/security/audit-log"
 import type { PublicIdentityRequestContext } from "@/lib/security/public-request-context"
 import { safeUserSelect } from "@/lib/security/server-authz"
 import { generateToken } from "@/lib/token"
 import { db } from "@/prisma/db"
+import { readInvitationRedemptionAuthority } from "./user-invitation-redemption-authority.service"
 import { recordReferralConversionInTx } from "@/services/referrals/referral-attribution.service"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
-import {
-  evaluateRoleGrantAuthority,
-  evaluateRoleGrantPolicy,
-} from "@/services/security/role-grant-policy.service"
 import type { OrgDataProps, RegisterUserProps, RegisterWorkflowData, UserProps } from "@/types/types"
 import { InviteStatus, Locale as PrismaLocale, LocationType, type Prisma } from "@prisma/client"
-import { randomBytes, randomUUID } from "crypto"
+import { randomUUID } from "crypto"
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function identityEmailClient() {
+  return new Resend(process.env.RESEND_API_KEY)
+}
 
 const ADMIN_USER_ROLE = {
   nameEn: "Admin",
@@ -44,32 +45,10 @@ type StatusResult<T = null> = {
   error: string | null
   status: number
   data: T | null
+  code?: string
 }
 
-type PasswordChangeInput = {
-  actor: {
-    id: string
-    organizationId: string
-  }
-  targetUserId: string
-  oldPassword: string
-  newPassword: string
-  isSelfChange: boolean
-}
-
-type InviteActor = {
-  id: string
-  organizationId: string
-  organizationName?: string | null
-}
-
-type InviteWorkflowInput = {
-  actor: InviteActor
-  actorPermissions: readonly string[]
-  email: string
-  roleId: string
-  roleName?: string | null
-}
+class PasswordResetUnavailableError extends Error {}
 
 type InvitedUserInput = {
   token: string
@@ -106,7 +85,7 @@ function addDetail(target: Record<string, unknown>, key: string, value: unknown)
 const REGISTER_MODULE_DEFAULTS = ["POS", "Sales", "Inventory", "Accounting", "Payment reconciliation", "Payroll"]
 
 function normalizeRequestedModules(value?: string[] | null) {
-  const modules = (value?.length ? value : REGISTER_MODULE_DEFAULTS)
+  const modules = (value ?? REGISTER_MODULE_DEFAULTS)
     .map((module) => cleanText(module))
     .filter((module): module is string => Boolean(module))
     .map((module) => module.slice(0, 80))
@@ -153,36 +132,11 @@ function buildRegistrationOnboardingDetails(
   addDetail(details, "tradeName", data.tradeName)
   addDetail(details, "taxIdentifier", data.taxIdentifier)
   addDetail(details, "firstBranchName", data.firstBranchName)
-  addDetail(details, "requestedModules", onboarding.requestedModules)
+  details.requestedModules = onboarding.requestedModules
   addDetail(details, "assistedSetupRequested", onboarding.assistedSetupRequested)
   addDetail(details, "defaultLocationId", defaultLocationId)
 
   return details
-}
-
-function validateRegistrationInput(data: RegisterUserProps) {
-  const requiredFields: Array<[keyof RegisterUserProps, string]> = [
-    ["firstName", "First name is required"],
-    ["lastName", "Last name is required"],
-    ["email", "Email is required"],
-    ["phone", "Phone number is required"],
-    ["companyName", "Company name is required"],
-    ["companySize", "Company size is required"],
-    ["password", "Password is required"],
-  ]
-
-  for (const [field, message] of requiredFields) {
-    const value = data[field]
-    if (typeof value !== "string" || !value.trim()) {
-      return message
-    }
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
-    return "Please enter a valid email address"
-  }
-
-  return null
 }
 
 function normalizeSlug(value: string) {
@@ -220,12 +174,16 @@ async function sendVerificationEmail(input: {
   expiresAt?: Date | null
 }) {
   try {
-    await resend.emails.send({
+    const result = await identityEmailClient().emails.send({
       from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
       to: input.email,
       subject: "Verify your StockFlow account",
       react: VerifyEmail({ verificationCode: input.verificationCode }),
     })
+
+    if (result.error || !result.data?.id) {
+      throw new BusinessRuleError("Verification email could not be sent")
+    }
 
     if (input.userId && input.organizationId) {
       await logSecurityEvent({
@@ -250,7 +208,10 @@ export async function createOrganizationOwner(
   orgData: OrgDataProps,
   requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult<{ id: string; email: string; organizationId: string }>> {
-  const { email, password, firstName, lastName, phone, image } = data
+  const parsed = legacyOwnerInput.safeParse({ user: data, organization: orgData })
+  if (!parsed.success) return { status: 400, code: "VALIDATION_ERROR", error: "Check the account and organization details.", data: null }
+  const { email, password, firstName, lastName, phone, image } = parsed.data.user
+  orgData = parsed.data.organization
   const normalizedEmail = email.trim().toLowerCase()
   const normalizedPhone = phone.trim()
   const abuseDecision = await enforcePublicIdentityAbuseLimits({
@@ -385,6 +346,10 @@ export async function createOrganizationOwner(
       userId: newUser.id,
       passwordHash: hashedPassword,
     })
+    await tx.auditLog.create({ data: {
+      organizationId: org.id, userId: newUser.id, entityType: "SecurityEvent", entityId: newUser.id,
+      action: SecurityEventType.AUTH_REGISTERED, changes: { source: "legacy_create_user_action" },
+    } })
 
     return {
       error: null,
@@ -409,15 +374,6 @@ export async function createOrganizationOwner(
       expiresAt: result.data.verificationTokenExpires,
     })
 
-    await logSecurityEvent({
-      type: SecurityEventType.AUTH_REGISTERED,
-      userId: result.data.id,
-      organizationId: result.data.organizationId,
-      resource: result.data.email,
-      details: {
-        source: "legacy_create_user_action",
-      },
-    })
   }
 
   return {
@@ -437,13 +393,16 @@ export async function registerOrganizationAccount(
   data: RegisterUserProps,
   requestContext?: PublicIdentityRequestContext | null,
 ) {
-  const validationError = validateRegistrationInput(data)
-  if (validationError) {
+  const parsed = guidedRegistrationInput.safeParse(data)
+  if (!parsed.success) {
     return {
       success: false,
-      error: validationError,
+      code: "VALIDATION_ERROR",
+      error: "Check the registration details, password confirmation and required acceptance.",
+      fieldErrors: parsed.error.flatten().fieldErrors,
     }
   }
+  data = parsed.data
 
   const email = data.email.trim().toLowerCase()
   const abuseDecision = await enforcePublicIdentityAbuseLimits({
@@ -454,6 +413,8 @@ export async function registerOrganizationAccount(
   if (!abuseDecision.allowed) {
     return {
       success: false,
+      code: "RATE_LIMITED",
+      retryAfterSeconds: abuseDecision.retryAfterSeconds,
       error: AUTH_MESSAGES.registrationUnavailable,
     }
   }
@@ -495,6 +456,7 @@ export async function registerOrganizationAccount(
   if (!passwordPolicy.ok) {
     return {
       success: false,
+      code: passwordPolicy.code,
       error: passwordPolicy.message,
     }
   }
@@ -623,21 +585,17 @@ export async function registerOrganizationAccount(
       accountantInviteAccepted: data.accountantInviteAccepted === true,
       now,
     })
+    await tx.auditLog.create({ data: {
+      organizationId: organization.id, userId: user.id, entityType: "SecurityEvent", entityId: user.id,
+      action: SecurityEventType.AUTH_REGISTERED,
+      changes: {
+        organizationId: organization.id, roleId: adminRole.id, roleCode: adminRole.code,
+        onboarding: buildRegistrationOnboardingDetails(data, defaultLocation?.id, onboarding),
+        termsAccepted: true,
+      } as Prisma.InputJsonValue,
+    } })
 
     return { user, organization, role: adminRole, defaultLocation }
-  })
-
-  await logSecurityEvent({
-    type: SecurityEventType.AUTH_REGISTERED,
-    userId: result.user.id,
-    organizationId: result.organization.id,
-    resource: result.user.email,
-    details: {
-      organizationId: result.organization.id,
-      roleId: result.role.id,
-      roleCode: result.role.code,
-      onboarding: buildRegistrationOnboardingDetails(data, result.defaultLocation?.id, onboarding),
-    },
   })
 
   await sendVerificationEmail({
@@ -651,7 +609,7 @@ export async function registerOrganizationAccount(
 
   return {
     success: true,
-    message: "Account created successfully! Please check your email to verify your account.",
+    message: "Account created. Continue to email verification; you can request a code there if needed.",
     data: {
       userId: result.user.id,
       organizationId: result.organization.id,
@@ -663,134 +621,7 @@ export async function registerOrganizationAccount(
   }
 }
 
-export async function sendInviteWorkflow(input: InviteWorkflowInput): Promise<StatusResult<unknown>> {
-  const email = input.email.trim().toLowerCase()
-  const roleName = input.roleName ?? "assigned"
-  const organizationId = input.actor.organizationId
-  const authorityDecision = evaluateRoleGrantAuthority(input.actorPermissions)
-
-  if (!authorityDecision.allowed) {
-    return {
-      error: authorityDecision.safeMessage ?? "You are not allowed to invite users with roles",
-      status: 403,
-      data: null,
-    }
-  }
-
-  return db.$transaction(async (tx) => {
-    const role = await tx.role.findFirst({
-      where: { id: input.roleId, organizationId },
-      select: { id: true, nameEn: true, nameFr: true, code: true, organizationId: true, permissions: true },
-    })
-
-    if (!role) {
-      return {
-        error: "Invalid role for this organization",
-        status: 403,
-        data: null,
-      }
-    }
-
-    const grantDecision = evaluateRoleGrantPolicy({
-      actorOrganizationId: organizationId,
-      actorPermissions: input.actorPermissions,
-      targetRole: role,
-    })
-
-    if (!grantDecision.allowed) {
-      return {
-        error: grantDecision.safeMessage ?? "You cannot grant the selected role",
-        status: 403,
-        data: null,
-      }
-    }
-
-    const existingUserByEmail = await tx.user.findFirst({
-      where: { email: { equals: email, mode: "insensitive" } },
-    })
-
-    if (existingUserByEmail) {
-      return {
-        error: `This email ${email} is already in use, another invitation cannot be sent`,
-        status: 409,
-        data: null,
-      }
-    }
-
-    const existingInvite = await tx.invite.findUnique({
-      where: { email_organizationId: { email, organizationId } },
-    })
-
-    if (
-      existingInvite &&
-      existingInvite.status === InviteStatus.PENDING &&
-      existingInvite.expiresAt > new Date()
-    ) {
-      return {
-        error: `This email ${email} is already invited, Another invitation cannot be sent`,
-        status: 409,
-        data: null,
-      }
-    }
-
-    const token = randomBytes(32).toString("hex")
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-
-    if (existingInvite) {
-      await tx.invite.update({
-        where: { id: existingInvite.id },
-        data: {
-          roleId: role.id,
-          token,
-          expiresAt,
-          status: InviteStatus.PENDING,
-        },
-      })
-    } else {
-      await tx.invite.create({
-        data: {
-          email,
-          organizationId,
-          roleId: role.id,
-          token,
-          expiresAt,
-        },
-      })
-    }
-
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? process.env.AUTH_URL ?? "http://localhost:3000"
-    const linkUrl = `${baseUrl}/user-invite/invitation?token=${encodeURIComponent(token)}`
-    const companyName = input.actor.organizationName ?? "StockFlow"
-    const { data: emailData, error } = await resend.emails.send({
-      from: "onboarding@resend.dev",
-      to: email,
-      subject: `Welcome to ${companyName} - ${(role.nameEn || role.nameFr || roleName)} role`,
-      react: UserInvitation({
-        companyName,
-        linkUrl,
-        name: role.nameEn || role.nameFr || roleName,
-      }),
-    })
-
-    if (error) {
-      throw new BusinessRuleError("Invitation email could not be sent")
-    }
-
-    await logSecurityEvent({
-      type: SecurityEventType.INVITE_CREATED,
-      userId: input.actor.id,
-      organizationId,
-      resource: email,
-      details: { roleId: role.id },
-    })
-
-    return {
-      error: null,
-      status: 200,
-      data: emailData,
-    }
-  })
-}
+export { issueUserInvitation as sendInviteWorkflow } from "./user-invitation-issuance.service"
 
 export async function acceptInvitationWorkflow(
   data: InvitedUserInput,
@@ -798,7 +629,7 @@ export async function acceptInvitationWorkflow(
 ): Promise<StatusResult<{ id: string; email: string; organizationId: string; inviteId: string; roleId: string }>> {
   const abuseDecision = await enforcePublicIdentityAbuseLimits({
     operation: "invitation_redemption",
-    subject: data.token,
+    subject: typeof data?.token === "string" ? data.token : "invalid-invitation-input",
     requestContext,
   })
   if (!abuseDecision.allowed) {
@@ -806,14 +637,22 @@ export async function acceptInvitationWorkflow(
       error: "Too many invitation attempts. Please try again later.",
       status: 429,
       data: null,
+      code: "RATE_LIMITED",
     }
   }
+
+  const parsed = invitationRedemptionInput.safeParse(data)
+  if (!parsed.success) {
+    return { error: "Invalid invitation details", status: 400, data: null, code: "INVITATION_INVALID" }
+  }
+  data = parsed.data
 
   return db.$transaction(async (tx) => {
     const invite = await tx.invite.findUnique({
       where: { token: data.token },
       include: {
-        role: { select: { id: true, organizationId: true } },
+        role: { select: { id: true, organizationId: true, permissions: true } },
+        organization: { select: { isActive: true, deletedAt: true } },
       },
     })
 
@@ -822,12 +661,13 @@ export async function acceptInvitationWorkflow(
         error: "Invalid or already used invitation link",
         status: 400,
         data: null,
+        code: "INVITATION_INVALID",
       }
     }
 
     if (invite.expiresAt <= new Date()) {
-      await tx.invite.update({
-        where: { id: invite.id },
+      await tx.invite.updateMany({
+        where: { id: invite.id, token: data.token, status: InviteStatus.PENDING, expiresAt: { lte: new Date() } },
         data: { status: InviteStatus.EXPIRED },
       })
 
@@ -835,19 +675,25 @@ export async function acceptInvitationWorkflow(
         error: "Invitation link has expired",
         status: 410,
         data: null,
+        code: "INVITATION_EXPIRED",
       }
     }
 
-    if (invite.role.organizationId !== invite.organizationId) {
+    if (invite.role.organizationId !== invite.organizationId || invite.role.permissions.includes("*") || !invite.organization.isActive || invite.organization.deletedAt) {
       return {
-        error: "Invitation role is invalid",
+        error: "Invitation organization or role is unavailable",
         status: 403,
         data: null,
+        code: "INVITATION_UNAVAILABLE",
       }
     }
 
+    const approval = await readInvitationRedemptionAuthority(tx, invite)
+    if (!approval) return { error: "Ask your organization administrator to review and replace this invitation.", status: 403, data: null, code: "INVITATION_REISSUE_REQUIRED" }
+
+    const email = invite.email.trim().toLowerCase()
     const existingUser = await tx.user.findFirst({
-      where: { email: { equals: invite.email, mode: "insensitive" } },
+      where: { email: { equals: email, mode: "insensitive" } },
       select: { id: true },
     })
 
@@ -856,12 +702,13 @@ export async function acceptInvitationWorkflow(
         error: "This email is already registered",
         status: 409,
         data: null,
+        code: "INVITATION_ACCOUNT_EXISTS",
       }
     }
 
     const passwordPolicy = await hashPolicyCompliantPassword({
       password: data.password,
-      email: invite.email,
+      email,
     })
 
     if (!passwordPolicy.ok) {
@@ -869,13 +716,34 @@ export async function acceptInvitationWorkflow(
         error: passwordPolicy.message,
         status: 400,
         data: null,
+        code: passwordPolicy.code,
       }
     }
+
+    // Hashing can outlast an invitation or overlap revocation/reissue. Claim the
+    // same current record before credentials, with all effects in this transaction.
+    const currentApproval = await readInvitationRedemptionAuthority(tx, invite, tx)
+    if (!currentApproval || currentApproval.issueId !== approval.issueId || currentApproval.payloadHash !== approval.payloadHash) return { error: "Invitation authority changed. Ask your administrator to review and replace the invitation.", status: 403, data: null, code: "INVITATION_REISSUE_REQUIRED" }
+    const claimedAt = new Date()
+    if (invite.expiresAt <= claimedAt) {
+      await tx.invite.updateMany({ where: { id: invite.id, token: data.token, status: InviteStatus.PENDING, expiresAt: { lte: claimedAt } }, data: { status: InviteStatus.EXPIRED } })
+      return { error: "Invitation link has expired", status: 410, data: null, code: "INVITATION_EXPIRED" }
+    }
+    const claimed = await tx.invite.updateMany({
+      where: {
+        id: invite.id, token: data.token, email: invite.email, roleId: invite.roleId, organizationId: invite.organizationId,
+        status: InviteStatus.PENDING, expiresAt: { gt: claimedAt },
+        organization: { isActive: true, deletedAt: null },
+        role: { organizationId: invite.organizationId, NOT: { permissions: { has: "*" } } },
+      },
+      data: { status: InviteStatus.ACCEPTED },
+    })
+    if (claimed.count !== 1) return { error: "Invitation changed or is no longer available. Reload the link or ask for a new invitation.", status: 409, data: null, code: "INVITATION_CHANGED" }
 
     const hashedPassword = passwordPolicy.hash
     const newUser = await tx.user.create({
       data: {
-        email: invite.email,
+        email,
         password: hashedPassword,
         firstName: data.firstName,
         lastName: data.lastName,
@@ -908,17 +776,12 @@ export async function acceptInvitationWorkflow(
       passwordHash: hashedPassword,
     })
 
-    await tx.invite.update({
-      where: { id: invite.id },
-      data: { status: InviteStatus.ACCEPTED },
-    })
-
-    await logSecurityEvent({
-      type: SecurityEventType.INVITE_REDEEMED,
-      userId: newUser.id,
-      organizationId: invite.organizationId,
-      resource: newUser.email,
-      details: { inviteId: invite.id, roleId: invite.roleId },
+    await tx.auditLog.create({
+      data: {
+        entityType: "SecurityEvent", entityId: newUser.id, action: SecurityEventType.INVITE_REDEEMED,
+        userId: newUser.id, organizationId: invite.organizationId,
+        changes: { inviteId: invite.id, roleId: invite.roleId, issueId: currentApproval.issueId, issuerId: currentApproval.issuerId, approvalPayloadHash: currentApproval.payloadHash, rolePermissions: currentApproval.rolePermissions },
+      },
     })
 
     return {
@@ -941,10 +804,10 @@ export async function listOrganizationUsers(organizationId: string) {
   })
 }
 
-export async function getInviteRegistrationContext(token?: string | null) {
+export async function getInviteRegistrationContext(token?: string | null, locale: "en" | "fr" = "en") {
   const inviteToken = token?.trim()
 
-  if (!inviteToken) {
+  if (!inviteToken || !/^[a-f0-9]{64}$/i.test(inviteToken)) {
     return {
       email: "",
       roleName: "",
@@ -956,26 +819,34 @@ export async function getInviteRegistrationContext(token?: string | null) {
   const invite = await db.invite.findUnique({
     where: { token: inviteToken },
     select: {
+      id: true,
+      roleId: true,
       email: true,
+      organizationId: true,
       status: true,
       expiresAt: true,
-      organization: { select: { name: true } },
-      role: { select: { nameEn: true, nameFr: true, code: true } },
+      organization: { select: { name: true, isActive: true, deletedAt: true } },
+      role: { select: { nameEn: true, nameFr: true, code: true, organizationId: true, permissions: true } },
     },
   })
   const isValidInvite = invite?.status === InviteStatus.PENDING && invite.expiresAt > new Date()
+    && invite.organization.isActive && !invite.organization.deletedAt
+    && invite.role.organizationId === invite.organizationId && !invite.role.permissions.includes("*")
+    && Boolean(await readInvitationRedemptionAuthority(db, { ...invite, token: inviteToken }))
 
   return {
     email: isValidInvite ? invite.email : "",
-    roleName: isValidInvite ? invite.role.nameEn || invite.role.nameFr || invite.role.code : "",
+    roleName: isValidInvite ? (locale === "fr" ? invite.role.nameFr || invite.role.nameEn : invite.role.nameEn || invite.role.nameFr) || invite.role.code : "",
     organizationName: isValidInvite ? invite.organization.name : "StockFlow",
     isValidInvite: Boolean(isValidInvite),
   }
 }
 
 export async function listOrganizationInvites(organizationId: string) {
-  return db.invite.findMany({
+  if (!organizationId?.trim()) throw new BusinessRuleError("Organization scope is required")
+  const rows = await db.invite.findMany({
     where: { organizationId },
+    orderBy: [{ createdAt: "desc" }, { id: "asc" }],
     select: {
       id: true,
       email: true,
@@ -995,6 +866,16 @@ export async function listOrganizationInvites(organizationId: string) {
       },
     },
   })
+  const asOf = new Date()
+  return {
+    asOf: asOf.toISOString(),
+    rows: rows.map(row => ({
+      ...row,
+      revision: invitationRevision(row),
+      storedStatus: row.status,
+      status: row.status === InviteStatus.PENDING && row.expiresAt <= asOf ? InviteStatus.EXPIRED : row.status,
+    })),
+  }
 }
 
 export async function getOrganizationUserById(input: {
@@ -1010,68 +891,80 @@ export async function getOrganizationUserById(input: {
   })
 }
 
-export async function changeUserPasswordWorkflow(input: PasswordChangeInput) {
-  const existingUser = await db.user.findFirst({
-    where: {
-      id: input.targetUserId,
-      organizationId: input.actor.organizationId,
-    },
+export { changeUserPasswordWorkflow } from "./user-password-change.service"
+
+export async function requestEmailVerificationCodeWorkflow(
+  userId: string,
+  email: string,
+  requestContext?: PublicIdentityRequestContext | null,
+): Promise<StatusResult> {
+  const genericResponse = { status: 200, error: null, data: null }
+  if (typeof userId !== "string" || typeof email !== "string") return genericResponse
+  const id = userId.trim()
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!id || id.length > 200 || normalizedEmail.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) return genericResponse
+
+  const abuseDecision = await enforcePublicIdentityAbuseLimits({
+    operation: "email_otp_resend",
+    subject: id,
+    requestContext,
   })
+  if (!abuseDecision.allowed) return genericResponse
 
-  if (!existingUser) {
-    return { error: "User not found", status: 404 }
+  const pendingIdentity = {
+    id,
+    email: { equals: normalizedEmail, mode: "insensitive" as const },
+    isVerified: false,
+    emailVerified: false,
+    isActive: true,
+    organization: { isActive: true, deletedAt: null },
   }
-
-  if (
-    input.isSelfChange &&
-    !(await verifyUserCredentialPassword(existingUser.id, input.oldPassword))
-  ) {
-    return { error: "Old Password Incorrect", status: 403 }
-  }
-
-  const passwordPolicy = await hashPolicyCompliantPassword({
-    password: input.newPassword,
-    userId: existingUser.id,
-    email: existingUser.email,
+  const user = await db.user.findFirst({
+    where: pendingIdentity,
+    select: { id: true, email: true, organizationId: true, verificationToken: true, verificationTokenExpires: true },
   })
+  if (!user) return genericResponse
 
-  if (!passwordPolicy.ok) {
-    return { error: passwordPolicy.message, status: 400 }
-  }
+  const now = new Date()
+  const liveToken = user.verificationTokenExpires && user.verificationTokenExpires > now
+  // The legacy column is also used by password reset. Never replace a live reset link.
+  if (liveToken && user.verificationToken && /^[a-z0-9]{32}$/.test(user.verificationToken)) return genericResponse
 
-  await db.$transaction(async (tx) => {
-    await syncUserCredentialPassword(tx, {
-      userId: input.targetUserId,
-      passwordHash: passwordPolicy.hash,
-      revokeSessions: true,
+  let code = user.verificationToken
+  let expiresAt = user.verificationTokenExpires
+  if (!liveToken || !code || !/^\d{6}$/.test(code)) {
+    code = generateOtp()
+    expiresAt = new Date(now.getTime() + 30 * 60 * 1000)
+    const rotation = await db.user.updateMany({
+      where: { ...pendingIdentity, verificationToken: user.verificationToken, verificationTokenExpires: user.verificationTokenExpires },
+      data: { verificationToken: code, verificationTokenExpires: expiresAt },
     })
-  })
+    if (rotation.count !== 1) return genericResponse
+  }
 
-  await logSecurityEvent({
-    type: SecurityEventType.AUTH_PASSWORD_CHANGED,
-    userId: input.actor.id,
-    organizationId: input.actor.organizationId,
-    resource: input.targetUserId,
-    details: {
-      targetUserId: input.targetUserId,
-      selfService: input.isSelfChange,
-      sessionsRevoked: true,
-    },
+  await sendVerificationEmail({
+    email: user.email,
+    verificationCode: code,
+    action: "users.email.resend",
+    userId: user.id,
+    organizationId: user.organizationId,
+    expiresAt,
   })
-
-  return { error: null, status: 200 }
+  return genericResponse
 }
 
 export async function requestPasswordResetLinkWorkflow(
   email: string,
   requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult> {
-  const normalizedEmail = email.trim().toLowerCase()
+  const parsedEmail = passwordRecoveryEmail.safeParse(email)
+  const normalizedEmail = parsedEmail.success ? parsedEmail.data : ""
   const genericResponse = {
     status: 200,
     error: null,
     data: null,
   }
+  if (!parsedEmail.success) return genericResponse
   const abuseDecision = await enforcePublicIdentityAbuseLimits({
     operation: "password_reset_request",
     subject: normalizedEmail,
@@ -1080,7 +973,7 @@ export async function requestPasswordResetLinkWorkflow(
   if (!abuseDecision.allowed) return genericResponse
 
   const user = await db.user.findFirst({
-    where: { email: { equals: normalizedEmail, mode: "insensitive" } },
+    where: { email: { equals: normalizedEmail, mode: "insensitive" }, isActive: true, organization: { isActive: true, deletedAt: null } },
   })
 
   if (!user) return genericResponse
@@ -1099,7 +992,7 @@ export async function requestPasswordResetLinkWorkflow(
   const resetPasswordLink = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(normalizedEmail)}`
 
   try {
-    await resend.emails.send({
+    const result = await identityEmailClient().emails.send({
       from: "onboarding@resend.dev",
       to: normalizedEmail,
       subject: "Reset Password Request",
@@ -1108,6 +1001,9 @@ export async function requestPasswordResetLinkWorkflow(
         resetPasswordLink,
       }),
     })
+    if (result.error || !result.data?.id) {
+      throw new BusinessRuleError("Reset email could not be sent")
+    }
   } catch (emailError) {
     logger.warn("reset email sending failed", {
       action: "users.password.reset.email",
@@ -1133,7 +1029,9 @@ export async function completePasswordResetWorkflow(
   newPassword: string,
   requestContext?: PublicIdentityRequestContext | null,
 ): Promise<StatusResult> {
-  const normalizedEmail = email.trim().toLowerCase()
+  const parsedEmail = passwordRecoveryEmail.safeParse(email)
+  if (!parsedEmail.success) return { status: 404, error: "Please use a valid reset link", data: null }
+  const normalizedEmail = parsedEmail.data
   const abuseDecision = await enforcePublicIdentityAbuseLimits({
     operation: "password_reset_completion",
     subject: normalizedEmail,
@@ -1147,11 +1045,18 @@ export async function completePasswordResetWorkflow(
     }
   }
 
+  if (typeof token !== "string" || !/^[a-z0-9]{32}$/.test(token)) {
+    return { status: 404, error: "Please use a valid reset link", data: null }
+  }
+  if (!passwordResetRequest.safeParse({ email, token, newPassword }).success) return { status: 400, code: "VALIDATION_ERROR", error: "Check the new password.", data: null }
+
   const user = await db.user.findFirst({
     where: {
       email: { equals: normalizedEmail, mode: "insensitive" },
       verificationToken: token,
       verificationTokenExpires: { gt: new Date() },
+      isActive: true,
+      organization: { isActive: true, deletedAt: null },
     },
   })
 
@@ -1172,36 +1077,58 @@ export async function completePasswordResetWorkflow(
   if (!passwordPolicy.ok) {
     return {
       status: 400,
+      code: passwordPolicy.code,
       error: passwordPolicy.message,
       data: null,
     }
   }
 
-  await db.$transaction(async (tx) => {
-    await syncUserCredentialPassword(tx, {
-      userId: user.id,
-      passwordHash: passwordPolicy.hash,
-      revokeSessions: true,
-    })
-
-    await tx.user.update({
+  const completed = await db.$transaction(async (tx) => {
+    const organizations = await tx.$queryRaw<{ isActive: boolean; deletedAt: Date | null }[]>`
+      SELECT "isActive", "deletedAt" FROM organizations WHERE id = ${user.organizationId} FOR SHARE`
+    if (!organizations[0]?.isActive || organizations[0].deletedAt) return false
+    const consumed = await tx.user.updateMany({
       where: {
         id: user.id,
+        organizationId: user.organizationId,
+        isActive: true,
+        password: user.password,
+        email: { equals: normalizedEmail, mode: "insensitive" },
+        verificationToken: token,
+        verificationTokenExpires: { gt: new Date() },
       },
       data: {
         verificationToken: null,
         verificationTokenExpires: null,
       },
     })
+    if (consumed.count !== 1) return false
+
+    const credentials = await tx.$queryRaw<{ userId: string; accountId: string }[]>`
+      SELECT "userId", "accountId" FROM accounts
+      WHERE "providerId" = 'credential' AND ("userId" = ${user.id} OR "accountId" = ${user.id})
+      ORDER BY id LIMIT 2 FOR UPDATE`
+    if (credentials.length > 1 || credentials.some(row => row.userId !== user.id || row.accountId !== user.id)) throw new PasswordResetUnavailableError()
+
+    await syncUserCredentialPassword(tx, {
+      userId: user.id,
+      passwordHash: passwordPolicy.hash,
+      revokeSessions: true,
+    })
+    await tx.auditLog.create({ data: {
+      organizationId: user.organizationId, userId: user.id, entityType: "SecurityEvent", entityId: user.id,
+      action: SecurityEventType.AUTH_PASSWORD_RESET_COMPLETED,
+      changes: { sessionsRevoked: true, resetLinkConsumed: true },
+    } })
+    return true
+  }, { isolationLevel: "ReadCommitted", timeout: 10000 }).catch(error => {
+    if (error instanceof PasswordResetUnavailableError) return false
+    throw error
   })
 
-  await logSecurityEvent({
-    type: SecurityEventType.AUTH_PASSWORD_RESET_COMPLETED,
-    userId: user.id,
-    organizationId: user.organizationId,
-    resource: user.id,
-    details: { sessionsRevoked: true },
-  })
+  if (!completed) {
+    return { status: 404, error: "Please use a valid reset link", data: null }
+  }
 
   return {
     status: 200,
@@ -1222,6 +1149,8 @@ export async function verifyEmailOtpWorkflow(
   })
   if (!abuseDecision.allowed) return { status: 429 }
 
+  if (typeof otp !== "string" || !/^\d{6}$/.test(otp)) return { status: 403 }
+
   const user = await db.user.findUnique({
     where: {
       id: userId,
@@ -1231,14 +1160,17 @@ export async function verifyEmailOtpWorkflow(
   if (
     !user?.verificationToken ||
     user.verificationToken !== otp ||
-    (user.verificationTokenExpires && user.verificationTokenExpires < new Date())
+    !user.verificationTokenExpires ||
+    user.verificationTokenExpires <= new Date()
   ) {
     return { status: 403 }
   }
 
-  await db.user.update({
+  const consumed = await db.user.updateMany({
     where: {
       id: userId,
+      verificationToken: otp,
+      verificationTokenExpires: { gt: new Date() },
     },
     data: {
       isVerified: true,
@@ -1247,6 +1179,8 @@ export async function verifyEmailOtpWorkflow(
       verificationTokenExpires: null,
     },
   })
+
+  if (consumed.count !== 1) return { status: 403 }
 
   await logSecurityEvent({
     type: SecurityEventType.AUTH_EMAIL_VERIFIED,

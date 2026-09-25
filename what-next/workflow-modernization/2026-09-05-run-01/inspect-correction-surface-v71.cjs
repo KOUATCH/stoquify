@@ -1,0 +1,2 @@
+const path=require('path'),root=path.resolve(__dirname,'../../..'),s=require(path.join(root,'scripts/module-surface-inventory.js')),r=s.buildModuleSurfaceInventory(root),records=r.records.filter(x=>x.file.includes('invoice-correction')||x.file.includes('/payables/correct/'));
+console.log(JSON.stringify({records,findings:s.moduleSurfaceGapFindings(r).filter(x=>x.file.includes('invoice-correction')||x.file.includes('/payables/correct/'))},null,2));

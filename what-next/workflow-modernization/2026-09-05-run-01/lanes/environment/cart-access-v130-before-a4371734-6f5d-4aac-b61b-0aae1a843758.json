@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-13T13:58:07.532Z",
+  "phase": "before",
+  "sourceBefore": "b36c75482d2820a661b93e998c70db96698b61cef15f44b31003f64925949d34",
+  "cases": [
+    {
+      "scenario": "read-only",
+      "cartWrites": "all_admitted",
+      "retainedRead": true,
+      "retainedClosure": true
+    }
+  ],
+  "scope": "Owned local PostgreSQL; actual shift/cart services and synthetic commercial grants. No checkout/payment/provider operation.",
+  "passed": true,
+  "sourceAfter": "b36c75482d2820a661b93e998c70db96698b61cef15f44b31003f64925949d34",
+  "sourceStable": true
+}

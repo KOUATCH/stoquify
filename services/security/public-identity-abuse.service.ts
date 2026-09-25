@@ -13,6 +13,7 @@ export type PublicIdentityOperation =
   | "password_reset_request"
   | "password_reset_completion"
   | "email_otp_verification"
+  | "email_otp_resend"
 
 type AbusePolicy = {
   maxRequests: number
@@ -48,6 +49,7 @@ const POLICIES: Record<PublicIdentityOperation, AbusePolicy> = {
   password_reset_request: { maxRequests: 3, windowSeconds: 15 * 60, blockSeconds: 30 * 60 },
   password_reset_completion: { maxRequests: 5, windowSeconds: 15 * 60, blockSeconds: 30 * 60 },
   email_otp_verification: { maxRequests: 5, windowSeconds: 15 * 60, blockSeconds: 30 * 60 },
+  email_otp_resend: { maxRequests: 3, windowSeconds: 15 * 60, blockSeconds: 30 * 60 },
 }
 
 function hashingSecret() {

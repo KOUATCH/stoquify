@@ -1,0 +1,58 @@
+{
+  "at": "2026-09-08T08:56:46.764Z",
+  "sourceBaseline": "evidence/source-baseline-v60.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "49ee0611aa286f363112fcd5ec64fc5af41335ac7eb1a7e46837c7e301e69c29",
+    "actions/purchasing/invoice-ledger-recovery.actions.ts": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b",
+    "services/purchasing/__tests__/invoice-ledger-recovery-contracts.test.ts": "f4112c92dd317924589b4e70f6912d525dee8a5735815e5561a0d2531a2e0db6",
+    "actions/purchasing/__tests__/invoice-ledger-recovery.actions.test.ts": "d22274c8e930544ba40c6c48944a904403824eb2f9250941c29425cc0688c159"
+  },
+  "verifier": {
+    "path": "lanes/environment/verify-invoice-ledger-recovery.cjs",
+    "sha256": "a491e8d817d79bce6e776d00b122922414032982943d0df4aa186eee15387040"
+  },
+  "runtime": "lanes/environment/invoice-ledger-recovery-abea1e41-f31.json",
+  "tests": "evidence/invoice-ledger-recovery-tests-final.json",
+  "priorAttempts": [
+    "lanes/environment/invoice-ledger-recovery-b98407ed-a05.json",
+    "lanes/environment/invoice-ledger-recovery-584fe315-a13.json"
+  ],
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/ap-control.service.ts services/purchasing/invoice-ledger-recovery.service.ts services/purchasing/invoice-ledger-recovery-authority.ts services/purchasing/invoice-ledger-recovery-contracts.ts actions/purchasing/invoice-ledger-recovery.actions.ts services/purchasing/__tests__/invoice-ledger-recovery-contracts.test.ts actions/purchasing/__tests__/invoice-ledger-recovery.actions.test.ts",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "migration": "none",
+  "browser": "pending UI integration",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2670,
+      "tests": 936,
+      "pages": 150,
+      "routeHandlers": 18,
+      "actionSources": 163,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2195,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

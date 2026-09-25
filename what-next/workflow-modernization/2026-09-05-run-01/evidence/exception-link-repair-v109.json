@@ -1,0 +1,159 @@
+{
+  "at": "2026-09-12T19:19:13.620Z",
+  "baseline": "evidence/source-baseline-v109.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed",
+    "actions/payments/exception-link.actions.ts": "bac00653e10b2b984e401b49c5ae862ff61fb86f8d1cc00476e6ac2c5a1ab6f3",
+    "components/finance/PaymentExceptionLinkPanel.tsx": "363db9048d8cd0c13eb2ae367eadcce4d26771f62ec6c9ef2ab6298689087e38",
+    "components/finance/PaymentSuspenseQueue.tsx": "34f9f9f546fdbdbf3594daa991985ac31415c479c2bf3c4761d7328cebe415e3",
+    "messages/en.json": "1cbd47eb4aa7709b50167875f962be11a0052bb786db49c11e89be2528724a34",
+    "messages/fr.json": "3906916c164c3e010b3750d39071d2f32882169289e2ae69d5aa65ce9f8f94a2",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "593378b096f93419aaf0f17266d2284a64bc856f6eccc44e3c0112da76b1f615",
+    "services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts": "729d7f8b92dda05d932174c106c86192b6871e10bc841d497645c7a31522553e",
+    "components/finance/__tests__/PaymentExceptionLinkPanel.test.tsx": "f7567a9062fba1609753f0cb4094785dc8ecfc80fe79a1ba7c72f79d74f84a52",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "f8a57c996aa50a436cdc9bd05d3ad02df7151873dfffc83ca120804b42c5493b",
+    "services/reconciliation/__tests__/payment-exception-link.service.test.ts": "3aa2f710fd441270d863b572d877b974b45841c11d76128970a520231bec793f",
+    "actions/payments/__tests__/exception-link.actions.test.ts": "0836db7181ee6bfadb47023f1bc7752fe80d15ede705f7c91c0b1ee05321cf42"
+  },
+  "changed": [
+    "actions/inventory/inventoryMovementActions.ts",
+    "actions/inventory/transferLifecycleActions.ts",
+    "actions/payments/__tests__/exception-link.actions.test.ts",
+    "actions/payments/exception-link.actions.ts",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+    "app/[locale]/(dashboard)/dashboard/inventory/transfers/[id]/page.tsx",
+    "app/[locale]/(dashboard)/dashboard/inventory/transfers/create/page.tsx",
+    "components/finance/PaymentExceptionLinkPanel.tsx",
+    "components/finance/PaymentSuspenseQueue.tsx",
+    "components/finance/__tests__/PaymentExceptionLinkPanel.test.tsx",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx",
+    "components/inventory/transfers/CreateTransferModal.tsx",
+    "components/inventory/transfers/CreateTransferPage.tsx",
+    "components/inventory/transfers/TransferDashboard.tsx",
+    "components/inventory/transfers/TransferWorkflowPage.tsx",
+    "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx",
+    "hooks/useTransferLifecycle.ts",
+    "hooks/useTransferQueries.ts",
+    "hooks/useTransferSourceInventory.ts",
+    "messages/en.json",
+    "messages/fr.json",
+    "services/accounting/close-assurance-pack.service.ts",
+    "services/inventory/__tests__/transfer-source-inventory.test.ts",
+    "services/inventory/inventory-read.service.ts",
+    "services/inventory/inventory-transfer-activity.service.ts",
+    "services/inventory/inventory-transfer-lifecycle.service.ts",
+    "services/inventory/inventory-transfer.service.ts",
+    "services/reconciliation/__tests__/payment-exception-link.service.test.ts",
+    "services/reconciliation/payment-exception-link.contracts.ts",
+    "services/reconciliation/payment-exception-link.service.ts",
+    "services/reconciliation/payment-reconciliation-notifications.ts",
+    "types/inventoryTypes.ts",
+    "types/transferLifecycle.ts"
+  ],
+  "tests": {
+    "file": "evidence/exception-link-repair-v109-tests-copy.json",
+    "passed": 77,
+    "suites": 6
+  },
+  "typecheck": {
+    "receipt": "6dfdb9",
+    "exitCode": 1,
+    "error": "TS2322 components/inventory/transfers/TransferWorkflowPage.tsx:68: string | undefined is not assignable to string",
+    "qualification": "Full configured typecheck failed outside the reconciliation changes; the existing untracked inventory component was preserved. This is an engineering failure, not an external decision."
+  },
+  "lint": {
+    "receipt": "d8ccb0",
+    "files": 11,
+    "exitCode": 0
+  },
+  "runtime": {
+    "file": "lanes/environment/exception-link-repair-v109-59fe5256-f8c.json",
+    "checks": 9,
+    "syntheticCertificateOnly": true,
+    "originalUnchanged": true,
+    "financialUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/exception-link-repair-v109-browser-569ba115-c3f.json",
+    "artifacts": "evidence/exception-link-repair-v109-files",
+    "screenshots": 8,
+    "journeys": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "exception-link-repair-v109-en-step-up-320-569ba115-c3f.png",
+          "exception-link-repair-v109-en-repaired-320-569ba115-c3f.png",
+          "exception-link-repair-v109-en-linked-768-569ba115-c3f.png",
+          "exception-link-repair-v109-en-linked-1440-569ba115-c3f.png"
+        ],
+        "pageErrors": [],
+        "consoleIssues": [
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240587731 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240617606 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+        ],
+        "routeLoadMs": [
+          8618,
+          7800
+        ],
+        "deniedWithoutMutation": true,
+        "actualRepairAndRetainedReview": true,
+        "receiptId": "af70c978-6735-4bdd-8d08-c20a14d96efd",
+        "exactReplayOneReceipt": true,
+        "focusReturned": true,
+        "financialUnchanged": true,
+        "passed": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "exception-link-repair-v109-fr-step-up-320-569ba115-c3f.png",
+          "exception-link-repair-v109-fr-repaired-320-569ba115-c3f.png",
+          "exception-link-repair-v109-fr-linked-768-569ba115-c3f.png",
+          "exception-link-repair-v109-fr-linked-1440-569ba115-c3f.png"
+        ],
+        "pageErrors": [],
+        "consoleIssues": [
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240656980 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+          "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240672895 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+        ],
+        "routeLoadMs": [
+          11907,
+          11426
+        ],
+        "deniedWithoutMutation": true,
+        "actualRepairAndRetainedReview": true,
+        "receiptId": "ddf7e01e-b27d-4c0b-a02d-c042f79c0fb4",
+        "exactReplayOneReceipt": true,
+        "focusReturned": true,
+        "financialUnchanged": true,
+        "passed": true
+      }
+    ]
+  },
+  "coverage": {
+    "discoveredWorkflows": 234,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2843,
+      "tests": 1001,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 171,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2465,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 212,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat",
+  "nextAction": "Genuine exception review and reviewed-run preparation/sign-off/export/reopening; continue the full platform register."
+}

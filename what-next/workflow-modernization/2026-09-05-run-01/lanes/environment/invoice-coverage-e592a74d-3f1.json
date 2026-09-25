@@ -1,0 +1,20 @@
+{
+  "at": "2026-09-08T19:05:20.123Z",
+  "run": "e592a74d-3f1",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "56ae95c9360d839339d2e13c22cdfce3becd5ece6ef9cd055bc6cfb4adcda159",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264"
+  },
+  "checks": [],
+  "scope": "Owned localhost receiving, invoice approval, payment request/approval/execution and supplier credit/reversal services. Return/credit service actor arguments are trusted fixture scope, not proof of their public-action authority. Accounting rules and external bank evidence synthetic; no external payment or notification delivery.",
+  "originalBefore": "4f599afdb0ddcfc185a550820ad7c71294d509aaec4366149e1c9f1716425bdc",
+  "error": "\nInvalid `tx.purchaseReturn.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\services\\purchasing\\purchase-return-credit.service.ts:294:45\n\n  291 if (!stock.eventId || stock.movementTransactionIds.length !== plans.length) {\n  292   throw new BusinessRuleError(\"Purchase return did not create complete inventory evidence.\")\n  293 }\n→ 294 const created = await tx.purchaseReturn.create({\n        data: {\n          id: \"327f9e8c-bc0a-4ed8-9f17-a26ee86f9e6e\",\n          organizationId: \"workflow_supplier_ack_en_coverage-e592a74d-3f1\",\n          purchaseOrderId: \"cmtt1hq0u0009ma1can4h3kj9\",\n          goodsReceiptId: \"cmtt1hqq8000zma1c4zs1rd9y\",\n          supplierId: \"cmtt1hpzh0003ma1c9755wsn6\",\n          returnNumber: \"PR-000001\",\n          reason: \"Owned invoice coverage return\",\n          idempotencyKey: \"496624bf-0401-404b-b19a-77cf0e73b27b\",\n          payloadHash: \"sha256:bdb2046d877b961b9a6e4e36dcfc332c9612c6e191ccb1a91065aa96f65a31de\",\n          documentHash: \"sha256:3f6c26a8ced43ac0f016866c8df8f80cc554fcbbb1b4ba41cbe7f93889210b7a\",\n          evidenceHash: \"sha256:9bde1013e076e5b716e41955ad5471d641545569a2f83add062a6d38c384a91d\",\n          inventoryBusinessEventId: \"cmtt1htdz005ema1cnexwy1kj\",\n          ledgerPostingBatchId: \"cmtt1htcm005ama1czagnu8hn\",\n          journalEntryId: null,\n          postedById: \"cmtt1hpym0001ma1ctgo3au60\",\n          occurredAt: new Date(\"2026-09-08T19:05:27.503Z\"),\n          lines: {\n            create: [\n              {\n                organizationId: \"workflow_supplier_ack_en_coverage-e592a74d-3f1\",\n                sourceGoodsReceipt",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "56ae95c9360d839339d2e13c22cdfce3becd5ece6ef9cd055bc6cfb4adcda159",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264"
+  },
+  "sourceStable": true
+}

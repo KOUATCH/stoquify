@@ -1,0 +1,74 @@
+{
+  "mode": "browser",
+  "attempt": "4445b735-929",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T05:25:08.426Z",
+  "sourcesBefore": {
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "components/Forms/users/userInvitationForm.tsx": "0bc264c4ab7cd25a26587987531b3c2ddb09b93aba07587a65792251ccc9dbfc",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "3264faaa8e9cb6364ba3e9524e5197aff784b3bf07d349e7c2b5987ea2344bbe",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "messages/en.json": "f00ba3b299fd2baf52e32c33357c8a1b978bc281598579c634741b5c3e9c0a2e",
+    "messages/fr.json": "257a36da16a4262e627f99c1e8a7857e9db35f46882e751c28e13b2425d3be50",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-invitation-register-expired-4445b735-929.png",
+        "en-invitation-register-read-failure-4445b735-929.png",
+        "en-invitation-register-failure-4445b735-929.png"
+      ],
+      "errors": [],
+      "readerRouteMs": 15886,
+      "keyboardReadRecovery": true,
+      "error": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByRole('dialog', { name: 'Invite a colleague', exact: true }).getByRole('alert')\nExpected: \"You cannot grant this role. Ask an organization administrator to review your invitation and role-assignment permissions.\"\nReceived: \"Sign in again to confirm your identity, then reopen this invitation. Keep a copy of the email and role before leaving.\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 5000ms\n  - waiting for getByRole('dialog', { name: 'Invite a colleague', exact: true }).getByRole('alert')\n    5 × locator resolved to <div role=\"alert\" tabindex=\"-1\" class=\"rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-3 text-sm outline-offset-4\">Sign in again to confirm your identity, then reop…</div>\n      - unexpected value \"Sign in again to confirm your identity, then reopen this invitation. Keep a copy of the email and role before leaving.\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-invitation-register-failure-4445b735-929.png"
+      ],
+      "errors": [],
+      "readerRouteMs": 3210,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Registre des invitations' })\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for getByRole('region', { name: 'Registre des invitations' })\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "No live email: browser actors have no invitation or role-assignment permission; service checks precede provider calls.",
+    "Read, expiry, denial, validation and recovery are exercised; successful issuance, provider delivery and inviter provenance are still open.",
+    "Development route timings are observations, not production performance evidence."
+  ],
+  "authorityBefore": "d0546029c122b52fb2aafcfda60ffab028158dce72ec5cbc03e2ab2d31b7a795",
+  "createdAuditBefore": 0,
+  "authorityAfter": "d0546029c122b52fb2aafcfda60ffab028158dce72ec5cbc03e2ab2d31b7a795",
+  "authorityUnchanged": true,
+  "completedAt": "2026-09-06T05:25:45.401Z",
+  "sourcesAfter": {
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "components/Forms/users/userInvitationForm.tsx": "0bc264c4ab7cd25a26587987531b3c2ddb09b93aba07587a65792251ccc9dbfc",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "3264faaa8e9cb6364ba3e9524e5197aff784b3bf07d349e7c2b5987ea2344bbe",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "messages/en.json": "f00ba3b299fd2baf52e32c33357c8a1b978bc281598579c634741b5c3e9c0a2e",
+    "messages/fr.json": "257a36da16a4262e627f99c1e8a7857e9db35f46882e751c28e13b2425d3be50",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "bc21951cceb50241a6f098eaf81445fb7d7c3cb542d7c67331c84ec7d7563499",
+  "passed": 0,
+  "failed": 2
+}

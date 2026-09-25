@@ -1,0 +1,112 @@
+{
+  "mode": "postgres",
+  "attempt": "af424ca5-101",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T04:18:38.315Z",
+  "sourcesBefore": {
+    "services/analytics/daily-sales-read.service.ts": "c2ad4e433263fddb91a1735ee81335c87df92d0a84473e9209640d2a9272381c",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a",
+    "services/analytics/financial-analytics.service.ts": "9a27a12c5bee7730a83771e5c2bfc4b57b11159ba8d32955d8b8263d5d0d5017",
+    "services/analytics/analytical-context-contracts.ts": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+    "actions/analytics/daily-sales.actions.ts": "fcf19bda57e84e71acc56e8fbce00164f8d1b68fd13ebfa976ab80850c1b59cf",
+    "hooks/analytics/useDailySalesReport.ts": "d67dac61ef9ec84c3218e3958e8f2a2ddc3d66c6a8dcc3f977712260e81958cf",
+    "components/analytics/CompleteIntegratedDailySalesDashboard.tsx": "351ee0befa603df01ac62e2e9ee43753e1887a0359d842044f4d23733ca97e81",
+    "messages/en.json": "20e995bf7d1d1e4784dce4f61326521794f16b3f36e01e3c6ba1914a66ff00e3",
+    "messages/fr.json": "666bd1d460245454b778ad1a818f0ba9a157d9d267a8134a823ba1bc147bee62",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "douala exact date-scoped aggregates exclude other-day and draft orders",
+      "passed": true,
+      "durationMs": 31,
+      "detail": {
+        "metrics": {
+          "value": "26.00",
+          "count": 2,
+          "quantity": "1.500",
+          "average": "13.00"
+        },
+        "period": {
+          "periodStart": "2026-09-05T23:00:00.000Z",
+          "periodEndExclusive": "2026-09-06T23:00:00.000Z",
+          "boundaryConvention": "INCLUSIVE_START_EXCLUSIVE_END",
+          "timezone": "Africa/Douala"
+        },
+        "inventedCash": false
+      }
+    },
+    {
+      "name": "douala saved report, retained location and tenant isolation",
+      "passed": true,
+      "durationMs": 39,
+      "detail": {
+        "savedReportId": "cmtpaxnjp000tmahk99hdljsd",
+        "retainedLocationRead": true,
+        "foreignLocationDenied": true
+      }
+    },
+    {
+      "name": "paris exact date-scoped aggregates exclude other-day and draft orders",
+      "passed": true,
+      "durationMs": 17,
+      "detail": {
+        "metrics": {
+          "value": "26.00",
+          "count": 2,
+          "quantity": "1.500",
+          "average": "13.00"
+        },
+        "period": {
+          "periodStart": "2026-03-28T23:00:00.000Z",
+          "periodEndExclusive": "2026-03-29T22:00:00.000Z",
+          "boundaryConvention": "INCLUSIVE_START_EXCLUSIVE_END",
+          "timezone": "Europe/Paris"
+        },
+        "inventedCash": false
+      }
+    },
+    {
+      "name": "paris saved report, retained location and tenant isolation",
+      "passed": true,
+      "durationMs": 36,
+      "detail": {
+        "savedReportId": "cmtpaxnmk001nmahkvgukp5q6",
+        "retainedLocationRead": true,
+        "foreignLocationDenied": true
+      }
+    },
+    {
+      "name": "Missing locations and organizations are not fabricated zero reports",
+      "passed": true,
+      "durationMs": 14,
+      "detail": {
+        "noLocationsDistinct": true,
+        "missingOrganizationDenied": true
+      }
+    }
+  ],
+  "externalOrigins": [],
+  "limitations": [
+    "Synthetic orders and saved daily reports are local read-model fixtures, not actual sales, payments, approvals or ledger postings.",
+    "No reset, migration, production deployment or external messages. Browser sign-in uses actual local credential authentication."
+  ],
+  "ownedOrganizationPrefix": "org_modules_service_smoke_daily_af424ca5-101",
+  "completedAt": "2026-09-06T04:18:38.756Z",
+  "sourcesAfter": {
+    "services/analytics/daily-sales-read.service.ts": "c2ad4e433263fddb91a1735ee81335c87df92d0a84473e9209640d2a9272381c",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a",
+    "services/analytics/financial-analytics.service.ts": "9a27a12c5bee7730a83771e5c2bfc4b57b11159ba8d32955d8b8263d5d0d5017",
+    "services/analytics/analytical-context-contracts.ts": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+    "actions/analytics/daily-sales.actions.ts": "fcf19bda57e84e71acc56e8fbce00164f8d1b68fd13ebfa976ab80850c1b59cf",
+    "hooks/analytics/useDailySalesReport.ts": "d67dac61ef9ec84c3218e3958e8f2a2ddc3d66c6a8dcc3f977712260e81958cf",
+    "components/analytics/CompleteIntegratedDailySalesDashboard.tsx": "351ee0befa603df01ac62e2e9ee43753e1887a0359d842044f4d23733ca97e81",
+    "messages/en.json": "20e995bf7d1d1e4784dce4f61326521794f16b3f36e01e3c6ba1914a66ff00e3",
+    "messages/fr.json": "666bd1d460245454b778ad1a818f0ba9a157d9d267a8134a823ba1bc147bee62",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "3bba174ad515ead610787b5596df11cc912f2521ad0b5db7facf2ee3fbc2a501",
+  "passed": 5,
+  "failed": 0
+}

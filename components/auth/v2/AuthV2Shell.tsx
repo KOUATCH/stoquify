@@ -17,7 +17,7 @@ import type { ReactNode } from "react"
 type AuthV2ShellProps = {
   children: ReactNode
   locale: Locale
-  variant: "login" | "register" | "verify"
+  variant: "login" | "register" | "verify" | "invite" | "recovery"
   alternatePath?: string
 }
 
@@ -30,9 +30,15 @@ const shellCopy = {
     registerTitle: "Create a workspace around your real business context.",
     registerBody:
       "Set country, business type, first branch, setup role, and recommended modules before the team starts operating.",
-    verifyTitle: "Confirm the workspace before access.",
+    verifyTitle: "Confirm your email address.",
     verifyBody:
-      "Enter the email code to activate the account and protect tenant access before anyone reaches cash, stock, payroll, or reports.",
+      "Enter your verification code, then sign in. Your organization’s roles and permissions determine your workspace access.",
+    inviteTitle: "Join your organization’s workspace.",
+    inviteBody: "Complete your invited account, then sign in. Your organization manages your role and available actions.",
+    invite: "Team invitation",
+    recovery: "Account recovery",
+    recoveryTitle: "Recover access to your account.",
+    recoveryBody: "Use your recovery link to choose a new password, then sign in with your current workspace permissions.",
     backHome: "OHADA OS",
     trust: [
       "Tenant-scoped workspace",
@@ -60,9 +66,15 @@ const shellCopy = {
     registerTitle: "Creez un espace adapte au contexte reel de l'entreprise.",
     registerBody:
       "Definissez pays, activite, premiere agence, role de configuration et modules recommandes avant l'exploitation.",
-    verifyTitle: "Confirmez l'espace avant l'acces.",
+    verifyTitle: "Confirmez votre adresse email.",
     verifyBody:
-      "Saisissez le code recu par email pour activer le compte et proteger l'acces tenant avant la caisse, le stock, la paie ou les rapports.",
+      "Saisissez votre code de vérification, puis connectez-vous. Les rôles et les droits de votre organisation déterminent votre accès à l’espace.",
+    inviteTitle: "Rejoignez l’espace de votre organisation.",
+    inviteBody: "Complétez le compte invité, puis connectez-vous. Votre organisation gère votre rôle et les actions autorisées.",
+    invite: "Invitation d’équipe",
+    recovery: "Récupération du compte",
+    recoveryTitle: "Récupérez l’accès à votre compte.",
+    recoveryBody: "Utilisez votre lien de récupération pour choisir un nouveau mot de passe, puis connectez-vous avec vos droits d’accès actuels.",
     backHome: "OHADA OS",
     trust: [
       "Espace tenant securise",
@@ -90,9 +102,9 @@ export function AuthV2Shell({ children, locale, variant, alternatePath }: AuthV2
   const t = shellCopy[locale]
   const otherLocale = locale === "fr" ? "en" : "fr"
   const currentPath = alternatePath ?? (variant === "register" ? "/register-v2" : "/login-v2")
-  const variantLabel = variant === "login" ? t.login : variant === "register" ? t.register : t.verify
-  const title = variant === "login" ? t.loginTitle : variant === "register" ? t.registerTitle : t.verifyTitle
-  const body = variant === "login" ? t.loginBody : variant === "register" ? t.registerBody : t.verifyBody
+  const variantLabel = t[variant]
+  const title = t[`${variant}Title`]
+  const body = t[`${variant}Body`]
 
   return (
     <main className="min-h-screen bg-[#eef4f0] text-[#132028]">
@@ -148,15 +160,15 @@ export function AuthV2Shell({ children, locale, variant, alternatePath }: AuthV2
           </div>
         </aside>
 
-        <section className="flex min-h-screen flex-col">
+        <section className="flex min-h-screen min-w-0 flex-col">
           <header className="flex items-center justify-between gap-3 px-5 py-5 sm:px-8 lg:hidden">
-            <Link href="/ohada-os" className="flex items-center gap-3">
+            <Link href="/ohada-os" className="flex min-w-0 flex-1 items-center gap-3">
               <StoquifyLogo theme="light" width={236} height={52} tagline={t.brandSubtitle} />
             </Link>
             <Link
               href={currentPath}
               locale={otherLocale}
-              className="inline-flex items-center gap-2 rounded-lg border border-[#cbd8d1] bg-white px-3 py-2 text-xs font-black uppercase text-[#132028]"
+              className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-[#cbd8d1] bg-white px-3 py-2 text-xs font-black uppercase text-[#132028]"
             >
               <Globe2 className="h-4 w-4" />
               {t.language}

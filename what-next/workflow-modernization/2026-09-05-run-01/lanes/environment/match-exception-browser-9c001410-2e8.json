@@ -1,0 +1,115 @@
+{
+  "run": "9c001410-2e8",
+  "at": "2026-09-08T10:59:29.589Z",
+  "sourcesBefore": {
+    "components/purchasing/InvoiceMatchExceptionWorkbench.tsx": "d9b8668cff89f9d4d9d610d3897b815348e13262b364982f42c8ef91abaab30d",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "9c11560d6d7f7ac7748e0230d632d7adffe8f40802bec676c69a6e80d9caccc8",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2ea511be8a9f8b1f03654293eaf605ed3e7dc235e9c3e1c3383fb2f22205631a",
+    "messages/en.json": "8b57cd8df92ceabf18051db5c3ac1de231e0419e6c5bd33873dffff901e78c56",
+    "messages/fr.json": "7116e0a585f61cfc816ce4db5f61d1e571f9e36d9f87a01f7a7185ddeb88fe1a",
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "components/purchasing/APControlWorkbench.tsx": "0fb7561901c97eeae211d9ceed474c4292f065572f86ad94c8300bb1efe3fdfd"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Existing AP entry, retained maker draft, keyboard focus and responsive form",
+        "Wrong password and stale source deny request without an exception",
+        "Lost committed response recovers the exact request with one exception",
+        "Independent review with actual password assurance records exception approval without payable",
+        "Separate invoice approval creates one payable and history observes resolved exception",
+        "Rejection requires a reason and does not create another obligation",
+        "Revoked role denies direct route; no supplier payment issued"
+      ],
+      "screenshots": [
+        "match-exception-en-maker-preview-9c001410-2e8.png",
+        "match-exception-en-maker-320-9c001410-2e8.png",
+        "match-exception-en-maker-390-9c001410-2e8.png",
+        "match-exception-en-maker-768-9c001410-2e8.png",
+        "match-exception-en-stale-9c001410-2e8.png",
+        "match-exception-en-request-recovered-9c001410-2e8.png",
+        "match-exception-en-reviewer-preview-9c001410-2e8.png",
+        "match-exception-en-reviewer-approved-9c001410-2e8.png",
+        "match-exception-en-reviewer-mobile-9c001410-2e8.png",
+        "match-exception-en-reviewer-text200-9c001410-2e8.png",
+        "match-exception-en-invoice-approval-handoff-9c001410-2e8.png",
+        "match-exception-en-retained-history-9c001410-2e8.png",
+        "match-exception-en-rejected-9c001410-2e8.png",
+        "match-exception-en-denied-9c001410-2e8.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "AP to request and preview development baseline",
+          "ms": 38356
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Existing AP entry, retained maker draft, keyboard focus and responsive form",
+        "Wrong password and stale source deny request without an exception",
+        "Lost committed response recovers the exact request with one exception",
+        "Independent review with actual password assurance records exception approval without payable",
+        "Separate invoice approval creates one payable and history observes resolved exception",
+        "Rejection requires a reason and does not create another obligation",
+        "Revoked role denies direct route; no supplier payment issued"
+      ],
+      "screenshots": [
+        "match-exception-fr-maker-preview-9c001410-2e8.png",
+        "match-exception-fr-maker-320-9c001410-2e8.png",
+        "match-exception-fr-maker-390-9c001410-2e8.png",
+        "match-exception-fr-maker-768-9c001410-2e8.png",
+        "match-exception-fr-stale-9c001410-2e8.png",
+        "match-exception-fr-request-recovered-9c001410-2e8.png",
+        "match-exception-fr-reviewer-preview-9c001410-2e8.png",
+        "match-exception-fr-reviewer-approved-9c001410-2e8.png",
+        "match-exception-fr-reviewer-mobile-9c001410-2e8.png",
+        "match-exception-fr-reviewer-text200-9c001410-2e8.png",
+        "match-exception-fr-invoice-approval-handoff-9c001410-2e8.png",
+        "match-exception-fr-retained-history-9c001410-2e8.png",
+        "match-exception-fr-rejected-9c001410-2e8.png",
+        "match-exception-fr-denied-9c001410-2e8.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "AP to request and preview development baseline",
+          "ms": 16471
+        }
+      ]
+    }
+  ],
+  "originalBefore": "31e8beb4f9c23d9810856cdbfa90378b9c6ed2ef214a6fcdb933a712e79fbbe5",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoiceMatchExceptionWorkbench.tsx": "d9b8668cff89f9d4d9d610d3897b815348e13262b364982f42c8ef91abaab30d",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "9c11560d6d7f7ac7748e0230d632d7adffe8f40802bec676c69a6e80d9caccc8",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2ea511be8a9f8b1f03654293eaf605ed3e7dc235e9c3e1c3383fb2f22205631a",
+    "messages/en.json": "8b57cd8df92ceabf18051db5c3ac1de231e0419e6c5bd33873dffff901e78c56",
+    "messages/fr.json": "7116e0a585f61cfc816ce4db5f61d1e571f9e36d9f87a01f7a7185ddeb88fe1a",
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "components/purchasing/APControlWorkbench.tsx": "0fb7561901c97eeae211d9ceed474c4292f065572f86ad94c8300bb1efe3fdfd"
+  },
+  "sourceStable": true
+}

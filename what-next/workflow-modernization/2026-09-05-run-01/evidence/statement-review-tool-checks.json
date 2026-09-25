@@ -1,0 +1,14 @@
+{
+  "evidenceDate": "2026-09-07",
+  "before": { "file": "lanes/environment/statement-review-before-33b3f4a2-5db.json", "receipt": "c3ce36", "reproduced": 2 },
+  "tests": { "file": "evidence/statement-review-tests-03.json", "receipt": "c96d64", "exitCode": 0, "tests": 99, "suites": 10 },
+  "postgres": { "file": "lanes/environment/statement-review-postgres-e080d0da-cef.json", "receipt": "05ec1a", "exitCode": 0, "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-review-postgres.cjs" },
+  "browser": { "file": "lanes/environment/statement-review-browser-932c1910-7f2.json", "receipt": "c0c86a", "exitCode": 0, "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-review-browser.cjs" },
+  "typecheck": { "receipt": "e3736b", "exitCode": 0, "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false" },
+  "lint": { "receipt": "e77749", "exitCode": 0, "paths": ["services/accounting/customer-statement-response.service.ts", "services/accounting/customer-statement-response.schemas.ts", "actions/accounting/customer-statement-response.actions.ts", "hooks/customer-statement-review-request.ts", "components/customers/CustomerStatementResponses.tsx", "components/customers/CustomerStatementWorkflow.tsx", "services/accounting/__tests__/customer-statement-response.service.test.ts", "hooks/__tests__/customer-statement-review-request.test.ts", "components/customers/__tests__/CustomerStatementResponses.test.tsx", "components/customers/__tests__/CustomerStatementWorkflow.test.tsx", "actions/accounting/__tests__/customer-statement-response.actions.test.ts", "app/customer-statement/[statementId]/statement-portal-copy.ts"] },
+  "moduleInventory": { "receipt": "aa17d2", "exitCode": 0, "result": "New action source mapped to Accounting/protect/enforce without dependency gaps. File-level inventory aggregates read and mutation permissions; individual action behavior is established by focused action tests, not inferred from this aggregate." },
+  "baseline": { "file": "evidence/source-baseline-v45.json", "receipt": "822b76", "exitCode": 0 },
+  "visualInspection": { "receipt": "48bf88", "file": "lanes/environment/statement-review-fr-932c1910-7f2-review-320.png", "result": "French narrow review content and focus ring are visible; no section or page horizontal overflow in recorded viewport checks." },
+  "build": { "status": "not_run", "reason": "Actual owned Next development routes compiled and executed; no full production-build result is claimed. Default migration-bearing build was not invoked." },
+  "nativeAccessibility": { "status": "not_verified", "reason": "Keyboard focus, accessible names, reduced-motion context and CSS width/text reflow are covered. Native screen readers, browser zoom and comprehensive contrast require separate evidence." }
+}

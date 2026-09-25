@@ -1,0 +1,63 @@
+{
+  "at": "2026-09-08T12:34:40.331Z",
+  "run": "ca70f4d5-85a",
+  "sourcesBefore": {
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "6a3b96b13e56a03e0a4f2c0410d9cfdcde32ab8b289e3d1aa7ac636f32730d59",
+    "services/purchasing/invoice-correction.service.ts": "2a8ff2b55d5994974859ad485ca078a216903e8292a69ecef30f8a972bcfe214",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "016d0cfc8075e7c57d8723c228b37dc4e88eb706dfe9d46a592684a7ba3514a0",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "f12f15a655bef8ad287fddd4e774a372d4f1bc5b4299e920511cb89ff581e5b1",
+    "messages/fr.json": "53687ecb9418df9fd24ea99b711ac4790c5cbc8ae9e1ad461a1f2ca85ef4e5c5",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "8ec96335fbe8dd97fcfaf40f603694b2bcb275bb15cd126cb4623673b4735a52",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-correction-en-failure-ca70f4d5-85a.png"
+      ],
+      "pageErrors": [],
+      "timings": [],
+      "error": "locator.check: Clicking the checkbox did not change its state\nCall log:\n\u001b[2m  - waiting for getByRole('radio', { name: /REVIEWED-correction-browser-ca70f4d5-85a-en/ })\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"radio\" name=\"correction-invoice\" class=\"mt-1 h-4 w-4 shrink-0 accent-[var(--dash-brand)]\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - click action done\u001b[22m\n\u001b[2m    - waiting for scheduled navigations to finish\u001b[22m\n\u001b[2m    - navigations have finished\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-correction-fr-failure-ca70f4d5-85a.png"
+      ],
+      "pageErrors": [],
+      "timings": [],
+      "error": "locator.check: Clicking the checkbox did not change its state\nCall log:\n\u001b[2m  - waiting for getByRole('radio', { name: /REVIEWED-correction-browser-ca70f4d5-85a-fr/ })\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"radio\" name=\"correction-invoice\" class=\"mt-1 h-4 w-4 shrink-0 accent-[var(--dash-brand)]\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - click action done\u001b[22m\n\u001b[2m    - waiting for scheduled navigations to finish\u001b[22m\n\u001b[2m    - navigations have finished\u001b[22m\n"
+    }
+  ],
+  "originalBefore": "86ab19d6f54e7fcbe4d56cb8cf2063b7f1382ac6b20d30ca819a4fab00945f90",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "6a3b96b13e56a03e0a4f2c0410d9cfdcde32ab8b289e3d1aa7ac636f32730d59",
+    "services/purchasing/invoice-correction.service.ts": "2a8ff2b55d5994974859ad485ca078a216903e8292a69ecef30f8a972bcfe214",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "016d0cfc8075e7c57d8723c228b37dc4e88eb706dfe9d46a592684a7ba3514a0",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "f12f15a655bef8ad287fddd4e774a372d4f1bc5b4299e920511cb89ff581e5b1",
+    "messages/fr.json": "53687ecb9418df9fd24ea99b711ac4790c5cbc8ae9e1ad461a1f2ca85ef4e5c5",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "8ec96335fbe8dd97fcfaf40f603694b2bcb275bb15cd126cb4623673b4735a52",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495"
+  },
+  "sourceStable": true
+}

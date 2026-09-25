@@ -1,0 +1,111 @@
+{
+  "graphDate": "2026-08-09",
+  "historicalOnly": true,
+  "nodes": [
+    {
+      "label": "Navbar.tsx",
+      "file_type": "code",
+      "source_file": "dashboard\\Navbar.tsx",
+      "source_location": "L1",
+      "id": "dashboard_navbar_tsx",
+      "community": 77,
+      "norm_label": "navbar.tsx"
+    },
+    {
+      "label": "Sidebar.tsx",
+      "file_type": "code",
+      "source_file": "dashboard\\Sidebar.tsx",
+      "source_location": "L1",
+      "id": "dashboard_sidebar_tsx",
+      "community": 60,
+      "norm_label": "sidebar.tsx"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dashboard\\Navbar.tsx",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "dashboard_navbar_tsx",
+      "_tgt": "dashboard_navbar_organizationbanner",
+      "confidence_score": 1.0,
+      "source": "dashboard_navbar_tsx",
+      "target": "dashboard_navbar_organizationbanner"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dashboard\\Navbar.tsx",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_src": "dashboard_navbar_tsx",
+      "_tgt": "dashboard_navbar_localizedhref",
+      "confidence_score": 1.0,
+      "source": "dashboard_navbar_tsx",
+      "target": "dashboard_navbar_localizedhref"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dashboard\\Navbar.tsx",
+      "source_location": "L167",
+      "weight": 1.0,
+      "_src": "dashboard_navbar_tsx",
+      "_tgt": "dashboard_navbar_handlelogout",
+      "confidence_score": 1.0,
+      "source": "dashboard_navbar_tsx",
+      "target": "dashboard_navbar_handlelogout"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dashboard\\Sidebar.tsx",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_src": "dashboard_sidebar_tsx",
+      "_tgt": "dashboard_sidebar_tosidebardomid",
+      "confidence_score": 1.0,
+      "source": "dashboard_sidebar_tsx",
+      "target": "dashboard_sidebar_tosidebardomid"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dashboard\\Sidebar.tsx",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "dashboard_sidebar_tsx",
+      "_tgt": "dashboard_sidebar_localizedhref",
+      "confidence_score": 1.0,
+      "source": "dashboard_sidebar_tsx",
+      "target": "dashboard_sidebar_localizedhref"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dashboard\\Sidebar.tsx",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "dashboard_sidebar_tsx",
+      "_tgt": "dashboard_sidebar_isactivehref",
+      "confidence_score": 1.0,
+      "source": "dashboard_sidebar_tsx",
+      "target": "dashboard_sidebar_isactivehref"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dashboard\\Sidebar.tsx",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_src": "dashboard_sidebar_tsx",
+      "_tgt": "dashboard_sidebar_handlelogout",
+      "confidence_score": 1.0,
+      "source": "dashboard_sidebar_tsx",
+      "target": "dashboard_sidebar_handlelogout"
+    }
+  ],
+  "authority": "Current source imports override historical graph hints."
+}

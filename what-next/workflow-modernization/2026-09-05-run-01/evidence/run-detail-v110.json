@@ -1,0 +1,64 @@
+{
+  "at": "2026-09-12T19:28:10.561Z",
+  "baseline": "evidence/source-baseline-v110.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "67f086e2f54eebf8fc7d3cf25a558edc91884cf64cb1704136dac6b33c88bdb1",
+    "services/reconciliation/__tests__/payment-reconciliation-run-detail.test.ts": "ceb4a6fe5722da5ef65c44b048c3e181a901d6cb89cc58a27f8a6a2d99e13270",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "17bbadcabdf1bc0b08b23cc77fe105d96c2c33dbe6830ff86a7caae61cdb1d39",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "3c57f12034975eac0de77a63232be658b766cfa3816f9018226876d8b4b3b932"
+  },
+  "productionFilesChangedInBatch": [
+    "services/reconciliation/payment-reconciliation-certification.service.ts"
+  ],
+  "tests": {
+    "file": "evidence/run-detail-v110-tests-final.json",
+    "passed": 44,
+    "suites": 3,
+    "receipt": "0773c5"
+  },
+  "lint": {
+    "exitCode": 0,
+    "receipt": "c4b5f7",
+    "files": 2
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "receipt": "87160a",
+    "qualification": "Only indentation in the modified transaction changed after this check; final tests/runtime bind the formatting."
+  },
+  "runtime": {
+    "file": "lanes/environment/run-detail-v110-7792ba4a-04f.json",
+    "receipt": "304e9c",
+    "checks": 4,
+    "readMs": 60,
+    "sourceStable": true,
+    "originalUnchanged": true,
+    "financialUnchanged": true
+  },
+  "browser": {
+    "status": "not_applicable_to_service_only_change",
+    "qualification": "No current rendered detail-hook consumer found; no UI or browser verification claim."
+  },
+  "coverage": {
+    "discoveredWorkflows": 234,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2848,
+      "tests": 1006,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 171,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2465,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 212,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "nextAction": "Implement evidence-bound exception review/closure and complete record navigation; then reviewed-run preparation/sign-off/export/reopening and the full platform register."
+}

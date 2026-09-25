@@ -1,0 +1,51 @@
+{
+  "run": "1daeb9dc-15e",
+  "startedAt": "2026-09-06T16:48:35.740Z",
+  "sourcesBefore": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "be1f3dc430f425e6cad5f6db174a6e4d3b1af4c8bc6b4c1aa6d229b59c774506",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [
+        "en-security-success-before-forged-count-1daeb9dc-15e.png",
+        "en-security-success-before-failure-1daeb9dc-15e.png"
+      ],
+      "readyMs": 6241,
+      "forgedSuccessReproduced": true,
+      "sessionsAndRevocationAuditUnchanged": true,
+      "menuBefore": "false",
+      "error": "locator.getAttribute: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Open account menu', exact: true })\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "pageErrors": [],
+      "screenshots": [
+        "fr-security-success-before-forged-count-1daeb9dc-15e.png",
+        "fr-security-success-before-failure-1daeb9dc-15e.png"
+      ],
+      "readyMs": 10651,
+      "forgedSuccessReproduced": true,
+      "sessionsAndRevocationAuditUnchanged": true,
+      "menuBefore": "false",
+      "error": "locator.getAttribute: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Ouvrir le menu du compte', exact: true })\u001b[22m\n"
+    }
+  ],
+  "workflowPassed": false,
+  "scope": "The canonical read prerequisite is corrected. This captures the still-unfixed URL success display and diagnoses the account menu without submitting mutations.",
+  "completedAt": "2026-09-06T16:50:05.858Z",
+  "sourcesAfter": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "be1f3dc430f425e6cad5f6db174a6e4d3b1af4c8bc6b4c1aa6d229b59c774506",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279"
+  },
+  "sourceStable": true,
+  "driverSha256": "8a1ff4b033ae28fb2afa197c80dc0b79e36549b572162735f81682f7b06e87f7"
+}

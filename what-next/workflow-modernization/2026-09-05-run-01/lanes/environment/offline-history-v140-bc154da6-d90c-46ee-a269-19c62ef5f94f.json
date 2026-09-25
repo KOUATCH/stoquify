@@ -1,0 +1,13 @@
+{
+  "at": "2026-09-13T16:41:58.985Z",
+  "checks": [
+    "Keyset paging covers all same-timestamp rows once despite a newer arrival; status/reference/location/terminal/tenant filters stay scoped",
+    "All 23 durable review audits are pageable; unrelated action/private fields excluded; foreign object denied and reads leave financial/audit state unchanged",
+    "Resolved note/actor/time and original replay/journal audit remain discoverable; failed reads do not become empty history"
+  ],
+  "passed": true,
+  "sources": {
+    "services/pos/offline-review.service.ts": "a810aec09020e68609e2650b26b53be145f50fafcc911f89326ade1e75e29ec1",
+    "services/pos/offline-resolution.service.ts": "a6f3fb44f143a60cda7e1dbdd586bf9b0b2bbdda7a1137dacaaecb1e06c2ac86"
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "attempt": "89401f67",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-05T18:28:05.428Z",
+  "sourcesBefore": {
+    "components/auth/v2/VerifyV2Form.tsx": "bdf45ff74247b3ed09befdd06db2f87bacd9fd3b5dde3f17ac4386f849c7e3c1",
+    "components/auth/v2/AuthV2Shell.tsx": "e312e8fd0b2a2815d7afa592dda4cacc9ff4c2dd4544feb055c39d82ec29274c",
+    "services/users/user-identity.service.ts": "f71890bda027db78aa182c0fbbff4b06a0c94080964d25b9be6c8e7f3a739aa2",
+    "actions/users/verifyOtp.ts": "b6e6d9696f8e66718d38942b1738830a5816ae18dfdbfe472ab4b8e086579331",
+    "actions/users/resendVerificationCode.ts": "12d54e11839bd912327fb3a6e1945945f08a7504cf2b7675bd759db26b469359",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "app/[locale]/(auth)/verify/[userId]/page.tsx": "8b44f603b71dfa6fa36165d560b56d9e0838e0f2c810e88efebe99c39771db5b"
+  },
+  "validAttemptsOnly": true,
+  "checks": [
+    {
+      "locale": "en",
+      "userId": "workflow_otp_20260905_48b21da20a_en",
+      "passed": true,
+      "before": {
+        "isVerified": false,
+        "emailVerified": false,
+        "tokenPresent": true,
+        "tokenExpired": false,
+        "successAuditCount": 0,
+        "sessionCount": 0
+      },
+      "requests": [
+        {
+          "at": "2026-09-05T18:28:10.400Z",
+          "suppliedStoredCode": true,
+          "suppliedCorrectUser": true
+        }
+      ],
+      "responses": [
+        {
+          "transportStatus": 200,
+          "actionStatuses": [
+            200
+          ]
+        }
+      ],
+      "errors": [],
+      "screenshots": [
+        "en-email-valid-empty-390-89401f67.png",
+        "en-email-valid-empty-1440-89401f67.png",
+        "en-email-valid-recovered-desktop-89401f67.png",
+        "en-email-valid-recovered-mobile-89401f67.png"
+      ],
+      "reflow": [
+        {
+          "viewport": 390,
+          "documentWidth": 390
+        },
+        {
+          "viewport": 320,
+          "documentWidth": 320
+        },
+        {
+          "viewport": 1440,
+          "documentWidth": 1440
+        }
+      ],
+      "renderedValueMatchedStoredCode": true,
+      "validRecoveryMs": 31579,
+      "after": {
+        "isVerified": true,
+        "emailVerified": true,
+        "tokenPresent": false,
+        "tokenExpired": false,
+        "successAuditCount": 1,
+        "sessionCount": 0
+      }
+    },
+    {
+      "locale": "fr",
+      "userId": "workflow_otp_20260905_48b21da20a_fr",
+      "passed": true,
+      "before": {
+        "isVerified": false,
+        "emailVerified": false,
+        "tokenPresent": true,
+        "tokenExpired": false,
+        "successAuditCount": 0,
+        "sessionCount": 0
+      },
+      "requests": [
+        {
+          "at": "2026-09-05T18:28:46.637Z",
+          "suppliedStoredCode": true,
+          "suppliedCorrectUser": true
+        }
+      ],
+      "responses": [
+        {
+          "error": "response.text: Protocol error (Network.getResponseBody): No data found for resource with given identifier\nResponse body is not available for a response that was navigated away from. Read response.body() before triggering any navigation."
+        }
+      ],
+      "errors": [],
+      "screenshots": [
+        "fr-email-valid-empty-390-89401f67.png",
+        "fr-email-valid-empty-1440-89401f67.png",
+        "fr-email-valid-recovered-desktop-89401f67.png",
+        "fr-email-valid-recovered-mobile-89401f67.png"
+      ],
+      "reflow": [
+        {
+          "viewport": 390,
+          "documentWidth": 390
+        },
+        {
+          "viewport": 320,
+          "documentWidth": 320
+        },
+        {
+          "viewport": 1440,
+          "documentWidth": 1440
+        }
+      ],
+      "renderedValueMatchedStoredCode": true,
+      "validRecoveryMs": 3964,
+      "after": {
+        "isVerified": true,
+        "emailVerified": true,
+        "tokenPresent": false,
+        "tokenExpired": false,
+        "successAuditCount": 1,
+        "sessionCount": 0
+      }
+    }
+  ],
+  "boundary": "Only the two previously created, still unconsumed OTP identities. No resend, invalid-code replay, counter reset, token rotation, email or manufactured session.",
+  "browserContextsClosed": true,
+  "sourcesAfter": {
+    "components/auth/v2/VerifyV2Form.tsx": "bdf45ff74247b3ed09befdd06db2f87bacd9fd3b5dde3f17ac4386f849c7e3c1",
+    "components/auth/v2/AuthV2Shell.tsx": "e312e8fd0b2a2815d7afa592dda4cacc9ff4c2dd4544feb055c39d82ec29274c",
+    "services/users/user-identity.service.ts": "f71890bda027db78aa182c0fbbff4b06a0c94080964d25b9be6c8e7f3a739aa2",
+    "actions/users/verifyOtp.ts": "b6e6d9696f8e66718d38942b1738830a5816ae18dfdbfe472ab4b8e086579331",
+    "actions/users/resendVerificationCode.ts": "12d54e11839bd912327fb3a6e1945945f08a7504cf2b7675bd759db26b469359",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "app/[locale]/(auth)/verify/[userId]/page.tsx": "8b44f603b71dfa6fa36165d560b56d9e0838e0f2c810e88efebe99c39771db5b"
+  },
+  "sourceStable": true,
+  "driverSha256": "e95b748f3176a64dfebceb3eb5aab87cf4f2845ab0b21a98bdd9de787030778b",
+  "completedAt": "2026-09-05T18:28:51.436Z",
+  "passed": 2,
+  "failed": 0
+}

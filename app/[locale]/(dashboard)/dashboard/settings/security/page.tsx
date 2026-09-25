@@ -1,8 +1,8 @@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { checkPermission } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
 import { localizePath, pickLocale } from "@/i18n/routing"
-import { requireSession, revokeAllSessionsForUser } from "@/lib/security/auth-session"
+import { requireSession } from "@/lib/security/auth-session"
 import { permissionRisk, type PermissionRisk } from "@/lib/security/rbac-permissions"
 import { getSecuritySettingsAccountState } from "@/services/security/security-settings.service"
 import type { Locale } from "@/types/bilingual"
@@ -11,7 +11,6 @@ import {
   Clock3,
   KeyRound,
   LockKeyhole,
-  ShieldAlert,
   ShieldCheck,
   Smartphone,
   UserCheck,
@@ -19,7 +18,7 @@ import {
 import type { LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { revalidatePath } from "next/cache"
+import AccountSessions from "@/components/settings/AccountSessions"
 import type { ReactNode } from "react"
 import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
@@ -28,11 +27,8 @@ export const metadata = {
   description: "Review password, session, MFA readiness, and permission risk state.",
 }
 
-type SearchParams = Promise<Record<string, string | string[] | undefined>>
-
 type SecurityPageProps = {
   params: Promise<{ locale: string }>
-  searchParams?: SearchParams
 }
 
 const copy = {
@@ -61,10 +57,10 @@ const copy = {
     failedLogins: "Failed login attempts",
     currentExpires: "Current session expires",
     currentDevice: "Current user agent",
-    mfaEnabled: "MFA enabled",
+    mfaEnabled: "An enrollment date is recorded, but it does not confirm that sign-in challenges are enforced.",
     mfaDisabled: "MFA not enrolled",
     mfaSchemaReady: "User records include MFA secret, enablement time, and backup-code fields.",
-    mfaFlowMissing: "No finished enrollment or challenge route is connected yet, so this page does not expose an MFA toggle.",
+    mfaFlowMissing: "Additional sign-in verification is unavailable",
     criticalNeedsMfa: "Critical or high-risk permissions are present. MFA enrollment should be completed before these actions are promoted.",
     noCriticalNeedsMfa: "No high or critical permissions were found in the current claim set.",
     roles: "Roles",
@@ -72,11 +68,11 @@ const copy = {
     claimsFetched: "RBAC claims fetched",
     noRiskPermissions: "No high-risk permissions found.",
     revoked: "Other active sessions revoked",
-    sessionPolicy: "Current session state comes from BetterAuth plus the database session mirror.",
+    sessionPolicy: "Review your current session and sign out other devices from your account.",
     readiness: "Readiness",
   },
   fr: {
-    title: "Securite",
+    title: "Sécurité",
     subtitle: "Mot de passe, sessions, preparation MFA et risque permissions pour ce compte.",
     password: "Mot de passe",
     sessions: "Sessions",
@@ -100,10 +96,10 @@ const copy = {
     failedLogins: "Tentatives echouees",
     currentExpires: "Expiration session actuelle",
     currentDevice: "Agent utilisateur actuel",
-    mfaEnabled: "MFA active",
+    mfaEnabled: "Une date d’inscription est enregistrée, mais elle ne confirme pas l’application d’un second facteur à la connexion.",
     mfaDisabled: "MFA non enrollee",
     mfaSchemaReady: "Les fiches utilisateur incluent secret MFA, date d'activation et codes de secours.",
-    mfaFlowMissing: "Aucune route finale d'enrolement ou challenge n'est connectee, donc cette page n'expose pas de bascule MFA.",
+    mfaFlowMissing: "La vérification supplémentaire à la connexion est indisponible",
     criticalNeedsMfa: "Des permissions critiques ou haut risque existent. L'enrolement MFA doit etre finalise avant promotion.",
     noCriticalNeedsMfa: "Aucune permission haute ou critique dans les claims actuels.",
     roles: "Roles",
@@ -111,7 +107,7 @@ const copy = {
     claimsFetched: "Claims RBAC recuperes",
     noRiskPermissions: "Aucune permission haut risque trouvee.",
     revoked: "Autres sessions actives revoquees",
-    sessionPolicy: "L'etat de session vient de BetterAuth et du miroir de session en base.",
+    sessionPolicy: "Vérifiez votre session actuelle et déconnectez les autres appareils de votre compte.",
     readiness: "Preparation",
   },
 } as const
@@ -193,33 +189,13 @@ async function loadSecurityState(locale: Locale) {
   }
 }
 
-async function revokeOtherSessionsAction(formData: FormData) {
-  "use server"
-
-  const locale = pickLocale(String(formData.get("locale") ?? "en"))
-  const verified = await requireSession()
-  const revoked = await revokeAllSessionsForUser({
-    userId: verified.ctx.userId,
-    organizationId: verified.ctx.orgId,
-    actorUserId: verified.ctx.userId,
-    exceptSessionToken: verified.claims.sessionToken,
-    reason: "settings.security.revoke_other_sessions",
-  })
-
-  revalidatePath("/[locale]/dashboard/settings/security", "page")
-  redirect(localizePath(`/dashboard/settings/security?revoked=${revoked}`, locale))
-}
-
-async function SecuritySettingsPageImpl({ params, searchParams }: SecurityPageProps) {
+async function SecuritySettingsPageImpl({ params }: SecurityPageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
-  await checkPermission("PASSWORD_READ")
+  await requirePermission("profile.read", { resource: "SettingsSecurity" })
   const labels = t(locale)
-  const query = searchParams ? await searchParams : {}
-  const revokedValue = Array.isArray(query.revoked) ? query.revoked[0] : query.revoked
-  const revokedCount = revokedValue ? Number.parseInt(revokedValue, 10) : 0
   const state = await loadSecurityState(locale)
-  const mfaEnabled = Boolean(state.user.mfaEnabledAt)
+  const mfaEnrollmentRecorded = Boolean(state.user.mfaEnabledAt)
   const hasCriticalOrHigh = state.riskCounts.crit + state.riskCounts.high > 0
   const verifiedEmail = state.user.emailVerified || state.user.isVerified
   const rawSession = state.verified.raw?.session as
@@ -246,11 +222,6 @@ async function SecuritySettingsPageImpl({ params, searchParams }: SecurityPagePr
                 {statusBadge(!state.user.isLocked, state.user.isLocked ? labels.accountLocked : labels.unlocked)}
               </div>
             </div>
-            {revokedCount > 0 ? (
-              <div className="mt-4 rounded-lg border border-[#2dd4bf]/30 bg-[rgba(45,212,191,0.12)] px-4 py-3 text-sm font-medium text-[#b5f5ee]">
-                {labels.revoked}: {revokedCount}
-              </div>
-            ) : null}
           </div>
 
           <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-5">
@@ -298,10 +269,6 @@ async function SecuritySettingsPageImpl({ params, searchParams }: SecurityPagePr
           </Panel>
 
           <Panel title={labels.sessions} icon={Smartphone}>
-            <div className="grid grid-cols-2 gap-3">
-              <Metric label={labels.activeSessions} value={String(state.user.sessions.length)} />
-              <Metric label={labels.otherSessions} value={String(state.otherSessionCount)} />
-            </div>
             <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-4">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--dash-text-faint)]">
                 {labels.currentSession}
@@ -317,33 +284,19 @@ async function SecuritySettingsPageImpl({ params, searchParams }: SecurityPagePr
               </div>
             </div>
             <p className="mt-4 text-sm leading-6 text-[var(--dash-text-soft)]">{labels.sessionPolicy}</p>
-            <form action={revokeOtherSessionsAction} className="mt-5">
-              <input type="hidden" name="locale" value={locale} />
-              <Button
-                type="submit"
-                variant="outline"
-                disabled={state.otherSessionCount === 0}
-                className="rounded-lg border-[#ef6a6a]/30 bg-[rgba(239,106,106,0.08)] text-[#ffc6c6] hover:bg-[rgba(239,106,106,0.14)]"
-              >
-                <ShieldAlert className="h-4 w-4" />
-                {state.otherSessionCount === 0 ? labels.noOtherSessions : labels.revokeOthers}
-              </Button>
-            </form>
+            <AccountSessions locale={locale} actorId={state.verified.ctx.userId} organizationId={state.verified.ctx.orgId} sessionId={state.verified.claims.sessionId} />
           </Panel>
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
           <Panel title={labels.mfa} icon={ShieldCheck}>
             <div className="flex flex-wrap items-center gap-2">
-              {statusBadge(mfaEnabled, mfaEnabled ? labels.mfaEnabled : labels.mfaDisabled)}
-              <Badge variant="outline" className="border-white/10 bg-white/[0.055] text-[var(--dash-text-soft)]">
-                {state.user.mfaBackupCodes.length} backup codes
-              </Badge>
+              <Badge variant="outline" className="border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-text)]">{labels.mfaFlowMissing}</Badge>
+
             </div>
             <div className="mt-4 space-y-3 text-sm leading-6 text-[var(--dash-text-soft)]">
-              <p>{labels.mfaSchemaReady}</p>
-              <p>{labels.mfaFlowMissing}</p>
-              <p className={hasCriticalOrHigh && !mfaEnabled ? "text-[#ffd89a]" : ""}>
+              <p>{mfaEnrollmentRecorded ? labels.mfaEnabled : labels.mfaDisabled}</p>
+              <p className={hasCriticalOrHigh ? "text-[#ffd89a]" : ""}>
                 {hasCriticalOrHigh ? labels.criticalNeedsMfa : labels.noCriticalNeedsMfa}
               </p>
             </div>

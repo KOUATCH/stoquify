@@ -207,6 +207,49 @@ function createActiveRegistryToken(input: {
 }
 
 describe("public receipt payload", () => {
+  it("keeps provider and outbox error details out of public receipts", async () => {
+    const receiptAccessToken = createActiveRegistryToken()
+    mockDb.salesOrder.findFirst.mockResolvedValue(saleFixture())
+    const originalOutbox = (db as any).businessEventOutbox
+    ;(db as any).businessEventOutbox = { findFirst: jest.fn().mockResolvedValue({
+      id: "fiscalization-request-1", status: "FAILED", lastErrorMessage: "private-provider-error credential=secret",
+    }) }
+    try {
+      const publicReceipt = await getPublicSalesReceipt({ salesOrderId: "sale-1", receiptAccessToken })
+      expect(publicReceipt.certification.regulatoryProcessingStatus).toBe("FAILED")
+      expect(publicReceipt.certification.legalDeliveryBlockReason).toBeNull()
+      expect(JSON.stringify(publicReceipt)).not.toContain("private-provider-error")
+      const privateReceipt = await getSalesReceipt({ salesOrderId: "sale-1", organizationId: "org-1" })
+      expect(privateReceipt.certification.legalDeliveryBlockReason).toContain("private-provider-error")
+
+      mockDb.fiscalDocument.findFirst.mockResolvedValue({
+        id: "fiscal-doc-1", status: FiscalDocumentStatus.REJECTED, documentType: FiscalDocumentType.POS_RECEIPT,
+        rejectedAt: new Date(), rejectionReason: "private-authority-rejection", submissions: [],
+        certificationPolicySnapshot: { legalDeliveryWhenUncertified: "BLOCK" },
+      })
+      const rejectedReceipt = await getPublicSalesReceipt({ salesOrderId: "sale-1", receiptAccessToken })
+      expect(rejectedReceipt.certification.fiscalDocumentStatus).toBe("REJECTED")
+      expect(rejectedReceipt.certification.legalDeliveryBlocked).toBe(true)
+      expect(rejectedReceipt.certification.rejectionReason).toBeNull()
+      expect(rejectedReceipt.certification.legalDeliveryBlockReason).toContain("Contact the store")
+      expect(JSON.stringify(rejectedReceipt)).not.toContain("private-authority-rejection")
+    } finally {
+      if (originalOutbox === undefined) delete (db as any).businessEventOutbox
+      else (db as any).businessEventOutbox = originalOutbox
+    }
+  })
+
+  it("retains delivery evidence without storing the bearer receipt token in the audit trail", async () => {
+    process.env.AQSTOQFLOW_RECEIPT_TOKEN_SECRET = "receipt-token-secret"
+    mockDb.salesOrder.findFirst.mockResolvedValue(saleFixture())
+    const result = await sendReceipt({ salesOrderId: "sale-1", organizationId: "org-1", userId: "cashier-1", channel: "NONE" })
+    const token = new URL(result.digitalReceiptUrl, "https://example.test").searchParams.get("token")
+    expect(token).toEqual(expect.any(String))
+    expect(JSON.stringify(mockDb.auditLog.create.mock.calls)).not.toContain(token)
+    expect(mockDb.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      action: "RECEIPT_NONE", changes: expect.objectContaining({ digitalReceiptPath: "/digital-receipt/sale-1" }),
+    }) }))
+  })
   it("rejects raw receipt-id public lookup before database access", async () => {
     await expect(getPublicSalesReceipt({ salesOrderId: "sale-1" })).rejects.toBeInstanceOf(NotFoundError)
     expect(mockDb.publicReceiptAccessToken.findFirst).not.toHaveBeenCalled()

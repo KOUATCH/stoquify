@@ -1,6 +1,8 @@
 "use server"
 
-import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+import { safeLoggedActionErrorMessage, safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses"
+import { ForbiddenError } from "@/services/_shared/action-errors"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { requireFreshAuth } from "@/lib/security/auth-session"
 import { assertCanUseOrganization, requirePermission, type RbacContext } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
@@ -58,7 +60,7 @@ async function requireOrganizationRead(organizationId: string, surface: string) 
 async function requireOrganizationWrite(organizationId: string, surface: string) {
   const requestedOrganizationId = organizationId.trim()
 
-  await requireFreshAuth(300)
+  const verified = await requireFreshAuth(300)
   const ctx = await requirePermission("system.organization.update", {
     resource: "Organization",
     resourceId: requestedOrganizationId,
@@ -66,9 +68,12 @@ async function requireOrganizationWrite(organizationId: string, surface: string)
   })
 
   await assertCanUseOrganization(ctx, requestedOrganizationId)
+  if (verified.claims.userId !== ctx.userId || verified.claims.tenantId !== ctx.orgId) {
+    throw new ForbiddenError("Your organization session changed. Reload before saving.")
+  }
   await observeOrganizationSettingsAccess(ctx, surface, "write")
 
-  return ctx
+  return { ...ctx, session: { id: verified.claims.sessionId, token: verified.claims.sessionToken } }
 }
 
 function revalidateOrganizationSettingsPaths() {
@@ -85,7 +90,7 @@ export async function getOrganizationSettings(organizationId: string) {
       return { success: false, error: "Organization not found" }
     }
 
-    return { success: true, data: organization }
+    return { success: true, data: { ...organization, canUpdate: hasRbacPermission(ctx.permissions, "system.organization.update") } }
   } catch (error) {
     return {
       success: false,
@@ -124,11 +129,13 @@ export async function createOrganizationSettings(
   data: CreateOrganizationSettingsInput,
 ): Promise<{ success: true; data: OrganizationManagementRow } | { success: false; error: string }> {
   try {
-    await requireFreshAuth(300)
+    const fresh = await requireFreshAuth(300)
     const ctx = await requirePermission("system.organization.update", {
       resource: "Organization",
       auditAllowed: true,
     })
+
+    if (fresh.claims.userId !== ctx.userId || fresh.claims.tenantId !== ctx.orgId) throw new ForbiddenError()
 
     await observeOrganizationSettingsAccess(
       ctx,
@@ -136,141 +143,90 @@ export async function createOrganizationSettings(
       "write",
     )
 
-    if (!data.name.trim()) {
-      return { success: false, error: "Organization name is required" }
-    }
-
     const organization = await createOrganizationForSettings(data)
     revalidateOrganizationSettingsPaths()
 
     return { success: true, data: organization }
   } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error creating organization",
-        error,
-        { action: "system.organization.update" },
-        "Failed to create organization",
-      ),
-    }
+    return safeSuccessActionErrorResult(error, { action: "system.organization.create" }, "Open owner registration to create another organization.")
   }
 }
 
 export async function updateOrganizationSettings(
   organizationId: string,
   data: OrganizationSettingsInput,
+  expectedUpdatedAt?: string,
 ) {
   try {
     const ctx = await requireOrganizationWrite(
       organizationId,
       "actions/organization/organization-settings-actions.ts#updateOrganizationSettings",
     )
-    const organization = await updateOrganizationSettingsForOrg(ctx.orgId, data)
+    const organization = await updateOrganizationSettingsForOrg(ctx.orgId, data, { actorUserId: ctx.userId, expectedUpdatedAt, session: ctx.session })
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error updating organization settings",
-        error,
-        { action: "system.organization.update" },
-        "Failed to update organization settings",
-      ),
-    }
+    return safeSuccessActionErrorResult(error, { action: "system.organization.update" })
   }
 }
 
-export async function updateOrganizationCurrency(organizationId: string, currency: string) {
+export async function updateOrganizationCurrency(organizationId: string, currency: string, expectedUpdatedAt?: string) {
   try {
     const ctx = await requireOrganizationWrite(
       organizationId,
       "actions/organization/organization-settings-actions.ts#updateOrganizationCurrency",
     )
-    const organization = await updateOrganizationCurrencyForOrg(ctx.orgId, currency)
+    const organization = await updateOrganizationCurrencyForOrg(ctx.orgId, currency, { actorUserId: ctx.userId, expectedUpdatedAt, session: ctx.session })
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error updating organization currency",
-        error,
-        { action: "system.organization.update" },
-        "Failed to update organization currency",
-      ),
-    }
+    return safeSuccessActionErrorResult(error, { action: "system.organization.update" })
   }
 }
 
-export async function updateOrganizationTimezone(organizationId: string, timezone: string) {
+export async function updateOrganizationTimezone(organizationId: string, timezone: string, expectedUpdatedAt?: string) {
   try {
     const ctx = await requireOrganizationWrite(
       organizationId,
       "actions/organization/organization-settings-actions.ts#updateOrganizationTimezone",
     )
-    const organization = await updateOrganizationTimezoneForOrg(ctx.orgId, timezone)
+    const organization = await updateOrganizationTimezoneForOrg(ctx.orgId, timezone, { actorUserId: ctx.userId, expectedUpdatedAt, session: ctx.session })
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error updating organization timezone",
-        error,
-        { action: "system.organization.update" },
-        "Failed to update organization timezone",
-      ),
-    }
+    return safeSuccessActionErrorResult(error, { action: "system.organization.update" })
   }
 }
 
-export async function updateInventoryStartDate(organizationId: string, inventoryStartDate: Date) {
+export async function updateInventoryStartDate(organizationId: string, inventoryStartDate: Date, expectedUpdatedAt?: string) {
   try {
     const ctx = await requireOrganizationWrite(
       organizationId,
       "actions/organization/organization-settings-actions.ts#updateInventoryStartDate",
     )
-    const organization = await updateInventoryStartDateForOrg(ctx.orgId, inventoryStartDate)
+    const organization = await updateInventoryStartDateForOrg(ctx.orgId, inventoryStartDate, { actorUserId: ctx.userId, expectedUpdatedAt, session: ctx.session })
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error updating inventory start date",
-        error,
-        { action: "system.organization.update" },
-        "Failed to update inventory start date",
-      ),
-    }
+    return safeSuccessActionErrorResult(error, { action: "system.organization.update" })
   }
 }
 
-export async function updateFiscalYearStart(organizationId: string, fiscalYearStart: string) {
+export async function updateFiscalYearStart(organizationId: string, fiscalYearStart: string, expectedUpdatedAt?: string) {
   try {
     const ctx = await requireOrganizationWrite(
       organizationId,
       "actions/organization/organization-settings-actions.ts#updateFiscalYearStart",
     )
-    const organization = await updateFiscalYearStartForOrg(ctx.orgId, fiscalYearStart)
+    const organization = await updateFiscalYearStartForOrg(ctx.orgId, fiscalYearStart, { actorUserId: ctx.userId, expectedUpdatedAt, session: ctx.session })
 
     revalidateOrganizationSettingsPaths()
     return { success: true, data: organization }
   } catch (error) {
-    return {
-      success: false,
-      error: safeLoggedActionErrorMessage(
-        "Error updating fiscal year start",
-        error,
-        { action: "system.organization.update" },
-        "Failed to update fiscal year start",
-      ),
-    }
+    return safeSuccessActionErrorResult(error, { action: "system.organization.update" })
   }
 }

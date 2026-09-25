@@ -1,0 +1,54 @@
+{
+  "at": "2026-09-13T17:17:51.684Z",
+  "phase": "after",
+  "sourceBefore": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36"
+  },
+  "checks": [
+    {
+      "name": "catalogue_edit",
+      "firstCost": 20,
+      "afterEditCost": 20,
+      "itemCost": 20,
+      "firstProfit": 80,
+      "afterEditProfit": 80
+    },
+    {
+      "name": "missing_cost_is_unavailable",
+      "passed": true
+    },
+    {
+      "name": "foreign_location_rejected",
+      "passed": true
+    },
+    {
+      "name": "archived_sold_item_retained",
+      "passed": true
+    },
+    {
+      "name": "pending_payment_excluded",
+      "passed": true
+    },
+    {
+      "name": "delivery_line_cost_and_tax",
+      "netRevenue": 300,
+      "grossValue": 340,
+      "cost": 80,
+      "profit": 220,
+      "passed": true
+    },
+    {
+      "name": "genuine_empty_period",
+      "passed": true
+    }
+  ],
+  "organizationId": "workflow_tender_report_65f6e197-a4c2-4e6f-bf92-5c577fc393bc",
+  "passed": true,
+  "reproduced": false,
+  "sourceAfter": {
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36"
+  },
+  "sourceStable": true
+}

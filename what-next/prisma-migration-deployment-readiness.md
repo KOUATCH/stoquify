@@ -1,28 +1,28 @@
 # Prisma Migration Deployment Readiness
 
-Generated: 2026-08-22T08:00:21.294Z
+Generated: 2026-08-28T12:36:45.783Z
 Mode: `fail`
 Status: `blocked`
 
 ## Summary
 
-- Checks ready: 8/9
-- Migrations: 76
+- Checks ready: 7/9
+- Migrations: 79
 - Risk findings: 13
 - Approved risks: 0
 - Stale approvals: 0
 - Revoked approvals: 0
-- Blockers: 1
+- Blockers: 3
 - Secret values printed: no
 
 ## Deployment Decision
 
-- Environment: `local`
-- Action: `skip`
-- Reason: `non_production_default_skip`
+- Environment: `production`
+- Action: `deploy`
+- Reason: `vercel_production`
 - Database URL configured: no
-- Database target safe: yes
-- Execution: `skipped`
+- Database target safe: no
+- Execution: `pending`
 
 ## Checks
 
@@ -30,7 +30,7 @@ Status: `blocked`
 - ready: migration_files_nonempty
 - ready: risk_approval_registry_valid
 - blocked: destructive_sql_is_exact_hash_approved
-- ready: deployment_target_is_safe
+- blocked: deployment_target_is_safe
 - ready: production_build_orders_secret_migration_and_app_gates
 - ready: migration_safety_gate_is_in_policy_chain
 - ready: release_verification_has_migration_preflight
@@ -55,6 +55,8 @@ Status: `blocked`
 ## Blockers
 
 - destructive_sql_is_exact_hash_approved
+- deployment_target_is_safe
+- database_url_missing
 
 ## Safety
 

@@ -1,0 +1,32 @@
+{
+  "at": "2026-09-09T01:13:26.749Z",
+  "run": "f39eb842-09f",
+  "sourcesBefore": {
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "8669f6deb779d0472338decdb233d87299fb2e91ec57ce759ba2b9fa2595b05a",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "98f7e381ffce294c901eab54cd1ec928bc65c22c1d171c5505a509c0c313d50f"
+  },
+  "checks": [
+    "Direct suspense posting rejects actually closed period; no persisted effects",
+    "Approval rejects actually closed period; no persisted effects",
+    "Direct posting rejects mismatched input period; no persisted effects",
+    "Direct posting rejects missing period; no persisted effects",
+    "Actual independent suspense approval commits balanced journal, source link and posted item",
+    "Actual suspense writer holds shared period lock until commit; synthetic exclusive closure contender waits",
+    "Retained posted suspense evidence replays after closure without new effects",
+    "Actual sign-off rejects closed period; no persisted effects",
+    "Actual sign-off rejects mismatched assigned period; no persisted effects"
+  ],
+  "scope": "Owned local PostgreSQL, actual domain services and synthetic actors/context. No public authorization, provider certification, live payments or browser completion claimed.",
+  "originalBefore": "16ef9bcadbc228bf248271f040e6b79812578832d3ee217b6720682c9d59f9d2",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "8669f6deb779d0472338decdb233d87299fb2e91ec57ce759ba2b9fa2595b05a",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "98f7e381ffce294c901eab54cd1ec928bc65c22c1d171c5505a509c0c313d50f"
+  },
+  "sourceStable": true
+}

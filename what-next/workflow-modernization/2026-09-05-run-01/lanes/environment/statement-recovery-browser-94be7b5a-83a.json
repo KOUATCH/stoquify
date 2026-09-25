@@ -1,0 +1,77 @@
+{
+  "run": "94be7b5a-83a",
+  "startedAt": "2026-09-06T19:42:04.830Z",
+  "sourcesBefore": {
+    "components/customers/CustomerStatementWorkflow.tsx": "ef94e2450eb9a4c9225b7e34f18c7667b3d2d9a626ae04b3d1fdfcd11f10fa38",
+    "hooks/customer-statement-request.ts": "ade236896224d6259199b8228ab9840963eec6e654ef3f55b1c895a34887ef2e",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx": "656d4a7ff665275c62ec681725d53533c17e2faf404489a96cb08dfc95578ab7",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx": "03c05b24766c0574f354d6e332a9882e6cc4e840ca6940bba03f52d500f9b6bb",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts": "05038bc5ef2611c0afd28162c4557f93006ac052514b095a8ec725be816d823c",
+    "actions/accounting/customer-statement.actions.ts": "04afc8d016beabe8bd3a1a0dcfc0a89654f9d1f4968062bb5c6b2cf27d8c4620",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-delivery-envelope.ts": "24da4d029b17e309a2b8531fa4bb68789bfd75a412f5b0b9d88244ff493fb3ad",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "customerId": "workflow_statement_browser_en_94be7b5a-83a",
+      "passed": false,
+      "screenshots": [
+        "en-statement-recovery-denied-94be7b5a-83a.png",
+        "en-statement-recovery-ready-94be7b5a-83a.png",
+        "en-statement-recovery-snapshot-unconfirmed-94be7b5a-83a.png",
+        "en-statement-recovery-failure-94be7b5a-83a.png"
+      ],
+      "cases": [],
+      "deniedWithoutPermission": true,
+      "allowedRouteReadyMs": 4567,
+      "snapshotLostResponseAndReloadReusedOneRecord": true,
+      "error": "expect(locator).toBeDisabled() failed\n\nLocator: getByLabel('Channel', { exact: true })\nExpected: disabled\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 60000ms\n  - waiting for getByLabel('Channel', { exact: true })\n",
+      "originalPermissionsRestored": true
+    },
+    {
+      "locale": "fr",
+      "customerId": "workflow_statement_browser_fr_94be7b5a-83a",
+      "passed": false,
+      "screenshots": [
+        "fr-statement-recovery-denied-94be7b5a-83a.png",
+        "fr-statement-recovery-ready-94be7b5a-83a.png",
+        "fr-statement-recovery-snapshot-unconfirmed-94be7b5a-83a.png",
+        "fr-statement-recovery-failure-94be7b5a-83a.png"
+      ],
+      "cases": [],
+      "deniedWithoutPermission": true,
+      "allowedRouteReadyMs": 7144,
+      "snapshotLostResponseAndReloadReusedOneRecord": true,
+      "error": "expect(locator).toBeDisabled() failed\n\nLocator: getByLabel('Canal', { exact: true })\nExpected: disabled\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 60000ms\n  - waiting for getByLabel('Canal', { exact: true })\n",
+      "originalPermissionsRestored": true
+    }
+  ],
+  "scope": "Owned local app 3109 and synthetic database. Real snapshot/delivery queue with lost response after server completion; no worker or external delivery. Empty customer statements are not populated-ledger certification.",
+  "originalBefore": "8e9539f37bf6adef2ba45485f5ed56a28cbb4dfb1fc8320916dcc886ab5e5e55",
+  "originalAfter": "8e9539f37bf6adef2ba45485f5ed56a28cbb4dfb1fc8320916dcc886ab5e5e55",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T19:46:45.433Z",
+  "sourcesAfter": {
+    "components/customers/CustomerStatementWorkflow.tsx": "ef94e2450eb9a4c9225b7e34f18c7667b3d2d9a626ae04b3d1fdfcd11f10fa38",
+    "hooks/customer-statement-request.ts": "ade236896224d6259199b8228ab9840963eec6e654ef3f55b1c895a34887ef2e",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx": "656d4a7ff665275c62ec681725d53533c17e2faf404489a96cb08dfc95578ab7",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx": "03c05b24766c0574f354d6e332a9882e6cc4e840ca6940bba03f52d500f9b6bb",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts": "05038bc5ef2611c0afd28162c4557f93006ac052514b095a8ec725be816d823c",
+    "actions/accounting/customer-statement.actions.ts": "04afc8d016beabe8bd3a1a0dcfc0a89654f9d1f4968062bb5c6b2cf27d8c4620",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-delivery-envelope.ts": "24da4d029b17e309a2b8531fa4bb68789bfd75a412f5b0b9d88244ff493fb3ad",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "40e3b16899679daa977d9cbccd408c00efeab7872855118d69e53cb875e7c908"
+}

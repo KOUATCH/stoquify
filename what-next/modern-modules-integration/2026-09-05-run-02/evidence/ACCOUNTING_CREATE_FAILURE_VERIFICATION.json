@@ -1,0 +1,136 @@
+{
+  "recordedAt": "2026-09-05T14:53:44.889Z",
+  "classification": "FOCUSED_ACCOUNTING_STOPPED_WORK_FAILURE_VERIFICATION",
+  "productionApproval": false,
+  "sourceStatus": "FROZEN; parent owns final coordinated typecheck/build/browser verification",
+  "changedProductionPaths": [
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx"
+  ],
+  "changedTestPaths": [
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx"
+  ],
+  "sharedMessageScope": [
+    {
+      "locale": "en",
+      "namespace": "moduleComposition.accountingCreate",
+      "keys": [
+        "stoppedTitle",
+        "stoppedDescription",
+        "reviewAccess",
+        "openQueue",
+        "failedTitle",
+        "connectionFailure",
+        "creating"
+      ],
+      "sha256": "8d6f4b1d779bbc53ab18a2d6ac772303a092a5c1c886b511035541e1b4619f0d"
+    },
+    {
+      "locale": "fr",
+      "namespace": "moduleComposition.accountingCreate",
+      "keys": [
+        "stoppedTitle",
+        "stoppedDescription",
+        "reviewAccess",
+        "openQueue",
+        "failedTitle",
+        "connectionFailure",
+        "creating"
+      ],
+      "sha256": "dda89fad8077a7124595fe7f680f968cdd3e29c0ec44be729557034287512fef"
+    }
+  ],
+  "behavior": [
+    "Retains all journal header fields and six line rows after structured stop/validation and unknown transport failure.",
+    "Shows focused inline EN/FR stopped-work reason and existing authorized journal-queue link.",
+    "Keeps protected server-derived create permission and original journal validation.",
+    "No automatic retry; unknown result instructs checking existing queue first.",
+    "Disables submission before hydration and while pending; confirmed success prevents another submission before navigation."
+  ],
+  "verification": {
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx",
+      "services/accounting/__tests__/manual-journal.test.ts",
+      "lib/modules/__tests__/module-operation-error.test.ts"
+    ],
+    "exitCode": 0,
+    "suitesPassed": 3,
+    "testsPassed": 15,
+    "jestDurationSeconds": 10.445,
+    "lintCommand": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+      "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx"
+    ],
+    "lintExitCode": 0,
+    "lintDiagnostics": []
+  },
+  "earlierCheckpoint": {
+    "testsPassed": 15,
+    "suitesPassed": 3,
+    "jestDurationSeconds": 15.835,
+    "thenChanged": "Added successful-result duplicate prevention and hydration guard; final rerun above covers final source."
+  },
+  "noWriteEvidence": "Page tests return the protected stopped-work response without success/navigation; the existing manual-journal service test separately exercises the real admission reader and asserts journalEntry.create and ledgerAuditEvent.create are not called. No new live database/browser write proof is claimed.",
+  "limitations": [
+    "Older journal-form field labels remain as existing English; only new stopped/failure/pending copy is localized.",
+    "No new journal idempotency protocol was introduced; unknown network results are not retried automatically.",
+    "This scoped run uses Jest database/action mocks; no customer or production activation.",
+    "Source hashes are captured after final tests, not represented as pre-run hashes. Shared full message files also contain other agents changes; namespace hashes bind only this task keys."
+  ],
+  "filesystemNotes": [
+    "Windows denied normal adjacent translation-file write; exact seven-key EN/FR insert succeeded through reviewed filesystem escalation. No other translations were rewritten."
+  ],
+  "sources": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "sha256": "d613fdbb1a84161d8d9cdd8db023c32741b6a6941467258c7bc4ff425720ba23"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+      "sha256": "cd6d7f0cbd994316b9e3669f0a5afd5b8bd3eb5ae66676f0ab748c38152c0dec"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx",
+      "sha256": "8b988ffa9c25889a0ae8fe6cc3b4525a9e854218b4ae328715d91fbbf007754a"
+    },
+    {
+      "path": "services/accounting/__tests__/manual-journal.test.ts",
+      "sha256": "2077478a0ceb2ba413f4d378f7f7f3c57eb3479fc1c0112823f94e40a2357d5a"
+    },
+    {
+      "path": "lib/modules/__tests__/module-operation-error.test.ts",
+      "sha256": "f5b1d81ef1d2f184ece213f0af982fda26a4bf9c6ab35aec370d6225f931d506"
+    },
+    {
+      "path": "lib/modules/module-operation-error.ts",
+      "sha256": "b61ed2a4d548d8808c851af2f05bd3712c947fa47ead7d837227cfdd7071c06f"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "actions/accounting/journals.actions.ts",
+      "sha256": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "7ab920a5f724cb2b857ec88340c99b8223197c6cd0b568eab188a7d78ce9b884"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "9b71a208b63ac5a09147c068f9c90fbd4ae869a63f6856849b564b4377b87203"
+    }
+  ]
+}

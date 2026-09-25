@@ -21,11 +21,6 @@ export const dailyDigestRouteCatalog: DailyDigestRouteSurface[] = [
     resource: "KontavaDailyHabitDigest",
     permissions: ["dashboard.read", "finance.read", "accounting.close.read", "inventory.read", "analytics.read"],
     permissionMode: "any",
-    noActiveOrgTitle: "Daily Digest needs an active organization",
-    noActiveOrgMessage: "Refresh your session from the dashboard so Daily Digest can load tenant-scoped signals.",
-    permissionDeniedTitle: "Daily Digest is not available for this role",
-    permissionDeniedMessage:
-      "Daily Digest is read-only, but it still requires dashboard, finance, accounting, or inventory access.",
     noActiveOrgPrimaryHref: "/dashboard",
     permissionDeniedPrimaryHref: "/dashboard",
   },

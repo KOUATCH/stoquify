@@ -1,0 +1,58 @@
+{
+  "run": "d76effcc-011",
+  "at": "2026-09-08T08:31:29.524Z",
+  "checks": [
+    {
+      "name": "Exact retry keeps one journal and one source link",
+      "status": "failed",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'cmtseukgg001lma78ecenq5kv'\n- 'cmtseuke3001cma78o47r4o1e'\n          ^\n"
+    },
+    {
+      "name": "Missing rules after success do not downgrade posted evidence",
+      "status": "failed",
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'BLOCKED_PENDING_RULES'\n- 'POSTED'\n"
+    },
+    {
+      "name": "Changed source amount is rejected after posting",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Concurrent exact submissions return one journal",
+      "status": "failed",
+      "message": "\nInvalid `tx.ledgerPostingBatch.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\services\\accounting\\posting.service.ts:198:32\n\n  195 \n  196 if (existing) return existing\n  197 \n→ 198 return tx.ledgerPostingBatch.create(\nUnique constraint failed on the fields: (`organizationId`,`sourceType`,`sourceId`,`postingPurpose`)"
+    },
+    {
+      "name": "Foreign direct account is rejected",
+      "status": "passed"
+    },
+    {
+      "name": "Direct parent account is rejected",
+      "status": "passed"
+    },
+    {
+      "name": "Closed period is rejected by posting owner",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Blocked batch can post after configuration without supplier liability changes",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned local PostgreSQL. Tests the AP posting kernel with synthetic sources and test-only rules; not an authenticated invoice recovery journey or statutory approval.",
+  "sourceBefore": "2fc32087a7341ae8d147e5a2d7b827419997d61fab92d9324b670d5b58bb6b07",
+  "originalUnchanged": true,
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-replay",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-downgrade",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-changed",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-concurrent",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-foreign",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-other",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-parent",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-closed",
+    "workflow_supplier_ack_en_ledger-retry-d76effcc-011-recover"
+  ],
+  "sourceAfter": "2fc32087a7341ae8d147e5a2d7b827419997d61fab92d9324b670d5b58bb6b07"
+}

@@ -1,6 +1,8 @@
 import { db } from "@/prisma/db"
 import { postGoodsReceiptStock } from "@/services/inventory/inventory-stock-event.service"
-import { receiveItems, resolveGoodsReceiptInspection } from "../purchase-order.service"
+import { Prisma } from "@prisma/client"
+import { receiveItems as receiveWithScope, resolveGoodsReceiptInspection as resolveWithScope } from "../purchase-order.service"
+import { purchaseReceivingAuthority } from "../purchase-receiving-authority"
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -31,6 +33,51 @@ jest.mock("@/services/events/business-event.service", () => ({
   markBusinessEventAppliedInTx: jest.fn(),
   recordBusinessEventInTx: jest.fn(),
 }))
+
+// Current account/session authority is exercised against PostgreSQL by the receiving
+// prerequisite and workbench verifiers. These tests isolate stock/receipt behavior.
+jest.mock("../purchase-receiving-authority", () => ({
+  ...jest.requireActual("../purchase-receiving-authority"),
+  purchaseReceivingAuthority: jest.fn().mockResolvedValue({ fresh: true, canReceive: true }),
+}))
+function receiveItems(input: Parameters<typeof receiveWithScope>[0]) {
+  return receiveWithScope(input, { organizationId: input.organizationId, actorId: input.receivedById, sessionId: "test-session", sessionToken: "test-session-token" })
+}
+function resolveGoodsReceiptInspection(input: Parameters<typeof resolveWithScope>[0]) {
+  return resolveWithScope(input, { organizationId: input.organizationId, actorId: input.resolvedById, sessionId: "test-session", sessionToken: "test-session-token" })
+}
+function databaseRows(value: unknown, parent?: string): unknown {
+  if (Array.isArray(value)) return value.map(row => databaseRows(row))
+  if (!value || typeof value !== "object" || value instanceof Date || value instanceof Prisma.Decimal) return value
+  const row = Object.fromEntries(Object.entries(value).map(([key, child]) => [key, typeof child === "number" && ["orderedQuantity", "receivedQuantity", "unitCost", "lineTotal"].includes(key) ? new Prisma.Decimal(child) : databaseRows(child,key)]))
+  if (parent === "item") return { organizationId: "org-1", isActive: true, deletedAt: null, ...row }
+  return row
+}
+// Supply the shared persisted fields required by the receiving service. Each test
+// retains its own delegate spies and explicit overrides for exceptional behavior.
+const receivingTransactions = new WeakMap<object, object>()
+function receivingTx<T extends object>(input: T): T {
+  const cached = receivingTransactions.get(input); if (cached) return cached as T
+  const tx = input as Record<string, unknown>
+  const models: Record<string, Record<string, jest.Mock>> = {
+    location: { findFirst: jest.fn().mockResolvedValue({ id: "loc-1" }) },
+    auditLog: { create: jest.fn().mockResolvedValue({ id: "receiving-audit" }) },
+    purchaseOrder: { findFirst: jest.fn().mockResolvedValue(purchaseOrder()) },
+    goodsReceipt: { findFirst: jest.fn().mockResolvedValue(tx.goodsReceiptInspectionResolution ? { purchaseOrderId: "po-1" } : null) },
+  }
+  const proxy = new Proxy(input, { get(target, property) {
+    const original = Reflect.get(target,property)
+    if (typeof property !== "string" || property.startsWith("$")) return original
+    const model = { ...models[property], ...(original as Record<string, jest.Mock> | undefined) }
+    return new Proxy(model, { get(delegate,method) {
+      const fn = delegate[String(method)]
+      if (typeof fn !== "function") return fn
+      return (...args: unknown[]) => Promise.resolve(fn(...args)).then(row => databaseRows(row))
+    } })
+  } })
+  receivingTransactions.set(input, proxy)
+  return proxy
+}
 
 const mockDb = db as unknown as {
   $transaction: jest.Mock
@@ -119,6 +166,8 @@ function purchaseOrder(overrides: Record<string, unknown> = {}) {
 describe("purchase-order receiving batch defaults", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockDb.$transaction.mockReset().mockImplementation(async handler => handler(receivingTx(mockDb)))
+    ;(purchaseReceivingAuthority as jest.Mock).mockResolvedValue({ fresh: true, canReceive: true })
     mockDb.goodsReceipt.findFirst.mockResolvedValue(null)
     mockDb.goodsReceiptInspectionResolution.findFirst.mockResolvedValue(null)
     mockPostGoodsReceiptStock.mockResolvedValue(undefined)
@@ -163,7 +212,7 @@ describe("purchase-order receiving batch defaults", () => {
         ),
       },
     }
-    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementation(async (handler) => handler(receivingTx(tx)))
 
     await receiveItems({
       purchaseOrderId: "po-1",
@@ -189,7 +238,7 @@ describe("purchase-order receiving batch defaults", () => {
           }),
         ],
       }),
-      tx,
+      receivingTx(tx),
     )
     expect(tx.goodsReceipt.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
@@ -237,7 +286,7 @@ describe("purchase-order receiving batch defaults", () => {
         findUnique: jest.fn().mockResolvedValue(po),
       },
     }
-    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(firstTx))
+    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(receivingTx(firstTx)))
     const first = await receiveItems(input)
     const payloadHash = firstTx.goodsReceipt.create.mock.calls[0][0].data.payloadHash
 
@@ -253,7 +302,7 @@ describe("purchase-order receiving batch defaults", () => {
       },
       purchaseOrder: { findFirst: jest.fn().mockResolvedValue(po) },
     }
-    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(replayTx))
+    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(receivingTx(replayTx)))
     const replay = await receiveItems(input)
 
     expect(first.replayed).toBe(false)
@@ -261,6 +310,7 @@ describe("purchase-order receiving batch defaults", () => {
     expect(mockPostGoodsReceiptStock).toHaveBeenCalledTimes(1)
 
     mockDb.$transaction.mockRejectedValueOnce({ code: "P2002", clientVersion: "test" })
+    mockDb.$transaction.mockImplementationOnce(async handler => handler(receivingTx(mockDb)))
     mockDb.goodsReceipt.findFirst.mockResolvedValue({
       receiptNumber: "GR-000001",
       purchaseOrderId: "po-1",
@@ -292,7 +342,7 @@ describe("purchase-order receiving batch defaults", () => {
       },
       purchaseOrder: { findFirst: jest.fn() },
     }
-    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(receivingTx(tx)))
 
     await expect(receiveItems({
       purchaseOrderId: "po-1",
@@ -336,7 +386,7 @@ describe("purchase-order receiving batch defaults", () => {
         ),
       },
     }
-    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementation(async (handler) => handler(receivingTx(tx)))
 
     const result = await receiveItems({
       purchaseOrderId: "po-1",
@@ -384,7 +434,7 @@ describe("purchase-order receiving batch defaults", () => {
         findFirst: jest.fn().mockResolvedValue(purchaseOrder()),
       },
     }
-    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementation(async (handler) => handler(receivingTx(tx)))
 
     await expect(receiveItems({
       purchaseOrderId: "po-1",
@@ -428,7 +478,7 @@ describe("purchase-order receiving batch defaults", () => {
           purchaseOrderId: "po-1",
           locationId: "loc-1",
           status: "HELD",
-          inspection: { id: "inspection-1", outcome: "FAILED" },
+          inspection: { id: "inspection-1", outcome: "FAILED", inspectedById: "original-inspector" },
           inspectionResolution: null,
           lines: [{
             id: "receipt-line-1",
@@ -459,7 +509,7 @@ describe("purchase-order receiving batch defaults", () => {
       serialNumber: { findMany: jest.fn().mockResolvedValue([]) },
       auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-1" }) },
     }
-    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(receivingTx(tx)))
 
     const first = await resolveGoodsReceiptInspection(input)
     const payloadHash = tx.goodsReceiptInspectionResolution.create.mock.calls[0][0].data.payloadHash
@@ -479,7 +529,7 @@ describe("purchase-order receiving batch defaults", () => {
         }),
       },
     }
-    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(replayTx))
+    mockDb.$transaction.mockImplementationOnce(async (handler) => handler(receivingTx(replayTx)))
     const replay = await resolveGoodsReceiptInspection(input)
 
     expect(first).toMatchObject({ receiptStatus: "RECEIVED", decision: "ACCEPT", replayed: false })
@@ -487,6 +537,7 @@ describe("purchase-order receiving batch defaults", () => {
     expect(mockPostGoodsReceiptStock).toHaveBeenCalledTimes(1)
 
     mockDb.$transaction.mockRejectedValueOnce({ code: "P2002", clientVersion: "test" })
+    mockDb.$transaction.mockImplementationOnce(async handler => handler(receivingTx(mockDb)))
     mockDb.goodsReceiptInspectionResolution.findFirst.mockResolvedValue({
       goodsReceiptId: "receipt-held",
       payloadHash,
@@ -507,8 +558,8 @@ describe("purchase-order receiving batch defaults", () => {
       }),
     )
     expect(tx.purchaseOrderLine.updateMany).toHaveBeenCalledWith({
-      where: { id: "line-1", purchaseOrderId: "po-1", receivedQuantity: 0 },
-      data: { receivedQuantity: { increment: 3 } },
+      where: { id: "line-1", purchaseOrderId: "po-1", receivedQuantity: new Prisma.Decimal(0) },
+      data: { receivedQuantity: { increment: new Prisma.Decimal(3) } },
     })
     expect(tx.goodsReceipt.update).toHaveBeenCalledWith({
       where: { id: "receipt-held" },
@@ -532,7 +583,7 @@ describe("purchase-order receiving batch defaults", () => {
         }),
       },
     }
-    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementation(async (handler) => handler(receivingTx(tx)))
 
     await expect(resolveGoodsReceiptInspection({
       goodsReceiptId: "receipt-held",
@@ -562,7 +613,7 @@ describe("purchase-order receiving batch defaults", () => {
           purchaseOrderId: "po-1",
           locationId: "loc-1",
           status: "HELD",
-          inspection: { id: "inspection-2", outcome: "INCOMPLETE" },
+          inspection: { id: "inspection-2", outcome: "INCOMPLETE", inspectedById: "original-inspector" },
           inspectionResolution: null,
           lines: [{
             id: "receipt-line-2",
@@ -584,7 +635,7 @@ describe("purchase-order receiving batch defaults", () => {
       purchaseOrder: { update: jest.fn().mockResolvedValue({ id: "po-1", status: "APPROVED" }) },
       auditLog: { create: jest.fn().mockResolvedValue({ id: "audit-reject" }) },
     }
-    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementation(async (handler) => handler(receivingTx(tx)))
 
     const result = await resolveGoodsReceiptInspection({
       goodsReceiptId: "receipt-held",
@@ -607,7 +658,7 @@ describe("purchase-order receiving batch defaults", () => {
 
   it("enforces tenant scope before resolving inspection evidence", async () => {
     const tx = { $queryRaw: jest.fn().mockResolvedValue([]) }
-    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    mockDb.$transaction.mockImplementation(async (handler) => handler(receivingTx(tx)))
 
     await expect(resolveGoodsReceiptInspection({
       goodsReceiptId: "receipt-other-tenant",
@@ -618,7 +669,7 @@ describe("purchase-order receiving batch defaults", () => {
       idempotencyKey: "inspection-resolution:tenant-1",
     })).rejects.toThrow("Goods receipt not found")
 
-    expect(tx.$queryRaw).toHaveBeenCalledTimes(1)
+    expect(tx.$queryRaw).not.toHaveBeenCalled()
     expect(mockPostGoodsReceiptStock).not.toHaveBeenCalled()
   })
 

@@ -1,0 +1,110 @@
+{
+  "at": "2026-09-13T12:24:59.359Z",
+  "baseline": "evidence/source-baseline-v122.json",
+  "sources": {
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+    "components/pos/ProfessionalPOSSystem.tsx": "c1fe5f739a78c18021603187c2e12665739be9d14a61a056fb72ce4065ae2adb",
+    "hooks/posHooks/usePosOperations.ts": "8296a3ff45dcbf248b96c2c86a28d1dcd1303f2080e80bac8f48b6b1f71748c4",
+    "messages/en.json": "c3e60d535199385e7c86b66eda3d91b223dfc05a49c109a403faa2b21c0dcf40",
+    "messages/fr.json": "89d13cecf8362fb97c19f6b4b4e998cf89da17931c09c15f23d0ef6eae51f2a7"
+  },
+  "tests": {
+    "passed": 76,
+    "suites": 5,
+    "receipts": [
+      "d43d08",
+      "3e4822"
+    ],
+    "initialFailure": "32babc: prior event audit expectation omitted existing APPLIED audit"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "c68dee"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "c954f2",
+    "files": 6
+  },
+  "database": {
+    "before": "lanes/environment/pos-cart-v122-before-d5beea5a-acc3-46ac-9c49-c05bb1e6c9f1.json",
+    "after": "lanes/environment/pos-cart-v122-after-2c6e1737-7a42-488f-acf7-249115781b88.json",
+    "boundaries": "lanes/environment/pos-cart-v122-before-905cab24-fdc9-47a4-8417-ced6d5da08e0.json"
+  },
+  "browser": {
+    "file": "lanes/environment/pos-cart-browser-v122-83393f73-135d-44aa-b9e1-1e93a19d2532.json",
+    "receipt": "48b959",
+    "at": "2026-09-13T12:20:57.242Z",
+    "sourcesBefore": {
+      "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+      "components/pos/ProfessionalPOSSystem.tsx": "c1fe5f739a78c18021603187c2e12665739be9d14a61a056fb72ce4065ae2adb",
+      "hooks/posHooks/usePosOperations.ts": "8296a3ff45dcbf248b96c2c86a28d1dcd1303f2080e80bac8f48b6b1f71748c4",
+      "messages/en.json": "c3e60d535199385e7c86b66eda3d91b223dfc05a49c109a403faa2b21c0dcf40",
+      "messages/fr.json": "89d13cecf8362fb97c19f6b4b4e998cf89da17931c09c15f23d0ef6eae51f2a7"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "pageErrors": [],
+        "screenshots": [
+          "pos-cart-v122-en-1440-83393f73-135d-44aa-b9e1-1e93a19d2532.png",
+          "pos-cart-v122-en-768-83393f73-135d-44aa-b9e1-1e93a19d2532.png",
+          "pos-cart-v122-en-320-83393f73-135d-44aa-b9e1-1e93a19d2532.png"
+        ],
+        "readyMs": 14263,
+        "noDuplicateGlobalError": true,
+        "rejectionRetainsDraftAndStoredQuantity": true,
+        "reflow1440": true,
+        "reflow768": true,
+        "reflow320": true,
+        "explicitCorrectionSaved": true
+      },
+      {
+        "locale": "fr",
+        "pageErrors": [],
+        "screenshots": [
+          "pos-cart-v122-fr-1440-83393f73-135d-44aa-b9e1-1e93a19d2532.png",
+          "pos-cart-v122-fr-768-83393f73-135d-44aa-b9e1-1e93a19d2532.png",
+          "pos-cart-v122-fr-320-83393f73-135d-44aa-b9e1-1e93a19d2532.png"
+        ],
+        "readyMs": 13314,
+        "noDuplicateGlobalError": true,
+        "rejectionRetainsDraftAndStoredQuantity": true,
+        "reflow1440": true,
+        "reflow768": true,
+        "reflow320": true,
+        "explicitCorrectionSaved": true
+      }
+    ],
+    "scope": "Owned local cashier login, real cart server actions and persisted quantities; no checkout or provider request.",
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+      "components/pos/ProfessionalPOSSystem.tsx": "c1fe5f739a78c18021603187c2e12665739be9d14a61a056fb72ce4065ae2adb",
+      "hooks/posHooks/usePosOperations.ts": "8296a3ff45dcbf248b96c2c86a28d1dcd1303f2080e80bac8f48b6b1f71748c4",
+      "messages/en.json": "c3e60d535199385e7c86b66eda3d91b223dfc05a49c109a403faa2b21c0dcf40",
+      "messages/fr.json": "89d13cecf8362fb97c19f6b4b4e998cf89da17931c09c15f23d0ef6eae51f2a7"
+    },
+    "sourceStable": true
+  },
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2873,
+      "tests": 1016,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 174,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2509,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "selectedSkill": "007-aqstoqflow-pos-ledger-controls",
+  "wholeWorkflowComplete": false
+}

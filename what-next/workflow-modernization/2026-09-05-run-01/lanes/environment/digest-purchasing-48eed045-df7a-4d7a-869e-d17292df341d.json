@@ -1,0 +1,260 @@
+{
+  "at": "2026-09-19T13:47:50.098Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "2055dbe37f000b82c42fd38614665eb39852c3484686d0b6bbf2725c1979422f",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "0cea03f6f05832e9023d62f9e1d624dab9c1d5f98d852cce707c624222c091a4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "435a2cba578216ee1d78564e391d7cf0ff3f00a52ba224d059f587a25c90e66a",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "0f2087bc7d7790a85dd7ba0e167e8c145acac587edfd564f4132ea2446657d6a"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "allowed": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-explicit-empty-en.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-explicit-empty-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-explicit-empty-fr.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-explicit-empty-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "allowed": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-active-en.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-active-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-active-fr.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-active-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "suspended",
+      "allowed": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-suspended-en.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-suspended-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-suspended-fr.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-suspended-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "expired",
+      "allowed": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "future",
+      "allowed": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "missing",
+      "allowed": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "read-only",
+      "allowed": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-read-only-en.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-read-only-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-read-only-fr.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-read-only-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "read-only-flag",
+      "allowed": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "recommended-inventory-suspended",
+      "allowed": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "stopped-new-work-retained",
+      "allowed": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-stopped-new-work-retained-en.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-stopped-new-work-retained-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-stopped-new-work-retained-fr.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-stopped-new-work-retained-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "summary-only",
+      "allowed": true,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-summary-only-en.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-summary-only-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-summary-only-fr.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-summary-only-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "permission-revoked",
+      "allowed": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-permission-revoked-en.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-permission-revoked-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-permission-revoked-fr.png",
+          "destinationScreenshot": "digest-purchasing-48eed045-df7a-4d7a-869e-d17292df341d-permission-revoked-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "2055dbe37f000b82c42fd38614665eb39852c3484686d0b6bbf2725c1979422f",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "0cea03f6f05832e9023d62f9e1d624dab9c1d5f98d852cce707c624222c091a4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "435a2cba578216ee1d78564e391d7cf0ff3f00a52ba224d059f587a25c90e66a",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "0f2087bc7d7790a85dd7ba0e167e8c145acac587edfd564f4132ea2446657d6a"
+  },
+  "sourceStable": true
+}

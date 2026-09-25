@@ -1,0 +1,68 @@
+{
+  "attempt": "48b21da20a",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "organizationId": "org_modules_legacy_en_desktop",
+  "startedAt": "2026-09-05T18:12:46.264Z",
+  "sourcesBefore": {
+    "services/users/user-identity.service.ts": "f71890bda027db78aa182c0fbbff4b06a0c94080964d25b9be6c8e7f3a739aa2",
+    "actions/users/verifyOtp.ts": "b6e6d9696f8e66718d38942b1738830a5816ae18dfdbfe472ab4b8e086579331",
+    "actions/users/resendVerificationCode.ts": "12d54e11839bd912327fb3a6e1945945f08a7504cf2b7675bd759db26b469359",
+    "components/auth/v2/VerifyV2Form.tsx": "b86bda7aa3cd1f3b60e20df2a14e181975f068802532269e0ec6b97f1c438ea3",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "app/[locale]/(auth)/verify/[userId]/page.tsx": "8b44f603b71dfa6fa36165d560b56d9e0838e0f2c810e88efebe99c39771db5b"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "userId": "workflow_otp_20260905_48b21da20a_en",
+      "passed": false,
+      "errors": [],
+      "screenshots": [
+        "en-email-recovery-resend-unconfirmed-48b21da20a.png",
+        "en-email-recovery-invalid-code-48b21da20a.png",
+        "en-email-recovery-invalid-alternate-width-48b21da20a.png"
+      ],
+      "usefulResendMs": 53825,
+      "overflow": {
+        "viewport": 390,
+        "content": 394
+      },
+      "error": "Expected values to be strictly equal:\n\n390 !== 394\n"
+    },
+    {
+      "locale": "fr",
+      "userId": "workflow_otp_20260905_48b21da20a_fr",
+      "passed": false,
+      "errors": [],
+      "screenshots": [
+        "fr-email-recovery-resend-unconfirmed-48b21da20a.png",
+        "fr-email-recovery-invalid-code-48b21da20a.png",
+        "fr-email-recovery-invalid-alternate-width-48b21da20a.png"
+      ],
+      "usefulResendMs": 16068,
+      "overflow": {
+        "viewport": 1440,
+        "content": 1440
+      },
+      "error": "expect(page).toHaveURL(expected) failed\n\nExpected: \"http://127.0.0.1:3107/fr/login-v2?verified=true\"\nReceived: \"http://127.0.0.1:3107/fr/verify/workflow_otp_20260905_48b21da20a_fr?email=mismatch.48b21da20a.fr%40otp-workflow.stockflow.test\"\nTimeout:  30000ms\n\nCall log:\n  - Expect \"to.have.url\" with timeout 30000ms\n    59 × locator resolved to <html lang=\"fr\" class=\"light\">…</html>\n       - unexpected value \"http://127.0.0.1:3107/fr/verify/workflow_otp_20260905_48b21da20a_fr?email=mismatch.48b21da20a.fr%40otp-workflow.stockflow.test\"\n"
+    }
+  ],
+  "blockedBrowserOrigins": [],
+  "providerBoundary": "Resend submitted only with mismatched email. Real service predicate must return before rotation/mail; no provider key, transport stub or delivery claim.",
+  "browserContextsClosed": true,
+  "originalStateHash": "a95e1f7b3b23ed1c6edfde6724140efdce891ec8306c3c3bef97b2eed4c9ded0",
+  "originalUsersRolesOrganizationConfigurationUnchanged": true,
+  "sourcesAfter": {
+    "services/users/user-identity.service.ts": "f71890bda027db78aa182c0fbbff4b06a0c94080964d25b9be6c8e7f3a739aa2",
+    "actions/users/verifyOtp.ts": "b6e6d9696f8e66718d38942b1738830a5816ae18dfdbfe472ab4b8e086579331",
+    "actions/users/resendVerificationCode.ts": "12d54e11839bd912327fb3a6e1945945f08a7504cf2b7675bd759db26b469359",
+    "components/auth/v2/VerifyV2Form.tsx": "b86bda7aa3cd1f3b60e20df2a14e181975f068802532269e0ec6b97f1c438ea3",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "app/[locale]/(auth)/verify/[userId]/page.tsx": "8b44f603b71dfa6fa36165d560b56d9e0838e0f2c810e88efebe99c39771db5b"
+  },
+  "sourceStable": true,
+  "driverSha256": "6c9456d6a2e5bc156873f9680abe4889e67341e64634563a3fc377ccc06778fe",
+  "completedAt": "2026-09-05T18:14:56.069Z",
+  "passed": 0,
+  "failed": 2
+}

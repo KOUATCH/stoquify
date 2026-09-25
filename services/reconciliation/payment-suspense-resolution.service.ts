@@ -1,0 +1,147 @@
+import { randomUUID } from "node:crypto"
+import { Prisma } from "@prisma/client"
+import { db } from "@/prisma/db"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { BusinessRuleError, ConflictError, ForbiddenError, IdempotencyConflictError } from "@/services/_shared/action-errors"
+import { assertSensitiveActionAllowed, auditSensitiveActionDecision, evaluateSensitiveAction, type SensitiveActionDecision } from "@/services/controls/sensitive-action.service"
+import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
+import type { SuspenseCorrectionControl } from "./payment-suspense-correction.service"
+import { suspenseEvidenceHash, suspenseMetadata } from "./payment-suspense-evidence"
+import { suspenseResolutionClearingKey, suspenseResolutionDecisionSchema, suspenseResolutionDraftSchema, suspenseResolutionProposalSchema,
+  type SuspenseResolutionDecision, type SuspenseResolutionProposal } from "./payment-suspense-resolution.contracts"
+import { loadSuspenseResolutionEvidenceInTx } from "./payment-suspense-resolution-evidence.service"
+import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
+
+type Tx = Prisma.TransactionClient
+type Controlled<T> = { value: T; denied?: never } | { denied: SensitiveActionDecision; value?: never }
+const json = (value: unknown) => JSON.parse(JSON.stringify(value)) as Prisma.InputJsonObject
+const nowOf = (control: SuspenseCorrectionControl) => control.now ?? new Date()
+
+async function transaction<T>(work: (tx: Tx) => Promise<Controlled<T>>) {
+  try {
+    const result = await db.$transaction(work, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+    if (result.denied) {
+      if (result.denied.reasonCode === "SELF_APPROVAL_BLOCKED") throw new BusinessRuleError(result.denied.safeMessage, "SOD_VIOLATION")
+      if (result.denied.reasonCode === "MISSING_PERMISSION") throw new ForbiddenError(result.denied.safeMessage)
+      assertSensitiveActionAllowed(result.denied); throw new ForbiddenError("Resolution is not authorized.")
+    }
+    return result.value
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && (["P2002", "P2034"].includes(error.code)
+      || (error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code))))) throw new ConflictError("Resolution evidence changed concurrently. Refresh or retry the same request.")
+    throw error
+  }
+}
+async function actor(tx: Tx, control: SuspenseCorrectionControl, itemId?: string) {
+  if (!hasRbacPermission(control.actorPermissions, "payments.reconciliation.read") || !hasRbacPermission(control.actorPermissions, "accounting.journal.read")) throw new ForbiddenError("Reconciliation and accounting journal read permissions are required.")
+  if (!await tx.user.findFirst({ where: { id: control.actorId, organizationId: control.organizationId, isActive: true }, select: { id: true } })) throw new ForbiddenError("Active workspace actor is required.")
+  if (itemId) await tx.$queryRaw`SELECT id FROM suspense_items WHERE id = ${itemId} AND "organizationId" = ${control.organizationId} FOR UPDATE`
+}
+function authorize(control: SuspenseCorrectionControl, itemId: string, decide: boolean, subjectActorId?: string) {
+  return evaluateSensitiveAction({ action: decide ? "payment.reconciliation.suspense.post" : "payment.reconciliation.suspense.propose",
+    actorId: control.actorId, organizationId: control.organizationId, actorPermissions: control.actorPermissions, lastAuthAt: control.lastAuthAt,
+    now: nowOf(control), resourceType: "SuspenseItem", resourceId: itemId, subjectActorId })
+}
+async function record(tx: Tx, control: SuspenseCorrectionControl, key: string, itemId: string, body: unknown, id = randomUUID()) {
+  const payload = json(body)
+  return tx.paymentReconciliationInboxItem.create({ data: { id, organizationId: control.organizationId, source: "SUSPENSE_POST", status: "PROCESSED",
+    idempotencyKey: key, externalId: itemId, payloadSummary: payload, payloadHash: suspenseEvidenceHash(payload).slice(7), processedAt: nowOf(control), correlationId: id } })
+}
+function payload(row: { payloadHash: string; payloadSummary: Prisma.JsonValue | null } | null) {
+  if (!row || row.payloadHash !== suspenseEvidenceHash(row.payloadSummary).slice(7)) throw new ConflictError("Resolution record requires evidence review.")
+  return suspenseMetadata(row.payloadSummary)
+}
+
+export async function proposeSuspenseResolution(input: SuspenseResolutionProposal, control: SuspenseCorrectionControl) {
+  const command = suspenseResolutionProposalSchema.parse(input), { expectedRevision, idempotencyKey, ...draft } = command
+  return transaction(async tx => {
+    await actor(tx, control, draft.suspenseItemId)
+    const decision = authorize(control, draft.suspenseItemId, false)
+    await auditSensitiveActionDecision(tx, decision); if (!decision.allowed) return { denied: decision }
+    const key = `suspense-resolution-proposal:${idempotencyKey}`, requestHash = suspenseEvidenceHash({ command, actorId: control.actorId })
+    const existing = await tx.paymentReconciliationInboxItem.findFirst({ where: { organizationId: control.organizationId, source: "SUSPENSE_POST", idempotencyKey: key } })
+    if (existing) {
+      const saved = payload(existing)
+      if (saved.kind !== "SUSPENSE_RESOLUTION_PROPOSED_V1" || saved.requestHash !== requestHash || existing.externalId !== draft.suspenseItemId) throw new IdempotencyConflictError()
+      return { value: { proposalId: existing.id, replayed: true } }
+    }
+    const current = await loadSuspenseResolutionEvidenceInTx(tx, draft, control)
+    if (current.revision !== expectedRevision) throw new ConflictError("Clearing evidence changed. Review the current resolution preview.")
+    const row = await record(tx, control, key, draft.suspenseItemId, { kind: "SUSPENSE_RESOLUTION_PROPOSED_V1", draft, requestHash, financialHash: current.financialHash,
+      proposedById: control.actorId, proposedAt: nowOf(control).toISOString(), originalJournalId: current.journal.id, cycle: current.cycle })
+    await tx.suspenseItem.update({ where: { id: current.item.id }, data: { metadata: json({ ...suspenseMetadata(current.item.metadata), resolutionProposalId: row.id }) } })
+    await tx.ledgerAuditEvent.create({ data: { organizationId: control.organizationId, actorId: control.actorId, action: "SUSPENSE_RESOLUTION_PROPOSE",
+      resourceType: "SuspenseItem", resourceId: current.item.id, message: "Clearing evidence proposed; final resolution remains unapproved", metadata: json({ proposalId: row.id, clearingJournalId: current.clearing.id }) } })
+    await publishPaymentReconciliationNotification({ type: "payment-reconciliation.suspense.resolution-proposed", organizationId: control.organizationId,
+      evidenceRef: { suspenseItemId: current.item.id, reconciliationRunId: current.item.reconciliationRunId }, correlationId: row.id, dedupeKey: row.id }, tx)
+    return { value: { proposalId: row.id, replayed: false } }
+  })
+}
+
+export async function reviewSuspenseResolution(suspenseItemId: string, proposalId: string, control: SuspenseCorrectionControl) {
+  return db.$transaction(async tx => {
+    await actor(tx, control)
+    const row = await tx.paymentReconciliationInboxItem.findFirst({ where: { id: proposalId, organizationId: control.organizationId, source: "SUSPENSE_POST", status: "PROCESSED", externalId: suspenseItemId } })
+    const proposed = payload(row)
+    if (proposed.kind !== "SUSPENSE_RESOLUTION_PROPOSED_V1") throw new ConflictError("Resolution proposal requires review.")
+    const draft = suspenseResolutionDraftSchema.parse(proposed.draft)
+    if (draft.suspenseItemId !== suspenseItemId) throw new ConflictError("Resolution proposal source does not match.")
+    const current = await loadSuspenseResolutionEvidenceInTx(tx, draft, control)
+    if (suspenseMetadata(current.item.metadata).resolutionProposalId !== proposalId || current.financialHash !== proposed.financialHash) throw new ConflictError("Resolution proposal was superseded or its clearing evidence changed.")
+    return { proposalId, draft, proposedById: String(proposed.proposedById), clearingCreatedById: current.clearing.createdById, revision: suspenseEvidenceHash({ proposalHash: row!.payloadHash, currentRevision: current.revision }),
+      amount: current.item.amount.toFixed(2), currencyCode: current.item.currencyCode, originalJournalNumber: current.journal.entryNumber, clearingJournalNumber: current.clearing.entryNumber,
+      destination: { code: current.counterpart.account.code, nameEn: current.counterpart.account.nameEn, nameFr: current.counterpart.account.nameFr }, newFinancialPosting: false }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+}
+
+export async function decideSuspenseResolution(input: SuspenseResolutionDecision, control: SuspenseCorrectionControl) {
+  const command = suspenseResolutionDecisionSchema.parse(input)
+  return transaction(async tx => {
+    await actor(tx, control, command.suspenseItemId)
+    const row = await tx.paymentReconciliationInboxItem.findFirst({ where: { id: command.proposalId, organizationId: control.organizationId, source: "SUSPENSE_POST", status: "PROCESSED", externalId: command.suspenseItemId } })
+    const proposed = payload(row), draft = suspenseResolutionDraftSchema.parse(proposed.draft)
+    if (proposed.kind !== "SUSPENSE_RESOLUTION_PROPOSED_V1" || typeof proposed.proposedById !== "string" || draft.suspenseItemId !== command.suspenseItemId) throw new ConflictError("Resolution proposal source requires review.")
+    const decision = authorize(control, command.suspenseItemId, true, proposed.proposedById)
+    await auditSensitiveActionDecision(tx, decision); if (!decision.allowed) return { denied: decision }
+    await tx.$queryRaw`SELECT id FROM journal_entries WHERE id = ${draft.clearingJournalId} AND "organizationId" = ${control.organizationId} FOR UPDATE`
+    const decisionKey = `suspense-resolution-decision:${row!.id}`, commandHash = suspenseEvidenceHash({ command, actorId: control.actorId })
+    const existing = await tx.paymentReconciliationInboxItem.findFirst({ where: { organizationId: control.organizationId, source: "SUSPENSE_POST", idempotencyKey: decisionKey } })
+    if (existing) {
+      const saved = payload(existing)
+      if (saved.commandHash !== commandHash || existing.externalId !== command.suspenseItemId) throw new IdempotencyConflictError()
+      if (saved.kind === "SUSPENSE_RESOLUTION_APPROVED_V1" && typeof saved.allocationId === "string") {
+        const current = await loadSuspenseResolutionEvidenceInTx(tx, draft, control, saved.allocationId)
+        if (current.financialHash !== saved.financialHash) throw new ConflictError("Retained clearing evidence changed after resolution.")
+        const allocation = await tx.paymentReconciliationInboxItem.findFirst({ where: { id: saved.allocationId, organizationId: control.organizationId, source: "SUSPENSE_POST" } })
+        const allocated = payload(allocation)
+        if (allocated.kind !== "SUSPENSE_RESOLUTION_ALLOCATION_V1" || allocated.decisionId !== existing.id || allocated.suspenseItemId !== command.suspenseItemId
+          || allocated.clearingJournalId !== draft.clearingJournalId) throw new ConflictError("Retained resolution allocation does not match its decision.")
+      } else if (saved.kind !== "SUSPENSE_RESOLUTION_REJECTED_V1") throw new ConflictError("Resolution decision requires review.")
+      return { value: { receiptId: existing.id, outcome: command.decision === "APPROVE" ? draft.outcome : "REJECTED" as const, replayed: true } }
+    }
+    const current = await loadSuspenseResolutionEvidenceInTx(tx, draft, control)
+    if (suspenseMetadata(current.item.metadata).resolutionProposalId !== row!.id || current.financialHash !== proposed.financialHash
+      || suspenseEvidenceHash({ proposalHash: row!.payloadHash, currentRevision: current.revision }) !== command.expectedRevision) throw new ConflictError("Resolution evidence changed. Refresh the independent review.")
+    const decisionId = randomUUID(), allocationId = randomUUID(), now = nowOf(control)
+    const body = { commandHash, draft, proposalId: row!.id, suspenseItemId: current.item.id, proposedById: proposed.proposedById, decidedById: control.actorId,
+      decidedAt: now.toISOString(), reason: command.reason, financialHash: current.financialHash, reviewedRevision: command.expectedRevision, originalJournalId: current.journal.id, cycle: current.cycle }
+    const approved = command.decision === "APPROVE"
+    if (approved) {
+      if (control.actorId === current.clearing.createdById) throw new BusinessRuleError("The clearing journal maker cannot approve final resolution.", "SOD_VIOLATION")
+      await record(tx, control, suspenseResolutionClearingKey(current.clearing.id), current.item.id, { kind: "SUSPENSE_RESOLUTION_ALLOCATION_V1", decisionId, clearingJournalId: current.clearing.id, suspenseItemId: current.item.id }, allocationId)
+    }
+    await record(tx, control, decisionKey, current.item.id, { ...body, kind: approved ? "SUSPENSE_RESOLUTION_APPROVED_V1" : "SUSPENSE_RESOLUTION_REJECTED_V1", ...(approved ? { allocationId } : {}) }, decisionId)
+    await tx.suspenseItem.update({ where: { id: current.item.id }, data: { ...(approved ? { status: draft.outcome, resolvedAt: now } : {}),
+      metadata: json({ ...suspenseMetadata(current.item.metadata), resolutionProposalId: null, ...(approved ? { resolutionReceiptId: allocationId, resolutionDecisionId: decisionId } : {}) }) } })
+    if (approved) for (const journal of [current.journal, current.clearing]) await recordCloseCertificationInvalidationsForSourceInTx(tx, control.organizationId, {
+      sourceCode: "PAYMENT_SUSPENSE_POSTING", sourceId: current.item.id, periodId: journal.periodId, periodStart: journal.entryDate, periodEnd: journal.entryDate,
+      staleReason: "Suspense resolution changed close evidence; review the retained clearing journal.", newEvidenceHash: current.financialHash, correlationId: decisionId,
+    }, { actorId: control.actorId, now })
+    await tx.ledgerAuditEvent.create({ data: { organizationId: control.organizationId, actorId: control.actorId, action: approved ? "SUSPENSE_RESOLUTION_APPROVE" : "SUSPENSE_RESOLUTION_REJECT",
+      resourceType: "SuspenseItem", resourceId: current.item.id, journalEntryId: current.clearing.id,
+      message: approved ? "Resolution linked to existing clearing evidence; no new journal posted" : "Resolution rejected; source evidence retained", metadata: json({ decisionId, proposalId: row!.id, outcome: approved ? draft.outcome : "REJECTED" }) } })
+    await publishPaymentReconciliationNotification({ type: approved ? "payment-reconciliation.suspense.resolution-approved" : "payment-reconciliation.suspense.resolution-rejected", organizationId: control.organizationId,
+      evidenceRef: { suspenseItemId: current.item.id, reconciliationRunId: current.item.reconciliationRunId }, correlationId: decisionId, dedupeKey: decisionId }, tx)
+    return { value: { receiptId: decisionId, outcome: approved ? draft.outcome : "REJECTED" as const, replayed: false } }
+  })
+}

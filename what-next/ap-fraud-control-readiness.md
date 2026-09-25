@@ -4,7 +4,7 @@ Report mode is read-only; fail mode blocks critical gaps.
 
 ## Summary
 
-- Generated at: 2026-08-22T09:02:51.342Z
+- Generated at: 2026-08-29T16:19:03.192Z
 - Mode: fail
 - Checks: 9
 - Ready: 9

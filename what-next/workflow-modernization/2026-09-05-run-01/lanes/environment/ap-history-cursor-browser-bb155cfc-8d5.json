@@ -1,0 +1,84 @@
+{
+  "at": "2026-09-08T15:19:24.612Z",
+  "run": "bb155cfc-8d5",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-revision.ts": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3",
+    "actions/purchasing/ap-history.actions.ts": "a16ac340274d02056c1f833b8b8fde84da6bb951f058ad2597b897eeb285eb3c",
+    "components/purchasing/APHistoryWorkbench.tsx": "fade0b5176ef216a0a9762d6f477525fef779cf21843302da55700bbd13c54e4",
+    "hooks/useAPHistoryWorkbench.ts": "b735db53ead8d3928e35ddf46b7dfd4f78f443764b6abd6180c7d53d47f6ce43",
+    "messages/en.json": "d5aae1c903186be13f343e9da2ed409b302e3dd4b457f68bf09bf8a21981b2e3",
+    "messages/fr.json": "599a361450a537b7ce630cecd5a97c5d068d93472a0a93eb727d7363995c9170"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Later-page details open and close without dropping the cursor or changing the six-row page",
+        "A source moving outside the date filter invalidates the old view; first-page recovery retains supplier/date/page-size filters",
+        "Ordinary query failure stays distinct from stale scope and retries without zero-row success"
+      ],
+      "screenshots": [
+        "ap-history-cursor-en-second-page-bb155cfc-8d5.png",
+        "ap-history-cursor-en-second-page-detail-bb155cfc-8d5.png",
+        "ap-history-cursor-en-stale-desktop-bb155cfc-8d5.png",
+        "ap-history-cursor-en-stale-mobile-bb155cfc-8d5.png",
+        "ap-history-cursor-en-recovered-bb155cfc-8d5.png",
+        "ap-history-cursor-en-query-failure-bb155cfc-8d5.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development first-page observation",
+          "ms": 20408
+        },
+        {
+          "name": "Development continuation observation",
+          "ms": 3535
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Later-page details open and close without dropping the cursor or changing the six-row page",
+        "A source moving outside the date filter invalidates the old view; first-page recovery retains supplier/date/page-size filters",
+        "Ordinary query failure stays distinct from stale scope and retries without zero-row success"
+      ],
+      "screenshots": [
+        "ap-history-cursor-fr-second-page-bb155cfc-8d5.png",
+        "ap-history-cursor-fr-second-page-detail-bb155cfc-8d5.png",
+        "ap-history-cursor-fr-stale-desktop-bb155cfc-8d5.png",
+        "ap-history-cursor-fr-stale-mobile-bb155cfc-8d5.png",
+        "ap-history-cursor-fr-recovered-bb155cfc-8d5.png",
+        "ap-history-cursor-fr-query-failure-bb155cfc-8d5.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development first-page observation",
+          "ms": 7302
+        },
+        {
+          "name": "Development continuation observation",
+          "ms": 2685
+        }
+      ]
+    }
+  ],
+  "scope": "Owned local synthetic AP sources only. Read pagination and recovery; no payment release, external message or production mutation.",
+  "originalBefore": "dd84ba2565201cb7e99aeba0207c0892639c81b7f77c70f2c31f1ef533646e77",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-revision.ts": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3",
+    "actions/purchasing/ap-history.actions.ts": "a16ac340274d02056c1f833b8b8fde84da6bb951f058ad2597b897eeb285eb3c",
+    "components/purchasing/APHistoryWorkbench.tsx": "fade0b5176ef216a0a9762d6f477525fef779cf21843302da55700bbd13c54e4",
+    "hooks/useAPHistoryWorkbench.ts": "b735db53ead8d3928e35ddf46b7dfd4f78f443764b6abd6180c7d53d47f6ce43",
+    "messages/en.json": "d5aae1c903186be13f343e9da2ed409b302e3dd4b457f68bf09bf8a21981b2e3",
+    "messages/fr.json": "599a361450a537b7ce630cecd5a97c5d068d93472a0a93eb727d7363995c9170"
+  },
+  "sourceStable": true
+}

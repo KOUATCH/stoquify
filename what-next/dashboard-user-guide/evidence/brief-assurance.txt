@@ -1,0 +1,52 @@
+
+ROUTE /en/dashboard/assurance/control-tower/incidents/[incidentId]
+FILE app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx; components/assurance/AssuranceIncidentDetailView.tsx; components/assurance/AssuranceIncidentActions.tsx; components/evidence/EvidenceGradeBadge.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/assurance/assurance-route-access.tsx; services/assurance/assurance-control-tower.service.ts; lib/utils.ts; services/assurance/assurance-control-tower-contracts.ts; actions/assurance/workflow-assurance-incident.actions.ts; actions/assurance/pos-cash-shortage-resolution.actions.ts; services/evidence/evidence-contracts.ts
+REDIRECTS []
+HEADINGS Incident actions
+PROPS Evidence | Source label | Source hash | Workflow | Required permission | Owner role | Occurrences | Timeline | Waivers | Redactions | Assign | Resolve | Suppress | Request waiver | Approve waiver | Reopen | Owner user ID | Assigned role | Due date | Note | Evidence hash | Reason | Suppress until | Evidence hash | Expires at
+CONTROLS Control Tower (Button, {}, components/assurance/AssuranceIncidentDetailView.tsx:54)
+Control Tower (Link, {"href":"\"/dashboard/assurance/control-tower\""}, components/assurance/AssuranceIncidentDetailView.tsx:55)
+Open source workflow (Button, {}, components/assurance/AssuranceIncidentDetailView.tsx:72)
+Open source workflow (Link, {"href":"incident.sourceRoute"}, components/assurance/AssuranceIncidentDetailView.tsx:73)
+Acknowledge (Button, {"type":"\"button\"","disabled":"isPending","onClick":"handleAcknowledge"}, components/assurance/AssuranceIncidentActions.tsx:156)
+Acknowledge (Button, {"type":"\"button\"","disabled":"isPending","onClick":"handleAcknowledge"}, components/assurance/AssuranceIncidentActions.tsx:311)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setOwnerId(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:355)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setAssignedRole(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:358)
+[dynamic or icon-only label] (Input, {"type":"\"datetime-local\"","onChange":"(event) => setDueAt(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:361)
+[dynamic or icon-only label] (Textarea, {"onChange":"(event) => setNote(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:368)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setEvidenceHash(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:374)
+[dynamic or icon-only label] (Textarea, {"onChange":"(event) => setReason(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:380)
+[dynamic or icon-only label] (Input, {"type":"\"datetime-local\"","onChange":"(event) => setSuppressedUntil(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:386)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setEvidenceHash(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:398)
+[dynamic or icon-only label] (Input, {"type":"\"datetime-local\"","onChange":"(event) => setExpiresAt(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:401)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setDialogAction(null)"}, components/assurance/AssuranceIncidentActions.tsx:419)
+Apply action (Button, {"type":"\"submit\"","disabled":"isPending"}, components/assurance/AssuranceIncidentActions.tsx:422)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled","onClick":"onClick"}, components/assurance/AssuranceIncidentActions.tsx:447)
+
+ROUTE /en/dashboard/assurance/control-tower
+FILE app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx; components/assurance/AssuranceControlTowerDashboard.tsx; components/assurance/AssuranceIncidentActions.tsx; components/evidence/EvidenceGradeBadge.tsx
+DEPENDENCIES services/assurance/assurance-control-tower.service.ts; app/[locale]/(dashboard)/dashboard/assurance/assurance-route-access.tsx; lib/utils.ts; services/assurance/assurance-control-tower-contracts.ts; actions/assurance/workflow-assurance-incident.actions.ts; actions/assurance/pos-cash-shortage-resolution.actions.ts; services/evidence/evidence-contracts.ts
+REDIRECTS []
+HEADINGS Workflow Assurance Control Tower | Manager-visible incidents | Incident actions
+PROPS Open | Blocking | Overdue | Hidden | Engine health | Recent runs | Stale running | Failed runs | Pending alerts | Failed alerts | Severity queues | Workflow queues | Recent check runs | Assign | Resolve | Suppress | Request waiver | Approve waiver | Reopen | Owner user ID | Assigned role | Due date | Note | Evidence hash | Reason | Suppress until | Evidence hash | Expires at
+CONTROLS Detail (Button, {}, components/assurance/AssuranceControlTowerDashboard.tsx:139)
+Detail (Link, {"href":"incident.detailRoute"}, components/assurance/AssuranceControlTowerDashboard.tsx:140)
+Source (Button, {}, components/assurance/AssuranceControlTowerDashboard.tsx:145)
+Source (Link, {"href":"incident.sourceRoute"}, components/assurance/AssuranceControlTowerDashboard.tsx:146)
+Acknowledge (Button, {"type":"\"button\"","disabled":"isPending","onClick":"handleAcknowledge"}, components/assurance/AssuranceIncidentActions.tsx:156)
+Acknowledge (Button, {"type":"\"button\"","disabled":"isPending","onClick":"handleAcknowledge"}, components/assurance/AssuranceIncidentActions.tsx:311)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setOwnerId(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:355)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setAssignedRole(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:358)
+[dynamic or icon-only label] (Input, {"type":"\"datetime-local\"","onChange":"(event) => setDueAt(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:361)
+[dynamic or icon-only label] (Textarea, {"onChange":"(event) => setNote(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:368)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setEvidenceHash(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:374)
+[dynamic or icon-only label] (Textarea, {"onChange":"(event) => setReason(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:380)
+[dynamic or icon-only label] (Input, {"type":"\"datetime-local\"","onChange":"(event) => setSuppressedUntil(event.target.value)"}, components/assurance/AssuranceIncidentActions.tsx:386)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => setEvidenceHash(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:398)
+[dynamic or icon-only label] (Input, {"type":"\"datetime-local\"","onChange":"(event) => setExpiresAt(event.target.value)","required":"true"}, components/assurance/AssuranceIncidentActions.tsx:401)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setDialogAction(null)"}, components/assurance/AssuranceIncidentActions.tsx:419)
+Apply action (Button, {"type":"\"submit\"","disabled":"isPending"}, components/assurance/AssuranceIncidentActions.tsx:422)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled","onClick":"onClick"}, components/assurance/AssuranceIncidentActions.tsx:447)

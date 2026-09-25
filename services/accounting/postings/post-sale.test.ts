@@ -26,6 +26,7 @@ import { postSale } from "./post-sale"
 const mockRecordPostedCloseInvalidation = recordPostedJournalCloseInvalidationInTx as jest.Mock
 
 const mockTx = {
+  $queryRaw: jest.fn(),
   salesOrder: {
     findFirst: jest.fn(),
   },
@@ -249,6 +250,7 @@ function arrangeNewSalePosting() {
   mockTx.ledgerPostingBatch.create.mockResolvedValue(pendingBatch)
   mockTx.journalEntry.findFirst.mockResolvedValue(null)
   mockTx.accountingPeriod.findFirst.mockResolvedValue(openPeriod)
+  mockTx.$queryRaw.mockResolvedValue([openPeriod])
   mockTx.postingRule.findFirst.mockResolvedValue(saleCompletionRule)
   mockTx.chartOfAccount.findMany.mockResolvedValue(accounts)
   mockTx.journal.findFirst.mockResolvedValue(salesJournal)

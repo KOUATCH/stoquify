@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import {
   type ColumnDef,
   type RowSelectionState,
@@ -38,6 +38,8 @@ import {
 import { Link } from "@/i18n/navigation"
 import type { Locale } from "@/types/bilingual"
 import { cn } from "@/lib/utils"
+import { usePermissions } from "@/hooks/usePermissions"
+import { mergeTerminalDraft } from "./terminal-draft"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import {
   AlertDialog,
@@ -83,6 +85,7 @@ import {
 import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
 import type { TerminalManagementInput, TerminalManagementRow } from "@/actions/pos/terminal-management.actions"
 import {
+  getTerminalManagementErrorMessage,
   useArchiveManagedTerminal,
   useCreateManagedTerminal,
   useTerminalManagementData,
@@ -137,6 +140,10 @@ const copy = {
     loadingBody: "Collecting terminal configuration, sessions, and drawer status.",
     errorTitle: "Terminals unavailable",
     retry: "Try again",
+    reviewLatest: "Review latest configuration",
+    archiveReviewDescription: "Review these details before confirming. Refreshing this review does not deactivate the terminal.",
+    reviewDescription: "Compare the current configuration with your proposed change. Newer values are kept where you did not edit a field. Reviewing does not save anything.",
+    currentValue: "Current", proposedValue: "Proposed", acceptReview: "Use this reviewed version", yes: "Yes", no: "No",
     emptyTitle: "No terminals found",
     emptyBody: "Create a terminal before opening cashier sessions at a location.",
     rows: "rows",
@@ -151,9 +158,13 @@ const copy = {
     activeTerminals: "Active",
     activeSessions: "Active sessions",
     drawerCount: "Cash drawers",
+    comfortable: "Comfortable",
+    compact: "Compact",
     openDrawers: "Open drawers",
     totalSales: "Session sales",
     transactions: "Transactions",
+    sessions: "Sessions",
+    sales: "Sales",
     copiedTitle: "Terminal ID copied",
     copiedBody: "The terminal identifier is ready to paste.",
     copyFailedTitle: "Copy failed",
@@ -220,6 +231,10 @@ const copy = {
     loadingBody: "Collecte de la configuration, des sessions et du statut caisse.",
     errorTitle: "Terminaux indisponibles",
     retry: "Reessayer",
+    reviewLatest: "Vérifier la configuration actuelle",
+    archiveReviewDescription: "Vérifiez ces informations avant de confirmer. Actualiser cette vérification ne désactive pas le terminal.",
+    reviewDescription: "Comparez la configuration actuelle à votre modification. Les valeurs récentes sont conservées pour les champs non modifiés. Cette vérification n’enregistre rien.",
+    currentValue: "Actuel", proposedValue: "Proposé", acceptReview: "Utiliser cette version vérifiée", yes: "Oui", no: "Non",
     emptyTitle: "Aucun terminal trouve",
     emptyBody: "Creez un terminal avant d'ouvrir des sessions caisse dans un lieu.",
     rows: "lignes",
@@ -234,9 +249,13 @@ const copy = {
     activeTerminals: "Actifs",
     activeSessions: "Sessions actives",
     drawerCount: "Caisses",
+    comfortable: "Confortable",
+    compact: "Compacte",
     openDrawers: "Caisses ouvertes",
     totalSales: "Ventes session",
     transactions: "Transactions",
+    sessions: "Sessions",
+    sales: "Ventes",
     copiedTitle: "ID terminal copie",
     copiedBody: "L'identifiant du terminal est pret a coller.",
     copyFailedTitle: "Copie echouee",
@@ -337,12 +356,20 @@ function toneClass(tone: "brand" | "spruce" | "gold" | "danger" | "success") {
   }[tone]
 }
 
-export default function TerminalManagementDashboard({
+export default function TerminalManagementDashboard(props: TerminalManagementDashboardProps) {
+  const { user, organizationId } = usePermissions()
+  const scope = useRef({ actorId: user?.id, organizationId })
+  if (scope.current.actorId !== user?.id || organizationId) scope.current = { actorId: user?.id, organizationId }
+  return <TerminalManagementWorkspace key={`${scope.current.actorId ?? "signed-out"}:${scope.current.organizationId ?? "unknown"}:${props.organizationId}`} {...props} />
+}
+
+function TerminalManagementWorkspace({
   organizationId,
   locale = "en",
 }: TerminalManagementDashboardProps) {
   const t = copy[locale]
   const notifications = useNotifications()
+  const { success: notifySuccess, error: notifyError } = notifications
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all")
   const [drawerFilter, setDrawerFilter] = useState<DrawerFilter>("all")
@@ -353,7 +380,11 @@ export default function TerminalManagementDashboard({
   const [formOpen, setFormOpen] = useState(false)
   const [editingTerminal, setEditingTerminal] = useState<TerminalManagementRow | null>(null)
   const [archiveTarget, setArchiveTarget] = useState<TerminalManagementRow | null>(null)
+  const [archiveError, setArchiveError] = useState<string | null>(null)
+  const [archiveReviewLoading, setArchiveReviewLoading] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
+  const [reviewedTerminal, setReviewedTerminal] = useState<TerminalManagementRow | null>(null)
+  const [reviewLoading, setReviewLoading] = useState(false)
   const [formState, setFormState] = useState<TerminalFormState>(() => getDefaultForm())
 
   const { data, isLoading, isFetching, isError, error, refetch } = useTerminalManagementData(organizationId)
@@ -414,6 +445,7 @@ export default function TerminalManagementDashboard({
   }, [terminals])
 
   const openCreate = useCallback(() => {
+    setReviewedTerminal(null)
     setEditingTerminal(null)
     setFormError(null)
     setFormState(getDefaultForm(locations[0]?.id))
@@ -421,6 +453,7 @@ export default function TerminalManagementDashboard({
   }, [locations])
 
   const openEdit = useCallback((terminal: TerminalManagementRow) => {
+    setReviewedTerminal(null)
     setEditingTerminal(terminal)
     setFormError(null)
     setFormState(formFromTerminal(terminal))
@@ -435,6 +468,7 @@ export default function TerminalManagementDashboard({
   }, [])
 
   const submitForm = useCallback(async () => {
+    if (reviewedTerminal || reviewLoading) return
     if (!formState.name.trim() || !formState.locationId) {
       setFormError(t.requiredBody)
       notifications.warning(t.requiredTitle, t.requiredBody)
@@ -451,7 +485,7 @@ export default function TerminalManagementDashboard({
 
     try {
       if (editingTerminal) {
-        await updateMutation.mutateAsync({ id: editingTerminal.id, data: payload })
+        await updateMutation.mutateAsync({ id: editingTerminal.id, data: { ...payload, expectedRevision: editingTerminal.configurationRevision } })
       } else {
         await createMutation.mutateAsync(payload)
       }
@@ -461,18 +495,52 @@ export default function TerminalManagementDashboard({
       setFormError(null)
       setFormState(getDefaultForm(locations[0]?.id))
     } catch (mutationError) {
-      setFormError(mutationError instanceof Error ? mutationError.message : t.requiredBody)
+      setFormError(getTerminalManagementErrorMessage(mutationError, locale))
     }
-  }, [createMutation, editingTerminal, formState, locations, notifications, t, updateMutation])
+  }, [createMutation, editingTerminal, formState, locations, locale, notifications, reviewedTerminal, reviewLoading, t, updateMutation])
+
+  async function reviewLatestConfiguration() {
+    if (!editingTerminal || reviewLoading || isSaving) return
+    setReviewLoading(true)
+    setReviewedTerminal(null)
+    try {
+      const result = await refetch()
+      if (result.isError || !result.data) throw new Error("Terminal review unavailable")
+      const latest = result.data.terminals.find(terminal => terminal.id === editingTerminal.id)
+      if (!latest) throw new Error("Terminal not found")
+      setReviewedTerminal(latest)
+    } catch (error) { setFormError(getTerminalManagementErrorMessage(error, locale)) }
+    finally { setReviewLoading(false) }
+  }
+
+  const reviewedDraft = reviewedTerminal && editingTerminal ? mergeTerminalDraft(formFromTerminal(editingTerminal), formState, formFromTerminal(reviewedTerminal)) : null
+  async function reviewArchiveConfiguration() {
+    if (!archiveTarget || archiveReviewLoading || archiveMutation.isPending) return
+    setArchiveReviewLoading(true)
+    try {
+      const result = await refetch()
+      if (result.isError || !result.data) throw new Error("Terminal review unavailable")
+      const latest = result.data.terminals.find(terminal => terminal.id === archiveTarget.id)
+      if (!latest) throw new Error("Terminal not found")
+      setArchiveTarget(latest)
+      setArchiveError(null)
+    } catch (error) { setArchiveError(getTerminalManagementErrorMessage(error, locale)) }
+    finally { setArchiveReviewLoading(false) }
+  }
+  function reviewValue(key: keyof TerminalFormState, value: string | boolean) {
+    if (typeof value === "boolean") return value ? t.yes : t.no
+    if (key === "locationId") return locations.find(location => location.id === value)?.name ?? t.noData
+    return value
+  }
 
   const copyTerminalId = useCallback(async (terminal: TerminalManagementRow) => {
     try {
       await navigator.clipboard.writeText(terminal.id)
-      notifications.success(t.copiedTitle, t.copiedBody)
+      notifySuccess(t.copiedTitle, t.copiedBody)
     } catch {
-      notifications.error(t.copyFailedTitle, t.copyFailedBody)
+      notifyError(t.copyFailedTitle, t.copyFailedBody)
     }
-  }, [notifications, t])
+  }, [notifyError, notifySuccess, t])
 
   const columns = useMemo<ColumnDef<TerminalManagementRow>[]>(() => [
     {
@@ -628,9 +696,9 @@ export default function TerminalManagementDashboard({
         return (
           <div className="min-w-[13rem] space-y-2">
             <div className="grid grid-cols-3 gap-2">
-              <InlineMetric label="Sessions" value={formatNumber(terminal.sessionsCount, locale)} />
-              <InlineMetric label="Sales" value={formatNumber(terminal.salesOrdersCount, locale)} />
-              <InlineMetric label="Drawers" value={formatNumber(terminal.cashDrawersCount, locale)} />
+              <InlineMetric label={t.sessions} value={formatNumber(terminal.sessionsCount, locale)} />
+              <InlineMetric label={t.sales} value={formatNumber(terminal.salesOrdersCount, locale)} />
+              <InlineMetric label={t.drawerCount} value={formatNumber(terminal.cashDrawersCount, locale)} />
             </div>
             <div className="flex items-center gap-2 text-xs text-[var(--dash-text-faint)]">
               <CalendarDays className="h-3.5 w-3.5" />
@@ -648,7 +716,7 @@ export default function TerminalManagementDashboard({
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]">
+              <Button aria-label={`${t.actions}: ${terminal.name}`} variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-[var(--dash-text-soft)] hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-brand-strong)]">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -671,7 +739,7 @@ export default function TerminalManagementDashboard({
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/cashDrawer" className="flex items-center">
+                <Link href="/dashboard/finance/cash-drawer" className="flex items-center">
                   <WalletCards className="me-2 h-4 w-4" />
                   {t.openCash}
                   <ExternalLink className="ms-auto h-3.5 w-3.5" />
@@ -681,7 +749,7 @@ export default function TerminalManagementDashboard({
               <DropdownMenuItem
                 className="text-[var(--dash-danger)] focus:text-[var(--dash-danger)]"
                 disabled={!terminal.isActive || !!terminal.currentSession}
-                onClick={() => setArchiveTarget(terminal)}
+                onClick={() => { setArchiveError(null); setArchiveTarget(terminal) }}
               >
                 <Power className="me-2 h-4 w-4" />
                 {t.deactivate}
@@ -852,8 +920,8 @@ export default function TerminalManagementDashboard({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                  <SelectItem value="comfortable">Comfort</SelectItem>
-                  <SelectItem value="compact">Compact</SelectItem>
+                  <SelectItem value="comfortable">{t.comfortable}</SelectItem>
+                  <SelectItem value="compact">{t.compact}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -917,6 +985,7 @@ export default function TerminalManagementDashboard({
       <Dialog
         open={formOpen}
         onOpenChange={(open) => {
+          if (isSaving || reviewLoading) return
           setFormOpen(open)
           if (!open && !isSaving) {
             setEditingTerminal(null)
@@ -925,7 +994,7 @@ export default function TerminalManagementDashboard({
           }
         }}
       >
-        <DialogContent className="dashboard-glass-panel max-h-[92vh] max-w-2xl overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+        <DialogContent closeLabel={locale === "fr" ? "Fermer" : "Close"} closeDisabled={isSaving} style={{ position: "fixed", background: "var(--dash-surface)" }} className="dashboard-landing-theme dark before:hidden after:hidden motion-reduce:animate-none w-[calc(100%-2rem)] min-w-0 max-h-[92dvh] max-w-2xl grid-cols-[minmax(0,1fr)] overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)] [&>*]:min-w-0">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[var(--dash-text)]">
               <Terminal className="h-5 w-5 text-[var(--dash-brand-strong)]" />
@@ -946,6 +1015,7 @@ export default function TerminalManagementDashboard({
             <div className="grid gap-4 md:grid-cols-2">
               <Field label={t.fields.name} required>
                 <Input
+                  aria-label={t.fields.name}
                   value={formState.name}
                   onChange={(event) => updateFormField("name", event.target.value)}
                   placeholder={t.placeholders.name}
@@ -954,6 +1024,7 @@ export default function TerminalManagementDashboard({
               </Field>
               <Field label={t.fields.terminalNumber}>
                 <Input
+                  aria-label={t.fields.terminalNumber}
                   value={formState.terminalNumber}
                   onChange={(event) => updateFormField("terminalNumber", event.target.value)}
                   placeholder={t.placeholders.terminalNumber}
@@ -964,7 +1035,7 @@ export default function TerminalManagementDashboard({
 
             <Field label={t.fields.location} required>
               <Select value={formState.locationId} onValueChange={(value) => updateFormField("locationId", value)}>
-                <SelectTrigger className="dashboard-control h-11 rounded-lg">
+                <SelectTrigger aria-label={t.fields.location} className="dashboard-control h-11 rounded-lg">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -991,22 +1062,35 @@ export default function TerminalManagementDashboard({
             </div>
 
             {formError ? (
-              <div className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] px-4 py-3 text-sm font-medium text-[var(--dash-danger)]">
+              <div role="alert" className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] px-4 py-3 text-sm font-medium text-[var(--dash-danger)]">
                 {formError}
               </div>
             ) : null}
+
+            {editingTerminal && formError ? <Button type="button" variant="outline" disabled={isSaving || reviewLoading} onClick={reviewLatestConfiguration} className="dashboard-button-secondary whitespace-normal">{t.reviewLatest}</Button> : null}
+            {reviewedTerminal && reviewedDraft ? <section aria-label={t.reviewLatest} className="space-y-3 rounded-lg border border-[var(--dash-border-subtle)] p-3">
+              <p className="text-sm text-[var(--dash-text-soft)]">{t.reviewDescription}</p>
+              <dl className="space-y-3">
+                {(Object.keys(reviewedDraft) as Array<keyof TerminalFormState>).map(key => <div key={key} className="min-w-0 break-words">
+                  <dt className="text-sm font-semibold">{t.fields[key === "locationId" ? "location" : key]}</dt>
+                  <dd className="text-sm text-[var(--dash-text-soft)]">{t.currentValue}: {reviewValue(key, formFromTerminal(reviewedTerminal)[key])}</dd>
+                  <dd className="text-sm">{t.proposedValue}: {reviewValue(key, reviewedDraft[key])}</dd>
+                </div>)}
+              </dl>
+              <Button type="button" className="dashboard-button-secondary h-auto whitespace-normal" onClick={() => { setFormState(reviewedDraft); setEditingTerminal(reviewedTerminal); setReviewedTerminal(null); setFormError(null) }}>{t.acceptReview}</Button>
+            </section> : null}
 
             <DialogFooter className="gap-2 pt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setFormOpen(false)}
-                disabled={isSaving}
+                disabled={isSaving || reviewLoading}
                 className="dashboard-button-secondary h-10 rounded-lg"
               >
                 {t.cancel}
               </Button>
-              <Button type="submit" disabled={isSaving || !locations.length} className="dashboard-button-primary h-10 rounded-lg">
+              <Button type="submit" disabled={isSaving || reviewLoading || !!reviewedTerminal || !locations.length} className="dashboard-button-primary h-10 rounded-lg">
                 {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -1024,8 +1108,8 @@ export default function TerminalManagementDashboard({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!archiveTarget} onOpenChange={(open) => !open && setArchiveTarget(null)}>
-        <AlertDialogContent className="dashboard-glass-panel border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+      <AlertDialog open={!!archiveTarget} onOpenChange={(open) => { if (!open && !archiveMutation.isPending && !archiveReviewLoading) setArchiveTarget(null) }}>
+        <AlertDialogContent style={{ position: "fixed", background: "var(--dash-surface)" }} className="dashboard-landing-theme dark before:hidden after:hidden motion-reduce:animate-none w-[calc(100%-2rem)] max-h-[92dvh] overflow-y-auto border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
           <AlertDialogHeader>
             <AlertDialogTitle>{t.deactivateTitle}</AlertDialogTitle>
             <AlertDialogDescription className="text-[var(--dash-text-soft)]">
@@ -1033,15 +1117,34 @@ export default function TerminalManagementDashboard({
               {archiveTarget ? ` ${archiveTarget.name}` : ""}
             </AlertDialogDescription>
           </AlertDialogHeader>
+          {archiveError ? <p role="alert" className="text-sm text-[var(--dash-danger)]">{archiveError}</p> : null}
+          {archiveTarget ? <section aria-label={t.reviewLatest} aria-busy={archiveReviewLoading} className="space-y-3 rounded-lg border border-[var(--dash-border-subtle)] p-3">
+            <p className="text-sm text-[var(--dash-text-soft)]">{t.archiveReviewDescription}</p>
+            <dl className="space-y-2 text-sm break-words">
+              <div><dt className="font-medium">{t.fields.name}</dt><dd>{archiveTarget.name}</dd></div>
+              <div><dt className="font-medium">{t.fields.terminalNumber}</dt><dd>{archiveTarget.terminalNumber}</dd></div>
+              <div><dt className="font-medium">{t.fields.location}</dt><dd>{archiveTarget.locationName}</dd></div>
+              <div><dt className="font-medium">{t.fields.isActive}</dt><dd>{archiveTarget.isActive ? t.yes : t.no}</dd></div>
+              <div><dt className="font-medium">{t.fields.hasCashDrawer}</dt><dd>{archiveTarget.hasCashDrawer ? t.yes : t.no}</dd></div>
+              <div><dt className="font-medium">{t.tableColumns.session}</dt><dd>{archiveTarget.currentSession?.sessionNumber ?? (archiveTarget.currentSessionId ? t.inSession : t.noSession)}</dd></div>
+            </dl>
+            <Button type="button" variant="outline" disabled={archiveReviewLoading || archiveMutation.isPending} onClick={reviewArchiveConfiguration} className="dashboard-button-secondary h-auto whitespace-normal">{archiveReviewLoading ? t.refreshing : t.reviewLatest}</Button>
+          </section> : null}
           <AlertDialogFooter>
-            <AlertDialogCancel className="dashboard-button-secondary rounded-lg">{t.cancel}</AlertDialogCancel>
+            <AlertDialogCancel disabled={archiveMutation.isPending || archiveReviewLoading} className="dashboard-button-secondary rounded-lg">{t.cancel}</AlertDialogCancel>
             <AlertDialogAction
+              disabled={archiveMutation.isPending || archiveReviewLoading || !!archiveError || !archiveTarget?.isActive || !!archiveTarget?.currentSessionId}
               className="rounded-lg bg-[var(--dash-danger)] text-white hover:bg-[var(--dash-danger)]/90"
               onClick={async (event) => {
                 event.preventDefault()
-                if (!archiveTarget) return
-                await archiveMutation.mutateAsync(archiveTarget.id)
-                setArchiveTarget(null)
+                if (!archiveTarget || archiveMutation.isPending || archiveReviewLoading || archiveError || !archiveTarget.isActive || archiveTarget.currentSessionId) return
+                setArchiveError(null)
+                try {
+                  await archiveMutation.mutateAsync({ id: archiveTarget.id, expectedRevision: archiveTarget.configurationRevision })
+                  setArchiveTarget(null)
+                } catch (error) {
+                  setArchiveError(getTerminalManagementErrorMessage(error, locale))
+                }
               }}
             >
               {archiveMutation.isPending ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : null}
@@ -1104,7 +1207,7 @@ function SwitchRow({
   return (
     <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] p-3">
       <Label className="text-sm font-medium text-[var(--dash-text)]">{label}</Label>
-      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+      <Switch aria-label={label} checked={checked} onCheckedChange={onCheckedChange} />
     </div>
   )
 }

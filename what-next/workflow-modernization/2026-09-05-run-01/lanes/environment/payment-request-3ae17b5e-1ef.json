@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-08T16:33:04.379Z",
+  "run": "3ae17b5e-1ef",
+  "sourcesBefore": {
+    "services/purchasing/payment-request.service.ts": "a990f4b39fb06fb98ea24bc72be4370beabfc31b0e2b9e704eb044a2c5e4987f",
+    "services/purchasing/payment-request-authority.ts": "b857f5fc4dc0270255df808acf682d9a29db48744c479c9181a7f0dabeb66bfe",
+    "services/purchasing/payment-request-evidence.ts": "c8d17217471e860a17175cc7fbbbb45f2009c8664a3c441cb80492c17f3f767b",
+    "services/purchasing/payment-request-contracts.ts": "05b3381795ccff918c5936660e6b722db92e66a6b57b10ed4c23d7f9c2ccf425",
+    "services/purchasing/ap-control.service.ts": "bc9f48d0e61e84afb3f034d2c3190cf343de120f4276e3932ad757e7245352a6",
+    "actions/purchasing/payment-request.actions.ts": "0eb3eec16d6051ac736583678e61da2c62c1f682c0de684cb6b8c4372ff570ef",
+    "actions/purchasing/ap-control.actions.ts": "a07e0198105c4a21b54753a4f0df6bb4ee4637fbb7a9855d7c97d882238693a3"
+  },
+  "checks": [
+    "Caller-selected requester is rejected; preview identity is the verified session user",
+    "Changed source revision prevents draft creation",
+    "Expired assurance blocks submission without an identity bypass",
+    "Concurrent identical submission retains one draft and one authenticated request event",
+    "Changed retry payload, self-approval and foreign-organization scope are denied",
+    "Revoked approval authority cannot commit a previously reviewed request",
+    "Independent concurrent confirmation approves the original draft once with retained decision evidence",
+    "Former controlled approval cannot create a payment by merely naming another requester",
+    "Release consumes verified request/approval evidence; later request, approval and release retries report current state without duplicate effects"
+  ],
+  "scope": "Owned local users/sessions and payment fixtures only; current DB authority and actual domain request/approval/release calls. No external payment rail, message or live customer action.",
+  "originalBefore": "9f35c14fe2ebb3f0fd766b25401e6f2692b16b976b4bc3650e278d221a76c02c",
+  "fixture": {
+    "organizationId": "workflow_supplier_ack_en_payment-request-3ae17b5e-1ef",
+    "paymentRequestId": "50a9bc1b-be4c-422f-9f6e-63601d857265"
+  },
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/payment-request.service.ts": "a990f4b39fb06fb98ea24bc72be4370beabfc31b0e2b9e704eb044a2c5e4987f",
+    "services/purchasing/payment-request-authority.ts": "b857f5fc4dc0270255df808acf682d9a29db48744c479c9181a7f0dabeb66bfe",
+    "services/purchasing/payment-request-evidence.ts": "c8d17217471e860a17175cc7fbbbb45f2009c8664a3c441cb80492c17f3f767b",
+    "services/purchasing/payment-request-contracts.ts": "05b3381795ccff918c5936660e6b722db92e66a6b57b10ed4c23d7f9c2ccf425",
+    "services/purchasing/ap-control.service.ts": "bc9f48d0e61e84afb3f034d2c3190cf343de120f4276e3932ad757e7245352a6",
+    "actions/purchasing/payment-request.actions.ts": "0eb3eec16d6051ac736583678e61da2c62c1f682c0de684cb6b8c4372ff570ef",
+    "actions/purchasing/ap-control.actions.ts": "a07e0198105c4a21b54753a4f0df6bb4ee4637fbb7a9855d7c97d882238693a3"
+  },
+  "sourceStable": true
+}

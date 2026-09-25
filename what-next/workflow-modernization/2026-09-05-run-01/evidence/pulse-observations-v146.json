@@ -1,0 +1,153 @@
+{
+  "at": "2026-09-13T18:54:11.161Z",
+  "baseline": "evidence/source-baseline-v146.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/analytics/sales-analytics.service.ts": "454d603afc34f0f6cdebb2d0e1fa8ecd53e1b9154db76d0ac615ee7bb49ab205",
+    "services/analytics/business-pulse-contracts.ts": "9ee681a1624c4faa23e8fc47df5ac10f21a8c60e67dc521e82091173e7e63d06",
+    "services/analytics/business-pulse-links.ts": "1518602dc88df56a846dbc7aa9e7dfeae4323a284d8f40a2b54ed5e301835bf5",
+    "services/bi/bi-contracts.ts": "65bd5316dc26c295eb2c4756327a9e2a4c3dd7b91f21fa00b07805b3d353efc4",
+    "components/bi/BIRiskOpportunityRadar.tsx": "83bae40c0c8d506aee6f8a03d740200034ae56228633b505cb76c0b1594899b7",
+    "components/bi/BIActionPriorityBoard.tsx": "93185424dbf7c162a16eb4e4bfa954c88433ed1976c92b2d7009bf9fa9604c76",
+    "components/analytics/BusinessPulseDashboard.tsx": "bd227a80f012ceb13fce31760230575e08ad7d7b4d41a4e1817432261dcba61f"
+  },
+  "tests": {
+    "passed": 55,
+    "suites": 7,
+    "receipt": "20981a",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/analytics/__tests__/business-pulse-snapshot.test.ts services/analytics/__tests__/business-pulse.service.test.ts services/analytics/__tests__/business-pulse-links.test.ts components/bi/__tests__/bi-command-primitives.test.tsx services/bi/__tests__/bi-evidence-adapter.service.test.ts services/analytics/__tests__/legacy-sales-analytics.test.ts actions/analytics/__tests__/sales-analytics.authorization.test.ts"
+  },
+  "sharedConsumerTests": {
+    "passed": 2,
+    "suites": 2,
+    "receipt": "39da66",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath components/cash-command/__tests__/CashCommandDashboard.test.tsx components/owner-war-room/__tests__/OwnerWarRoomDashboard.test.tsx"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "2aae92",
+    "command": "node node_modules/eslint/bin/eslint.js services/analytics/sales-analytics.service.ts services/analytics/business-pulse-contracts.ts services/analytics/business-pulse-links.ts services/bi/bi-contracts.ts components/bi/BIRiskOpportunityRadar.tsx components/bi/BIActionPriorityBoard.tsx components/analytics/BusinessPulseDashboard.tsx services/analytics/__tests__/business-pulse.service.test.ts components/bi/__tests__/bi-command-primitives.test.tsx"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "9aefc6",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/pulse-observations-v146-810d8201-4167-44b3-b5c0-2d4ef98719f9.json",
+    "receipt": "1e69ad",
+    "at": "2026-09-13T18:50:44.139Z",
+    "sourceBefore": {
+      "services/analytics/sales-analytics.service.ts": "454d603afc34f0f6cdebb2d0e1fa8ecd53e1b9154db76d0ac615ee7bb49ab205",
+      "services/analytics/business-pulse-contracts.ts": "9ee681a1624c4faa23e8fc47df5ac10f21a8c60e67dc521e82091173e7e63d06",
+      "services/analytics/business-pulse-links.ts": "1518602dc88df56a846dbc7aa9e7dfeae4323a284d8f40a2b54ed5e301835bf5",
+      "services/bi/bi-contracts.ts": "65bd5316dc26c295eb2c4756327a9e2a4c3dd7b91f21fa00b07805b3d353efc4",
+      "components/bi/BIRiskOpportunityRadar.tsx": "83bae40c0c8d506aee6f8a03d740200034ae56228633b505cb76c0b1594899b7",
+      "components/bi/BIActionPriorityBoard.tsx": "93185424dbf7c162a16eb4e4bfa954c88433ed1976c92b2d7009bf9fa9604c76",
+      "components/analytics/BusinessPulseDashboard.tsx": "bd227a80f012ceb13fce31760230575e08ad7d7b4d41a4e1817432261dcba61f"
+    },
+    "checks": [
+      {
+        "locale": "en",
+        "zeroActivityNoRisk": true,
+        "realCompletedOrderComparison": -100,
+        "unassessedObservations": 2,
+        "noAssignedOwnersOrDeadlines": true,
+        "noReadFinancialEffects": true
+      },
+      {
+        "locale": "fr",
+        "zeroActivityNoRisk": true,
+        "realCompletedOrderComparison": -100,
+        "unassessedObservations": 2,
+        "noAssignedOwnersOrDeadlines": true,
+        "noReadFinancialEffects": true
+      }
+    ],
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "pulse-observations-v146-en-1440-810d8201-4167-44b3-b5c0-2d4ef98719f9.png",
+          "pulse-observations-v146-en-768-810d8201-4167-44b3-b5c0-2d4ef98719f9.png",
+          "pulse-observations-v146-en-320-810d8201-4167-44b3-b5c0-2d4ef98719f9.png"
+        ],
+        "pageErrors": [],
+        "emptyNotHealthAssessment": true,
+        "readyMs": 7019,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "keyboardFocus": true,
+        "observationLimitsVisible": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "pulse-observations-v146-fr-1440-810d8201-4167-44b3-b5c0-2d4ef98719f9.png",
+          "pulse-observations-v146-fr-768-810d8201-4167-44b3-b5c0-2d4ef98719f9.png",
+          "pulse-observations-v146-fr-320-810d8201-4167-44b3-b5c0-2d4ef98719f9.png"
+        ],
+        "pageErrors": [],
+        "emptyNotHealthAssessment": true,
+        "readyMs": 3401,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "keyboardFocus": true,
+        "observationLimitsVisible": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "services/analytics/sales-analytics.service.ts": "454d603afc34f0f6cdebb2d0e1fa8ecd53e1b9154db76d0ac615ee7bb49ab205",
+      "services/analytics/business-pulse-contracts.ts": "9ee681a1624c4faa23e8fc47df5ac10f21a8c60e67dc521e82091173e7e63d06",
+      "services/analytics/business-pulse-links.ts": "1518602dc88df56a846dbc7aa9e7dfeae4323a284d8f40a2b54ed5e301835bf5",
+      "services/bi/bi-contracts.ts": "65bd5316dc26c295eb2c4756327a9e2a4c3dd7b91f21fa00b07805b3d353efc4",
+      "components/bi/BIRiskOpportunityRadar.tsx": "83bae40c0c8d506aee6f8a03d740200034ae56228633b505cb76c0b1594899b7",
+      "components/bi/BIActionPriorityBoard.tsx": "93185424dbf7c162a16eb4e4bfa954c88433ed1976c92b2d7009bf9fa9604c76",
+      "components/analytics/BusinessPulseDashboard.tsx": "bd227a80f012ceb13fce31760230575e08ad7d7b4d41a4e1817432261dcba61f"
+    },
+    "sourceStable": true
+  },
+  "visualReview": {
+    "inspected": "Final French mobile observation screenshot",
+    "screenshots": 6,
+    "limits": [
+      "Shared Ready, fresh and Operational badges remain English.",
+      "No screen-reader or zoom certification."
+    ]
+  },
+  "performance": {
+    "enMs": 7019,
+    "frMs": 3401,
+    "context": "Local development route-ready observations, not comparable production benchmarks."
+  },
+  "fixtureLimit": "Actual POS sale then explicit owned reporting-fixture orderDate edit. Financial read snapshots cover selected fixture tables, not every table. No production correction claimed.",
+  "guide": "BUSINESS_PULSE_OBSERVATIONS_V146.md",
+  "coverage": {
+    "discoveredWorkflows": 256,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2921,
+      "tests": 1042,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 196,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "migrations": false,
+  "build": {
+    "run": false,
+    "reason": "Actual isolated application exercised; migration-bearing default build not invoked."
+  }
+}

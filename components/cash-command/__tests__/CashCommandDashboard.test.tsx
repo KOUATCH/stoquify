@@ -311,11 +311,11 @@ describe("CashCommandDashboard", () => {
     )
 
     expect(screen.getByRole("heading", { name: "Cash command brief" })).toBeInTheDocument()
-    expect(screen.getByText("Cash trust banner")).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Cash trust banner" })).toBeInTheDocument()
     expect(screen.getByText("Cash collected")).toBeInTheDocument()
     expect(screen.getAllByText("Unreconciled cash").length).toBeGreaterThan(0)
     expect(screen.getByText("What changed since yesterday")).toBeInTheDocument()
-    expect(screen.getByText("What needs action today")).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "What needs action today" })).toBeInTheDocument()
     expect(screen.getByText("Resolve payment suspense")).toBeInTheDocument()
     expect(screen.getByText("Payment transaction proof")).toBeInTheDocument()
     expect(screen.getByText("Reconciliation proof")).toBeInTheDocument()

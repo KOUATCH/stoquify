@@ -45,6 +45,11 @@ const mockDb = db as unknown as {
 }
 
 const mockTx = {
+  pOSCheckoutWorkspace: { updateMany: jest.fn().mockResolvedValue({ count: 0 }) },
+  pOSCommitResult: { count: jest.fn().mockResolvedValue(0) },
+  pOSOfflineEvent: { count: jest.fn().mockResolvedValue(0) },
+  pOSOfflineSyncCertificate: { count: jest.fn().mockResolvedValue(0) },
+  salesOrder: { updateMany: jest.fn().mockResolvedValue({ count: 0 }) },
   pOSSession: {
     findFirst: jest.fn(),
     updateMany: jest.fn(),
@@ -315,6 +320,12 @@ describe("POS shift close evidence", () => {
       data: {
         status: "APPLIED",
         processedAt: expect.any(Date),
+        audits: { create: {
+          organizationId: "org-1",
+          action: "APPLIED",
+          reason: "Business event applied to its domain mutation.",
+          metadata: { status: "APPLIED" },
+        } },
       },
     })
     expect(createdEvent).toMatchObject({

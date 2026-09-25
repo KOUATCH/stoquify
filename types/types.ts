@@ -149,6 +149,7 @@ export type ForgotPasswordProps = {
 
 export interface RoleFormData {
   name: string;
+  nameFr?: string;
   description?: string;
   permissions: string[];
   organizationId: string;

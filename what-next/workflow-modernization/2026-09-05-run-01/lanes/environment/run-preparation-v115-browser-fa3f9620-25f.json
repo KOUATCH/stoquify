@@ -1,0 +1,78 @@
+{
+  "at": "2026-09-13T10:16:47.064Z",
+  "sourcesBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "9872e382eb68514c68fd14925a7f54763dc23ac21995d367324559819d999490",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts": "136ae6e194cd5d3e1f0a2e2c6ec66ffc21a99c537cd241afc651756cefb1f664",
+    "actions/payments/reconciliation-preparation.actions.ts": "211057dacb08dae00c7388fd370e4dee1a96f0fce61bcb281322cef20002e4ce",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "69236f750417a5af1deae0462147d7cfea7e70770328c2e0d8d834edb5bac7d8",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "7a529287a2989f6fcb7f9426c1544ebe034648c41fe6dbbff34a7a3cd1b38b2e",
+    "messages/en.json": "7bfc6ea3f8c531286983705172f968ebb496e1ade6abb2123ec0022088905f74",
+    "messages/fr.json": "8634629ceb4a83d943914f60cbc0670c544c29cb5339e921a329c0a2c4919e63"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "run-preparation-v115-en-prerequisite-desktop-fa3f9620-25f.png",
+        "run-preparation-v115-en-failure-fa3f9620-25f.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789294700095 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789294705108 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789294706423 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": [
+        56083,
+        10748
+      ],
+      "readOnlyDenial": true,
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Reconciliation runs', exact: true }).getByRole('button', { name: 'Review preparation', exact: true })\u001b[22m\n",
+      "stack": [
+        "locator.click: Timeout 60000ms exceeded.",
+        "Call log:",
+        "\u001b[2m  - waiting for getByRole('region', { name: 'Reconciliation runs', exact: true }).getByRole('button', { name: 'Review preparation', exact: true })\u001b[22m",
+        "",
+        "    at open (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-run-preparation-ui-v115.cjs:27:245)"
+      ]
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "run-preparation-v115-fr-prerequisite-desktop-fa3f9620-25f.png",
+        "run-preparation-v115-fr-failure-fa3f9620-25f.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789294852884 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789294845701 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": [
+        16280,
+        10888
+      ],
+      "readOnlyDenial": true,
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Rapprochements', exact: true }).getByRole('button', { name: 'Examiner la préparation', exact: true })\u001b[22m\n",
+      "stack": [
+        "locator.click: Timeout 60000ms exceeded.",
+        "Call log:",
+        "\u001b[2m  - waiting for getByRole('region', { name: 'Rapprochements', exact: true }).getByRole('button', { name: 'Examiner la préparation', exact: true })\u001b[22m",
+        "",
+        "    at open (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-run-preparation-ui-v115.cjs:27:245)"
+      ]
+    }
+  ],
+  "scope": "Actual EN/FR owned browser preparation with synthetic original provider mismatch, real financial treatment, exception closure and source recovery. No live provider or professional approval claim.",
+  "sourcesAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "9872e382eb68514c68fd14925a7f54763dc23ac21995d367324559819d999490",
+    "services/reconciliation/reconciliation-run-preparation-evidence.ts": "beed773939f58c5eca279e25685fe929d4f39988209f494e91483a51eac87047",
+    "services/reconciliation/reconciliation-run-preparation.contracts.ts": "136ae6e194cd5d3e1f0a2e2c6ec66ffc21a99c537cd241afc651756cefb1f664",
+    "actions/payments/reconciliation-preparation.actions.ts": "211057dacb08dae00c7388fd370e4dee1a96f0fce61bcb281322cef20002e4ce",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "6b77826393524909d2de4a5990f5a0e48c7bdfca82df284a92f55bfe53adb17d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "7a529287a2989f6fcb7f9426c1544ebe034648c41fe6dbbff34a7a3cd1b38b2e",
+    "messages/en.json": "7bfc6ea3f8c531286983705172f968ebb496e1ade6abb2123ec0022088905f74",
+    "messages/fr.json": "8634629ceb4a83d943914f60cbc0670c544c29cb5339e921a329c0a2c4919e63"
+  },
+  "sourceStable": false
+}

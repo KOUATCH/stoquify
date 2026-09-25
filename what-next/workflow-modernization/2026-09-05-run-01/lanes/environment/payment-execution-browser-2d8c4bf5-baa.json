@@ -1,0 +1,62 @@
+{
+  "at": "2026-09-08T17:51:44.649Z",
+  "run": "2d8c4bf5-baa",
+  "scope": "Owned localhost fixture organizations, actual authenticated execution recorder and password assurance. Request/approval use actual services; bank destination and external execution evidence are synthetic setup fixtures. No external bank rail or live customer mutation.",
+  "sourcesBefore": {
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "871d54f9c2dfef6792241120510469390bc4713c1be9b04ac36776fd9908f2f4",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-release-contracts.ts": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "12d71975bfdf0ffa811348930001accff117c06db7941ed237eb50f8fcb049af",
+    "actions/purchasing/payment-release.actions.ts": "fc88eaf0cecb36b1fe8ad7660b74065a0ec8c52b477d5263f4de1a0881a4e60e",
+    "actions/purchasing/ap-control.actions.ts": "46e6cdc26f3ad4f43c3e62a88b535ea71bef843a877f86841ad4f6a0ef08f3d1",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx": "bec844b1464db9fe8b6bfa83fbbbe7708d847b59511695af27da5c1ade5a6f12",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "d66268fce6c2c4d0660d9ea628c0da6874630eb8cbac75908f3a2b8909ca3815",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "73fac5a844b799dd62802501310be79dd81bae7ad24bc3ed9a0d4ea35b98ca76",
+    "i18n/request.ts": "c05310ca7f3be731b33477ff34aba2b049b986e531e4d45627dd9553f24eaf58",
+    "app/[locale]/layout.tsx": "8d69f9aeb68628a5dca069dbba29ff0cf7bda44a78c10622f3d2a0fdf19098dc",
+    "messages/payment-execution/en.json": "0e12e41879fbbd5696da2efd26a7b663e2fe7afb8194f81fe845afb5ddb7bbcc",
+    "messages/payment-execution/fr.json": "a8bef9ba63af78546481b14fbc965a797094fa06beead93c506450ca5692b906"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [],
+      "screenshots": [],
+      "timings": [],
+      "pageErrors": [],
+      "passed": false,
+      "error": "apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:3110\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:3110/api/auth/sign-in/email\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Origin: http://127.0.0.1:3110\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 131\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "stages": [],
+      "screenshots": [],
+      "timings": [],
+      "pageErrors": [],
+      "passed": false,
+      "error": "apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:3110\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:3110/api/auth/sign-in/email\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Origin: http://127.0.0.1:3110\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 131\u001b[22m\n"
+    }
+  ],
+  "originalBefore": "a8e07d38a7647a15e8fa8ddd61d63817cb516fb8af4243018df4eb3b5e70b0f2",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "871d54f9c2dfef6792241120510469390bc4713c1be9b04ac36776fd9908f2f4",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-release-contracts.ts": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "12d71975bfdf0ffa811348930001accff117c06db7941ed237eb50f8fcb049af",
+    "actions/purchasing/payment-release.actions.ts": "fc88eaf0cecb36b1fe8ad7660b74065a0ec8c52b477d5263f4de1a0881a4e60e",
+    "actions/purchasing/ap-control.actions.ts": "46e6cdc26f3ad4f43c3e62a88b535ea71bef843a877f86841ad4f6a0ef08f3d1",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx": "bec844b1464db9fe8b6bfa83fbbbe7708d847b59511695af27da5c1ade5a6f12",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "d66268fce6c2c4d0660d9ea628c0da6874630eb8cbac75908f3a2b8909ca3815",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "73fac5a844b799dd62802501310be79dd81bae7ad24bc3ed9a0d4ea35b98ca76",
+    "i18n/request.ts": "c05310ca7f3be731b33477ff34aba2b049b986e531e4d45627dd9553f24eaf58",
+    "app/[locale]/layout.tsx": "8d69f9aeb68628a5dca069dbba29ff0cf7bda44a78c10622f3d2a0fdf19098dc",
+    "messages/payment-execution/en.json": "0e12e41879fbbd5696da2efd26a7b663e2fe7afb8194f81fe845afb5ddb7bbcc",
+    "messages/payment-execution/fr.json": "a8bef9ba63af78546481b14fbc965a797094fa06beead93c506450ca5692b906"
+  },
+  "sourceStable": true
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   AlertTriangle,
   Ban,
@@ -127,6 +128,7 @@ export function AgentCommandPanel({
         digestId,
         periodStart,
         periodEnd,
+        locale,
       });
       if (!response.success) {
         setResult(null);
@@ -358,10 +360,10 @@ export function AgentCommandPanel({
                       variant="outline"
                       className="h-8 rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
                     >
-                      <a href={priority.href}>
+                      <Link href={`/${locale}${priority.href}`} prefetch={false}>
                         <ExternalLink className="h-4 w-4" aria-hidden="true" />
                         {t.open}
-                      </a>
+                      </Link>
                     </Button>
                     {proposalDraftsEnabled && brief.runId ? (
                       <CopilotProposalControls

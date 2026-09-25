@@ -1,0 +1,179 @@
+// REVIEW CANDIDATE ONLY. NOT APPLIED. NOT EXECUTED.
+import "server-only"
+
+import { createHash } from "node:crypto"
+import { Prisma } from "@prisma/client"
+import { ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { hashBusinessPayload } from "@/services/events/business-event.service"
+import { getModuleAdmissionInTx, ModuleNewWorkStoppedError } from "@/services/modules/module-admission.service"
+import { commitSaleSchema, type CommitSaleInput } from "./pos.schemas"
+
+type Tx = Prisma.TransactionClient
+export type AcceptedOfflineSaleReference = { organizationId: string; userId: string; offlineEventId: string }
+type Reader = Pick<Tx, "pOSOfflineEvent">
+type Envelope = Prisma.POSOfflineEventGetPayload<{ include: { device: true; businessEvent: true; syncBatch: true } }>
+
+function object(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+}
+function parseSale(event: Pick<Envelope, "payload" | "id">): CommitSaleInput {
+  const payload = object(event.payload) && object(event.payload.commitSale) ? event.payload.commitSale : event.payload
+  return commitSaleSchema.parse(object(payload)
+    ? { ...payload, clientCommitId: payload.clientCommitId ?? ("offline:" + event.id) }
+    : payload)
+}
+function canonicalEntryHash(event: Envelope) {
+  // Identical to buildOfflineEventEntryHash; avoids the existing POS/sync import cycle.
+  return createHash("sha256").update([event.deviceId, String(event.deviceSeq), event.eventType,
+    String(event.schemaVersion), event.payloadHash, event.prevHash ?? ""].join("|")).digest("hex")
+}
+
+export async function readAcceptedOfflineSale(client: Reader, reference: AcceptedOfflineSaleReference) {
+  const event = await client.pOSOfflineEvent.findFirst({
+    where: { id: reference.offlineEventId, organizationId: reference.organizationId },
+    include: { device: true, businessEvent: true, syncBatch: true },
+  })
+  if (!event) throw new NotFoundError("Accepted offline sale was not found")
+  if (event.eventType !== "OFFLINE_SALE_CAPTURED" || hashBusinessPayload(event.payload) !== event.payloadHash) {
+    throw new ConflictError("Stored offline sale does not match its accepted payload")
+  }
+  if (event.businessEvent?.actorId !== reference.userId || event.syncBatch?.actorId !== reference.userId) {
+    throw new NotFoundError("Accepted offline sale was not found for this actor")
+  }
+  const input = parseSale(event)
+  if (input.terminalId !== event.terminalId || input.locationId !== event.locationId ||
+    !event.sessionId || input.sessionId !== event.sessionId) {
+    throw new ConflictError("Stored offline sale scope does not match its accepted envelope")
+  }
+  return { event, input }
+}
+
+/** Database wall time AFTER admission locking; now() is transaction-start time. */
+export async function offlineServerClockInTx(tx: Tx): Promise<Date> {
+  const rows = await tx.$queryRaw<Array<{ now: Date }>>(Prisma.sql`
+    SELECT date_trunc('milliseconds', clock_timestamp()) AS "now"`)
+  if (rows.length !== 1 || !(rows[0].now instanceof Date) || !Number.isFinite(rows[0].now.getTime())) {
+    throw new ConflictError("Server acceptance clock is unavailable")
+  }
+  return rows[0].now
+}
+
+/** Parent UPDATE lock also blocks a new line's FK insertion while the cart is checked. */
+async function draftFingerprintInTx(tx: Tx, reference: AcceptedOfflineSaleReference, input: CommitSaleInput) {
+  const parent = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+    SELECT "id" FROM "sales_orders" WHERE "id" = ${input.salesOrderId}
+      AND "organizationId" = ${reference.organizationId} FOR UPDATE`)
+  if (parent.length !== 1) return null
+  await tx.$queryRaw(Prisma.sql`
+    SELECT "id" FROM "sales_order_lines" WHERE "salesOrderId" = ${input.salesOrderId}
+    ORDER BY "id" FOR SHARE`)
+  const sale = await tx.salesOrder.findFirst({
+    where: { id: input.salesOrderId, organizationId: reference.organizationId,
+      terminalId: input.terminalId, locationId: input.locationId, sessionId: input.sessionId,
+      createdById: reference.userId, channel: "POS", status: "DRAFT", deletedAt: null },
+    include: { lines: { orderBy: { id: "asc" } } },
+  })
+  return sale ? hashBusinessPayload(JSON.parse(JSON.stringify(sale))) : null
+}
+
+/** Ingestion already holds org admission and device locks; no client proof input. */
+export async function captureOfflineContinuationProofInTx(tx: Tx, reference: AcceptedOfflineSaleReference) {
+  const event = await tx.pOSOfflineEvent.findFirst({
+    where: { id: reference.offlineEventId, organizationId: reference.organizationId },
+    include: { device: true, businessEvent: true, syncBatch: true },
+  })
+  if (!event || event.status !== "PENDING_REPLAY" || event.eventType !== "OFFLINE_SALE_CAPTURED") return null
+  let parsed: CommitSaleInput
+  try { parsed = parseSale(event) } catch { return null }
+  // Preserve opaque historical-envelope ingestion, without fabricating replay eligibility.
+  if (!event.sessionId || parsed.sessionId !== event.sessionId ||
+    parsed.terminalId !== event.terminalId || parsed.locationId !== event.locationId) return null
+  const draftHash = await draftFingerprintInTx(tx, reference, parsed)
+  if (!draftHash) return null
+  const config = await tx.tenantModuleConfiguration.findUnique({
+    where: { organizationId: reference.organizationId }, select: { revision: true },
+  })
+  const proof = {
+    version: 1, organizationId: reference.organizationId, actorId: reference.userId,
+    offlineEventId: event.id, deviceId: event.deviceId, terminalId: event.terminalId,
+    locationId: event.locationId, sessionId: event.sessionId,
+    deviceSeq: event.deviceSeq, schemaVersion: event.schemaVersion,
+    payloadHash: event.payloadHash, entryHash: event.entryHash,
+    receivedAtServer: event.receivedAtServer.toISOString(),
+    acceptedAtServer: (await offlineServerClockInTx(tx)).toISOString(),
+    configurationRevision: config?.revision ?? 0, draftHash,
+    signingKeyHash: event.device.signingPublicKeyPem ? hashBusinessPayload(event.device.signingPublicKeyPem) : null,
+    signatureVerification: event.device.signingPublicKeyPem ? "ENFORCED" : "LEGACY_UNVERIFIED",
+  }
+  return { proof, proofHash: hashBusinessPayload(proof) }
+}
+
+/** Resolve existing POS registry outcomes BEFORE invoking this admission function. */
+export async function assertAcceptedOfflineContinuationInTx(
+  tx: Tx, reference: AcceptedOfflineSaleReference, expectedInput: CommitSaleInput,
+) {
+  const admissionInput = { organizationId: reference.organizationId, moduleSlug: "pos" as const, operation: "pos.sale.commit" }
+  const admission = await getModuleAdmissionInTx(tx, admissionInput)
+  // Lock order: org -> device -> envelope -> acceptance -> server draft.
+  const identity = await tx.pOSOfflineEvent.findFirst({
+    where: { id: reference.offlineEventId, organizationId: reference.organizationId }, select: { deviceId: true },
+  })
+  if (!identity) throw new NotFoundError("Accepted offline sale was not found")
+  await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "pos_offline_devices"
+    WHERE "id" = ${identity.deviceId} AND "organizationId" = ${reference.organizationId} FOR SHARE`)
+  await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "pos_offline_events"
+    WHERE "id" = ${reference.offlineEventId} AND "organizationId" = ${reference.organizationId} FOR UPDATE`)
+  await tx.$queryRaw(Prisma.sql`SELECT b."id" FROM "business_events" b
+    JOIN "pos_offline_events" e ON e."businessEventId" = b."id"
+    WHERE e."id" = ${reference.offlineEventId} AND e."organizationId" = ${reference.organizationId}
+      AND b."organizationId" = ${reference.organizationId} FOR SHARE OF b`)
+  const { event, input } = await readAcceptedOfflineSale(tx, reference)
+  const accepted = event.businessEvent
+  const evidence = accepted && object(accepted.payload) ? accepted.payload : null
+  if (hashBusinessPayload(input) !== hashBusinessPayload(expectedInput) ||
+    event.status !== "PENDING_REPLAY" || event.device.status !== "ACTIVE" ||
+    event.device.organizationId !== reference.organizationId || event.device.id !== event.deviceId ||
+    event.device.terminalId !== event.terminalId || event.device.locationId !== event.locationId ||
+    event.entryHash !== canonicalEntryHash(event) ||
+    !event.syncBatch || event.syncBatch.organizationId !== reference.organizationId ||
+    event.syncBatch.actorId !== reference.userId || event.syncBatch.deviceId !== event.deviceId ||
+    event.syncBatch.terminalId !== event.terminalId || event.syncBatch.locationId !== event.locationId ||
+    !accepted || accepted.organizationId !== reference.organizationId || accepted.actorId !== reference.userId ||
+    accepted.eventSource !== "OFFLINE_POS" || accepted.eventType !== "pos.offline.event.captured" ||
+    accepted.idempotencyKey !== ("offline-event:" + event.idempotencyKey + ":captured") ||
+    accepted.sourceId !== event.id || accepted.payloadHash !== event.payloadHash ||
+    accepted.deviceId !== event.deviceId || accepted.registerId !== event.terminalId ||
+    accepted.locationId !== event.locationId || evidence?.offlineEventId !== event.id ||
+    evidence?.entryHash !== event.entryHash || evidence?.payloadHash !== event.payloadHash ||
+    evidence?.eventType !== event.eventType || evidence?.deviceSeq !== event.deviceSeq) {
+    throw new ConflictError("Accepted offline sale evidence changed or does not match its server scope")
+  }
+  if (admission.allowed) return
+  const continuation = evidence && object(evidence.continuation) ? evidence.continuation : null
+  const proof = continuation && object(continuation.proof) ? continuation.proof : null
+  const denied = () => { throw new ModuleNewWorkStoppedError(admissionInput, admission.blockedBy) }
+  if (!proof || continuation?.proofHash !== hashBusinessPayload(proof) || proof.version !== 1 ||
+    proof.organizationId !== reference.organizationId || proof.actorId !== reference.userId ||
+    proof.offlineEventId !== event.id || proof.deviceId !== event.deviceId ||
+    proof.terminalId !== event.terminalId || proof.locationId !== event.locationId || proof.sessionId !== event.sessionId ||
+    proof.deviceSeq !== event.deviceSeq || proof.schemaVersion !== event.schemaVersion ||
+    proof.payloadHash !== event.payloadHash || proof.entryHash !== event.entryHash ||
+    proof.receivedAtServer !== event.receivedAtServer.toISOString() ||
+    proof.signingKeyHash !== (event.device.signingPublicKeyPem ? hashBusinessPayload(event.device.signingPublicKeyPem) : null) ||
+    typeof proof.acceptedAtServer !== "string" || typeof proof.configurationRevision !== "number" ||
+    !Number.isSafeInteger(proof.configurationRevision) || proof.configurationRevision < 0) return denied()
+  const receivedAt = event.receivedAtServer.getTime()
+  const acceptedAt = Date.parse(proof.acceptedAtServer as string)
+  const recordedAt = accepted.recordedAt.getTime()
+  if (![receivedAt, acceptedAt, recordedAt].every(Number.isFinite) || acceptedAt < receivedAt ||
+    !admission.blockedBy.every(slug => {
+      const cutoff = admission.stoppedAt[slug]
+      return typeof cutoff === "string" && Number.isFinite(Date.parse(cutoff)) &&
+        Math.max(receivedAt, acceptedAt, recordedAt) < Date.parse(cutoff)
+    })) return denied()
+  const draftHash = await draftFingerprintInTx(tx, reference, input)
+  if (!draftHash || draftHash !== proof.draftHash) {
+    throw new ConflictError("The server cart changed after offline acceptance; review the retained obligation")
+  }
+}
+

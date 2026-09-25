@@ -1,0 +1,46 @@
+const f = require('./exception-link-repair-fixtures.cjs'), { db, fs, path, crypto, assert } = f;
+const service = require(path.join(f.root, 'services/reconciliation/payment-exception-link.service.ts'));
+const run = crypto.randomUUID().slice(0, 12), organizations = [];
+const files = ['services/reconciliation/payment-exception-link.service.ts', 'services/reconciliation/payment-exception-link.contracts.ts', 'services/accounting/close-assurance-pack.service.ts', 'services/reconciliation/payment-reconciliation-notifications.ts'];
+const sources = () => Object.fromEntries(files.map(p => [p, crypto.createHash('sha256').update(fs.readFileSync(path.join(f.root, p))).digest('hex')]));
+const tables = ['paymentException', 'suspenseItem', 'reconciliationRun', 'paymentReconciliationInboxItem', 'ledgerAuditEvent', 'closeRun', 'closePackExport'];
+const snapshot = async where => f.hash(await Promise.all(tables.map(n => db[n].findMany({ where, orderBy: { id: 'asc' } }))));
+const finance = async () => f.hash(await Promise.all(['journalEntry', 'journalEntryLine', 'ledgerPostingBatch', 'accountingSourceLink'].map(n => db[n].findMany({ orderBy: { id: 'asc' } }))));
+const report = { at: new Date().toISOString(), run, sourcesBefore: sources(), checks: [], scope: 'Owned isolated automatic-run fixtures with the historical missing link reproduced. Synthetic current SIGNED/CERTIFIED labels test invalidation/retention only and are not genuine approvals or sign-off proof. No financial posting or external delivery.' };
+async function command(x, row) { const preview = await service.readReconciliationExceptionLink({ suspenseItemId: row.suspenseItem.id }, x.control); return { suspenseItemId: row.suspenseItem.id, reason: 'Restore verified original source relationship', expectedRevision: preview.revision, idempotencyKey: crypto.randomUUID() }; }
+(async () => {
+  await f.local.withClient(f.target, f.local.assertOwned); report.originalBefore = await snapshot({ organizationId: { notIn: organizations } });
+  const x = await f.fixture(run, organizations, 5); report.financialBefore = await finance();
+  const first = x.exceptions[0], second = x.exceptions[1], third = x.exceptions[2], fourth = x.exceptions[3], fifth = x.exceptions[4];
+  const beforeRead = await snapshot({ organizationId: x.organizationId }), input = await command(x, first); assert.equal(await snapshot({ organizationId: x.organizationId }), beforeRead);
+  for (const [label, control] of [['missing-write', { ...x.control, actorPermissions: ['payments.reconciliation.read'] }], ['stale-auth', { ...x.control, lastAuthAt: new Date(0) }], ['foreign-actor', { ...x.control, actorId: 'not-this-org' }], ['foreign-org', { ...x.control, organizationId: 'not-this-org' }]]) {
+    await assert.rejects(() => service.repairReconciliationExceptionLink(input, control)); assert.equal(await snapshot({ organizationId: x.organizationId }), beforeRead); report.checks.push({ denial: label, unchanged: true });
+  }
+  const restored = await service.repairReconciliationExceptionLink(input, x.control), repaired = await db.paymentException.findUniqueOrThrow({ where: { id: first.id } }); assert.equal(repaired.suspenseItemId, first.suspenseItem.id); assert.equal(repaired.status, first.status); assert.equal(repaired.ownerId, first.ownerId);
+  const once = await snapshot({ organizationId: x.organizationId }); assert.equal((await service.repairReconciliationExceptionLink(input, x.control)).receiptId, restored.receiptId); assert.equal(await snapshot({ organizationId: x.organizationId }), once);
+  await assert.rejects(() => service.repairReconciliationExceptionLink({ ...input, reason: 'Changed replay command' }, x.control), error => error.code === 'IDEMPOTENCY_CONFLICT'); report.checks.push({ repairAndExactReplay: true, receiptId: restored.receiptId, exceptionStatusUnchanged: true });
+  const stale = await command(x, second); await db.paymentException.update({ where: { id: second.id }, data: { metadata: { ownerNote: 'Concurrent retained metadata' } } }); const afterWinner = await snapshot({ organizationId: x.organizationId });
+  await assert.rejects(() => service.repairReconciliationExceptionLink(stale, x.control), error => error.code === 'CONFLICT'); assert.equal(await snapshot({ organizationId: x.organizationId }), afterWinner); report.checks.push({ staleReviewDoesNotOverwriteWinner: true });
+  const period = await db.accountingPeriod.findFirstOrThrow({ where: { organizationId: x.organizationId, startDate: { lte: new Date() }, endDate: { gte: new Date() } } });
+  const syntheticCertificate = { kind: 'OWNED_SYNTHETIC_INVALIDATION_PRECONDITION', privateEvidence: crypto.randomUUID(), notAnApproval: true };
+  await db.reconciliationRun.update({ where: { id: x.runId }, data: { status: 'SIGNED', signedAt: new Date(), signedById: x.checkerId, certificateHash: 'synthetic-only', certificatePayload: syntheticCertificate } });
+  const close = await db.closeRun.create({ data: { organizationId: x.organizationId, periodId: period.id, status: 'CERTIFIED', metadata: { synthetic: true, notAnApproval: true } } });
+  const exp = await db.closePackExport.create({ data: { organizationId: x.organizationId, periodId: period.id, closeRunId: close.id, watermarkId: crypto.randomUUID(), contentHash: crypto.randomUUID(), isCertified: true, metadata: { synthetic: true } } });
+  const signedCommand = await command(x, third), signedResult = await service.repairReconciliationExceptionLink(signedCommand, x.control);
+  const receipt = await db.paymentReconciliationInboxItem.findUniqueOrThrow({ where: { id: signedResult.receiptId } }); assert.deepEqual(receipt.payloadSummary.priorRunCertificate.certificatePayload, syntheticCertificate);
+  const changedRun = await db.reconciliationRun.findUniqueOrThrow({ where: { id: x.runId } }); assert.equal(changedRun.status, 'NEEDS_REVIEW'); assert.equal(changedRun.certificateHash, null); assert.equal(changedRun.certificatePayload, null);
+  assert.equal((await db.closeRun.findUniqueOrThrow({ where: { id: close.id } })).status, 'BLOCKED');
+  const retainedExport = await db.closePackExport.findUniqueOrThrow({ where: { id: exp.id } });
+  assert.equal(retainedExport.isCertified, true); assert.equal(retainedExport.metadata.staleState.status, 'EVIDENCE_STALE');
+  assert.equal(retainedExport.metadata.staleState.sourceCode, 'PAYMENT_RECONCILIATION_SOURCE_REPAIRED'); assert.equal(retainedExport.metadata.staleState.sourceId, x.runId);
+  report.checks.push({ syntheticCertificateRetainedAndCurrentRunCloseInvalidated: true, historicalExportFlagRetainedWithExplicitStaleEvidence: true, notGenuineSignOffProof: true });
+  const late = await command(x, fourth), beforeLate = await snapshot({ organizationId: x.organizationId }), transaction = db.$transaction.bind(db);
+  db.$transaction = (work, options) => transaction(tx => work(new Proxy(tx, { get(target, property) { if (property === 'ledgerAuditEvent') return new Proxy(target.ledgerAuditEvent, { get(model, method) { if (method === 'create') return args => { if (args.data.action === 'RECONCILIATION_EXCEPTION_LINK_REPAIR') throw new Error('OWNED_LATE_AUDIT_FAILURE'); return model.create(args); }; return model[method]; } }); return target[property]; } })), options);
+  try { await assert.rejects(() => service.repairReconciliationExceptionLink(late, x.control), /OWNED_LATE_AUDIT_FAILURE/); } finally { db.$transaction = transaction; }
+  assert.equal(await snapshot({ organizationId: x.organizationId }), beforeLate); report.checks.push({ lateAuditFailureRollsBackAllRepairEffects: true });
+  const duplicateCommand = await command(x, fifth); await db.suspenseItem.create({ data: { organizationId: x.organizationId, providerAccountId: x.provider.id, reconciliationRunId: x.runId, type: fifth.suspenseItem.type, direction: fifth.suspenseItem.direction, amount: fifth.suspenseItem.amount, currencyCode: 'XAF', evidence: fifth.suspenseItem.evidence } });
+  const duplicateBefore = await snapshot({ organizationId: x.organizationId }); await assert.rejects(() => service.repairReconciliationExceptionLink(duplicateCommand, x.control), error => error.code === 'CONFLICT'); assert.equal(await snapshot({ organizationId: x.organizationId }), duplicateBefore); report.checks.push({ ambiguousDuplicateRefused: true });
+})().catch(error => { report.error = f.safe(error); report.stack = String(error.stack).split('\n').slice(0, 5); }).finally(async () => {
+  report.originalUnchanged = report.originalBefore === await snapshot({ organizationId: { notIn: organizations } }); report.financialUnchanged = report.financialBefore === await finance(); report.sourcesAfter = sources(); report.sourceStable = JSON.stringify(report.sourcesBefore) === JSON.stringify(report.sourcesAfter); await db.$disconnect();
+  const file = 'exception-link-repair-v109-' + run + '.json'; fs.writeFileSync(path.join(__dirname, file), JSON.stringify(report, null, 2), { flag: 'wx' }); console.log(JSON.stringify({ file, checks: report.checks, error: report.error, stack: report.stack, originalUnchanged: report.originalUnchanged, financialUnchanged: report.financialUnchanged, sourceStable: report.sourceStable })); process.exit(!report.error && report.originalUnchanged && report.financialUnchanged && report.sourceStable ? 0 : 1);
+});

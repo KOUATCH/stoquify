@@ -1,0 +1,151 @@
+{
+  "at": "2026-09-13T14:27:19.418Z",
+  "baseline": "evidence/source-baseline-v131.json",
+  "sources": {
+    "services/pos/pos.service.ts": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+    "services/pos/tender-write-access.ts": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4",
+    "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1",
+    "components/pos/ProfessionalPOSSystem.tsx": "5c346f16cdf8f9aebd3736aa24a253c3b534e5d4c9be975260845578fe3a7d28",
+    "hooks/posHooks/usePosOperations.ts": "bc07f2361d6a4678ee9271b9cfe2b8ab0a0b0457b2b3f56b7ce078590c666cfc",
+    "messages/en.json": "25a1e9de9f61c693ea1a89cd82e8ef7ed4f66363564d338fbf029b8922d750b4",
+    "messages/fr.json": "1c7ce874ab566e275ff814b3bc466a244282a7a0f74124fdc6668a3d2d81ae26"
+  },
+  "policy": "evidence/pos-tender-access-policy-v131.json",
+  "tests": {
+    "passed": 102,
+    "suites": 7,
+    "receipts": [
+      "d582b9",
+      "6afc91"
+    ]
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "7b06ae"
+  },
+  "lint": {
+    "passed": true,
+    "files": 5,
+    "receipt": "241c44"
+  },
+  "database": {
+    "file": "lanes/environment/tender-access-v131-after-dc3bf273-44b8-4b1b-af15-1314128509c9.json",
+    "receipt": "2a4e4e",
+    "at": "2026-09-13T14:23:46.058Z",
+    "phase": "after",
+    "checks": [
+      {
+        "operation": "commit",
+        "preflightAllowedBeforeGrantChanged": true,
+        "restrictedWrite": "denied_all_financial_state_unchanged",
+        "authorizedExplicitRecovery": true,
+        "balancedPostedEntries": 2,
+        "stockQuantity": 19,
+        "exactServiceReplayAfterRestriction": true,
+        "foreignActorReplayDenied": true,
+        "passed": true
+      },
+      {
+        "operation": "refund",
+        "preflightAllowedBeforeGrantChanged": true,
+        "restrictedWrite": "denied_all_financial_state_unchanged",
+        "authorizedExplicitRecovery": true,
+        "balancedPostedEntries": 3,
+        "stockQuantity": 20,
+        "exactServiceReplayAfterRestriction": true,
+        "foreignActorReplayDenied": true,
+        "passed": true
+      },
+      {
+        "operation": "void",
+        "preflightAllowedBeforeGrantChanged": true,
+        "restrictedWrite": "denied_all_financial_state_unchanged",
+        "authorizedExplicitRecovery": true,
+        "balancedPostedEntries": 3,
+        "stockQuantity": 20,
+        "exactServiceReplayAfterRestriction": true,
+        "foreignActorReplayDenied": true,
+        "passed": true
+      }
+    ],
+    "scope": "Owned local PostgreSQL, actual cash sale/posting/correction services, synthetic accounts and rules; no external payment, delivery, statutory approval or live activation.",
+    "sourceBefore": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+    "passed": true,
+    "sourceAfter": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/tender-browser-v131-b45e5db1-5702-46cc-8f34-6cd32daa6c20.json",
+    "receipt": "f00b2d",
+    "at": "2026-09-13T14:22:15.114Z",
+    "sourcesBefore": {
+      "services/pos/pos.service.ts": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+      "services/pos/tender-write-access.ts": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4",
+      "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1",
+      "components/pos/ProfessionalPOSSystem.tsx": "5c346f16cdf8f9aebd3736aa24a253c3b534e5d4c9be975260845578fe3a7d28",
+      "hooks/posHooks/usePosOperations.ts": "bc07f2361d6a4678ee9271b9cfe2b8ab0a0b0457b2b3f56b7ce078590c666cfc",
+      "messages/en.json": "25a1e9de9f61c693ea1a89cd82e8ef7ed4f66363564d338fbf029b8922d750b4",
+      "messages/fr.json": "1c7ce874ab566e275ff814b3bc466a244282a7a0f74124fdc6668a3d2d81ae26"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "pageErrors": [],
+        "screenshots": [
+          "tender-v131-en-1440-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+          "tender-v131-en-768-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+          "tender-v131-en-320-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png"
+        ],
+        "readyMs": 13470,
+        "deniedAttemptPreservesTenderAndFinancialState": true,
+        "grantChangeDoesNotSubmit": true,
+        "explicitKeyboardRetryCommitsExactlyOnceWithBalancedPostings": true
+      },
+      {
+        "locale": "fr",
+        "pageErrors": [],
+        "screenshots": [
+          "tender-v131-fr-1440-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+          "tender-v131-fr-768-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+          "tender-v131-fr-320-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png"
+        ],
+        "readyMs": 7658,
+        "deniedAttemptPreservesTenderAndFinancialState": true,
+        "grantChangeDoesNotSubmit": true,
+        "explicitKeyboardRetryCommitsExactlyOnceWithBalancedPostings": true
+      }
+    ],
+    "scope": "Actual EN/FR cashier actions on owned local accounts and PostgreSQL. Synthetic cash/ledger fixture, no external provider, delivery, statutory approval or live activation.",
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/pos.service.ts": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+      "services/pos/tender-write-access.ts": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4",
+      "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1",
+      "components/pos/ProfessionalPOSSystem.tsx": "5c346f16cdf8f9aebd3736aa24a253c3b534e5d4c9be975260845578fe3a7d28",
+      "hooks/posHooks/usePosOperations.ts": "bc07f2361d6a4678ee9271b9cfe2b8ab0a0b0457b2b3f56b7ce078590c666cfc",
+      "messages/en.json": "25a1e9de9f61c693ea1a89cd82e8ef7ed4f66363564d338fbf029b8922d750b4",
+      "messages/fr.json": "1c7ce874ab566e275ff814b3bc466a244282a7a0f74124fdc6668a3d2d81ae26"
+    },
+    "sourceStable": true
+  },
+  "verificationDetails": "TENDER_ACCESS_V131.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2890,
+      "tests": 1026,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 174,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2514,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

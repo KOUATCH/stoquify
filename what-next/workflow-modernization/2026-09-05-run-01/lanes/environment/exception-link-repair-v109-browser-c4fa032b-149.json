@@ -1,0 +1,77 @@
+{
+  "at": "2026-09-12T18:53:26.752Z",
+  "run": "c4fa032b-149",
+  "sourcesBefore": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed",
+    "actions/payments/exception-link.actions.ts": "bac00653e10b2b984e401b49c5ae862ff61fb86f8d1cc00476e6ac2c5a1ab6f3",
+    "components/finance/PaymentExceptionLinkPanel.tsx": "3276fc518672c5d1f0ccbc2079eddce746c87ba539e3e8cede8f868dffc50055",
+    "components/finance/PaymentSuspenseQueue.tsx": "34f9f9f546fdbdbf3594daa991985ac31415c479c2bf3c4761d7328cebe415e3",
+    "messages/en.json": "dd1142806118a4b658e2119e878b9b66a9d9cf54e59fd181acd051338a0d6839",
+    "messages/fr.json": "bf1c69e9c336207c0008cd3917da2e9bf030ace8517b5db102339dfd9958fdac"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "exception-link-repair-v109-en-step-up-320-c4fa032b-149.png",
+        "exception-link-repair-v109-en-repaired-320-c4fa032b-149.png",
+        "exception-link-repair-v109-en-linked-768-c4fa032b-149.png",
+        "exception-link-repair-v109-en-linked-1440-c4fa032b-149.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [],
+      "routeLoadMs": [
+        120303,
+        12328
+      ],
+      "deniedWithoutMutation": true,
+      "actualRepairAndRetainedReview": true,
+      "receiptId": "9cee010a-b111-4869-95fa-84af56462285",
+      "exactReplayOneReceipt": true,
+      "focusReturned": true,
+      "financialUnchanged": true,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "exception-link-repair-v109-fr-step-up-320-c4fa032b-149.png",
+        "exception-link-repair-v109-fr-repaired-320-c4fa032b-149.png",
+        "exception-link-repair-v109-fr-linked-768-c4fa032b-149.png",
+        "exception-link-repair-v109-fr-linked-1440-c4fa032b-149.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789239433637 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789239483813 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": [
+        11027,
+        12167
+      ],
+      "deniedWithoutMutation": true,
+      "actualRepairAndRetainedReview": true,
+      "receiptId": "6933c8a0-5bf7-4af9-a35d-ce32ada380c7",
+      "exactReplayOneReceipt": true,
+      "focusReturned": true,
+      "financialUnchanged": true,
+      "passed": true
+    }
+  ],
+  "scope": "Actual EN/FR source-link review and repair in owned fixtures with the historical missing link reproduced. Password step-up, explicit retry/reload and real persisted records; no synthetic SIGNED state, live approval or financial posting.",
+  "sourcesAfter": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed",
+    "actions/payments/exception-link.actions.ts": "bac00653e10b2b984e401b49c5ae862ff61fb86f8d1cc00476e6ac2c5a1ab6f3",
+    "components/finance/PaymentExceptionLinkPanel.tsx": "3276fc518672c5d1f0ccbc2079eddce746c87ba539e3e8cede8f868dffc50055",
+    "components/finance/PaymentSuspenseQueue.tsx": "34f9f9f546fdbdbf3594daa991985ac31415c479c2bf3c4761d7328cebe415e3",
+    "messages/en.json": "dd1142806118a4b658e2119e878b9b66a9d9cf54e59fd181acd051338a0d6839",
+    "messages/fr.json": "bf1c69e9c336207c0008cd3917da2e9bf030ace8517b5db102339dfd9958fdac"
+  },
+  "sourceStable": true
+}

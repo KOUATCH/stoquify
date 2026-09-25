@@ -1,0 +1,43 @@
+{
+  "run": "59ca484b-96a",
+  "startedAt": "2026-09-06T16:42:46.898Z",
+  "sourcesBefore": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "fcb6ad2542e6d8ede6c75209f4ff757a47911df0fba46ae4d57f58e4eef2c74d",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "1d74943ed10c2c49d5189e57a8842e6e43955f86f36be2248801ec19658df9a0",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [
+        "en-security-success-before-failure-59ca484b-96a.png"
+      ],
+      "readyMs": 8708,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Other active sessions revoked: 999', { exact: true })\nExpected: visible\nTimeout: 90000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 90000ms\n  - waiting for getByText('Other active sessions revoked: 999', { exact: true })\n"
+    },
+    {
+      "locale": "fr",
+      "pageErrors": [],
+      "screenshots": [
+        "fr-security-success-before-failure-59ca484b-96a.png"
+      ],
+      "readyMs": 6377,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Autres sessions actives revoquees: 999', { exact: true })\nExpected: visible\nTimeout: 90000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 90000ms\n  - waiting for getByText('Autres sessions actives revoquees: 999', { exact: true })\n"
+    }
+  ],
+  "workflowPassed": false,
+  "scope": "The canonical read prerequisite is corrected. This captures the still-unfixed URL success display and diagnoses the account menu without submitting mutations.",
+  "completedAt": "2026-09-06T16:46:17.161Z",
+  "sourcesAfter": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "fcb6ad2542e6d8ede6c75209f4ff757a47911df0fba46ae4d57f58e4eef2c74d",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "1d74943ed10c2c49d5189e57a8842e6e43955f86f36be2248801ec19658df9a0",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279"
+  },
+  "sourceStable": true,
+  "driverSha256": "8a1ff4b033ae28fb2afa197c80dc0b79e36549b572162735f81682f7b06e87f7"
+}

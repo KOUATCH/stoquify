@@ -1,0 +1,83 @@
+{
+  "run": "7b28f44e-321",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T13:23:46.942Z",
+  "sourcesBefore": {
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "hooks/useMemberAccess.ts": "b8fbd52fd866b8ba52abd1b1ad6b69dd17564748fabd3a0ec9072e79b2288082",
+    "components/settings/MemberAccessEditor.tsx": "7435a9cf20bebb0881295891889a28e30c9fb8e4aaad8efb4a42626dabf5aa2f",
+    "components/settings/member-access-copy.ts": "32224403e66b520862e3caa7e9ee76e2cd7da6fd171c7838c92ca61e71b6ae95",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "25085e83405e70c638bbbee69018012608b40bf8cc439140189ae1237982ad84",
+    "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-member-access-reader-7b28f44e-321.png",
+        "en-member-access-review-mobile-7b28f44e-321.png",
+        "en-member-access-review-desktop-7b28f44e-321.png",
+        "en-member-access-roles-receipt-7b28f44e-321.png",
+        "en-member-access-failure-7b28f44e-321.png"
+      ],
+      "pageErrors": [],
+      "readOnlyControls": true,
+      "routeReadyMs": 39264,
+      "receiptMs": 2817,
+      "error": "locator.click: Error: strict mode violation: getByRole('dialog').getByRole('button', { name: 'Close', exact: true }) resolved to 2 elements:\n    1) <button type=\"button\" class=\"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 px-4 py-2 dashboard-button-secondary h-auto whitespace-normal\">Close</button> aka getByRole('button', { name: 'Close' }).first()\n    2) <button type=\"button\" class=\"absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground\">…</button> aka getByRole('button', { name: 'Close' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByRole('button', { name: 'Close', exact: true })\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-member-access-reader-7b28f44e-321.png",
+        "fr-member-access-review-mobile-7b28f44e-321.png",
+        "fr-member-access-review-desktop-7b28f44e-321.png",
+        "fr-member-access-roles-receipt-7b28f44e-321.png",
+        "fr-member-access-failure-7b28f44e-321.png"
+      ],
+      "pageErrors": [],
+      "readOnlyControls": true,
+      "routeReadyMs": 8779,
+      "receiptMs": 2502,
+      "error": "locator.click: Error: strict mode violation: getByRole('dialog').getByRole('button', { name: 'Fermer', exact: true }) resolved to 2 elements:\n    1) <button type=\"button\" class=\"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 px-4 py-2 dashboard-button-secondary h-auto whitespace-normal\">Fermer</button> aka getByRole('button', { name: 'Fermer' }).first()\n    2) <button type=\"button\" class=\"absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground\">…</button> aka getByRole('button', { name: 'Fermer' }).nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByRole('button', { name: 'Fermer', exact: true })\u001b[22m\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Only new synthetic members and roles are changed. Existing fixture administrators are reused without changing grants or credentials.",
+    "No email, migration, external provider call or production action.",
+    "Responsive and keyboard verification does not establish native screen-reader or full contrast certification."
+  ],
+  "originalAuthorityBefore": "03fb123d9c59d16e5e651664788a5744ea21cefd3376147c71d69b6380590c3a",
+  "originalAuthorityAfter": "03fb123d9c59d16e5e651664788a5744ea21cefd3376147c71d69b6380590c3a",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T13:26:18.698Z",
+  "sourcesAfter": {
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "hooks/useMemberAccess.ts": "b8fbd52fd866b8ba52abd1b1ad6b69dd17564748fabd3a0ec9072e79b2288082",
+    "components/settings/MemberAccessEditor.tsx": "7435a9cf20bebb0881295891889a28e30c9fb8e4aaad8efb4a42626dabf5aa2f",
+    "components/settings/member-access-copy.ts": "32224403e66b520862e3caa7e9ee76e2cd7da6fd171c7838c92ca61e71b6ae95",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "25085e83405e70c638bbbee69018012608b40bf8cc439140189ae1237982ad84",
+    "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "sourceStable": true,
+  "driverSha256": "e80e46369c86c89742a43b30fc0bbee3f5e17a785c196b9274bd7cb85aa595eb",
+  "passed": 0,
+  "failed": 2
+}

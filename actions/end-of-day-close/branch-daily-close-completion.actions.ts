@@ -46,7 +46,7 @@ const getCompletion = protect<unknown, BranchDailyCloseCompletionResult>(
       surface:
         "actions/end-of-day-close/branch-daily-close-completion.actions.ts",
       accessIntent: "read",
-      mode: "observe",
+      mode: "enforce",
     },
   },
   async (input, ctx) => {

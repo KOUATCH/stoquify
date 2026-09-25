@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-15T10:55:16.973Z",
+  "sourceBefore": {
+    "services/referrals/referral-funnel-read-model.service.ts": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a",
+    "components/referrals/ReferralFunnelDashboard.tsx": "9adb23f346264e3e3b880729e4ff32636f80dd471f9ffaa1b957a8d7d7932fc9",
+    "messages/referral-funnel/en.json": "d5ebef0e2c5c04585689e08ab922119d4a72c54febb66f9342a5ba86137a130e",
+    "messages/referral-funnel/fr.json": "5061872772fb2d656c9a5ab53b6006e44606c1e64b7d46c2bbebf9eb2c4f685d"
+  },
+  "checks": {
+    "empty": true,
+    "queuedNotAccepted": true,
+    "deduplicatedClickAndRegistration": true
+  },
+  "browser": [],
+  "scope": "Owned local database only. Synthetic consent inputs and private queued envelopes; no provider worker or external delivery.",
+  "error": "\nInvalid `db.referralAttribution.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-referral-funnel-v150.cjs:32:44\n\n  29 const accepted=await db.$transaction(tx=>recordReferralConversionInTx(tx,conversion));await db.$transaction(tx=>recordReferralConversionInTx(tx,conversion));\n  30 result.checks.deduplicatedClickAndRegistration=true;\n  31 // Deliberate legacy anomaly, not a fabricated accepted state: registration exists without an invite.\n→ 32 const legacy=await db.referralAttribution.create(\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"23514\", message: \"new row for relation \\\"referral_attributions\\\" violates check constraint \\\"referral_attributions_hash_check\\\"\", severity: \"ERROR\", detail: Some(\"Failing row contains (cmu2k2eyk001fma3kjr7vspip, workflow_funnel_source_aad17254-ed9d-49ac-bc8b-25d1116308bc, null, ACCOUNTANT_INVITE, owned-legacy, Y_AqjBettQBis1BDEIuuqQET, legacy_missing_acceptance, null, cmu2k2eqb0001ma3ka2e75hs4, owned-legacy, 2026-09-15 10:55:17.564).\"), column: None, hint: None }), transient: false })",
+  "sourceAfter": {
+    "services/referrals/referral-funnel-read-model.service.ts": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a",
+    "components/referrals/ReferralFunnelDashboard.tsx": "9adb23f346264e3e3b880729e4ff32636f80dd471f9ffaa1b957a8d7d7932fc9",
+    "messages/referral-funnel/en.json": "d5ebef0e2c5c04585689e08ab922119d4a72c54febb66f9342a5ba86137a130e",
+    "messages/referral-funnel/fr.json": "5061872772fb2d656c9a5ab53b6006e44606c1e64b7d46c2bbebf9eb2c4f685d"
+  },
+  "sourceStable": true
+}

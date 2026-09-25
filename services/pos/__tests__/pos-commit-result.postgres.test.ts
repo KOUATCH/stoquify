@@ -1,13 +1,16 @@
+/** @jest-environment node */
 import { randomUUID } from "node:crypto"
 
 import { Prisma } from "@prisma/client"
 
+jest.unmock("@/prisma/db")
 import { db } from "@/prisma/db"
 import { hashBusinessPayload } from "@/services/events/business-event.service"
 
 const CERTIFICATION_SCHEMA = "codex_pos_commit_result_cert_20260817"
 const runCertification = process.env.RUN_POS_COMMIT_POSTGRES_CERTIFICATION === "1"
 const describeCertification = runCertification ? describe : describe.skip
+const disposableDatabase = process.env.POS_DISPOSABLE_DATABASE_NAME
 
 type Fixture = {
   organizationId: string
@@ -23,7 +26,9 @@ function assertIsolatedCertificationDatabase() {
   const databaseUrl = new URL(process.env.DATABASE_URL ?? "")
   const hostname = databaseUrl.hostname.toLowerCase()
   const isLocalHost = ["localhost", "127.0.0.1", "::1"].includes(hostname)
-  if (!isLocalHost || databaseUrl.searchParams.get("schema") !== CERTIFICATION_SCHEMA) {
+  const isolatedDatabase = disposableDatabase && /^stoquify_pos_audit_\d{8}_[a-f0-9]+$/.test(disposableDatabase)
+    && databaseUrl.pathname === `/${disposableDatabase}` && databaseUrl.searchParams.get("schema") === "public"
+  if (!isLocalHost || (!isolatedDatabase && databaseUrl.searchParams.get("schema") !== CERTIFICATION_SCHEMA)) {
     throw new Error(
       `Refusing POS commit certification outside local schema ${CERTIFICATION_SCHEMA}`,
     )

@@ -18,7 +18,7 @@ function assertSafeLocalTarget() {
   const databaseName = decodeURIComponent(target.pathname.replace(/^\//, ""));
   if (
     !LOCAL_HOSTS.has(target.hostname.toLowerCase()) ||
-    !/(?:dev|test|local|reconcile|referral)/i.test(databaseName)
+    !/(?:dev|test|local|reconcile|referral|replay|disposable)/i.test(databaseName)
   ) {
     throw new Error("Coverage completion is restricted to an explicitly named local development database.");
   }

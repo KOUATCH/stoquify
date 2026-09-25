@@ -1,0 +1,74 @@
+{
+  "run": "e1c7761e-3de",
+  "at": "2026-09-07T17:59:49.040Z",
+  "sourceBefore": {
+    "services/purchase-order/purchase-order.service.ts": "dd58ad8ecc21e423690814b89bc6ed32b83dcec954615ecd4d79c6f5690e1023",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "240bed638ddac69f4fe78f974a80a4db1453020c10172ac2db6f915beb06578e",
+    "services/purchase-order/purchase-order.schemas.ts": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "22844f676ef87f8a83259ee9184c033e11f7b03e20c3b0e90ec44b4cdee318b0"
+  },
+  "checks": [
+    {
+      "name": "Reviewed hold: concurrent exact retry, trustworthy history and reserved quantities",
+      "status": "passed",
+      "oneReceipt": true,
+      "revokedReplayDenied": true,
+      "ms": 587
+    },
+    {
+      "name": "Changed order or competing hold rejects stale review with no duplicate effects",
+      "status": "passed",
+      "staleCases": 2,
+      "ms": 353
+    },
+    {
+      "name": "Foreign order and expired session cannot read or review",
+      "status": "passed",
+      "isolated": true,
+      "ms": 159
+    },
+    {
+      "name": "Read-only user sees history but cannot prepare a receipt",
+      "status": "passed",
+      "readOnly": true,
+      "ms": 98
+    },
+    {
+      "name": "Atomic decision-event failure rolls back stock, receipt, audit and sequence before safe retry",
+      "status": "passed",
+      "rollbackAndRetry": true,
+      "ms": 460
+    },
+    {
+      "name": "Held acceptance preserves cancellation, exact decision recovery and separate stock/accounting evidence",
+      "status": "passed",
+      "cancelledParentPreserved": true,
+      "noPostedJournal": true,
+      "ms": 451
+    },
+    {
+      "name": "Original inspector rejection requires fresh authentication; held stock stays unavailable",
+      "status": "passed",
+      "noStockOnRejection": true,
+      "ms": 397
+    },
+    {
+      "name": "Corrupted decision evidence fails closed instead of displaying successful history",
+      "status": "passed",
+      "corruptionDetected": true,
+      "ms": 241
+    }
+  ],
+  "scope": "Real domain services and owned PostgreSQL. Synthetic approved orders are setup, not approval-workflow proof. Stock ledger review remains required.",
+  "originalUnchanged": true,
+  "sourceAfter": {
+    "services/purchase-order/purchase-order.service.ts": "dd58ad8ecc21e423690814b89bc6ed32b83dcec954615ecd4d79c6f5690e1023",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "240bed638ddac69f4fe78f974a80a4db1453020c10172ac2db6f915beb06578e",
+    "services/purchase-order/purchase-order.schemas.ts": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "22844f676ef87f8a83259ee9184c033e11f7b03e20c3b0e90ec44b4cdee318b0"
+  }
+}

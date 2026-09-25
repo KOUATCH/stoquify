@@ -1,0 +1,14 @@
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');const file=path.resolve(__dirname,'../../../services/purchasing/ap-control.service.ts');let text=fs.readFileSync(file,'utf8');
+assert.ok(!text.includes('from "./supplier-payment-balance"'));text='import { lockSupplierPaymentSources, readSupplierPaymentBalances } from "./supplier-payment-balance"\n'+text;
+function edit(start,end,fn){const a=text.indexOf(start),b=text.indexOf(end,a+start.length);assert.ok(a>=0&&b>a);let part=text.slice(a,b);const replace=(old,value)=>{assert.equal(part.split(old).length,2,old);part=part.replace(old,value)};fn(replace);text=text.slice(0,a)+part+text.slice(b)}
+edit('export async function approveSupplierPayment(', 'export async function approveSupplierPaymentWithControls(', replace=>{
+ replace('const supplier = await assertSupplier(tx, parsed.organizationId, parsed.supplierId)','await lockSupplierPaymentSources(tx, parsed.organizationId, parsed.supplierId, parsed.allocations.map(allocation => allocation.supplierInvoiceId))\n    const supplier = await assertSupplier(tx, parsed.organizationId, parsed.supplierId)');
+ replace('const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))','const balances = await readSupplierPaymentBalances(tx, parsed.organizationId, invoices, normalizeCurrency(invoices[0]?.currency))\n    const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))');
+ replace('const outstanding = decimal2(invoice.total).minus(decimal2(invoice.amountPaid)).toDecimalPlaces(2)','const outstanding = balances.get(invoice.id)!');
+});
+edit('export async function releaseSupplierPayment(', 'export async function releaseSupplierPaymentWithControls(', replace=>{
+ replace('const approvedPayment = await tx.supplierPayment.findFirst({','await tx.$queryRaw`SELECT id FROM supplier_payments WHERE "organizationId" = ${parsed.organizationId} AND id = ${parsed.supplierPaymentId} FOR UPDATE`\n    const approvedPayment = await tx.supplierPayment.findFirst({');
+ replace('const supplier = await assertSupplier(tx, parsed.organizationId, approvedPayment.supplierId)','await lockSupplierPaymentSources(tx, parsed.organizationId, approvedPayment.supplierId, approvedPayment.allocations.map(allocation => allocation.supplierInvoiceId))\n    const supplier = await assertSupplier(tx, parsed.organizationId, approvedPayment.supplierId)');
+ replace('const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))','const balances = await readSupplierPaymentBalances(tx, parsed.organizationId, invoices, normalizeCurrency(approvedPayment.currency))\n    const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))');
+ replace('const outstanding = decimal2(invoice.total).minus(decimal2(invoice.amountPaid)).toDecimalPlaces(2)','const outstanding = balances.get(invoice.id)!');
+});fs.writeFileSync(file,text);

@@ -1,0 +1,246 @@
+{
+  "recordedAt": "2026-09-05T10:11:34.752Z",
+  "method": "Actual current TypeScript transpiled in memory; imports stubbed; synthetic in-memory persistence. No real database or application edits.",
+  "probes": [
+    {
+      "id": "C01",
+      "description": "Explicit empty grant array falls back to legacy defaults",
+      "result": {
+        "organizationId": "demo-org",
+        "userId": null,
+        "moduleSlug": "inventory",
+        "surfaceType": "api",
+        "surface": "isolated-design-probe",
+        "accessIntent": "read",
+        "mode": "enforce",
+        "result": "allow",
+        "allowed": true,
+        "wouldBlock": false,
+        "reason": "Tenant module entitlement is available.",
+        "entitlement": {
+          "moduleSlug": "inventory",
+          "status": "legacy_default",
+          "source": "legacy_default",
+          "startsAt": null,
+          "endsAt": null,
+          "readOnly": false,
+          "trial": false,
+          "metadata": {
+            "legacyFullSuiteAccess": true
+          }
+        },
+        "missingDependencies": [],
+        "rbacWildcardPresent": false,
+        "rbacWildcardBypassedEntitlement": false,
+        "hardEnforcementEnabled": false,
+        "evaluatedAt": "2026-09-05T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "C02",
+      "description": "Expired temporal grant marked trial remains available",
+      "result": {
+        "organizationId": "demo-org",
+        "userId": null,
+        "moduleSlug": "inventory",
+        "surfaceType": "api",
+        "surface": "isolated-design-probe",
+        "accessIntent": "read",
+        "mode": "enforce",
+        "result": "allow",
+        "allowed": true,
+        "wouldBlock": false,
+        "reason": "Tenant module entitlement is available.",
+        "entitlement": {
+          "moduleSlug": "inventory",
+          "status": "trial",
+          "source": "manual_override",
+          "startsAt": null,
+          "endsAt": "2020-01-01T00:00:00Z",
+          "readOnly": false,
+          "trial": true
+        },
+        "missingDependencies": [],
+        "rbacWildcardPresent": false,
+        "rbacWildcardBypassedEntitlement": false,
+        "hardEnforcementEnabled": false,
+        "evaluatedAt": "2026-09-05T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "C03",
+      "description": "Present but suspended required dependency satisfies presence check",
+      "result": {
+        "organizationId": "demo-org",
+        "userId": null,
+        "moduleSlug": "pos",
+        "surfaceType": "api",
+        "surface": "isolated-design-probe",
+        "accessIntent": "read",
+        "mode": "enforce",
+        "result": "allow",
+        "allowed": true,
+        "wouldBlock": false,
+        "reason": "Tenant module entitlement is available.",
+        "entitlement": {
+          "moduleSlug": "pos",
+          "status": "active",
+          "source": "manual_override",
+          "startsAt": null,
+          "endsAt": null,
+          "readOnly": false,
+          "trial": false
+        },
+        "missingDependencies": [],
+        "rbacWildcardPresent": false,
+        "rbacWildcardBypassedEntitlement": false,
+        "hardEnforcementEnabled": false,
+        "evaluatedAt": "2026-09-05T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "C04",
+      "description": "Read-only API read denied by surface allowlist",
+      "result": {
+        "organizationId": "demo-org",
+        "userId": null,
+        "moduleSlug": "inventory",
+        "surfaceType": "api",
+        "surface": "isolated-design-probe",
+        "accessIntent": "read",
+        "mode": "enforce",
+        "result": "deny",
+        "allowed": false,
+        "wouldBlock": true,
+        "reason": "Tenant module entitlement is available.",
+        "entitlement": {
+          "moduleSlug": "inventory",
+          "status": "read_only",
+          "source": "manual_override",
+          "startsAt": null,
+          "endsAt": null,
+          "readOnly": true,
+          "trial": false
+        },
+        "missingDependencies": [],
+        "rbacWildcardPresent": false,
+        "rbacWildcardBypassedEntitlement": false,
+        "hardEnforcementEnabled": false,
+        "evaluatedAt": "2026-09-05T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "C05",
+      "description": "Enforcing decision still reports hardEnforcementEnabled false",
+      "result": {
+        "organizationId": "demo-org",
+        "userId": null,
+        "moduleSlug": "inventory",
+        "surfaceType": "api",
+        "surface": "isolated-design-probe",
+        "accessIntent": "read",
+        "mode": "enforce",
+        "result": "deny",
+        "allowed": false,
+        "wouldBlock": true,
+        "reason": "Tenant is not entitled to this module in observe mode.",
+        "entitlement": null,
+        "missingDependencies": [],
+        "rbacWildcardPresent": false,
+        "rbacWildcardBypassedEntitlement": false,
+        "hardEnforcementEnabled": false,
+        "evaluatedAt": "2026-09-05T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "C06",
+      "description": "Missing organization defaults to legacy grants in module service",
+      "result": {
+        "organizationId": "demo-org",
+        "userId": null,
+        "moduleSlug": "inventory",
+        "surfaceType": "api",
+        "surface": "isolated-design-probe",
+        "accessIntent": "read",
+        "mode": "enforce",
+        "result": "allow",
+        "allowed": true,
+        "wouldBlock": false,
+        "reason": "Tenant module entitlement is available.",
+        "entitlement": {
+          "moduleSlug": "inventory",
+          "status": "legacy_default",
+          "source": "legacy_default",
+          "startsAt": null,
+          "endsAt": null,
+          "readOnly": false,
+          "trial": false,
+          "metadata": {
+            "legacyFullSuiteAccess": true
+          }
+        },
+        "missingDependencies": [],
+        "rbacWildcardPresent": false,
+        "rbacWildcardBypassedEntitlement": false,
+        "hardEnforcementEnabled": false,
+        "evaluatedAt": "2026-09-05T00:00:00.000Z"
+      }
+    },
+    {
+      "id": "C07",
+      "description": "Reconciliation activation narrows empty-intent legacy tenant inferred catalogue",
+      "result": {
+        "before": [
+          "dashboard",
+          "inventory",
+          "sales",
+          "pos",
+          "cash_drawer",
+          "accounting",
+          "close_assurance",
+          "compliance",
+          "purchasing",
+          "presence",
+          "payroll",
+          "finance",
+          "payment_reconciliation",
+          "analytics",
+          "reports",
+          "commercial_agents",
+          "content",
+          "settings",
+          "administration"
+        ],
+        "after": [
+          "dashboard",
+          "accounting",
+          "finance",
+          "payment_reconciliation",
+          "settings",
+          "administration"
+        ],
+        "lost": [
+          "inventory",
+          "sales",
+          "pos",
+          "cash_drawer",
+          "close_assurance",
+          "compliance",
+          "purchasing",
+          "presence",
+          "payroll",
+          "analytics",
+          "reports",
+          "commercial_agents",
+          "content"
+        ],
+        "storedRequestedModules": [
+          "finance",
+          "accounting",
+          "payment_reconciliation"
+        ],
+        "auditEvents": 1
+      }
+    }
+  ]
+}

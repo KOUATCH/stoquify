@@ -1,0 +1,72 @@
+{
+  "mode": "browser",
+  "attempt": "c8e304ac-a69",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T04:55:32.300Z",
+  "sourcesBefore": {
+    "services/users/user-identity.service.ts": "edf8968a79c4af924b443facb6ba75c50e600ae8828a27854f67d2510ca96482",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "f3bd2251f6e859eef9c6a1b0d40c6323d01c62c58151bf36ea72388e4470c022",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "fa1a196e582a751522b9d118416f84755f9026e48b811e0ef8d8d0f78e758514",
+    "messages/fr.json": "5b33f510d00ac8db436f17898dea62a116b44543ed2a8f0b482fcf1429b56436",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-invitation-ready-c8e304ac-a69.png",
+        "en-invitation-recovery-c8e304ac-a69.png",
+        "en-invitation-failure-c8e304ac-a69.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 11795,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('status').filter({ hasText: 'Account created' })\nExpected: visible\nTimeout: 120000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 120000ms\n  - waiting for getByRole('status').filter({ hasText: 'Account created' })\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-invitation-ready-c8e304ac-a69.png",
+        "fr-invitation-recovery-c8e304ac-a69.png",
+        "fr-invitation-failure-c8e304ac-a69.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 917,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('status').filter({ hasText: 'Compte créé' })\nExpected: focused\nReceived: inactive\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 5000ms\n  - waiting for getByRole('status').filter({ hasText: 'Compte créé' })\n    14 × locator resolved to <div role=\"status\" tabindex=\"-1\" class=\"mt-5 rounded-lg border border-[#178e83] bg-[#f0fbf6] p-5 text-[#132028]\">…</div>\n       - unexpected value \"inactive\"\n"
+    }
+  ],
+  "blockedBrowserOrigins": [],
+  "limitations": [
+    "Owned synthetic invitation records are local preconditions; email issuance and real recipient delivery are not claimed.",
+    "Real application services, password policy, credential creation and sign-in; no success response body is mocked.",
+    "Browser external requests are blocked; server password-breach lookup uses the existing application configuration and is not measured by the browser interceptor."
+  ],
+  "originalAuthorityBefore": "d939aebee6d3cb67ff8a7c86cc55c819dbf31d6444510ac0e87f93c9091b0bec",
+  "originalAuthorityAfter": "d939aebee6d3cb67ff8a7c86cc55c819dbf31d6444510ac0e87f93c9091b0bec",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T04:58:26.782Z",
+  "sourcesAfter": {
+    "services/users/user-identity.service.ts": "edf8968a79c4af924b443facb6ba75c50e600ae8828a27854f67d2510ca96482",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "a5c4e1a47abce6aa6cc3d8cc48f771ae9e90c953dc18148519c7793bcaa5288d",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "fa1a196e582a751522b9d118416f84755f9026e48b811e0ef8d8d0f78e758514",
+    "messages/fr.json": "5b33f510d00ac8db436f17898dea62a116b44543ed2a8f0b482fcf1429b56436",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": false,
+  "driverSha256": "6126e6eca622b1f70033a287728269ff723d8b36124241047e2d0ba9dfd9284f",
+  "passed": 0,
+  "failed": 2
+}

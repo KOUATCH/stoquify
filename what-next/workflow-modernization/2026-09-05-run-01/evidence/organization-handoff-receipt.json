@@ -1,0 +1,168 @@
+{
+  "recordedAt": "2026-09-06T15:07:36.143Z",
+  "baseline": "evidence/source-baseline-v31.json",
+  "sources": {
+    "services/organization/organization-settings.service.ts": "5fb34c5ed712ec1d29a1cce3935c414f48233f4f06360d7f4cdd803c62d534ac",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "actions/organization/organization-settings-actions.ts": "13d47e0b96af65328378bbaa2790fcfed9dbec939f2c52cdfee237459c8dba15",
+    "components/settings/OrganizationManagementTable.tsx": "adf388834ca43c475463eb43d91ffd3eccb2ec0a039a17dcc5f2e0e4531aea9f",
+    "components/settings/OrganizationSetupHandoff.tsx": "3e8a9ecf524802a321c1a87e658c56ac0a1b6e763b10bb7d335eba302130b098",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "components/auth/v2/LoginV2Form.tsx": "c678152f86185968102a31a721e9259fa4d8f2d2e0c59e329e358f67ef16b414",
+    "components/auth/EnhancedLoginForm.tsx": "0599b95e1953b37617fb3b5ee936244e536b5389c48a2695f44d4060603a8e5a",
+    "app/[locale]/(auth)/login-v2/page.tsx": "d6aa396736196004ce106565bc0d309760b9ad9fd320ff411b8045e867d8d5df",
+    "app/[locale]/(auth)/login/page.tsx": "d7581f4e91e368bf91e570dafb7c17ff7af80f7ecc739679394bd5e8aa9a70f8",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "components/settings/__tests__/OrganizationSetupHandoff.workflow.test.tsx": "401afe8ca5da4d1312482790a65d6202901aab519101bb23a6bef9652970f873",
+    "actions/organization/__tests__/organization-create-handoff.actions.test.ts": "0311c25bd6d1e914c705c07ca9f63cf352bf06864868a4943cb52d36bbb1ced3",
+    "services/organization/__tests__/organization-management-scope.service.test.ts": "e763933ab22c01327b2172e24d4fe7c3eca8edb3893216a5e4ce1e594733182a",
+    "hooks/__tests__/useOrganizationSettings.workflow.test.tsx": "d9200f056e2cf744d5fad6e40810adb15f27d88bcdf6422b714121e1809700e8",
+    "services/organization/__tests__/organization-settings.service.test.ts": "b065369800f66194140670f2b7c093f296a51449526f70a3fe05110f96f086ab",
+    "actions/organization/__tests__/organization-settings-actions.test.ts": "87aa819351d52334d7a861b939036d9a5886ba5e0a3320ea0cad13ca03eaacf9",
+    "components/auth/__tests__/LoginSubmissionSafety.test.tsx": "6bac1cd7791fdebc6ad84a3f95438422062e572afd0473b4e390c1a3e62a4043",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": [
+    "OA-CREATE",
+    "OA-DIRECTORY",
+    "ID-01",
+    "ID-02",
+    "ID-09"
+  ],
+  "before": {
+    "file": "lanes/environment/organization-handoff-before-1db18f21-6e9.json",
+    "chunk": "2cc65d",
+    "defectReproduced": true,
+    "ownerCount": 0,
+    "roleCount": 1,
+    "auditCount": 0,
+    "active": true,
+    "visibleToOriginalOrganization": false,
+    "syntheticOrphanRetained": true
+  },
+  "tests": [
+    {
+      "file": "evidence/organization-handoff-tests-04.json",
+      "passed": 50,
+      "failed": 0,
+      "suites": 6,
+      "chunk": "8392f4",
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/settings/__tests__/OrganizationSetupHandoff.workflow.test.tsx\" \"actions/organization/__tests__/organization-create-handoff.actions.test.ts\" \"services/organization/__tests__/organization-management-scope.service.test.ts\" \"hooks/__tests__/useOrganizationSettings.workflow.test.tsx\" \"services/organization/__tests__/organization-settings.service.test.ts\" \"actions/organization/__tests__/organization-settings-actions.test.ts\" --json --outputFile=evidence/organization-handoff-tests-04.json"
+    },
+    {
+      "file": "evidence/login-submission-tests-02.json",
+      "passed": 6,
+      "failed": 0,
+      "suites": 1,
+      "chunk": "1614fd",
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/auth/__tests__/LoginSubmissionSafety.test.tsx\" --json --outputFile=evidence/login-submission-tests-02.json"
+    }
+  ],
+  "browser": {
+    "file": "lanes/environment/organization-handoff-browser-23b3a356-9bb.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "ddf4c9",
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-organization-handoff-browser.cjs",
+    "screenshots": [
+      "evidence/organization-handoff/en-organization-handoff-mobile-23b3a356-9bb.png",
+      "evidence/organization-handoff/en-organization-handoff-desktop-23b3a356-9bb.png",
+      "evidence/organization-handoff/en-organization-handoff-owner-review-23b3a356-9bb.png",
+      "evidence/organization-handoff/en-organization-handoff-verification-required-23b3a356-9bb.png",
+      "evidence/organization-handoff/en-organization-handoff-other-account-scope-23b3a356-9bb.png",
+      "evidence/organization-handoff/fr-organization-handoff-mobile-23b3a356-9bb.png",
+      "evidence/organization-handoff/fr-organization-handoff-desktop-23b3a356-9bb.png",
+      "evidence/organization-handoff/fr-organization-handoff-owner-review-23b3a356-9bb.png",
+      "evidence/organization-handoff/fr-organization-handoff-verification-required-23b3a356-9bb.png",
+      "evidence/organization-handoff/fr-organization-handoff-other-account-scope-23b3a356-9bb.png"
+    ],
+    "postAndDisabledNoScriptCases": 4,
+    "credentialUrlRequests": 0,
+    "originalAuthorityUnchanged": true,
+    "legacyCreationRejectedWithoutEffects": true
+  },
+  "boundaries": {
+    "file": "evidence/organization-handoff-boundaries.json",
+    "passed": 7,
+    "failed": 0,
+    "chunk": "8f2e93"
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "exitCode": 0,
+    "chunk": "289ebc"
+  },
+  "lint": {
+    "command": "node node_modules/eslint/bin/eslint.js \"services/organization/organization-settings.service.ts\" \"actions/organization/organization-settings-actions.ts\" \"components/settings/OrganizationManagementTable.tsx\" \"components/settings/OrganizationSetupHandoff.tsx\" \"components/auth/EnhancedLoginForm.tsx\" \"components/auth/v2/LoginV2Form.tsx\" \"app/[locale]/(auth)/login/page.tsx\" \"app/[locale]/(auth)/login-v2/page.tsx\" \"services/organization/__tests__/organization-settings.service.test.ts\" \"actions/organization/__tests__/organization-create-handoff.actions.test.ts\" \"components/settings/__tests__/OrganizationSetupHandoff.workflow.test.tsx\" \"components/auth/__tests__/LoginSubmissionSafety.test.tsx\"",
+    "exitCode": 0,
+    "chunk": "61ff75"
+  },
+  "failedAttempts": [
+    {
+      "file": "evidence/organization-handoff-tests-01.json",
+      "result": "Lucide ESM test import could not load; test icons isolated."
+    },
+    {
+      "file": "evidence/organization-handoff-tests-03.json",
+      "result": "Jest focus assertion used the browser matcher name; corrected to toHaveFocus."
+    },
+    {
+      "file": "evidence/login-submission-tests-01.json",
+      "result": "Next-intl ESM test import could not load; route localization dependency isolated."
+    },
+    {
+      "chunk": "104133",
+      "result": "Initial bounded UI edit left an old JSX tail. Lint/typecheck found it; removed before successful validation."
+    },
+    {
+      "file": "lanes/environment/organization-handoff-browser-0557b954-7b4.json",
+      "result": "Actual dialog focus return failed and authority snapshot counted normal sign-in timestamps. Corrected opener ref and compared explicit authority/credential fields; failed evidence retained."
+    },
+    {
+      "file": "lanes/environment/organization-handoff-browser-94ccf539-624.json",
+      "result": "EN popup timed out; FR registration succeeded but unhydrated login made a native GET with synthetic credentials in its URL. Both login forms now disable pre-initialization fields and use POST; no-referrer metadata added. This failed receipt was redacted with its original hash preserved; the final verifier aborts and counts credential-bearing URLs."
+    },
+    {
+      "file": "lanes/environment/organization-handoff-browser-d130e3e9-6ae.json",
+      "result": "No-script checker used isDisabled semantics on fieldset. Replaced with actual disabled attribute plus disabled email, password and submit controls; no registration occurred in this failed run."
+    },
+    {
+      "chunk": "93ecf2",
+      "result": "Default sandbox prevented v31 evidence write. Exact read-only capture reran with filesystem authorization; v31 created once."
+    }
+  ],
+  "supersededEvidence": [
+    "evidence/organization-handoff-tests-02.json"
+  ],
+  "performance": {
+    "classification": "owned local development observations only; no approved budget or production performance claim",
+    "routeReadyMs": [
+      {
+        "locale": "en",
+        "value": 17312
+      },
+      {
+        "locale": "fr",
+        "value": 11070
+      }
+    ]
+  },
+  "remaining": [
+    "One-account multiple-organization membership and a switcher are unimplemented engineering work.",
+    "Live owner-email delivery, verification recovery and full onboarding remain separately incomplete; local new owners remain unverified.",
+    "Pre-existing ownerless organization records need individually authorized reconciliation; no automatic deletion or reassignment.",
+    "Organization directory CSV export authority/audit and full retention review remain open.",
+    "Native screen reader, browser zoom, comprehensive contrast and full sign-in exceptions/recovery remain open.",
+    "Permission refresh, personal-identity administration and the remaining whole-platform register remain open.",
+    "Previously rejected global authentication/provider and live invitation-adapter changes remain unapplied."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

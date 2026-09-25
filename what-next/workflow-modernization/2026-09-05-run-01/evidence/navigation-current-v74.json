@@ -1,0 +1,91 @@
+{
+  "at": "2026-09-08T13:57:28.803Z",
+  "sourceBaseline": "evidence/source-baseline-v74.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "aqstoqflow-uiux-02-shell-navigation-governance",
+  "sources": {
+    "components/dashboard/Sidebar.tsx": "c65a9783f03b6251f64eba96bc296f1fc40fd75f4cf0883f0921fe186d063e44",
+    "components/dashboard/Navbar.tsx": "931861504fee2ef5545bd60702b6e6260db68271e3afd0070f2e0e4570556a13",
+    "config/sidebar.ts": "beeb3d9dde8283b6897962cb3a34c6fa2971fbd9aeda8b419ea76c39bb775c8f",
+    "lib/dashboard/presentation.ts": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3",
+    "lib/modules/navigation.ts": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932",
+    "components/dashboard/useShellPermissions.ts": "e1a68ed56528442d7adae42ae5d87becbc1a4321fb21ef4b1c60d079cca1c21c",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/dashboard-shared/en.json": "5fb5d17baf0c934ab8bcea8d9b9c4059bb091ae334865e025e5ef5d4c9a0cbe5",
+    "messages/dashboard-shared/fr.json": "723cd0ba2282d487d187072d4eb5023f120c49f76394482fb5e5be94a2338716",
+    "services/purchasing/ap-history.service.ts": "2e8991736333beb090ea686c331a045c35ff876a7f25f3355929007faca8da99",
+    "components/purchasing/APHistoryWorkbench.tsx": "8eb8f5f11efa59d99cae76c27d7c8d93f6bf127c92b708981392ebe67632cdf0",
+    "messages/en.json": "604111ca773bc32db1f34597ee6c5dc632b53a8541245cc381e7850c972a15a1",
+    "messages/fr.json": "c899c288f4af247ca9c9376eabca663b8199e737d980c8d9eb30212938d8aacb",
+    "components/dashboard/__tests__/Sidebar-current.test.tsx": "0040d322cb0228b189cc800f39199c399fec7e4c676be7fa3582cf041d35e087",
+    "components/dashboard/__tests__/dashboard-localization.test.tsx": "d4690a62aba6f3ce7101d863b821e235557cd89814447a27ec3f786314ba140e",
+    "app/[locale]/(dashboard)/dashboard/__tests__/layout.test.tsx": "0718c0004a8717cab6ca5ed302c1283da85f958da9affa63029845e148f42f25",
+    "config/__tests__/sidebar.test.ts": "a2a74d537bd93705cd4da69902878c314a73d925b27421d10947ec0e86e753f1"
+  },
+  "tests": {
+    "file": "evidence/navigation-current-tests-v74-final.json",
+    "passed": 46,
+    "suites": 4
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 24633,
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "eslint Sidebar.tsx Navbar.tsx Sidebar-current.test.tsx plus final test rerun",
+      "chunk": "30c68a",
+      "finalTestChunk": "8ae81f",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "browser": "lanes/environment/navigation-current-browser-01401e6f-05c.json",
+  "screenshots": [
+    "lanes/environment/navigation-current-en-nested-desktop-01401e6f-05c.png",
+    "lanes/environment/navigation-current-en-collapsed-01401e6f-05c.png",
+    "lanes/environment/navigation-current-en-nested-mobile-01401e6f-05c.png",
+    "lanes/environment/navigation-current-en-history-mobile-01401e6f-05c.png",
+    "lanes/environment/navigation-current-en-history-desktop-01401e6f-05c.png",
+    "lanes/environment/navigation-current-en-permission-revoked-01401e6f-05c.png",
+    "lanes/environment/navigation-current-fr-nested-desktop-01401e6f-05c.png",
+    "lanes/environment/navigation-current-fr-collapsed-01401e6f-05c.png",
+    "lanes/environment/navigation-current-fr-nested-mobile-01401e6f-05c.png",
+    "lanes/environment/navigation-current-fr-history-mobile-01401e6f-05c.png",
+    "lanes/environment/navigation-current-fr-history-desktop-01401e6f-05c.png",
+    "lanes/environment/navigation-current-fr-permission-revoked-01401e6f-05c.png"
+  ],
+  "counterexample": "lanes/environment/ap-history-counterexample-v74.json",
+  "failedAttempts": [
+    "evidence/navigation-current-tests-v74.json",
+    "lanes/environment/navigation-current-browser-274dc8ce-342.json"
+  ],
+  "skillReport": "what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_02_SHELL_NAVIGATION_REPORT_2026-09-08.md",
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2710,
+      "tests": 950,
+      "pages": 155,
+      "routeHandlers": 18,
+      "actionSources": 166,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2278,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 207,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "next": "Correct PA-029 financial history meaning from the verified unposted-invoice counterexample",
+  "migration": "none",
+  "externalActions": "none"
+}

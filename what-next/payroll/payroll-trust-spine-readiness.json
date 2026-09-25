@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-08-22T15:56:10.235Z",
+    "generatedAt": "2026-08-28T12:36:42.232Z",
     "mode": "fail",
-    "status": "ready",
+    "status": "blocked",
     "checkCount": 6,
-    "readyCount": 6,
-    "blockerCount": 0
+    "readyCount": 5,
+    "blockerCount": 1
   },
   "checks": [
     {
@@ -26,12 +26,14 @@
     },
     {
       "id": "cas_idempotency_and_partial_commit_regressions_covered",
-      "ready": true
+      "ready": false
     },
     {
       "id": "postgres_concurrency_and_failure_injection_wired",
       "ready": true
     }
   ],
-  "blockers": []
+  "blockers": [
+    "cas_idempotency_and_partial_commit_regressions_covered"
+  ]
 }

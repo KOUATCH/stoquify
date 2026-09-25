@@ -1,0 +1,1191 @@
+### POS POS sales, refunds and shifts
+services/pos/pos.service.ts
+1: import {
+14: import { db } from "@/prisma/db"
+15: import { currencyFractionDigits } from "@/lib/i18n/organization-money"
+16: import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+17: import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
+18: import { postRefund } from "@/services/accounting/postings/post-refund"
+19: import { postPayment } from "@/services/accounting/postings/post-payment"
+20: import { postSale } from "@/services/accounting/postings/post-sale"
+21: import { postVoid } from "@/services/accounting/postings/post-void"
+22: import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
+23: import {
+27: import {
+hooks/posHooks/usePosOperations.ts
+3: import {
+9: import {
+15: import {
+21: import {
+26: import { commitPOSSaleAction, refundPOSSaleAction, voidPOSSaleAction } from "@/actions/pos/tender.actions"
+27: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+29: export const posOperationsKeys = {
+46: export function usePOSLocations() {
+48: queryKey: posOperationsKeys.locations(),
+53: export function usePOSTerminals(locationId?: string) {
+55: queryKey: posOperationsKeys.terminals(locationId),
+60: export function useActivePOSShift(terminalId?: string) {
+actions/pos/terminal-management.actions.ts
+3: import { revalidatePath, revalidateTag } from "next/cache"
+4: import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+5: import { requirePermission } from "@/lib/security/rbac"
+6: import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+7: import { err, ok } from "@/services/_shared/action-response"
+8: import { BusinessRuleError, ForbiddenError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
+9: import {
+18: import {
+23: export type {
+153: export async function getTerminalManagementData(organizationId: string) {
+173: export async function createManagedTerminal(organizationId: string, input: TerminalManagementInput) {
+203: export async function updateManagedTerminal(
+actions/pos/tender.actions.ts
+3: import { revalidateTag } from "next/cache"
+4: import { logger } from "@/lib/logger"
+5: import { protect } from "@/services/_shared/protect"
+6: import { commitPOSSale, refundPOSSale, voidPOSSale } from "@/services/pos/pos.service"
+7: import {
+43: export const commitPOSSaleAction = protect(
+66: export const refundPOSSaleAction = protect(
+85: export const voidPOSSaleAction = protect(
+hooks/posHooks/useTerminalManagement.ts
+3: import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query"
+4: import { useNotifications } from "@/components/notifications/NotificationProvider"
+5: import {
+13: import type { Locale } from "@/types/bilingual"
+15: export const terminalManagementKeys = {
+42: queryClient.invalidateQueries({ queryKey: terminalManagementKeys.dashboard(organizationId) })
+43: queryClient.invalidateQueries({ queryKey: ["pos-operations"] })
+44: queryClient.invalidateQueries({ queryKey: ["terminals"] })
+45: queryClient.invalidateQueries({ queryKey: ["available-terminals"] })
+48: queryClient.invalidateQueries({ queryKey: ["terminal-status", terminalId] })
+52: export function useTerminalManagementData(organizationId: string) {
+54: queryKey: terminalManagementKeys.dashboard(organizationId),
+components/pos/TerminalManagementDashboard.tsx
+3: import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
+4: import {
+14: import {
+38: import { Link } from "@/i18n/navigation"
+39: import type { Locale } from "@/types/bilingual"
+40: import { cn } from "@/lib/utils"
+41: import { useNotifications } from "@/components/notifications/NotificationProvider"
+42: import {
+52: import { Badge } from "@/components/ui/badge"
+53: import { Button } from "@/components/ui/button"
+54: import { Checkbox } from "@/components/ui/checkbox"
+55: import {
+components/pos/ReceiptTokenHistoryPanel.tsx
+3: import { FormEvent } from "react"
+4: import { History, Search } from "lucide-react"
+6: import { Button } from "@/components/ui/button"
+7: import { Input } from "@/components/ui/input"
+8: import { cn } from "@/lib/utils"
+9: import {
+16: export type ReceiptTokenSaleSearchItem = {
+75: export function ReceiptTokenHistoryPanel({
+TEST {"file":"services/pos/__tests__/pos.service.test.ts","sha256":"0f02fb15f53cb9a3c6e8d0525426a13dba81d7dab4055988618874f2da55c47d","mockedPrisma":true,"externalIndicators":[]}
+
+### OFF Offline POS devices, sync and replay
+services/pos/offline-sync.service.ts
+1: import { createHash, createPublicKey, verify as verifySignature } from "crypto"
+3: import {
+11: import { db } from "@/prisma/db"
+12: import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+13: import {
+19: import {
+31: import { commitSaleSchema, type CommitSaleInput } from "./pos.schemas"
+32: import { commitPOSSale } from "./pos.service"
+33: import { getSalesReceipt, type SalesReceiptPayload } from "./receipt.service"
+43: export type OfflineSyncErrorCode =
+56: export type OfflineSyncDeviceDTO = {
+76: export type OfflineSyncConflictDTO = {
+hooks/posHooks/useOfflineSync.ts
+3: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+5: import {
+13: import { useNotifications } from "@/components/notifications/NotificationProvider"
+14: import {
+25: import type { Locale } from "@/types/bilingual"
+75: export const offlineSyncKeys = {
+87: export function useOfflineSyncDashboard(filters: OfflineSyncFilters = {}, options: { enabled?: boolean } = {}) {
+89: queryKey: offlineSyncKeys.dashboard(filters),
+105: export function useRegisterOfflineDevice(locale: Locale = "en") {
+121: queryClient.invalidateQueries({ queryKey: offlineSyncKeys.all })
+130: export function useSyncOfflineEvents(locale: Locale = "en") {
+146: queryClient.invalidateQueries({ queryKey: offlineSyncKeys.all })
+components/pos/offline/OfflineSyncStatusStrip.tsx
+3: import { AlertTriangle, Clock3, RefreshCw, ShieldCheck, Wifi, WifiOff } from "lucide-react"
+5: import { Badge } from "@/components/ui/badge"
+6: import { Button } from "@/components/ui/button"
+7: import { cn } from "@/lib/utils"
+8: import { useOfflineSyncDashboard } from "@/hooks/posHooks/useOfflineSync"
+67: export function OfflineSyncStatusStrip({
+TEST {"file":"services/pos/__tests__/offline-sync.service.test.ts","sha256":"337b9259c5931f9c3b3f9a7ded70f83012c9cf5ae53d84a3361432ed40672584","mockedPrisma":true,"externalIndicators":[]}
+
+### SAL Sales orders, reservations, delivery and billing
+services/order-to-cash/delivery-order.service.ts
+1: import "server-only"
+3: import {
+14: import { db } from "@/prisma/db"
+15: import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+16: import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
+17: import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
+18: import {
+22: import {
+26: import { createFiscalDocumentFromPostedSource } from "@/services/compliance/fiscal-document.service"
+27: import { resolveEInvoicingMetadata } from "@/services/compliance/country-pack-hooks"
+28: import {
+33: import {
+actions/order-to-cash/delivery-order.actions.ts
+3: import { revalidateTag } from "next/cache"
+5: import { logger } from "@/lib/logger"
+6: import { protect } from "@/services/_shared/protect"
+7: import {
+13: import {
+54: export const createDeliveryOrderAction = protect(
+86: export const confirmDeliveryOrderAction = protect(
+114: export const postDeliveryGoodsIssueAction = protect(
+143: export const createDeliveryBillingOutcomeAction = protect(
+components/sales/CompleteIntegratedDailySalesDashboard.tsx
+3: export { default } from "@/components/analytics/CompleteIntegratedDailySalesDashboard"
+TEST {"file":"services/order-to-cash/__tests__/delivery-order.service.test.ts","sha256":"3849ac48a555292ddccdd425d1988a4d6fa0d30dece8e3ef2bc675c18127e61e","mockedPrisma":true,"externalIndicators":[]}
+
+### CUS Customers, receivables, statements and settlement
+services/accounting/customer-settlement.service.ts
+1: import { createHash } from "crypto"
+3: import {
+17: import { db } from "@/prisma/db"
+18: import {
+24: import {
+29: import {
+35: import {
+40: import { createCustomerLedgerEntry } from "./customer-ledger.service"
+41: import {
+45: import {
+49: import { recordPostedJournalCloseInvalidationInTx } from "./journal-close-invalidation.service"
+50: import { getOpenPeriodForDate } from "./periods.service"
+hooks/useCustomerQueries.ts
+3: import { getCustomers } from "@/actions/customers/customerAction2"
+4: import {
+11: import type { ServerActionResult } from "@/lib/error-handling/types"
+12: import { useNotifications } from "@/components/notifications/NotificationProvider"
+13: import type { Locale } from "@/types/bilingual"
+14: import type { Customer, CustomerOrdersResult, CustomerWithStats } from "@/types/customerTypes"
+15: import type { CustomerEditFormData, CustomerFormData } from "@/validations/customer"
+16: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+27: export function useCustomers() {
+29: queryKey: ["customers"],
+35: export function useCustomer(id: string) {
+37: queryKey: ["customers", id],
+actions/finance/customer-settlement.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import {
+9: import {
+13: import { reverseCustomerSettlementInputSchema } from "@/services/accounting/customer-settlement.schemas"
+14: import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+56: export async function reverseCustomerSettlementAction(input: unknown) {
+actions/customers/customerActions.ts
+3: import {
+11: import { safeServerActionErrorResult } from "@/actions/_shared/safe-action-responses"
+12: import type { ServerActionResult } from "@/lib/error-handling/types"
+13: import { BusinessRuleError } from "@/services/_shared/action-errors"
+14: import type { CustomerRemovalReceipt } from "@/services/customer/customer.service"
+15: import type { Customer, CustomerOrdersResult, CustomerWithStats } from "@/types/customerTypes"
+16: import type { CustomerEditFormData, CustomerFormData } from "@/validations/customer"
+17: import { customerEditSchema, customerSchema } from "@/validations/customer"
+18: import { revalidatePath } from "next/cache"
+20: export type CustomerRemovalResult = CustomerRemovalReceipt & { cacheStatus: "invalidated" | "deferred" }
+43: export async function getCustomersAction(): Promise<ServerActionResult<CustomerWithStats[]>> {
+51: export async function getCustomerAction(id: string): Promise<ServerActionResult<Customer | null>> {
+hooks/useCustomerManagement.ts
+3: import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query"
+5: import {
+21: import { useNotifications } from "@/components/notifications/NotificationProvider"
+22: import type { Locale } from "@/types/bilingual"
+23: import { CustomerKeys } from "@/types/queryKeys"
+25: export const customerManagementKeys = {
+84: queryClient.invalidateQueries({ queryKey }, { throwOnError: reportErrors }),
+89: export function useManagedCustomer(organizationId: string, customerId: string) {
+91: queryKey: customerManagementKeys.detail(organizationId, customerId),
+120: export function useCustomerManagementData(organizationId: string) {
+122: queryKey: customerManagementKeys.dashboard(organizationId),
+138: export function useCustomerAnalyticsData(
+components/customers/CustomerStatementWorkflow.tsx
+3: import { type FormEvent, useEffect, useId, useRef, useState } from "react"
+4: import Link from "next/link"
+6: import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+7: import { retryCustomerStatementDeliveryAction } from "@/actions/accounting/customer-statement-history.actions"
+8: import type { RetryCustomerStatementInput } from "@/services/accounting/customer-statement.schemas"
+9: import {
+14: import { localizePath } from "@/i18n/routing"
+15: import type { CustomerStatementSummary } from "@/services/accounting/customer-statement-history.service"
+16: import { CustomerStatementHistory } from "./CustomerStatementHistory"
+17: import { CustomerStatementResponses } from "./CustomerStatementResponses"
+18: import type { CustomerStatementDeliveryResult } from "@/services/accounting/customer-statement-delivery.service"
+19: import type { Locale } from "@/types/bilingual"
+components/customers/CustomerStatementResponses.tsx
+3: import { useEffect, useRef, useState, type FormEvent } from "react"
+4: import { listCustomerStatementResponsesAction, getCustomerStatementResponseHistoryAction, reviewCustomerStatementResponseAction } from "@/actions/accounting/customer-statement-response.actions"
+5: import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+6: import type { CustomerStatementResponse, CustomerStatementResponseHistory, CustomerStatementResponses as ResponseList, StatementResponseReviewReceipt } from "@/services/accounting/customer-statement-r
+7: import { statementResponseReviewSchema } from "@/services/accounting/customer-statement-response.schemas"
+8: import { readStatementReview, saveStatementReview, type RetainedStatementReview, type StatementReviewDraft, type StatementReviewScope } from "@/hooks/customer-statement-review-request"
+9: import type { Locale } from "@/types/bilingual"
+16: export function CustomerStatementResponses({ organizationId, actorId, customerId, locale }: StatementReviewScope & { locale: Locale }) {
+TEST {"file":"services/accounting/__tests__/customer-statement-access.service.test.ts","sha256":"e4274102c1ef0dbb831da28baa81aa856c0e4ee712f356f308b96d9f517caefe","mockedPrisma":false,"externalIndicators":[]}
+
+### PUR Purchasing, supplier collaboration and AP
+services/purchasing/ap-control.service.ts
+1: import { createHash } from "crypto"
+2: import {
+28: import { db } from "@/prisma/db"
+29: import { invoicePreparationSourceHash } from "./invoice-source-evidence"
+30: import { recordPostedJournalCloseInvalidationInTx } from "@/services/accounting/journal-close-invalidation.service"
+31: import { createLedgerPostingBatch, linkAccountingSource } from "@/services/accounting/posting.service"
+32: import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
+33: import { getActivePostingRule } from "@/services/accounting/posting-rules.service"
+34: import { ApplicationError, BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+35: import {
+41: import {
+46: import {
+hooks/useRecentPurchaseOrderQueries.ts
+2: import { approvePurchaseOrder } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction";
+3: import type { PurchaseLifecycleRequest } from "@/services/purchase-order/purchase-order-lifecycle-contracts";
+4: import type { PurchaseApprovalRequest } from "@/services/purchase-order/purchase-order-approval-contracts";
+6: import { notify } from "@/lib/notifications/notify"
+7: import {
+21: import {
+25: import { CreatePurchaseOrderPayload, PaginatedPurchaseOrdersResponse, PurchaseOrderFilters, PurchaseOrderResponse, PurchaseOrderWithRelations, UpdatePurchaseOrderDTO } from "@/types/purchase-orders-sy
+26: import type { PurchaseOrderStatus } from "@/services/purchase-order/purchase-order.schemas";
+27: import type { PurchaseOrderPresentation } from "@/services/purchase-order/purchase-order-capabilities";
+28: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+29: import { useSearchParams } from "next/navigation";
+30: import { useCallback, useMemo } from "react";
+actions/suppliers/supplier-management-actions.ts
+3: import { createHash } from "node:crypto"
+4: import { revalidatePath } from "next/cache"
+5: import { z } from "zod"
+7: import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+8: import { requireFreshAuth } from "@/lib/security/auth-session"
+9: import { requirePermission } from "@/lib/security/rbac"
+10: import { BusinessRuleError, ForbiddenError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
+11: import { requireOrg } from "@/services/_shared/require-org"
+12: import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+13: import { readAPHistory, type APHistoryResult } from "@/services/purchasing/ap-history.service"
+14: import {
+18: import { auditSupplierExportDecision } from "@/services/supplier/supplier-export.service"
+actions/suppliers/itemSupplierActions.ts
+3: import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
+4: import {
+9: import {
+20: import { revalidatePath } from "next/cache"
+22: export type { ItemSupplierData, UpdateItemSupplierData }
+91: export async function getItemSuppliers(organizationId?: string) {
+119: export async function getItemSupplierById(id: string) {
+143: export async function createItemSupplier(data: ItemSupplierData) {
+167: export async function updateItemSupplier(data: UpdateItemSupplierData) {
+191: export async function deleteItemSupplier(id: string) {
+212: export async function getAllOrgItemSuppliers(organizationId: string) {
+240: export async function getItemSuppliersByItemId(itemId: string) {
+hooks/useAPHistoryWorkbench.ts
+3: import { useCallback, useMemo, useTransition } from "react"
+4: import { usePathname, useRouter, useSearchParams } from "next/navigation"
+5: import { useQuery } from "@tanstack/react-query"
+7: import {
+11: import type { TransactionHistoryFilters } from "@/components/dashboard/history/TransactionHistoryWorkbenchShell"
+16: export type APHistoryUrlFilters = TransactionHistoryFilters & {
+23: export function parseAPHistorySearchParams(params: URLSearchParams): APHistoryUrlFilters {
+36: export function filtersForAPHistoryAction(filters: APHistoryUrlFilters) {
+47: export function useAPHistoryWorkbench() {
+55: queryKey: ["ap-history-workbench", actionFilters],
+components/purchasing/APControlWorkbench.tsx
+3: import {
+22: import type { APWorkbenchData } from "@/actions/purchasing/ap-control.actions"
+23: import {
+35: import { Badge } from "@/components/ui/badge"
+36: import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+37: import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+38: import { cn } from "@/lib/utils"
+39: import type { Locale } from "@/types/bilingual"
+194: maximumFractionDigits: ["XAF", "XOF"].includes(currency.toUpperCase()) ? 0 : 2,
+231: export function apStatusTone(status: string | null | undefined): DashboardTone {
+243: export function formatAPStatus(status: string | null | undefined, locale: Locale) {
+249: export function isAPSnapshotStale(asOf: string, evaluatedAt: string) {
+components/purchase-orders/purchase-order-money.ts
+1: import type { Locale } from "@/types/bilingual"
+6: export function formatPurchaseOrderMoney(amount: number, locale: Locale, currency: string) {
+TEST {"file":"services/purchasing/__tests__/ap-control.service.test.ts","sha256":"c592d9ba693c170a2ff753bb959d0013941e339d673aedfc432736e0301a2d52","mockedPrisma":true,"externalIndicators":[]}
+
+### INV Inventory, transfers, counts and valuation
+services/inventory/inventory-stock-event.service.ts
+1: import {
+12: import { db } from "@/prisma/db"
+13: import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+14: import { createLedgerPostingBatch } from "@/services/accounting/posting.service"
+15: import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
+16: import {
+21: import { recordInventoryValuationCloseInvalidationInTx } from "./inventory-close-invalidation.service"
+23: import { ConcurrentStockUpdateError, InsufficientStockError } from "./inventory-errors"
+55: idempotencyKey: string
+70: export type InventoryStockEventResult = {
+72: idempotencyKey: string
+80: export type OpeningStockInput = {
+hooks/useInventoryMovementQueries.ts
+3: import { notify } from "@/lib/notifications/notify"
+4: import {
+9: import type { TransactionType } from "@/types/inventoryMovementTypes"
+10: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+11: import { useTranslations } from "next-intl"
+15: export const InventoryMovementKeys = {
+40: export function useInventoryTransactions(
+52: queryKey: InventoryMovementKeys.transactions(organizationId!, filters),
+66: export function useStockMovementSummary(
+76: queryKey: InventoryMovementKeys.summary(organizationId!, filters),
+99: export function useInventoryReservation() {
+135: queryClient.invalidateQueries({ queryKey: InventoryMovementKeys.all })
+actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts
+3: import { z } from "zod"
+5: import { protect } from "@/services/_shared/protect"
+6: import {
+54: idempotencyKey: z.string().trim().min(8).max(128),
+76: idempotencyKey: record.idempotencyKey,
+107: idempotencyKey: parsed.idempotencyKey,
+116: export async function enqueueInventoryMovementHistoryBackgroundExportAction(
+145: export async function getInventoryMovementHistoryBackgroundExportStatusAction(
+184: export async function createInventoryMovementHistoryBackgroundExportDownloadGrantAction(
+actions/inventory/inventoryMovementHistoryActions.ts
+3: import { z } from "zod"
+5: import { protect } from "@/services/_shared/protect"
+6: import {
+11: import {
+17: export type { InventoryHistoryExportResult, InventoryMovementHistoryResult }
+64: export async function getInventoryMovementHistoryAction(input: unknown = {}) {
+97: export async function exportInventoryMovementHistoryAction(input: unknown = {}) {
+hooks/useTransferQueries.ts
+3: import {
+8: import type { CreateTransferPayload, LocationTransferDTO, TransferStatus } from "@/types/inventoryMovementTypes"
+9: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+10: import { useNotifications } from "@/components/notifications/NotificationProvider"
+11: import { useTranslations } from "next-intl"
+12: import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
+45: export const TransferKeys = {
+60: export function useTransfers(
+65: queryKey: TransferKeys.list(organizationId!, filters),
+83: export function useTransfer(transferId: string | undefined, organizationId: string | undefined) {
+85: queryKey: TransferKeys.detail(transferId!, organizationId!),
+107: export function useCreateTransfer(options: { inlineStoppedWork?: boolean } = {}) {
+components/inventory/EnhancedCategoriesManagement.tsx
+3: import { type CSSProperties, useMemo, useState } from "react"
+4: import { Activity, Archive, CheckCircle2, Download, FolderOpen, Languages, Layers, Package, RefreshCw, Sparkles } from "lucide-react"
+6: import { createEnhancedCategoriesColumns } from "@/_legacy-dashboard/dashboard/inventory/categories/enhanced-columns"
+7: import DataTable from "@/components/DataTableComponents/DataTable"
+8: import {
+18: import { Badge } from "@/components/ui/badge"
+19: import { Button } from "@/components/ui/button"
+20: import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+21: import {
+28: import { useDeleteCategory, useOrgCategories } from "@/hooks/useCategories"
+29: import type { Locale } from "@/types/bilingual"
+30: import type { CategoryDTO } from "@/types/category"
+components/inventory/EnhancedBrandsManagement.tsx
+3: import { type CSSProperties, useMemo, useState } from "react"
+4: import { Activity, Archive, CheckCircle2, Download, Languages, Package, RefreshCw, Sparkles, Tags } from "lucide-react"
+6: import { createEnhancedBrandsColumns } from "@/_legacy-dashboard/dashboard/inventory/brands/enhanced-columns"
+7: import DataTable from "@/components/DataTableComponents/DataTable"
+8: import {
+18: import { Badge } from "@/components/ui/badge"
+19: import { Button } from "@/components/ui/button"
+20: import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+21: import {
+28: import { useDeleteBrand, useOrgBrands } from "@/hooks/useBrands"
+29: import type { Locale } from "@/types/bilingual"
+30: import type { BrandDTO } from "@/types/brand"
+TEST {"file":"services/inventory/__tests__/inventory-stock-event.service.test.ts","sha256":"3248339cd176aaa91a8a4a56df694f130303ff0003f8eee6faf20036a3fbc618","mockedPrisma":true,"externalIndicators":[]}
+
+### FIN Finance, cash drawers, expenses and treasury
+services/finance/finance-dashboard.service.ts
+1: import { Prisma } from "@prisma/client"
+3: import { db } from "@/prisma/db"
+4: import {
+8: import { getTenantOperatingSnapshot } from "@/services/snapshots/tenant-operating-snapshot.service"
+9: import type {
+13: import { moneyToNumber, type MoneyValue } from "@/services/pos/money"
+14: import {
+248: evidenceHashCount: 0,
+318: evidenceHashCount: forecast.evidenceHashCount,
+346: export type FinanceLocationOption = {
+352: export type FinanceAgingSummary = {
+359: export type FinanceSummary = {
+hooks/finance/useFinanceDashboard.ts
+3: import { getFinanceDashboardAction } from "@/actions/finance/finance-dashboard.actions"
+4: import type { FinanceDashboardInput } from "@/services/finance/finance-dashboard.schemas"
+5: import { useQuery } from "@tanstack/react-query"
+7: export const financeDashboardKeys = {
+20: export function useFinanceDashboard(params: FinanceDashboardInput) {
+22: queryKey: financeDashboardKeys.dashboard(params),
+actions/finance/finance-dashboard.actions.ts
+3: import { requireAnyPermission } from "@/lib/security/rbac"
+4: import { err, ok } from "@/services/_shared/action-response"
+5: import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+6: import { getFinanceDashboardViewPermissions } from "@/services/finance/finance-dashboard-access"
+7: import { financeDashboardInputSchema } from "@/services/finance/finance-dashboard.schemas"
+8: import { getFinanceDashboard } from "@/services/finance/finance-dashboard.service"
+10: export async function getFinanceDashboardAction(input: unknown) {
+actions/finance/customer-settlement.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import {
+9: import {
+13: import { reverseCustomerSettlementInputSchema } from "@/services/accounting/customer-settlement.schemas"
+14: import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+56: export async function reverseCustomerSettlementAction(input: unknown) {
+components/finance/PaymentReconciliationWorkbench.tsx
+3: import {
+11: import { useLocale, useTranslations } from "next-intl"
+12: import { type CSSProperties, useMemo, useState } from "react"
+13: import type { LucideIcon } from "lucide-react"
+14: import {
+37: import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
+38: import { BIProofDrawerHost } from "@/components/bi"
+39: import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
+40: import { Badge } from "@/components/ui/badge"
+41: import { Button } from "@/components/ui/button"
+42: import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+43: import { Input } from "@/components/ui/input"
+components/finance/FinanceSpecializedLedgerSurfaces.tsx
+3: import Link from "next/link"
+4: import { useLocale, useTranslations } from "next-intl"
+5: import { useMemo, useState, type ReactNode } from "react"
+6: import {
+15: import type { LucideIcon } from "lucide-react"
+16: import {
+50: import { Badge } from "@/components/ui/badge"
+51: import { Button } from "@/components/ui/button"
+52: import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
+53: import { CanonicalTableDensityControl } from "@/components/DataTableComponents/CanonicalTableDensityControl"
+54: import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
+55: import { useCanonicalTablePreferences } from "@/components/DataTableComponents/useCanonicalTablePreferences"
+TEST {"file":"services/finance/__tests__/finance-dashboard.service.test.ts","sha256":"13aca7e0c25609dfc3b9d84a08fc51a2bb09a6f8165731d82f443b69efa81cb4","mockedPrisma":true,"externalIndicators":[]}
+
+### PAY Providers, statements, matching and suspense
+services/reconciliation/payment-reconciliation-manual-match.service.ts
+1: import { MatchRule, MatchStatus, Prisma, type MatchRecord } from "@prisma/client"
+2: import { createHash, randomUUID } from "node:crypto"
+3: import { db } from "@/prisma/db"
+4: import { ApplicationError, BusinessRuleError, ConflictError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
+5: import { auditSensitiveActionDecision, evaluateSensitiveAction, type SensitiveActionDecision } from "@/services/controls/sensitive-action.service"
+6: import { evaluateModuleAccessInTx } from "@/services/modules/module-entitlement.service"
+7: import type { ModuleEntitlementDecision } from "@/services/modules/module-control-contracts"
+8: import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
+9: import { MANUAL_ALLOCATION_STATUSES, getManualRemainingAmounts, manualMatchAmount as amount, validateManualMatchEvidence } from "./manual-match-evidence"
+12: export type ProposeManualMatchInput = {
+15: amountMatched: Prisma.Decimal.Value; currencyCode?: string; idempotencyKey: string
+19: export type ApproveManualMatchInput = {
+hooks/payments/usePaymentReconciliationDashboard.ts
+1: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+2: import { useRef } from "react"
+3: import { useTranslations } from "next-intl"
+5: import {
+19: export const paymentReconciliationDashboardKeys = {
+30: export function unwrapPaymentReconciliationActionResult<T>(result: { success: true; data: T } | { success: false; error: string | null }) {
+36: queryClient.invalidateQueries({ queryKey: paymentReconciliationDashboardKeys.all })
+37: queryClient.invalidateQueries({ queryKey: ["payment-reconciliation-workbench"] })
+40: export function usePaymentReconciliationDashboard() {
+42: queryKey: paymentReconciliationDashboardKeys.dashboard(),
+49: export function useReconciliationRunDetail(runId?: string | null) {
+51: queryKey: paymentReconciliationDashboardKeys.run(runId ?? undefined),
+actions/payments/reconciliation.actions.ts
+3: import { z } from "zod"
+5: import {
+9: import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+10: import {
+14: import {
+22: import {
+27: import {
+32: import { MobileMoneyHmacAdapter } from "@/services/payments/adapters/mobile-money-hmac.adapter"
+33: import { importProviderStatement, type ImportProviderStatementResult } from "@/services/payments/statement-import.service"
+35: export type { PaymentReconciliationDashboardData }
+36: export type { ImportProviderStatementResult, ReconciliationCertificateExportResult, ReconciliationRunDetail, SignReconciliationRunResult }
+74: idempotencyKey: z.string().min(16).max(128),
+actions/payments/reconciliation-workbench.actions.ts
+3: import { protect } from "@/services/_shared/protect"
+4: import {
+8: import { paymentReconciliationWorkbenchInputSchema } from "@/services/payments/payment-reconciliation-workbench.schemas"
+10: export type { PaymentReconciliationWorkbenchData }
+35: export async function getPaymentReconciliationWorkbenchAction(input: unknown = {}) {
+hooks/payments/usePaymentReconciliationWorkbench.ts
+3: import { useQuery } from "@tanstack/react-query"
+5: import { getPaymentReconciliationWorkbenchAction } from "@/actions/payments/reconciliation-workbench.actions"
+6: import type { PaymentReconciliationWorkbenchInput } from "@/services/payments/payment-reconciliation-workbench.schemas"
+8: export const paymentReconciliationWorkbenchKeys = {
+20: export function usePaymentReconciliationWorkbench(params: PaymentReconciliationWorkbenchInput) {
+22: queryKey: paymentReconciliationWorkbenchKeys.dashboard(params),
+components/finance/PaymentReconciliationWorkbench.tsx
+3: import {
+11: import { useLocale, useTranslations } from "next-intl"
+12: import { type CSSProperties, useMemo, useState } from "react"
+13: import type { LucideIcon } from "lucide-react"
+14: import {
+37: import { getProofTrailAction } from "@/actions/evidence/proof-trail.actions"
+38: import { BIProofDrawerHost } from "@/components/bi"
+39: import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
+40: import { Badge } from "@/components/ui/badge"
+41: import { Button } from "@/components/ui/button"
+42: import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+43: import { Input } from "@/components/ui/input"
+TEST {"file":"services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts","sha256":"e0f80ceb280dc22447c532da626ba0a8cf12f1e08cb9cb64bb1368dcb711b59e","mockedPrisma":true,"externalIndicators":[]}
+
+### HR HRIS, presence, contracts and self-service
+services/hris/approval-inbox.service.ts
+1: import "server-only"
+3: import {
+10: import { z } from "zod"
+12: import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
+13: import { db } from "@/prisma/db"
+14: import { BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors"
+15: import {
+22: import { approveHrisContractActivation } from "@/services/hris/contract.service"
+23: import {
+27: import {
+33: import { resolveHrisPeopleAccessScope } from "@/services/hris/org.service"
+34: import {
+components/hris/HrisApprovalInbox.tsx
+3: import { useMemo, useState, useTransition } from "react"
+4: import { useRouter } from "next/navigation"
+5: import {
+16: import { decideHrisApprovalInboxItemAction } from "@/actions/hris/approval-inbox.actions"
+17: import { localizePath } from "@/i18n/routing"
+18: import {
+23: import type {
+62: export function HrisApprovalInboxView({
+124: idempotencyKey: [
+actions/hris/time-leave.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import { protect } from "@/services/_shared/protect"
+6: import {
+15: export type {
+45: idempotencyKey: record.idempotencyKey,
+86: export async function getHrisTimeLeaveAttendanceStatusAction(input: unknown) {
+134: export async function certifyHrisTimeLeaveAttendanceAction(input: unknown) {
+138: export async function correctCertifiedHrisTimeLeaveAttendanceAction(
+actions/hris/payment-destination.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import { protect } from "@/services/_shared/protect"
+6: import {
+23: export type {
+51: idempotencyKey: record.idempotencyKey,
+101: export async function getHrisPaymentDestinationStatusAction(input: unknown) {
+105: export async function getOwnHrisPaymentDestinationStatusAction(
+133: export async function requestOwnHrisPaymentDestinationChangeAction(
+182: export async function requestHrisPaymentDestinationChangeAction(input: unknown) {
+186: export async function approveHrisPaymentDestinationChangeAction(input: unknown) {
+190: export async function rejectHrisPaymentDestinationChangeAction(input: unknown) {
+194: export async function applyApprovedHrisPaymentDestinationChangeAction(
+components/hris/HrisOperationalTimeRequestPanel.tsx
+3: import { useState, useTransition } from "react"
+5: import { requestOperationalTimeAction } from "@/actions/hris/operational-time.actions"
+31: export function HrisOperationalTimeRequestPanel({
+64: idempotencyKey: `${type}:${periodStart}:${periodEnd}:${evidence}`,
+components/hris/HrisOperationalTimeApprovalPanel.tsx
+3: import { useState, useTransition } from "react"
+5: import { decideOperationalTimeRequestAction } from "@/actions/hris/operational-time.actions"
+27: export function HrisOperationalTimeApprovalPanel({
+TEST {"file":"services/hris/__tests__/approval-inbox.service.test.ts","sha256":"ba1eff261f8e83d9e1714670c8bd3f6897fac717c43f9e9423615c8684833b8d","mockedPrisma":false,"externalIndicators":[]}
+
+### PRL Payroll, payslips, obligations and payment
+services/payroll/payroll-control.service.ts
+1: import { createHash } from "crypto";
+2: import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service";
+3: import {
+36: import { z } from "zod";
+38: import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions";
+39: import { db } from "@/prisma/db";
+40: import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service";
+41: import {
+45: import { getOpenPeriodForDate } from "@/services/accounting/periods.service";
+46: import { getActivePostingRule } from "@/services/accounting/posting-rules.service";
+47: import {
+54: import {
+hooks/payroll/usePayrollWorkbench.ts
+3: import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+4: import { useTranslations } from "next-intl"
+5: import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
+7: import {
+16: export const payrollWorkbenchKeys = {
+28: queryClient.invalidateQueries({ queryKey: payrollWorkbenchKeys.all })
+31: export function usePayrollWorkbench(limit = 20) {
+33: queryKey: payrollWorkbenchKeys.dashboard(limit),
+44: export function useCalculatePayrollRun() {
+60: export function useApprovePayrollRun() {
+74: export function useReleasePayrollPaymentBatch() {
+88: export function usePreparePayrollDeclarations() {
+actions/payroll/payroll-setup.actions.ts
+3: import { protect } from "@/services/_shared/protect";
+4: import {
+8: import {
+14: import {
+20: import {
+24: import {
+29: export type {
+150: idempotencyKey: stringValue(raw.idempotencyKey),
+210: export async function getPayrollSetupReadinessAction(input: unknown = {}) {
+237: export async function generatePayrollSeedBackfillDryRunPlanAction(
+263: export async function getPayrollSetupEvidenceReadModelAction(
+322: export async function preparePayrollProofBackfillExecutionAction(
+actions/payroll/payroll-register.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import { protect } from "@/services/_shared/protect"
+6: import {
+15: export type { PayrollRegisterExportResult, PayrollRegisterReadModel }
+51: export async function getPayrollRegisterAction(input: unknown = {}) {
+84: export async function preparePayrollRegisterExportAction(input: unknown) {
+components/payroll/PayrollSetupControlPlane.tsx
+3: import {
+16: import type {
+22: import PayrollProofBackfillExecutionPanel from "./PayrollProofBackfillExecutionPanel";
+23: import {
+522: {item.idempotencyKey}
+708: export default function PayrollSetupControlPlane({
+components/payroll/PayrollRunWorkbench.tsx
+3: import Link from "next/link";
+4: import type { LucideIcon } from "lucide-react";
+5: import {
+18: import type { PayrollRunWorkbenchResult } from "@/actions/payroll/payroll-control.actions";
+19: import { localizePath } from "@/i18n/routing";
+20: import type { Locale } from "@/types/bilingual";
+21: import {
+26: import PayrollProofDrawerButton, {
+29: import PayrollRunActionPanel from "./PayrollRunActionPanel";
+152: ["Evidence", run.proof.evidenceHash],
+258: { label: "Evidence hash", value: run.proof.evidenceHash },
+465: batch.evidenceHash ||
+TEST {"file":"services/payroll/__tests__/payroll-control.service.test.ts","sha256":"8f60aeee129132419a0da707d9843ffcfa6594b06d16a065b0653ffa389eb472","mockedPrisma":true,"externalIndicators":[]}
+
+### CMP Fiscal documents, compliance and country packs
+services/compliance/fiscal-document.service.ts
+1: import { createHash } from "crypto"
+3: import {
+14: import { db } from "@/prisma/db"
+15: import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+16: import {
+23: import {
+27: import {
+31: import {
+35: import {
+57: return "$transaction" in client
+167: export async function allocateFiscalSequenceNumber(
+212: const transition = await tx.fiscalSequence.updateMany({
+hooks/compliance/useComplianceCenter.ts
+3: import { useQuery } from "@tanstack/react-query"
+5: import {
+10: export type ComplianceCenterQueryInput = {
+15: export type ComplianceCenterQueryError = Error & {
+19: export const complianceCenterKeys = {
+36: export function unwrapComplianceCenterActionResult<T>(
+48: export function useComplianceCenter(options: {
+56: queryKey: complianceCenterKeys.dashboard(input),
+71: export type { ComplianceCenterKernelSnapshot }
+actions/compliance/country-adapter-pilot.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import {
+11: import {
+17: import { protect, type ProtectedActionResponse } from "@/services/_shared/protect"
+27: export type CountryAdapterPilotErrorCode =
+95: export async function configureCountryAdapterPilotAction(input: unknown) {
+121: export async function rotateCountryAdapterCredentialAction(input: unknown) {
+147: export async function recordCountryAdapterReviewAction(input: unknown) {
+173: export async function disableCountryAdapterAction(input: unknown) {
+actions/compliance/compliance-center.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import { protect } from "@/services/_shared/protect"
+6: import {
+13: import {
+20: export type { ComplianceCenterKernelSnapshot }
+60: export async function getComplianceCenterKernelSnapshotAction(input: unknown = {}) {
+80: export async function resolveEInvoicingMetadataAction(input: unknown) {
+106: export async function createFiscalDocumentFromPostedSourceAction(input: unknown) {
+132: export async function enqueueComplianceSubmissionAction(input: unknown) {
+components/compliance/ComplianceCenterDashboard.tsx
+3: import { useLocale, useTranslations } from "next-intl"
+4: import { type CSSProperties, type ReactNode, useMemo, useState } from "react"
+5: import type { LucideIcon } from "lucide-react"
+6: import {
+25: import { Badge } from "@/components/ui/badge"
+26: import { Button } from "@/components/ui/button"
+27: import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+28: import { Input } from "@/components/ui/input"
+29: import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+30: import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+31: import { Skeleton } from "@/components/ui/skeleton"
+32: import { useNotifications } from "@/components/notifications/NotificationProvider"
+TEST {"file":"services/compliance/__tests__/fiscal-document.service.test.ts","sha256":"8b864deb40cb5c4ca1ac308a102ceac3be77f5dfe31d12791989f31bb5f5d901","mockedPrisma":false,"externalIndicators":[]}
+
+### CLS Close assurance, incidents and accountant collaboration
+services/accounting/close-assurance.service.ts
+1: import "server-only"
+3: import {
+18: import { randomUUID } from "node:crypto"
+20: import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+21: import { db } from "@/prisma/db"
+22: import { recordBusinessEventInTx } from "@/services/events/business-event.service"
+23: import {
+32: import { getAccountantPortalData } from "./data-trust.service"
+33: import { resolveAccountantClientAccess } from "./accountant-access.service"
+34: import {
+39: import {
+43: import { getPaymentReconciliationDashboardData } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
+components/accounting/CloseAssuranceCenter.tsx
+3: import { useEffect, useMemo, useState } from "react"
+4: import {
+25: import type { CloseAssuranceDashboardData, CloseAssuranceFindingDto } from "@/actions/accounting/close-assurance.actions"
+26: import type { ClosePackExportResult } from "@/services/accounting/close-assurance-pack.service"
+27: import {
+37: import { cn } from "@/lib/utils"
+38: import type { Locale } from "@/types/bilingual"
+39: import { Badge } from "@/components/ui/badge"
+40: import { Button } from "@/components/ui/button"
+41: import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
+42: import {
+46: import { createCanonicalTableQuery } from "@/components/DataTableComponents/table-system-contract"
+actions/accounting/close-assurance.actions.ts
+3: import { revalidatePath } from "next/cache"
+5: import {
+9: import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+10: import {
+30: import {
+33: import {
+37: import {
+52: export type {
+78: export async function getCloseAssuranceDashboardAction(input: unknown = {}) {
+95: export async function runCloseAssuranceAction(input: unknown) {
+107: export async function getCloseEvidenceGraphAction(input: unknown) {
+124: export async function assignCloseFindingAction(input: unknown) {
+components/assurance/AssuranceIncidentDetailView.tsx
+1: import Link from "next/link"
+2: import { ArrowLeft, ArrowUpRight, CalendarClock, EyeOff, FileSearch, GitBranch, ShieldCheck } from "lucide-react"
+4: import { AssuranceIncidentActions } from "@/components/assurance/AssuranceIncidentActions"
+5: import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge"
+6: import { Badge } from "@/components/ui/badge"
+7: import { Button } from "@/components/ui/button"
+8: import {
+14: import { cn } from "@/lib/utils"
+15: import type { AssuranceIncidentDetailData } from "@/services/assurance/assurance-control-tower-contracts"
+45: export function AssuranceIncidentDetailView({ data, locale }: AssuranceIncidentDetailViewProps) {
+140: <p className="mt-1 break-words text-xs text-[var(--dash-text-soft)]">{waiver.evidenceHash}</p>
+components/assurance/AssuranceIncidentActions.tsx
+3: import { useRouter } from "next/navigation"
+4: import { CheckCircle2, Clock3, FileCheck2, RotateCcw, ShieldAlert, UserRoundCheck } from "lucide-react"
+5: import type { FormEvent, ReactNode } from "react"
+6: import { useMemo, useState } from "react"
+8: import {
+17: import { resolvePosCashShortageIncidentAction } from "@/actions/assurance/pos-cash-shortage-resolution.actions"
+18: import { useNotifications } from "@/components/notifications/NotificationProvider"
+19: import { Badge } from "@/components/ui/badge"
+20: import { Button } from "@/components/ui/button"
+21: import {
+29: import { Input } from "@/components/ui/input"
+30: import { Label } from "@/components/ui/label"
+TEST {"file":"services/assurance/__tests__/assurance-control-tower.service.test.ts","sha256":"162c703098507ca4b0ee7c23dba88e086f92a648e80b47e95c94b90503d03c8c","mockedPrisma":true,"externalIndicators":[]}
+
+### ANA Dashboards, analytics, command views and reports
+services/analytics/sales-analytics.service.ts
+1: import "server-only"
+3: import { endOfDay, startOfDay, startOfMonth, startOfWeek, subDays } from "date-fns"
+5: import { db } from "@/prisma/db"
+6: import type {
+18: import type {
+23: import type { SnapshotSourceModule } from "@/services/snapshots/snapshot-contracts"
+24: import { ApplicationError, toSafeActionError } from "@/services/_shared/action-errors"
+26: export interface SalesAnalyticsReadModelInput {
+33: export interface AnalyticsLocationInput {
+38: export interface BusinessPulseCommandInput {
+43: export interface SalesAnalytics {
+73: export interface CashReconciliationReport {
+hooks/analytics/useDailySalesReport.ts
+2: import { useQuery } from "@tanstack/react-query"
+3: import { getDailySalesReportAction } from "@/actions/analytics/daily-sales.actions"
+5: export function useDailySalesReport(scope: { userId?: string; organizationId?: string; locationId?: string; date?: string | Date }) {
+7: queryKey: ["daily-sales", scope.userId ?? null, scope.organizationId ?? null, scope.locationId ?? null, scope.date instanceof Date ? scope.date.toISOString() : scope.date ?? null],
+actions/analytics/getSalesAnalytics.ts
+3: import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
+4: import {
+13: export type {
+47: export async function getSalesAnalytics(
+58: export async function getCashReconciliationReports(
+69: export async function getProductPerformance(
+80: export async function getUserPerformance(
+91: export async function getDashboardSummary(organizationId: string, locationId: string) {
+actions/analytics/get-sales-analytics.ts
+3: export * from "@/actions/analytics/getSalesAnalytics"
+components/daily-habit/DailyHabitDigestDashboard.tsx
+3: import { useMemo, useState } from "react"
+4: import { CalendarDays, EyeOff, LayoutList, LockKeyhole } from "lucide-react"
+5: import { AgentCommandPanel } from "@/components/agents/AgentCommandPanel"
+7: import {
+14: import { Button } from "@/components/ui/button"
+15: import {
+21: import { cn } from "@/lib/utils"
+22: import type { BICommandMode, BIDailyDigest } from "@/services/bi/bi-contracts"
+23: import type { DailyHabitDigestData } from "@/services/daily-habit/daily-habit-digest-contracts"
+24: import type { CommandAgentSurfaceAccess } from "@/services/agents/command-agent-contracts"
+72: export function DailyHabitDigestDashboard({
+components/analytics/dashboard/top-products-card.tsx
+3: import { Badge } from "@/components/ui/badge"
+4: import { Progress } from "@/components/ui/progress"
+5: import { Target } from "lucide-react"
+6: import {
+22: export function TopProductsCard() {
+TEST null
+
+### IAM Identity, tenant access, settings and administration
+services/security/account-session.service.ts
+1: import "server-only"
+2: import { createHash } from "node:crypto"
+3: import { Prisma } from "@prisma/client"
+4: import { db } from "@/prisma/db"
+5: import { expandPermissions, hasRbacPermission } from "@/lib/security/rbac-permissions"
+6: import { isUsableAccount } from "@/services/roles/role-custodian-policy"
+7: import { ApplicationError, ConflictError, ForbiddenError, IdempotencyConflictError } from "@/services/_shared/action-errors"
+8: import { accountSessionCommand, accountSessionReceipt, type AccountSessionCommand, type AccountSessionPreview } from "./account-session-input"
+28: export async function getAccountSessionPreview(scope: Scope): Promise<AccountSessionPreview> {
+29: return db.$transaction(async tx => {
+33: const records = await tx.auditLog.findMany({ where: auditWhere(scope), orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 10, select: { id: true, changes: true } })
+40: }, { isolationLevel: "RepeatableRead", timeout: 10000 })
+hooks/account-session-recovery.ts
+1: import { z } from "zod"
+2: import { accountSessionCommand, type AccountSessionCommand } from "@/services/security/account-session-input"
+7: export function readAccountSessionRequest(store: Store, organizationId: string, actorId: string, sessionId: string, now = Date.now()) {
+17: export function saveAccountSessionRequest(store: Store, organizationId: string, actorId: string, sessionId: string, command: AccountSessionCommand | null) {
+actions/users/verifyOtp.ts
+2: import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
+3: import { getPublicIdentityRequestContext } from "@/lib/security/public-request-context";
+4: import { verifyEmailOtpWorkflow } from "@/services/users/user-identity.service";
+22: export default verifyOTP
+actions/users/updateUserPassword.ts
+3: import {
+7: import { requireFreshAuth, requireSession } from "@/lib/security/auth-session";
+8: import { getPublicIdentityRequestContext } from "@/lib/security/public-request-context";
+9: import { requirePermission } from "@/lib/security/rbac";
+10: import { passwordChangeRequest, type PasswordChangeFields } from "@/services/users/password-change-input";
+11: import { stepUpSessionWithPassword } from "@/services/security/step-up-auth.service";
+12: import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
+13: import {
+17: import { revalidatePath } from "next/cache";
+18: import { redirect } from "next/navigation";
+19: import { getLocale } from "next-intl/server";
+20: import { localizePath, pickLocale } from "@/i18n/routing";
+components/settings/UserDeactivation.tsx
+3: import { useId, useRef, useState } from "react"
+4: import { deleteUser } from "@/actions/users/deleteUser"
+5: import getOrgUsers from "@/actions/users/getOrgUsers"
+6: import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+7: import { Button } from "@/components/ui/button"
+8: import { Input } from "@/components/ui/input"
+9: import { Label } from "@/components/ui/label"
+10: import { Textarea } from "@/components/ui/textarea"
+11: import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+12: import type { UserDeactivationCommand, UserDeactivationReceipt } from "@/services/users/user-deactivation-input"
+13: import { userDirectoryCopy } from "./user-directory-copy"
+17: export function UserDeactivation(props: Props) {
+components/settings/user-directory-copy.ts
+1: export const userDirectoryCopy = {
+TEST {"file":"services/security/__tests__/account-session.service.test.ts","sha256":"580c0c8199914109953a6c628c644ac55ec0d904af2f7a3af7b09bf50676ae83","mockedPrisma":true,"externalIndicators":[]}
+
+### MOD Module lifecycle, packaging and billing boundaries
+services/modules/module-entitlement.service.ts
+1: import "server-only"
+3: import { Prisma } from "@prisma/client"
+5: import { logger } from "@/lib/logger"
+6: import { db } from "@/prisma/db"
+7: import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+8: import {
+19: import {
+26: export async function getManagedModuleState(organizationId: string, client: Prisma.TransactionClient = db) {
+48: export function deriveLegacyEntitlements(input: {
+89: export function evaluateModuleEntitlement(input: ModuleEntitlementEvaluationInput): ModuleEntitlementDecision {
+147: export async function observeModuleAccess(input: ModuleAccessObserveInput): Promise<ModuleEntitlementDecision> {
+172: export async function evaluateModuleAccessInTx(
+actions/modules/module-composition.actions.ts
+3: import { z } from "zod"
+4: import { revalidatePath } from "next/cache"
+5: import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
+6: import { applyModuleComposition, getModuleCompositionData, getModuleCompositionHistory, previewModuleComposition, reopenModuleComposition, saveModuleCompositionDraft, resumeModuleComposition } from "@
+7: import type { CompositionHistoryEntry, CompositionHistoryPage, ModuleCompositionApplyResult, ModuleCompositionData, ModuleCompositionPreview } from "@/services/modules/module-composition-contracts"
+12: const draft = selection.extend({ idempotencyKey: key })
+14: const reopen = z.object({ commandId: z.string().trim().min(1).max(128), expectedRevision: z.number().int().min(0), idempotencyKey: key })
+15: const resumeInput = z.object({ operationId: z.string().trim().min(1).max(128), expectedRevision: z.number().int().min(0), idempotencyKey: key })
+41: export async function getModuleCompositionAction(input: unknown = {}) { return read(input) }
+42: export async function getModuleCompositionHistoryAction(input: unknown) { return history(input) }
+43: export async function previewModuleCompositionAction(input: unknown) { return preview(input) }
+44: export async function saveModuleCompositionDraftAction(input: unknown) { return save(input) }
+actions/modules/module-control.actions.ts
+3: import { z } from "zod"
+5: import { BusinessRuleError } from "@/services/_shared/action-errors"
+6: import { protect } from "@/services/_shared/protect"
+7: import {
+12: import {
+20: export type { ModuleControlCenterData, ModuleEntitlementDecision }
+85: export async function getModuleControlCenterAction(input: unknown = {}) {
+89: export async function observeModuleAccessAction(input: unknown) {
+93: export async function activateTenantModuleAction(input: unknown) {
+components/modules/TenantModuleActivationButton.tsx
+3: import { type FormEvent, useState, useTransition } from "react"
+4: import { useRouter } from "next/navigation"
+6: import { activateTenantModuleAction } from "@/actions/modules/module-control.actions"
+7: import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+8: import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
+10: export function TenantModuleActivationButton({
+components/modules/ModuleCompositionWorkbench.tsx
+3: import { useEffect, useMemo, useRef, useState, type FormEvent } from "react"
+4: import { useLocale, useTranslations } from "next-intl"
+5: import { useRouter } from "next/navigation"
+6: import Link from "next/link"
+7: import { ArrowRight, Boxes, Check, CheckCircle2, CircleDot, FileClock, History, Layers3, Link2, Loader2, LockKeyhole, RefreshCw, Search, ShieldCheck, SlidersHorizontal, Store, BriefcaseBusiness, Alert
+9: import { applyModuleCompositionAction, getModuleCompositionAction, getModuleCompositionHistoryAction, previewModuleCompositionAction, reopenModuleCompositionAction, resumeModuleCompositionAction, save
+10: import { stepUpWithPasswordAction } from "@/actions/security/step-up-auth.actions"
+11: import { CommandBriefHeader, RouteStatePanel, dashboardToneClass, type DashboardTone } from "@/components/dashboard/primitives"
+12: import { Badge } from "@/components/ui/badge"
+13: import { Button } from "@/components/ui/button"
+14: import { Checkbox } from "@/components/ui/checkbox"
+15: import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+TEST {"file":"services/modules/__tests__/module-admission.service.test.ts","sha256":"182bbc671ba489bff1b732db5570ca2abaf3800a29c8912a31c698f099696f72","mockedPrisma":false,"externalIndicators":[]}
+
+### ONB Onboarding, imports and migration readiness
+services/onboarding/master-data-import.service.ts
+1: import "server-only"
+3: import type { Prisma } from "@prisma/client"
+5: import { db } from "@/prisma/db"
+6: import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+7: import type { CustomerCreateInput } from "@/services/customer/customer.schemas"
+8: import { createCustomer } from "@/services/customer/customer.service"
+9: import type { ItemCreateInput } from "@/services/item/item.schemas"
+10: import { createItem } from "@/services/item/item.service"
+11: import type { SupplierCreateInput } from "@/services/supplier/supplier.schemas"
+12: import { createSupplier } from "@/services/supplier/supplier.service"
+13: import {
+32: export const MASTER_DATA_ONBOARDING_CONTROL_BOUNDARY = {
+components/onboarding/MasterDataOnboardingWorkbench.tsx
+3: import { useLocale, useTranslations } from "next-intl"
+4: import { useRouter } from "next/navigation"
+5: import { useMemo, useState, type FormEvent } from "react"
+7: import {
+14: import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+15: import { Button } from "@/components/ui/button"
+16: import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+17: import type {
+21: import type { MasterDataImportTarget } from "@/services/onboarding/master-data-csv"
+42: export function MasterDataOnboardingWorkbench({
+actions/onboarding/master-data-onboarding.actions.ts
+3: import { revalidatePath } from "next/cache"
+4: import { z } from "zod"
+6: import {
+11: import { hasRbacPermission, requireAnyPermission, requirePermission } from "@/lib/security/rbac"
+12: import { BusinessRuleError } from "@/services/_shared/action-errors"
+13: import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+14: import {
+24: import {
+79: export async function getMasterDataCsvTemplateAction(targetInput: unknown) {
+88: export async function createMasterDataMappingAction(input: unknown) {
+102: export async function stageMasterDataImportAction(input: unknown) {
+114: export async function approveMasterDataImportAction(input: unknown) {
+TEST {"file":"services/onboarding/__tests__/master-data-import-guards.test.ts","sha256":"e727e97ea667dd4a941836bdbf04a92ab75506eda300e143cb65e5b2c512fa4b","mockedPrisma":true,"externalIndicators":[]}
+
+### COM Notifications, collaboration and referral outcomes
+services/communication/customer-statement-delivery-worker.service.ts
+1: import { createHash, randomUUID } from "node:crypto"
+2: import {
+8: import { z } from "zod"
+10: import { db } from "@/prisma/db"
+11: import {
+16: import {
+21: import {
+24: import {
+27: import { verifyCustomerStatementAccessToken } from "@/services/accounting/customer-statement-token"
+28: import { hashCustomerStatementAccessValue } from "@/services/accounting/customer-statement-access.service"
+29: import { statementDispatchMetadata as dispatchMetadata } from "@/services/accounting/customer-statement-delivery-recovery"
+30: import { hashWhatsAppDestination } from "./whatsapp-receipt.provider"
+components/notifications/NotificationProvider.tsx
+3: import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
+5: import { NotificationData, NotificationSystem } from "./NotificationSystem"
+6: import { setupErrorNotificationIntegration } from "@/lib/error-handling/notification-integration"
+7: import {
+11: import {
+98: export function useNotifications() {
+112: export function NotificationProvider({
+actions/referrals/referral-funnel.actions.ts
+3: import {
+7: import { getReferralFunnelReadModel } from "@/services/referrals/referral-funnel-read-model.service"
+9: export async function getReferralFunnelAction(
+components/referrals/ReferralFunnelDashboard.tsx
+1: import {
+9: import { dashboardPanelClass } from "@/components/dashboard/primitives"
+10: import { Badge } from "@/components/ui/badge"
+11: import {
+17: import { cn } from "@/lib/utils"
+18: import type { ReferralFunnelReadModel } from "@/services/referrals/referral-funnel-read-model.service"
+79: export function ReferralFunnelDashboard({
+components/notifications/NotificationSystem.tsx
+3: import { Button } from "@/components/ui/button"
+4: import { cn } from "@/lib/utils"
+5: import {
+23: import { useCallback, useEffect, useRef, useState } from "react"
+24: import { usePathname } from "next/navigation"
+25: import type { Locale } from "@/types/bilingual"
+26: import { notificationCategoryLabel, notificationCopy, notificationDateTime, notificationStateLabel } from "@/lib/notifications/presentation"
+28: export type NotificationCategory =
+57: export type NotificationSeverity = "info" | "success" | "warning" | "error" | "critical"
+58: export type NotificationDeliveryState = "queued" | "sent" | "delivered" | "read" | "failed" | "dismissed"
+59: export type NotificationChannel = "in_app" | "email" | "sms" | "push"
+61: export interface NotificationData {
+TEST {"file":"services/communication/__tests__/customer-statement-delivery-worker.service.test.ts","sha256":"f9faf9d7a63988ea9c8c935d870b0b6e4e49d7a80d2cb7e97ff0511bb8cf5871","mockedPrisma":true,"externalIndicators":[]}
+
+### AI AI, command agents and proposal governance
+services/ai/copilot-proposal.service.ts
+1: import "server-only"
+3: import { db } from "@/prisma/db"
+4: import {
+10: import {
+14: import {
+19: import {
+71: export type CopilotProposalDto = {
+89: executionAuthority: "NONE"
+92: export async function createCopilotProposal(
+170: const proposal = await db.$transaction(async (tx) => {
+173: organizationId_idempotencyKey: {
+175: idempotencyKey: input.idempotencyKey,
+components/copilot/CopilotProposalControls.tsx
+3: import { useState } from "react"
+4: import { Check, FileCheck2, Loader2, ShieldAlert, X } from "lucide-react"
+6: import {
+10: import { Button } from "@/components/ui/button"
+11: import type { CommandDailyBrief } from "@/services/agents/command-agent-contracts"
+12: import type { CopilotProposalDto } from "@/services/ai/copilot-proposal.service"
+49: export function CopilotProposalControls({
+91: idempotencyKey: `copilot-proposal:${runId}:${priority.id}`,
+actions/ai/copilot-proposal.actions.ts
+3: import { protect, type ProtectedActionResponse } from "@/services/_shared/protect"
+4: import {
+10: import { authorizeCopilotProposalRelease } from "@/services/ai/copilot-proposal-release.service"
+11: import {
+23: export type CopilotGuardrailErrorCode =
+126: export async function createCopilotProposalAction(input: unknown) {
+130: export async function decideCopilotProposalAction(input: unknown) {
+134: export async function listCopilotProposalsAction(input: unknown = {}) {
+actions/agents/command-agent.actions.ts
+3: import {
+9: import { protect } from "@/services/_shared/protect";
+10: import { recordBusinessEvent } from "@/services/events/business-event.service";
+11: import { AgentDefinitionError } from "@/services/agents/agent-definition.service";
+12: import { recordCommandAgentFeedback } from "@/services/agents/agent-feedback.service";
+13: import { AgentReleaseControlError } from "@/services/agents/agent-release-control.service";
+14: import {
+18: import {
+53: idempotencyKey: `ai-analysis-requested:${parsed.data.requestId}`,
+62: executionAuthority: "READ_ONLY",
+144: export async function runCommandAgentAction(input: unknown) {
+148: export async function submitCommandAgentFeedbackAction(input: unknown) {
+components/agents/AgentCommandPanel.tsx
+3: import { useState } from "react";
+4: import {
+18: import {
+22: import { CopilotProposalControls } from "@/components/copilot/CopilotProposalControls";
+23: import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge";
+24: import { Button } from "@/components/ui/button";
+25: import {
+31: import { cn } from "@/lib/utils";
+32: import type {
+102: export function AgentCommandPanel({
+TEST {"file":"services/ai/__tests__/copilot-proposal.service.test.ts","sha256":"61c5901d575cad8d3e5a7f98c9683cd9a4d23f9840d14a949a87db7afb7677b8","mockedPrisma":true,"externalIndicators":[]}
+
+### EVT Events, recovery, migrations and platform operations
+services/events/business-event-outbox.service.ts
+1: import {
+7: import { db } from "@/prisma/db"
+8: import {
+23: export type BusinessEventOutboxMessage = {
+30: idempotencyKey: string
+54: updateMany(args: unknown): Promise<{ count: number }>
+64: export type BusinessEventOutboxClient = BusinessEventOutboxStore & {
+65: $transaction<T>(
+70: export type ClaimBusinessEventOutboxInput = {
+112: export async function claimBusinessEventOutboxMessages(
+146: take: Math.min(200, limit * 2),
+154: idempotencyKey: true,
+services/events/business-event.service.ts
+1: import { createHash } from "crypto"
+3: import type { Prisma } from "@prisma/client"
+5: import { db } from "@/prisma/db"
+6: import { createCorrelationId } from "@/lib/error-handling/canonical"
+7: import {
+15: import {
+19: import {
+30: idempotencyKey: string
+47: export type BusinessEventDatabaseClient = {
+51: $transaction<T>(
+60: export type RecordBusinessEventResult = {
+79: export function stableJsonStringify(value: unknown): string {
+TEST {"file":"services/events/__tests__/business-event-outbox.service.test.ts","sha256":"53a55cb7e154c5ef5945a43786c406f43188cdd77a9b3a37efabcc1c56a0c732","mockedPrisma":false,"externalIndicators":[]}
+
+### WEB Public experience, content and marketing administration
+services/modules/module-catalog.service.ts
+1: import "server-only"
+3: import type {
+8: import { isCommercialModuleSlug } from "./module-control-contracts"
+329: export function getModuleCatalog() {
+333: export function getModuleCatalogEntry(slug: CommercialModuleSlug) {
+337: export function normalizeModuleSlug(value: string): CommercialModuleSlug | null {
+350: export function normalizeRequestedModuleSlugs(values: readonly string[] | null | undefined) {
+369: export function moduleForPath(pathname: string) {
+config/sidebar.ts
+1: import type { LucideIcon } from "lucide-react"
+2: import {
+18: import { PERMISSIONS } from "@/lib/permissions"
+19: import {
+25: export interface ISidebarDropdownItem {
+36: export interface ISidebarLink {
+51: export type SidebarSectionKey = "command" | "operations" | "finance" | "people" | "governance"
+53: export interface SidebarSection {
+59: export interface SidebarDestination {
+71: export const sidebarSections: SidebarSection[] = [
+81: export const sidebarLinks: ISidebarLink[] = [
+336: export function filterSidebarLinksByPermission(
+components/landing-preview/founder-journey/preview-sections.tsx
+1: import { Link } from "@/i18n/navigation"
+2: import {
+24: import type { LucideIcon } from "lucide-react"
+25: import Image from "next/image"
+26: import { useTranslations } from "next-intl"
+157: export function PreviewProblem() {
+202: export function PreviewJourney() {
+254: export function PreviewProof() {
+322: export function PreviewPathways() {
+372: export function PreviewTrust() {
+420: export function PreviewAdoption() {
+components/landing-preview/founder-journey/preview-hero.tsx
+1: import Image from "next/image"
+2: import { ArrowDown, ShieldCheck } from "lucide-react"
+3: import { useTranslations } from "next-intl"
+5: export function PreviewHero() {
+TEST null
+
+### AGT Commercial agents and revenue channels
+services/modules/module-catalog.service.ts
+1: import "server-only"
+3: import type {
+8: import { isCommercialModuleSlug } from "./module-control-contracts"
+329: export function getModuleCatalog() {
+333: export function getModuleCatalogEntry(slug: CommercialModuleSlug) {
+337: export function normalizeModuleSlug(value: string): CommercialModuleSlug | null {
+350: export function normalizeRequestedModuleSlugs(values: readonly string[] | null | undefined) {
+369: export function moduleForPath(pathname: string) {
+config/sidebar.ts
+1: import type { LucideIcon } from "lucide-react"
+2: import {
+18: import { PERMISSIONS } from "@/lib/permissions"
+19: import {
+25: export interface ISidebarDropdownItem {
+36: export interface ISidebarLink {
+51: export type SidebarSectionKey = "command" | "operations" | "finance" | "people" | "governance"
+53: export interface SidebarSection {
+59: export interface SidebarDestination {
+71: export const sidebarSections: SidebarSection[] = [
+81: export const sidebarLinks: ISidebarLink[] = [
+336: export function filterSidebarLinksByPermission(
+TEST null

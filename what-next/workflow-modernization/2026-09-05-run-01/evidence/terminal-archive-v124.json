@@ -1,0 +1,52 @@
+{
+  "at": "2026-09-13T12:45:54.830Z",
+  "baseline": "evidence/source-baseline-v124.json",
+  "sources": {
+    "services/pos/terminal-management.service.ts": "f57ae943d546dc86ec9b7db140af4d5348481d01f2ad19a196de66dc9cb594bc",
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56"
+  },
+  "before": {
+    "file": "lanes/environment/terminal-race-v124-before-f1336a18-82e0-4f04-94dd-124428239569.json",
+    "receipt": "9df366"
+  },
+  "after": {
+    "file": "lanes/environment/terminal-race-v124-after-06f8c4c4-7325-422d-a657-ba35f06b6bd5.json",
+    "receipt": "420e69"
+  },
+  "tests": {
+    "passed": 48,
+    "suites": 3,
+    "receipt": "7f3fd8"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "8d077b"
+  },
+  "lint": {
+    "passed": true,
+    "files": 2,
+    "receipt": "2ee110"
+  },
+  "browser": {
+    "status": "not_visited_for_terminal_workflow"
+  },
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2877,
+      "tests": 1018,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 174,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2511,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

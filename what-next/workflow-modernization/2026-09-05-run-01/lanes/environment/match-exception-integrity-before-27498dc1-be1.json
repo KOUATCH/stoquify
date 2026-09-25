@@ -1,0 +1,58 @@
+{
+  "run": "27498dc1-be1",
+  "mode": "before",
+  "at": "2026-09-08T10:12:09.629Z",
+  "checks": [
+    {
+      "name": "missing-maker observation",
+      "status": "observed",
+      "rejected": false
+    },
+    {
+      "name": "missing-maker",
+      "status": "passed"
+    },
+    {
+      "name": "changed-request-source observation",
+      "status": "observed",
+      "rejected": false
+    },
+    {
+      "name": "changed-request-source",
+      "status": "passed"
+    },
+    {
+      "name": "changed-review-source observation",
+      "status": "observed",
+      "rejected": false
+    },
+    {
+      "name": "changed-review-source",
+      "status": "passed"
+    },
+    {
+      "name": "deleted-review-invoice observation",
+      "status": "observed",
+      "rejected": false
+    },
+    {
+      "name": "deleted-review-invoice",
+      "status": "passed"
+    },
+    {
+      "name": "valid approval and rejection preserve payable until separate invoice approval",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "26c14bc3b1f102809d56d26b6f6c7f97f4d9956f1194cc640e33d9b597e7a3a7",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df"
+  },
+  "originalBefore": "3bead3afb4c5aa9d65ee1de6a10e2f3acc7d6e6f7dc1e178f331f9b0e2169d0d",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "26c14bc3b1f102809d56d26b6f6c7f97f4d9956f1194cc640e33d9b597e7a3a7",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df"
+  },
+  "sourceStable": true
+}

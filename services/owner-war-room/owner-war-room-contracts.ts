@@ -56,7 +56,7 @@ export type OwnerWarRoomMetricCard = {
   id: OwnerWarRoomCardId
   title: string
   detail: string
-  value: number
+  value: number | null
   unit: string
   tone: OwnerWarRoomTone
   state: OwnerWarRoomCardState
@@ -127,7 +127,7 @@ export type OwnerMorningBriefData = BIDailyDigest & {
   proofSubjects: BIProofDrawerSubject[]
   acknowledgement: OwnerMorningBriefAcknowledgement
   headlineMetrics: {
-    cashAtRisk: number
+    cashAtRisk: number | null
     payrollForecastTotal: number
     blockedCloseItems: number
     staleEvidenceItems: number

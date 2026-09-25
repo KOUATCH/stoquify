@@ -1,0 +1,14 @@
+{
+  "at": "2026-09-13T15:20:23.936Z",
+  "checks": [
+    "Legacy unrecorded request requires explicit current review, rejects unbound commit, isolates scope, then same identifier commits after review",
+    "Completed re-reviewed sale cannot acknowledge older different queued intent; payload/hash retained and no financial effects",
+    "Unbound pending offline event has durable review-required blocker and unchanged accepted payload, with no sale"
+  ],
+  "scope": "Owned synthetic cash data; offline PENDING_REPLAY records are direct controlled fixtures, not signature-ingestion evidence.",
+  "passed": true,
+  "sources": {
+    "services/pos/pos.service.ts": "eb7d15d8a778794327661430f54c33d67510e5e4b3ec81df795462b536dcf1b8",
+    "services/pos/offline-sync.service.ts": "b11e9f56fc75fc39f038192185c01757fd9c46d887879eb2b569a73d29b70f7b"
+  }
+}

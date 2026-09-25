@@ -1,6 +1,7 @@
 import { AccountingSourceType, AdjustmentType, Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 import {
   BusinessRuleError,
   ConflictError,
@@ -391,6 +392,7 @@ export async function createStockCountSession(
 ): Promise<CreateStockCountSessionResult> {
   const parsed = createStockCountSessionInputSchema.parse(input)
   const run = async (tx: Prisma.TransactionClient) => {
+    await assertModuleNewWorkInTx(tx, { organizationId: parsed.organizationId, moduleSlug: "inventory", operation: "inventory.count.create" })
     const countDate = parsed.countDate ?? new Date()
     const location = await tx.location.findFirst({
       where: {

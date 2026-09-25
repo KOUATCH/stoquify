@@ -1,0 +1,1330 @@
+ M .gitignore
+ M README.md
+ M actions/accounting/close-assurance.actions.ts
+ M actions/agents/command-agent.actions.ts
+ M actions/analytics/analytics/__tests__/financial-reports.authorization.test.ts
+ M actions/analytics/financial-analytics.ts
+ M actions/auth.ts
+ M actions/customers/__tests__/customer-management-actions.test.ts
+ M actions/customers/customer-management-actions.ts
+ M actions/customers/customerAction2.ts
+ M actions/customers/customerActions.ts
+ M actions/end-of-day-close/__tests__/branch-daily-close-completion.actions.test.ts
+ M actions/end-of-day-close/branch-daily-close-completion.actions.ts
+ M actions/inventory/inventoryActions.ts
+ M actions/inventory/inventoryMovementActions.ts
+ M actions/itemsShow/__tests__/item-service-boundary.actions.test.ts
+ M actions/itemsShow/getOrgItemsWithInventoryLevels.ts
+ M actions/manager-action-center/__tests__/manager-action-center.actions.test.ts
+ M actions/manager-action-center/manager-action-center.actions.ts
+ M actions/organization/organization-settings-actions.ts
+ M actions/owner-war-room/__tests__/owner-war-room.actions.test.ts
+ M actions/owner-war-room/owner-war-room.actions.ts
+ M actions/payments/__tests__/reconciliation-workbench.actions.test.ts
+ M actions/payments/__tests__/reconciliation.actions.test.ts
+ M actions/payments/reconciliation-workbench.actions.ts
+ M actions/payments/reconciliation.actions.ts
+ M actions/pos/__tests__/catalog.actions.test.ts
+ M actions/pos/__tests__/receipt-token.actions.test.ts
+ M actions/pos/__tests__/session.actions.test.ts
+ M actions/pos/__tests__/tender-electronic-authority.actions.test.ts
+ M actions/pos/__tests__/tender.actions.test.ts
+ M actions/pos/__tests__/terminal-management.actions.test.ts
+ M actions/pos/cart.actions.ts
+ M actions/pos/catalog.actions.ts
+ M actions/pos/receipt-token.actions.ts
+ M actions/pos/session.actions.ts
+ M actions/pos/tender.actions.ts
+ M actions/pos/terminal-management.actions.ts
+ M actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts
+ M actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts
+ M actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts
+ M actions/purchasing/__tests__/ap-control.actions.test.ts
+ M actions/purchasing/ap-control.actions.ts
+ M actions/purchasing/ap-history.actions.ts
+ M actions/roles/__tests__/role-actions.test.ts
+ M actions/roles/createRole.ts
+ M actions/roles/role-auth.ts
+ M actions/roles/updateRole.ts
+ M actions/storage/__tests__/photo-upload-actions.test.ts
+ M actions/storage/__tests__/storage-config-actions.test.ts
+ M actions/storage/photo-upload-actions.ts
+ M actions/storage/storage-config-actions.ts
+ M actions/suppliers/supplier-management-actions.ts
+ M actions/users/__tests__/public-identity-actions.test.ts
+ M actions/users/__tests__/sendInvite.authorization.test.ts
+ M actions/users/deleteUser.ts
+ M actions/users/getOrgInvites.ts
+ M actions/users/getOrgUsers.ts
+ M actions/users/sendInvite.ts
+ M actions/users/updateUserPassword.ts
+ M app/[locale]/(auth)/forgot-password/page.tsx
+ M app/[locale]/(auth)/layout.tsx
+ M app/[locale]/(auth)/login-v2/page.tsx
+ M app/[locale]/(auth)/login/page.tsx
+ M app/[locale]/(auth)/register-v2/page.tsx
+ M app/[locale]/(auth)/register/page.tsx
+ M app/[locale]/(auth)/reset-password/__tests__/page.test.tsx
+ M app/[locale]/(auth)/reset-password/page.tsx
+ M app/[locale]/(auth)/unauthorized/page.tsx
+ M app/[locale]/(auth)/user-invite/[organisationId]/page.tsx
+ M app/[locale]/(dashboard)/dashboard/__tests__/layout.test.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/accounting/journals/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/trial-balance-table.test.tsx
+ M app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx
+ M app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/analytics/error.tsx
+ M app/[locale]/(dashboard)/dashboard/analytics/page.tsx
+ M app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx
+ M app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/ReportsClient.test.tsx
+ M app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx
+ M app/[locale]/(dashboard)/dashboard/change-password/__tests__/route-audit.test.ts
+ M app/[locale]/(dashboard)/dashboard/change-password/change-password-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/change-password/change-password-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/change-password/page.tsx
+ M app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx
+ M app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx
+ M app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx
+ M app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx
+ M app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx
+ M app/[locale]/(dashboard)/dashboard/finance/reconciliation/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx
+ M app/[locale]/(dashboard)/dashboard/inventory/error.tsx
+ M app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/inventory/items/[id]/edit/EditItemClient.tsx
+ M app/[locale]/(dashboard)/dashboard/inventory/items/create/page.tsx
+ M app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx
+ M app/[locale]/(dashboard)/dashboard/inventory/movements/page.tsx
+ M app/[locale]/(dashboard)/dashboard/layout.tsx
+ M app/[locale]/(dashboard)/dashboard/manager-action-center/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/notifications-demo/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx
+ M app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx
+ M app/[locale]/(dashboard)/dashboard/purchase-orders/new/__tests__/page.test.tsx
+ M app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx
+ M app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx
+ M app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx
+ M app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx
+ M app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/security/page.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts
+ M app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx
+ M app/[locale]/(dashboard)/dashboard/settings/users/page.tsx
+ M app/[locale]/(dashboard)/error.tsx
+ M app/[locale]/(dashboard)/not-found.tsx
+ M app/[locale]/(home)/landing.css
+ M app/[locale]/(home)/page.tsx
+ M app/[locale]/layout.tsx
+ M app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx
+ M app/api/auth/[...all]/route.ts
+ M app/api/customer-statements/[statementId]/__tests__/route.test.ts
+ M app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts
+ M app/api/customer-statements/[statementId]/actions/route.ts
+ M app/api/customer-statements/[statementId]/route.ts
+ M app/api/me/permissions/__tests__/route.test.ts
+ M app/api/me/permissions/route.ts
+ M app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts
+ M app/api/supplier-po-envelopes/[envelopeId]/route.ts
+ M app/api/uploads/[...path]/__tests__/route.test.ts
+ M app/api/uploads/[...path]/route.ts
+ M app/api/uploadthing/core.ts
+ M app/customer-statement/[statementId]/CustomerStatementPortal.tsx
+ M app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx
+ M app/customer-statement/[statementId]/page.tsx
+ M app/globals.css
+ M components/DataTableColumns/ActionColumn.tsx
+ M components/DataTableComponents/DataTablePagination.tsx
+ M components/DataTableComponents/DataTableViewOptions.tsx
+ M components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts
+ M components/FormInputs/EnhancedImageUploadButton.tsx
+ M components/FormInputs/ImageUploadButton.tsx
+ M components/Forms/ChangePasswordForm.tsx
+ M components/Forms/ForgotPasswordForm.tsx
+ M components/Forms/InvitedUserRegistration.tsx
+ M components/Forms/ResetPasswordForm.tsx
+ M components/Forms/RoleForm.tsx
+ M components/Forms/users/userInvitationForm.tsx
+ M components/NotAuthorized.tsx
+ M components/UserDropdownMenu.tsx
+ M components/accounting/AccountantPortal.tsx
+ M components/accounting/CloseAssuranceCenter.tsx
+ M components/accounting/CloseReadinessJourneyPanel.tsx
+ M components/accounting/__tests__/CloseAssuranceCenter.test.tsx
+ M components/agents/AgentCommandPanel.tsx
+ M components/agents/__tests__/AgentCommandPanel.test.tsx
+ M components/analytics/BusinessPulseDashboard.tsx
+ M components/analytics/CompleteIntegratedDailySalesDashboard.tsx
+ M components/auth/AuthLayout.tsx
+ M components/auth/BeautifulRegisterForm.tsx
+ M components/auth/EmailVerificationForm.tsx
+ M components/auth/EnhancedLoginForm.tsx
+ M components/auth/auth-copy.ts
+ M components/auth/v2/AuthV2Shell.tsx
+ M components/auth/v2/LoginV2Form.tsx
+ M components/auth/v2/RegisterV2Form.tsx
+ M components/auth/v2/VerifyV2Form.tsx
+ M components/auth/v2/__tests__/RegisterV2Form.referral.test.tsx
+ M components/bi/BIActionPriorityBoard.tsx
+ M components/bi/BIBusinessTruthZone.tsx
+ M components/bi/BICommandBriefHeader.tsx
+ M components/bi/BICommandModeTabs.tsx
+ M components/bi/BIEvidenceBadgeRow.tsx
+ M components/bi/BIKpiCard.tsx
+ M components/bi/BIRiskOpportunityRadar.tsx
+ M components/bi/BIStateBadge.tsx
+ M components/bi/BIStateSurface.tsx
+ M components/bi/BIWhatChangedStrip.tsx
+ M components/bi/__tests__/bi-command-primitives.test.tsx
+ M components/copilot/CopilotProposalControls.tsx
+ M components/copilot/__tests__/CopilotProposalControls.test.tsx
+ M components/customers/CustomerStatementWorkflow.tsx
+ M components/customers/__tests__/CustomerActionPage.test.tsx
+ M components/customers/__tests__/CustomerStatementWorkflow.test.tsx
+ M components/daily-habit/DailyHabitDigestDashboard.tsx
+ M components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx
+ M components/dashboard/DashboardErrorState.tsx
+ M components/dashboard/DashboardRouteState.tsx
+ M components/dashboard/Navbar.tsx
+ M components/dashboard/SessionRecoverySignOutButton.tsx
+ M components/dashboard/Sidebar.tsx
+ M components/dashboard/Tables/Invites.tsx
+ M components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx
+ M components/dashboard/history/TransactionHistoryWorkbenchShell.tsx
+ M components/dashboard/items/ModernItemFormForEditing.tsx
+ M components/dashboard/primitives/__tests__/command-center-primitives.test.tsx
+ M components/dashboard/primitives/command-center-primitives.tsx
+ M components/evidence/EvidenceGradeBadge.tsx
+ M components/finance/AROpenItemsHistoryWorkbench.tsx
+ M components/finance/CashPaymentHistoryWorkbench.tsx
+ M components/finance/FinanceCommandCenterDashboard.tsx
+ M components/finance/FinanceSpecializedLedgerSurfaces.tsx
+ M components/finance/PaymentReconciliationWorkbench.tsx
+ M components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx
+ M components/inventory/CreateItemWizard.tsx
+ M components/inventory/movements/InventoryMovementHistoryWorkbench.tsx
+ M components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx
+ M components/inventory/movements/inventoryMovementHistoryAdapter.ts
+ M components/inventory/transfers/CreateTransferModal.tsx
+ M components/inventory/transfers/TransferDashboard.tsx
+ M components/landing/final-cta.tsx
+ M components/landing/hero.tsx
+ M components/landing/landing-footer.tsx
+ M components/landing/landing-header.tsx
+ M components/landing/landing-section-navigation.tsx
+ M components/landing/pricing-section.tsx
+ M components/landing/product-gallery.tsx
+ M components/manager-action-center/PaymentReconciliationSignOffCommand.tsx
+ M components/manager-action-center/__tests__/PaymentReconciliationSignOffCommand.test.tsx
+ M components/notifications/NotificationProvider.tsx
+ M components/notifications/NotificationSystem.tsx
+ M components/owner-war-room/OwnerWarRoomDashboard.tsx
+ M components/payroll/PayrollRunActionPanel.tsx
+ M components/payroll/__tests__/PayrollRunWorkbench.test.tsx
+ M components/pos/ProfessionalPOSSystem.tsx
+ M components/pos/TerminalManagementDashboard.tsx
+ M components/pos/__tests__/ProfessionalPOSSystem.receipt-token-visibility.test.tsx
+ M components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx
+ M components/pos/offline/OfflineSyncStatusStrip.tsx
+ M components/purchase-orders/ModernCreatePurchaseOrderForm.tsx
+ M components/purchase-orders/ModernEditPurchaseOrderForm.tsx
+ M components/purchase-orders/ModernPurchaseOrderDetailPage.tsx
+ M components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx
+ M components/purchasing/APControlWorkbench.tsx
+ M components/purchasing/APHistoryWorkbench.tsx
+ M components/purchasing/__tests__/APHistoryWorkbench.test.tsx
+ M components/referrals/ReferralFunnelDashboard.tsx
+ M components/referrals/__tests__/ReferralFunnelDashboard.test.tsx
+ M components/reports/__tests__/item-performance-report.test.tsx
+ M components/reports/cash-flow-report.tsx
+ M components/reports/cashier-performance-report.tsx
+ M components/reports/financial-summary-report.tsx
+ M components/reports/item-performance-report.tsx
+ M components/reports/report-trust-banner.tsx
+ M components/settings/OrganizationManagementTable.tsx
+ M components/settings/OrganizationSettingsForm.tsx
+ M components/stock-to-cash/StockToCashFlowDashboard.tsx
+ M components/suppliers/SupplierManagementDashboard.tsx
+ M components/suppliers/__tests__/SupplierManagementDashboard.presentation.test.tsx
+ M components/ui/dialog.tsx
+ M components/ui/groups/inventory/ItemForm2.tsx
+ M components/ui/groups/inventory/ItemManagement.tsx
+ M components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx
+ M components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx
+ M components/ui/scroll-area.tsx
+ M components/ui/sheet.tsx
+ M config/sidebar.ts
+ M docs/UI/UX/AQSTOQFLOW_UI_REVIEW_CHECKLIST_2026-06-26.md
+ M docs/UI/UX/AQSTOQFLOW_UI_ROUTE_MATURITY_MATRIX_2026-06-26.md
+ M docs/migrations/MIGRATION_CONTROL_PLANE_DECISION_RECORD_2026-08-28.pdf
+ M docs/migrations/STOQUIFY_MIGRATION_CONTROL_PLANE_IMPLEMENTATION_REPORT_2026-08-28.pdf
+ M docs/migrations/STOQUIFY_MIGRATION_CONTROL_PLANE_REMEDIATION_PROMPT_2026-08-28.pdf
+ M docs/migrations/STOQUIFY_MIGRATION_ISSUES_DIAGNOSIS_AND_PERMANENT_ROUTE_2026-08-28.pdf
+ M docs/migrations/STOQUIFY_STAGING_PRIMARY_MIGRATION_CLOSURE_REPORT_2026-08-29.pdf
+ M hooks/__tests__/useAPHistoryWorkbench.test.ts
+ M hooks/__tests__/useInventoryMovementHistoryWorkbench.test.ts
+ M hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx
+ M hooks/payments/usePaymentReconciliationDashboard.ts
+ M hooks/payments/usePaymentReconciliationWorkbench.ts
+ M hooks/payroll/usePayrollWorkbench.ts
+ M hooks/posHooks/__tests__/usePosOperations-receipts.test.tsx
+ M hooks/posHooks/useOfflineSync.ts
+ M hooks/posHooks/usePosOperations.ts
+ M hooks/posHooks/useTerminalManagement.ts
+ M hooks/useAPHistoryWorkbench.ts
+ M hooks/useCustomerManagement.ts
+ M hooks/useCustomerQueries.ts
+ M hooks/useInventoryMovementHistoryWorkbench.ts
+ M hooks/useInventoryMovementQueries.ts
+ M hooks/useOrganizationSettings.ts
+ M hooks/useRecentPurchaseOrderQueries.ts
+ M hooks/useRegisterWorkflow.ts
+ M hooks/useSupplierManagement.ts
+ M hooks/useTransferQueries.ts
+ M i18n/request.ts
+ M jest.setup.ts
+ M lib/auth-client.ts
+ M lib/auth.ts
+ M lib/error-handling/canonical.ts
+ M lib/error-handling/server-action-wrapper.ts
+ M lib/error-handling/types.ts
+ M lib/generateOtp.ts
+ M lib/security/__tests__/rbac-permissions.test.ts
+ M lib/security/__tests__/rbac.test.ts
+ M lib/security/rbac-permissions.ts
+ M lib/security/rbac.ts
+ M lib/token.ts
+ M messages/en.json
+ M messages/fr.json
+ M middleware.ts
+ M next.config.mjs
+ M package.json
+ M playwright.inventory-items.config.ts
+ M prisma/complete-realistic-seed-coverage.ts
+ M prisma/compliance-hris-role-seed.ts
+ M prisma/comprehensive-seed.ts
+ M prisma/db.ts
+ M prisma/migration-catalog-manifest.json
+ M prisma/realistic-development-seed.ts
+ M prisma/schema.prisma
+ M scripts/__tests__/api-route-guard-inventory.test.js
+ M scripts/__tests__/compliance-hris-role-seed-contract.test.js
+ M scripts/__tests__/landing-navigation-localization.test.js
+ M scripts/__tests__/landing-public-content.test.js
+ M scripts/__tests__/landing-refinement-content.test.js
+ M scripts/__tests__/module-surface-inventory.test.js
+ M scripts/__tests__/public-identity-abuse-gate.test.js
+ M scripts/api-route-guard-inventory.js
+ M scripts/inventory-items-e2e-fixture.js
+ M scripts/module-surface-inventory.js
+ M scripts/public-identity-abuse-gate.js
+ M scripts/verify-realistic-development-seed.ts
+ M services/_shared/__tests__/action-errors.test.ts
+ M services/_shared/__tests__/protect.test.ts
+ M services/_shared/action-errors.ts
+ M services/_shared/protect.ts
+ M services/accounting/__tests__/accountant-access.service.test.ts
+ M services/accounting/__tests__/customer-statement-access.service.test.ts
+ M services/accounting/__tests__/customer-statement-recipient-action.service.test.ts
+ M services/accounting/__tests__/financial-statements.service.test.ts
+ M services/accounting/__tests__/manual-journal.test.ts
+ M services/accounting/__tests__/periods.service.test.ts
+ M services/accounting/__tests__/posting.service.test.ts
+ M services/accounting/accountant-access.service.ts
+ M services/accounting/close-assurance-pack.service.ts
+ M services/accounting/customer-statement-access.service.ts
+ M services/accounting/customer-statement-delivery.service.ts
+ M services/accounting/customer-statement-recipient-action.service.ts
+ M services/accounting/customer-statement.schemas.ts
+ M services/accounting/data-trust.service.ts
+ M services/accounting/financial-statements.service.ts
+ M services/accounting/journals.service.ts
+ M services/accounting/periods.service.ts
+ M services/accounting/posting.service.ts
+ M services/accounting/postings/post-payment.test.ts
+ M services/accounting/postings/post-reversal.test.ts
+ M services/accounting/postings/post-sale.test.ts
+ M services/accounting/reports.service.ts
+ M services/agents/__tests__/agent-context.service.test.ts
+ M services/agents/__tests__/command-agent-contracts.test.ts
+ M services/agents/__tests__/command-agent.service.test.ts
+ M services/agents/__tests__/command-tool-adapters.test.ts
+ M services/agents/agent-context.service.ts
+ M services/agents/command-agent-contracts.ts
+ M services/agents/command-agent.service.ts
+ M services/agents/tools/command-tool-adapters.ts
+ M services/ai/__tests__/copilot-proposal-release.service.test.ts
+ M services/ai/__tests__/copilot-proposal.service.test.ts
+ M services/ai/copilot-proposal-release.service.ts
+ M services/ai/copilot-proposal.service.ts
+ M services/analytics/__tests__/business-pulse.service.test.ts
+ M services/analytics/__tests__/financial-analytics.service.test.ts
+ M services/analytics/business-pulse-contracts.ts
+ M services/analytics/financial-analytics.service.ts
+ M services/analytics/financial-reports.service.ts
+ M services/analytics/sales-analytics.service.ts
+ M services/bi/__tests__/bi-evidence-adapter.service.test.ts
+ M services/bi/bi-contracts.ts
+ M services/bi/bi-evidence-adapter.service.ts
+ M services/cash-command/__tests__/cash-command.service.test.ts
+ M services/cash-command/cash-command-contracts.ts
+ M services/cash-command/cash-command.service.ts
+ M services/communication/__tests__/customer-statement-delivery-worker.service.test.ts
+ M services/communication/__tests__/customer-statement-delivery.provider.test.ts
+ M services/communication/customer-statement-delivery-worker.service.ts
+ M services/communication/customer-statement-delivery.provider.ts
+ M services/compliance/country-adapter-pilot.service.ts
+ M services/customer/__tests__/customer-legacy.service.test.ts
+ M services/customer/customer.service.ts
+ M services/daily-habit/__tests__/daily-habit-digest.service.test.ts
+ M services/daily-habit/daily-habit-digest-contracts.ts
+ M services/daily-habit/daily-habit-digest.service.ts
+ M services/events/__tests__/business-event.service.test.ts
+ M services/events/business-event-outbox.service.ts
+ M services/events/business-event.schemas.ts
+ M services/events/business-event.service.ts
+ M services/hris/document-evidence.service.ts
+ M services/inventory/__tests__/inventory-adjustment.service.test.ts
+ M services/inventory/__tests__/inventory-count.service.test.ts
+ M services/inventory/__tests__/inventory-read.service.test.ts
+ M services/inventory/__tests__/inventory-stock-event.service.test.ts
+ M services/inventory/__tests__/inventory-transfer.service.test.ts
+ M services/inventory/inventory-adjustment.service.ts
+ M services/inventory/inventory-count.service.ts
+ M services/inventory/inventory-history-export.service.ts
+ M services/inventory/inventory-read.service.ts
+ M services/inventory/inventory-transfer.service.ts
+ M services/item/__tests__/edit-item.service.test.ts
+ M services/item/__tests__/item.service.test.ts
+ M services/item/item.schemas.ts
+ M services/item/item.service.ts
+ M services/location/location.service.ts
+ M services/manager-action-center/__tests__/manager-action-center.service.test.ts
+ M services/manager-action-center/__tests__/manager-location-action-center.service.test.ts
+ M services/manager-action-center/manager-action-center.service.ts
+ M services/modules/__tests__/module-entitlement.service.test.ts
+ M services/modules/module-entitlement.service.ts
+ M services/order-to-cash/__tests__/delivery-order.service.test.ts
+ M services/order-to-cash/delivery-order.service.ts
+ M services/organization/__tests__/organization-settings.service.test.ts
+ M services/organization/organization-read.service.ts
+ M services/organization/organization-settings.service.ts
+ M services/owner-war-room/__tests__/owner-war-room.service.test.ts
+ M services/owner-war-room/owner-war-room-contracts.ts
+ M services/owner-war-room/owner-war-room.service.ts
+ M services/payments/__tests__/mobile-money-hmac.adapter.test.ts
+ M services/payments/__tests__/provider-operations.service.test.ts
+ M services/payments/__tests__/statement-import.service.test.ts
+ M services/payments/adapters/mobile-money-hmac.adapter.ts
+ M services/payments/provider-operations.service.ts
+ M services/payments/statement-import.service.ts
+ M services/payroll/__tests__/declaration-lifecycle.service.test.ts
+ M services/payroll/__tests__/payroll-control.service.test.ts
+ M services/payroll/__tests__/payroll-payslip-self-service.service.test.ts
+ M services/payroll/__tests__/payroll-register.service.test.ts
+ M services/payroll/__tests__/payroll-setup-readiness.service.test.ts
+ M services/payroll/authority-adapter-execution.service.ts
+ M services/payroll/compensation.service.ts
+ M services/payroll/contract.service.ts
+ M services/payroll/declaration-lifecycle.service.ts
+ M services/payroll/payment-evidence.service.ts
+ M services/payroll/payroll-control.service.ts
+ M services/payroll/payroll-register.service.ts
+ M services/payroll/payroll-setup-readiness.service.ts
+ M services/payroll/payslip-self-service.service.ts
+ M services/pos/__tests__/offline-sync.service.test.ts
+ M services/pos/__tests__/pos-shift-close.service.test.ts
+ M services/pos/__tests__/pos.service.test.ts
+ M services/pos/offline-sync.service.ts
+ M services/pos/pos.schemas.ts
+ M services/pos/pos.service.ts
+ M services/pos/terminal-management.schemas.ts
+ M services/pos/terminal-management.service.ts
+ M services/purchase-order/__tests__/purchase-order-capabilities.test.ts
+ M services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts
+ M services/purchase-order/__tests__/purchase-order.service.test.ts
+ M services/purchase-order/purchase-order-capabilities.ts
+ M services/purchase-order/purchase-order.schemas.ts
+ M services/purchase-order/purchase-order.service.ts
+ M services/purchase-order/supplier-po-access-token.ts
+ M services/purchase-order/supplier-po-acknowledgement.schemas.ts
+ M services/purchase-order/supplier-po-acknowledgement.service.ts
+ M services/purchasing/__tests__/ap-control.service.test.ts
+ M services/purchasing/__tests__/ap-history.service.test.ts
+ M services/purchasing/__tests__/purchase-correction-ledger.service.test.ts
+ M services/purchasing/__tests__/purchase-return-credit.service.test.ts
+ M services/purchasing/ap-control.schemas.ts
+ M services/purchasing/ap-control.service.ts
+ M services/purchasing/ap-history.service.ts
+ M services/purchasing/purchase-correction-ledger.service.ts
+ M services/purchasing/purchase-return-credit.service.ts
+ M services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts
+ M services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts
+ M services/reconciliation/__tests__/payment-reconciliation-sign-off-command-state.service.test.ts
+ M services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts
+ M services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts
+ M services/reconciliation/payment-reconciliation-certification.service.ts
+ M services/reconciliation/payment-reconciliation-dashboard.service.ts
+ M services/reconciliation/payment-reconciliation-evidence.service.ts
+ M services/reconciliation/payment-reconciliation-notifications.ts
+ M services/reconciliation/payment-reconciliation-run.service.ts
+ M services/reconciliation/payment-reconciliation-sign-off-command-state-contracts.ts
+ M services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts
+ M services/reconciliation/payment-suspense-ledger.service.ts
+ M services/reconciliation/payment-suspense-workflow.service.ts
+ M services/referrals/__tests__/referral-funnel-read-model.service.test.ts
+ M services/referrals/referral-funnel-read-model.service.ts
+ M services/roles/__tests__/role.service.test.ts
+ M services/roles/role.service.ts
+ M services/security/__tests__/export-safety.service.test.ts
+ M services/security/__tests__/public-identity-abuse.service.test.ts
+ M services/security/__tests__/role-grant-policy.service.test.ts
+ M services/security/export-safety.service.ts
+ M services/security/public-identity-abuse.service.ts
+ M services/security/role-grant-policy.service.ts
+ M services/signals/__tests__/action-queue.service.test.ts
+ M services/signals/__tests__/business-signal-rules.service.test.ts
+ M services/signals/action-queue.service.ts
+ M services/signals/business-signal-contracts.ts
+ M services/signals/business-signal-rules.service.ts
+ M services/signals/business-signal.service.ts
+ M services/snapshots/__tests__/branch-operating-snapshot.service.test.ts
+ M services/snapshots/__tests__/payment-truth-snapshot.service.test.ts
+ M services/snapshots/__tests__/tenant-operating-snapshot.service.test.ts
+ M services/snapshots/branch-operating-snapshot.service.ts
+ M services/snapshots/payment-truth-snapshot.service.ts
+ M services/snapshots/snapshot-contracts.ts
+ M services/snapshots/tenant-operating-snapshot.service.ts
+ M services/stock-to-cash/stock-to-cash-contracts.ts
+ M services/supplier/supplier.service.ts
+ M services/users/__tests__/user-identity.service.test.ts
+ M services/users/__tests__/user-lifecycle.service.test.ts
+ M services/users/user-identity.service.ts
+ M services/users/user-lifecycle.service.ts
+ M tmp-protocol-check.js
+ M tsconfig.json
+ M types/inventoryTypes.ts
+ M types/purchase-orders-system-types.ts
+ M types/types.ts
+ M what-next/ai-copilot-guardrails-readiness.json
+ M what-next/ai-copilot-guardrails-readiness.md
+ M what-next/ap-fraud-control-readiness.json
+ M what-next/ap-fraud-control-readiness.md
+ M what-next/api-route-guard-inventory.json
+ M what-next/api-route-guard-inventory.md
+ M what-next/ci-release-readiness.json
+ M what-next/ci-release-readiness.md
+ M what-next/country-adapter-pilot-readiness.json
+ M what-next/country-adapter-pilot-readiness.md
+ M what-next/enterprise-release-blocker-status.json
+ M what-next/enterprise-release-blocker-status.md
+ M what-next/enterprise-release-external-evidence-intake-readiness.json
+ M what-next/enterprise-release-external-evidence-intake-readiness.md
+ M what-next/evidence/inventory-item-create-edit-2026-08-07/browser-matrix.json
+ M what-next/evidence/inventory-item-create-edit-2026-08-07/cleanup.json
+ M what-next/evidence/inventory-item-create-edit-2026-08-07/create-render-desktop.png
+ M what-next/inventory-valuation-truth-readiness.md
+ M what-next/ledger-close-truth-readiness.json
+ M what-next/ledger-close-truth-readiness.md
+ M what-next/module-surface-inventory.json
+ M what-next/module-surface-inventory.md
+ M what-next/module-system/execution-status.md
+ M what-next/offline-pos-fiscal-replay-readiness.json
+ M what-next/offline-pos-fiscal-replay-readiness.md
+ M what-next/payment-cash-truth-readiness.json
+ M what-next/payment-cash-truth-readiness.md
+ M what-next/payroll/payroll-trust-spine-readiness.json
+ M what-next/payroll/payroll-trust-spine-readiness.md
+ M what-next/prisma-migration-deployment-readiness.json
+ M what-next/prisma-migration-deployment-readiness.md
+ M what-next/public-identity-abuse-readiness.json
+ M what-next/public-identity-abuse-readiness.md
+ M what-next/purchasing-ap-consolidation-readiness.json
+ M what-next/purchasing-ap-consolidation-readiness.md
+ M what-next/release-secret-preflight.json
+ M what-next/release-secret-preflight.md
+ M what-next/statutory-country-pack-production-readiness.json
+ M what-next/statutory-country-pack-production-readiness.md
+?? .agents/skills/docs-report-publisher/
+?? .agents/skills/stoquify-prompt-execution-roadmap-publisher/
+?? .next-landing-message/
+?? .next-workflow-digest-query/
+?? .next-workflow-item-query/
+?? .next-workflow-statement/
+?? .next-workflow-supplier/
+?? actions/accounting/__tests__/close-assurance-read-access.test.ts
+?? actions/accounting/__tests__/customer-statement-history.actions.test.ts
+?? actions/accounting/__tests__/customer-statement-response.actions.test.ts
+?? actions/accounting/__tests__/finance-statement-export.actions.test.ts
+?? actions/accounting/customer-statement-history.actions.ts
+?? actions/accounting/customer-statement-response.actions.ts
+?? actions/accounting/finance-statement-export.actions.ts
+?? actions/analytics/__tests__/
+?? actions/analytics/daily-sales.actions.ts
+?? actions/customers/__tests__/customer-legacy-removal.actions.test.ts
+?? actions/inventory/__tests__/inventoryReservationActions.test.ts
+?? actions/inventory/__tests__/transferLifecycleActions.test.ts
+?? actions/inventory/transferLifecycleActions.ts
+?? actions/modules/__tests__/module-composition.actions.test.ts
+?? actions/modules/module-composition.actions.ts
+?? actions/organization/__tests__/
+?? actions/organization/organization-directory-export.actions.ts
+?? actions/payments/__tests__/exception-closure.actions.test.ts
+?? actions/payments/__tests__/exception-link.actions.test.ts
+?? actions/payments/__tests__/reconciliation-preparation.actions.test.ts
+?? actions/payments/__tests__/reconciliation-sign-review.actions.test.ts
+?? actions/payments/__tests__/suspense-guard.integration.test.ts
+?? actions/payments/__tests__/suspense-resolution.actions.test.ts
+?? actions/payments/exception-closure.actions.ts
+?? actions/payments/exception-link.actions.ts
+?? actions/payments/reconciliation-preparation.actions.ts
+?? actions/payments/reconciliation-sign-review.actions.ts
+?? actions/payments/suspense-resolution.actions.ts
+?? actions/pos/__tests__/cart-write-access.actions.test.ts
+?? actions/pos/__tests__/commit-recovery.actions.test.ts
+?? actions/pos/__tests__/offline-review.actions.test.ts
+?? actions/pos/__tests__/shift-open-policy.actions.test.ts
+?? actions/pos/checkout.actions.ts
+?? actions/pos/commit-recovery.actions.ts
+?? actions/pos/offline-review.actions.ts
+?? actions/purchaseOrderWorkflow/__tests__/purchase-order-amendment.actions.test.ts
+?? actions/purchaseOrderWorkflow/__tests__/purchase-receiving.actions.test.ts
+?? actions/purchaseOrderWorkflow/__tests__/supplier-po-buyer.actions.test.ts
+?? actions/purchaseOrderWorkflow/purchase-order-amendment.actions.ts
+?? actions/purchaseOrderWorkflow/purchase-receiving.actions.ts
+?? actions/purchasing/__tests__/ap-history-export.actions.test.ts
+?? actions/purchasing/__tests__/invoice-approval.actions.test.ts
+?? actions/purchasing/__tests__/invoice-correction.actions.test.ts
+?? actions/purchasing/__tests__/invoice-ledger-recovery.actions.test.ts
+?? actions/purchasing/__tests__/invoice-match-exception.actions.test.ts
+?? actions/purchasing/__tests__/invoice-preparation.actions.test.ts
+?? actions/purchasing/__tests__/payment-request.actions.test.ts
+?? actions/purchasing/invoice-approval.actions.ts
+?? actions/purchasing/invoice-correction.actions.ts
+?? actions/purchasing/invoice-ledger-recovery.actions.ts
+?? actions/purchasing/invoice-match-exception.actions.ts
+?? actions/purchasing/invoice-preparation.actions.ts
+?? actions/purchasing/payment-release.actions.ts
+?? actions/purchasing/payment-request.actions.ts
+?? actions/roles/getRoleEditor.ts
+?? actions/security/__tests__/account-session.actions.test.ts
+?? actions/security/account-session.actions.ts
+?? actions/suppliers/__tests__/supplier-create-receipt.actions.test.ts
+?? actions/users/__tests__/cancelInvite.test.ts
+?? actions/users/__tests__/getInvitationHistory.test.ts
+?? actions/users/__tests__/getOrgInvites.test.ts
+?? actions/users/__tests__/member-access.actions.test.ts
+?? actions/users/__tests__/member-history.actions.test.ts
+?? actions/users/__tests__/member-lifecycle.actions.test.ts
+?? actions/users/__tests__/self-profile.actions.test.ts
+?? actions/users/__tests__/updateUserPassword.test.ts
+?? actions/users/cancelInvite.ts
+?? actions/users/getInvitationHistory.ts
+?? actions/users/memberAccess.ts
+?? actions/users/memberHistory.ts
+?? actions/users/resendVerificationCode.ts
+?? actions/users/self-profile.actions.ts
+?? app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx
+?? app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/__tests__/financial-statement-lines-table.test.tsx
+?? app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx
+?? app/[locale]/(dashboard)/dashboard/analytics/__tests__/access-recovery.test.tsx
+?? app/[locale]/(dashboard)/dashboard/analytics/__tests__/recovery.test.tsx
+?? app/[locale]/(dashboard)/dashboard/analytics/loading.tsx
+?? app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/access-recovery.test.tsx
+?? app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/proposal-availability.test.tsx
+?? app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/recovery.test.tsx
+?? app/[locale]/(dashboard)/dashboard/inventory/transfers/[id]/
+?? app/[locale]/(dashboard)/dashboard/inventory/transfers/create/
+?? app/[locale]/(dashboard)/dashboard/profile/
+?? app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/__tests__/
+?? app/[locale]/(dashboard)/dashboard/purchases/payables/approve/
+?? app/[locale]/(dashboard)/dashboard/purchases/payables/correct/
+?? app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/
+?? app/[locale]/(dashboard)/dashboard/purchases/payables/payments/
+?? app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/
+?? app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/
+?? app/[locale]/(dashboard)/dashboard/settings/__tests__/security-access.test.ts
+?? app/[locale]/(dashboard)/dashboard/settings/modules/error.tsx
+?? app/[locale]/(dashboard)/dashboard/settings/modules/loading.tsx
+?? app/[locale]/(dashboard)/dashboard/settings/users/update/
+?? app/[locale]/supplier-purchase-order/[envelopeId]/__tests__/
+?? app/api/auth/__tests__/
+?? app/api/auth/permissions/
+?? app/api/me/profile/
+?? app/api/media/
+?? app/api/supplier-po-envelopes/[envelopeId]/__tests__/
+?? app/customer-statement/[statementId]/statement-portal-copy.ts
+?? artifacts/
+?? components/DataTableComponents/CanonicalTableBoundary.tsx
+?? components/DataTableComponents/CanonicalTableDensityControl.tsx
+?? components/DataTableComponents/__tests__/CanonicalTableContract.test.ts
+?? components/DataTableComponents/__tests__/FinanceAccountingContract.test.ts
+?? components/DataTableComponents/__tests__/FinanceHistoryCanonicalContract.test.ts
+?? components/DataTableComponents/__tests__/FinanceX1EvidenceBinding.test.ts
+?? components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts
+?? components/DataTableComponents/__tests__/NextPhaseContracts.test.ts
+?? components/DataTableComponents/__tests__/TableSystemRegistry.contract.test.ts
+?? components/DataTableComponents/finance-accounting-contracts.ts
+?? components/DataTableComponents/finance-x1-evidence-binding.ts
+?? components/DataTableComponents/index.ts
+?? components/DataTableComponents/inventory-movements-table-contract.ts
+?? components/DataTableComponents/next-phase-contracts.ts
+?? components/DataTableComponents/pilot-table-contracts.ts
+?? components/DataTableComponents/table-system-contract.ts
+?? components/DataTableComponents/table-system-registry.ts
+?? components/DataTableComponents/useCanonicalTablePreferences.ts
+?? components/DataTableComponents/useCanonicalTableUrlState.ts
+?? components/Forms/RoleHistory.tsx
+?? components/Forms/role-editor-copy.ts
+?? components/Forms/users/InvitationHistory.tsx
+?? components/analytics/__tests__/
+?? components/auth/__tests__/
+?? components/auth/public-auth-copy.ts
+?? components/auth/v2/__tests__/BeautifulRegisterForm.workflow.test.tsx
+?? components/auth/v2/__tests__/ChangePasswordForm.test.tsx
+?? components/auth/v2/__tests__/InvitationHistory.test.tsx
+?? components/auth/v2/__tests__/InvitedUserRegistration.test.tsx
+?? components/auth/v2/__tests__/PasswordRecoveryForms.test.tsx
+?? components/auth/v2/__tests__/UserInvitationForm.test.tsx
+?? components/auth/v2/__tests__/VerifyV2Form.recovery.test.tsx
+?? components/bi/__tests__/BIEvidenceBadgeRow.test.tsx
+?? components/customers/CustomerStatementHistory.tsx
+?? components/customers/CustomerStatementResponses.tsx
+?? components/customers/__tests__/CustomerStatementHistory.test.tsx
+?? components/customers/__tests__/CustomerStatementResponses.test.tsx
+?? components/daily-habit/DailyHabitDigestDashboard.module.css
+?? components/daily-habit/__tests__/modes.test.tsx
+?? components/dashboard/__tests__/Sidebar-current.test.tsx
+?? components/dashboard/__tests__/dashboard-localization.test.tsx
+?? components/evidence/__tests__/
+?? components/finance/PaymentExceptionClosurePanel.tsx
+?? components/finance/PaymentExceptionLinkPanel.tsx
+?? components/finance/PaymentSuspenseCorrectionPanel.tsx
+?? components/finance/PaymentSuspenseHistory.tsx
+?? components/finance/PaymentSuspenseQueue.tsx
+?? components/finance/PaymentSuspenseResolutionPanel.tsx
+?? components/finance/ReconciliationCertificateExportPanel.tsx
+?? components/finance/ReconciliationCertificateHistory.tsx
+?? components/finance/ReconciliationPreparationWorkbench.tsx
+?? components/finance/ReconciliationSignReview.tsx
+?? components/finance/__tests__/CashFlowStatementContract.test.ts
+?? components/finance/__tests__/CashFlowStatementTable.test.tsx
+?? components/finance/__tests__/CashPaymentHistoryCanonicalContract.test.ts
+?? components/finance/__tests__/PaymentExceptionLinkPanel.test.tsx
+?? components/finance/__tests__/PaymentSuspenseCorrectionPanel.test.tsx
+?? components/finance/__tests__/PaymentSuspenseQueue.test.tsx
+?? components/finance/__tests__/PaymentSuspenseResolutionPanel.test.tsx
+?? components/finance/__tests__/ReconciliationCertificateExportPanel.test.tsx
+?? components/finance/__tests__/ReconciliationCertificateHistory.test.tsx
+?? components/finance/__tests__/ReconciliationPreparationWorkbench.test.tsx
+?? components/finance/__tests__/ReconciliationSignReview.test.tsx
+?? components/finance/__tests__/reconciliation-amount.test.ts
+?? components/finance/reconciliation-amount.ts
+?? components/inventory/__tests__/CreateItemWizard.media.test.tsx
+?? components/inventory/movements/InventoryMovementHistoryTable.tsx
+?? components/inventory/movements/__tests__/InventoryMovementHistoryTable.test.tsx
+?? components/inventory/transfers/CreateTransferPage.tsx
+?? components/inventory/transfers/TransferWorkflowPage.tsx
+?? components/inventory/transfers/__tests__/
+?? components/landing/landing-message-copy.ts
+?? components/landing/landing-message-sections.tsx
+?? components/modules/ModuleCompositionWorkbench.tsx
+?? components/modules/__tests__/ModuleCompositionWorkbench.test.tsx
+?? components/modules/module-composition.module.css
+?? components/notifications/__tests__/
+?? components/pos/__tests__/OfflineConflictHistory.test.tsx
+?? components/pos/__tests__/OfflineConflictReview.test.tsx
+?? components/pos/__tests__/review-note-draft.test.ts
+?? components/pos/__tests__/terminal-draft.test.ts
+?? components/pos/offline/OfflineConflictHistory.tsx
+?? components/pos/offline/OfflineConflictReview.tsx
+?? components/pos/offline/review-note-draft.ts
+?? components/pos/terminal-draft.ts
+?? components/purchase-orders/PurchaseOrderAmendmentDialog.tsx
+?? components/purchase-orders/PurchaseOrderApprovalDialog.tsx
+?? components/purchase-orders/PurchaseOrderCloneNotice.tsx
+?? components/purchase-orders/PurchaseOrderDecisionHistory.tsx
+?? components/purchase-orders/PurchaseOrderLifecycleDialog.tsx
+?? components/purchase-orders/PurchaseReceivingWorkbench.tsx
+?? components/purchase-orders/SupplierPoBuyerWorkflow.tsx
+?? components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx
+?? components/purchase-orders/__tests__/PurchaseOrderAmendmentDialog.test.tsx
+?? components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx
+?? components/purchase-orders/__tests__/PurchaseOrderCloneNotice.test.tsx
+?? components/purchase-orders/__tests__/PurchaseOrderDecisionHistory.test.tsx
+?? components/purchase-orders/__tests__/PurchaseOrderLifecycleDialog.test.tsx
+?? components/purchase-orders/__tests__/SupplierPoBuyerWorkflow.test.tsx
+?? components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts
+?? components/purchase-orders/__tests__/purchase-order-edit-model.test.ts
+?? components/purchase-orders/__tests__/purchase-order-money.test.ts
+?? components/purchase-orders/purchase-order-edit-draft.ts
+?? components/purchase-orders/purchase-order-edit-model.ts
+?? components/purchase-orders/purchase-order-money.ts
+?? components/purchasing/APHistoryExportDialog.tsx
+?? components/purchasing/InvoiceApprovalWorkbench.tsx
+?? components/purchasing/InvoiceCorrectionWorkbench.tsx
+?? components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx
+?? components/purchasing/InvoiceMatchExceptionWorkbench.tsx
+?? components/purchasing/InvoicePreparationWorkbench.tsx
+?? components/purchasing/PaymentExecutionWorkbench.tsx
+?? components/purchasing/PaymentPostingRecoveryWorkbench.tsx
+?? components/purchasing/PaymentRequestWorkbench.tsx
+?? components/purchasing/__tests__/APHistoryExportDialog.test.tsx
+?? components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx
+?? components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx
+?? components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx
+?? components/purchasing/__tests__/InvoiceMatchExceptionWorkbench.test.tsx
+?? components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx
+?? components/purchasing/__tests__/PaymentExecutionWorkbench.test.tsx
+?? components/purchasing/__tests__/PaymentPostingRecoveryWorkbench.test.tsx
+?? components/purchasing/__tests__/PaymentRequestWorkbench.test.tsx
+?? components/purchasing/__tests__/ap-history-export-download.test.tsx
+?? components/reports/__tests__/financial-summary-report.test.tsx
+?? components/reports/cash-count-records.tsx
+?? components/reports/report-cost-basis.tsx
+?? components/settings/AccountSessions.tsx
+?? components/settings/MemberAccessEditor.tsx
+?? components/settings/MemberAccessHistory.tsx
+?? components/settings/OrganizationDirectoryExport.tsx
+?? components/settings/OrganizationSetupHandoff.tsx
+?? components/settings/SelfProfile.tsx
+?? components/settings/UserDeactivation.tsx
+?? components/settings/__tests__/
+?? components/settings/member-access-copy.ts
+?? components/settings/member-history-copy.ts
+?? components/settings/user-directory-copy.ts
+?? docs/Astra/
+?? docs/Compliance/
+?? docs/X1/
+?? docs/accounting/
+?? docs/approval-register/
+?? docs/astra-analyses/
+?? docs/bakery-recipes/
+?? docs/blockers-and-gates/hris-payroll-compliance-prefill/~$MPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_REFRESHED_WORKING_COPY_2026-08-22.docx
+?? docs/blockers-and-gates/~$MPLIANCE_AUTHORIZATION_G1_PREFILLED_WORKING_COPY_2026-08-19.docx
+?? "docs/blockers-and-gates/~$mpliance authorization validation.docx"
+?? docs/blockers-docs/
+?? docs/branding/
+?? docs/credentials-blockers/
+?? docs/dashboard-user-guide/
+?? docs/gates-and-blockers/STOQUIFY_ENTERPRISE_UI_UX_REMEDIATION_BLOCKERS_ELIMINATION_GUIDE_2026-08-27.md
+?? docs/gates-and-blockers/STOQUIFY_ENTERPRISE_UI_UX_REMEDIATION_BLOCKERS_ELIMINATION_GUIDE_2026-08-27.pdf
+?? docs/landing-message/
+?? "docs/migrations/Database Migration Info.docx"
+?? "docs/migrations/Exact Recipe.docx"
+?? docs/migrations/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md
+?? docs/migrations/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.pdf
+?? "docs/migrations/Table remediation blockers - final-verified.docx"
+?? "docs/migrations/Table remediation blockers - verified.docx"
+?? "docs/migrations/Table remediation blockers.docx"
+?? "docs/migrations/Tables remediation to proceed safely.docx"
+?? docs/modern-modules/
+?? docs/network/
+?? docs/password_DB/
+?? docs/plan-of-action/
+?? docs/prompt-execution-manifest.md
+?? docs/prompt-execution/
+?? docs/remediations/
+?? docs/system-evaluation-and-redirection/
+?? docs/table-harmonization/
+?? hooks/__tests__/account-session-recovery.test.ts
+?? hooks/__tests__/customer-legacy-removal.test.tsx
+?? hooks/__tests__/customer-statement-request.test.ts
+?? hooks/__tests__/customer-statement-review-request.test.ts
+?? hooks/__tests__/managed-create-receipt.test.tsx
+?? hooks/__tests__/member-access-draft.test.ts
+?? hooks/__tests__/organization-directory-recovery.test.ts
+?? hooks/__tests__/permission-invalidation.workflow.test.tsx
+?? hooks/__tests__/self-profile-draft.test.ts
+?? hooks/__tests__/statement-recipient-request.test.ts
+?? hooks/__tests__/supplier-po-buyer-request.test.ts
+?? hooks/__tests__/supplier-po-response-request.test.ts
+?? hooks/__tests__/useAPHistoryWorkbench.scope.test.tsx
+?? hooks/__tests__/useAccountSessions.test.tsx
+?? hooks/__tests__/useInventoryMovementQueries.reservation.test.tsx
+?? hooks/__tests__/useManualMatchWorkflow.test.tsx
+?? hooks/__tests__/useOrganizationDirectoryExport.test.tsx
+?? hooks/__tests__/useOrganizationSettings.workflow.test.tsx
+?? hooks/__tests__/usePermissions.workflow.test.tsx
+?? hooks/__tests__/usePurchaseOrderClone.test.tsx
+?? hooks/__tests__/useRegisterWorkflow.test.tsx
+?? hooks/__tests__/useSelfProfile.test.tsx
+?? hooks/__tests__/useTransferLifecycle.test.tsx
+?? hooks/__tests__/useTransferQueries.module-stop.test.tsx
+?? hooks/account-session-recovery.ts
+?? hooks/analytics/
+?? hooks/customer-statement-request.ts
+?? hooks/customer-statement-review-request.ts
+?? hooks/member-access-draft.ts
+?? hooks/organization-directory-recovery.ts
+?? hooks/payments/__tests__/
+?? hooks/payments/correction-export-download.ts
+?? hooks/payments/resolution-export-download.ts
+?? hooks/payments/suspense-recovery.ts
+?? hooks/payments/verified-evidence-download.ts
+?? hooks/posHooks/__tests__/offline-dashboard-scope.test.ts
+?? hooks/posHooks/__tests__/pos-read-scope.test.tsx
+?? hooks/posHooks/__tests__/terminal-errors.test.ts
+?? hooks/posHooks/__tests__/terminal-read-scope.test.tsx
+?? hooks/posHooks/usePOSCheckoutLifecycle.ts
+?? hooks/posHooks/usePOSReadQuery.ts
+?? hooks/self-profile-draft.ts
+?? hooks/statement-recipient-request.ts
+?? hooks/supplier-po-buyer-request.ts
+?? hooks/supplier-po-response-request.ts
+?? hooks/useAccountSessions.ts
+?? hooks/useMemberAccess.ts
+?? hooks/useMemberHistory.ts
+?? hooks/useOrganizationDirectoryExport.ts
+?? hooks/usePurchaseOrderClone.ts
+?? hooks/useRoleEditor.ts
+?? hooks/useSelfProfile.ts
+?? hooks/useTransferLifecycle.ts
+?? hooks/useTransferSourceInventory.ts
+?? lib/__tests__/
+?? lib/dashboard/
+?? lib/media/
+?? lib/modules/
+?? lib/notifications/presentation.ts
+?? lib/pos/__tests__/pending-sale.test.ts
+?? lib/pos/pending-sale.ts
+?? lib/purchasing/
+?? lib/security/__tests__/auth-deactivation.test.ts
+?? lib/security/__tests__/dashboard-session-recovery.test.ts
+?? lib/security/__tests__/middleware-routing.test.ts
+?? lib/security/dashboard-session-recovery.ts
+?? lib/security/self-sign-out-copy.ts
+?? lib/security/self-sign-out-plugin.ts
+?? messages/dashboard-shared/
+?? messages/payment-execution/
+?? messages/payment-posting-recovery/
+?? messages/payment-request/
+?? messages/referral-funnel/
+?? playwright.finance-x1-evidence.config.ts
+?? playwright.finance-x1-local-evidence.config.ts
+?? playwright.modern-modules.config.ts
+?? prisma/__tests__/
+?? prisma/migrations/20260905170000_add_tenant_module_composition/
+?? prisma/migrations/20260905173000_protect_module_configuration_authority/
+?? prisma/migrations/20260905200000_add_module_lifecycle_command_state/
+?? prisma/migrations/20260905200100_add_module_lifecycle/
+?? prisma/migrations/20260909093000_add_suspense_posting_cycles/
+?? prisma/migrations/20260919110000_managed_picture_assets/
+?? prisma/migrations/20260920060000_pos_checkout_lifecycle/
+?? scripts/__tests__/development-progression-agent.test.js
+?? scripts/__tests__/ensure-prisma-client.test.js
+?? scripts/__tests__/finance-x1-evidence-preflight.test.ts
+?? scripts/__tests__/module-purchases-route-evidence.test.js
+?? scripts/__tests__/realistic-seed-blocker-remediation.test.js
+?? scripts/__tests__/reconciliation-alert-worker.test.ts
+?? scripts/__tests__/validate-finance-x1-evidence.test.ts
+?? scripts/__tests__/x1-approval-automation-orchestrator.test.js
+?? scripts/__tests__/x1-local-approval-register.test.cjs
+?? scripts/audit-picture-storage.cjs
+?? scripts/build-x1-approval-intake-docx.py
+?? scripts/build-x1-product-approval.py
+?? scripts/cleanup-item-pictures.cjs
+?? scripts/create-finance-x1-local-storage-state.js
+?? scripts/development-progression-agent.js
+?? scripts/ensure-prisma-client.js
+?? scripts/finance-x1-evidence-preflight.ts
+?? scripts/finance-x1-local-evidence-preflight.js
+?? scripts/inspect-finance-x1-fixtures.js
+?? scripts/item-media-test-database.cjs
+?? scripts/landing-message-browser-smoke.js
+?? scripts/landing-message-evidence-summary.js
+?? scripts/landing-message-live-auth-check.js
+?? scripts/landing-message-verification.js
+?? scripts/modern-modules-lifecycle-fixture.ts
+?? scripts/modern-modules-local-verification.js
+?? scripts/modern-modules-postgres-smoke.ts
+?? scripts/module-purchases-route-evidence.js
+?? scripts/prepare-finance-x1-local-auth.js
+?? scripts/reconciliation-alert-worker.ts
+?? scripts/render-x1-product-approval.ps1
+?? scripts/run-modern-modules-lifecycle-fixture.js
+?? scripts/run-modern-modules-postgres-smoke.js
+?? scripts/validate-finance-x1-evidence.ts
+?? scripts/verify-realistic-development-seed-readonly.ts
+?? scripts/x1-approval-automation-entry.js
+?? scripts/x1-approval-automation-orchestrator.js
+?? scripts/x1-approval-register-documents.py
+?? scripts/x1-local-approval-register.js
+?? services/accounting/__tests__/customer-statement-history.service.test.ts
+?? services/accounting/__tests__/customer-statement-response.service.test.ts
+?? services/accounting/__tests__/customer-statement-retry.service.test.ts
+?? services/accounting/__tests__/finance-statement-export-operations.service.test.ts
+?? services/accounting/__tests__/finance-statement-export.service.test.ts
+?? services/accounting/__tests__/posting-batch-identity.test.ts
+?? services/accounting/__tests__/reports-retained-accounts.service.test.ts
+?? services/accounting/customer-statement-delivery-recovery.ts
+?? services/accounting/customer-statement-history.service.ts
+?? services/accounting/customer-statement-http.ts
+?? services/accounting/customer-statement-response.schemas.ts
+?? services/accounting/customer-statement-response.service.ts
+?? services/accounting/customer-statement-retry.service.ts
+?? services/accounting/finance-statement-export-operations.service.ts
+?? services/accounting/finance-statement-export.service.ts
+?? services/analytics/__tests__/analytical-context-contracts.test.ts
+?? services/analytics/__tests__/business-pulse-links.test.ts
+?? services/analytics/__tests__/business-pulse-snapshot.test.ts
+?? services/analytics/__tests__/cash-report-evidence.test.ts
+?? services/analytics/__tests__/completed-sales-evidence.test.ts
+?? services/analytics/__tests__/daily-sales-read.test.ts
+?? services/analytics/__tests__/legacy-sales-analytics.test.ts
+?? services/analytics/analytical-context-contracts.ts
+?? services/analytics/business-pulse-links.ts
+?? services/analytics/business-pulse-snapshot.ts
+?? services/analytics/cash-report-evidence.ts
+?? services/analytics/completed-sales-evidence.ts
+?? services/analytics/daily-sales-period.ts
+?? services/analytics/daily-sales-read.service.ts
+?? services/analytics/financial-order-activity.service.ts
+?? services/communication/__tests__/user-invitation-delivery-worker.service.test.ts
+?? services/communication/user-invitation-delivery-worker.service.ts
+?? services/customer/__tests__/customer-create-receipt.service.test.ts
+?? services/customer/__tests__/customer-retention-policy.service.test.ts
+?? services/daily-habit/__tests__/close-route-access.test.tsx
+?? services/daily-habit/__tests__/daily-habit-signal-presentation.test.ts
+?? services/daily-habit/__tests__/daily-habit-source-visibility.test.ts
+?? services/daily-habit/__tests__/inventory-route-access.test.tsx
+?? services/daily-habit/__tests__/operating-route-access.test.tsx
+?? services/daily-habit/__tests__/purchasing-route-access.test.tsx
+?? services/daily-habit/daily-habit-digest-presentation.ts
+?? services/daily-habit/daily-habit-signal-presentation.ts
+?? services/daily-habit/daily-habit-source-visibility.ts
+?? services/governance/
+?? services/inventory/__tests__/inventory-transfer-lifecycle.service.test.ts
+?? services/inventory/__tests__/transfer-source-inventory.test.ts
+?? services/inventory/inventory-transfer-activity.service.ts
+?? services/inventory/inventory-transfer-lifecycle.service.ts
+?? services/item/__tests__/media-route.test.ts
+?? services/item/__tests__/media-upload-route.test.ts
+?? services/item/__tests__/picture.service.test.ts
+?? services/location/__tests__/
+?? services/media/
+?? services/modules/__tests__/module-access-regressions.test.ts
+?? services/modules/__tests__/module-admission.service.test.ts
+?? services/modules/__tests__/module-composition.service.test.ts
+?? services/modules/__tests__/module-inventory-continuation.service.test.ts
+?? services/modules/__tests__/module-lifecycle-readiness.service.test.ts
+?? services/modules/__tests__/module-navigation.test.ts
+?? services/modules/__tests__/module-reconciliation-obligations.postgres.test.ts
+?? services/modules/__tests__/module-reconciliation-obligations.service.test.ts
+?? services/modules/__tests__/module-stop-policy.service.test.ts
+?? services/modules/__tests__/module-transport.integration.test.ts
+?? services/modules/module-admission.service.ts
+?? services/modules/module-composition-contracts.ts
+?? services/modules/module-composition.service.ts
+?? services/modules/module-inventory-continuation.service.ts
+?? services/modules/module-lifecycle-readiness.service.ts
+?? services/modules/module-lifecycle.service.ts
+?? services/modules/module-navigation.service.ts
+?? services/modules/module-operational-dependencies.ts
+?? services/modules/module-reconciliation-obligations.service.ts
+?? services/modules/module-stop-policy.service.ts
+?? services/organization/__tests__/organization-directory-export.service.test.ts
+?? services/organization/__tests__/organization-management-scope.service.test.ts
+?? services/organization/__tests__/organization-profile-input.test.ts
+?? services/organization/__tests__/organization-profile-update.service.test.ts
+?? services/organization/organization-directory-export.service.ts
+?? services/organization/organization-directory-input.ts
+?? services/organization/organization-profile-input.ts
+?? services/organization/organization-profile-update.service.ts
+?? services/payments/provider-operation-evidence.ts
+?? services/pos/__tests__/cart-revision.test.ts
+?? services/pos/__tests__/cart-write-access.test.ts
+?? services/pos/__tests__/checkout-lifecycle.postgres.test.ts
+?? services/pos/__tests__/checkout-lifecycle.service.test.ts
+?? services/pos/__tests__/commit-recovery.service.test.ts
+?? services/pos/__tests__/pos-cart-transaction.test.ts
+?? services/pos/__tests__/shift-opening-access.test.ts
+?? services/pos/__tests__/tender-write-access.test.ts
+?? services/pos/__tests__/terminal-archive.service.test.ts
+?? services/pos/cart-revision.ts
+?? services/pos/cart-write-access.ts
+?? services/pos/checkout-state.ts
+?? services/pos/checkout.service.ts
+?? services/pos/offline-resolution.service.ts
+?? services/pos/offline-review.service.ts
+?? services/pos/pos-read-result.ts
+?? services/pos/shift-opening-access.ts
+?? services/pos/tender-write-access.ts
+?? services/pos/terminal-configuration-revision.ts
+?? services/purchase-order/__tests__/purchase-order-amendment-record.test.ts
+?? services/purchase-order/__tests__/purchase-order-clone-scope.service.test.ts
+?? services/purchase-order/__tests__/purchase-quantity.test.ts
+?? services/purchase-order/__tests__/purchase-receiving-contracts.test.ts
+?? services/purchase-order/__tests__/supplier-po-proposal-evidence.test.ts
+?? services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts
+?? services/purchase-order/purchase-order-amendment-contracts.ts
+?? services/purchase-order/purchase-order-amendment-record.ts
+?? services/purchase-order/purchase-order-amendment.service.ts
+?? services/purchase-order/purchase-order-approval-contracts.ts
+?? services/purchase-order/purchase-order-approval.ts
+?? services/purchase-order/purchase-order-decision-history.ts
+?? services/purchase-order/purchase-order-edit-record.ts
+?? services/purchase-order/purchase-order-lifecycle-contracts.ts
+?? services/purchase-order/purchase-order-lifecycle.ts
+?? services/purchase-order/purchase-quantity.ts
+?? services/purchase-order/purchase-receiving-authority.ts
+?? services/purchase-order/purchase-receiving-contracts.ts
+?? services/purchase-order/purchase-receiving-workbench.service.ts
+?? services/purchase-order/supplier-po-buyer-authority.ts
+?? services/purchase-order/supplier-po-buyer-contracts.ts
+?? services/purchase-order/supplier-po-http.ts
+?? services/purchase-order/supplier-po-proposal-evidence.ts
+?? services/purchase-order/supplier-po-response-contracts.ts
+?? services/purchasing/__tests__/ap-history-allocation-integrity.test.ts
+?? services/purchasing/__tests__/ap-history-export.service.test.ts
+?? services/purchasing/__tests__/ap-history-financial.test.ts
+?? services/purchasing/__tests__/ap-history-revision.test.ts
+?? services/purchasing/__tests__/ap-ledger-retry.test.ts
+?? services/purchasing/__tests__/invoice-approval-contracts.test.ts
+?? services/purchasing/__tests__/invoice-correction-contracts.test.ts
+?? services/purchasing/__tests__/invoice-ledger-recovery-contracts.test.ts
+?? services/purchasing/__tests__/invoice-match-exception-contracts.test.ts
+?? services/purchasing/__tests__/invoice-preparation-contracts.test.ts
+?? services/purchasing/__tests__/payment-posting-recovery.service.test.ts
+?? services/purchasing/__tests__/payment-release-evidence.test.ts
+?? services/purchasing/__tests__/payment-request-contracts.test.ts
+?? services/purchasing/__tests__/payment-request-evidence.test.ts
+?? services/purchasing/__tests__/payment-request-read.service.test.ts
+?? services/purchasing/__tests__/supplier-payment-balance.test.ts
+?? services/purchasing/ap-history-export.service.ts
+?? services/purchasing/ap-history-financial.ts
+?? services/purchasing/ap-history-revision.ts
+?? services/purchasing/invoice-approval-contracts.ts
+?? services/purchasing/invoice-approval.service.ts
+?? services/purchasing/invoice-correction-authority.ts
+?? services/purchasing/invoice-correction-contracts.ts
+?? services/purchasing/invoice-correction.service.ts
+?? services/purchasing/invoice-ledger-recovery-authority.ts
+?? services/purchasing/invoice-ledger-recovery-contracts.ts
+?? services/purchasing/invoice-ledger-recovery.service.ts
+?? services/purchasing/invoice-match-exception-authority.ts
+?? services/purchasing/invoice-match-exception-contracts.ts
+?? services/purchasing/invoice-match-exception.service.ts
+?? services/purchasing/invoice-preparation-authority.ts
+?? services/purchasing/invoice-preparation-contracts.ts
+?? services/purchasing/invoice-preparation-evidence.ts
+?? services/purchasing/invoice-preparation.service.ts
+?? services/purchasing/invoice-source-evidence.ts
+?? services/purchasing/payment-posting-recovery-contracts.ts
+?? services/purchasing/payment-posting-recovery.service.ts
+?? services/purchasing/payment-release-contracts.ts
+?? services/purchasing/payment-release-evidence.ts
+?? services/purchasing/payment-release.service.ts
+?? services/purchasing/payment-request-authority.ts
+?? services/purchasing/payment-request-contracts.ts
+?? services/purchasing/payment-request-evidence.ts
+?? services/purchasing/payment-request-read.service.ts
+?? services/purchasing/payment-request.service.ts
+?? services/purchasing/supplier-payment-balance.ts
+?? services/reconciliation/__tests__/payment-exception-closure.service.test.ts
+?? services/reconciliation/__tests__/payment-exception-link.service.test.ts
+?? services/reconciliation/__tests__/payment-reconciliation-alert-scan.service.test.ts
+?? services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts
+?? services/reconciliation/__tests__/payment-reconciliation-manual-candidates.test.ts
+?? services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts
+?? services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts
+?? services/reconciliation/__tests__/payment-reconciliation-run-detail.test.ts
+?? services/reconciliation/__tests__/payment-reconciliation-summary.service.test.ts
+?? services/reconciliation/__tests__/payment-suspense-correction-record.test.ts
+?? services/reconciliation/__tests__/payment-suspense-correction.contracts.test.ts
+?? services/reconciliation/__tests__/payment-suspense-evidence.test.ts
+?? services/reconciliation/__tests__/payment-suspense-read.service.test.ts
+?? services/reconciliation/__tests__/payment-suspense-resolution-evidence.service.test.ts
+?? services/reconciliation/__tests__/payment-suspense-resolution-export.service.test.ts
+?? services/reconciliation/__tests__/payment-suspense-resolution-read.service.test.ts
+?? services/reconciliation/__tests__/payment-suspense-resolution-record.test.ts
+?? services/reconciliation/__tests__/payment-suspense-resolution-recovery-evidence.service.test.ts
+?? services/reconciliation/__tests__/payment-suspense-resolution.contracts.test.ts
+?? services/reconciliation/__tests__/reconciliation-certificate-history.service.test.ts
+?? services/reconciliation/__tests__/reconciliation-run-preparation.service.test.ts
+?? services/reconciliation/manual-match-evidence.ts
+?? services/reconciliation/manual-match-lineage.sql.ts
+?? services/reconciliation/payment-exception-closure-evidence.service.ts
+?? services/reconciliation/payment-exception-closure.contracts.ts
+?? services/reconciliation/payment-exception-closure.service.ts
+?? services/reconciliation/payment-exception-link.contracts.ts
+?? services/reconciliation/payment-exception-link.service.ts
+?? services/reconciliation/payment-exception-source-evidence.ts
+?? services/reconciliation/payment-reconciliation-alert-scan.service.ts
+?? services/reconciliation/payment-reconciliation-manual-candidates.service.ts
+?? services/reconciliation/payment-reconciliation-manual-match.service.ts
+?? services/reconciliation/payment-reconciliation-manual-read.service.ts
+?? services/reconciliation/payment-reconciliation-summary.service.ts
+?? services/reconciliation/payment-suspense-correction-export.service.ts
+?? services/reconciliation/payment-suspense-correction-record.ts
+?? services/reconciliation/payment-suspense-correction.contracts.ts
+?? services/reconciliation/payment-suspense-correction.service.ts
+?? services/reconciliation/payment-suspense-cycle-ledger.service.ts
+?? services/reconciliation/payment-suspense-evidence.ts
+?? services/reconciliation/payment-suspense-read.service.ts
+?? services/reconciliation/payment-suspense-resolution-archive.service.ts
+?? services/reconciliation/payment-suspense-resolution-evidence.service.ts
+?? services/reconciliation/payment-suspense-resolution-export.service.ts
+?? services/reconciliation/payment-suspense-resolution-read.contracts.ts
+?? services/reconciliation/payment-suspense-resolution-read.service.ts
+?? services/reconciliation/payment-suspense-resolution-record.ts
+?? services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts
+?? services/reconciliation/payment-suspense-resolution-recovery.contracts.ts
+?? services/reconciliation/payment-suspense-resolution-recovery.service.ts
+?? services/reconciliation/payment-suspense-resolution.contracts.ts
+?? services/reconciliation/payment-suspense-resolution.service.ts
+?? services/reconciliation/reconciliation-certificate-export.contracts.ts
+?? services/reconciliation/reconciliation-certificate-history.contracts.ts
+?? services/reconciliation/reconciliation-certificate-history.service.ts
+?? services/reconciliation/reconciliation-run-preparation-evidence.ts
+?? services/reconciliation/reconciliation-run-preparation.contracts.ts
+?? services/reconciliation/reconciliation-run-preparation.service.ts
+?? services/reconciliation/reconciliation-sign-review.contracts.ts
+?? services/roles/role-command.ts
+?? services/roles/role-custodian-policy.ts
+?? services/roles/role-editor.service.ts
+?? services/roles/role-permission-policy.ts
+?? services/roles/role-write.service.ts
+?? services/security/__tests__/account-session.service.test.ts
+?? services/security/__tests__/self-sign-out.service.test.ts
+?? services/security/account-session-input.ts
+?? services/security/account-session.service.ts
+?? services/security/self-sign-out.service.ts
+?? services/signals/__tests__/payroll-action-access.test.ts
+?? services/supplier/__tests__/supplier-create-receipt.service.test.ts
+?? services/users/__tests__/member-access.service.test.ts
+?? services/users/__tests__/member-history.service.test.ts
+?? services/users/__tests__/registration-input.test.ts
+?? services/users/__tests__/self-profile-http.service.test.ts
+?? services/users/__tests__/self-profile.service.test.ts
+?? services/users/__tests__/user-invitation-history.service.test.ts
+?? services/users/__tests__/user-invitation-issuance.service.test.ts
+?? services/users/__tests__/user-invitation-management.service.test.ts
+?? services/users/__tests__/user-invitation-options.service.test.ts
+?? services/users/__tests__/user-invitation-redemption-authority.service.test.ts
+?? services/users/__tests__/user-password-change.service.test.ts
+?? services/users/invitation-input.ts
+?? services/users/invitation-revision.ts
+?? services/users/member-access-input.ts
+?? services/users/member-access-policy.ts
+?? services/users/member-access-read.service.ts
+?? services/users/member-access.service.ts
+?? services/users/member-history-input.ts
+?? services/users/member-history.service.ts
+?? services/users/password-change-input.ts
+?? services/users/password-recovery-input.ts
+?? services/users/registration-input.ts
+?? services/users/self-profile-http.service.ts
+?? services/users/self-profile-input.ts
+?? services/users/self-profile.service.ts
+?? services/users/user-deactivation-input.ts
+?? services/users/user-invitation-authority.service.ts
+?? services/users/user-invitation-delivery-contract.ts
+?? services/users/user-invitation-history.service.ts
+?? services/users/user-invitation-issuance.service.ts
+?? services/users/user-invitation-management.service.ts
+?? services/users/user-invitation-options.service.ts
+?? services/users/user-invitation-redemption-authority.service.ts
+?? services/users/user-password-change.service.ts
+?? solafide/
+?? tests/e2e/finance-x1-authenticated-evidence.spec.ts
+?? tests/e2e/finance-x1-evidence-aggregate.setup.ts
+?? tests/e2e/finance-x1-local-authenticated-evidence.spec.ts
+?? tests/e2e/finance-x1-local-evidence-aggregate.setup.ts
+?? tests/e2e/finance-x1-route-observation.ts
+?? tests/e2e/item-media-create.spec.ts
+?? tests/e2e/modern-modules.spec.ts
+?? types/inventoryMovementHistory.ts
+?? types/transferLifecycle.ts
+?? what-next/2026-09-06-ohada-product-competitive-audit-evidence/
+?? what-next/2026-09-06-ohada-product-competitive-audit.md
+?? what-next/2026-09-06-stoquify-enterprise-execution-roadmap.md
+?? what-next/2026-09-06-stoquify-enterprise-first-30-days.md
+?? what-next/2026-09-06-stoquify-enterprise-roadmap-evidence/
+?? what-next/2026-09-06-stoquify-enterprise-traceability-and-blockers.md
+?? what-next/2026-09-06-stoquify-enterprise-work-packages.json
+?? what-next/STOQUIFY_ANALYTICS_MARKETPLACE_NETWORK_EFFECT_STRATEGY_2026-08-29.md
+?? what-next/STOQUIFY_ANALYTICS_MARKETPLACE_OPPORTUNITY_REGISTRY_2026-08-29.json
+?? what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md
+?? what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_WORK_PACKAGE_REGISTRY_2026-08-30.json
+?? what-next/accounting-enterprise-audit/
+?? what-next/accounting-remediation-roadmap/
+?? what-next/agents-skills/STOQUIFY_DEVELOPMENT_AGENT_SKILL_PLAYBOOK_2026-09-02.md
+?? what-next/agents-skills/STOQUIFY_DEVELOPMENT_AGENT_SKILL_RECOMMENDATIONS_2026-09-02.md
+?? what-next/agents-skills/STOQUIFY_DEVELOPMENT_AGENT_SKILL_REGISTRY_2026-09-02.json
+?? what-next/ai/
+?? what-next/analytics-network-program/
+?? what-next/astra-platform-review/
+?? what-next/business-record-search-delivery-plan.md
+?? what-next/dashboard-user-guide/
+?? what-next/development-progression-agent/
+?? what-next/evidence/finance-x1/
+?? what-next/inventory-movements-uiux-normalization.md
+?? what-next/inventory-transfer-lifecycle.md
+?? what-next/inventory-transfers-page-remediation.md
+?? what-next/item-media-remediation/
+?? what-next/migrations/isolated-next-level-blocker-register-20260830.json
+?? what-next/migrations/isolated-next-level-blocker-register-20260830.md
+?? what-next/migrations/isolated-next-level-fresh-replay-20260830.json
+?? what-next/migrations/isolated-next-level-fresh-replay-20260830.md
+?? what-next/modern-modules-integration/
+?? what-next/module-composition-blueprint/
+?? what-next/platform-module-audit/
+?? what-next/pos-cart-lifecycle-and-interruption-recovery.md
+?? what-next/referrals/referral-value-efficiency-audit-2026-09-06-evidence/
+?? what-next/referrals/referral-value-efficiency-audit-2026-09-06.md
+?? what-next/stoquify-n8n-cost-model.csv
+?? what-next/stoquify-n8n-evidence-register.md
+?? what-next/stoquify-n8n-integration-assessment.md
+?? what-next/system-evaluation-2026-08-28-action-plan.md
+?? what-next/system-evaluation-2026-08-28-blocker-matrix.json
+?? what-next/system-evaluation-2026-08-28-comprehensive-report.md
+?? what-next/system-evaluation-2026-08-28-risk-register.md
+?? what-next/table-harmonization-x1-finance-execution-2026-08-31.json
+?? what-next/table-harmonization-x1-finance-execution-2026-08-31.md
+?? what-next/table-remediation-reseed-readiness-2026-08-30.json
+?? what-next/table-remediation-reseed-readiness-2026-08-30.md
+?? what-next/ui-missing-capabilities-value-assessment.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_02_SHELL_NAVIGATION_REPORT_2026-09-08.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_05_ROBUST_STATES_REPORT_2026-09-08.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_05_ROBUST_STATES_REPORT_2026-09-09.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_05_ROBUST_STATES_REPORT_2026-09-15.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_05_ROBUST_STATES_REPORT_2026-09-19.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_FINANCE_ACCOUNTING_NORMALIZATION_REPORT_2026-08-31.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_FINANCE_ACCOUNTING_TABLE_NORMALIZATION_REPORT_2026-08-28.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_INVENTORY_ITEMS_TABLE_NORMALIZATION_REPORT_2026-08-28.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_INVENTORY_MOVEMENTS_TABLE_NORMALIZATION_REPORT_2026-08-27.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_PAYMENT_RECONCILIATION_TABLE_NORMALIZATION_REPORT_2026-08-28.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_PURCHASE_ORDERS_TABLE_NORMALIZATION_REPORT_2026-08-28.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_09_GOVERNANCE_REPORT_2026-09-19.md
+?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_09_TABLE_GOVERNANCE_REPORT_2026-08-28.md
+?? what-next/ui-ux/STOQUIFY_ENTERPRISE_TABLE_BENCHMARK_AND_AUDIT_REPORT_2026-08-28.md
+?? what-next/ui-ux/STOQUIFY_TABLE_SYSTEM_HARMONIZATION_ROADMAP_2026-08-28.md
+?? what-next/ui-ux/evidence/
+?? what-next/workflow-modernization/

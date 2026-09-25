@@ -1,0 +1,34 @@
+{
+  "at": "2026-09-08T11:30:10.108Z",
+  "run": "7c45f388-7ae",
+  "before": false,
+  "checks": [
+    {
+      "name": "OPEN replacement retains original evidence and requires a new decision",
+      "status": "passed"
+    },
+    {
+      "name": "APPROVED replacement retains original evidence and requires a new decision",
+      "status": "passed"
+    },
+    {
+      "name": "REJECTED replacement retains original evidence and requires a new decision",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "9664809700f5e10cad6937d93972cc8916faadac843957328075443c9081fa2b",
+    "services/purchasing/invoice-match-exception.service.ts": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82",
+    "services/purchasing/invoice-match-exception-contracts.ts": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8"
+  },
+  "originalBefore": "0c0b421c137fdc3cc5a62f0a63e8d16647f5dc940443af0efecc6e2d2331f2a6",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "9664809700f5e10cad6937d93972cc8916faadac843957328075443c9081fa2b",
+    "services/purchasing/invoice-match-exception.service.ts": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82",
+    "services/purchasing/invoice-match-exception-contracts.ts": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8"
+  },
+  "sourceStable": true
+}

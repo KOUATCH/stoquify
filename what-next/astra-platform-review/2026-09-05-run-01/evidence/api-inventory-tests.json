@@ -1,0 +1,27 @@
+{
+  "id": "api-inventory-tests",
+  "startedAt": "2026-09-05T09:09:40.271Z",
+  "finishedAt": "2026-09-05T09:09:52.270Z",
+  "command": [
+    "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--json",
+    "--runTestsByPath",
+    "scripts/__tests__/api-route-guard-inventory.test.js"
+  ],
+  "target": "local workspace; database connection disabled with loopback port 1",
+  "exitCode": 1,
+  "signal": null,
+  "status": "failed",
+  "summary": {
+    "suites": 1,
+    "passedSuites": 0,
+    "failedSuites": 1,
+    "tests": 18,
+    "passedTests": 17,
+    "failedTests": 1,
+    "pendingTests": 0
+  },
+  "log": "api-inventory-tests.log"
+}

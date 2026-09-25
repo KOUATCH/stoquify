@@ -1,0 +1,69 @@
+{
+  "run": "db152c50-896",
+  "at": "2026-09-08T10:51:32.762Z",
+  "sourcesBefore": {
+    "components/purchasing/InvoiceMatchExceptionWorkbench.tsx": "d9b8668cff89f9d4d9d610d3897b815348e13262b364982f42c8ef91abaab30d",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "9c11560d6d7f7ac7748e0230d632d7adffe8f40802bec676c69a6e80d9caccc8",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2ea511be8a9f8b1f03654293eaf605ed3e7dc235e9c3e1c3383fb2f22205631a",
+    "messages/en.json": "8b57cd8df92ceabf18051db5c3ac1de231e0419e6c5bd33873dffff901e78c56",
+    "messages/fr.json": "7116e0a585f61cfc816ce4db5f61d1e571f9e36d9f87a01f7a7185ddeb88fe1a",
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "match-exception-en-maker-failure-db152c50-896.png",
+        "match-exception-en-checker-failure-db152c50-896.png"
+      ],
+      "pageErrors": [
+        "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n      <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n        <SegmentTrieNode>\n        <PurchasePayablesPage>\n          <div className=\"dashboard-...\">\n            <div className=\"dashboard-...\">\n              <div>\n              <APControlWorkbench data={{...}} error={null} locale=\"en\">\n                <main className=\"min-w-0 sp...\">\n                  <CommandBriefHeader title=\"Accounts p...\" summary=\"Review sup...\" eyebrow=\"Purchasing...\" ...>\n                    <section className=\"dashboard-...\">\n                      <div className=\"flex flex-...\">\n                        <div>\n                        <aside className=\"flex w-ful...\">\n                          <dl className=\"rounded-lg...\">\n                            <MetaLine>\n                            <MetaLine item={{label:\"Up"
+      ],
+      "timings": [],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Request an invoice exception', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Request an invoice exception', exact: true })\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "match-exception-fr-maker-failure-db152c50-896.png",
+        "match-exception-fr-checker-failure-db152c50-896.png"
+      ],
+      "pageErrors": [
+        "Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\nhttps://react.dev/link/hydration-mismatch\n\n  ...\n    <InnerLayoutRouter url=\"/fr/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n      <SegmentViewNode type=\"page\" pagePath=\"[locale]/(...\">\n        <SegmentTrieNode>\n        <PurchasePayablesPage>\n          <div className=\"dashboard-...\">\n            <div className=\"dashboard-...\">\n              <div>\n              <APControlWorkbench data={{...}} error={null} locale=\"fr\">\n                <main className=\"min-w-0 sp...\">\n                  <CommandBriefHeader title=\"Atelier de...\" summary=\"Examinez l...\" eyebrow=\"Centre de ...\" ...>\n                    <section className=\"dashboard-...\">\n                      <div className=\"flex flex-...\">\n                        <div>\n                        <aside className=\"flex w-ful...\">\n                          <dl className=\"rounded-lg...\">\n                            <MetaLine>\n                            <MetaLine item={{label:\"Mi"
+      ],
+      "timings": [],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Demander une dérogation de facture', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Demander une dérogation de facture', exact: true })\n"
+    }
+  ],
+  "originalBefore": "c541cffbbbf085fe020a1be52b115b4d5a0546631db335e2b7eee6782c79a4ca",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoiceMatchExceptionWorkbench.tsx": "d9b8668cff89f9d4d9d610d3897b815348e13262b364982f42c8ef91abaab30d",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "9c11560d6d7f7ac7748e0230d632d7adffe8f40802bec676c69a6e80d9caccc8",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2ea511be8a9f8b1f03654293eaf605ed3e7dc235e9c3e1c3383fb2f22205631a",
+    "messages/en.json": "8b57cd8df92ceabf18051db5c3ac1de231e0419e6c5bd33873dffff901e78c56",
+    "messages/fr.json": "7116e0a585f61cfc816ce4db5f61d1e571f9e36d9f87a01f7a7185ddeb88fe1a",
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98"
+  },
+  "sourceStable": true
+}

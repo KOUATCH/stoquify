@@ -1,0 +1,129 @@
+{
+  "attempt": "cbda867c",
+  "startedAt": "2026-09-05T18:39:28.769Z",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "sourcesBefore": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "35d0879e7fb9c0cec8de241db45c05eb085cbdd6aced9d322ea2d37834372b05",
+    "components/purchase-orders/purchase-order-edit-model.ts": "2925b4bf34ce9793691716fb593a18fe2e5c2ca272a9a8b2f9544ff84b6b8423",
+    "components/purchase-orders/purchase-order-money.ts": "de4278efa9c52dddce0c8d51c36b518a5b5b6078e9d0873990d7551299d2b6df",
+    "hooks/useRecentPurchaseOrderQueries.ts": "242cee7d2ef4de6062a9c4fb5ee5e615236af17b35de953a97cd5add676a52e6",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c",
+    "services/purchase-order/purchase-order.service.ts": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "ad31ccf0f894d3c85aa9d1d53bb782f492c6b7e6d504a8e1ab8d3c4ab94cbd77",
+    "messages/en.json": "2b269dffd58334739079ee51718fef2bd7e534b5007b901964a318564f6acad5",
+    "messages/fr.json": "6cf697b3943ba7f580d85a5aee5bdb7ef043dc06f54a015122fc304e11b6f40e"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "id": "cmtop4wde006hmac0xzyvdfyc",
+      "orderNumber": "PO-000003",
+      "passed": true,
+      "requests": [
+        {
+          "at": "2026-09-05T18:40:02.494Z",
+          "pathname": "/en/dashboard/purchase-orders/cmtop4wde006hmac0xzyvdfyc/edit",
+          "method": "GET",
+          "rsc": false,
+          "serverAction": false
+        },
+        {
+          "at": "2026-09-05T18:40:37.563Z",
+          "pathname": "/en/dashboard/purchase-orders/cmtop4wde006hmac0xzyvdfyc/edit",
+          "method": "POST",
+          "rsc": false,
+          "serverAction": true
+        }
+      ],
+      "responses": [
+        {
+          "at": "2026-09-05T18:40:09.385Z",
+          "pathname": "/en/dashboard/purchase-orders/cmtop4wde006hmac0xzyvdfyc/edit",
+          "status": 200,
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "at": "2026-09-05T18:40:47.132Z",
+          "pathname": "/en/dashboard/purchase-orders/cmtop4wde006hmac0xzyvdfyc/edit",
+          "status": 200,
+          "contentType": "text/x-component"
+        }
+      ],
+      "fastRefresh": [],
+      "errors": [],
+      "screenshots": [
+        "en-purchase-recovery-retained-390-cbda867c.png",
+        "en-purchase-recovery-retained-1440-cbda867c.png"
+      ],
+      "cancelledAt": "2026-09-05T18:40:36.128Z",
+      "cancelledStateHash": "66ec0b14b20c4e285fc34ec37e5846fda72ee8c0ec0702224232bc13079f8a8c",
+      "retainedAfterServerReplay": true,
+      "readOnlyCopyable": true
+    },
+    {
+      "locale": "fr",
+      "id": "cmtop6se9007imac0fyec5d09",
+      "orderNumber": "PO-000004",
+      "passed": true,
+      "requests": [
+        {
+          "at": "2026-09-05T18:41:32.346Z",
+          "pathname": "/fr/dashboard/purchase-orders/cmtop6se9007imac0fyec5d09/edit",
+          "method": "GET",
+          "rsc": false,
+          "serverAction": false
+        },
+        {
+          "at": "2026-09-05T18:41:46.977Z",
+          "pathname": "/fr/dashboard/purchase-orders/cmtop6se9007imac0fyec5d09/edit",
+          "method": "POST",
+          "rsc": false,
+          "serverAction": true
+        }
+      ],
+      "responses": [
+        {
+          "at": "2026-09-05T18:41:33.825Z",
+          "pathname": "/fr/dashboard/purchase-orders/cmtop6se9007imac0fyec5d09/edit",
+          "status": 200,
+          "contentType": "text/html; charset=utf-8"
+        },
+        {
+          "at": "2026-09-05T18:41:48.275Z",
+          "pathname": "/fr/dashboard/purchase-orders/cmtop6se9007imac0fyec5d09/edit",
+          "status": 200,
+          "contentType": "text/x-component"
+        }
+      ],
+      "fastRefresh": [],
+      "errors": [],
+      "screenshots": [
+        "fr-purchase-recovery-retained-390-cbda867c.png",
+        "fr-purchase-recovery-retained-1440-cbda867c.png"
+      ],
+      "cancelledAt": "2026-09-05T18:41:46.654Z",
+      "cancelledStateHash": "58073ef4568c1754a3d44a654a54964370e97c82633748b01ac559fdf369a805",
+      "retainedAfterServerReplay": true,
+      "readOnlyCopyable": true
+    }
+  ],
+  "scope": "Recovery only on two existing real draft clones; original cancelled orders are immutable comparison subjects. No repeated no-op save/clone or fixture reset.",
+  "browserContextsClosed": true,
+  "originalCancelledOrdersUnchanged": true,
+  "sourcesAfter": {
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "35d0879e7fb9c0cec8de241db45c05eb085cbdd6aced9d322ea2d37834372b05",
+    "components/purchase-orders/purchase-order-edit-model.ts": "2925b4bf34ce9793691716fb593a18fe2e5c2ca272a9a8b2f9544ff84b6b8423",
+    "components/purchase-orders/purchase-order-money.ts": "de4278efa9c52dddce0c8d51c36b518a5b5b6078e9d0873990d7551299d2b6df",
+    "hooks/useRecentPurchaseOrderQueries.ts": "242cee7d2ef4de6062a9c4fb5ee5e615236af17b35de953a97cd5add676a52e6",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c",
+    "services/purchase-order/purchase-order.service.ts": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "ad31ccf0f894d3c85aa9d1d53bb782f492c6b7e6d504a8e1ab8d3c4ab94cbd77",
+    "messages/en.json": "2b269dffd58334739079ee51718fef2bd7e534b5007b901964a318564f6acad5",
+    "messages/fr.json": "6cf697b3943ba7f580d85a5aee5bdb7ef043dc06f54a015122fc304e11b6f40e"
+  },
+  "sourceStable": true,
+  "driverSha256": "4564055678917b926d81f18a74b2b66ccd684c68400679158b353ab68fb23801",
+  "completedAt": "2026-09-05T18:42:14.663Z",
+  "passed": 2,
+  "failed": 0
+}

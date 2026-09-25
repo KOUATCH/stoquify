@@ -1,24 +1,17 @@
 "use server"
 
-import { revalidateTag } from "next/cache"
-import { logger } from "@/lib/logger"
+import { revalidatePOSAfterCommit } from "./cache-revalidation"
 import { err, ok } from "@/services/_shared/action-response"
+import { posReadResult, posReadError } from "@/services/pos/pos-read-result"
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { ModuleNewWorkStoppedError } from "@/services/modules/module-admission.service"
+import { POSShiftOpeningAccessError } from "@/services/pos/shift-opening-access"
 import { closePOSShift, getActivePOSSession, openPOSShift } from "@/services/pos/pos.service"
 import { activePOSSessionSchema, closeShiftSchema, openShiftSchema } from "@/services/pos/pos.schemas"
 
 function revalidatePOSSessionTags(tags: string[]) {
-  for (const tag of tags) {
-    try {
-      revalidateTag(tag)
-    } catch (error) {
-      logger.warn("POS session cache revalidation failed after a committed operation", {
-        tag,
-        error: error instanceof Error ? error.message : "unknown",
-      })
-    }
-  }
+  revalidatePOSAfterCommit({ tags })
 }
 
 export async function getActivePOSSessionAction(input: unknown) {
@@ -29,9 +22,9 @@ export async function getActivePOSSessionAction(input: unknown) {
       resourceId: parsed.terminalId,
     })
     const session = await getActivePOSSession({ ...parsed, organizationId: orgId, userId })
-    return ok(session)
+    return posReadResult(session, { orgId, userId })
   } catch (error) {
-    return err(error)
+    return posReadError(error)
   }
 }
 
@@ -49,6 +42,12 @@ export async function openPOSShiftAction(input: unknown) {
 
     return ok(session)
   } catch (error) {
+    if (error instanceof ModuleNewWorkStoppedError) {
+      return { success: false as const, data: null, error: error.message, code: "MODULE_NEW_WORK_STOPPED" as const }
+    }
+    if (error instanceof POSShiftOpeningAccessError) {
+      return { success: false as const, data: null, error: error.message, code: "POS_SHIFT_ENTITLEMENT_UNAVAILABLE" as const }
+    }
     return err(error)
   }
 }

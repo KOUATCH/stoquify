@@ -1,4 +1,5 @@
 "use client"
+import { formatAPHistoryTotal } from "@/lib/purchasing/ap-history-presentation"
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -234,7 +235,7 @@ const copy = {
     paymentHistory: "Payment history",
     noInvoices: "No supplier invoices yet",
     noPayments: "No supplier payments yet",
-    openPayable: "Open payable",
+    openPayable: "Current invoice remainder",
     releasedPayments: "Released payments",
     ledgerBlockers: "Ledger blockers",
     completeHistory: "Operational AP history complete",
@@ -402,7 +403,7 @@ const copy = {
     paymentHistory: "Historique paiements",
     noInvoices: "Aucune facture fournisseur",
     noPayments: "Aucun paiement fournisseur",
-    openPayable: "Dette ouverte",
+    openPayable: "Solde actuel des factures",
     releasedPayments: "Paiements liberes",
     ledgerBlockers: "Blocages comptables",
     completeHistory: "Historique operationnel complet",
@@ -1351,11 +1352,7 @@ export default function SupplierManagementDashboard({
                 {
                   id: "open-payable",
                   label: t.openPayable,
-                  value: formatCurrencyText(
-                    analyticsQuery.data.apHistory.summary.openPayable,
-                    analyticsQuery.data.apHistory.summary.currency,
-                    locale,
-                  ),
+                  value: formatAPHistoryTotal(analyticsQuery.data.apHistory.summary, "openPayable", locale),
                   tone: "gold",
                   icon: Wallet,
                 },
@@ -1873,20 +1870,12 @@ export default function SupplierManagementDashboard({
                   <div className="grid gap-3 sm:grid-cols-3">
                     <InlineMetric
                       label={t.openPayable}
-                      value={formatCurrencyText(
-                        analyticsQuery.data?.apHistory.summary.openPayable ?? "0",
-                        analyticsQuery.data?.apHistory.summary.currency ?? "XAF",
-                        locale,
-                      )}
+                      value={formatAPHistoryTotal(analyticsQuery.data?.apHistory.summary, "openPayable", locale)}
                       tone="gold"
                     />
                     <InlineMetric
                       label={t.releasedPayments}
-                      value={formatCurrencyText(
-                        analyticsQuery.data?.apHistory.summary.releasedPaymentTotal ?? "0",
-                        analyticsQuery.data?.apHistory.summary.currency ?? "XAF",
-                        locale,
-                      )}
+                      value={formatAPHistoryTotal(analyticsQuery.data?.apHistory.summary, "releasedPaymentTotal", locale)}
                     />
                     <InlineMetric
                       label={t.ledgerBlockers}

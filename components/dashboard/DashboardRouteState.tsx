@@ -2,6 +2,8 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { AlertTriangle, Building2, Clock3, LockKeyhole, PackageX, SearchX } from "lucide-react"
 
+import { dashboardSharedCopy, dashboardLocale, recoveryLabel } from "@/lib/dashboard/presentation"
+
 import { cn } from "@/lib/utils"
 
 export type DashboardRouteStateKind =
@@ -20,79 +22,43 @@ const stateCopy: Record<
   {
     icon: typeof AlertTriangle
     toneClass: string
-    eyebrow: string
-    defaultTitle: string
-    defaultMessage: string
   }
 > = {
   permission_denied: {
     icon: LockKeyhole,
     toneClass: "bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]",
-    eyebrow: "Permission required",
-    defaultTitle: "This dashboard surface is not available for this role",
-    defaultMessage:
-      "The route is protected by server-side permissions. Ask an administrator for access or return to the command center.",
   },
   no_active_org: {
     icon: Building2,
     toneClass: "bg-[var(--dash-gold-soft)] text-[var(--dash-gold)]",
-    eyebrow: "Organization required",
-    defaultTitle: "Choose an active organization",
-    defaultMessage:
-      "Your session does not have an active organization for this route. Refresh the session from the dashboard.",
   },
   error: {
     icon: AlertTriangle,
     toneClass: "bg-[var(--dash-danger-soft)] text-[var(--dash-danger)]",
-    eyebrow: "Load failed",
-    defaultTitle: "Dashboard surface could not load",
-    defaultMessage: "One read-only command source failed or timed out. Retry or return to the command center.",
   },
   empty: {
     icon: SearchX,
     toneClass: "bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
-    eyebrow: "No data",
-    defaultTitle: "No command data yet",
-    defaultMessage: "This surface needs trusted source activity before it can produce a dashboard view.",
   },
   partial: {
     icon: AlertTriangle,
     toneClass: "bg-[var(--dash-gold-soft)] text-[var(--dash-gold)]",
-    eyebrow: "Partial data",
-    defaultTitle: "Some command data is partial",
-    defaultMessage:
-      "The route loaded safely, but one or more source modules are unavailable or incomplete.",
   },
   locked_module: {
     icon: PackageX,
     toneClass: "bg-[rgba(37,57,67,0.34)] text-[var(--dash-text-soft)]",
-    eyebrow: "Module locked",
-    defaultTitle: "This module is not enabled",
-    defaultMessage:
-      "The tenant does not currently have this module enabled. Open settings or contact an administrator.",
   },
   stale_session: {
     icon: Clock3,
     toneClass: "bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]",
-    eyebrow: "Session refresh required",
-    defaultTitle: "Refresh your dashboard session",
-    defaultMessage:
-      "Your session context is stale. Refresh the session before relying on this dashboard surface.",
   },
   not_found: {
     icon: SearchX,
     toneClass: "bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
-    eyebrow: "Not found",
-    defaultTitle: "Dashboard page not found",
-    defaultMessage:
-      "This route is not available in the current dashboard workspace. Return to the command center.",
   },
   loading: {
     icon: Clock3,
     toneClass: "bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
-    eyebrow: "Loading",
-    defaultTitle: "Preparing command surface",
-    defaultMessage: "Trusted dashboard data is loading. The layout is reserved so content does not jump.",
   },
 }
 
@@ -102,7 +68,8 @@ export function DashboardRouteState({
   title,
   message,
   primaryHref,
-  primaryLabel = "Back to dashboard",
+  primaryLabel,
+  locale,
   secondaryHref,
   secondaryLabel,
   actions,
@@ -113,11 +80,14 @@ export function DashboardRouteState({
   message?: string
   primaryHref: string
   primaryLabel?: string
+  locale?: "en" | "fr"
   secondaryHref?: string
   secondaryLabel?: string
   actions?: ReactNode
 }) {
   const state = stateCopy[kind]
+  const resolvedLocale = locale ?? dashboardLocale(primaryHref)
+  const copy = dashboardSharedCopy[resolvedLocale].states[kind]
   const Icon = state.icon
   const isLoading = kind === "loading"
 
@@ -138,25 +108,25 @@ export function DashboardRouteState({
             <Icon className="h-7 w-7" aria-hidden="true" />
           </div>
           <p className="mt-4 text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]">
-            {eyebrow ?? state.eyebrow}
+            {eyebrow ?? copy.eyebrow}
           </p>
           <h1 className="mt-2 text-xl font-semibold tracking-normal text-[var(--dash-text)]">
-            {title ?? state.defaultTitle}
+            {title ?? copy.defaultTitle}
           </h1>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--dash-text-soft)]">
-            {message ?? state.defaultMessage}
+            {message ?? copy.defaultMessage}
           </p>
           <div className="mt-5 flex flex-wrap justify-center gap-2">
             <Link
               href={primaryHref}
-              className="inline-flex h-10 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]"
+              className="inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text)] transition hover:bg-[var(--dash-surface-raised)]"
             >
-              {primaryLabel}
+              {primaryLabel ?? recoveryLabel(primaryHref, resolvedLocale)}
             </Link>
             {secondaryHref && secondaryLabel ? (
               <Link
                 href={secondaryHref}
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text-soft)] transition hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)]"
+                className="inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text-soft)] transition hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)]"
               >
                 {secondaryLabel}
               </Link>

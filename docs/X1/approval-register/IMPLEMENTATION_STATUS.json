@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-09-05",
+  "implementationStatus": "LOCAL_REGISTER_IMPLEMENTED_AND_FOCUSED_TESTS_PASSED",
+  "approvalStatus": "AWAITING_HUMAN_COMPLETION",
+  "realApprovalsRecorded": 0,
+  "realControllerEnrolled": false,
+  "productionReleaseAuthorized": false,
+  "databaseMutatedByRegisterSetup": false,
+  "draftRecordsAllocated": 4,
+  "fillableWordForms": 8,
+  "unsignedFormPdfs": 8,
+  "formPagesVisuallyReviewed": 12,
+  "guidesPublished": ["README.md", "README.pdf", "FORMS.md", "FORMS.pdf"],
+  "verification": {
+    "localRegisterTests": { "passed": 13, "failed": 0, "command": "node --test scripts/__tests__/x1-local-approval-register.test.cjs" },
+    "preflightBindingAndLegacyCompatibilityTests": { "passed": 19, "failed": 0, "command": "npx jest --runInBand scripts/__tests__/finance-x1-evidence-preflight.test.ts components/DataTableComponents/__tests__/FinanceX1EvidenceBinding.test.ts scripts/__tests__/x1-approval-automation-orchestrator.test.js" },
+    "windowsManagerSyntax": "PASSED",
+    "wordExport": "ALL_EIGHT_FORMS_RENDERED",
+    "wordInputImport": "ALL_FOUR_RECORDS_IMPORTED_WITH_DECISIONS_PENDING",
+    "actualWindowsControllerEnrollmentAndAttestation": "NOT_EXECUTED_REQUIRES_REAL_CONTROLLER_ACTION"
+  },
+  "testedRefusals": [
+    "Missing approvals and typed verification flags without a signature",
+    "Invalid controller signatures and attempted key replacement",
+    "Changed signed PDFs and contract sources",
+    "Changed identities, impossible dates and future signing times",
+    "Revision decisions and invalid authority windows",
+    "Independent reviewer sharing the product approver account",
+    "Revoked or expired approvals",
+    "Tampered exports and copied local bindings outside the register",
+    "Inconsistent audit history and path traversal"
+  ],
+  "humanNextSteps": [
+    "Enroll the actual document controller through Open-Register.cmd",
+    "Complete, sign and verify adoption with real authority evidence",
+    "Complete, sign and verify product, evidence and independent-review delegation records",
+    "Synchronize approved records and capture fresh authorized EN/FR evidence"
+  ],
+  "limits": [
+    "The local certificate authenticates the controller attestation, not a handwriting image or legal qualification",
+    "The register needs access controls and a separate backup/checkpoint under the adopted process",
+    "The independent-review delegation is not approval of future capture results",
+    "Signed records are preserved; changed authority, identity or contract scope requires a separately issued replacement package"
+  ]
+}

@@ -1,4 +1,7 @@
 import { render, screen } from "@testing-library/react"
+jest.mock("@/components/dashboard/DashboardRouteState", () => ({ DashboardRouteState: () => null }))
+jest.mock("next-intl/server", () => ({ getTranslations: jest.fn() }))
+jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn(async () => ({ allowed: true })) }))
 
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
 import { RbacError, requirePermission } from "@/lib/security/rbac"

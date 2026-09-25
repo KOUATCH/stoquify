@@ -35,7 +35,15 @@ if (databaseUrl) {
 }
 
 // Standard Prisma client for Node.js runtime (API routes, server actions)
-export const db = globalThis.prisma || new PrismaClient(prismaOptions);
+// Hot reload can retain a client created before the module models were generated.
+const cachedPrisma = globalThis.prisma;
+const hasModuleModels = cachedPrisma?.pictureAsset
+  && cachedPrisma.tenantModuleConfiguration
+  && cachedPrisma.tenantModuleGrant
+  && cachedPrisma.pOSCheckoutWorkspace
+  && cachedPrisma.tenantModuleConfigurationCommand;
+
+export const db = (hasModuleModels && cachedPrisma) || new PrismaClient(prismaOptions);
 
 // Export as both 'db' and 'prisma' for compatibility
 export const prisma = db;

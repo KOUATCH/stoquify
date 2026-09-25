@@ -1,5 +1,5 @@
 import type { SVGProps } from "react"
-import { fireEvent, render, screen } from "@testing-library/react"
+import { fireEvent, render, screen, within } from "@testing-library/react"
 
 import { TransactionHistoryWorkbenchShell, type TransactionHistoryShellLabels } from "../history/TransactionHistoryWorkbenchShell"
 
@@ -18,6 +18,7 @@ const labels: TransactionHistoryShellLabels = {
   resetFilters: "Reset", retry: "Retry", export: "Export server history", exporting: "Exporting", tableCaption: "Inventory movement history table", details: "Details", nextPage: "Next page", noNextPage: "No next page",
   loadingTitle: "Loading", loadingMessage: "Loading server scope", emptyTitle: "Empty", emptyMessage: "No movement", emptyFilteredTitle: "No matches", emptyFilteredMessage: "Reset filters", errorTitle: "Failed", partialTitle: "Partial source data", partialMessage: "Partial warning",
   permissionTitle: "Permission required", permissionMessage: "Denied", noOrgTitle: "Organization required", noOrgMessage: "Choose org", proofUnavailableTitle: "Proof unavailable", proofUnavailableMessage: "No proof badge", mobileCardAction: "Open details", resultCount: (count) => `${count} visible rows`,
+  filter: "Filter movements", clearFilters: "Clear filters", liveData: "Live data", refresh: "Refresh", refreshing: "Refreshing", viewColumns: "View", selectAllRows: "Select all movement rows", selectRow: (title) => `Select ${title}`, selectedRows: (selected, total) => `${selected} of ${total} row(s) selected.`, page: (page) => `Page ${page}`, firstPage: "Go to first page", previousPage: "Go to previous page",
 }
 
 type Row = { id: string; item: string; qty: string; status: string }
@@ -67,6 +68,34 @@ describe("TransactionHistoryWorkbenchShell", () => {
 
     expect(screen.getByRole("button", { name: "Export server history" })).toBeDisabled()
     expect(screen.getByText("safe failure")).toBeInTheDocument()
+  })
+
+  it("supports the compact three-dot row action used by normalized tables", () => {
+    const { onSelectRow } = renderShell({ tableVariant: "system", rowActionVariant: "icon" })
+    const action = screen.getByRole("button", { name: "Details: Rice" })
+
+    expect(action).toHaveClass("h-8", "w-8")
+    expect(screen.getByTestId("icon-MoreHorizontal")).toBeInTheDocument()
+    fireEvent.click(action)
+    expect(onSelectRow).toHaveBeenCalledWith("row-1")
+  })
+
+  it("matches the normalized items toolbar, selection, column controls, and cursor pagination", () => {
+    renderShell({ tableVariant: "system", rowActionVariant: "icon", enableRowSelection: true, enableColumnVisibility: true, hasMore: true })
+
+    expect(screen.getByRole("button", { name: "Refresh" })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "View" })).toBeInTheDocument()
+    expect(screen.getByText("0 of 1 row(s) selected.")).toBeInTheDocument()
+    expect(screen.getByText("Page 1")).toBeInTheDocument()
+    const table = screen.getByRole("table", { name: "Inventory movement history table" })
+    fireEvent.click(within(table).getByRole("checkbox", { name: "Select Rice" }))
+    expect(screen.getByText("1 of 1 row(s) selected.")).toBeInTheDocument()
+    const desktopAndMobileSelection = screen.getAllByRole("checkbox", { name: "Select Rice" })
+    expect(desktopAndMobileSelection).toHaveLength(2)
+    for (const checkbox of desktopAndMobileSelection) expect(checkbox).toBeChecked()
+    fireEvent.click(desktopAndMobileSelection.find((checkbox) => !table.contains(checkbox))!)
+    expect(screen.getByText("0 of 1 row(s) selected.")).toBeInTheDocument()
+    for (const checkbox of desktopAndMobileSelection) expect(checkbox).not.toBeChecked()
   })
 })
 

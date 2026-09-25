@@ -1,0 +1,159 @@
+{
+  "at": "2026-09-15T11:02:51.710Z",
+  "baseline": "evidence/source-baseline-v150.json",
+  "baselineReceipt": "dc18a3",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/referrals/referral-funnel-read-model.service.ts": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a",
+    "components/referrals/ReferralFunnelDashboard.tsx": "9adb23f346264e3e3b880729e4ff32636f80dd471f9ffaa1b957a8d7d7932fc9",
+    "messages/referral-funnel/en.json": "d5ebef0e2c5c04585689e08ab922119d4a72c54febb66f9342a5ba86137a130e",
+    "messages/referral-funnel/fr.json": "5061872772fb2d656c9a5ab53b6006e44606c1e64b7d46c2bbebf9eb2c4f685d",
+    "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0"
+  },
+  "tests": {
+    "passed": 33,
+    "suites": 5,
+    "receipt": "217968",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/referrals/__tests__/referral-funnel-read-model.service.test.ts components/referrals/__tests__/ReferralFunnelDashboard.test.tsx actions/referrals/__tests__/referral-funnel.actions.test.ts services/referrals/__tests__/referral-attribution.service.test.ts services/accounting/__tests__/accountant-access.service.test.ts"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "781df8",
+    "command": "node node_modules/eslint/bin/eslint.js services/referrals/referral-funnel-read-model.service.ts components/referrals/ReferralFunnelDashboard.tsx services/referrals/__tests__/referral-funnel-read-model.service.test.ts components/referrals/__tests__/ReferralFunnelDashboard.test.tsx services/accounting/accountant-access.service.ts services/accounting/__tests__/accountant-access.service.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "006535",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/referral-funnel-v150-26723f6a-e239-4c4d-9b39-3bea58873755.json",
+    "receipt": "188957",
+    "at": "2026-09-15T11:00:17.893Z",
+    "sourceBefore": {
+      "services/referrals/referral-funnel-read-model.service.ts": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a",
+      "components/referrals/ReferralFunnelDashboard.tsx": "9adb23f346264e3e3b880729e4ff32636f80dd471f9ffaa1b957a8d7d7932fc9",
+      "messages/referral-funnel/en.json": "d5ebef0e2c5c04585689e08ab922119d4a72c54febb66f9342a5ba86137a130e",
+      "messages/referral-funnel/fr.json": "5061872772fb2d656c9a5ab53b6006e44606c1e64b7d46c2bbebf9eb2c4f685d",
+      "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0"
+    },
+    "checks": {
+      "empty": true,
+      "queuedNotAccepted": true,
+      "deduplicatedClickAndRegistration": true,
+      "totals": {
+        "preparedLinks": 3,
+        "clicks": 1,
+        "registrations": 2,
+        "acceptedInvitations": 1
+      },
+      "historicalFormulaWouldReportActivations": 2,
+      "legacyRegistrationNotAcceptance": true,
+      "tenantScopeAndAggregatePrivacy": true,
+      "revocationPreservesHistoricalAcceptance": true,
+      "directGrantExpiryAndRenewal": true,
+      "domainEventReferencePreserved": true,
+      "selectedRecordsUnchangedByReads": true
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "referral-funnel-v150-en-1440-26723f6a-e239-4c4d-9b39-3bea58873755.png",
+          "referral-funnel-v150-en-768-26723f6a-e239-4c4d-9b39-3bea58873755.png",
+          "referral-funnel-v150-en-320-26723f6a-e239-4c4d-9b39-3bea58873755.png"
+        ],
+        "pageErrors": [],
+        "routeReadyMs": 2692,
+        "keyboardTableReachable": true,
+        "countsVerified": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "referral-funnel-v150-fr-1440-26723f6a-e239-4c4d-9b39-3bea58873755.png",
+          "referral-funnel-v150-fr-768-26723f6a-e239-4c4d-9b39-3bea58873755.png",
+          "referral-funnel-v150-fr-320-26723f6a-e239-4c4d-9b39-3bea58873755.png"
+        ],
+        "pageErrors": [],
+        "routeReadyMs": 4217,
+        "keyboardTableReachable": true,
+        "countsVerified": true
+      }
+    ],
+    "scope": "Owned local database only. Synthetic consent inputs and private queued envelopes; no provider worker or external delivery.",
+    "passed": true,
+    "sourceAfter": {
+      "services/referrals/referral-funnel-read-model.service.ts": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a",
+      "components/referrals/ReferralFunnelDashboard.tsx": "9adb23f346264e3e3b880729e4ff32636f80dd471f9ffaa1b957a8d7d7932fc9",
+      "messages/referral-funnel/en.json": "d5ebef0e2c5c04585689e08ab922119d4a72c54febb66f9342a5ba86137a130e",
+      "messages/referral-funnel/fr.json": "5061872772fb2d656c9a5ab53b6006e44606c1e64b7d46c2bbebf9eb2c4f685d",
+      "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0"
+    },
+    "sourceStable": true
+  },
+  "attempts": [
+    {
+      "receipt": "fc704e",
+      "result": "Two component assertions matched ambiguous region landmarks; 16 other tests passed. Corrected accessible-name locator."
+    },
+    {
+      "receipt": "07cd17",
+      "file": "lanes/environment/referral-funnel-v150-aad17254-ed9d-49ac-bc8b-25d1116308bc.json",
+      "result": "Fixture evidence hash rejected by real constraint."
+    },
+    {
+      "receipt": "d5b25e",
+      "file": "lanes/environment/referral-funnel-v150-e5a0c850-55e0-43de-8398-02c3f92812c5.json",
+      "result": "Foreign fixture had invalid statement source without snapshot; corrected fixture source."
+    },
+    {
+      "receipt": "4691fa",
+      "file": "lanes/environment/referral-funnel-v150-dfd62444-79be-4bfc-beb1-1a9990debe7c.json",
+      "result": "Real revocation failed, transaction rolled back."
+    },
+    {
+      "receipt": "051353",
+      "file": "lanes/environment/referral-revoke-diagnosis-v150.json",
+      "result": "Unsupported AccountantAccessGrant accounting-source value identified; grant remained ACTIVE."
+    },
+    {
+      "receipt": "3a2e23",
+      "file": "lanes/environment/referral-funnel-v150-13ffcb6c-8242-402a-b198-a8ec41e1cf2d.json",
+      "result": "Revocation corrected, but browser heading locator matched shell and page. Exact heading used for final pass."
+    }
+  ],
+  "visualReview": {
+    "screenshots": 6,
+    "inspected": "French mobile full-page screenshot",
+    "limits": [
+      "Table horizontal scrolling intentional; keyboard focus verified, actual assistive-technology and zoom checks remain open."
+    ]
+  },
+  "guide": "REFERRAL_FUNNEL_V150.md",
+  "coverage": {
+    "discoveredWorkflows": 257,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2926,
+      "tests": 1044,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 194,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "migrations": false,
+  "build": {
+    "run": false,
+    "reason": "Owned actual application exercised; migration-bearing default build not invoked."
+  }
+}

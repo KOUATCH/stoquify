@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-09-06T07:43:07.957Z",
+  "sources": {
+    "actions/users/getInvitationHistory.ts": "26cef822d040e5ccb5a16156b738ef1ffbab8e8a40e7b6a0d5b9eee10e088363",
+    "components/Forms/users/InvitationHistory.tsx": "65aabd09efaa68e6ea0ed54c7bc47844644e506b872a20b8b4ff42e540af65e4",
+    "components/dashboard/Tables/Invites.tsx": "512621d092ec92dd7f16bea8be0c9ed6f6e59fbee069e0b0d9f1697500fc10cb",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "4ef059dc1ead2e085c063e03bf465ec72ba44fb2170e9e6bd2c66a09e00b05ea",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "01c9b147d5ecef8e4b2a74da68bc2d4f10db8b0939b9462aea6f7986e1dc0c8f"
+  },
+  "records": [
+    {
+      "file": "actions/users/getInvitationHistory.ts",
+      "surface": "users/getInvitationHistory.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "settings",
+      "permission": "INVITATION_HISTORY_PERMISSIONS",
+      "guard": "requireAllPermissions",
+      "observeOrEnforce": "observe",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx",
+      "surface": "/dashboard/settings/users",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "settings",
+      "permission": "READ_USERS",
+      "guard": "checkPermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    }
+  ],
+  "moduleGaps": [],
+  "serviceBoundary": {
+    "activeViolationCount": 0,
+    "allowedFindingCount": 0,
+    "totalFindings": 0,
+    "byClassification": {},
+    "bySeverity": {}
+  },
+  "findings": []
+}

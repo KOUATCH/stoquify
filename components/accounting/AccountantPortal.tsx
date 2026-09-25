@@ -1,6 +1,9 @@
 "use client"
 
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+
 import { useMemo } from "react"
+import type { ColumnDef } from "@tanstack/react-table"
 import {
   AlertTriangle,
   BadgeCheck,
@@ -21,6 +24,7 @@ import { cn } from "@/lib/utils"
 import type { Locale } from "@/types/bilingual"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import DataTable from "@/components/DataTableComponents/DataTable"
 
 type AccountantPortalProps = {
   initialData?: AccountantPortalData | null
@@ -57,6 +61,11 @@ const copy = {
     gate: "Gate",
     detail: "Detail",
     source: "Source",
+    journal: "Journal",
+    batch: "Batch",
+    searchBlockers: "Search close blockers...",
+    searchSourceLinks: "Search recent source links...",
+    searchAuditEvents: "Search audit and control trail...",
     action: "Action",
     resource: "Resource",
     actor: "Actor",
@@ -95,6 +104,11 @@ const copy = {
     gate: "Porte",
     detail: "Detail",
     source: "Source",
+    journal: "Journal",
+    batch: "Lot",
+    searchBlockers: "Rechercher les blocages de clôture...",
+    searchSourceLinks: "Rechercher les liens source récents...",
+    searchAuditEvents: "Rechercher les audits et contrôles...",
     action: "Action",
     resource: "Ressource",
     actor: "Acteur",
@@ -283,8 +297,14 @@ export function AccountantPortal({
   }
 
   return (
-    <div className="space-y-5">
-      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="min-w-0 space-y-6" data-finance-result="accountant-portal" data-finance-result-state={query.isError ? "error" : query.isFetching ? "refreshing" : "ready"}>
+      <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
+        { id: "portal-blockers", label: t.blockersTitle },
+        { id: "portal-figures", label: t.figures },
+        { id: "portal-source-links", label: t.sourceLinks },
+        { id: "portal-audit", label: t.auditEvents },
+      ]} />
+      <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
         <MetricTile
           label={t.trustLevel}
           value={`${data.certificate.level} ${trustLabel(data, locale)}`}
@@ -343,7 +363,11 @@ export function AccountantPortal({
         </Button>
       </section>
 
-      <div className="grid min-w-0 gap-5 xl:grid-cols-[0.8fr_1.2fr]">
+      <section id="portal-blockers" className="min-w-0 scroll-mt-24">
+        <BlockersTable data={data} locale={locale} />
+      </section>
+
+      <div id="portal-figures" className="grid min-w-0 scroll-mt-24 gap-4">
         <Panel title={t.figures} description={t.figuresDescription}>
           <div className="grid gap-3 p-4 sm:grid-cols-2">
             <FigureTile label={t.debit} figure={data.figures.activityDebit} locale={locale} />
@@ -378,45 +402,13 @@ export function AccountantPortal({
         </Panel>
       </div>
 
-      <Panel title={t.blockersTitle}>
-        {data.blockers.length ? (
-          <div className="overflow-x-auto">
-            <table className="dashboard-table-base w-full min-w-[860px] text-sm">
-              <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-                <tr>
-                  <th className="px-4 py-3">{t.status}</th>
-                  <th className="px-4 py-3">{t.gate}</th>
-                  <th className="px-4 py-3">{t.detail}</th>
-                  <th className="px-4 py-3">{t.source}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.blockers.map((blocker) => (
-                  <tr key={blocker.id} className="border-b border-[var(--dash-border-subtle)] align-top">
-                    <td className="px-4 py-3">
-                      <Badge variant="outline" className={cn("rounded-md", severityClass(blocker.severity))}>
-                        {blocker.severity}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3">
-                      <p className="font-medium text-[var(--dash-text)]">{blocker.title}</p>
-                      <p className="mt-1 text-xs text-[var(--dash-text-faint)]">{blocker.gate}</p>
-                    </td>
-                    <td className="px-4 py-3 text-[var(--dash-text-soft)]">{blocker.detail}</td>
-                    <td className="px-4 py-3 text-xs leading-5 text-[var(--dash-text-soft)]">{blocker.sourceTables.join(", ")}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="p-5 text-sm text-[var(--dash-text-soft)]">{t.noBlockers}</div>
-        )}
-      </Panel>
-
       <div className="grid min-w-0 gap-5">
-        <SourceLinksTable data={data} locale={locale} />
-        <AuditEventsTable data={data} locale={locale} />
+        <section id="portal-source-links" className="min-w-0 scroll-mt-24">
+          <SourceLinksTable data={data} locale={locale} />
+        </section>
+        <section id="portal-audit" className="min-w-0 scroll-mt-24">
+          <AuditEventsTable data={data} locale={locale} />
+        </section>
       </div>
     </div>
   )
@@ -456,106 +448,228 @@ function FigureTile({
   )
 }
 
+function BlockersTable({ data, locale }: { data: AccountantPortalData; locale: Locale }) {
+  const t = copy[locale]
+  const columns = useMemo<ColumnDef<AccountantPortalData["blockers"][number]>[]>(() => [
+    {
+      id: t.status,
+      accessorKey: "severity",
+      header: t.status,
+      cell: ({ row: { original: blocker } }) => (
+        <Badge variant="outline" className={cn("rounded-md", severityClass(blocker.severity))}>
+          {blocker.severity}
+        </Badge>
+      ),
+    },
+    {
+      id: t.gate,
+      accessorKey: "title",
+      header: t.gate,
+      cell: ({ row: { original: blocker } }) => (
+        <div className="min-w-48 whitespace-normal">
+          <p className="font-medium text-[var(--dash-text)]">{blocker.title}</p>
+          <p className="mt-1 text-xs text-[var(--dash-text-faint)]">{blocker.gate}</p>
+        </div>
+      ),
+    },
+    {
+      id: t.detail,
+      accessorKey: "detail",
+      header: t.detail,
+      cell: ({ row: { original: blocker } }) => (
+        <p className="min-w-64 whitespace-normal text-[var(--dash-text-soft)]">{blocker.detail}</p>
+      ),
+    },
+    {
+      id: t.source,
+      accessorFn: (blocker) => blocker.sourceTables.join(", "),
+      header: t.source,
+      cell: ({ row: { original: blocker } }) => (
+        <p className="min-w-40 whitespace-normal text-xs leading-5 text-[var(--dash-text-soft)]">
+          {blocker.sourceTables.join(", ")}
+        </p>
+      ),
+    },
+  ], [t])
+
+  return (
+    <Panel title={t.blockersTitle}>
+      <div className="min-w-0 p-4">
+        <DataTable
+          columns={columns}
+          data={data.blockers}
+          caption={t.blockersTitle}
+          scrollRegionLabel={t.blockersTitle}
+          locale={locale}
+          variant="landing"
+          searchPlaceholder={t.searchBlockers}
+          showDateFilters={false}
+          showSelectionSummary={false}
+          emptyMessage={data.blockers.length ? t.emptyRows : t.noBlockers}
+        />
+      </div>
+    </Panel>
+  )
+}
+
 function SourceLinksTable({ data, locale }: { data: AccountantPortalData; locale: Locale }) {
   const t = copy[locale]
+  const columns = useMemo<ColumnDef<AccountantPortalData["latestSourceLinks"][number]>[]>(() => [
+    {
+      id: t.source,
+      accessorKey: "sourceType",
+      header: t.source,
+      cell: ({ row: { original: link } }) => (
+        <div>
+          <p className="font-medium text-[var(--dash-text)]">{link.sourceType}</p>
+          <p className="mt-1 max-w-48 truncate text-xs text-[var(--dash-text-faint)]" title={link.sourceNumber || link.sourceId}>
+            {link.sourceNumber || link.sourceId}
+          </p>
+        </div>
+      ),
+    },
+    {
+      id: t.journal,
+      accessorKey: "journalEntryNumber",
+      header: t.journal,
+      cell: ({ row: { original: link } }) => link.journalEntryNumber || "-",
+    },
+    {
+      id: t.batch,
+      accessorKey: "postingBatchId",
+      header: t.batch,
+      cell: ({ row: { original: link } }) => (
+        <span className="block max-w-48 truncate" title={link.postingBatchId}>{link.postingBatchId}</span>
+      ),
+    },
+    {
+      id: t.status,
+      accessorKey: "postingStatus",
+      header: t.status,
+      cell: ({ row: { original: link } }) => (
+        <Badge variant="outline" className={cn("rounded-md", statusClass(link.postingStatus === "POSTED" ? "ready" : "blocked"))}>
+          {link.postingStatus}
+        </Badge>
+      ),
+    },
+    {
+      id: t.time,
+      accessorKey: "createdAt",
+      header: t.time,
+      cell: ({ row: { original: link } }) => (
+        <span className="whitespace-nowrap text-xs">{formatDate(link.createdAt, locale)}</span>
+      ),
+    },
+  ], [locale, t])
 
   return (
     <Panel title={t.sourceLinks}>
-      {data.latestSourceLinks.length ? (
-        <div className="overflow-x-auto">
-          <table className="dashboard-table-base w-full min-w-[760px] text-sm">
-            <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-              <tr>
-                <th className="px-4 py-3">{t.source}</th>
-                <th className="px-4 py-3">Journal</th>
-                <th className="px-4 py-3">Batch</th>
-                <th className="px-4 py-3">{t.status}</th>
-                <th className="px-4 py-3">{t.time}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.latestSourceLinks.map((link) => (
-                <tr key={link.id} className="border-b border-[var(--dash-border-subtle)] align-top">
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-[var(--dash-text)]">{link.sourceType}</p>
-                    <p className="mt-1 max-w-[12rem] truncate text-xs text-[var(--dash-text-faint)]">
-                      {link.sourceNumber || link.sourceId}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3 text-[var(--dash-text-soft)]">{link.journalEntryNumber || "-"}</td>
-                  <td className="px-4 py-3 max-w-[12rem] truncate text-[var(--dash-text-soft)]">{link.postingBatchId}</td>
-                  <td className="px-4 py-3">
-                    <Badge variant="outline" className={cn("rounded-md", statusClass(link.postingStatus === "POSTED" ? "ready" : "blocked"))}>
-                      {link.postingStatus}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-[var(--dash-text-soft)]">{formatDate(link.createdAt, locale)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="p-5 text-sm text-[var(--dash-text-soft)]">{t.emptyRows}</div>
-      )}
+      <div className="min-w-0 p-4">
+        <DataTable
+          columns={columns}
+          data={data.latestSourceLinks}
+          caption={t.sourceLinks}
+          scrollRegionLabel={t.sourceLinks}
+          locale={locale}
+          variant="landing"
+          searchPlaceholder={t.searchSourceLinks}
+          showSelectionSummary={false}
+          emptyMessage={t.emptyRows}
+        />
+      </div>
     </Panel>
   )
 }
 
 function AuditEventsTable({ data, locale }: { data: AccountantPortalData; locale: Locale }) {
   const t = copy[locale]
+  const events = useMemo(() => data.latestAuditEvents.map((event) => ({
+    ...event,
+    id: `${event.source}-${event.id}`,
+  })), [data.latestAuditEvents])
+  const columns = useMemo<ColumnDef<AccountantPortalData["latestAuditEvents"][number]>[]>(() => [
+    {
+      id: t.source,
+      accessorKey: "source",
+      header: t.source,
+      cell: ({ row: { original: event } }) => (
+        <Badge
+          variant="outline"
+          className={cn(
+            "rounded-md",
+            event.source === "ledger"
+              ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]"
+              : "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
+          )}
+        >
+          {event.source}
+        </Badge>
+      ),
+    },
+    {
+      id: t.action,
+      accessorKey: "action",
+      header: t.action,
+      cell: ({ row: { original: event } }) => (
+        <span className="font-medium text-[var(--dash-text)]">{event.action}</span>
+      ),
+    },
+    {
+      id: t.resource,
+      accessorKey: "resourceType",
+      header: t.resource,
+      cell: ({ row: { original: event } }) => (
+        <div>
+          {event.resourceType}
+          <span className="block max-w-48 truncate text-xs text-[var(--dash-text-faint)]" title={event.resourceId || undefined}>
+            {event.resourceId || "-"}
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: t.actor,
+      accessorKey: "actorId",
+      header: t.actor,
+      cell: ({ row: { original: event } }) => (
+        <span className="block max-w-40 truncate" title={event.actorId || undefined}>{event.actorId || "-"}</span>
+      ),
+    },
+    {
+      id: t.status,
+      accessorKey: "status",
+      header: t.status,
+      cell: ({ row: { original: event } }) => (
+        <Badge variant="outline" className={cn("rounded-md", statusClass(event.status))}>
+          {event.status}
+        </Badge>
+      ),
+    },
+    {
+      id: t.time,
+      accessorKey: "createdAt",
+      header: t.time,
+      cell: ({ row: { original: event } }) => (
+        <span className="whitespace-nowrap text-xs">{formatDate(event.createdAt, locale)}</span>
+      ),
+    },
+  ], [locale, t])
 
   return (
     <Panel title={t.auditEvents}>
-      {data.latestAuditEvents.length ? (
-        <div className="overflow-x-auto">
-          <table className="dashboard-table-base w-full min-w-[780px] text-sm">
-            <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-              <tr>
-                <th className="px-4 py-3">{t.source}</th>
-                <th className="px-4 py-3">{t.action}</th>
-                <th className="px-4 py-3">{t.resource}</th>
-                <th className="px-4 py-3">{t.actor}</th>
-                <th className="px-4 py-3">{t.status}</th>
-                <th className="px-4 py-3">{t.time}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.latestAuditEvents.map((event) => (
-                <tr key={`${event.source}-${event.id}`} className="border-b border-[var(--dash-border-subtle)] align-top">
-                  <td className="px-4 py-3">
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "rounded-md",
-                        event.source === "ledger"
-                          ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-brand-strong)]"
-                          : "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]",
-                      )}
-                    >
-                      {event.source}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3 font-medium text-[var(--dash-text)]">{event.action}</td>
-                  <td className="px-4 py-3 text-[var(--dash-text-soft)]">
-                    {event.resourceType}
-                    <span className="block max-w-[12rem] truncate text-xs text-[var(--dash-text-faint)]">{event.resourceId || "-"}</span>
-                  </td>
-                  <td className="px-4 py-3 max-w-[10rem] truncate text-[var(--dash-text-soft)]">{event.actorId || "-"}</td>
-                  <td className="px-4 py-3">
-                    <Badge variant="outline" className={cn("rounded-md", statusClass(event.status))}>
-                      {event.status}
-                    </Badge>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-[var(--dash-text-soft)]">{formatDate(event.createdAt, locale)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="p-5 text-sm text-[var(--dash-text-soft)]">{t.emptyRows}</div>
-      )}
+      <div className="min-w-0 p-4">
+        <DataTable
+          columns={columns}
+          data={events}
+          caption={t.auditEvents}
+          scrollRegionLabel={t.auditEvents}
+          locale={locale}
+          variant="landing"
+          searchPlaceholder={t.searchAuditEvents}
+          showSelectionSummary={false}
+          emptyMessage={t.emptyRows}
+        />
+      </div>
     </Panel>
   )
 }

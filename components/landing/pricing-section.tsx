@@ -51,7 +51,7 @@ const pointKeys = ["a", "b", "c"] as const
 
 type ViewKey = (typeof views)[number]["key"]
 
-export function PricingSection() {
+export function PricingSection({ id = "pricing" }: { id?: string } = {}) {
   const t = useTranslations("landing.pricing")
   const [activeView, setActiveView] = useState<ViewKey>("paths")
 
@@ -71,7 +71,7 @@ export function PricingSection() {
 
   return (
     <section
-      id="pricing"
+      id={id}
       data-adoption-section
       className="surface-grid scroll-mt-20 bg-[var(--paper-0)] px-6 py-20 text-[var(--color-text-on-paper)] lg:px-8"
     >

@@ -1,0 +1,14 @@
+sequenceDiagram
+  actor Cashier
+  participant POS as POS / sales action
+  participant Policy as Identity and operation policy
+  participant Owner as Sales and inventory owners
+  participant Ledger as Ledger integrity
+  participant Events as Outbox / read models
+  Cashier->>POS: Capture sale with stable request ID
+  POS->>Policy: Tenant, device, item and operation scope
+  Policy-->>POS: Allowed or reasoned refusal
+  POS->>Owner: Validate prices, stock and source version
+  Owner->>Ledger: Commit required movement, receivable/payment and posting
+  Owner->>Events: Record event in transaction
+  Events-->>Cashier: Receipt and authorized reporting status

@@ -1,0 +1,80 @@
+{
+  "startedAt": "2026-09-05T14:32:35.085Z",
+  "completedAt": "2026-09-05T14:33:57.679Z",
+  "classification": "ISOLATED_AUTHENTICATED_APPLICATION_VERIFICATION",
+  "productionApproval": false,
+  "observations": [
+    {
+      "check": "real_password_sign_in",
+      "passed": true
+    },
+    {
+      "check": "real_persisted_session",
+      "passed": true
+    },
+    {
+      "check": "server_permissions_and_foreign_tenant_header",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "failure": {
+    "message": "The expression evaluated to a falsy value:\n\n  assert.ok(!/Cannot read properties of null|Switched to client rendering because the server rendering errored/.test(html))\n",
+    "name": "AssertionError"
+  },
+  "beforeSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "282aa45adf3637c7de07beac0233d2167a83518315f795819a0acecedec66948"
+    },
+    {
+      "path": "hooks/useClientAuth.ts",
+      "sha256": "c76b06c6630426a3c5aa5d898d8b02bd13634aa09bdced72ed1f20baf3c7df7b"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDashboard.tsx",
+      "sha256": "1d2013ac354ae64ecc1642371464f43fc76d9fb8397531c0d5f1322625bb9e56"
+    },
+    {
+      "path": "actions/security/step-up-auth.actions.ts",
+      "sha256": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+    }
+  ],
+  "afterSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "282aa45adf3637c7de07beac0233d2167a83518315f795819a0acecedec66948"
+    },
+    {
+      "path": "hooks/useClientAuth.ts",
+      "sha256": "c76b06c6630426a3c5aa5d898d8b02bd13634aa09bdced72ed1f20baf3c7df7b"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDashboard.tsx",
+      "sha256": "1d2013ac354ae64ecc1642371464f43fc76d9fb8397531c0d5f1322625bb9e56"
+    },
+    {
+      "path": "actions/security/step-up-auth.actions.ts",
+      "sha256": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+    }
+  ],
+  "sourceStable": true,
+  "bundle": {
+    "path": ".next-modern-modules-integration/server/app/[locale]/(dashboard)/dashboard/inventory/transfers/page.js",
+    "sha256": "65f0f4c620dfdb058cbea2eb0a7b8d3ebc2a3fabab4708876d43f4a8692bbbc7",
+    "externalClient": false,
+    "bundledReactStore": true,
+    "vendoredSsrReact": true,
+    "vendorPath": ".next-modern-modules-integration\\server\\vendor-chunks\\better-auth@1.6.26_@prisma+_d24fae1797ed323d5d6672531c718152.js",
+    "vendorSha256": "b817042507204434966e4e4a6049d0d4b7415531fd37f5ea90e71d03a9ebb9a6"
+  },
+  "scope": "Actual fixture password sign-in, session, permissions, transfer render and password step-up; only one new synthetic draft, no activation or transfer write."
+}

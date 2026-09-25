@@ -1,0 +1,71 @@
+{
+  "run": "3b005967-781",
+  "mode": "browser-before",
+  "startedAt": "2026-09-06T18:12:00.162Z",
+  "sourcesBefore": {
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "lib/auth-client.ts": "d5dcaf05372e073b5b4f3b4c4d765e219c62f7e111bad90c3dd5fc292b903b38",
+    "components/dashboard/Navbar.tsx": "4694f1d5616f122969c7b47fd2acb1f10f6f3f986fa28616fb9900e9d5c3f3ad",
+    "components/dashboard/Sidebar.tsx": "87b4ceeec07f61dbf4d0e7daf2438371f908b227227dd2040b3a7bdd95ef27f2",
+    "components/dashboard/SessionRecoverySignOutButton.tsx": "eec1c62e5921cabbc96b2dfee2b892e3c41d3e5681eb4b711a637b84853c0e06",
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "app/api/auth/[...all]/route.ts": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+    "node_modules/better-auth/dist/api/routes/sign-out.mjs": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "entry": "desktop",
+      "defectReproduced": true,
+      "failedRequests": 1,
+      "loginNavigationRequests": 1,
+      "serverSessionStillExists": true,
+      "screenshot": "en-self-signout-before-desktop-3b005967-781.png",
+      "exactSyntheticSessionCleaned": true
+    },
+    {
+      "locale": "en",
+      "entry": "mobile",
+      "defectReproduced": true,
+      "failedRequests": 1,
+      "loginNavigationRequests": 1,
+      "serverSessionStillExists": true,
+      "screenshot": "en-self-signout-before-mobile-3b005967-781.png",
+      "exactSyntheticSessionCleaned": true
+    },
+    {
+      "locale": "fr",
+      "entry": "desktop",
+      "defectReproduced": true,
+      "failedRequests": 1,
+      "loginNavigationRequests": 1,
+      "serverSessionStillExists": true,
+      "screenshot": "fr-self-signout-before-desktop-3b005967-781.png",
+      "exactSyntheticSessionCleaned": true
+    },
+    {
+      "locale": "fr",
+      "entry": "mobile",
+      "defectReproduced": true,
+      "failedRequests": 1,
+      "loginNavigationRequests": 1,
+      "serverSessionStillExists": true,
+      "screenshot": "fr-self-signout-before-mobile-3b005967-781.png",
+      "exactSyntheticSessionCleaned": true
+    }
+  ],
+  "scope": "Owned synthetic current-account sign-out defect reproduction. No application source change, external messages or financial operations.",
+  "completedAt": "2026-09-06T18:12:57.196Z",
+  "sourcesAfter": {
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "lib/auth-client.ts": "d5dcaf05372e073b5b4f3b4c4d765e219c62f7e111bad90c3dd5fc292b903b38",
+    "components/dashboard/Navbar.tsx": "4694f1d5616f122969c7b47fd2acb1f10f6f3f986fa28616fb9900e9d5c3f3ad",
+    "components/dashboard/Sidebar.tsx": "87b4ceeec07f61dbf4d0e7daf2438371f908b227227dd2040b3a7bdd95ef27f2",
+    "components/dashboard/SessionRecoverySignOutButton.tsx": "eec1c62e5921cabbc96b2dfee2b892e3c41d3e5681eb4b711a637b84853c0e06",
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "app/api/auth/[...all]/route.ts": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+    "node_modules/better-auth/dist/api/routes/sign-out.mjs": "a130b00bd64c2e42bf2e7a1204e76b1d7493f4599db9f0bd354032a8c0bb24c3"
+  },
+  "sourceStable": true,
+  "driverSha256": "687df5d61748dc9dc8a91c4dc8911e24cca47004df8039af9426ddc6d6b4b2af"
+}

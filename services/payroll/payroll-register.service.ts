@@ -2514,7 +2514,7 @@ async function prepareExportInTx(
     eventSource: "SYSTEM",
     idempotencyKey: `payroll-register:${readModel.payrollRun.id}:export:${contentHash}`,
     actorId: parsed.actorId ?? undefined,
-    sourceType: "PAYROLL_REGISTER",
+    sourceEntityType: "PAYROLL_REGISTER",
     sourceId: readModel.payrollRun.id,
     documentHash: contentHash,
     payload: {

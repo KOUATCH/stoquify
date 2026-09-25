@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react"
 import {
   ArrowRight,
+  AlertTriangle,
   CheckCircle,
   Loader2,
   MapPin,
@@ -11,31 +12,22 @@ import {
   Search,
   Trash2,
 } from "lucide-react"
-import { useQuery } from "@tanstack/react-query"
+import { useTranslations } from "next-intl"
 
-import { getInventoryLevels } from "@/actions/inventory/inventoryActions"
 import { DatePicker } from "@/components/ui/date-picker"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { useOrgItemsNew } from "@/hooks/useAllItemQueries"
+import { useTransferSourceInventory } from "@/hooks/useTransferSourceInventory"
 import { useOrgLocationsNew } from "@/hooks/useAllLocationsQueries"
 import { useClientAuth } from "@/hooks/useClientAuth"
 import { useCreateTransfer } from "@/hooks/useTransferQueries"
 import { notify } from "@/lib/notifications/notify"
-import type { InventoryLevelWithRelations } from "@/types/inventoryTypes"
+import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 import type { CreateTransferPayload, TransferPriority } from "@/types/inventoryMovementTypes"
 import type { LocationDTO } from "@/types/location"
 
@@ -94,8 +86,19 @@ function itemSku(item: TransferItemOption) {
   return item.sku ?? "No SKU"
 }
 
+// Compatibility entry point for existing callers; creation now renders in normal page flow.
 export function CreateTransferModal({ open, onOpenChange, organizationId }: CreateTransferModalProps) {
+  return open ? <CreateTransferForm organizationId={organizationId} onCancel={() => onOpenChange(false)} onSuccess={() => onOpenChange(false)} /> : null
+}
+
+export function CreateTransferForm({ organizationId, onCancel, onSuccess }: {
+  organizationId: string
+  onCancel: () => void
+  onSuccess: (transferId?: string) => void
+}) {
   const { user } = useClientAuth()
+  const t = useTranslations("moduleComposition.stop")
+  const copy = useTranslations("inventoryTransferCreate")
   const userId = user?.id ?? ""
 
   const [fromLocationId, setFromLocationId] = useState("")
@@ -110,39 +113,31 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
   const [selectedItemId, setSelectedItemId] = useState("")
   const [quantity, setQuantity] = useState("")
 
-  const createTransferMutation = useCreateTransfer()
+  const createTransferMutation = useCreateTransfer({ inlineStoppedWork: true })
 
-  const { data: locationsResponse } = useOrgLocationsNew(organizationId, { enabled: !!organizationId })
-  const { data: itemsResponse } = useOrgItemsNew(organizationId, { enabled: !!organizationId })
-  const { data: inventoryResponse } = useQuery({
-    queryKey: ["transfer-source-inventory", organizationId, fromLocationId],
-    queryFn: () =>
-      getInventoryLevels({
-        organizationId,
-        filters: {
-          locationId: fromLocationId || undefined,
-        },
-      }),
-    enabled: !!organizationId && !!fromLocationId,
-  })
+  const locationsQuery = useOrgLocationsNew(organizationId, { enabled: !!organizationId })
+  const sourceQuery = useTransferSourceInventory(organizationId, fromLocationId)
+  const locations = useMemo<LocationDTO[]>(() => locationsQuery.data?.data ?? [], [locationsQuery.data?.data])
+  const inventory = useMemo(() => (sourceQuery.data ?? []).filter(entry => entry.locationId === fromLocationId && entry.quantityAvailable > 0 && entry.item), [sourceQuery.data, fromLocationId])
+  const items = useMemo<TransferItemOption[]>(() => inventory.flatMap(entry => entry.item ? [entry.item] : []), [inventory])
+  const locationsFailed = locationsQuery.isError || locationsQuery.data?.success === false
 
-  const locations = useMemo<LocationDTO[]>(() => locationsResponse?.data ?? [], [locationsResponse?.data])
-  const items = useMemo<TransferItemOption[]>(() => itemsResponse?.data ?? [], [itemsResponse?.data])
-  const inventory = useMemo<InventoryLevelWithRelations[]>(
-    () => inventoryResponse?.data ?? [],
-    [inventoryResponse?.data],
-  )
+  function changeSource(locationId: string) {
+    setFromLocationId(locationId)
+    setLines([])
+    setSelectedItemId("")
+    setItemSearch("")
+    setQuantity("")
+  }
 
   const availableFromLocations = locations.filter((location) => location.id !== toLocationId)
   const availableToLocations = locations.filter((location) => location.id !== fromLocationId)
 
   const filteredItems = useMemo(() => {
     const query = itemSearch.trim().toLowerCase()
-    if (!query) return items.slice(0, 10)
+    if (!query) return items
 
-    return items
-      .filter((item) => itemDisplayName(item).toLowerCase().includes(query) || itemSku(item).toLowerCase().includes(query))
-      .slice(0, 10)
+    return items.filter((item) => itemDisplayName(item).toLowerCase().includes(query) || itemSku(item).toLowerCase().includes(query))
   }, [items, itemSearch])
 
   const selectedItemInventory = useMemo(() => {
@@ -151,7 +146,10 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
   }, [selectedItemId, fromLocationId, inventory])
 
   const totalItems = lines.reduce((sum, line) => sum + line.requestedQuantity, 0)
-  const isValid = Boolean(fromLocationId && toLocationId && lines.length > 0 && userId)
+  const isValid = Boolean(fromLocationId && toLocationId && fromLocationId !== toLocationId && lines.length > 0 && userId
+    && !locationsFailed && !sourceQuery.isError && !sourceQuery.isFetching
+    && lines.every(line => Number.isFinite(line.requestedQuantity) && line.requestedQuantity > 0
+      && line.requestedQuantity <= (inventory.find(entry => entry.itemId === line.itemId)?.quantityAvailable ?? 0)))
 
   function resetForm() {
     setFromLocationId("")
@@ -167,28 +165,29 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
   }
 
   function handleAddLine() {
-    if (!selectedItemId || !quantity || Number(quantity) <= 0) {
-      notify.error("Please select an item and enter a valid quantity")
+    if (!selectedItemId || !quantity || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0 || sourceQuery.isFetching || sourceQuery.isError) {
+      notify.error(copy("invalidItem"))
       return
     }
 
     const item = items.find((entry) => entry.id === selectedItemId)
-    const availableQty = selectedItemInventory?.quantityAvailable || 0
+    if (!item || !selectedItemInventory) return
+    const availableQty = selectedItemInventory.quantityAvailable
     const requestedQty = Number(quantity)
 
     if (requestedQty > availableQty) {
-      notify.error(`Insufficient inventory. Available: ${availableQty}`)
+      notify.error(copy("insufficient", { quantity: availableQty }))
       return
     }
 
     const existingLineIndex = lines.findIndex((line) => line.itemId === selectedItemId)
 
     if (existingLineIndex >= 0) {
-      const updatedLines = [...lines]
+      const updatedLines = lines.map(line => ({ ...line }))
       updatedLines[existingLineIndex].requestedQuantity += requestedQty
 
       if (updatedLines[existingLineIndex].requestedQuantity > availableQty) {
-        notify.error(`Total quantity exceeds available inventory. Available: ${availableQty}`)
+        notify.error(copy("excessiveTotal", { quantity: availableQty }))
         return
       }
 
@@ -214,10 +213,10 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
 
   function handleUpdateLineQuantity(lineId: string, newQuantity: number) {
     const line = lines.find((entry) => entry.id === lineId)
-    if (!line) return
+    if (!line || !Number.isFinite(newQuantity) || newQuantity <= 0) return
 
     if (newQuantity > line.availableQuantity) {
-      notify.error(`Quantity exceeds available inventory. Available: ${line.availableQuantity}`)
+      notify.error(copy("excessive", { quantity: line.availableQuantity }))
       return
     }
 
@@ -226,19 +225,21 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
 
   async function handleSubmit() {
     if (!userId) {
-      notify.error("Unable to identify the current user")
+      notify.error(copy("missingUser"))
       return
     }
 
     if (!fromLocationId || !toLocationId) {
-      notify.error("Please select both source and destination locations")
+      notify.error(copy("missingLocations"))
       return
     }
 
     if (lines.length === 0) {
-      notify.error("Please add at least one item to transfer")
+      notify.error(copy("missingLines"))
       return
     }
+
+    if (!isValid || createTransferMutation.isPending) return
 
     const payload: CreateTransferPayload = {
       fromLocationId,
@@ -257,42 +258,46 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
     }
 
     try {
-      await createTransferMutation.mutateAsync(payload)
-      onOpenChange(false)
+      const result = await createTransferMutation.mutateAsync(payload)
+      onSuccess(result?.transfer?.id)
       resetForm()
     } catch {
-      // The mutation hook owns user-facing error notifications.
+      // Keep the draft on this page after a denial; other errors are notified by the hook.
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="dashboard-glass-panel max-h-[92vh] max-w-5xl overflow-y-auto rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
-        <DialogHeader className="border-b border-[var(--dash-border-subtle)] pb-4">
-          <DialogTitle className="flex items-center gap-2 text-xl text-[var(--dash-text)]">
+    <section aria-label={copy("title")} className="min-w-0 space-y-6 text-[var(--dash-text)]">
+        <header className="border-b border-[var(--dash-border-subtle)] pb-4">
+          <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-4xl">
             <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]">
               <Package className="h-5 w-5" />
             </span>
-            Create Location Transfer
-          </DialogTitle>
-          <DialogDescription className="text-[var(--dash-text-soft)]">
-            Move inventory between locations with requested quantities, priority, and audit notes.
-          </DialogDescription>
-        </DialogHeader>
+            {copy("title")}
+          </h1>
+          <p className="text-[var(--dash-text-soft)]">
+            {copy("description")}
+          </p>
+        </header>
 
-        <div className="space-y-5">
-          <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.48)] text-[var(--dash-text)]">
+        {locationsQuery.isLoading ? <p role="status">{copy("locationsLoading")}</p> : locationsFailed ? (
+          <div role="alert" className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-4">
+            <p>{copy("locationsError")}</p><Button type="button" variant="outline" onClick={() => locationsQuery.refetch()}>{copy("retry")}</Button>
+          </div>
+        ) : locations.length < 2 ? <p role="status">{copy("locationsEmpty")}</p> : null}
+        <fieldset disabled={createTransferMutation.isPending} className="min-w-0 space-y-5">
+          <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] text-[var(--dash-text)]">
             <CardHeader>
-              <CardTitle className="text-lg text-[var(--dash-text)]">Transfer Route</CardTitle>
-              <CardDescription className="text-[var(--dash-text-soft)]">Select source and destination locations.</CardDescription>
+              <CardTitle className="text-lg text-[var(--dash-text)]">{copy("route")}</CardTitle>
+              <CardDescription className="text-[var(--dash-text-soft)]">{copy("routeDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-[var(--dash-text-muted)]">From Location</Label>
-                  <Select value={fromLocationId} onValueChange={setFromLocationId}>
-                    <SelectTrigger className="dashboard-control h-11 rounded-lg">
-                      <SelectValue placeholder="Select source location" />
+                  <Label htmlFor="transfer-source" className="text-[var(--dash-text-muted)]">{copy("from")}</Label>
+                  <Select value={fromLocationId} onValueChange={changeSource}>
+                    <SelectTrigger id="transfer-source" className="dashboard-control h-11 rounded-lg">
+                      <SelectValue placeholder={copy("sourcePlaceholder")} />
                     </SelectTrigger>
                     <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
                       {availableFromLocations.map((location) => (
@@ -305,10 +310,10 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[var(--dash-text-muted)]">To Location</Label>
+                  <Label htmlFor="transfer-destination" className="text-[var(--dash-text-muted)]">{copy("to")}</Label>
                   <Select value={toLocationId} onValueChange={setToLocationId}>
-                    <SelectTrigger className="dashboard-control h-11 rounded-lg">
-                      <SelectValue placeholder="Select destination location" />
+                    <SelectTrigger id="transfer-destination" className="dashboard-control h-11 rounded-lg">
+                      <SelectValue placeholder={copy("destinationPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
                       {availableToLocations.map((location) => (
@@ -322,16 +327,16 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
               </div>
 
               {fromLocationId && toLocationId ? (
-                <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.38)] p-4">
+                <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-canvas)] p-4">
                   <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
                     <RouteNode
-                      label="Source"
+                      label={copy("source")}
                       name={locations.find((location) => location.id === fromLocationId)?.name}
                       tone="info"
                     />
                     <ArrowRight className="mx-auto hidden h-7 w-7 text-[var(--dash-text-faint)] sm:block" />
                     <RouteNode
-                      label="Destination"
+                      label={copy("destination")}
                       name={locations.find((location) => location.id === toLocationId)?.name}
                       tone="success"
                     />
@@ -341,22 +346,22 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
             </CardContent>
           </Card>
 
-          <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.48)] text-[var(--dash-text)]">
+          <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] text-[var(--dash-text)]">
             <CardHeader>
-              <CardTitle className="text-lg text-[var(--dash-text)]">Transfer Details</CardTitle>
+              <CardTitle className="text-lg text-[var(--dash-text)]">{copy("details")}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-[var(--dash-text-muted)]">Priority</Label>
+                  <Label htmlFor="transfer-priority" className="text-[var(--dash-text-muted)]">{copy("priority")}</Label>
                   <Select value={priority} onValueChange={(value) => setPriority(value as TransferPriority)}>
-                    <SelectTrigger className="dashboard-control h-11 rounded-lg">
+                    <SelectTrigger id="transfer-priority" className="dashboard-control h-11 rounded-lg">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
                       {priorityOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                          {copy(option.value)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -364,11 +369,11 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[var(--dash-text-muted)]">Requested Date</Label>
+                  <Label>{copy("date")}</Label>
                   <DatePicker
                     date={requestedDate}
                     onDateChange={setRequestedDate}
-                    placeholder="Select requested date"
+                    placeholder={copy("datePlaceholder")}
                     minDate={new Date()}
                   />
                 </div>
@@ -376,9 +381,9 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label className="text-[var(--dash-text-muted)]">Notes</Label>
+                  <Label htmlFor="transfer-notes" className="text-[var(--dash-text-muted)]">{copy("notes")}</Label>
                   <Textarea
-                    placeholder="Add transfer notes..."
+                    id="transfer-notes" placeholder={copy("notesPlaceholder")}
                     value={notes}
                     onChange={(event) => setNotes(event.target.value)}
                     rows={3}
@@ -387,9 +392,9 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[var(--dash-text-muted)]">Internal Notes</Label>
+                  <Label htmlFor="transfer-internal-notes" className="text-[var(--dash-text-muted)]">{copy("internalNotes")}</Label>
                   <Textarea
-                    placeholder="Internal notes for operations..."
+                    id="transfer-internal-notes" placeholder={copy("internalPlaceholder")}
                     value={internalNotes}
                     onChange={(event) => setInternalNotes(event.target.value)}
                     rows={3}
@@ -401,19 +406,24 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
           </Card>
 
           {fromLocationId ? (
-            <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.48)] text-[var(--dash-text)]">
+            <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] text-[var(--dash-text)]">
               <CardHeader>
-                <CardTitle className="text-lg text-[var(--dash-text)]">Add Items</CardTitle>
-                <CardDescription className="text-[var(--dash-text-soft)]">Search inventory at the selected source location.</CardDescription>
+                <CardTitle className="text-lg text-[var(--dash-text)]">{copy("addItems")}</CardTitle>
+                <CardDescription className="text-[var(--dash-text-soft)]">{copy("addDescription")}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
+                {sourceQuery.isFetching ? <p role="status">{copy("itemsLoading")}</p> : sourceQuery.isError ? (
+                  <div role="alert" className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-4">
+                    <p>{copy("itemsError")}</p><Button type="button" variant="outline" onClick={() => sourceQuery.refetch()}>{copy("retry")}</Button>
+                  </div>
+                ) : inventory.length === 0 ? <p role="status">{copy("itemsEmpty")}</p> : filteredItems.length === 0 ? <p role="status">{copy("noResults")}</p> : null}
                 <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_140px_140px]">
                   <div className="space-y-2">
-                    <Label className="text-[var(--dash-text-muted)]">Search Items</Label>
+                    <Label htmlFor="transfer-search" className="text-[var(--dash-text-muted)]">{copy("search")}</Label>
                     <div className="relative">
                       <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
                       <Input
-                        placeholder="Search by name or SKU..."
+                        id="transfer-search" placeholder={copy("searchPlaceholder")}
                         value={itemSearch}
                         onChange={(event) => setItemSearch(event.target.value)}
                         className="dashboard-control h-11 rounded-lg pl-10"
@@ -422,10 +432,10 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[var(--dash-text-muted)]">Select Item</Label>
-                    <Select value={selectedItemId} onValueChange={setSelectedItemId}>
-                      <SelectTrigger className="dashboard-control h-11 rounded-lg">
-                        <SelectValue placeholder="Choose item" />
+                    <Label htmlFor="transfer-item" className="text-[var(--dash-text-muted)]">{copy("item")}</Label>
+                    <Select value={selectedItemId} onValueChange={setSelectedItemId} disabled={sourceQuery.isFetching || sourceQuery.isError || filteredItems.length === 0}>
+                      <SelectTrigger id="transfer-item" className="dashboard-control h-11 rounded-lg">
+                        <SelectValue placeholder={copy("itemPlaceholder")} />
                       </SelectTrigger>
                       <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
                       {filteredItems.map((item) => {
@@ -434,7 +444,7 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
 
                           return (
                             <SelectItem key={item.id} value={item.id} disabled={available === 0}>
-                              {itemDisplayName(item)} ({itemSku(item)}) - {available} available
+                              {copy("option", { name: itemDisplayName(item), sku: itemSku(item), quantity: available })}
                             </SelectItem>
                           )
                         })}
@@ -443,10 +453,10 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[var(--dash-text-muted)]">Quantity</Label>
+                    <Label htmlFor="transfer-quantity" className="text-[var(--dash-text-muted)]">{copy("quantity")}</Label>
                     <Input
                       type="number"
-                      placeholder="0"
+                      id="transfer-quantity" placeholder="0"
                       value={quantity}
                       onChange={(event) => setQuantity(event.target.value)}
                       min="1"
@@ -454,34 +464,34 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                       className="dashboard-control h-11 rounded-lg"
                     />
                     {selectedItemInventory ? (
-                      <p className="text-xs text-[var(--dash-text-soft)]">Available: {selectedItemInventory.quantityAvailable}</p>
+                      <p className="text-xs text-[var(--dash-text-soft)]">{copy("available", { quantity: selectedItemInventory.quantityAvailable })}</p>
                     ) : null}
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-transparent">Add</Label>
+                    <Label className="text-transparent">{copy("add")}</Label>
                     <Button
                       type="button"
                       onClick={handleAddLine}
-                      disabled={!selectedItemId || !quantity || Number(quantity) <= 0}
+                      disabled={!selectedItemId || !quantity || !Number.isFinite(Number(quantity)) || Number(quantity) <= 0 || sourceQuery.isFetching || sourceQuery.isError}
                       className="dashboard-button-primary h-11 w-full rounded-lg"
                     >
                       <Plus className="h-4 w-4" />
-                      Add
+                      {copy("add")}
                     </Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          ) : null}
+          ) : <p role="status" className="text-sm text-[var(--dash-text-soft)]">{copy("selectSource")}</p>}
 
           {lines.length > 0 ? (
-            <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.48)] text-[var(--dash-text)]">
+            <Card className="rounded-lg border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] text-[var(--dash-text)]">
               <CardHeader>
                 <CardTitle className="flex flex-col gap-3 text-lg text-[var(--dash-text)] sm:flex-row sm:items-center sm:justify-between">
-                  <span>Items to Transfer</span>
+                  <span>{copy("lines")}</span>
                   <Badge variant="outline" className="w-fit rounded-lg border-[var(--dash-gold)] bg-[var(--dash-gold-soft)] text-[var(--dash-gold)]">
-                    {lines.length} items / {totalItems} total qty
+                    {copy("total", { count: lines.length, quantity: totalItems })}
                   </Badge>
                 </CardTitle>
               </CardHeader>
@@ -490,18 +500,19 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                   {lines.map((line) => (
                     <div
                       key={line.id}
-                      className="grid gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(12,20,24,0.34)] p-3 lg:grid-cols-[minmax(0,1fr)_auto_auto]"
+                      className="grid gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-canvas)] p-3 lg:grid-cols-[minmax(0,1fr)_auto_auto]"
                     >
                       <div className="min-w-0">
                         <p className="truncate font-semibold text-[var(--dash-text)]">{line.itemName}</p>
                         <p className="text-sm text-[var(--dash-text-soft)]">{line.itemSku}</p>
                       </div>
 
-                      <div className="flex items-center gap-3 text-sm text-[var(--dash-text-soft)]">
-                        <span>Available: {line.availableQuantity}</span>
-                        <Label className="text-[var(--dash-text-muted)]">Qty</Label>
+                      <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--dash-text-soft)]">
+                        <span>{copy("available", { quantity: line.availableQuantity })}</span>
+                        <Label htmlFor={`transfer-quantity-${line.id}`} className="text-[var(--dash-text-muted)]">{copy("qty")}</Label>
                         <Input
                           type="number"
+                          id={`transfer-quantity-${line.id}`}
                           value={line.requestedQuantity}
                           onChange={(event) => handleUpdateLineQuantity(line.id, Number(event.target.value))}
                           min="1"
@@ -518,7 +529,7 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
                         className="h-10 w-10 rounded-lg text-[var(--dash-danger)] hover:bg-[var(--dash-danger-soft)] hover:text-[var(--dash-danger)]"
                       >
                         <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Remove item</span>
+                        <span className="sr-only">{copy("remove")}</span>
                       </Button>
                     </div>
                   ))}
@@ -526,16 +537,21 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
               </CardContent>
             </Card>
           ) : null}
-        </div>
+        </fieldset>
 
-        <DialogFooter className="border-t border-[var(--dash-border-subtle)] pt-4">
+        {getModuleOperationErrorReason(createTransferMutation.error) ? <div role="alert" className="flex items-start gap-3 rounded-lg border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] p-4 text-[var(--dash-text)]">
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--dash-warning)]" aria-hidden="true" />
+          <div><p className="font-semibold">{t("deniedTitle")}</p><p className="mt-1 text-sm leading-6">{t("deniedMessage")}</p></div>
+        </div> : null}
+        <footer className="flex flex-col-reverse gap-3 border-t border-[var(--dash-border-subtle)] pt-4 sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={onCancel}
+            disabled={createTransferMutation.isPending}
             className="dashboard-button-secondary h-10 rounded-lg"
           >
-            Cancel
+            {copy("cancel")}
           </Button>
           <Button
             type="button"
@@ -548,11 +564,10 @@ export function CreateTransferModal({ open, onOpenChange, organizationId }: Crea
             ) : (
               <CheckCircle className="h-4 w-4" />
             )}
-            Create Transfer
+            {copy("create")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </footer>
+    </section>
   )
 }
 
@@ -571,7 +586,7 @@ function RouteNode({
       : "bg-[var(--dash-spruce-soft)] text-[var(--dash-spruce)]"
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.36)] p-3">
+    <div className="flex items-center gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] p-3">
       <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg ${toneClass}`}>
         <MapPin className="h-5 w-5" />
       </div>

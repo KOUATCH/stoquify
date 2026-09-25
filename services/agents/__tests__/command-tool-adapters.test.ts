@@ -8,6 +8,38 @@ import {
 import type { DailyHabitDigestData } from "@/services/daily-habit/daily-habit-digest-contracts"
 
 describe("readRoleDailyDigest", () => {
+  it.each(["en", "fr"] as const)("accepts a localized Digest handoff while keeping canonical agent routes (%s)", async locale => {
+    const data = digestData()
+    data.digests[0].risks[0].drillThrough = { available: true, type: "route", label: "Source", href: `/${locale}/dashboard/purchase-orders`, requiredPermission: "dashboard.read" }
+    const loadDigest = jest.fn().mockResolvedValue(data)
+    const result = await readRoleDailyDigest({ digestId: "manager-run-sheet" }, { ...context(), locale }, { loadDigest })
+    expect(result.output.priorities[0].href).toBe("/dashboard/purchase-orders")
+    expect(loadDigest).toHaveBeenCalledWith(expect.objectContaining({ locale }))
+  })
+
+  it("requires every source permission before projecting its details", async () => {
+    const data = digestData()
+    data.digests[0].risks[0].drillThrough.additionalRequiredPermissions = ["payroll.command.read"]
+    const denied = await readRoleDailyDigest({ digestId: "manager-run-sheet" }, context(), { loadDigest: async () => data })
+    expect(denied.output.priorities).toHaveLength(0)
+    const allowed = await readRoleDailyDigest({ digestId: "manager-run-sheet" }, { ...context(), permissions: ["dashboard.read", "payroll.command.read"] }, { loadDigest: async () => data })
+    expect(allowed.output.priorities).toHaveLength(1)
+  })
+
+  it.each(["/dashboard/../admin", "/en/dashboard/%2e%2e/admin", "/dashboard/\\evil", "/dashboard//evil", "//evil.invalid/dashboard/a", "https://evil.invalid/dashboard/a", "/de/dashboard/a", "/dashboard/a?next=https://evil.invalid", "/dashboard/a#fragment"])("rejects unsafe or unsupported source routes: %s", async href => {
+    const data = digestData()
+    data.digests[0].risks[0].drillThrough = { available: true, type: "route", label: "Source", href, requiredPermission: "dashboard.read" }
+    await expect(readRoleDailyDigest({ digestId: "manager-run-sheet" }, context(), { loadDigest: async () => data })).rejects.toMatchObject({ code: "UNAUTHORIZED_DIGEST_FIELD" })
+  })
+
+  it("binds weekly evidence identity to the selected digest period", async () => {
+    const data = digestData()
+    data.digests[0].id = "weekly"
+    data.digests[0].periodStart = "2026-07-16T00:00:00.000Z"
+    const result = await readRoleDailyDigest({ digestId: "weekly" }, context(), { loadDigest: async () => data })
+    expect(result.output.periodStart).toBe("2026-07-16T00:00:00.000Z")
+    expect(result.output.evidence[0].subjectId).toBe("org-pilot:weekly:2026-07-16T00:00:00.000Z:2026-07-22T23:59:59.999Z")
+  })
   it("returns only permission-allowed priorities and an allowlisted evidence projection", async () => {
     const result = await readRoleDailyDigest(
       { digestId: "manager-run-sheet" },
@@ -36,6 +68,7 @@ describe("readRoleDailyDigest", () => {
       actorPermissions: ["dashboard.read"],
       actorRoleCodes: ["manager"],
       isSuperUser: false,
+      locale: "en",
       periodStart: null,
       periodEnd: null,
     })

@@ -11,10 +11,13 @@ import {
 import { safeServerActionErrorResult } from "@/actions/_shared/safe-action-responses"
 import type { ServerActionResult } from "@/lib/error-handling/types"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
+import type { CustomerRemovalReceipt } from "@/services/customer/customer.service"
 import type { Customer, CustomerOrdersResult, CustomerWithStats } from "@/types/customerTypes"
 import type { CustomerEditFormData, CustomerFormData } from "@/validations/customer"
 import { customerEditSchema, customerSchema } from "@/validations/customer"
 import { revalidatePath } from "next/cache"
+
+export type CustomerRemovalResult = CustomerRemovalReceipt & { cacheStatus: "invalidated" | "deferred" }
 
 function assertSuccess<T>(result: ServerActionResult<T>): T {
   if (!result.success) {
@@ -85,22 +88,22 @@ export async function updateCustomerAction(data: CustomerEditFormData): Promise<
   }
 }
 
-export async function deleteCustomerAction(id: string): Promise<ServerActionResult<void>> {
+export async function deleteCustomerAction(id: string): Promise<ServerActionResult<CustomerRemovalResult>> {
   try {
     if (!id) {
       throw new BusinessRuleError("Customer ID is required")
     }
 
     const result = await deleteCustomer(id)
-    if (!result.success) {
-      throw new BusinessRuleError(result.error?.userMessage || result.error?.message || "Customer delete failed")
+    const receipt = assertSuccess(result)
+    try {
+      revalidateCustomerPaths(id)
+      return { success: true, data: { ...receipt, cacheStatus: "invalidated" } }
+    } catch {
+      return { success: true, data: { ...receipt, cacheStatus: "deferred" } }
     }
-
-    revalidateCustomerPaths(id)
-
-    return { success: true, data: undefined }
   } catch (error) {
-    return safeServerActionErrorResult<void>(error, { action: "deleteCustomerAction" })
+    return safeServerActionErrorResult<CustomerRemovalResult>(error, { action: "deleteCustomerAction" })
   }
 }
 

@@ -1,0 +1,59 @@
+
+ROUTE /en/dashboard/analytics
+FILE app/[locale]/(dashboard)/dashboard/analytics/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/analytics/page.tsx; components/analytics/BusinessPulseDashboard.tsx; components/bi/index.ts; components/bi/BIActionPriorityBoard.tsx; components/bi/BIEvidenceBadgeRow.tsx; components/evidence/EvidenceGradeBadge.tsx; components/bi/BIStateBadge.tsx; components/bi/BIStateSurface.tsx; components/bi/BIEmptyState.tsx; components/bi/BICommandBriefHeader.tsx; components/bi/BICommandModeTabs.tsx; components/bi/BIBusinessTruthZone.tsx; components/bi/BIKpiCard.tsx; components/bi/BIProofDrawerHost.tsx; components/evidence/ProofTrailDrawer.tsx; components/bi/BIRiskOpportunityRadar.tsx; components/bi/BITrustLegend.tsx; components/bi/BIWhatChangedStrip.tsx
+DEPENDENCIES services/analytics/sales-analytics.service.ts; app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx; lib/utils.ts; services/bi/bi-contracts.ts; services/analytics/business-pulse-contracts.ts; services/evidence/evidence-contracts.ts
+REDIRECTS []
+HEADINGS Proof Trail
+PROPS Generated | Period | Business pulse is blocked | What changed | What needs action today | Business pulse risks | Trust posture | No visible action is due | Period | Generated | Sources | Review | Proof-only drill-through needs a proof drawer host. | No proof subject was supplied. | Evidence Nodes | Evidence Edges | Blockers | Redactions | No ranked risk is visible | No important changes yet
+CONTROLS [dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:139)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:154)
+[dynamic or icon-only label] (Button, {}, components/bi/BIActionPriorityBoard.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIActionPriorityBoard.tsx:168)
+[dynamic or icon-only label] (Button, {}, components/bi/BICommandBriefHeader.tsx:90)
+[dynamic or icon-only label] (Link, {"href":"brief.primaryAction.href"}, components/bi/BICommandBriefHeader.tsx:91)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onValueChange?.(mode)"}, components/bi/BICommandModeTabs.tsx:41)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIBusinessTruthZone.tsx:65)
+[dynamic or icon-only label] (Button, {}, components/bi/BIBusinessTruthZone.tsx:77)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIBusinessTruthZone.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"card.actionLink.disabled"}, components/bi/BIKpiCard.tsx:67)
+[dynamic or icon-only label] (Link, {"href":"card.actionLink.href"}, components/bi/BIKpiCard.tsx:81)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:96)
+Proof-only drill-through needs a proof drawer host. (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:111)
+[dynamic or icon-only label] (Button, {}, components/bi/BIKpiCard.tsx:125)
+[dynamic or icon-only label] (Link, {"href":"drillThrough.href"}, components/bi/BIKpiCard.tsx:131)
+No proof subject was supplied. (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:46)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:62)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isLoading","onClick":"() => {\n          onOpenSubject?.(subject)\n          setOpen(true)\n        }"}, components/bi/BIProofDrawerHost.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIRiskOpportunityRadar.tsx:123)
+[dynamic or icon-only label] (Button, {}, components/bi/BIRiskOpportunityRadar.tsx:137)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIRiskOpportunityRadar.tsx:138)
+
+ROUTE /en/dashboard/analytics/referrals
+FILE app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx; components/referrals/ReferralFunnelDashboard.tsx
+DEPENDENCIES actions/referrals/referral-funnel.actions.ts; app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx; lib/utils.ts; services/referrals/referral-funnel-read-model.service.ts
+REDIRECTS []
+HEADINGS Referral funnel | Aggregate evidence only | Referral funnel
+PROPS 
+CONTROLS 
+
+ROUTE /en/dashboard/analytics/reports
+FILE app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx; app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx; components/reports/cash-flow-report.tsx; components/reports/report-trust-banner.tsx; components/reports/cashier-performance-report.tsx; components/reports/financial-summary-report.tsx; components/reports/item-performance-report.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx; lib/utils.ts; actions/analytics/financial-reports.ts; actions/analytics/analytics/financial-reports.ts
+REDIRECTS []
+HEADINGS Financial Reports | Cash Flow Report | Total Cash In | Total Cash Out | Net Cash Flow | Cash Sales | Cash Inflows | Cash Outflows | Daily Cash Flow Trend | Cash Drawer Reconciliation | Cashier Performance Report | Sales Performance Overview | Recent Sessions | Financial Summary Report | Total Revenue | Gross Profit | Transactions | Items Sold | Payment Method Breakdown | Hourly Sales Distribution | Top Selling Items | Product Sales Analysis / Item Performance Report | No items found
+PROPS Reports could not load | Net Flow | Running Balance | Search items, SKU, or category...
+CONTROLS [dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onAction"}, app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx:134)
+[dynamic or icon-only label] (Button, {"onClick":"() => setSelectedReport(type.id)"}, app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx:273)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx:300)
+7 days (Button, {"onClick":"() => setQuickDateRange(7)"}, app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx:340)
+30 days (Button, {"onClick":"() => setQuickDateRange(30)"}, app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx:343)
+This month (Button, {"onClick":"setMonthRange"}, app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx:346)
+Show all products (Button, {"onClick":"() => {\n              setSearchTerm(\"\")\n              setShowFocusedOnly(false)\n            }"}, components/reports/item-performance-report.tsx:107)
+Search items, SKU, or category... (Input, {"onChange":"(e) => {\n                  setSearchTerm(e.target.value)\n                  setShowFocusedOnly(false)\n                }"}, components/reports/item-performance-report.tsx:129)
+Revenue (Button, {"onClick":"() => setSortBy(\"revenue\")"}, components/reports/item-performance-report.tsx:140)
+Quantity (Button, {"onClick":"() => setSortBy(\"quantity\")"}, components/reports/item-performance-report.tsx:148)
+Profit (Button, {"onClick":"() => setSortBy(\"profit\")"}, components/reports/item-performance-report.tsx:156)
+Margin (Button, {"onClick":"() => setSortBy(\"margin\")"}, components/reports/item-performance-report.tsx:164)

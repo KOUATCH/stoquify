@@ -84,9 +84,12 @@ export const offlineSyncKeys = {
     ] as const,
 }
 
-export function useOfflineSyncDashboard(filters: OfflineSyncFilters = {}, options: { enabled?: boolean } = {}) {
+export type OfflineReviewAccess = { organizationId?: string; userId?: string; canRead: boolean; canReview: boolean }
+
+export function useOfflineSyncDashboard(filters: OfflineSyncFilters, options: { enabled?: boolean; access: OfflineReviewAccess }) {
+  const { organizationId, userId, canRead } = options.access
   return useQuery<OfflineSyncDashboardData>({
-    queryKey: offlineSyncKeys.dashboard(filters),
+    queryKey: [...offlineSyncKeys.dashboard(filters), organizationId, userId],
     queryFn: async () => {
       const result = await getOfflineSyncDashboardAction(filters)
 
@@ -96,7 +99,7 @@ export function useOfflineSyncDashboard(filters: OfflineSyncFilters = {}, option
 
       return result.data
     },
-    enabled: options.enabled ?? true,
+    enabled: (options.enabled ?? true) && Boolean(organizationId && userId && canRead),
     staleTime: 30_000,
     refetchInterval: 60_000,
   })

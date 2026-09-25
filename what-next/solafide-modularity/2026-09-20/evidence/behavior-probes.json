@@ -1,0 +1,165 @@
+{
+  "recordedAt": "2026-09-20T15:50:35.116Z",
+  "method": "TypeScript transpileModule + VM; real pure entitlement/catalog/admission functions; DB access forbidden; error classes and Prisma metadata stubbed; no transaction, browser or production proof",
+  "passed": 14,
+  "failed": 0,
+  "probes": [
+    {
+      "id": "P01",
+      "name": "Explicit empty grants do not restore legacy access",
+      "status": "passed",
+      "observed": "Tenant is not entitled to this module."
+    },
+    {
+      "id": "P02",
+      "name": "Legacy empty intent preserves full-suite access",
+      "status": "passed",
+      "observed": "legacy_default"
+    },
+    {
+      "id": "P03",
+      "name": "Expired grants deny at the end boundary",
+      "status": "passed",
+      "observed": "Tenant module grant has expired."
+    },
+    {
+      "id": "P04",
+      "name": "Invalid validity interval denies",
+      "status": "passed",
+      "observed": "Tenant module grant has an invalid validity interval."
+    },
+    {
+      "id": "P05",
+      "name": "POS requires an operational sales grant",
+      "status": "passed",
+      "observed": "Required module dependencies are missing or unavailable for this operation."
+    },
+    {
+      "id": "P06",
+      "name": "Read-only allows reads and denies writes and exports",
+      "status": "passed",
+      "observed": [
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "id": "P07",
+      "name": "RBAC wildcard cannot override an enforcing entitlement deny",
+      "status": "passed",
+      "observed": "deny"
+    },
+    {
+      "id": "P08",
+      "name": "Default observe mode records would-block but allows",
+      "status": "passed",
+      "observed": {
+        "mode": "observe",
+        "result": "would_block"
+      }
+    },
+    {
+      "id": "P09",
+      "name": "Duplicate grants are rejected",
+      "status": "passed",
+      "observed": "Duplicate module grants are ambiguous and require reconciliation."
+    },
+    {
+      "id": "P10",
+      "name": "Workspace omission does not stop new work",
+      "status": "passed",
+      "observed": []
+    },
+    {
+      "id": "P11",
+      "name": "Recommended purchasing-inventory connection is not a stop dependency",
+      "status": "passed",
+      "observed": []
+    },
+    {
+      "id": "P12",
+      "name": "Stopping manual journals does not cascade into reconciliation",
+      "status": "passed",
+      "observed": []
+    },
+    {
+      "id": "P13",
+      "name": "Stopping sales blocks dependent POS new work at the admission resolver",
+      "status": "passed",
+      "observed": [
+        "sales"
+      ]
+    },
+    {
+      "id": "P14",
+      "name": "Catalog counts and hard versus recommended dependencies",
+      "status": "passed",
+      "observed": {
+        "count": 19,
+        "core": [
+          "dashboard",
+          "settings",
+          "administration"
+        ],
+        "dependencies": [
+          {
+            "moduleSlug": "pos",
+            "dependsOnSlug": "sales",
+            "dependencyType": "required",
+            "reason": "POS writes sales orders, payments, stock movements, and receipt evidence."
+          },
+          {
+            "moduleSlug": "pos",
+            "dependsOnSlug": "sales",
+            "dependencyType": "required",
+            "reason": "POS writes sales orders, payments, stock movements, and receipt evidence."
+          },
+          {
+            "moduleSlug": "close_assurance",
+            "dependsOnSlug": "accounting",
+            "dependencyType": "required",
+            "reason": "Close assurance depends on accounting periods, journals, and ledger checks."
+          },
+          {
+            "moduleSlug": "close_assurance",
+            "dependsOnSlug": "payment_reconciliation",
+            "dependencyType": "recommended",
+            "reason": "Close readiness is stronger when payment reconciliation evidence is available."
+          },
+          {
+            "moduleSlug": "purchasing",
+            "dependsOnSlug": "inventory",
+            "dependencyType": "recommended",
+            "reason": "Purchasing decisions are stronger when purchase orders update stock exposure."
+          },
+          {
+            "moduleSlug": "payroll",
+            "dependsOnSlug": "accounting",
+            "dependencyType": "recommended",
+            "reason": "Payroll becomes enterprise-grade when runs are posted to ledger evidence."
+          },
+          {
+            "moduleSlug": "payment_reconciliation",
+            "dependsOnSlug": "finance",
+            "dependencyType": "required",
+            "reason": "Payment reconciliation needs finance cash ledgers and payment-provider accounts."
+          },
+          {
+            "moduleSlug": "payment_reconciliation",
+            "dependsOnSlug": "accounting",
+            "dependencyType": "required",
+            "reason": "Reconciled payment truth must link back to posted ledger evidence."
+          },
+          {
+            "moduleSlug": "analytics",
+            "dependsOnSlug": "reports",
+            "dependencyType": "recommended",
+            "reason": "Analytics surfaces depend on report/export semantics and shared read models."
+          }
+        ]
+      }
+    }
+  ]
+}

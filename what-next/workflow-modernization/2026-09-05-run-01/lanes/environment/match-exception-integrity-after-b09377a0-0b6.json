@@ -1,0 +1,80 @@
+{
+  "run": "b09377a0-0b6",
+  "mode": "after",
+  "at": "2026-09-08T10:15:43.872Z",
+  "checks": [
+    {
+      "name": "missing-maker observation",
+      "status": "observed",
+      "rejected": true
+    },
+    {
+      "name": "missing-maker",
+      "status": "passed"
+    },
+    {
+      "name": "changed-request-source observation",
+      "status": "observed",
+      "rejected": true
+    },
+    {
+      "name": "changed-request-source",
+      "status": "passed"
+    },
+    {
+      "name": "changed-review-source observation",
+      "status": "observed",
+      "rejected": true
+    },
+    {
+      "name": "changed-review-source",
+      "status": "passed"
+    },
+    {
+      "name": "deleted-review-invoice observation",
+      "status": "observed",
+      "rejected": true
+    },
+    {
+      "name": "deleted-review-invoice",
+      "status": "passed"
+    },
+    {
+      "name": "altered-request-proof observation",
+      "status": "observed",
+      "rejected": true
+    },
+    {
+      "name": "altered-request-proof",
+      "status": "passed"
+    },
+    {
+      "name": "cross-tenant-review observation",
+      "status": "observed",
+      "rejected": true
+    },
+    {
+      "name": "cross-tenant-review",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent independent reviews record exactly one decision",
+      "status": "passed"
+    },
+    {
+      "name": "valid approval and rejection preserve payable until separate invoice approval",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "fa045fcd202674d54af1b0feb27777a272ac4d096794cd4be1ecc2979896bc58",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df"
+  },
+  "originalBefore": "b0df463b5ba021b18db6b257876fbf634e9f5753407a8911ed4651e47df8736d",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "fa045fcd202674d54af1b0feb27777a272ac4d096794cd4be1ecc2979896bc58",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df"
+  },
+  "sourceStable": true
+}

@@ -160,7 +160,7 @@ export async function submitCustomerStatementRecipientActionInTx(
     input.requestedAmount,
     "Requested amount",
   )
-  if (requestedAmount.lte(0)) {
+  if (!requestedAmount.isFinite() || requestedAmount.lte(0)) {
     throw new BusinessRuleError("Requested amount must be positive")
   }
   const actionType =
@@ -228,17 +228,6 @@ export async function submitCustomerStatementRecipientActionInTx(
     if (!promisedFor || Number.isNaN(promisedFor.getTime())) {
       throw new BusinessRuleError(
         "Promise-to-pay date is required and must be valid",
-      )
-    }
-    const maxPromiseDate = new Date(
-      now.getTime() + 365 * 24 * 60 * 60 * 1000,
-    )
-    if (
-      promisedFor.getTime() <= now.getTime() ||
-      promisedFor.getTime() > maxPromiseDate.getTime()
-    ) {
-      throw new BusinessRuleError(
-        "Promise-to-pay date must be within the next 365 days",
       )
     }
     if (input.customerReceivableDocumentId) {
@@ -320,6 +309,22 @@ export async function submitCustomerStatementRecipientActionInTx(
       occurredAt: now,
     })
     return result
+  }
+
+  // A time window governs new commitments. Exact, currently authorized retries
+  // return their retained result even when the recorded promise date has passed.
+  if (promisedFor) {
+    const maxPromiseDate = new Date(
+      now.getTime() + 365 * 24 * 60 * 60 * 1000,
+    )
+    if (
+      promisedFor.getTime() <= now.getTime() ||
+      promisedFor.getTime() > maxPromiseDate.getTime()
+    ) {
+      throw new BusinessRuleError(
+        "Promise-to-pay date must be within the next 365 days",
+      )
+    }
   }
 
   const evidenceHash = hashBusinessPayload({

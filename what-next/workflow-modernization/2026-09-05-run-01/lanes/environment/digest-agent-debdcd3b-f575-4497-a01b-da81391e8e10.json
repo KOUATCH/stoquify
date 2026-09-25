@@ -1,0 +1,82 @@
+{
+  "at": "2026-09-19T12:41:51.677Z",
+  "sourceBefore": {
+    "services/agents/tools/command-tool-adapters.ts": "231b42fdfe26058fca6180ae023fdf051aad695f7aeb8a92b393a3f0ed09d4e9",
+    "services/agents/command-agent-contracts.ts": "a0463e487a8b55e015575abdf02a92c143c19b198dd9ac742530aa9109e0027b",
+    "services/agents/skills/role-daily-brief.skill.ts": "a55ee65539223029356f5a2e9b4ddf290f1b2f2607b897413436c4e0f4de9da6",
+    "services/agents/agent-output-validator.service.ts": "1ae68e7c11872d2fe7116d9036d3743425ff184c607fbb7358c63591f94dee1b",
+    "services/agents/agent-release-control.service.ts": "6fcb4e95d34d8ee39f786839ea370b3474f350630bdda635de3ad21607ba3c00",
+    "services/agents/agent-rollout.service.ts": "a49f7f75ae50e55ca2b92af11074948511d5c4faf0c7bf42dd68ff7da4016c28",
+    "components/agents/AgentCommandPanel.tsx": "329c42d840354efbe78b8437c2c7590376f294902ab6d795d9097ce0f07aaa84",
+    "services/daily-habit/daily-habit-digest.service.ts": "ff5c7c80c69736ec3203ccde9c86df00ecc3cc449ff439f7e7ed075c1a7e9094",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "788dc3f428390064f2dce4766d4bb61360e31595e8e9d2fb303d8f802eb5b4ba",
+    "services/agents/agent-context.service.ts": "6ad9dbbbc8b8bdaacbac321f20953f276c9767895b08bab79ab5fcf4bf019894",
+    "services/agents/command-agent.service.ts": "d9bc752701fa3e3f81400615b27bf71f3ed2ec2eff1291636a34e74774c5732d",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "866ceb6c640cb41ef1e6ecdb0695d8263432c571309a6b94fa2ca167874cdb1a"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "actionPosts": 0,
+      "screenshot": "digest-agent-debdcd3b-f575-4497-a01b-da81391e8e10-en-disabled.png",
+      "reflow": {
+        "scroll": 1440,
+        "viewport": 1440
+      }
+    },
+    {
+      "locale": "fr",
+      "errors": [],
+      "actionPosts": 0,
+      "screenshot": "digest-agent-debdcd3b-f575-4497-a01b-da81391e8e10-fr-disabled.png",
+      "reflow": {
+        "scroll": 320,
+        "viewport": 320
+      }
+    }
+  ],
+  "adapter": [
+    {
+      "locale": "en",
+      "title": "Manager run sheet digest",
+      "priorityTitle": "Purchase Order Receiving Delay",
+      "canonicalHref": "/dashboard/purchase-orders",
+      "permission": "purchases.orders.read",
+      "cited": true,
+      "foreignPriorityCount": 0,
+      "revokedPriorityCount": 0,
+      "redactionCount": 10
+    },
+    {
+      "locale": "fr",
+      "title": "Feuille de route du responsable",
+      "priorityTitle": "Commandes au-delà de la date de livraison prévue",
+      "canonicalHref": "/dashboard/purchase-orders",
+      "permission": "purchases.orders.read",
+      "cited": true,
+      "foreignPriorityCount": 0,
+      "revokedPriorityCount": 0,
+      "redactionCount": 10
+    }
+  ],
+  "scope": "Real source-to-adapter-to-validator reads; actual browser disabled state. No governed agent execution or activation.",
+  "missingReleaseDenied": true,
+  "noBusinessOrAgentMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/agents/tools/command-tool-adapters.ts": "231b42fdfe26058fca6180ae023fdf051aad695f7aeb8a92b393a3f0ed09d4e9",
+    "services/agents/command-agent-contracts.ts": "a0463e487a8b55e015575abdf02a92c143c19b198dd9ac742530aa9109e0027b",
+    "services/agents/skills/role-daily-brief.skill.ts": "a55ee65539223029356f5a2e9b4ddf290f1b2f2607b897413436c4e0f4de9da6",
+    "services/agents/agent-output-validator.service.ts": "1ae68e7c11872d2fe7116d9036d3743425ff184c607fbb7358c63591f94dee1b",
+    "services/agents/agent-release-control.service.ts": "6fcb4e95d34d8ee39f786839ea370b3474f350630bdda635de3ad21607ba3c00",
+    "services/agents/agent-rollout.service.ts": "a49f7f75ae50e55ca2b92af11074948511d5c4faf0c7bf42dd68ff7da4016c28",
+    "components/agents/AgentCommandPanel.tsx": "329c42d840354efbe78b8437c2c7590376f294902ab6d795d9097ce0f07aaa84",
+    "services/daily-habit/daily-habit-digest.service.ts": "ff5c7c80c69736ec3203ccde9c86df00ecc3cc449ff439f7e7ed075c1a7e9094",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "788dc3f428390064f2dce4766d4bb61360e31595e8e9d2fb303d8f802eb5b4ba",
+    "services/agents/agent-context.service.ts": "6ad9dbbbc8b8bdaacbac321f20953f276c9767895b08bab79ab5fcf4bf019894",
+    "services/agents/command-agent.service.ts": "d9bc752701fa3e3f81400615b27bf71f3ed2ec2eff1291636a34e74774c5732d",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "866ceb6c640cb41ef1e6ecdb0695d8263432c571309a6b94fa2ca167874cdb1a"
+  },
+  "sourceStable": true
+}

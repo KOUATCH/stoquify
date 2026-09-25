@@ -59,12 +59,12 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { type FieldErrors, useForm } from "react-hook-form"
+import { type FieldErrors, type FieldPath, useForm } from "react-hook-form"
 import { z } from "zod"
 import { useNotifications } from "../notifications/NotificationProvider"
 
 // Enhanced validation schema for items - matches backend schema exactly
-const itemCreationSchema = z.object({
+const itemCreationFields = z.object({
   organizationId: itemOrganizationIdSchema,
   // Core
   nameEn: itemNameEnSchema,
@@ -116,7 +116,8 @@ const itemCreationSchema = z.object({
       referenceNumber: z.string().optional(),
     })
     .optional(),
-}).superRefine(validateItemStockRange)
+})
+const itemCreationSchema = itemCreationFields.superRefine(validateItemStockRange)
 
 export type ItemCreationFormData = z.infer<typeof itemCreationSchema>
 
@@ -212,6 +213,7 @@ export function CreateItemWizard({
   const [openingStockEnabled, setOpeningStockEnabled] = useState(false)
   const { success, error, warning, info, operationStart, operationComplete } = useNotifications()
 
+  const [stepError, setStepError] = useState("")
   const form = useForm<ItemCreationFormData>({
     resolver: zodResolver(itemCreationSchema),
     defaultValues: {
@@ -275,8 +277,26 @@ export function CreateItemWizard({
 
     const fieldsToValidate = fieldsByStep[step]
 
-    // If no fields to validate, consider step valid (avoid form.trigger)
-    const result = fieldsToValidate.length === 0 ? true : await form.trigger(fieldsToValidate)
+    // Validate only the current step. Final submission validates the complete schema.
+    form.clearErrors(fieldsToValidate)
+    const values = form.getValues()
+    if (!openingStockEnabled) {
+      values.initialInventory = undefined
+      form.setValue("initialInventory", undefined)
+    }
+    const mask = Object.fromEntries(fieldsToValidate.map((field) => [field, true])) as Record<keyof ItemCreationFormData, true>
+    const stepSchema = itemCreationFields.pick(mask)
+    const parsed = (step === "inventory" ? stepSchema.superRefine(validateItemStockRange) : stepSchema).safeParse(values)
+    const result = parsed.success
+    setStepError("")
+    if (!parsed.success) {
+      for (const issue of parsed.error.issues) {
+        form.setError(issue.path.join(".") as FieldPath<ItemCreationFormData>, { type: "validation", message: issue.message })
+      }
+      const first = parsed.error.issues[0]
+      setStepError(first?.message ?? "Review the highlighted fields.")
+      if (first) form.setFocus(first.path.join(".") as FieldPath<ItemCreationFormData>)
+    }
 
     if (result) {
       setCompletedSteps(prev => new Set(prev).add(step))
@@ -290,9 +310,10 @@ export function CreateItemWizard({
     }
 
     return result
-  }, [form, operationComplete, operationStart, warning])
+  }, [form, openingStockEnabled, operationComplete, operationStart, warning])
 
   const handleNext = async () => {
+    if (isImageUploading || isExplicitlySubmitting) return
     const isValid = await validateStep(currentStep)
 
     if (isValid && currentStepIndex < FORM_STEPS.length - 1) {
@@ -301,20 +322,24 @@ export function CreateItemWizard({
   }
 
   const handlePrevious = () => {
+    if (isImageUploading || isExplicitlySubmitting) return
+    setStepError("")
     if (currentStepIndex > 0) {
       setCurrentStep(FORM_STEPS[currentStepIndex - 1].id)
     }
   }
 
   const handleStepClick = async (stepId: FormStep) => {
+    if (isImageUploading || isExplicitlySubmitting) return
     const stepIndex = FORM_STEPS.findIndex(step => step.id === stepId)
     const currentIndex = FORM_STEPS.findIndex(step => step.id === currentStep)
-    // Forward navigation requires the current create step to be valid.
-    if (stepIndex > currentIndex) {
-      const isValid = await validateStep(currentStep)
-      if (!isValid) return
+    for (let index = currentIndex; index < stepIndex; index += 1) {
+      if (!(await validateStep(FORM_STEPS[index].id))) {
+        setCurrentStep(FORM_STEPS[index].id)
+        return
+      }
     }
-
+    setStepError("")
     setCurrentStep(stepId)
   }
 
@@ -407,7 +432,6 @@ export function CreateItemWizard({
             `${data.nameEn} has been successfully added to your inventory with SKU: ${data.sku}`,
           )
           router.push(redirectPath)
-          router.refresh()
           submissionCompletedRef.current = true
           return
         }
@@ -477,6 +501,7 @@ export function CreateItemWizard({
       info("Auto-Generated", `SKU set to: ${autoSku}`)
     }
 
+    if (!openingStockEnabled) form.setValue("initialInventory", undefined)
     submissionLockRef.current = true
     setIsExplicitlySubmitting(true)
 
@@ -1176,6 +1201,7 @@ export function CreateItemWizard({
                       </FormDescription>
                     </div>
                     <Switch
+                      aria-label="Add Opening Stock"
                       checked={openingStockEnabled}
                       disabled={locations.length === 0 || Boolean(isSerialTracked)}
                       onCheckedChange={(checked) => {
@@ -1338,14 +1364,14 @@ export function CreateItemWizard({
               <div className={cn(formStepIconClass, "mb-4")}>
                 <ImageIcon className="h-7 w-7" />
               </div>
-              <h3 className="mb-2 text-2xl font-semibold text-[var(--dash-text)]">Product Media</h3>
-              <p className="text-[var(--dash-text-soft)]">Upload the required product image before creating this item</p>
+              <h3 className="mb-2 text-2xl font-semibold text-[var(--dash-text)]">{locale === "fr" ? "Images du produit" : "Product Media"}</h3>
+              <p className="text-[var(--dash-text-soft)]">{locale === "fr" ? "Ajoutez l’image requise avant de créer cet article." : "Upload the required product image before creating this item"}</p>
             </div>
 
             <div className="text-center space-y-6">
               <div className="mx-auto max-w-md">
                 <EnhancedImageUploadButton
-                  title="Upload Product Image"
+                  title={locale === "fr" ? "Ajouter une image du produit" : "Upload Product Image"}
                   imageUrl={itemImageUrl}
                   setImageUrl={(url: string) => {
                     setItemImageUrl(url)
@@ -1358,6 +1384,7 @@ export function CreateItemWizard({
                   }}
                   organizationId={organizationId}
                   endpoint="itemImageUpload"
+                  locale={locale}
                   onUploadStart={() => {
                     setIsImageUploading(true)
                   }}
@@ -1520,13 +1547,14 @@ export function CreateItemWizard({
                     <form onSubmit={(event) => event.preventDefault()} className="space-y-8">
 
                       {getCurrentStepComponent()}
+                      {stepError && <p role="alert" className="text-sm text-[var(--dash-danger)]">{stepError}</p>}
 
                       {/* Form Navigation */}
                       <div className="flex flex-col gap-3 border-t border-[var(--dash-border-subtle)] pt-6 sm:flex-row sm:items-center sm:justify-between">
                         <Button
                           type="button"
                           onClick={handlePrevious}
-                          disabled={currentStepIndex === 0}
+                          disabled={currentStepIndex === 0 || isImageUploading || isExplicitlySubmitting}
                           variant="outline"
                           className={cn(formSecondaryButtonClass, "h-11 w-full sm:w-auto")}
                         >
@@ -1544,17 +1572,17 @@ export function CreateItemWizard({
                             {isExplicitlySubmitting || form.formState.isSubmitting || isLoading ? (
                               <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Creating Product...
+                                {locale === "fr" ? "Création de l’article..." : "Creating Product..."}
                               </>
                             ) : isImageUploading ? (
                               <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Uploading Image...
+                                {locale === "fr" ? "Envoi de l’image..." : "Uploading Image..."}
                               </>
                             ) : (
                               <>
                                 <Save className="mr-2 h-4 w-4" />
-                                Create Product
+                                {locale === "fr" ? "Créer l’article" : "Create Product"}
                               </>
                             )}
                           </Button>

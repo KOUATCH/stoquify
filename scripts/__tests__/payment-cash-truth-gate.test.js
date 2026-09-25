@@ -35,7 +35,10 @@ function writeReadyFixture(root) {
     '"PROVIDER_EVENT_CURRENCY"',
     '"STATEMENT_LINE_CURRENCY"',
     "if (mismatchReasons.length > 0)",
-    "type: PaymentExceptionType.AMOUNT_MISMATCH",
+    "const exceptionType = ambiguous ? PaymentExceptionType.DUPLICATE_PROVIDER_REFERENCE : PaymentExceptionType.AMOUNT_MISMATCH",
+    "await createExceptionAndSuspense(tx, {",
+    "type: exceptionType",
+    "continue",
     "if (event || line)",
     "status: MatchStatus.AUTO_MATCHED",
   ].join("\n"))
@@ -121,7 +124,12 @@ describe("payment cash truth gate", () => {
     expect(gateResultForReport(report, "fail").exitCode).toBe(0)
   })
 
-  it("blocks auto-match when external amount and currency agreement is not enforced", () => {
+  it.each([
+    "PROVIDER_EVENT_AMOUNT",
+    "STATEMENT_LINE_AMOUNT",
+    "PROVIDER_EVENT_CURRENCY",
+    "STATEMENT_LINE_CURRENCY",
+  ])("blocks auto-match when %s agreement is missing", (reason) => {
     const root = makeTempRepo()
     writeReadyFixture(root)
     const runPath = path.join(
@@ -131,7 +139,7 @@ describe("payment cash truth gate", () => {
     write(
       root,
       "services/reconciliation/payment-reconciliation-run.service.ts",
-      fs.readFileSync(runPath, "utf8").replace('"STATEMENT_LINE_AMOUNT"', '"REFERENCE_ONLY_MATCH"'),
+      fs.readFileSync(runPath, "utf8").replace(`"${reason}"`, '"REFERENCE_ONLY_MATCH"'),
     )
 
     const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
@@ -140,6 +148,35 @@ describe("payment cash truth gate", () => {
       "auto_match_requires_amount_and_currency_agreement",
     )
     expect(gateResultForReport(report, "fail").exitCode).toBe(1)
+  })
+
+  it.each([
+    ["exception classification", "PaymentExceptionType.AMOUNT_MISMATCH", "PaymentExceptionType.OTHER"],
+    ["exception persistence", "await createExceptionAndSuspense(tx, {", "await logMismatch(tx, {"],
+    ["classified exception wiring", "type: exceptionType", "type: PaymentExceptionType.OTHER"],
+    ["skip before auto-match", "continue", "recordMismatch()"],
+  ])("blocks auto-match when %s is removed", (_label, marker, replacement) => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const relativePath = "services/reconciliation/payment-reconciliation-run.service.ts"
+    write(root, relativePath, fs.readFileSync(path.join(root, relativePath), "utf8").replace(marker, replacement))
+
+    const report = buildPaymentCashTruthReadiness(root, { mode: "fail" })
+
+    expect(report.blockers).toContain("auto_match_requires_amount_and_currency_agreement")
+  })
+
+  it("blocks auto-match if the skip occurs after matching", () => {
+    const root = makeTempRepo()
+    writeReadyFixture(root)
+    const relativePath = "services/reconciliation/payment-reconciliation-run.service.ts"
+    const source = fs.readFileSync(path.join(root, relativePath), "utf8")
+      .replace("continue\n", "")
+      .replace("status: MatchStatus.AUTO_MATCHED", "status: MatchStatus.AUTO_MATCHED\ncontinue")
+    write(root, relativePath, source)
+
+    expect(buildPaymentCashTruthReadiness(root, { mode: "fail" }).blockers)
+      .toContain("auto_match_requires_amount_and_currency_agreement")
   })
 
   it("blocks when payment reconciliation tables are not in migration history before inbox leases", () => {

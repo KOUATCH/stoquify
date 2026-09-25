@@ -33,7 +33,11 @@ export function filterBusinessSignalsForPermissions(
   signals: readonly BusinessSignal[],
   actorPermissions: readonly string[],
 ) {
-  return signals.filter((signal) => hasRbacPermission(actorPermissions, signal.requiredPermission))
+  return signals.filter((signal) => hasSignalAccess(actorPermissions, signal))
+}
+
+export function hasSignalAccess(permissions: readonly string[], requirement: { requiredPermission: string; additionalRequiredPermissions?: readonly string[] }) {
+  return [requirement.requiredPermission, ...(requirement.additionalRequiredPermissions ?? [])].every(permission => hasRbacPermission(permissions, permission))
 }
 
 export function markExpiredBusinessSignals(

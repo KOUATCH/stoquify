@@ -5,6 +5,7 @@ import { observeModuleAccess } from "@/services/modules/module-entitlement.servi
 import {
   getPurchaseOrderById,
   getPurchaseOrderFormOptions,
+  getPurchaseOrderCurrency,
 } from "@/services/purchase-order/purchase-order.service"
 import { notFound } from "next/navigation"
 
@@ -46,6 +47,7 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
 jest.mock("@/services/purchase-order/purchase-order.service", () => ({
   getPurchaseOrderById: jest.fn(),
   getPurchaseOrderFormOptions: jest.fn(),
+  getPurchaseOrderCurrency: jest.fn(),
 }))
 
 jest.mock("@/components/purchase-orders/ModernEditPurchaseOrderForm", () => ({
@@ -119,6 +121,7 @@ describe("PurchaseOrderEditPage", () => {
       mode: "observe",
       moduleSlug: "purchasing",
     })
+    ;(getPurchaseOrderCurrency as jest.Mock).mockResolvedValue("XAF")
     mockGetPurchaseOrderById.mockResolvedValue({ id: "po-1", status: "DRAFT" })
     mockGetPurchaseOrderFormOptions.mockResolvedValue({
       suppliers: [{ id: "supplier-1" }],
@@ -188,14 +191,24 @@ describe("PurchaseOrderEditPage", () => {
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
   })
 
-  it("returns notFound after tenant-scoped lookup when the purchase order is not editable", async () => {
+  it("keeps an authorized non-draft order in the same editor for read-only recovery", async () => {
     mockGetPurchaseOrderById.mockResolvedValue({ id: "po-1", status: "APPROVED" })
 
-    await expect(PurchaseOrderEditPage({ params: params("en", "po-1") })).rejects.toThrow("NEXT_NOT_FOUND")
+    render(await PurchaseOrderEditPage({ params: params("en", "po-1") }))
 
     expect(mockRequirePermission).toHaveBeenCalledWith("purchases.orders.update", expect.objectContaining({ resourceId: "po-1" }))
     expect(mockObserveModuleAccess).toHaveBeenCalled()
     expect(mockGetPurchaseOrderById).toHaveBeenCalledWith("po-1", "org-1")
-    expect(mockGetPurchaseOrderFormOptions).not.toHaveBeenCalled()
+    expect(mockNotFound).not.toHaveBeenCalled()
+    expect(screen.getByText("APPROVED")).toBeInTheDocument()
   })
+})
+
+it("propagates a failed purchase order query instead of displaying not found", async () => {
+  jest.clearAllMocks()
+  mockRequirePermission.mockResolvedValue({ orgId: "org-1", userId: "user-1", permissions: ["purchases.orders.update"] })
+  mockObserveModuleAccess.mockResolvedValue({ allowed: true })
+  mockGetPurchaseOrderById.mockRejectedValue(new Error("Database unavailable"))
+  await expect(PurchaseOrderEditPage({ params: params() })).rejects.toThrow("Database unavailable")
+  expect(mockNotFound).not.toHaveBeenCalled()
 })

@@ -73,7 +73,7 @@ export function CloseReadinessJourneyPanel({ data, locale }: CloseReadinessJourn
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className={cn("border", toneClass(data.run.criticalBlockerCount ? "danger" : "success"))}>
+            <Badge variant="outline" className={cn("border", toneClass(data.run.criticalBlockerCount ? "danger" : statusTone(data.run.status)))}>
               {data.run.status}
             </Badge>
             <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
@@ -239,4 +239,3 @@ function toneClass(tone: JourneyTone) {
   if (tone === "warning") return "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-warning)]"
   return "border-[var(--dash-info)] bg-[var(--dash-info-soft)] text-[var(--dash-info)]"
 }
-

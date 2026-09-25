@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-19T15:24:18.855Z",
+  "sourceHashes": {
+    "services/daily-habit/daily-habit-digest.service.ts": "958fbf944b0d650a8e50adb1a921395859f68f2083d783e395868e7ed5cfa507",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "dfce0aebe011b382d7c82b4d74fbf1132f961bdd3832a27bde6b9d4f7dc4084e",
+    "messages/en.json": "d741e5ce50bff6e694c4497a99cf05a431711db1abd18d00b33439380a5688c6",
+    "messages/fr.json": "18108ce13ac0a3be91c662cc99e8f0e6af27e0bea44c1aa1bbf031e59071d6d7"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/daily-habit/__tests__/operating-route-access.test.tsx\" \"app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/page.test.tsx\"",
+    "lint": "node node_modules/eslint/bin/eslint.js \"app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx\" \"services/daily-habit/__tests__/operating-route-access.test.tsx\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "results": {
+    "tests": "000c2e: 17 passed / two suites, including six new EN/FR recovery cases",
+    "lint": "f1dc93: passed / two changed TypeScript files",
+    "diff": "9f815c: passed / changed route, tests and EN/FR messages",
+    "typecheckReceipt": null,
+    "typecheckSession": null,
+    "typecheckState": "recorder_failed_result_unavailable",
+    "typecheckPassed": null,
+    "typecheckFailure": "f87b74: checker wrapper ended but failed with EPERM before printing or retaining diagnostics; no typecheck pass can be established. Receipt preflight and output-before-save are now implemented."
+  },
+  "reusedServiceEvidence": "digest-operating-handoff-service.json",
+  "environment": {
+    "firstTypecheck": "f3fd9f: generated Next types disappeared during server restart",
+    "secondTypecheck": "6229b6: exit 1, BeautifulRegisterForm.tsx(607,20) TS2304 Rocket undefined. It completed before the planned timeout stop acted (1a0214). No process was terminated for this check.",
+    "concurrentRegistrationChange": "9dfc9b: a Rocket import was subsequently present in the dirty registration file; this task did not edit that file.",
+    "resourceObservation": "a8345b: approximately 500 MB free of 25 GB. e55ba5: stopped only verified task server ancestry; generated types retained. fc7365: approximately 687 MB free. Resource contention observed; application root cause not established.",
+    "restart": "75005a: task launcher 28720, log server-recovery-b632a2d1-9846-45b3-afb2-46113a90d553.out.log",
+    "loginProbe": "3e27b4: login request timed out after 48.9185481 seconds with a configured 45-second bound; browser matrix not repeated against this failed health probe.",
+    "finalServerState": "0ca6ce: stopped only verified owned server 22148, CLI 13124 and launcher 28720 to serialize checks. Port-3110 application is stopped."
+  },
+  "browserVerified": false,
+  "completeWorkflowVerified": false
+}

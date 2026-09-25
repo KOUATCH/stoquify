@@ -1,0 +1,31 @@
+{
+  "authorization": "User explicitly requested completion of the remaining APPLICATION postingCycle migration; exact approved local target and migration only",
+  "target": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "stoquify_replay_next_20260830",
+    "schema": "public"
+  },
+  "migrationName": "20260909093000_add_suspense_posting_cycles",
+  "migrationPath": "prisma/migrations/20260909093000_add_suspense_posting_cycles/migration.sql",
+  "sha256": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+  "prismaVersion": "6.19.3",
+  "mode": "--apply-approved",
+  "startedAt": "2026-09-24T04:42:03.728Z",
+  "phase": "complete",
+  "sqlCommittedAt": "2026-09-24T04:42:04.080Z",
+  "historyCommand": "node node_modules/prisma/build/index.js migrate resolve --config prisma.config.ts --schema prisma/schema.prisma --applied 20260909093000_add_suspense_posting_cycles",
+  "historyExit": 0,
+  "completedAt": "2026-09-24T04:42:12.194Z",
+  "exit": 0,
+  "verification": {
+    "columnAndDefault": true,
+    "validatedCycleCheck": true,
+    "cycleUniqueIndex": true,
+    "oldUniqueIndexRemoved": true,
+    "unrelatedIdempotencyIndexPreserved": true,
+    "unrelatedColumnsAndConstraintsPreserved": true,
+    "matchingCompletedPrismaHistory": true,
+    "unrelatedMigrationHistoryPreserved": true
+  }
+}

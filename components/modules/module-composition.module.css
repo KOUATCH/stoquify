@@ -1,0 +1,38 @@
+.workbench { color: var(--dash-text); min-width: 0; }
+.workbench :is(button, input, select, a):focus-visible { outline: 3px solid var(--dash-brand-strong); outline-offset: 3px; }
+.workbench [role="checkbox"] { border-color: var(--dash-border); }
+.workbench [role="checkbox"][data-state="checked"] { border-color: var(--dash-brand-strong); background-color: var(--dash-brand); color: var(--dash-text); }
+.layout { display: grid; gap: 1.25rem; align-items: start; grid-template-columns: minmax(0, 1fr) 19rem; }
+.catalog { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.card { min-width: 0; border: 1px solid var(--dash-border-subtle); border-radius: .5rem; background: var(--dash-surface); padding: 1rem; }
+.card[data-selected="true"] { border-color: var(--dash-brand-strong); background: color-mix(in srgb, var(--dash-brand-soft) 50%, var(--dash-surface)); }
+.summary { position: sticky; top: 1rem; }
+.summaryAction { min-height: 2.75rem; width: 100%; white-space: normal; }
+.recipe { text-align: left; border: 1px solid var(--dash-border-subtle); border-radius: .5rem; padding: 1rem; background: var(--dash-surface); }
+.recipe:hover { border-color: var(--dash-brand-strong); }
+.recipe[aria-pressed="true"] { border-color: var(--dash-brand-strong); background: var(--dash-brand-soft); }
+.tabs { display: grid; width: 100%; max-width: 36rem; grid-template-columns: repeat(3, minmax(0, 1fr)); height: auto; padding: .25rem; background: var(--dash-chrome); }
+.tab { min-height: 2.75rem; white-space: normal; font-size: .875rem; }
+.tab[data-state="active"] { color: var(--dash-text); background: var(--dash-brand-soft); box-shadow: inset 0 -2px var(--dash-brand-strong); }
+.impact { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+.dialog { --dash-canvas: var(--product-canvas); --dash-surface: var(--product-surface); --dash-surface-raised: var(--product-surface-raised); --dash-text: var(--product-text); --dash-text-soft: var(--product-text-soft); --dash-text-muted: var(--product-text-muted); --dash-text-faint: var(--product-text-faint); --dash-border: var(--product-border); --dash-border-subtle: var(--product-border-subtle); --dash-brand: var(--product-brand); --dash-brand-strong: var(--product-brand-strong); --dash-brand-soft: var(--product-brand-soft); --dash-gold: var(--product-gold); --dash-gold-soft: var(--product-gold-soft); --dash-warning: var(--product-warning); --dash-warning-soft: var(--product-warning-soft); --dash-danger: var(--product-danger); --dash-danger-soft: var(--product-danger-soft); --dash-success: var(--product-success); --dash-success-soft: var(--product-success-soft); --dash-info: var(--product-info); --dash-info-soft: var(--product-info-soft); width: calc(100vw - 2rem); max-width: 54rem; max-height: calc(100dvh - 2rem); overflow-y: auto; overscroll-behavior: contain; background: var(--dash-surface); color: var(--dash-text); border-color: var(--dash-border-subtle); border-radius: .5rem; }
+.dialog :is(button, input, a):focus-visible { outline: 3px solid var(--dash-brand-strong); outline-offset: 3px; }
+.step { display: flex; align-items: center; gap: .5rem; font-size: .75rem; color: var(--dash-text-soft); }
+.journey { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .75rem; }
+.stepNumber { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; height: 1.5rem; width: 1.5rem; border: 1px solid var(--dash-border-subtle); border-radius: 50%; }
+.step[aria-current="step"] { color: var(--dash-text); }
+.step[aria-current="step"] .stepNumber { color: var(--dash-brand-strong); border-color: var(--dash-brand-strong); background: var(--dash-brand-soft); }
+.workspaceGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; }
+.workspaceLink { display: flex; flex-direction: column; gap: .5rem; min-height: 9rem; border-radius: .5rem; border: 1px solid var(--dash-border-subtle); padding: 1rem; background: var(--dash-surface); }
+.workspaceLink:hover { border-color: var(--dash-brand-strong); background: var(--dash-brand-soft); }
+@media (max-width: 1279px) { .layout { grid-template-columns: minmax(0, 1fr) 17rem; } .catalog { grid-template-columns: minmax(0, 1fr); } .workspaceGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 950px) { .layout { grid-template-columns: minmax(0, 1fr); } .summary { position: static; grid-row: 1; } .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Keep the same review control reachable after scrolling a long catalogue.
+   The reserved space lets the final content scroll completely above it. */
+@media (max-width: 950px) {
+  .workbench[data-configuring="true"] { padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px)); }
+  .reviewAction { position: fixed; z-index: 40; left: 1rem; right: 1rem; bottom: calc(.75rem + env(safe-area-inset-bottom, 0px)); width: auto; height: auto; min-height: 2.75rem; margin-top: 0; padding: .75rem 1rem; box-shadow: 0 0 0 .5rem var(--dash-canvas), 0 -6px 20px rgba(0, 0, 0, .16); }
+}
+@media (min-width: 768px) and (max-width: 950px) { .reviewAction { left: calc(220px + 1rem); } }
+@media (max-width: 600px) { .catalog, .workspaceGrid, .impact { grid-template-columns: minmax(0, 1fr); } .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dialog { padding: 1rem; } }
+@media (prefers-reduced-motion: reduce) { .workbench *, .dialog { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

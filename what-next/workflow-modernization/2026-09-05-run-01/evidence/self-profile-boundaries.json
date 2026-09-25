@@ -1,0 +1,197 @@
+{
+  "recordedAt": "2026-09-06T17:58:36.624Z",
+  "checks": [
+    {
+      "file": "services/users/self-profile-input.ts",
+      "sha256": "692babde90f89f955041250c66cf24b286a7a885a765da248e8f5c3ce40c4fcf",
+      "findings": []
+    },
+    {
+      "file": "services/users/self-profile.service.ts",
+      "sha256": "d77613d9e944616cca27f40efe0066d3a484dd741a15d2a4ffedb8a13029df17",
+      "findings": [
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 3,
+          "category": "PRISMA_CLIENT_IMPORT",
+          "snippet": "import { Prisma } from \"@prisma/client\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 4,
+          "category": "DIRECT_DB_IMPORT",
+          "snippet": "import { db } from \"@/prisma/db\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 20,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const now = new Date(), actor = await tx.user.findFirst({ where: { id: scope.actorId, organizationId: scope.organizationId, organization: { isActive: true, deletedAt: null } }, select: { isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: { where: { organizationId: scope.organizationId }, select: { permissions: true } } } })",
+          "client": "tx",
+          "delegate": "user",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 23,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const session = await tx.session.findFirst({ where: { id: scope.sessionId, token: scope.sessionToken, userId: scope.actorId, expiresAt: { gt: now } }, select: { id: true } })",
+          "client": "tx",
+          "delegate": "session",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 31,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const user = await tx.user.findFirst({ where: { id: scope.actorId, organizationId: scope.organizationId }, select: selection })",
+          "client": "tx",
+          "delegate": "user",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 33,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const records = await tx.auditLog.findMany({ where: auditWhere(scope), orderBy: [{ createdAt: \"desc\" }, { id: \"desc\" }], take: 10, select: { id: true, changes: true } })",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "findMany",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 53,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const prior = await tx.auditLog.findFirst({ where: { id, ...auditWhere(scope) }, select: { changes: true } })",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 61,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const before = await tx.user.findFirst({ where: { id: scope.actorId, organizationId: scope.organizationId }, select: selection })",
+          "client": "tx",
+          "delegate": "user",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 67,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "if (changedFields.length) await tx.user.update({ where: { id: scope.actorId }, data: { ...values, lastName: values.lastName || null, jobTitle: values.jobTitle || null, updatedAt: new Date(Math.max(now.getTime(), before.updatedAt.getTime() + 1)) } })",
+          "client": "tx",
+          "delegate": "user",
+          "operation": "update",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/users/self-profile.service.ts",
+          "line": 69,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "await tx.auditLog.create({ data: { id, ...auditWhere(scope), changes: { before: { ...fieldsOf(before), name: before.name }, receipt, requestHash: hash(command), reviewedHash: command.expectedHash } } })",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "create",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        }
+      ]
+    },
+    {
+      "file": "services/users/self-profile-http.service.ts",
+      "sha256": "77bde5fd7d103f580ed228a2a0d63bbb8283d89d2799f3f1a74b8f93016f8bf3",
+      "findings": []
+    },
+    {
+      "file": "actions/users/self-profile.actions.ts",
+      "sha256": "3ebaeebb34459710386533ea6f38e912c1e7a72150099592041c0012386751b2",
+      "findings": []
+    },
+    {
+      "file": "hooks/self-profile-draft.ts",
+      "sha256": "e131a85afc28617ff954dfd15e1800c262eb5a4f9dc7778ec346d5d9c2559ee9",
+      "findings": []
+    },
+    {
+      "file": "hooks/useSelfProfile.ts",
+      "sha256": "228ef4afb7d74bb096cb9fe9012b5240f12bd4172454a72b055d0bcf125f13c6",
+      "findings": []
+    },
+    {
+      "file": "components/settings/SelfProfile.tsx",
+      "sha256": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+      "findings": []
+    },
+    {
+      "file": "components/UserDropdownMenu.tsx",
+      "sha256": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+      "findings": []
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+      "sha256": "e6379f0fc71dcd51f070889006b6a9e05baa3b3f4e2054babf5a563492b1bdfc",
+      "findings": []
+    },
+    {
+      "file": "app/api/me/profile/route.ts",
+      "sha256": "7b72f47e15810d348e52edbf9b15905477ee9d60e9bd90802ebe526889ef966e",
+      "findings": []
+    },
+    {
+      "file": "app/api/auth/[...all]/route.ts",
+      "sha256": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+      "findings": []
+    }
+  ],
+  "passed": 11,
+  "failed": 0
+}

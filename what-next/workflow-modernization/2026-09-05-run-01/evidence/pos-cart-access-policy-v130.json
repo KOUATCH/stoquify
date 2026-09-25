@@ -1,0 +1,26 @@
+{
+  "ids": [
+    "pos.cart.add",
+    "pos.cart.update",
+    "pos.cart.remove"
+  ],
+  "version": "2026-09-13.1",
+  "owner": "POS domain services",
+  "source": "services/pos/cart-write-access.ts",
+  "sourceHash": "2f6b1811df12075a8dbb298987af100b3d8335db2d66ed7fa7cef65edd7899e8",
+  "permission": "pos.use",
+  "moduleSlug": "pos",
+  "accessIntent": "write",
+  "effectiveMode": "enforce",
+  "scope": "Draft add/update/remove, checked in transaction; legacy derivation unchanged.",
+  "denial": "Rollback before draft mutation; POS_CART_WRITE_ENTITLEMENT_DENIED audit; stable POS_CART_WRITE_UNAVAILABLE action code; retained draft and explicit retry.",
+  "continuation": "Retained cart read and service shift closure verified after commercial restriction. Sale/refund/void/replay remain unverified in this batch.",
+  "rollout": "Local implementation; no live cohort, deployment or grant mutation.",
+  "rollback": "Forward correction or presentation rollback retaining authority checks. Guard removal reopens defect; production recovery rehearsal outstanding.",
+  "evidence": [
+    "lanes/environment/cart-access-v130-after-d95718cd-5592-4139-b722-450a357c8fb6.json",
+    "lanes/environment/cart-access-browser-v130-291b8d6b-6ef3-4908-a407-a3e423c639ef.json",
+    "lanes/environment/pos-cart-v130-concurrency-after-7453946f-e08e-4a3b-aff3-85939c8f73c9.json",
+    "CART_ACCESS_V130.md"
+  ]
+}

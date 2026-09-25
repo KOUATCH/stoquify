@@ -1,5 +1,7 @@
 "use client"
 
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+
 import { useState, useTransition } from "react"
 import {
   AlertTriangle,
@@ -108,7 +110,7 @@ export function StockToCashFlowDashboard({ data, locale }: StockToCashFlowDashbo
 
   return (
     <main className="dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8">
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 text-[var(--dash-text)] sm:px-6 sm:py-6">
         <BICommandBriefHeader brief={data.commandBrief} mode={mode} onModeChange={setMode} />
 
         <section className={cn(dashboardPanelClass, "p-4 md:p-5")}>
@@ -127,19 +129,24 @@ export function StockToCashFlowDashboard({ data, locale }: StockToCashFlowDashbo
             <div className={cn(dashboardRowClass, "grid gap-2 p-3 text-sm sm:grid-cols-2 xl:min-w-[460px]")}>
               <SummaryMetric label="Stock exposure" value={formatMoney(data.summary.stockCashExposure, data.currency, formatterLocale)} tone="gold" />
               <SummaryMetric label="Cash collected" value={formatMoney(data.summary.cashCollected, data.currency, formatterLocale)} tone="success" />
-              <SummaryMetric label="Suspense" value={formatMoney(data.summary.unresolvedSuspenseAmount, data.currency, formatterLocale)} tone={data.summary.unresolvedSuspenseAmount > 0 ? "danger" : "success"} />
+              <SummaryMetric label="Suspense" value={formatMoney(data.summary.unresolvedSuspenseAmount, data.currency, formatterLocale)} tone={data.summary.unresolvedSuspenseAmount === null ? "gold" : data.summary.unresolvedSuspenseAmount > 0 ? "danger" : "success"} />
               <SummaryMetric label="Source links" value={String(data.summary.sourceLinkCount)} tone={data.summary.sourceLinkCount > 0 ? "success" : "gold"} />
             </div>
           </div>
         </section>
 
-        <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <WorkspaceSectionNavigation label={locale === "fr" ? "Sections de la page" : "Page sections"} items={[
+          { id: "stock-cash-summary", label: t.summary },
+          { id: "stock-cash-flow", label: t.flow },
+          { id: "stock-cash-proof", label: t.proof },
+        ]} />
+        <section id="stock-cash-summary" className="grid min-w-0 scroll-mt-24 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
           {data.cards.map((card) => (
             <BIKpiCard key={card.id} card={card} locale={formatterLocale} currencyCode={data.currency} />
           ))}
         </section>
 
-        <section className={cn(dashboardPanelClass, "p-4")}>
+        <section id="stock-cash-flow" className={cn(dashboardPanelClass, "min-w-0 scroll-mt-24 p-4")}>
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <h2 className="text-base font-semibold text-[var(--dash-text)]">{t.flow}</h2>
@@ -149,14 +156,14 @@ export function StockToCashFlowDashboard({ data, locale }: StockToCashFlowDashbo
               {data.summary.blockedStepCount} blocked
             </Badge>
           </div>
-          <div className="mt-4 grid gap-3 xl:grid-cols-7">
+          <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {data.flowSteps.map((step) => (
               <FlowStepCard key={step.id} step={step} locale={formatterLocale} currency={data.currency} />
             ))}
           </div>
         </section>
 
-        <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(340px,0.75fr)]">
+        <section id="stock-cash-proof" className="grid min-w-0 scroll-mt-24 gap-4 2xl:grid-cols-2">
           <BIRiskOpportunityRadar
             risks={data.risks}
             title={t.riskTitle}
@@ -290,7 +297,8 @@ function formatBIValue(
   return unit ? `${formatted} ${unit}` : formatted
 }
 
-function formatMoney(value: number, currency: string, locale: string) {
+function formatMoney(value: number | null, currency: string, locale: string) {
+  if (value === null) return locale.startsWith("fr") ? "Total indisponible" : "Total unavailable"
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,

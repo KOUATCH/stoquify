@@ -1,0 +1,90 @@
+{
+  "suites": 1,
+  "passedSuites": 0,
+  "failedSuites": 1,
+  "tests": 18,
+  "passedTests": 17,
+  "failedTests": 1,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "scripts/__tests__/api-route-guard-inventory.test.js",
+      "status": "failed",
+      "assertions": [
+        {
+          "title": "api route guard inventory does not declare unknown endpoints ready, including endpoints under the auth prefix",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory recognizes the authenticated session claims route without exempting the entire auth prefix",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory classifies tenant, public, upload, and receipt evidence in report mode",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory describes report, warn, and fail inventory modes accurately",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory returns a failing gate result in fail mode when active issues exist",
+          "status": "failed"
+        },
+        {
+          "title": "api route guard inventory fails the CLI in fail mode when inventory issues exist",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory passes the CLI in fail mode when inventory is clean",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory does not flag inventory item APIs once module entitlement is enforced",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory does not flag receipt routes once signed token access is wired",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory represents the public receipt service as guard evidence for the receipt route",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory classifies the public receipt service when token gate and contact redaction are present",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory flags a public receipt service missing token gate and public contact redaction",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory requires settings module entitlement for the organization self-service API",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory classifies tenant asset reads and inventory item media writes separately",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory does not flag fresh security.txt or contact-safe public receipt shaping",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory includes canonical well-known security.txt as an intentional public route",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory flags security.txt contact fields that are not disclosure URIs",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory parses report arguments",
+          "status": "passed"
+        }
+      ],
+      "message": "  ● api route guard inventory › returns a failing gate result in fail mode when active issues exist\n\n    expect(received).toMatchObject(expected)\n\n    - Expected  - 1\n    + Received  + 1\n\n      Object {\n        \"exitCode\": 1,\n    -   \"issueCount\": 2,\n    +   \"issueCount\": 3,\n        \"mode\": \"fail\",\n        \"status\": \"blocked\",\n      }\n\n      121 |\n      122 |     expect(report.summary.status).toBe(\"blocked\")\n    > 123 |     expect(gateResultForReport(report, \"fail\")).toMatchObject({\n          |                                                 ^\n      124 |       mode: \"fail\",\n      125 |       status: \"blocked\",\n      126 |       exitCode: 1,\n\n      at Object.toMatchObject (scripts/__tests__/api-route-guard-inventory.test.js:123:49)\n"
+    }
+  ]
+}

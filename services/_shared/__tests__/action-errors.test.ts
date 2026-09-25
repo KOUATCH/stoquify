@@ -9,6 +9,10 @@ import {
 import { ErrorCategory, ErrorSeverity } from "@/lib/error-handling/types"
 
 describe("action error compatibility facade", () => {
+  it("preserves the suspense currency code through canonical and legacy action normalization", () => {
+    expect(toSafeActionError(new BusinessRuleError("Accounting currency evidence is required", "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED")))
+      .toMatchObject({ code: "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED", status: 422, category: ErrorCategory.BUSINESS_RULE, retryable: false })
+  })
   it("keeps domain error ergonomics while adding canonical metadata", () => {
     const result = toSafeActionError(
       new BusinessRuleError("Accounting period is closed"),

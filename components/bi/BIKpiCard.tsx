@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowUpRight, Eye, LockKeyhole, ShieldAlert } from "lucide-react"
 
+import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
 import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
 import { BIEmptyState } from "@/components/bi/BIEmptyState"
 import { BIStateBadge } from "@/components/bi/BIStateBadge"
@@ -17,6 +18,7 @@ type BIKpiCardProps = {
 
 type BIDrillThroughButtonProps = {
   drillThrough: BIDrillThrough
+  locale?: string
 }
 
 const blockedStates = new Set(["blocked", "redacted", "permission_denied", "module_unavailable", "safe_error"])
@@ -27,33 +29,34 @@ export function BIKpiCard({ card, locale = "en", currencyCode = "XAF", className
   return (
     <article
       className={cn(
-        "rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-4 text-[var(--dash-text)]",
+        "min-w-0 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-4 text-[var(--dash-text)]",
         "transition hover:border-[var(--dash-brand)]",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="truncate text-sm font-semibold">{card.title}</h3>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 max-w-full flex-1 basis-48">
+          <h3 className="break-words text-sm font-semibold">{card.title}</h3>
           <p className="mt-1 line-clamp-2 text-xs text-[var(--dash-text-soft)]">{card.detail}</p>
         </div>
-        <BIStateBadge state={card.state} />
+        <BIStateBadge state={card.state} locale={locale} className="max-w-full shrink-0 whitespace-normal [&_svg]:shrink-0" />
       </div>
 
       {blocked ? (
         <BIEmptyState
           kind={toEmptyStateKind(card.state)}
-          title={blockedTitle(card)}
+          title={blockedTitle(card, locale)}
           detail={card.blockers[0]?.detail ?? (card.drillThrough.available ? undefined : card.drillThrough.unavailableReason)}
           className="mt-4"
         />
       ) : (
-        <p className="mt-4 text-2xl font-semibold tracking-normal">
+        <p className="mt-4 break-words text-2xl font-semibold tracking-normal">
           {formatBIValue(card.value, card.format, card.unit, locale, currencyCode)}
         </p>
       )}
 
       <BIEvidenceBadgeRow
+        locale={locale}
         className="mt-4"
         evidenceGrade={card.evidenceGrade}
         trustState={card.trustState}
@@ -62,7 +65,7 @@ export function BIKpiCard({ card, locale = "en", currencyCode = "XAF", className
       />
 
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <BIDrillThroughButton drillThrough={card.drillThrough} />
+        <BIDrillThroughButton drillThrough={card.drillThrough} locale={locale} />
         {card.actionLink ? (
           <Button
             asChild={!card.actionLink.disabled}
@@ -90,7 +93,7 @@ export function BIKpiCard({ card, locale = "en", currencyCode = "XAF", className
   )
 }
 
-export function BIDrillThroughButton({ drillThrough }: BIDrillThroughButtonProps) {
+export function BIDrillThroughButton({ drillThrough, locale = "en" }: BIDrillThroughButtonProps) {
   if (!drillThrough.available) {
     return (
       <Button
@@ -113,7 +116,7 @@ export function BIDrillThroughButton({ drillThrough }: BIDrillThroughButtonProps
         variant="outline"
         className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
         disabled
-        title="Proof-only drill-through needs a proof drawer host."
+        title={biCopy[biLocale(locale)].proofUnavailable}
       >
         <Eye className="h-4 w-4" aria-hidden="true" />
         {drillThrough.label}
@@ -136,12 +139,13 @@ export function BIDrillThroughButton({ drillThrough }: BIDrillThroughButtonProps
   )
 }
 
-function blockedTitle(card: BIKpiCardData) {
-  if (card.state === "redacted") return "This KPI is redacted"
-  if (card.state === "permission_denied") return "You do not have access to this KPI"
-  if (card.state === "module_unavailable") return "This module is not available"
-  if (card.state === "safe_error") return "This KPI is temporarily unavailable"
-  return card.blockers[0]?.title ?? "This KPI is blocked"
+function blockedTitle(card: BIKpiCardData, locale: string) {
+  const t = biCopy[biLocale(locale)].kpi
+  if (card.state === "redacted") return t.redacted
+  if (card.state === "permission_denied") return t.permission_denied
+  if (card.state === "module_unavailable") return t.module_unavailable
+  if (card.state === "safe_error") return t.safe_error
+  return card.blockers[0]?.title ?? t.blocked
 }
 
 function toEmptyStateKind(state: BIKpiCardData["state"]) {
@@ -160,14 +164,13 @@ function formatBIValue(
   locale: string,
   currencyCode: string,
 ) {
-  if (value === null || value === undefined || value === "") return "No value"
+  if (value === null || value === undefined || value === "") return biCopy[biLocale(locale)].noValue
   if (typeof value === "string") return value
 
   if (format === "currency") {
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currencyCode,
-      maximumFractionDigits: 0,
     }).format(value)
   }
 

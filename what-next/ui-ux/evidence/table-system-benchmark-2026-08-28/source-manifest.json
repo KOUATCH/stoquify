@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "reportDate": "2026-08-28",
+  "accessDate": "2026-08-28",
+  "sources": [
+    {
+      "id": "ODOO-01",
+      "platform": "Odoo 19",
+      "sourceName": "Search, filter, and group records",
+      "publisher": "Odoo",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://www.odoo.com/documentation/19.0/applications/essentials/search.html",
+      "claimsSupported": ["field-aware search", "custom and preconfigured filters", "grouping", "private/shared/default favorites"],
+      "limitations": "Documents intended behavior; no tenant performance or accessibility verification."
+    },
+    {
+      "id": "ODOO-02",
+      "platform": "Odoo 19",
+      "sourceName": "Views",
+      "publisher": "Odoo",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://www.odoo.com/documentation/19.0/applications/studio/views.html",
+      "claimsSupported": ["list overview", "inline editing", "mass editing", "default sort/group", "mobile Kanban preference"],
+      "limitations": "Studio configuration documentation; deployment behavior can vary by app and customization."
+    },
+    {
+      "id": "ODOO-03",
+      "platform": "Odoo 19",
+      "sourceName": "Access rights",
+      "publisher": "Odoo",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://www.odoo.com/documentation/19.0/applications/general/users/access_rights.html",
+      "claimsSupported": ["roles and groups", "read/write/create/delete rights", "record rules", "view access"],
+      "limitations": "Security design documentation; not an independent security assessment."
+    },
+    {
+      "id": "D365-01",
+      "platform": "Microsoft Dynamics 365 Finance and Operations",
+      "sourceName": "Grid capabilities",
+      "publisher": "Microsoft",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "page indexed as updated in 2026; exact date not retained",
+      "url": "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/get-started/grid-capabilities",
+      "claimsSupported": ["calculated values", "type-ahead", "math expressions", "grouping", "freezing", "auto-fit", "Excel export"],
+      "limitations": "Feature availability can depend on application version and configuration."
+    },
+    {
+      "id": "D365-02",
+      "platform": "Microsoft Dynamics 365 Finance and Operations",
+      "sourceName": "Personalize the user experience",
+      "publisher": "Microsoft",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "page indexed as updated in 2026; exact date not retained",
+      "url": "https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/get-started/personalize-user-experience",
+      "claimsSupported": ["full personalization", "saved views", "persistent changes", "workspace views", "organizational defaults"],
+      "limitations": "Does not prove discoverability, mobile parity, or end-to-end recoverability."
+    },
+    {
+      "id": "SAP-01",
+      "platform": "SAP S/4HANA Cloud / SAP Fiori",
+      "sourceName": "Responsive Table",
+      "publisher": "SAP",
+      "sourceType": "primary design guidelines",
+      "publicationOrUpdateDate": "not stated on captured page",
+      "url": "https://experience.sap.com/fiori-design-web/responsive-table/",
+      "claimsSupported": ["responsive pop-in", "variant management", "toolbar", "selection", "column personalization", "persisted column layout"],
+      "limitations": "Design guideline, not proof that every SAP application follows every recommendation."
+    },
+    {
+      "id": "SAP-02",
+      "platform": "SAP S/4HANA Cloud / SAP Fiori",
+      "sourceName": "Table Personalization Overview",
+      "publisher": "SAP",
+      "sourceType": "primary design guidelines",
+      "publicationOrUpdateDate": "2023-08-04",
+      "url": "https://experience.sap.com/fiori-design-web/overview-table-personalization/",
+      "claimsSupported": ["column visibility/order", "sorting", "grouping", "filtering", "simple and complex personalization"],
+      "limitations": "Guideline version shown as 1.128; product implementations can differ."
+    },
+    {
+      "id": "SAP-03",
+      "platform": "SAP S/4HANA Cloud / SAP Fiori",
+      "sourceName": "Analytical Table (ALV)",
+      "publisher": "SAP",
+      "sourceType": "primary design guidelines",
+      "publicationOrUpdateDate": "not stated on captured page",
+      "url": "https://experience.sap.com/fiori-design-web/analytical-table-alv/",
+      "claimsSupported": ["large-row analytical use", "grouping", "aggregation", "freezing", "persisted views", "desktop/tablet limitation"],
+      "limitations": "Explicitly requires adaptive smartphone UI; performance threshold is design guidance, not measured SLA."
+    },
+    {
+      "id": "NETSUITE-01",
+      "platform": "Oracle NetSuite",
+      "sourceName": "Customizing List Views",
+      "publisher": "Oracle",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_N496170.html",
+      "claimsSupported": ["custom list views", "displayed columns", "footer filters", "saved search as view"],
+      "limitations": "Capability availability varies by record type and account configuration."
+    },
+    {
+      "id": "NETSUITE-02",
+      "platform": "Oracle NetSuite",
+      "sourceName": "Exporting Search Results",
+      "publisher": "Oracle",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_N663983.html",
+      "claimsSupported": ["CSV/PDF/XLSX export", "export permissions", "execution log", "format limitations"],
+      "limitations": "Does not establish all export retention or audit policies for every account."
+    },
+    {
+      "id": "NETSUITE-03",
+      "platform": "Oracle NetSuite",
+      "sourceName": "Create a Saved Search and Export to a CSV file",
+      "publisher": "Oracle",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/article_1201045458.html",
+      "claimsSupported": ["saved search criteria", "result fields", "available filters", "save/run", "CSV validation"],
+      "limitations": "Example is tied to a particular NetSuite workflow but demonstrates the general pattern."
+    },
+    {
+      "id": "SHOPIFY-01",
+      "platform": "Shopify Admin / POS",
+      "sourceName": "Searching and filtering your lists using views",
+      "publisher": "Shopify",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://help.shopify.com/en/manual/shopify-admin/productivity-tools/searching-filtering-views",
+      "claimsSupported": ["default/custom views", "advanced filters", "saved views", "bulk actions", "mobile view consumption", "pagination"],
+      "limitations": "Resource pages use two view experiences; behavior is not perfectly uniform."
+    },
+    {
+      "id": "SHOPIFY-02",
+      "platform": "Shopify Admin / POS",
+      "sourceName": "Searching for products and filtering your product list",
+      "publisher": "Shopify",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://help.shopify.com/en/manual/products/searching-filtering",
+      "claimsSupported": ["product sort/search/filter", "edit columns", "saved product views", "bulk edit", "CSV export"],
+      "limitations": "Saved-view management is desktop-only and some sort changes are not persisted."
+    },
+    {
+      "id": "WORKDAY-01",
+      "platform": "Workday",
+      "sourceName": "Reporting and Analytics",
+      "publisher": "Workday",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://doc.workday.com/admin-guide/en-us/reporting-and-analytics/reporting-and-analytics.html",
+      "claimsSupported": ["Prism Analytics", "Discovery Boards", "People Analytics", "custom reporting", "Report Designer", "Worksheets"],
+      "limitations": "Public landing page gives less row-interaction detail than other platform documentation."
+    },
+    {
+      "id": "WORKDAY-02",
+      "platform": "Workday",
+      "sourceName": "Workday Prism Analytics datasheet",
+      "publisher": "Workday",
+      "sourceType": "primary product datasheet",
+      "publicationOrUpdateDate": "approximately 2024 according to search index; exact date not stated in captured extract",
+      "url": "https://www.workday.com/content/dam/web/en-us/documents/datasheets/datasheet-workday-prism-analytics.pdf",
+      "claimsSupported": ["reporting and worksheets", "desktop/tablet/mobile access", "auditability", "data lineage", "governance"],
+      "limitations": "Product marketing datasheet; packaging and tenant configuration may affect availability."
+    },
+    {
+      "id": "STRIPE-01",
+      "platform": "Stripe Dashboard",
+      "sourceName": "Perform searches in the Dashboard",
+      "publisher": "Stripe",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://docs.stripe.com/dashboard/search",
+      "claimsSupported": ["cross-resource search", "field filters", "operators", "date search", "negation", "sortable result groups"],
+      "limitations": "Search behavior can vary by resource and account capability."
+    },
+    {
+      "id": "STRIPE-02",
+      "platform": "Stripe Dashboard",
+      "sourceName": "Stripe reporting",
+      "publisher": "Stripe",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://docs.stripe.com/stripe-reports",
+      "claimsSupported": ["balance reports", "payout reconciliation", "bank reconciliation", "CSV download", "report filters"],
+      "limitations": "Some advanced reporting capabilities can depend on product/package."
+    },
+    {
+      "id": "STRIPE-03",
+      "platform": "Stripe Dashboard",
+      "sourceName": "How report configuration works",
+      "publisher": "Stripe",
+      "sourceType": "primary documentation",
+      "publicationOrUpdateDate": "not stated",
+      "url": "https://docs.stripe.com/reports/options",
+      "claimsSupported": ["account-scope filters", "currency/report filters", "payout reconciliation configuration"],
+      "limitations": "Connected-account visibility depends on platform/account relationships."
+    },
+    {
+      "id": "STOQUIFY-01",
+      "platform": "Stoquify",
+      "sourceName": "AqStoqFlow Table Presentation Benchmark and Adoption Recommendation",
+      "publisher": "Stoquify repository",
+      "sourceType": "local audit",
+      "publicationOrUpdateDate": "2026-08-23",
+      "path": "what-next/ui-ux/AQSTOQFLOW_TABLE_PRESENTATION_BENCHMARK_AND_ADOPTION_RECOMMENDATION_2026-08-23.md",
+      "claimsSupported": ["table occurrence inventory", "shared/native adoption", "feature counts", "graph findings", "browser limitation"],
+      "limitations": "Static repository audit; runtime behavior was not authenticated."
+    },
+    {
+      "id": "STOQUIFY-02",
+      "platform": "Stoquify",
+      "sourceName": "AqStoqFlow Table Presentation Scorecard",
+      "publisher": "Stoquify repository",
+      "sourceType": "local scorecard",
+      "publicationOrUpdateDate": "2026-08-23",
+      "path": "what-next/ui-ux/AQSTOQFLOW_TABLE_PRESENTATION_SCORECARD_2026-08-23.json",
+      "claimsSupported": ["prior dimension baseline", "confidence boundaries"],
+      "limitations": "Precedes this benchmark's 100-point weighting."
+    },
+    {
+      "id": "STOQUIFY-03",
+      "platform": "Stoquify",
+      "sourceName": "UI route smoke evidence",
+      "publisher": "Stoquify repository",
+      "sourceType": "local browser artifact",
+      "publicationOrUpdateDate": "2026-08-06",
+      "path": "what-next/ui-ux/ui-route-smoke-2026-08-06.json",
+      "claimsSupported": ["public route smoke boundary"],
+      "limitations": "Does not cover authenticated table routes."
+    },
+    {
+      "id": "STOQUIFY-04",
+      "platform": "Stoquify",
+      "sourceName": "Shared table source and related components",
+      "publisher": "Stoquify repository",
+      "sourceType": "local source code",
+      "publicationOrUpdateDate": "workspace state inspected 2026-08-28",
+      "paths": [
+        "components/DataTableComponents/DataTable.tsx",
+        "components/DataTableComponents/DataTablePagination.tsx",
+        "components/DataTableComponents/DataTableViewOptions.tsx",
+        "components/DataTableComponents/DataTableFacetedFilter.tsx"
+      ],
+      "claimsSupported": ["TanStack foundation", "sorting", "filtering", "pagination", "visibility", "aria-sort"],
+      "limitations": "Source inspection does not prove browser or assistive-technology behavior."
+    },
+    {
+      "id": "STOQUIFY-05",
+      "platform": "Stoquify",
+      "sourceName": "Route access catalogs and graph artifacts",
+      "publisher": "Stoquify repository",
+      "sourceType": "local architecture evidence",
+      "publicationOrUpdateDate": "workspace state inspected 2026-08-28",
+      "paths": [
+        "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts",
+        "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+        "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+        "app/[locale]/(dashboard)/dashboard/people/people-route-data-access.ts",
+        "app/[locale]/(dashboard)/dashboard/payroll/payroll-route-data-access.ts",
+        "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/pos-route-data-access.ts",
+        "graphify-out/GRAPH_REPORT_components.md",
+        "graphify-out/GRAPH_REPORT_app.md"
+      ],
+      "claimsSupported": ["permission and module gates", "route inventory", "component community fragmentation", "impact boundaries"],
+      "limitations": "Graph community association is architectural evidence, not runtime call-frequency telemetry."
+    }
+  ]
+}
+

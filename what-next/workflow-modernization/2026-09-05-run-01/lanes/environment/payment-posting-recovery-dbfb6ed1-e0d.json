@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-08T18:24:50.844Z",
+  "run": "dbfb6ed1-e0d",
+  "checks": [
+    "Missing posting setup blocks recovery without repeating paid effects",
+    "Requester, approver and foreign-organization scope cannot recover posting",
+    "Changed accounting configuration invalidates the reviewed revision",
+    "Expired password assurance and revoked role cannot confirm an earlier preview",
+    "Concurrent identical recovery posts one journal and reuses one reconciliation transaction without changing invoices, allocations or supplier balances",
+    "Posting blocker resolution preserves its evidence and opens the distinct outstanding statement obligation; recording retry remains financially inert",
+    "Exact recovery retry observes current state, changed replay is rejected, and posted work cannot be posted anew",
+    "Rehashed recovery evidence cannot substitute another execution source"
+  ],
+  "sourcesBefore": {
+    "services/purchasing/payment-posting-recovery.service.ts": "6304df34227a14808345952530f3b42acbb02600222290af39874bfa08de3a94",
+    "services/purchasing/payment-posting-recovery-contracts.ts": "52204aa8e71e3fded6a0d521b308da5e802c24ccf54dee032b14eb3282aa5efb",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "782645c28ee8a60f3e435f12196fc3816a2b797ee1894a533f5dcc21401fc743"
+  },
+  "scope": "Owned localhost synthetic payment fixtures. Recovery must not change paid allocations or supplier balances; no external payment or message.",
+  "originalBefore": "904f9f5033ddec322609398d53994073f588962d4a91aa9c70658f543708c1da",
+  "fixture": {
+    "organizationId": "workflow_supplier_ack_en_payment-recovery-dbfb6ed1-e0d",
+    "paymentRequestId": "f3229b82-4c99-4654-b2eb-79f980d48657"
+  },
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/payment-posting-recovery.service.ts": "6304df34227a14808345952530f3b42acbb02600222290af39874bfa08de3a94",
+    "services/purchasing/payment-posting-recovery-contracts.ts": "52204aa8e71e3fded6a0d521b308da5e802c24ccf54dee032b14eb3282aa5efb",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "782645c28ee8a60f3e435f12196fc3816a2b797ee1894a533f5dcc21401fc743"
+  },
+  "sourceStable": true
+}

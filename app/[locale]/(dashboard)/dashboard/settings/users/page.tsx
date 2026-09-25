@@ -1,12 +1,17 @@
 import Link from "next/link"
 import { AlertTriangle, Settings, UserPlus, UsersRound } from "lucide-react"
 
-import getOrgRoles from "@/actions/roles/getOrgRoles"
+import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses"
+import { readInvitationRoleOptions, type InvitationRoleOptions } from "@/services/users/user-invitation-options.service"
 import { getOrgInvites } from "@/actions/users/getOrgInvites"
 import getOrgUsers from "@/actions/users/getOrgUsers"
 import UserInvitationForm from "@/components/Forms/users/userInvitationForm"
 import { Button } from "@/components/ui/button"
-import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
+import { getAuthenticatedUser } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { userDirectoryCopy } from "@/components/settings/user-directory-copy"
 import { pickLocale } from "@/i18n/routing"
 import UsersPageClient from "./UsersPageClient"
 import type { UserTableRow } from "./columns"
@@ -19,7 +24,8 @@ type UsersPageProps = {
 async function UsersPageImpl({ params }: UsersPageProps) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
-  await checkPermission("READ_USERS")
+  const ctx = await requirePermission("users.read", { resource: "User" })
+  const t = userDirectoryCopy[locale]
   const user = await getAuthenticatedUser()
   const organizationId = user?.organizationId ?? ""
 
@@ -31,27 +37,29 @@ async function UsersPageImpl({ params }: UsersPageProps) {
             <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-danger-soft)]">
               <AlertTriangle className="h-8 w-8 text-[var(--dash-danger)]" />
             </div>
-            <h1 className="mb-3 text-xl font-semibold text-[var(--dash-text)]">Organization Required</h1>
-            <p className="text-sm text-[var(--dash-text-soft)]">No organization found for the current user.</p>
+            <h1 className="mb-3 text-xl font-semibold text-[var(--dash-text)]">{t.noOrg}</h1>
+            <p className="text-sm text-[var(--dash-text-soft)]">{t.noOrgHelp}</p>
           </div>
         </div>
       </div>
     )
   }
 
-  const rolesResult = await getOrgRoles(organizationId)
-  const rolesData = rolesResult.data || []
-  const userRoles = rolesData.map((role) => ({
-    label: role.name,
-    value: role.id,
-  }))
+  let invitationOptions: InvitationRoleOptions | { state: "load_failed"; roles: [] }
+  try {
+    invitationOptions = await readInvitationRoleOptions({ organizationId, actorId: user.id, actorPermissions: user.permissions, locale })
+  } catch (error) {
+    logSafeActionWarning("Invitation roles could not be loaded", error, { action: "users.invite", component: "User" })
+    invitationOptions = { state: "load_failed", roles: [] }
+  }
   const organizationName = user?.organizationName ?? ""
   const email = user?.email ?? ""
   const orgUsers = await getOrgUsers(organizationId)
-  const userRows: UserTableRow[] = orgUsers.map((orgUser) => ({
+  if (!orgUsers.success) return <DashboardRouteState kind="error" title={t.loadFailed} message={t.loadHelp} primaryHref={`/${locale}/dashboard/settings/users`} primaryLabel={t.retry} />
+  const userRows: UserTableRow[] = orgUsers.data.map((orgUser) => ({
     ...orgUser,
     name: [orgUser.firstName, orgUser.lastName].filter(Boolean).join(" ") || orgUser.email,
-    roleNames: orgUser.roles.map((role) => role.nameEn).join(", "),
+    roleNames: orgUser.roles.map((role) => locale === "fr" ? role.nameFr || role.nameEn : role.nameEn).join(", "),
   }))
 
   const orgInvites = await getOrgInvites(organizationId)
@@ -63,7 +71,7 @@ async function UsersPageImpl({ params }: UsersPageProps) {
           <div className="min-w-0 max-w-3xl">
             <div className="dashboard-eyebrow mb-4">
               <span className="dashboard-live-dot" />
-              Workspace access
+              {t.eyebrow}
             </div>
             <div className="flex min-w-0 items-start gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
@@ -71,10 +79,10 @@ async function UsersPageImpl({ params }: UsersPageProps) {
               </div>
               <div className="min-w-0">
                 <h1 className="text-3xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-4xl">
-                  Users & Invitations
+                  {t.title}
                 </h1>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--dash-text-soft)] sm:text-base">
-                  Manage organization users, role access, verification state, and pending invitations from one focused workspace.
+                  {t.intro}
                 </p>
               </div>
             </div>
@@ -83,11 +91,12 @@ async function UsersPageImpl({ params }: UsersPageProps) {
             <Button asChild variant="outline" size="sm" className="dashboard-button-secondary h-10 w-full rounded-lg sm:w-auto">
               <Link href={`/${locale}/dashboard/settings`}>
                 <Settings className="h-4 w-4" />
-                <span>Settings</span>
+                <span>{t.settings}</span>
               </Link>
             </Button>
             <UserInvitationForm
-              roles={userRoles}
+              roles={invitationOptions.roles}
+              availability={invitationOptions.state}
               organizationId={organizationId}
               organizationName={organizationName}
               email={email}
@@ -98,7 +107,7 @@ async function UsersPageImpl({ params }: UsersPageProps) {
           </div>
         </div>
 
-        <UsersPageClient users={userRows} invites={orgInvites} locale={locale} />
+        <UsersPageClient key={organizationId + ":" + ctx.userId} users={userRows} actorId={ctx.userId} canDeactivate={["users.deactivate", "users.delete"].some(permission => hasRbacPermission(ctx.permissions, permission))} asOf={orgUsers.asOf} invites={orgInvites.data?.rows ?? null} invitationAsOf={orgInvites.data?.asOf ?? null} invitationErrorCode={"code" in orgInvites ? orgInvites.code : undefined} locale={locale} invitationManagement={invitationOptions.state === "ready" ? { organizationId, organizationName, roles: invitationOptions.roles } : undefined} />
       </div>
     </div>
   )

@@ -2,6 +2,7 @@ import { PaymentMethod, Prisma, SupplierInvoiceStatus, SupplierPaymentStatus } f
 
 import { HistoryCursorError, type HistoryCursorCodec } from "@/services/history/transaction-history.types"
 import { readAPHistory } from "@/services/purchasing/ap-history.service"
+jest.mock("@/services/purchasing/ap-history-revision", () => ({ readAPHistorySourceRevision: jest.fn().mockResolvedValue("source-revision") }))
 
 const now = new Date("2026-07-17T10:00:00.000Z")
 const recordedThrough = new Date("2026-07-17T09:00:00.000Z")
@@ -83,18 +84,28 @@ function mockClient(overrides: {
       findMany: jest
         .fn()
         .mockResolvedValueOnce(invoiceRows)
-        .mockResolvedValueOnce(overrides.invoiceSummaryRows ?? invoiceRows),
+        .mockResolvedValueOnce(overrides.invoiceSummaryRows ?? invoiceRows.map((row: any) => ({ ...row, updatedAt: row.createdAt, supplierCreditNotes: [], paymentAllocations: [{ organizationId: "org-1", supplierInvoiceId: row.id, amount: decimal("40.00"), createdAt: recordedThrough, supplierPayment: { ...paymentRows[0] as object, updatedAt: recordedThrough } }] }))),
     },
+    supplierLedgerEntry: { findMany: jest.fn().mockResolvedValue([
+      { id: "li", organizationId: "org-1", supplierId: "supplier-1", referenceType: "SUPPLIER_INVOICE", referenceId: "invoice-1", type: "PURCHASE", debit: decimal("100.00"), credit: decimal("0"), entryDate: new Date("2026-07-10T00:00:00Z"), createdAt: recordedThrough },
+      { id: "lp", organizationId: "org-1", supplierId: "supplier-1", referenceType: "SUPPLIER_PAYMENT", referenceId: "payment-1", type: "PAYMENT", debit: decimal("0"), credit: decimal("40.00"), entryDate: new Date("2026-07-12T00:00:00Z"), createdAt: recordedThrough },
+    ]) },
     supplierPayment: {
       findMany: jest
         .fn()
         .mockResolvedValueOnce(paymentRows)
-        .mockResolvedValueOnce(overrides.paymentSummaryRows ?? paymentRows),
+        .mockResolvedValueOnce(overrides.paymentSummaryRows ?? paymentRows)
+        .mockResolvedValueOnce([{ id: "payment-1", allocations: [{ organizationId: "org-1", supplierPaymentId: "payment-1", supplierInvoiceId: "invoice-1", amount: decimal("40.00"), createdAt: recordedThrough, supplierInvoice: { id: "invoice-1", organizationId: "org-1", supplierId: "supplier-1", currency: "XAF" } }] }]),
     },
   }
 }
 
 describe("readAPHistory", () => {
+  it("rejects an oversized export before financial resolution instead of returning the visible page", async () => {
+    const client = mockClient({ invoiceSummaryRows: Array.from({length: 5001}, (_, i) => ({ id: `i${i}` })), paymentSummaryRows: [] })
+    await expect(readAPHistory({ organizationId: "org-1", actorUserId: "u1", actorPermissions: [], filters: {pageSize: 25} }, {client: client as never, cursorCodec: cursorCodec(), now: () => now, exportRowLimit: 5000})).rejects.toThrow(/5000/)
+    expect(client.supplierLedgerEntry.findMany).not.toHaveBeenCalled()
+  })
   it("returns supplier invoice and payment rows with signed AP movement and redacted bank destination", async () => {
     const client = mockClient()
 

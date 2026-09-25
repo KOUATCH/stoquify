@@ -1,0 +1,98 @@
+{
+  "run": "88cd4da5-990",
+  "at": "2026-09-07T18:20:29.942Z",
+  "sourceBefore": {
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f",
+    "services/purchase-order/purchase-order.schemas.ts": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "1d319ec2c1e0c536bf1e9b141a8f4e69c8aabd0fc6a0db11e45ff7bc5499a97f"
+  },
+  "checks": [
+    {
+      "name": "Reviewed hold: concurrent exact retry, trustworthy history and reserved quantities",
+      "status": "passed",
+      "oneReceipt": true,
+      "revokedReplayDenied": true,
+      "ms": 645
+    },
+    {
+      "name": "Changed order or competing hold rejects stale review with no duplicate effects",
+      "status": "passed",
+      "staleCases": 2,
+      "ms": 426
+    },
+    {
+      "name": "Foreign order and expired session cannot read or review",
+      "status": "passed",
+      "isolated": true,
+      "ms": 167
+    },
+    {
+      "name": "Read-only user sees history but cannot prepare a receipt",
+      "status": "passed",
+      "readOnly": true,
+      "ms": 108
+    },
+    {
+      "name": "Managed missing purchasing grant prevents receiving writes",
+      "status": "passed",
+      "noReceipt": true,
+      "ms": 91
+    },
+    {
+      "name": "Managed expired purchasing grant prevents receiving writes",
+      "status": "passed",
+      "noReceipt": true,
+      "ms": 81
+    },
+    {
+      "name": "Managed suspended purchasing grant prevents receiving writes",
+      "status": "passed",
+      "noReceipt": true,
+      "ms": 66
+    },
+    {
+      "name": "Managed read_only purchasing grant prevents receiving writes",
+      "status": "passed",
+      "noReceipt": true,
+      "ms": 96
+    },
+    {
+      "name": "Atomic decision-event failure rolls back stock, receipt, audit and sequence before safe retry",
+      "status": "passed",
+      "rollbackAndRetry": true,
+      "ms": 443
+    },
+    {
+      "name": "Held acceptance preserves cancellation, exact decision recovery and separate stock/accounting evidence",
+      "status": "passed",
+      "cancelledParentPreserved": true,
+      "noPostedJournal": true,
+      "ms": 450
+    },
+    {
+      "name": "Original inspector rejection requires fresh authentication; held stock stays unavailable",
+      "status": "passed",
+      "noStockOnRejection": true,
+      "ms": 402
+    },
+    {
+      "name": "Corrupted decision evidence fails closed instead of displaying successful history",
+      "status": "passed",
+      "corruptionDetected": true,
+      "ms": 232
+    }
+  ],
+  "scope": "Real domain services and owned PostgreSQL. Synthetic approved orders are setup, not approval-workflow proof. Stock ledger review remains required.",
+  "originalUnchanged": true,
+  "sourceAfter": {
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f",
+    "services/purchase-order/purchase-order.schemas.ts": "fa96b20d8eef82597cec1b86d0e1e149eb833df83982112753c5d3114f8b80d9",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "1d319ec2c1e0c536bf1e9b141a8f4e69c8aabd0fc6a0db11e45ff7bc5499a97f"
+  }
+}

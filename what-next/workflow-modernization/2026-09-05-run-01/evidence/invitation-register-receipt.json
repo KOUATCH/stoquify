@@ -1,0 +1,165 @@
+{
+  "recordedAt": "2026-09-06T05:38:09.006Z",
+  "baseline": "evidence/source-baseline-v13.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 206,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2447,
+      "tests": 841,
+      "pages": 147,
+      "routeHandlers": 17,
+      "actionSources": 149,
+      "backgroundCandidates": 31,
+      "uiControlCandidates": 2023,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 214,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "implementationGuide": "lanes/environment/INVITATION_REGISTER_AND_ISSUANCE.md",
+  "sources": {
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "components/Forms/users/userInvitationForm.tsx": "3edacf237a2bd2c26c19addae4e7a18315c44a5b8e319b44154427663d8c0c23",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "3264faaa8e9cb6364ba3e9524e5197aff784b3bf07d349e7c2b5987ea2344bbe",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "messages/en.json": "98e51495fc3557c882721e71bb27b43f8f1cde8cbe40a8cafda301fedad6642e",
+    "messages/fr.json": "73944a7b7ee3a8c30ea6702a82495f3c1864a0dd387e1222fcef09e470fa0631",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "actions/security/__tests__/step-up-auth.actions.test.ts": "0db8f3512c4ea45c3682b4f85b918f78acc7f4026457f3b72538400d0ccf9b3e",
+    "components/auth/v2/__tests__/UserInvitationForm.test.tsx": "cc959aeb3f695994578348dfc9f600c820927439fc73ac9d4a1d615b64c20b2c",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "da50744da01871c8161b587fdb4aab0622d907f9d978a4e659b83bed90158378",
+    "services/security/__tests__/step-up-auth.service.test.ts": "dfff07cada0a875fceaba000ee91e4395185d9a03bcee80f91c615478a907bba",
+    "services/users/__tests__/user-identity.service.test.ts": "cb28e15e69e227b42a4fb7538fe995167c7aeab08addb158cddd74c31a479d75",
+    "actions/users/__tests__/sendInvite.authorization.test.ts": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04",
+    "actions/users/__tests__/getOrgInvites.test.ts": "4850b694209dfc2e0d0f0daed366089e6ba25e7923d4c120e3f99776947748fd",
+    "actions/users/__tests__/public-identity-actions.test.ts": "2eb4184c2c983693afcf54b1a014ce0dc20c7568cb080d1631ac92d75d72a00f"
+  },
+  "tests": {
+    "file": "evidence/invitation-register-step-up-03.json",
+    "passed": 109,
+    "suites": 8,
+    "chunk": "937dff",
+    "seconds": 4.759
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "session": 2679,
+    "chunk": "e19b83"
+  },
+  "lint": {
+    "runner": "node_modules/eslint/bin/eslint.js",
+    "changedFiles": 12,
+    "exitCode": 0,
+    "chunk": "7e495b"
+  },
+  "diff": {
+    "command": "git diff --check -- <14 scoped source/test/translation paths>",
+    "exitCode": 0,
+    "chunk": "072ba1"
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-register-postgres-48b28725-c78.json",
+    "passed": 2,
+    "failed": 0,
+    "authorityUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-register-browser-8428c4a8-011.json",
+    "passed": 2,
+    "failed": 0,
+    "authorityUnchanged": true,
+    "readerRouteMs": {
+      "en": 3291,
+      "fr": 4923
+    }
+  },
+  "screenshots": [
+    {
+      "file": "evidence/invitation-register/en-invitation-register-expired-8428c4a8-011.png",
+      "sha256": "c59c66ebcb1553a2f793f4189003322d4a96b29cb71a4c98680c0f544d8a4008"
+    },
+    {
+      "file": "evidence/invitation-register/en-invitation-register-read-failure-8428c4a8-011.png",
+      "sha256": "c73cdcdac7a685b278c67bb79c65da553e4ca35e731f1be1f41fd50ab4348dd2"
+    },
+    {
+      "file": "evidence/invitation-register/en-invitation-register-denied-submit-8428c4a8-011.png",
+      "sha256": "1ca05c4525e03cda513d38f88fadbea859e9a53a50e8681a65db3925afd51ec2"
+    },
+    {
+      "file": "evidence/invitation-register/en-invitation-register-no-roles-8428c4a8-011.png",
+      "sha256": "982cfd32bca7a578b82a82770718d1f149601115c07f99fed2cd10934a9a1ea6"
+    },
+    {
+      "file": "evidence/invitation-register/en-invitation-register-denied-route-8428c4a8-011.png",
+      "sha256": "b741b4ddb3c9710c6127e74dca77615d352e04cd42caf1d4a5b173dbda223470"
+    },
+    {
+      "file": "evidence/invitation-register/fr-invitation-register-expired-8428c4a8-011.png",
+      "sha256": "543e5d5ebc7ed683f5fa3ea65d3a92a34b900ad2da08b5ea21fb27c3890cae0f"
+    },
+    {
+      "file": "evidence/invitation-register/fr-invitation-register-read-failure-8428c4a8-011.png",
+      "sha256": "ee2a0b34044fbb9735d3497ab2e5bb6ff16ebdef4fc745ec5463ac7dc30f7121"
+    },
+    {
+      "file": "evidence/invitation-register/fr-invitation-register-denied-submit-8428c4a8-011.png",
+      "sha256": "222fada5f7084c06df3f339cd57aeadc4088459cb087e32f2043d78cb10ea7dc"
+    },
+    {
+      "file": "evidence/invitation-register/fr-invitation-register-no-roles-8428c4a8-011.png",
+      "sha256": "a053861cce613ac77a3e5f3133aafc81147fdcaf68642f4863a98cc96fbd1e85"
+    },
+    {
+      "file": "evidence/invitation-register/fr-invitation-register-denied-route-8428c4a8-011.png",
+      "sha256": "1b295bff439ef2dcba9d8372b2ac6cdfa7d96990c16026b22e67dbda52378cc5"
+    }
+  ],
+  "failedAttempts": [
+    {
+      "kind": "unit",
+      "chunk": "4ead58",
+      "passed": 95,
+      "failed": 2,
+      "jsonWritten": false,
+      "reason": "Asynchronous focus assertion; subsequent evidence write EPERM"
+    },
+    {
+      "kind": "typecheck",
+      "chunk": "651742",
+      "reason": "Optional abuse subject incompatible with required string"
+    },
+    {
+      "kind": "browser",
+      "file": "lanes/environment/invitation-register-browser-3d06b000-1a5.json"
+    },
+    {
+      "kind": "browser",
+      "file": "lanes/environment/invitation-register-browser-4445b735-929.json"
+    },
+    {
+      "kind": "browser",
+      "file": "lanes/environment/invitation-register-browser-7ea4f93a-e36.json"
+    },
+    {
+      "kind": "browser",
+      "file": "lanes/environment/invitation-register-browser-c8d0c82f-d83.json"
+    }
+  ],
+  "remaining": "Provider calls remain inside the issuance transaction; atomic issuance audit/outbox, unknown delivery, inviter provenance, revision-safe reissue and complete administrative recovery still require engineering. Read-only users still see the invitation entry; grantable-role options need a service-owned read model. Directory-wide EN/FR, native zoom, actual screen reader, comprehensive contrast and full release/build assurance remain open. No email, X1 clearance or professional certification is claimed.",
+  "completeWorkflowVerified": false
+}

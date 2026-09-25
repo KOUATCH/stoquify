@@ -25,6 +25,8 @@ export default async function AnalyticsPage({
       const resolvedLocale = pickLocale(locale)
       const data = await getBusinessPulseCommandReadModel({
         organizationId: ctx.orgId,
+        permissions: ctx.permissions,
+        locale: resolvedLocale,
       })
 
       return <BusinessPulseDashboard data={data} locale={resolvedLocale} />

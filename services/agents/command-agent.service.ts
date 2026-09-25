@@ -70,6 +70,7 @@ export async function runCommandAgent(
     requestedModules: ["dashboard"],
     periodStart: request.periodStart,
     periodEnd: request.periodEnd,
+    locale: request.locale,
   });
   const access = resolveCommandAgentRollout(context);
   if (!access.canRun || access.mode === "off") {

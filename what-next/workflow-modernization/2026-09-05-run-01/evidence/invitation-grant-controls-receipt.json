@@ -1,0 +1,123 @@
+{
+  "recordedAt": "2026-09-06T12:05:50.324Z",
+  "baseline": "evidence/source-baseline-v26.json",
+  "sources": {
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/security/role-grant-policy.service.ts": "3a05d510979a36c13f57564c660b326ed21400a5323f039dfa5d52ed203f22a3",
+    "services/users/user-invitation-authority.service.ts": "cea31d719e4f1caeaefce5db3f9b2db365777f24a63541be4a41929183c22f73",
+    "services/users/user-invitation-options.service.ts": "1ed6895231f82c3c3b4bad23e4c5c96de3f7f429b6ce5624b42f4a8d3aee91c4",
+    "services/users/user-invitation-delivery-contract.ts": "65bd2e5e6bb7095f32eaf6d20052c47890c0512ed325cefd59d5f8375944f888",
+    "services/users/user-invitation-issuance.service.ts": "81c4bfb10795c7c31f18cca3645cd88029518ad658de5c8dc7fe33e368529f1a",
+    "services/users/user-invitation-redemption-authority.service.ts": "b6db935303eb5845fb2ef3266b4c51f24e011dc8a9637cca33493d395571402c",
+    "services/users/user-invitation-history.service.ts": "86d0943c05e233607a6f42b9bb4115e8505d1411ce435a08ccc1c7390b1d8500",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/communication/user-invitation-delivery-worker.service.ts": "17e28cb568e07b9b1c66e1accd6ba64cc27f4ebd6402dc798e03a0fbaba353f3",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "232c0f2061101dc53d16eccda111670ce126579840201449316998706e43677b",
+    "components/Forms/users/userInvitationForm.tsx": "00648a757494997efe64b548146fd42d7775d6d4bf3a623148731f06e8e2a514",
+    "messages/en.json": "a67a949eef244ce3f029bfd10c16af72b6254c512c004082c730d6d9dc011320",
+    "messages/fr.json": "d08958c8a52601e370977cd023c36d41a4e32fdd4c19081d4399cd15a57bc743",
+    "components/settings/__tests__/RoleForm.workflow.test.tsx": "61a490bd4fd529fb638a353087cb04b7025c36cf93e4fde8b49287a2881e1e33",
+    "components/auth/v2/__tests__/UserInvitationForm.test.tsx": "8d43e362f4ad85dc6123dfafbd6a64e4088e31846de203573e97cf5824544609",
+    "services/roles/__tests__/role.service.test.ts": "cd91caae88fba588d422083c3d2c68c8b12428033b82af736ceff61ec758da4a",
+    "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts": "a2a955390daa67cc63e34fcbd840e87d02649869d92216832da5c5ccbf17f892",
+    "services/users/__tests__/user-invitation-history.service.test.ts": "f881aef02a69325eac7f80f639d59c95950aad82d83d6e357d43ca438bc42a63",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "5b20553e349dabf06740092b622355772d20db0740c24efb7df41fc6e1c051ca",
+    "services/users/__tests__/user-invitation-options.service.test.ts": "d7781e25fa3dc0b6f776db51efa97ce54cdbd2bbb73f2543f2656c9badbbf3d5",
+    "services/users/__tests__/user-invitation-management.service.test.ts": "a2f24660dcae808969461e27c8bfc4c9328da684cca9fbfa604ed6f290874cb1",
+    "components/auth/v2/__tests__/InvitationHistory.test.tsx": "65efbe2591ac58c4794d67652534c1222473eaf529a3880a479af5bb7575f796",
+    "services/users/__tests__/user-invitation-redemption-authority.service.test.ts": "c38b1c359bb66f4eab393b1e4d1913a80523401373b882ac60856fa5f2383d59",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts": "8e4600e54830bfc73be63750b1cb0caf3efd7617107396fe02a3e4cd8bf0b58f",
+    "services/security/__tests__/role-grant-policy.service.test.ts": "38b36bbad554a1983a1c7ce2d3c56b10131578e2216fff98f898d976562d7b7c",
+    "actions/roles/__tests__/role-actions.test.ts": "7509ec4e6c27f5063424b8b81f3b02a626378523796f1f7635ee839756233f06",
+    "services/users/__tests__/user-identity.service.test.ts": "6df0d3c62811e666e4a0d53c57ea7a3bf568ca07d93f42d22123d38528fec510",
+    "actions/users/__tests__/sendInvite.authorization.test.ts": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04",
+    "actions/users/__tests__/getInvitationHistory.test.ts": "446437d97fa70bd861e33ed78da551c242b9191f8a6ce5e288b6ffa1936fc1a1",
+    "actions/users/__tests__/cancelInvite.test.ts": "8d0880ef2a97cf80c3a0fd58354fdcc95441d8d4de1a498706b7f54b43235582"
+  },
+  "scope": [
+    "ID-03",
+    "ID-04",
+    "OA-INVITE-ADMIN",
+    "OA-ROLE-CREATE",
+    "OA-ROLE-UPDATE"
+  ],
+  "tests": {
+    "file": "evidence/invitation-grant-controls-tests-01.json",
+    "passed": 302,
+    "failed": 0,
+    "suites": 17,
+    "chunk": "476048"
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-grant-controls-f75b821e-4dc.json",
+    "passed": 11,
+    "failed": 0,
+    "chunk": "d5cb0b",
+    "sourceStable": true,
+    "originalAuthorityUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-grant-browser-browser-4d43c5b9-6f8.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "7e1d39",
+    "screenshots": [
+      "evidence/invitation-grant-controls/en-invitation-grant-choices-4d43c5b9-6f8.png",
+      "evidence/invitation-grant-controls/en-invitation-grant-mobile-4d43c5b9-6f8.png",
+      "evidence/invitation-grant-controls/fr-invitation-grant-choices-4d43c5b9-6f8.png",
+      "evidence/invitation-grant-controls/fr-invitation-grant-mobile-4d43c5b9-6f8.png"
+    ],
+    "routeReadyMs": [
+      {
+        "locale": "en",
+        "value": 53076
+      },
+      {
+        "locale": "fr",
+        "value": 7258
+      }
+    ],
+    "sourceStable": true,
+    "originalAuthorityUnchanged": true
+  },
+  "lint": {
+    "exitCode": 0,
+    "chunk": "9a3aee"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "ccfb11"
+  },
+  "historicalAttempts": [
+    {
+      "chunk": "75711d",
+      "result": "Seven failing tests reproduced canonical role-control alias conflation; 43 passed before the correction."
+    },
+    {
+      "file": "lanes/environment/invitation-grant-controls-30d52b5f-d30.json",
+      "result": "10/11: synthetic historical recipient reused issuer address and hit the existing-account guard."
+    },
+    {
+      "file": "lanes/environment/invitation-grant-controls-8689c9bb-2e2.json",
+      "result": "10/11: French synthetic recipient received 400; exact code was not recorded. Fixture generator now validates against the actual password schema and records safe failure codes. No production policy changed."
+    },
+    {
+      "file": "lanes/environment/invitation-grant-browser-browser-3c78b5de-ed9.json",
+      "result": "0/2: local app connection refused before login. Owned app restarted against unchanged database and network fence; no user operation ran."
+    }
+  ],
+  "remaining": [
+    "Member deactivation/assignment and coordinated last-administrator protection",
+    "Other shared alias families and global RBAC semantics",
+    "New ambiguous-history presentation and reissue in a dedicated browser journey",
+    "Directory-wide EN/FR, native zoom, actual screen reader and full contrast review",
+    "Production invitation adapter remains absent after the previously recorded automatic approval rejection; operator retry controls and delivery outcomes are unverified",
+    "Whole-platform discovery/reconciliation, remaining workflows and release verification"
+  ],
+  "completeWorkflowVerified": false,
+  "deployment": false,
+  "migration": false,
+  "externalEmail": false
+}

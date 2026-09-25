@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-09T10:25:00.985Z",
+  "run": "770dbf69-16c",
+  "checks": [
+    "Actual initial posting and independently reviewed approval retained",
+    "Durable proposal retries preserve one record; changed payload under the same key conflicts",
+    "Self-approval, stale authentication and missing reversal permission produce no financial effects",
+    "Foreign scope and stale independent review are refused without mutation",
+    "Rejection and retry retain the original posting and immutable decision",
+    "Injected late audit failure rolls back journals, batches, source changes, receipt and notifications together",
+    "Concurrent approval and retry yield one exact compensation, preserve original approval and reopen the obligation for cycle 2",
+    "Actual trial balance includes the reversed original and compensating journal with zero net suspense",
+    "Corrected posting uses cycle 2 and a distinct approval receipt; net suspense is exactly 100.25",
+    "Second correction and third posting retain the chain; tampered prior compensation blocks new posting until actual evidence is restored",
+    "Already-posted approval retry verifies earlier compensation cycles and refuses tampered history",
+    "Correction history exposes original proposal and decisions under tenant scope",
+    "Synthetic signed-run and certified-close states invalidated in both accounting periods; prior certificate bytes retained and linked exception reopened (not certification issuance verification)",
+    "Voided source run cannot be silently reopened by a new correction"
+  ],
+  "sourcesBefore": {
+    "services/reconciliation/payment-suspense-correction.service.ts": "53b814abfff84d9a9c1a456c94bd62ea346a8fa9220cd20a5b4e42fddb889636",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "72e73a681c81f3273855aa8d21d7931a36bcdc86dd6570eae07491e206607ebf",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "b230e17295dec9df766174240f898defb0222e0e78da2960504ec0d2faf6c1bc",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "329d8eebe7bbfb6e2d8b55ccd5303e75076664e1a8e4d6e5c217365e17060139",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "9ed6f44807e2efb76ca0555a086cd4589ca41c7c1bc7a31c97edbbb4497303e8",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+  },
+  "scope": "Owned synthetic source correction, original/counter-journal/reposting, transaction rollback and retained evidence. No live operation or professional approval.",
+  "originalBefore": "ff27f796adb40195f03402de11e2914c830073c689c96aede280b9bd8f0b886a",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-suspense-correction.service.ts": "53b814abfff84d9a9c1a456c94bd62ea346a8fa9220cd20a5b4e42fddb889636",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "72e73a681c81f3273855aa8d21d7931a36bcdc86dd6570eae07491e206607ebf",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "b230e17295dec9df766174240f898defb0222e0e78da2960504ec0d2faf6c1bc",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "329d8eebe7bbfb6e2d8b55ccd5303e75076664e1a8e4d6e5c217365e17060139",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "9ed6f44807e2efb76ca0555a086cd4589ca41c7c1bc7a31c97edbbb4497303e8",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+  },
+  "sourceStable": true
+}

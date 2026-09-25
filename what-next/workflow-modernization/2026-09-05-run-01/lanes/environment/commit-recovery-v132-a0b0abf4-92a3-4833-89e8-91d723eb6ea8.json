@@ -1,0 +1,14 @@
+{
+  "at": "2026-09-13T14:34:25.273Z",
+  "sourceBefore": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+  "checks": [
+    "Missing exact result is explicit and creates no sale",
+    "Own recorded sale readable under read-only grant without effects",
+    "Cross-scope reads reveal no result; altered original request rejected",
+    "Current refunded status distinguished from original committed response"
+  ],
+  "scope": "Owned PostgreSQL with actual cash posting and refund. Synthetic result-lifecycle/corruption fixtures; no external payment, receipt delivery or live approval.",
+  "error": "\nInvalid `db.pOSCommitResult.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-commit-recovery-v132.cjs:15:27\n\n  12 await db.tenantModuleGrant.updateMany({where:{organizationId:x.ctx.organizationId,moduleSlug:'pos'},data:{readOnly:false}});await pos.refundPOSSale(x.correction);await db.tenantModuleGrant.updateMany({where:{organizationId:x.ctx.organizationId,moduleSlug:'pos'},data:{readOnly:true}});\n  13 const refunded=await unchanged(x,()=>pos.getPOSSaleCommitStatus(x.commit));assert.equal(refunded.originalStatus,'COMPLETED');assert.equal(refunded.currentStatus,'RETURNED');report.checks.push('Current refunded status distinguished from original committed response');\n  14 const record=await db.pOSCommitResult.findFirstOrThrow({where:{organizationId:x.ctx.organizationId}});\n→ 15 await db.pOSCommitResult.update(\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"P0001\", message: \"Completed POS commit result evidence is immutable\", severity: \"ERROR\", detail: None, column: None, hint: None }), transient: false })",
+  "sourceAfter": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+  "sourceStable": true
+}

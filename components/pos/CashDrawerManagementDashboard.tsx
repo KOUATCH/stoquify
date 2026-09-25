@@ -1,6 +1,9 @@
 "use client"
 
-import Link from "next/link"
+import { Link } from "@/i18n/navigation"
+import { getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table"
+import { DataTableSearch } from "@/components/DataTableComponents/DataTableSearch"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
 import { useLocale, useTranslations } from "next-intl"
 import { Fragment, useDeferredValue, useEffect, useMemo, useState } from "react"
 import {
@@ -15,17 +18,14 @@ import {
   Building2,
   CalendarDays,
   CheckCircle2,
-  ChevronLeft,
       ChevronDown,
   ChevronRight,
   CircleDollarSign,
   Clock,
-      Search,
   ExternalLink,
   Filter,
   Gauge,
   LayoutDashboard,
-  LockKeyhole,
   MapPin,
   Monitor,
   ReceiptText,
@@ -40,13 +40,14 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { useNotifications } from "@/components/notifications/NotificationProvider"
 import { useCashDrawerDashboard } from "@/hooks/posHooks/useDrawerDashboard"
+import { DrawerCommandCenter } from "@/components/pos/DrawerCommandCenter"
 import {
   dashboardControlClass,
   dashboardEmptyClass,
@@ -77,12 +78,6 @@ const severityPriority: Record<CashDrawerDashboardDrawer["severity"], number> = 
   warning: 1,
   info: 2,
   success: 3,
-}
-const severityRailClasses: Record<CashDrawerDashboardDrawer["severity"], string> = {
-  critical: "bg-[var(--dash-danger)]",
-  warning: "bg-[var(--dash-gold)]",
-  info: "bg-[var(--dash-info)]",
-  success: "bg-[var(--dash-success)]",
 }
 
 function inputDate(date: Date) {
@@ -136,7 +131,7 @@ function LoadingState() {
       <Skeleton className="h-24 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
       <Skeleton className="h-28 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
       <Skeleton className="h-12 w-full rounded-lg bg-[var(--dash-surface-raised)]" />
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1.35fr)_repeat(3,minmax(0,1fr))]">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1.35fr)_repeat(3,minmax(0,1fr))]">
         {Array.from({ length: 5 }).map((_, index) => (
           <Skeleton key={index} className="h-32 rounded-lg bg-[var(--dash-surface-raised)]" />
         ))}
@@ -192,7 +187,7 @@ export default function CashDrawerManagementDashboard() {
   async function refreshDashboard() {
     notifications.info(t("notifications.refreshTitle"), t("notifications.refreshMessage"), { category: "cash" })
     const result = await dashboardQuery.refetch()
-    if (result.data?.success) {
+    if (!result.isError && result.data?.success) {
       notifications.success(t("notifications.refreshedTitle"), t("notifications.refreshedMessage"), { category: "cash" })
     } else {
       notifications.error(t("notifications.refreshFailedTitle"), result.data?.error || t("notifications.refreshFailedMessage"), {
@@ -256,15 +251,19 @@ export default function CashDrawerManagementDashboard() {
     )
   }
 
-  if (errorMessage && !dashboard) {
-    return <DashboardErrorState error="Cash drawer dashboard unavailable" reset={() => { void dashboardQuery.refetch() }} />
+  if (dashboardQuery.readState === "denied") {
+    return <DashboardRouteState kind="permission_denied" locale={locale === "fr" ? "fr" : "en"} primaryHref={`/${locale}/dashboard`} actions={<Button onClick={() => { void dashboardQuery.retryRead() }}>{t("actions.refresh")}</Button>} />
+  }
+
+  if (dashboardQuery.isError && !dashboard) {
+    return <DashboardErrorState error={t("notifications.refreshFailedMessage")} reset={() => { void dashboardQuery.retryRead() }} />
   }
 
   return (
     <main className="cash-drawer-dashboard dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 text-[var(--dash-text)] sm:px-6 sm:py-6">
       <section className={cn(dashboardPanelClass, "p-4")}>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex min-w-0 flex-col gap-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)]">
@@ -290,7 +289,7 @@ export default function CashDrawerManagementDashboard() {
             ) : null}
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[220px_180px_160px_auto] xl:min-w-[740px]">
+          <div className="grid min-w-0 gap-3 border-t border-[var(--dash-border-subtle)] pt-4 sm:grid-cols-2 xl:grid-cols-[220px_180px_160px_auto]">
             <div>
               <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
                 <MapPin className="h-3.5 w-3.5 text-[var(--dash-info)]" />
@@ -428,7 +427,7 @@ export default function CashDrawerManagementDashboard() {
               <a href="#journal" className="rounded-md px-3 py-2 text-sm font-medium text-[var(--dash-text-soft)] transition-colors hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]">{t("navigation.journal")}</a>
             </div>
           </nav>
-          <section id="overview" className="grid scroll-mt-24 gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1.35fr)_repeat(3,minmax(0,1fr))]">
+          <section id="overview" className="grid scroll-mt-24 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1.35fr)_repeat(3,minmax(0,1fr))]">
             <KpiCard
               title={t("metrics.currentBalance")}
               value={money(dashboard.summary.currentBalance)}
@@ -475,35 +474,13 @@ export default function CashDrawerManagementDashboard() {
           </section>
 
           <section className="flex flex-col-reverse gap-3">
-            <Card id="drawers" className={cn(dashboardPanelClass, "scroll-mt-24")}>
-              <CardHeader className="pb-3">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <Gauge className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-                      {t("sections.drawerHealth")}
-                    </CardTitle>
-                    <CardDescription className={dashboardMutedTextClass}>{t("sections.drawerHealthDescription")}</CardDescription>
-                  </div>
-                  <Badge variant="outline" className={dashboardFilterClass}>
-                    {t("summary.netMovement", { amount: money(dashboard.summary.netMovement) })}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {dashboard.drawers.length === 0 ? (
-                  <div className={dashboardEmptyClass}>
-                    {t("empty.drawers")}
-                  </div>
-                ) : (
-                  <div className="grid gap-3 lg:grid-cols-2">
-                    {orderedDrawers.map((drawer) => (
-                      <DrawerCard key={drawer.id} drawer={drawer} money={money} t={t} formatDateTime={formatDateTime} />
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <DrawerCommandCenter
+              key={`${dashboard.organization.id}:${locationId}:${period}:${period === "custom" ? `${customRange.start}:${customRange.end}` : ""}`}
+              drawers={orderedDrawers}
+              money={money}
+              formatDateTime={formatDateTime}
+              netMovement={dashboard.summary.netMovement}
+            />
 
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
@@ -692,81 +669,6 @@ export default function CashDrawerManagementDashboard() {
   )
 }
 
-function DrawerCard({
-  drawer,
-  money,
-  t,
-  formatDateTime,
-}: {
-  drawer: CashDrawerDashboardDrawer
-  money: (value: number | null | undefined) => string
-  t: ReturnType<typeof useTranslations>
-  formatDateTime: (value: string | null) => string
-}) {
-  return (
-    <div className={cn(dashboardRowClass, "relative overflow-hidden p-3 pl-4")}>
-      <span aria-hidden="true" className={cn("absolute inset-y-0 left-0 w-1", severityRailClasses[drawer.severity])} />
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            {drawer.isOpen ? <UnlockKeyhole className="h-4 w-4 text-[var(--dash-success)]" /> : <LockKeyhole className="h-4 w-4 text-[var(--dash-text-soft)]" />}
-            <div className="truncate text-sm font-semibold">{drawer.name}</div>
-          </div>
-          <div className="mt-1 truncate text-xs text-[var(--dash-text-soft)]">
-            {drawer.locationName} / {drawer.terminalName}
-          </div>
-        </div>
-        <Badge variant="outline" className={cn("shrink-0", drawer.isOpen ? dashboardSeverityClass("success") : dashboardSeverityClass("info"))}>
-          {drawer.isOpen ? t("drawer.open") : t("drawer.closed")}
-        </Badge>
-      </div>
-
-      <div className="mt-3 grid grid-cols-3 gap-2">
-        <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.44)] p-2">
-          <div className="text-[11px] text-[var(--dash-text-soft)]">{t("drawer.expected")}</div>
-          <div className="mt-1 truncate text-sm font-semibold tabular-nums">{money(drawer.expectedBalance)}</div>
-        </div>
-        <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.44)] p-2">
-          <div className="text-[11px] text-[var(--dash-text-soft)]">{t("drawer.current")}</div>
-          <div className="mt-1 truncate text-sm font-semibold tabular-nums">{money(drawer.currentBalance)}</div>
-        </div>
-        <div className={cn("rounded-lg border p-2", dashboardSeverityClass(drawer.severity))}>
-          <div className="text-[11px] opacity-80">{t("drawer.variance")}</div>
-          <div className={cn("mt-1 truncate text-sm font-semibold tabular-nums", dashboardValueTone(drawer.variance))}>{money(drawer.variance)}</div>
-        </div>
-      </div>
-
-      <div className="mt-3 grid gap-1.5 text-xs text-[var(--dash-text-soft)]">
-        <div className="flex justify-between gap-2">
-          <span>{t("drawer.session")}</span>
-          <span className="truncate font-medium text-[var(--dash-text)]">
-            {drawer.activeSessionNumber || t("common.notAvailable")}
-          </span>
-        </div>
-        <div className="flex justify-between gap-2">
-          <span>{t("drawer.cashier")}</span>
-          <span className="truncate font-medium text-[var(--dash-text)]">
-            {drawer.activeCashierName || t("common.notAvailable")}
-          </span>
-        </div>
-        <div className="flex justify-between gap-2">
-          <span>{t("drawer.lastEvent")}</span>
-          <span className="truncate font-medium text-[var(--dash-text)]">{formatDateTime(drawer.lastEventAt)}</span>
-        </div>
-      </div>
-
-      <div className="mt-3 grid grid-cols-4 gap-1.5 text-[11px]">
-        <span className="rounded-lg bg-[var(--dash-brand-soft)] px-2 py-1 text-[var(--dash-brand-strong)]">{money(drawer.periodCashSales)}</span>
-        <span className="rounded-lg bg-[var(--dash-success-soft)] px-2 py-1 text-[var(--dash-success)]">
-          {money(drawer.periodCashIn)}
-        </span>
-        <span className="rounded-lg bg-[var(--dash-gold-soft)] px-2 py-1 text-[var(--dash-gold)]">{money(drawer.periodCashOut)}</span>
-        <span className="rounded-lg bg-[var(--dash-danger-soft)] px-2 py-1 text-[var(--dash-danger)]">{money(drawer.periodRefunds)}</span>
-      </div>
-    </div>
-  )
-}
-
 function TrendChart({
   trend,
   money,
@@ -891,6 +793,8 @@ function SessionTable({
   formatDateTime: (value: string | null) => string
   statusLabel: (status: CashDrawerDashboardSession["status"]) => string
 }) {
+  const locale = useLocale() === "fr" ? "fr" : "en"
+
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null)
   const [sessionSearch, setSessionSearch] = useState("")
   const deferredSessionSearch = useDeferredValue(sessionSearch)
@@ -1004,33 +908,34 @@ function SessionTable({
     setSessionPage((current) => Math.min(Math.max(1, current), totalPages))
   }, [sessionPageSize, totalPages])
 
-  if (sessions.length === 0) {
-    return <div className={dashboardEmptyClass}>{t("empty.sessions")}</div>
-  }
+  const paginationTable = useReactTable({
+    data: filteredAndSortedSessions,
+    columns: [],
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    rowCount: filteredAndSortedSessions.length,
+    state: { pagination: { pageIndex: boundedPage - 1, pageSize: sessionPageSize } },
+    onPaginationChange: (updater) => {
+      const current = { pageIndex: boundedPage - 1, pageSize: sessionPageSize }
+      const next = typeof updater === "function" ? updater(current) : updater
+      setSessionPageSize(next.pageSize)
+      setSessionPage(next.pageSize !== sessionPageSize ? 1 : next.pageIndex + 1)
+    },
+  })
 
   return (
     <div className="space-y-3">
-      <div className="dashboard-table-toolbar flex flex-wrap gap-2 xl:flex-nowrap">
-        <div className="relative min-w-[220px] flex-1">
-          <Search className="text-input-icon pointer-events-none absolute left-3 top-3 h-4 w-4 text-[var(--dash-text-soft)]" />
-          <Input
-            type="search"
-            value={sessionSearch}
-            onChange={(event) => setSessionSearch(event.target.value)}
-            placeholder={t("tableControls.searchPlaceholder")}
-            aria-label={t("tableControls.searchPlaceholder")}
-            className={cn("pl-9", dashboardControlClass)}
-          />
-        </div>
-        <div className="w-44">
-          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">{t("tableControls.status")}</div>
+      <div className="dashboard-table-toolbar flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
+        <div className="min-w-[220px] flex-1"><DataTableSearch value={sessionSearch} onChange={setSessionSearch} placeholder={t("tableControls.searchPlaceholder")} clearButtonLabel={locale === "fr" ? "Effacer la recherche" : "Clear table search"} /></div>
+        <div className="w-44 shrink-0">
+          <div className="sr-only">{t("tableControls.status")}</div>
           <Select
             value={statusFilter}
             onValueChange={(value) => {
               setStatusFilter(value as "all" | CashDrawerDashboardSession["status"])
             }}
           >
-            <SelectTrigger className={dashboardControlClass} aria-label={t("tableControls.status")}>
+            <SelectTrigger className={cn(dashboardControlClass, "h-9")} aria-label={t("tableControls.status")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -1042,15 +947,15 @@ function SessionTable({
             </SelectContent>
           </Select>
         </div>
-        <div className="w-44">
-          <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">{t("tableControls.time")}</div>
+        <div className="w-44 shrink-0">
+          <div className="sr-only">{t("tableControls.time")}</div>
           <Select
             value={timeFilter}
             onValueChange={(value) => {
               setTimeFilter(value as "all" | "24h" | "7d" | "30d")
             }}
           >
-            <SelectTrigger className={dashboardControlClass} aria-label={t("tableControls.time")}>
+            <SelectTrigger className={cn(dashboardControlClass, "h-9")} aria-label={t("tableControls.time")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -1097,7 +1002,7 @@ function SessionTable({
             {visibleSessions.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-12 text-center text-sm text-[var(--dash-text-soft)]">
-                  {t("empty.sessionsFiltered")}
+                  {sessions.length ? t("empty.sessionsFiltered") : t("empty.sessions")}
                 </td>
               </tr>
             ) : null}
@@ -1154,7 +1059,7 @@ function SessionTable({
                           <TableDetailValue label={t("details.location")} value={session.locationName} />
                           <TableDetailValue label={t("details.openingBalance")} value={money(session.openingBalance)} numeric />
                           <TableDetailValue label={t("details.expectedBalance")} value={money(session.expectedBalance)} numeric />
-                          <TableDetailValue label={t("details.closingBalance")} value={money(session.closingBalance)} numeric />
+                          <TableDetailValue label={t("details.closingBalance")} value={session.closingBalance === null ? t("common.notAvailable") : money(session.closingBalance)} numeric />
                           <TableDetailValue label={t("details.card")} value={money(session.cardTotal)} numeric />
                           <TableDetailValue label={t("details.mobileMoney")} value={money(session.mobileMoneyTotal)} numeric />
                           <TableDetailValue label={t("details.bankTransfer")} value={money(session.bankTransferTotal)} numeric />
@@ -1172,60 +1077,16 @@ function SessionTable({
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
-      <div className="dashboard-table-pagination flex flex-wrap items-center justify-between gap-2">
-        <span className="text-xs text-[var(--dash-text-soft)]">
-          {t("tableControls.showing", { start: visibleStart, end: visibleEnd, total: filteredAndSortedSessions.length })}
-        </span>
-        <div className="flex flex-wrap items-center gap-2">
-          <div>
-            <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">{t("tableControls.rowsPerPage")}</div>
-            <Select
-              value={String(sessionPageSize)}
-              onValueChange={(value) => {
-                setSessionPageSize(Number(value))
-              }}
-            >
-              <SelectTrigger className={cn("h-9 w-[106px]", dashboardControlClass)} aria-label={t("tableControls.rowsPerPage")}>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {pageSizeOptions.map((option) => (
-                  <SelectItem key={option} value={String(option)}>
-                    {option}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center gap-2 pt-5 sm:pt-0">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="dashboard-button-secondary rounded-lg"
-              onClick={() => setSessionPage((current) => Math.max(1, current - 1))}
-              disabled={boundedPage <= 1}
-            >
-              <ChevronLeft className="h-3.5 w-3.5" />
-              {t("tableControls.previous")}
-            </Button>
-            <span className="inline-flex h-9 min-w-11 items-center justify-center rounded-md border border-[var(--dash-border-subtle)] px-2 text-xs text-[var(--dash-text)]">
-              {boundedPage} / {totalPages}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="dashboard-button-secondary rounded-lg"
-              onClick={() => setSessionPage((current) => Math.min(totalPages, current + 1))}
-              disabled={boundedPage >= totalPages}
-            >
-              {t("tableControls.next")}
-              <ChevronRight className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-        </div>
+      <div className="space-y-3">
+        <p className="text-xs text-[var(--dash-text-soft)]">{t("tableControls.showing", { start: visibleStart, end: visibleEnd, total: filteredAndSortedSessions.length })}</p>
+        <DataTablePagination
+          table={paginationTable}
+          variant="landing"
+          locale={locale}
+          showSelectionCount={false}
+          pageSizeOptions={pageSizeOptions}
+          copy={{ rowsPerPage: t("tableControls.rowsPerPage"), previousPage: t("tableControls.previous"), nextPage: t("tableControls.next") }}
+        />
       </div>
     </div>
   )
@@ -1243,14 +1104,34 @@ function JournalTable({
   formatDateTime: (value: string | null) => string
   eventLabel: (type: CashDrawerDashboardJournalEntry["type"]) => string
 }) {
+  const locale = useLocale() === "fr" ? "fr" : "en"
+
   const [expandedJournalId, setExpandedJournalId] = useState<string | null>(null)
 
-  if (journal.length === 0) {
-    return <div className={dashboardEmptyClass}>{t("empty.journal")}</div>
-  }
+  const [search, setSearch] = useState("")
+  const filteredJournal = useMemo(() => journal.filter((entry) => [
+    eventLabel(entry.type), entry.reason, entry.drawerName, entry.terminalName, entry.cashierName,
+    money(entry.amount), money(entry.balanceAfter), formatDateTime(entry.createdAt),
+  ].join(" ").toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())), [journal, search, eventLabel, money, formatDateTime])
+  const table = useReactTable({
+    data: filteredJournal,
+    columns: [],
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageIndex: 0, pageSize: 10 } },
+  })
 
   return (
-    <ScrollArea className="max-h-[560px] w-full">
+    <div className="space-y-3">
+      <div className="dashboard-table-toolbar">
+        <DataTableSearch
+          value={search}
+          onChange={(value) => { setSearch(value); table.setPageIndex(0); setExpandedJournalId(null) }}
+          placeholder={locale === "fr" ? "Rechercher dans le journal..." : "Search journal..."}
+          clearButtonLabel={locale === "fr" ? "Effacer la recherche" : "Clear table search"}
+        />
+      </div>
+      {filteredJournal.length ? <ScrollArea className="max-h-[560px] w-full">
       <table className="dashboard-table-base w-full text-sm">
         <thead className="sticky top-0 z-10 bg-[var(--dash-surface)] text-left text-xs text-[var(--dash-text-soft)]">
           <tr className="border-b border-[var(--dash-border-subtle)]">
@@ -1263,7 +1144,7 @@ function JournalTable({
           </tr>
         </thead>
         <tbody>
-          {journal.map((entry, index) => {
+          {table.getRowModel().rows.map(({ original: entry }, index) => {
             const isExpanded = expandedJournalId === entry.id
             return (
               <Fragment key={entry.id}>
@@ -1316,6 +1197,8 @@ function JournalTable({
         </tbody>
       </table>
       <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    </ScrollArea> : <div className={dashboardEmptyClass}>{search.trim() ? (locale === "fr" ? "Aucun résultat." : "No results.") : t("empty.journal")}</div>}
+      <DataTablePagination table={table} variant="landing" locale={locale} showSelectionCount={false} pageSizeOptions={[10, 25, 50]} />
+    </div>
   )
 }

@@ -1,0 +1,48 @@
+{
+  "run": "59c36911-345",
+  "mode": "prepare",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T11:58:59.417Z",
+  "sourcesBefore": {
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/security/role-grant-policy.service.ts": "3a05d510979a36c13f57564c660b326ed21400a5323f039dfa5d52ed203f22a3",
+    "services/users/user-invitation-authority.service.ts": "cea31d719e4f1caeaefce5db3f9b2db365777f24a63541be4a41929183c22f73",
+    "services/users/user-invitation-options.service.ts": "1ed6895231f82c3c3b4bad23e4c5c96de3f7f429b6ce5624b42f4a8d3aee91c4",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "232c0f2061101dc53d16eccda111670ce126579840201449316998706e43677b",
+    "components/Forms/users/userInvitationForm.tsx": "00648a757494997efe64b548146fd42d7775d6d4bf3a623148731f06e8e2a514",
+    "messages/en.json": "a67a949eef244ce3f029bfd10c16af72b6254c512c004082c730d6d9dc011320",
+    "messages/fr.json": "d08958c8a52601e370977cd023c36d41a4e32fdd4c19081d4399cd15a57bc743"
+  },
+  "checks": [
+    {
+      "name": "EN/FR synthetic scoped issuers",
+      "passed": true,
+      "users": 2,
+      "roles": 8
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Browser only reads role choices and dialog state. It never submits invitations, grants permissions, confirms passwords, sends email or changes existing users.",
+    "New synthetic issuers and target roles are added only to existing owned role fixture organizations. Their credentials are private and never printed.",
+    "Desktop/mobile keyboard and scope checks do not establish native screen-reader or whole-workflow certification."
+  ],
+  "originalAuthorityBefore": "16fc99d2c88e8b991ce7e245ea0ba99306c3cbaeb7a4b4cc1f91da36fdefd4b4",
+  "originalAuthorityAfter": "16fc99d2c88e8b991ce7e245ea0ba99306c3cbaeb7a4b4cc1f91da36fdefd4b4",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T11:59:00.147Z",
+  "sourcesAfter": {
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/security/role-grant-policy.service.ts": "3a05d510979a36c13f57564c660b326ed21400a5323f039dfa5d52ed203f22a3",
+    "services/users/user-invitation-authority.service.ts": "cea31d719e4f1caeaefce5db3f9b2db365777f24a63541be4a41929183c22f73",
+    "services/users/user-invitation-options.service.ts": "1ed6895231f82c3c3b4bad23e4c5c96de3f7f429b6ce5624b42f4a8d3aee91c4",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "232c0f2061101dc53d16eccda111670ce126579840201449316998706e43677b",
+    "components/Forms/users/userInvitationForm.tsx": "00648a757494997efe64b548146fd42d7775d6d4bf3a623148731f06e8e2a514",
+    "messages/en.json": "a67a949eef244ce3f029bfd10c16af72b6254c512c004082c730d6d9dc011320",
+    "messages/fr.json": "d08958c8a52601e370977cd023c36d41a4e32fdd4c19081d4399cd15a57bc743"
+  },
+  "sourceStable": true,
+  "driverSha256": "b52a84d50ebad36ba82d03ed4196e80845bb726391754483ce825238c90eff1d",
+  "passed": 1,
+  "failed": 0
+}

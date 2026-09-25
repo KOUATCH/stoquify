@@ -1,0 +1,369 @@
+{
+  "at": "2026-09-08T20:36:00.113Z",
+  "scope": "Source inventory of period-check callers and direct readers, not workflow or concurrency completion",
+  "callers": [
+    {
+      "path": "services/accounting/customer-settlement.service.ts",
+      "sha256": "607321e7d5541a82d5aba4e88bc5ee7b5064a3b5afee371faea39ef32799616e",
+      "calls": [
+        {
+          "line": 395,
+          "text": "const period = await getOpenPeriodForDate("
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/customer-settlement-reversal.service.ts",
+      "sha256": "ddccb853d7df229ffc577a3f698986ac3d2111b5d7df5959a199a7d15967fb70",
+      "calls": [
+        {
+          "line": 672,
+          "text": "const period = await getOpenPeriodForDate("
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/periods.service.ts",
+      "sha256": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+      "calls": [
+        {
+          "line": 156,
+          "text": "export async function getOpenPeriodForDate("
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+      "calls": [
+        {
+          "line": 314,
+          "text": "const period = await getOpenPeriodForDate(organizationId, entryDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/posting.service.ts",
+      "sha256": "6978d887319fc82384075de1fa1946eef538ad40762a5577a1ae1da61cfa1df1",
+      "calls": [
+        {
+          "line": 251,
+          "text": "const period = await getOpenPeriodForDate(organizationId, entry.entryDate, tx)"
+        },
+        {
+          "line": 425,
+          "text": "const period = await getOpenPeriodForDate(organizationId, reversalDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/postings/pos-reversal-helpers.ts",
+      "sha256": "765ebc80a9076d0d64e4304d0e52a2437f41fd3a9440839d5ea96eece683ffdc",
+      "calls": [
+        {
+          "line": 463,
+          "text": "const period = await getOpenPeriodForDate(organizationId, entryDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/postings/post-delivery-order.ts",
+      "sha256": "8705f3ca1143fa83dad060846e90279a8246258caa3c999781651a88d85833e9",
+      "calls": [
+        {
+          "line": 122,
+          "text": "const period = await getOpenPeriodForDate(input.organizationId, input.postingDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/postings/post-sale.ts",
+      "sha256": "b5d78b39dbbf215acbde2e28d5fd794e1765267b9cad1b69365e1ff477be6d5c",
+      "calls": [
+        {
+          "line": 513,
+          "text": "const period = await getOpenPeriodForDate(organizationId, entryDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/accounting/postings/post-payment.ts",
+      "sha256": "1e3165412259eb5bc809c7e23b815e879e895004f1a6dff277611e9eb43759e9",
+      "calls": [
+        {
+          "line": 585,
+          "text": "const period = await getOpenPeriodForDate(organizationId, entryDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/purchasing/purchase-correction-ledger.service.ts",
+      "sha256": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+      "calls": [
+        {
+          "line": 62,
+          "text": "const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/purchasing/invoice-preparation.service.ts",
+      "sha256": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+      "calls": [
+        {
+          "line": 45,
+          "text": "const periodBeforeLock = await getOpenPeriodForDate(scope.organizationId, documentDate, tx)"
+        },
+        {
+          "line": 47,
+          "text": "const period = await getOpenPeriodForDate(scope.organizationId, documentDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/purchasing/invoice-correction.service.ts",
+      "sha256": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+      "calls": [
+        {
+          "line": 63,
+          "text": "for (const value of [invoice.invoiceDate, date]) { const period = await getOpenPeriodForDate(scope.organizationId, value, tx); await tx.$queryRaw`SELECT id FROM accounting_periods WHERE id = ${period.id} AND \"organizationId\" = ${scope.organizationId} FOR SHARE`; periods.push(await getOpenPeriodForDate(scope.organizationId, value, tx)) }"
+        }
+      ]
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+      "calls": [
+        {
+          "line": 679,
+          "text": "const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)"
+        },
+        {
+          "line": 1041,
+          "text": "const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)"
+        },
+        {
+          "line": 1860,
+          "text": "const period = await getOpenPeriodForDate(parsed.organizationId, invoiceDate, tx)"
+        },
+        {
+          "line": 2704,
+          "text": "const period = await getOpenPeriodForDate(parsed.organizationId, invoice.invoiceDate, tx)"
+        },
+        {
+          "line": 3620,
+          "text": "const period = await getOpenPeriodForDate(parsed.organizationId, paymentDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/inventory/inventory-count.service.ts",
+      "sha256": "0476fbb5691b41a0965a4186842b88fdc3f801c34ea94cbc7a32d1d0bc70517e",
+      "calls": [
+        {
+          "line": 633,
+          "text": "await getOpenPeriodForDate(parsed.organizationId, occurredAt, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "b2b99b3b868ca33ba13b3f9e6610c21a8a879ddcf7beb0ecac766153e8b6d6fb",
+      "calls": [
+        {
+          "line": 316,
+          "text": "return await getOpenPeriodForDate(organizationId, eventDate, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/inventory/inventory-adjustment-reversal.service.ts",
+      "sha256": "087d1cb80e27bfa231fffdb7f9d7c089c6f27e3054dbbeb8bc004fdedc08a689",
+      "calls": [
+        {
+          "line": 473,
+          "text": "const period = await getOpenPeriodForDate(parsed.organizationId, parsed.effectiveAt, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/payroll/payroll-employee-balance.service.ts",
+      "sha256": "e9a7c38b63298fdc4898649e1621399eca20fe1929337e72209a706930727e6f",
+      "calls": [
+        {
+          "line": 1527,
+          "text": "const period = await getOpenPeriodForDate("
+        },
+        {
+          "line": 1859,
+          "text": "const period = await getOpenPeriodForDate("
+        }
+      ]
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9",
+      "calls": [
+        {
+          "line": 7543,
+          "text": "const accountingPeriod = await getOpenPeriodForDate("
+        },
+        {
+          "line": 7882,
+          "text": "const accountingPeriod = await getOpenPeriodForDate("
+        },
+        {
+          "line": 8438,
+          "text": "const period = await getOpenPeriodForDate("
+        },
+        {
+          "line": 9028,
+          "text": "const period = await getOpenPeriodForDate("
+        }
+      ]
+    },
+    {
+      "path": "services/inventory/inventory-stock-event.service.ts",
+      "sha256": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+      "calls": [
+        {
+          "line": 250,
+          "text": "return await getOpenPeriodForDate(organizationId, occurredAt, tx)"
+        }
+      ]
+    },
+    {
+      "path": "services/inventory/inventory-transfer.service.ts",
+      "sha256": "ad1aee0a3cb2deb570581600eaf19125962f1ffd89835845a20937b8310015d3",
+      "calls": [
+        {
+          "line": 224,
+          "text": "return await getOpenPeriodForDate(organizationId, eventDate, tx)"
+        }
+      ]
+    }
+  ],
+  "directPeriodReaders": [
+    {
+      "path": "services/assurance/assurance-registry.service.ts",
+      "sha256": "e96e38c948011dee8e7d1c1a23979d1a51c0e9e0f97cef605ff3585ab3c129de",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/accounting/close-assurance.service.ts",
+      "sha256": "dc721de85a3f3c7b10fa4e54be905627ab71e101fc3a78a45ea5f32a27f705ab",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/accounting/accounting-settings.service.ts",
+      "sha256": "1be92b5855539232f9ddcc971d6e8c1449500d340b964d87535012173771650f",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/accounting/periods.service.ts",
+      "sha256": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/accounting/financial-statements.service.ts",
+      "sha256": "a0ed910c921207695372c7fcaaf7c857ba605e58b0d094f6383e2d7525644430",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/accounting/data-trust.service.ts",
+      "sha256": "f25a82b358ef2f039f38bcc3e6b37176d578731d8141f36598e21065d2a55943",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/accounting/reports.service.ts",
+      "sha256": "dfe72749da17a5c3af4de5bd2ac4e680138fdd0c1603a1cd19f85b41bb3ce268",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/accounting/reconciliations.service.ts",
+      "sha256": "47586a4957bd6850a2fae7a0b58c46996fc061b15f9af1fd5c4ad6a75d8f56de",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/reconciliation/payment-suspense-workflow.service.ts",
+      "sha256": "b9154e4a2042e067aac126ee106ce789e9b96ef8ca96006d93e2302b797e3fb7",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-certification.service.ts",
+      "sha256": "f2cf266ed4f53dbb473ee2de06f0f54f00b098aa9aa674593621b3a56f41894e",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/snapshots/close-readiness-snapshot.service.ts",
+      "sha256": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/purchasing/payment-release.service.ts",
+      "sha256": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/purchasing/payment-posting-recovery.service.ts",
+      "sha256": "65991f8dac589001bfde2729c347dee8922caf653c323e49e5a972134cb44c0c",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/purchasing/invoice-ledger-recovery.service.ts",
+      "sha256": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/purchasing/invoice-approval.service.ts",
+      "sha256": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/payroll/payroll-setup-readiness.service.ts",
+      "sha256": "28c53d5da7ea67f5171846189109edac2164812ef8bea1c3cc1d192bccebc292",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    },
+    {
+      "path": "services/inventory/inventory-reconciliation.service.ts",
+      "sha256": "d6357d6c4f5ee2c7dbeb9c485c7a191b37074e57715e5d26e9ce4d377d16ca6e",
+      "classification": "Requires owning-call-path review; a period read alone is not proof of a write or a bypass"
+    }
+  ],
+  "graphHints": [
+    {
+      "id": "accounting_settings_actions_closeaccountingperiodaction",
+      "label": "closeAccountingPeriodAction()"
+    }
+  ],
+  "verifiedRuntime": [
+    "Transactional period checks versus actual close, both orderings",
+    "Concurrent close uniqueness",
+    "Concurrent shared checks and independent tenant close",
+    "Actual AP invoice/credit/return and stock regression"
+  ],
+  "confirmedRemaining": [
+    {
+      "path": "services/reconciliation/payment-suspense-workflow.service.ts",
+      "boundary": "resolveOpenPeriodForSuspense reads an open period without shared lock; underlying suspense posting writer requires joining the protocol"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-certification.service.ts",
+      "boundary": "Sign-off uses cached run.accountingPeriod or a separate unlocked open-period lookup; current period must be locked and revalidated"
+    },
+    {
+      "path": "services/accounting/posting.service.ts",
+      "boundary": "createLedgerPostingBatch remains a low-level helper; callers outside the checked writer paths and null-period batches need separate inventory"
+    }
+  ],
+  "limitations": [
+    "Root-client period checks are read-only; writers must supply their transaction",
+    "Direct SQL writes, other period mutation paths and every dependent domain lifecycle are not certified by this census",
+    "Current date resolution preserves the existing latest-start-date rule; overlapping period setup requires separate review"
+  ]
+}

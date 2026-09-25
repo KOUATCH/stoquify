@@ -1,0 +1,102 @@
+# PROPOSED ONLY: automatic approval review rejected this change; do not apply without resolved approval.
+# Additional ingestion serialization and focused tests remain necessary before enabling POS operational stop.
+--- a/services/pos/pos.service.ts
++++ b/services/pos/pos.service.ts
+@@
+-import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
++import { assertModuleNewWorkInTx, getModuleAdmissionInTx, ModuleNewWorkStoppedError } from "@/services/modules/module-admission.service"
+@@
+-export async function commitPOSSale(rawInput: UserScoped) {
++type AcceptedOfflineSaleReference = UserScoped<{ offlineEventId: string }>
++
++async function loadAcceptedOfflineSale(
++  client: Pick<Prisma.TransactionClient, "pOSOfflineEvent">,
++  reference: AcceptedOfflineSaleReference,
++) {
++  const event = await client.pOSOfflineEvent.findFirst({
++    where: { id: reference.offlineEventId, organizationId: reference.organizationId },
++    include: { device: true, businessEvent: true },
++  })
++  if (!event) throw new NotFoundError("Accepted offline sale was not found")
++  const acceptance = event.businessEvent
++  const evidence = acceptance && isJsonObject(acceptance.payload) ? acceptance.payload : null
++  if (
++    event.status !== "PENDING_REPLAY" || event.eventType !== "OFFLINE_SALE_CAPTURED" ||
++    event.device.status !== "ACTIVE" || event.device.organizationId !== reference.organizationId ||
++    event.device.terminalId !== event.terminalId || event.device.locationId !== event.locationId ||
++    hashBusinessPayload(event.payload) !== event.payloadHash ||
++    !acceptance || acceptance.organizationId !== reference.organizationId ||
++    acceptance.eventSource !== "OFFLINE_POS" || acceptance.eventType !== "pos.offline.event.captured" ||
++    acceptance.sourceId !== event.id || acceptance.payloadHash !== event.payloadHash ||
++    acceptance.locationId !== event.locationId || acceptance.registerId !== event.terminalId ||
++    acceptance.deviceId !== event.deviceId || evidence?.offlineEventId !== event.id ||
++    evidence?.payloadHash !== event.payloadHash || evidence?.entryHash !== event.entryHash
++  ) {
++    throw new ConflictError("Accepted offline sale evidence does not match its tenant and stored payload")
++  }
++  const payload = isJsonObject(event.payload) && isJsonObject(event.payload.commitSale ?? null)
++    ? event.payload.commitSale
++    : event.payload
++  const input = commitSaleSchema.parse(isJsonObject(payload)
++    ? { ...payload, clientCommitId: payload.clientCommitId ?? ("offline:" + event.id) }
++    : payload)
++  if (input.terminalId !== event.terminalId || input.locationId !== event.locationId ||
++    !event.sessionId || input.sessionId !== event.sessionId) {
++    throw new ConflictError("Accepted offline sale scope does not match its stored payload")
++  }
++  return { event, acceptance, input }
++}
++
++/** Stored tenant event reference only; caller cannot supply continuation evidence. */
++export async function commitAcceptedOfflinePOSSale(reference: AcceptedOfflineSaleReference) {
++  if (process.env.NODE_ENV !== "test" || process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS !== "1") {
++    throw new BusinessRuleError("Offline POS capture and replay are disabled for the authorized development-only cash pilot.")
++  }
++  const { input } = await loadAcceptedOfflineSale(db, reference)
++  return commitPOSSaleInternal({ ...input, organizationId: reference.organizationId, userId: reference.userId }, reference.offlineEventId)
++}
++
++export async function commitPOSSale(rawInput: UserScoped) {
++  return commitPOSSaleInternal(rawInput)
++}
++
++async function commitPOSSaleInternal(rawInput: UserScoped, acceptedOfflineEventId?: string) {
+@@
+-    await assertModuleNewWorkInTx(tx, {
++    const admissionInput = {
+       organizationId: rawInput.organizationId,
+-      moduleSlug: "pos",
++      moduleSlug: "pos" as const,
+       operation: "pos.sale.commit",
+-    })
++    }
++    if (acceptedOfflineEventId) {
++      const admission = await getModuleAdmissionInTx(tx, admissionInput)
++      const { event, acceptance, input: storedInput } = await loadAcceptedOfflineSale(tx, {
++        organizationId: rawInput.organizationId, userId: rawInput.userId, offlineEventId: acceptedOfflineEventId,
++      })
++      if (storedInput.clientCommitId !== input.clientCommitId || posSaleCommitRequestHash(rawInput, storedInput) !== requestHash) {
++        throw new ConflictError("Accepted offline sale changed before finalization")
++      }
++      const acceptedAt = Math.max(event.receivedAtServer.getTime(), acceptance.recordedAt.getTime())
++      const acceptedBeforeStops = Number.isFinite(acceptedAt) && admission.blockedBy.every(slug => {
++        const stoppedAt = admission.stoppedAt[slug]
++        return typeof stoppedAt === "string" && Number.isFinite(Date.parse(stoppedAt)) && acceptedAt < Date.parse(stoppedAt)
++      })
++      if (!admission.allowed && !acceptedBeforeStops) throw new ModuleNewWorkStoppedError(admissionInput, admission.blockedBy)
++    } else {
++      await assertModuleNewWorkInTx(tx, admissionInput)
++    }
+--- a/services/pos/offline-sync.service.ts
++++ b/services/pos/offline-sync.service.ts
+@@
+-import { commitPOSSale } from "./pos.service"
++import { commitAcceptedOfflinePOSSale } from "./pos.service"
+@@
+-    const committed = await commitPOSSale({
+-      ...commitInput,
++    const committed = await commitAcceptedOfflinePOSSale({
++      offlineEventId: event.id,
+       organizationId: input.organizationId,
+       userId: input.userId,
+     })

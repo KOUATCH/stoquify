@@ -12,6 +12,7 @@ import { InventorySoDViolationError } from "../inventory-errors"
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
     location: { findFirst: jest.fn() },
     item: { findMany: jest.fn() },
     inventoryLevel: { findMany: jest.fn(), findUnique: jest.fn(), updateMany: jest.fn(), create: jest.fn() },
@@ -36,6 +37,7 @@ jest.mock("@/prisma/db", () => ({
 }))
 
 const mockedDb = db as unknown as {
+  $queryRaw: jest.Mock
   $transaction: jest.Mock
   location: { findFirst: jest.Mock }
   item: { findMany: jest.Mock }
@@ -222,6 +224,7 @@ function adjustment(overrides: Record<string, unknown> = {}) {
 
 beforeEach(() => {
   jest.clearAllMocks()
+  mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: [], newWorkStoppedAt: {} }])
   mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
   mockedDb.location.findFirst.mockResolvedValue(location())
   mockedDb.item.findMany.mockResolvedValue([item()])
@@ -300,6 +303,11 @@ beforeEach(() => {
 })
 
 describe("stock count kernel", () => {
+  it("blocks new count sessions after a reviewed inventory stop", async () => {
+    mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["inventory"], newWorkStoppedAt: { inventory: "2026-09-05T10:00:00Z" } }])
+    await expect(createStockCountSession({ organizationId: "org-1", locationId: "loc-1", createdById: "maker-1", itemIds: ["item-1"], countDate })).rejects.toMatchObject({ metadata: { reason: "MODULE_NEW_WORK_STOPPED" } })
+    expect(mockedDb.stockCountSession.create).not.toHaveBeenCalled()
+  })
   it("freezes a count snapshot with a stable evidence hash", async () => {
     const result = await createStockCountSession({
       organizationId: "org-1",
@@ -358,7 +366,11 @@ describe("stock count kernel", () => {
     )
   })
 
-  it("posts count variance through a generated stock adjustment event and explicit ledger blocker", async () => {
+  it.each([false, true])("posts recorded count variance with explicit ledger blockers (new work stopped: %s)", async stopped => {
+    if (stopped) {
+      mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : query.sql.includes('"stock_count_sessions"') ? [{ id: "count-1" }] : [{ newWorkStoppedModules: ["inventory"], newWorkStoppedAt: { inventory: "2026-09-05T10:00:00Z" } }])
+      mockedDb.stockAdjustment.findFirst.mockResolvedValueOnce(null)
+    }
     mockedDb.stockCountSession.findFirst.mockResolvedValue(
       countSession({
         status: "SUBMITTED",

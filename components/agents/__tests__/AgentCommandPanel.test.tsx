@@ -56,7 +56,7 @@ describe("AgentCommandPanel", () => {
     expect(actions.runCommandAgentAction).not.toHaveBeenCalled()
   })
 
-  it("renders evidence-cited priorities and bounded feedback controls", async () => {
+  it.each([[false, "en"], [true, "en"], [false, "fr"]] as const)("renders evidence-cited priorities with governed proposal visibility (%s, %s)", async (proposalDraftsEnabled, locale) => {
     actions.runCommandAgentAction.mockResolvedValue({
       success: true,
       data: {
@@ -127,25 +127,29 @@ describe("AgentCommandPanel", () => {
     render(
       <AgentCommandPanel
         access={{ mode: "internal", canRun: true, canRender: true, reason: "available" }}
+        proposalDraftsEnabled={proposalDraftsEnabled}
         digestId="manager-run-sheet"
         periodStart="2026-07-22T00:00:00.000Z"
         periodEnd="2026-07-22T23:59:59.999Z"
-        locale="en"
+        locale={locale}
       />,
     )
 
-    fireEvent.click(screen.getByRole("button", { name: "Generate brief" }))
+    fireEvent.click(screen.getByRole("button", { name: locale === "en" ? "Generate brief" : "Generer le brief" }))
     expect(await screen.findByRole("heading", { name: "Manager run sheet" })).toBeInTheDocument()
-    expect(screen.getByRole("link", { name: "Open source" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: locale === "en" ? "Open source" : "Ouvrir la source" })).toHaveAttribute(
       "href",
-      "/dashboard/manager-action-center",
+      `/${locale}/dashboard/manager-action-center`,
     )
-    expect(
-      screen.queryByRole("button", { name: /prepare proposal/i }),
-    ).not.toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Unsafe" })).toBeInTheDocument()
+    if (proposalDraftsEnabled) {
+      expect(screen.getByRole("button", { name: /prepare proposal/i })).toBeEnabled()
+    } else {
+      expect(screen.queryByRole("button", { name: /prepare proposal/i })).not.toBeInTheDocument()
+    }
+    expect(screen.getByRole("button", { name: locale === "en" ? "Unsafe" : "Dangereux" })).toBeInTheDocument()
     expect(actions.runCommandAgentAction).toHaveBeenCalledWith(expect.objectContaining({
       digestId: "manager-run-sheet",
+      locale,
       requestId: "00000000-0000-4000-8000-000000000001",
     }))
   })

@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-08T15:12:36.392Z",
+  "mode": "after",
+  "run": "9e6848b3-408",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "8c02d4dcdbd981e9f07dc741d99eedf97df96d4faeddcb65783d149b8869915b",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/purchasing/ap-history-revision.ts": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3"
+  },
+  "checks": [
+    "All invoice/payment rows traverse exactly once despite cross-table ID collision",
+    "Status change moving a source outside its filter rejects the old cursor",
+    "Date/sort movement invalidates continuation",
+    "New ledger evidence invalidates continuation",
+    "New allocation without parent timestamp change invalidates continuation",
+    "Supplier label revision invalidates continuation",
+    "Fresh first-page read recovers after source changes"
+  ],
+  "originalBefore": "0b81b716dcb3ef0701ebc5bf8cdf8d14fe958f38f6074a8b3d52c84086657e16",
+  "pagination": {
+    "expected": 29,
+    "received": 29,
+    "unique": 29,
+    "paymentWithSharedIdIncluded": true
+  },
+  "changedOutOfFilter": {
+    "staleRejected": true,
+    "staleCode": "CONFLICT"
+  },
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "8c02d4dcdbd981e9f07dc741d99eedf97df96d4faeddcb65783d149b8869915b",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/purchasing/ap-history-revision.ts": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3"
+  },
+  "sourceStable": true
+}

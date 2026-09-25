@@ -53,13 +53,13 @@ jest.mock("@/actions/security/step-up-auth.actions", () => ({
   stepUpWithPasswordAction: jest.fn(),
 }))
 
-const mockPaymentReconciliationWorkbench = jest.fn(() => (
+const mockPaymentReconciliationWorkbench = jest.fn((_props: { initialSignRunId?: string }) => (
   <section>Payment reconciliation workbench rendered</section>
 ))
 
 jest.mock("@/components/finance/PaymentReconciliationWorkbench", () => ({
   __esModule: true,
-  default: () => mockPaymentReconciliationWorkbench(),
+  default: (props: { initialSignRunId?: string }) => mockPaymentReconciliationWorkbench(props),
 }))
 
 const mockRequireAnyPermission = requireAnyPermission as jest.Mock
@@ -118,6 +118,16 @@ describe("FinanceReconciliationPage", () => {
       audit: true,
     })
     expect(screen.getByText("Payment reconciliation workbench rendered")).toBeInTheDocument()
+  })
+
+  it("passes a requested run only as selection after the normal route boundary", async () => {
+    render(await FinanceReconciliationPage({ params: Promise.resolve({ locale: "en" }), searchParams: Promise.resolve({ reviewRun: "retained-run" }) }))
+    expect(mockPaymentReconciliationWorkbench).toHaveBeenCalledWith({ initialSignRunId: "retained-run" })
+    expect(mockRequireAnyPermission).toHaveBeenCalled(); expect(mockObserveModuleAccess).toHaveBeenCalled()
+  })
+  it.each(["", "x".repeat(192), ["first", "second"]])("ignores malformed or ambiguous run selection", async reviewRun => {
+    render(await FinanceReconciliationPage({ params: Promise.resolve({ locale: "en" }), searchParams: Promise.resolve({ reviewRun }) }))
+    expect(mockPaymentReconciliationWorkbench).toHaveBeenCalledWith({ initialSignRunId: undefined })
   })
 
   it("renders the unavailable module state without mounting the workbench", async () => {

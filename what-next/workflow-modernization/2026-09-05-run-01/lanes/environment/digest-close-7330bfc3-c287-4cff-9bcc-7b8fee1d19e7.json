@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-15T14:00:27.525Z",
+  "baseline": true,
+  "sourceBefore": {
+    "services/signals/business-signal-rules.service.ts": "36b904d7056e7c62a0b690680dbc73c09d74de44b3fd074a1809967ef5504197",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "c0fefb35efd2c6902b9c700159c4f0f4d0d96b4d7d1e9135ced337819c7fa9ab",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "bc01d19aa9c8dbc4f958feea211d32386a9d051654376cda6da7a74ebb47d750",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "d55cbafc387827b277e66cecad4516965e9015253c19afb4b289fced23c166b4"
+  },
+  "browser": [],
+  "passed": false,
+  "error": "apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:3110\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:3110/api/auth/sign-in/email\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.7922.34 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Origin: http://127.0.0.1:3110\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 135\u001b[22m\n",
+  "sourceAfter": {
+    "services/signals/business-signal-rules.service.ts": "36b904d7056e7c62a0b690680dbc73c09d74de44b3fd074a1809967ef5504197",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "c0fefb35efd2c6902b9c700159c4f0f4d0d96b4d7d1e9135ced337819c7fa9ab",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "bc01d19aa9c8dbc4f958feea211d32386a9d051654376cda6da7a74ebb47d750",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "d55cbafc387827b277e66cecad4516965e9015253c19afb4b289fced23c166b4"
+  },
+  "sourceStable": true
+}

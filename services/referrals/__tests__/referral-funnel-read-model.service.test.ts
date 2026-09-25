@@ -22,6 +22,7 @@ function client() {
       {
         sourceType: ReferralAttributionSource.ACCOUNTANT_INVITE,
         campaign: "accountant_client_invite",
+        accountantClientInvite: { states: [{ status: "ACCEPTED" }] },
         events: [
           { eventType: ReferralAttributionEventType.CLICK },
           { eventType: ReferralAttributionEventType.CONVERSION },
@@ -49,7 +50,7 @@ function client() {
 }
 
 describe("referral funnel read model", () => {
-  it("aggregates issued links and privacy-bounded events by source and campaign", async () => {
+  it("aggregates prepared links, registrations and recorded invitation acceptances by source and campaign", async () => {
     const fixture = client()
 
     const result = await getReferralFunnelReadModel(
@@ -63,27 +64,27 @@ describe("referral funnel read model", () => {
       generatedAt: now.toISOString(),
       scope: "ALL_TIME",
       totals: {
-        issuedLinks: 2,
+        preparedLinks: 2,
         clicks: 3,
-        conversions: 2,
-        inviteActivations: 1,
+        registrations: 2,
+        acceptedInvitations: 1,
       },
       rows: [
         {
           sourceType: ReferralAttributionSource.CUSTOMER_STATEMENT,
           campaign: "customer_statement_share",
-          issuedLinks: 1,
+          preparedLinks: 1,
           clicks: 2,
-          conversions: 1,
-          inviteActivations: 0,
+          registrations: 1,
+          acceptedInvitations: 0,
         },
         {
           sourceType: ReferralAttributionSource.ACCOUNTANT_INVITE,
           campaign: "accountant_client_invite",
-          issuedLinks: 1,
+          preparedLinks: 1,
           clicks: 1,
-          conversions: 1,
-          inviteActivations: 1,
+          registrations: 1,
+          acceptedInvitations: 1,
         },
       ],
       privacyBoundary: {
@@ -116,6 +117,15 @@ describe("referral funnel read model", () => {
       select: {
         sourceType: true,
         campaign: true,
+        accountantClientInvite: {
+          select: {
+            states: {
+              where: { organizationId: "org-a", status: "ACCEPTED" },
+              take: 1,
+              select: { status: true },
+            },
+          },
+        },
         events: {
           where: {
             organizationId: "org-a",
@@ -136,7 +146,7 @@ describe("referral funnel read model", () => {
       ],
     })
     expect(JSON.stringify(result)).not.toContain("other_tenant_campaign")
-    expect(result.totals.conversions).toBe(2)
+    expect(result.totals.registrations).toBe(2)
   })
 
   it("does not select or return recipient contacts or raw request evidence", async () => {
@@ -156,4 +166,24 @@ describe("referral funnel read model", () => {
       /subjectHash|ipAddress|userAgent|referralCode/i,
     )
   })
+})
+
+it("does not infer acceptance from registration events and counts historical acceptance once", async () => {
+  const findMany = jest.fn().mockResolvedValue([
+    { sourceType: "ACCOUNTANT_INVITE", campaign: "pending", accountantClientInvite: { states: [] }, events: [{ eventType: "CONVERSION" }, { eventType: "CONVERSION" }] },
+    { sourceType: "ACCOUNTANT_INVITE", campaign: "accepted", accountantClientInvite: { states: [{ status: "ACCEPTED" }] }, events: [{ eventType: "CONVERSION" }, { eventType: "CONVERSION" }] },
+    { sourceType: "ACCOUNTANT_INVITE", campaign: "legacy", accountantClientInvite: null, events: [{ eventType: "CONVERSION" }] },
+    { sourceType: "ACCOUNTANT_INVITE", campaign: "historical", accountantClientInvite: { states: [{ status: "ACCEPTED" }] }, events: [] },
+  ])
+  const result = await getReferralFunnelReadModel("org-a", { referralAttribution: { findMany } } as never, now)
+  expect(result.totals).toEqual({ preparedLinks: 4, clicks: 0, registrations: 5, acceptedInvitations: 2 })
+  expect(result.rows.find(row => row.campaign === "pending")?.acceptedInvitations).toBe(0)
+  expect(result.rows.find(row => row.campaign === "legacy")?.acceptedInvitations).toBe(0)
+})
+it("distinguishes an empty result from a failed source read", async () => {
+  const findMany = jest.fn().mockResolvedValue([])
+  const client = { referralAttribution: { findMany } } as never
+  expect((await getReferralFunnelReadModel("org-empty", client, now)).totals).toEqual({ preparedLinks: 0, clicks: 0, registrations: 0, acceptedInvitations: 0 })
+  findMany.mockRejectedValue(new Error("Source unavailable"))
+  await expect(getReferralFunnelReadModel("org-empty", client, now)).rejects.toThrow("Source unavailable")
 })

@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-15T10:27:40.473Z",
+  "phase": "before",
+  "sourceBefore": {
+    "app/[locale]/(dashboard)/dashboard/analytics/error.tsx": "2b6d300c237f993760aa2ff2ca031f82375f74184d1b3066d0eb2f1d01c6c55c"
+  },
+  "browser": [
+    {
+      "locale": "fr",
+      "screenshots": [],
+      "pageErrors": [],
+      "rscRequests": 0,
+      "failedReadNotZero": true,
+      "error": "locator.focus: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Retry', exact: true })\u001b[22m\n",
+      "headings": [
+        "Vue d’ensemble",
+        "Analytics could not load"
+      ]
+    }
+  ],
+  "error": "locator.focus: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Retry', exact: true })\u001b[22m\n",
+  "sourceAfter": {
+    "app/[locale]/(dashboard)/dashboard/analytics/error.tsx": "2b6d300c237f993760aa2ff2ca031f82375f74184d1b3066d0eb2f1d01c6c55c"
+  },
+  "sourceStable": true
+}

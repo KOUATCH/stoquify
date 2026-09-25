@@ -1,0 +1,8 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const file=path.resolve(__dirname,'../../../services/purchasing/ap-control.service.ts');let source=fs.readFileSync(file,'utf8');
+assert.ok(!source.includes('export async function validateInvoiceApprovalSource('));
+const owner=source.indexOf('export async function approveSupplierInvoice('),start=source.indexOf('    if (\n      invoice.status !== SupplierInvoiceStatus.MATCHED',owner),end=source.indexOf('    let activeMatchException:',start);assert.ok(owner>0&&start>owner&&end>start);
+const body=source.slice(start,end).replaceAll('parsed.organizationId','organizationId').split('\n').map(line=>line.startsWith('    ')?line.slice(2):line).join('\n');
+const helper='type InvoiceApprovalSource = Prisma.SupplierInvoiceGetPayload<{ include: { lines: true; threeWayMatches: true; supplier: { select: { id: true; name: true; currentBalance: true; isActive: true; organizationId: true } } } }>\n\nexport async function validateInvoiceApprovalSource(tx: Prisma.TransactionClient, invoice: InvoiceApprovalSource, organizationId: string) {\n'+body+'  return { requiresMatchException, match, variance, priceVariance }\n}\n\n';
+const old=source.slice(start,end).trimEnd(),signature=source.slice(owner).split('\n')[0];
+process.stdout.write('*** Begin Patch\n*** Update File: '+file.replaceAll('\\','/')+'\n@@\n'+helper.trimEnd().split('\n').map(l=>'+'+l).join('\n')+'\n+\n '+signature+'\n@@\n'+old.split('\n').map(l=>'-'+l).join('\n')+'\n+    const { requiresMatchException, match, variance, priceVariance } = await validateInvoiceApprovalSource(tx, invoice, parsed.organizationId)\n*** End Patch');

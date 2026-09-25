@@ -1,0 +1,49 @@
+{
+  "mode": "preflight",
+  "attempt": "18699f271f42",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-05T19:24:43.099Z",
+  "sourcesBefore": {
+    "services/accounting/accounts.service.ts": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "services/accounting/posting.service.ts": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2",
+    "services/accounting/reports.service.ts": "dfe72749da17a5c3af4de5bd2ac4e680138fdd0c1603a1cd19f85b41bb3ce268",
+    "services/accounting/financial-statements.service.ts": "a0ed910c921207695372c7fcaaf7c857ba605e58b0d094f6383e2d7525644430",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/periods.service.ts": "c9fabd9a1ed2ead2ca6f17e88f53494b35190540519df1c2f027c2907e203990",
+    "services/accounting/journal-close-invalidation.service.ts": "8ee2bfe698fdab25e6d557c113023b64051ab59d9b487b86ece4925fb64899a8",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/location/location.service.ts": "8ea6c4d6c1b7b7837f252c76e5658c0b63918219148f90cc6b66b125fbbb3de2",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [],
+  "ownedOrganizations": [],
+  "limitations": [
+    "Direct service proof; action/session authorization is separate.",
+    "Posting/reversal permission and fresh-auth timestamps are explicitly synthetic service-control inputs, not a real sign-in, human signature, professional approval or release evidence.",
+    "No missing/foreign historical account row is fabricated by disabling constraints; malformed-evidence guards retain their unit-test scope.",
+    "No claim of concurrent manager reassignment safety or certified statutory reporting."
+  ],
+  "targetGuardPassed": true,
+  "blockedFetchOrigins": [],
+  "completedAt": "2026-09-05T19:24:43.528Z",
+  "sourcesAfter": {
+    "services/accounting/accounts.service.ts": "3f7ba3555c67122f92a038ccc35e801b7dafb975501e4141c1b7bf4945f2b4fe",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "services/accounting/posting.service.ts": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2",
+    "services/accounting/reports.service.ts": "dfe72749da17a5c3af4de5bd2ac4e680138fdd0c1603a1cd19f85b41bb3ce268",
+    "services/accounting/financial-statements.service.ts": "a0ed910c921207695372c7fcaaf7c857ba605e58b0d094f6383e2d7525644430",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/accounting/periods.service.ts": "c9fabd9a1ed2ead2ca6f17e88f53494b35190540519df1c2f027c2907e203990",
+    "services/accounting/journal-close-invalidation.service.ts": "8ee2bfe698fdab25e6d557c113023b64051ab59d9b487b86ece4925fb64899a8",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/location/location.service.ts": "8ea6c4d6c1b7b7837f252c76e5658c0b63918219148f90cc6b66b125fbbb3de2",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "c12b20c9c5e91f6a4390d0a8d6c0fac9dc9560b2911053acd60f8988dce89419",
+  "passed": 0,
+  "failed": 0
+}

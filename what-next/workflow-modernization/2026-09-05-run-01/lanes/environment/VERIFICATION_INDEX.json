@@ -1,0 +1,15 @@
+{
+  "scope": "Workflow modernization verification environment and authorized isolated fixtures",
+  "server": { "url": "http://127.0.0.1:3107", "ownedSession": 87013, "leftRunning": true },
+  "browserContextsClosed": true,
+  "overallCompletionClaim": false,
+  "records": [
+    { "area": "Environment baseline", "status": "passed with preserved initial failure", "report": "ENVIRONMENT_REPORT.md", "receipts": ["process-and-readiness.json", "environment-baseline.json", "environment-baseline-fr-retry.json"] },
+    { "area": "Real PostgreSQL identity completion", "status": "3 groups passed", "report": "POSTGRES_VERIFICATION.md", "receipts": ["postgres-run-f799fb30e867.json"], "limitation": "The same receipt includes a separate statement fixture failure; identity source was later extended for resend and is not covered wholesale by this earlier hash." },
+    { "area": "Real PostgreSQL public statement retry", "status": "1 group passed after exact metadata fix", "report": "POSTGRES_VERIFICATION.md", "receipts": ["postgres-statement-dd56bf1aa069.json"], "limitation": "Synthetic immutable statement input; no snapshot-generation or email-provider claim." },
+    { "area": "Purchase editor/clone native browser", "status": "financial/save/clone checks passed; original combined failures preserved and followed by focused recovery proof", "report": "PURCHASE_RECOVERY_BROWSER.md", "receipts": ["purchase-editor-browser-524588b9.json", "purchase-editor-browser-ef30b99c.json", "browser-partial-outcomes-ef30b99c-48b21da20a.json", "purchase-recovery-cbda867c.json"] },
+    { "area": "Email verification native browser", "status": "final valid-code subset 2 passed / 0 failed", "report": "EMAIL_VERIFICATION_BROWSER.md", "receipts": ["email-recovery-48b21da20a.json", "otp-readonly-diagnosis-48b21da20a.json", "email-valid-recovery-89401f67.json"], "limitation": "EN recovered desktop image is loading-only; fully rendered recovery is visible in EN/FR mobile. FR response-body status capture raced successful navigation; database and UI success are verified." },
+    { "area": "Purchase recovery-only follow-up", "status": "2 passed / 0 failed", "driver": "verify-purchase-recovery.cjs", "report": "PURCHASE_RECOVERY_BROWSER.md", "receipt": "purchase-recovery-cbda867c.json", "fixtureScope": "Existing real clones PO-000003 and PO-000004 were cancelled once and remain cancelled; original cancelled orders unchanged." },
+    { "area": "Read-only organization-listing scope", "status": "7 passed / 0 failed", "driver": "verify-organization-scope.cjs", "report": "ORGANIZATION_SCOPE_POSTGRES.md", "receipt": "organization-scope-7e7c1c57.json", "limitation": "Real service and READ ONLY transaction proof, not authenticated action/session authority; no nonzero payment fixture." }
+  ]
+}

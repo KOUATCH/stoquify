@@ -259,7 +259,7 @@ export async function issueCustomerStatementAccessTokenInTx(
       expiresAt,
       metadata: input.metadata
         ? statementJson(input.metadata)
-        : Prisma.JsonNull,
+        : Prisma.DbNull,
     },
   })
   await tx.auditLog.create({

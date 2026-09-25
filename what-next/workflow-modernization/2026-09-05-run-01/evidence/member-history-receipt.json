@@ -1,0 +1,155 @@
+{
+  "recordedAt": "2026-09-06T14:23:47.250Z",
+  "baseline": "evidence/source-baseline-v30.json",
+  "sources": {
+    "services/users/member-history.service.ts": "7484079fe7930e92d2d73068088fea8fe300f537e2dccc9d0a9707fbd7edec4e",
+    "services/users/member-history-input.ts": "466440fe0a9acc3a9cdc2944cd459ca78657a450c0e8ed6b1007bd2f1d31ed58",
+    "services/security/export-safety.service.ts": "ec19538e6277c4cb047e935b5a74828143c884c978c3bd5866015cf0334dda8a",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "84b4fc7dd4b60c0e65159d95d46d765a428c808d3816292841f5b070022cccb6",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/roles/role-write.service.ts": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+    "actions/users/memberHistory.ts": "ebc7378784926ab106137f6adf708aefb192bf216e3baa36b64f1711589069c1",
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "hooks/useMemberHistory.ts": "59255739a89d4a9a8678a0f98e172b955d80e241e0690ef7fd39e25d1e4986ae",
+    "hooks/member-access-draft.ts": "095a540c01799e56af0b372cdb4dd0102e07c933021b206eb81ec0a5151018f9",
+    "hooks/useMemberAccess.ts": "b8fbd52fd866b8ba52abd1b1ad6b69dd17564748fabd3a0ec9072e79b2288082",
+    "components/settings/MemberAccessHistory.tsx": "d95ff48fc0a3653e875c1f70adfd00e1f5905489ae093cd4ea567fd9a38b70ca",
+    "components/settings/member-history-copy.ts": "a41bed5a6e7f2cc818263d35c108bd660a2f19e0d3bd51faf833d38e643f7b0f",
+    "components/settings/MemberAccessEditor.tsx": "8c30ab71b133617676ecbaaf66199f6190242782acb590baf2e40e60c88f0312",
+    "components/settings/member-access-copy.ts": "32224403e66b520862e3caa7e9ee76e2cd7da6fd171c7838c92ca61e71b6ae95",
+    "components/settings/__tests__/MemberAccessEditor.workflow.test.tsx": "93a4c7cbee239c657b78aa950f2584cfd1ce5cf92c6f74fb56ff19aa4573eee2",
+    "services/users/__tests__/member-access.service.test.ts": "27bf473533eab9065aed55994820917d705e1f5b0e9b787005945b067ac242c3",
+    "components/settings/__tests__/MemberAccessHistory.workflow.test.tsx": "7711fc0262f12c6e989382aa41ee277651a4985426750521251bc115f6b0d85e",
+    "actions/users/__tests__/member-history.actions.test.ts": "4acb650dc73de296820f125525797978eea1fb4fcdd1ce12e2c1f0429de8ee77",
+    "services/users/__tests__/member-history.service.test.ts": "b3a9214b62f274cd45404304d669b2b5538025df509f49175b09d607c1ff58ca",
+    "hooks/__tests__/member-access-draft.test.ts": "1f93a4ec010821ee0abfc11a5a2ba78b645252d300823585cd7246e6a9e08f5d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": [
+    "OA-USER-EDIT",
+    "OA-MEMBER-ROLES",
+    "OA-REACTIVATE",
+    "OA-MEMBER-HISTORY",
+    "OA-MEMBER-HISTORY-EXPORT"
+  ],
+  "tests": {
+    "file": "evidence/member-history-tests-04.json",
+    "passed": 90,
+    "failed": 0,
+    "suites": 6,
+    "chunk": "cfc167",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/settings/__tests__/MemberAccessEditor.workflow.test.tsx\" \"services/users/__tests__/member-access.service.test.ts\" \"components/settings/__tests__/MemberAccessHistory.workflow.test.tsx\" \"actions/users/__tests__/member-history.actions.test.ts\" \"services/users/__tests__/member-history.service.test.ts\" \"hooks/__tests__/member-access-draft.test.ts\" --json --outputFile=evidence/member-history-tests-04.json"
+  },
+  "postgres": {
+    "file": "lanes/environment/member-history-postgres-9b0f9d54-a72.json",
+    "passed": 7,
+    "failed": 0,
+    "chunk": "d5dd41",
+    "command": "node lanes/environment/verify-member-history.cjs"
+  },
+  "browser": {
+    "file": "lanes/environment/member-history-browser-59ea36f6-207.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "0bc8db",
+    "command": "node lanes/environment/verify-member-history-browser.cjs",
+    "screenshots": [
+      "evidence/member-history/en-member-history-auditor-older-59ea36f6-207.png",
+      "evidence/member-history/en-member-history-mobile-59ea36f6-207.png",
+      "evidence/member-history/en-member-history-desktop-59ea36f6-207.png",
+      "evidence/member-history/en-member-history-interrupted-59ea36f6-207.png",
+      "evidence/member-history/en-member-history-recovered-receipt-59ea36f6-207.png",
+      "evidence/member-history/fr-member-history-auditor-older-59ea36f6-207.png",
+      "evidence/member-history/fr-member-history-mobile-59ea36f6-207.png",
+      "evidence/member-history/fr-member-history-desktop-59ea36f6-207.png",
+      "evidence/member-history/fr-member-history-interrupted-59ea36f6-207.png",
+      "evidence/member-history/fr-member-history-recovered-receipt-59ea36f6-207.png"
+    ],
+    "downloads": [
+      {
+        "file": "evidence/member-history/en-member-history-59ea36f6-207.csv",
+        "sha256": "7d9c8f5665a8ef5f08dc8f65456e273b09a7719d87c38824281a83f7ae14c00a",
+        "auditId": "cmtpwc2k500ffma6ocioehagv",
+        "rows": 20
+      },
+      {
+        "file": "evidence/member-history/fr-member-history-59ea36f6-207.csv",
+        "sha256": "0c42e204173e58fbf801321bac7759a5cded09434cfcc87542be98bd4b76cae4",
+        "auditId": "cmtpwe9co00gtma6o5euh24bk",
+        "rows": 20
+      }
+    ]
+  },
+  "boundaries": {
+    "file": "evidence/member-history-boundaries.json",
+    "passed": 5,
+    "failed": 0
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "exitCode": 0,
+    "chunk": "eaffc8"
+  },
+  "lint": {
+    "command": "node node_modules/eslint/bin/eslint.js [15 changed production/test files; see VERIFICATION checkpoint]",
+    "exitCode": 0,
+    "chunk": "54fc30"
+  },
+  "failedAttempts": [
+    {
+      "file": "evidence/member-history-tests-01.json",
+      "result": "Old test mocks did not cover the new history query and imported real BetterAuth through the isolated editor test. Corrected mocks; focused suites then passed."
+    },
+    {
+      "file": "lanes/environment/member-history-postgres-dbfc63af-948.json",
+      "passed": 6,
+      "failed": 1,
+      "result": "Whole-file substring assertion counted the cursor metadata as an exported row. The verifier now checks the actual CSV data rows in order."
+    },
+    {
+      "chunk": "c1e86d",
+      "result": "Default-sandbox duplicate verifier attempt could not write its final receipt; it is not counted as a pass. Corrected verifier reran with authorized isolated access."
+    },
+    {
+      "file": "lanes/environment/member-history-browser-98ebd564-7fc.json",
+      "passed": 0,
+      "failed": 2,
+      "result": "Real EN/FR downloads lost the UTF-8 marker during server-action text transport; downloaded hashes differed from the audit. Corrected transport to base64-encoded bytes and added service/browser-byte regression tests. Final EN/FR bytes match their audits."
+    }
+  ],
+  "supersededEvidence": [
+    "evidence/member-history-tests-02.json",
+    "evidence/member-history-tests-03.json",
+    "lanes/environment/member-history-postgres-ebb97e97-6d0.json"
+  ],
+  "performance": {
+    "classification": "owned local development observations; no approved budget or production claim",
+    "routeReadyMs": [
+      {
+        "locale": "en",
+        "value": 8306
+      },
+      {
+        "locale": "fr",
+        "value": 6401
+      }
+    ]
+  },
+  "remaining": [
+    "Same-tab draft recovery is verified; tab-close recovery remains unimplemented.",
+    "Organization deletion, retention, legal-hold and immutable-record policy require lifecycle review; AuditLog currently cascades on organization deletion.",
+    "Actual native screen-reader operation, browser zoom and comprehensive contrast checks remain open.",
+    "Personal-identity administration, organization handoffs and the remaining whole-platform register remain open.",
+    "The earlier global authentication/provider and live invitation-adapter rejections remain respected; no rejected change was applied."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

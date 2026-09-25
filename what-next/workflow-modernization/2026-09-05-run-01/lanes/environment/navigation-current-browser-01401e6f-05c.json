@@ -1,0 +1,89 @@
+{
+  "legacyAliasObservation": [
+    "purchases.orders.read",
+    "READ_PURCHASE_ORDERS",
+    "READ_ORDERS"
+  ],
+  "at": "2026-09-08T13:54:25.578Z",
+  "run": "01401e6f-05c",
+  "sourcesBefore": {
+    "components/dashboard/Sidebar.tsx": "c65a9783f03b6251f64eba96bc296f1fc40fd75f4cf0883f0921fe186d063e44",
+    "components/dashboard/Navbar.tsx": "931861504fee2ef5545bd60702b6e6260db68271e3afd0070f2e0e4570556a13",
+    "config/sidebar.ts": "beeb3d9dde8283b6897962cb3a34c6fa2971fbd9aeda8b419ea76c39bb775c8f",
+    "lib/dashboard/presentation.ts": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3",
+    "lib/modules/navigation.ts": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932",
+    "components/dashboard/useShellPermissions.ts": "e1a68ed56528442d7adae42ae5d87becbc1a4321fb21ef4b1c60d079cca1c21c",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/dashboard-shared/en.json": "5fb5d17baf0c934ab8bcea8d9b9c4059bb091ae334865e025e5ef5d4c9a0cbe5",
+    "messages/dashboard-shared/fr.json": "723cd0ba2282d487d187072d4eb5023f120c49f76394482fb5e5be94a2338716"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "One nearest authorized location on desktop; overview unselected; keyboard collapse/reopen works; search does not falsely promote ancestor",
+        "Mobile identifies the same location, real history navigation becomes one exact current page, menu closes and keyboard returns",
+        "Full current permission revocation removes all work destinations and current markers; direct preparation route remains denied"
+      ],
+      "screenshots": [
+        "navigation-current-en-nested-desktop-01401e6f-05c.png",
+        "navigation-current-en-collapsed-01401e6f-05c.png",
+        "navigation-current-en-nested-mobile-01401e6f-05c.png",
+        "navigation-current-en-history-mobile-01401e6f-05c.png",
+        "navigation-current-en-history-desktop-01401e6f-05c.png",
+        "navigation-current-en-permission-revoked-01401e6f-05c.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Nested preparation route cold/warm development observation",
+          "ms": 4030
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "One nearest authorized location on desktop; overview unselected; keyboard collapse/reopen works; search does not falsely promote ancestor",
+        "Mobile identifies the same location, real history navigation becomes one exact current page, menu closes and keyboard returns",
+        "Full current permission revocation removes all work destinations and current markers; direct preparation route remains denied"
+      ],
+      "screenshots": [
+        "navigation-current-fr-nested-desktop-01401e6f-05c.png",
+        "navigation-current-fr-collapsed-01401e6f-05c.png",
+        "navigation-current-fr-nested-mobile-01401e6f-05c.png",
+        "navigation-current-fr-history-mobile-01401e6f-05c.png",
+        "navigation-current-fr-history-desktop-01401e6f-05c.png",
+        "navigation-current-fr-permission-revoked-01401e6f-05c.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Nested preparation route cold/warm development observation",
+          "ms": 5179
+        }
+      ]
+    }
+  ],
+  "scope": "Real authenticated local navigation with fresh synthetic tenant/actor. Permission and route controls remain real. No production or external requests.",
+  "originalBefore": "ce683f445c9da9852d7cfd87772014b73ea41f584e938da764014092c599848b",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/dashboard/Sidebar.tsx": "c65a9783f03b6251f64eba96bc296f1fc40fd75f4cf0883f0921fe186d063e44",
+    "components/dashboard/Navbar.tsx": "931861504fee2ef5545bd60702b6e6260db68271e3afd0070f2e0e4570556a13",
+    "config/sidebar.ts": "beeb3d9dde8283b6897962cb3a34c6fa2971fbd9aeda8b419ea76c39bb775c8f",
+    "lib/dashboard/presentation.ts": "3fc70022c973a90361c0ff2e9540ab180cb7c6895a0a2af2fb4af2d2a57287c3",
+    "lib/modules/navigation.ts": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932",
+    "components/dashboard/useShellPermissions.ts": "e1a68ed56528442d7adae42ae5d87becbc1a4321fb21ef4b1c60d079cca1c21c",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/dashboard-shared/en.json": "5fb5d17baf0c934ab8bcea8d9b9c4059bb091ae334865e025e5ef5d4c9a0cbe5",
+    "messages/dashboard-shared/fr.json": "723cd0ba2282d487d187072d4eb5023f120c49f76394482fb5e5be94a2338716"
+  },
+  "sourceStable": true
+}

@@ -1,6 +1,9 @@
 import { getAPWorkbenchAction } from "@/actions/purchasing/ap-control.actions"
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import APControlWorkbench from "@/components/purchasing/APControlWorkbench"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { routeByKey, withPurchasesSurfaceAccess } from "../purchases-route-access"
 
 export const metadata = {
@@ -55,6 +58,19 @@ export default async function PurchasePayablesPage({
       return (
         <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
           <div className="dashboard-landing-content mx-auto flex w-full max-w-[1920px] min-w-0 flex-col gap-4 px-4 py-4 sm:px-6 sm:py-6">
+            {hasRbacPermission(_context.permissions, "purchasing.ap.invoice.post") && <div className="flex flex-wrap gap-3">
+              <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/correct`}>{locale === "fr" ? "Corriger une facture fournisseur" : "Correct a supplier invoice"}</Link></Button>
+              <Button asChild><Link href={`/${locale}/dashboard/purchases/payables/prepare`}>{locale === "fr" ? "Préparer une facture fournisseur" : "Prepare a supplier invoice"}</Link></Button>
+              <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/approve`}>{locale === "fr" ? "Examiner les factures fournisseurs" : "Review supplier invoices"}</Link></Button>
+              <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/recovery`}>{locale === "fr" ? "Reprendre la comptabilisation des factures" : "Recover invoice posting"}</Link></Button>
+              <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/exceptions/request`}>{locale === "fr" ? "Demander une dérogation de facture" : "Request an invoice exception"}</Link></Button>
+            </div>}
+            {hasRbacPermission(_context.permissions, "purchasing.ap.match.review") && <div><Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/exceptions/review`}>{locale === "fr" ? "Examiner les dérogations de facture" : "Review invoice exceptions"}</Link></Button></div>}
+            <div className="flex flex-wrap gap-3">
+              {hasRbacPermission(_context.permissions, "purchasing.ap.payment.release") && <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/payments/record`}>{locale === "fr" ? "Enregistrer un paiement fournisseur" : "Record a supplier payment"}</Link></Button>}
+              {hasRbacPermission(_context.permissions, "purchasing.ap.payment.request") && <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/payments/request`}>{locale === "fr" ? "Demander un paiement fournisseur" : "Request a supplier payment"}</Link></Button>}
+              {hasRbacPermission(_context.permissions, "purchasing.ap.payment.approve") && <Button asChild variant="outline" className="h-auto min-h-10 whitespace-normal"><Link href={`/${locale}/dashboard/purchases/payables/payments/approve`}>{locale === "fr" ? "Examiner les paiements fournisseurs" : "Review supplier payments"}</Link></Button>}
+            </div>
             <APControlWorkbench
               data={result.data}
               error={null}

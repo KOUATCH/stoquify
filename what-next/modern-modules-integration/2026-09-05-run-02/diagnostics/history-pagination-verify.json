@@ -1,0 +1,85 @@
+{
+  "command": "verify",
+  "startedAt": "2026-09-05T14:57:40.798Z",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "fixture": "service_en_desktop",
+  "productionApproval": false,
+  "checks": [
+    {
+      "name": "full_history_no_gaps_or_duplicates",
+      "passed": true,
+      "records": 112,
+      "pageSizes": [
+        25,
+        25,
+        25,
+        25,
+        12
+      ]
+    },
+    {
+      "name": "actual_active_configuration_beyond100",
+      "passed": true
+    },
+    {
+      "name": "foreign_tenant_cursor_denied",
+      "passed": true
+    },
+    {
+      "name": "limited_setup_scope_absent",
+      "passed": true,
+      "note": "This check alone does not prove redaction of nonempty scope; scoped fixtures are reported separately."
+    }
+  ],
+  "beforeSources": [
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "564b7601d243c98c1830baae5f41a97aaa76e1139877abf692f9f710fa4b4377"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "e03f44cc1a38fb3df6bfe09f9484977ee09836a7ef53132e8668138557fc6fe7"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+    }
+  ],
+  "historyBefore": 112,
+  "existingActiveCount": 2,
+  "activeCommandIds": [
+    "cmtoepldf002pmapczthaphxv",
+    "cmtof6un000fpmapczluhsi1z"
+  ],
+  "oldActive": {
+    "id": "cmtof6un000fpmapczluhsi1z",
+    "ordinal": 107,
+    "state": "ACTIVE",
+    "selectedModules": [
+      "accounting",
+      "finance",
+      "payment_reconciliation",
+      "reports",
+      "sales"
+    ]
+  },
+  "equalTimestampGroups": [],
+  "activeAndDesiredConfigurationUnchanged": true,
+  "historyAfter": 112,
+  "afterSources": [
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "564b7601d243c98c1830baae5f41a97aaa76e1139877abf692f9f710fa4b4377"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "e03f44cc1a38fb3df6bfe09f9484977ee09836a7ef53132e8668138557fc6fe7"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+    }
+  ],
+  "sourceStable": true,
+  "completedAt": "2026-09-05T14:57:41.800Z"
+}

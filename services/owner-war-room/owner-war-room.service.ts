@@ -250,7 +250,7 @@ export function composeOwnerWarRoomData(input: ComposeOwnerWarRoomInput): OwnerW
       detail: "Unresolved payment suspense value that should be explained before owners trust cash.",
       value: paymentTruth.metrics.openSuspenseAmount,
       unit: "value",
-      tone: paymentTruth.metrics.openSuspenseAmount > 0 ? "danger" : "success",
+      tone: paymentTruth.metrics.openSuspenseCount > 0 ? "danger" : paymentTruth.metrics.openSuspenseAmount === null ? "muted" : "success",
       requiredPermission: "payments.reconciliation.read",
       href: "/dashboard/finance/reconciliation",
       snapshot: paymentTruth,
@@ -645,7 +645,7 @@ function buildOwnerMorningBriefChanges(input: {
   const { paymentTruth, closeReadiness } = input.input.snapshots
   const changes: BIChangeEvent[] = []
 
-  if (input.headlineMetrics.cashAtRisk > 0) {
+  if (paymentTruth.metrics.openSuspenseCount > 0 || (input.headlineMetrics.cashAtRisk !== null && input.headlineMetrics.cashAtRisk > 0)) {
     changes.push({
       id: "owner-morning-brief-cash-at-risk",
       organizationId: input.input.organizationId,
@@ -798,7 +798,7 @@ function buildOwnerMorningBriefRisks(input: {
   const payrollForecastBlockers = payrollForecastSnapshotBlockers(tenantOperating)
   const risks: Array<Omit<BIRiskRank, "rank">> = []
 
-  if (input.headlineMetrics.cashAtRisk > 0) {
+  if (paymentTruth.metrics.openSuspenseCount > 0 || (input.headlineMetrics.cashAtRisk !== null && input.headlineMetrics.cashAtRisk > 0)) {
     risks.push({
       id: "owner-risk-cash-at-risk",
       organizationId: input.input.organizationId,
@@ -974,7 +974,9 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
       title: "Cash truth",
       businessQuestion: "How much cash is at risk before the owner trusts the day?",
       summary:
-        paymentTruth.metrics.openSuspenseAmount > 0
+        paymentTruth.metrics.openSuspenseAmount === null
+          ? "A combined suspense value is unavailable. Review the source currency breakdown."
+          : paymentTruth.metrics.openSuspenseAmount > 0
           ? `${formatBriefAmount(paymentTruth.metrics.openSuspenseAmount)} remains in suspense.`
           : "No suspense value is visible in the current payment truth snapshot.",
       snapshot: paymentTruth,
@@ -983,7 +985,7 @@ function buildOwnerMorningBriefZones(input: ComposeOwnerWarRoomInput): BICommand
         title: "Cash at risk",
         detail: "Open suspense amount from payment truth.",
         value: paymentTruth.metrics.openSuspenseAmount,
-        unit: "XAF",
+        unit: paymentTruth.metrics.suspenseCurrencyCode ?? "",
         format: "currency",
       },
       action: actionLink({
@@ -1294,7 +1296,7 @@ function buildMorningBriefSummary(input: OwnerWarRoomData["morningBrief"]["headl
 }
 
 function buildMorningBriefConclusion(input: OwnerWarRoomData["morningBrief"]["headlineMetrics"]) {
-  if (input.cashAtRisk > 0) {
+  if (input.cashAtRisk === null || input.cashAtRisk > 0) {
     return "Start with cash risk: suspense must be explained before the owner can trust daily cash."
   }
   if (input.blockedCloseItems > 0) {
@@ -1416,7 +1418,8 @@ function dueLabel(value: string) {
   return `Due ${new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(parsed)}`
 }
 
-function formatBriefAmount(value: number) {
+function formatBriefAmount(value: number | null) {
+  if (value === null) return "total unavailable"
   return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)} XAF`
 }
 
@@ -1424,7 +1427,7 @@ function card(input: {
   id: OwnerWarRoomCardId
   title: string
   detail: string
-  value: number
+  value: number | null
   unit: string
   tone: OwnerWarRoomTone
   requiredPermission: string
@@ -1540,4 +1543,3 @@ async function getLatestProofSubjectIds(input: {
     "close.run": closeRun?.id ?? null,
   }
 }
-

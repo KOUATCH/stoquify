@@ -147,7 +147,7 @@ async function ItemsPageImpl(props: {
 
   const [organizationSettings, itemsRes, brandsRes, unitsRes, taxRatesRes, catsRes] = await Promise.all([
     getOrganizationSettingsForOrg(userOrg),
-    getOrgItemsWithInventoryLevels(userOrg).catch(() => null),
+    getOrgItemsWithInventoryLevels(userOrg),
     getOrgBrands(userOrg).catch(() => null),
     getOrgUnits(userOrg).catch(() => null),
     getOrgTaxRates(userOrg).catch(() => null),
@@ -159,8 +159,10 @@ async function ItemsPageImpl(props: {
     currency: organizationSettings?.currency,
   })
 
-  const allItemData: ItemWithInventoryLevelsPayload[] =
-    itemsRes?.success && Array.isArray(itemsRes.data) ? itemsRes.data : []
+  if (!itemsRes?.success || !Array.isArray(itemsRes.data)) {
+    throw new Error("Inventory items could not be loaded")
+  }
+  const allItemData: ItemWithInventoryLevelsPayload[] = itemsRes.data
 
   const searchedItemData = q
     ? allItemData.filter((item) => {

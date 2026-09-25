@@ -1,0 +1,31 @@
+{
+  "run": "852006c2-90b",
+  "at": "2026-09-08T08:38:40.456Z",
+  "checks": [
+    {
+      "name": "Concurrent different invoices preserve both supplier liabilities",
+      "status": "passed",
+      "balance": "5000.00",
+      "ledgerStatus": "BLOCKED_PENDING_RULES"
+    },
+    {
+      "name": "Concurrent identical approvals return one liability and one retained outcome",
+      "status": "passed",
+      "liabilityCount": 1
+    },
+    {
+      "name": "Approval records operation time while preserving the effective invoice date",
+      "status": "passed",
+      "operationTimeRecorded": true
+    },
+    {
+      "name": "Replay without ledger-status metadata does not claim a posted journal",
+      "status": "passed",
+      "ledgerStatus": "UNVERIFIED"
+    }
+  ],
+  "scope": "Owned local PostgreSQL; synthetic independent actors, real receiving and AP kernel. Missing posting rules must remain blocked; this does not verify current-session approval transport.",
+  "sourceBefore": "155cee3ed259024121f431d711372ef8250744a634d1048ed2dada2c476b7525",
+  "originalUnchanged": true,
+  "sourceAfter": "155cee3ed259024121f431d711372ef8250744a634d1048ed2dada2c476b7525"
+}

@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-05T18:04:40.807Z",
+  "workflowIds": [
+    "PA-002",
+    "PA-007",
+    "PA-009"
+  ],
+  "reason": "Genuine browser revealed Continue-to-Save DOM reuse causing premature submission, missing local dashboard token scope, and fractional XAF amounts hidden by ISO zero-digit formatting on editor and saved detail.",
+  "historicalBrowserFinding": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/purchase-editor-browser-524588b9.json",
+  "sourceFiles": [
+    {
+      "path": "components/purchase-orders/ModernEditPurchaseOrderForm.tsx",
+      "sha256": "18eab5025288e80e8f3fb7b5111470257d1e03721492d7a5ad0336b8e5e351cb"
+    },
+    {
+      "path": "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+      "sha256": "f57fb146e169517362c189cb8cfa0d8a8c38f800fcc83bb5750d842616a30fe7"
+    },
+    {
+      "path": "components/purchase-orders/purchase-order-money.ts",
+      "sha256": "de4278efa9c52dddce0c8d51c36b518a5b5b6078e9d0873990d7551299d2b6df"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+      "sha256": "a22726ebca496f4ae490413394bc3e725eb13041dfc879c3508780625b67f0ff"
+    },
+    {
+      "path": "components/purchase-orders/__tests__/purchase-order-money.test.ts",
+      "sha256": "2eb3be81640d3bed18ef4bca261156d33193d211f25f8b66b4ff9f5a5c6b380b"
+    }
+  ],
+  "baseline": {
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-editor-browser-before.json",
+    "success": false,
+    "passed": 0,
+    "failed": 5,
+    "skipped": 9,
+    "suites": 1,
+    "exitCode": 1,
+    "scope": "Five new regressions reproduced; nine earlier cases intentionally skipped by name filter."
+  },
+  "intermediate": {
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-editor-browser-final.json",
+    "success": true,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "suites": 1,
+    "exitCode": 0,
+    "scope": "14-case editor correction before extracting the shared purchase-order formatter."
+  },
+  "tests": {
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-editor-detail-money-final.json",
+    "success": true,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "suites": 2,
+    "exitCode": 0,
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx components/purchase-orders/__tests__/purchase-order-money.test.ts --json --outputFile what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-editor-detail-money-final.json"
+  },
+  "lint": {
+    "status": "passed",
+    "exitCode": 0,
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/lint-editor-detail-money-final.log",
+    "fileCount": 5
+  },
+  "noFinancialMutation": "Formatting keeps at least the stored two decimal places and higher ISO precision; no calculation, storage, admissible fraction, currency rounding or statutory rule changed.",
+  "remaining": [
+    "Parent aggregate typecheck and genuine browser rerun pending at receipt creation.",
+    "Fractional-XAF draft admission and rounding policy require separate domain review; visible stored fractions are not currency-compliance certification.",
+    "Legacy detail-page terminology remains partly English; new editor/clone controls and failure messages are localized.",
+    "Full receiving/AP lifecycle and state-race/shipping-only corrections remain required in NEXT_BATCH_PLAN.md."
+  ],
+  "lineage": [
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/edit-correction-receipt.json",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/clone-correction-receipt.json",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/clone-transport-followup-receipt.json"
+  ]
+}

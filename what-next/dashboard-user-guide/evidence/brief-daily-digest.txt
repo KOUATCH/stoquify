@@ -1,0 +1,42 @@
+
+ROUTE /en/dashboard/daily-digest
+FILE app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx; components/daily-habit/DailyHabitDigestDashboard.tsx; components/agents/AgentCommandPanel.tsx; components/copilot/CopilotProposalControls.tsx; components/evidence/EvidenceGradeBadge.tsx; components/bi/index.ts; components/bi/BIActionPriorityBoard.tsx; components/bi/BIEvidenceBadgeRow.tsx; components/bi/BIStateBadge.tsx; components/bi/BIStateSurface.tsx; components/bi/BIEmptyState.tsx; components/bi/BICommandBriefHeader.tsx; components/bi/BICommandModeTabs.tsx; components/bi/BIBusinessTruthZone.tsx; components/bi/BIKpiCard.tsx; components/bi/BIProofDrawerHost.tsx; components/evidence/ProofTrailDrawer.tsx; components/bi/BIRiskOpportunityRadar.tsx; components/bi/BITrustLegend.tsx; components/bi/BIWhatChangedStrip.tsx
+DEPENDENCIES services/daily-habit/daily-habit-digest.service.ts; services/agents/agent-rollout.service.ts; app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx; lib/utils.ts; services/bi/bi-contracts.ts; services/daily-habit/daily-habit-digest-contracts.ts; services/agents/command-agent-contracts.ts; actions/agents/command-agent.actions.ts; actions/ai/copilot-proposal.actions.ts; services/ai/copilot-proposal.service.ts; services/evidence/evidence-contracts.ts
+REDIRECTS []
+HEADINGS Daily Habit Digest | No Daily Digest workspace is available | Command Agent | Proof Trail
+PROPS Generated | Period | Currency | Visible workspaces | Digest signals | Digest actions | Digest risk radar | Helpful | Not helpful | Stale | Wrong | Unsafe | No visible action is due | Period | Generated | Sources | Review | Proof-only drill-through needs a proof drawer host. | No proof subject was supplied. | Evidence Nodes | Evidence Edges | Blockers | Redactions | No ranked risk is visible | No important changes yet
+CONTROLS [dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => {\n                  setSelectedId(digest.id)\n                  setMode(digest.commandBrief.mode)\n                }"}, components/daily-habit/DailyHabitDigestDashboard.tsx:119)
+Back to dashboard (Button, {}, components/daily-habit/DailyHabitDigestDashboard.tsx:193)
+Back to dashboard (a, {"href":"\"/\" + locale + \"/dashboard\""}, components/daily-habit/DailyHabitDigestDashboard.tsx:194)
+[dynamic or icon-only label] (Button, {}, components/daily-habit/DailyHabitDigestDashboard.tsx:247)
+Open (a, {"href":"action.href"}, components/daily-habit/DailyHabitDigestDashboard.tsx:254)
+Retry / Generate brief (Button, {"type":"\"button\"","onClick":"generate","disabled":"!access.canRun || !access.canRender || loading"}, components/agents/AgentCommandPanel.tsx:203)
+Open source (Button, {}, components/agents/AgentCommandPanel.tsx:355)
+Open source (a, {"href":"priority.href"}, components/agents/AgentCommandPanel.tsx:361)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled","onClick":"onClick"}, components/agents/AgentCommandPanel.tsx:497)
+Preparing... / Prepare proposal (Button, {"type":"\"button\"","disabled":"pending","onClick":"prepare"}, components/copilot/CopilotProposalControls.tsx:133)
+Reject proposal (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => decide(\"REJECTED\")"}, components/copilot/CopilotProposalControls.tsx:165)
+Accept proposal (Button, {"type":"\"button\"","disabled":"pending","onClick":"() => decide(\"ACCEPTED\")"}, components/copilot/CopilotProposalControls.tsx:175)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:139)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:154)
+[dynamic or icon-only label] (Button, {}, components/bi/BIActionPriorityBoard.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIActionPriorityBoard.tsx:168)
+[dynamic or icon-only label] (Button, {}, components/bi/BICommandBriefHeader.tsx:90)
+[dynamic or icon-only label] (Link, {"href":"brief.primaryAction.href"}, components/bi/BICommandBriefHeader.tsx:91)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onValueChange?.(mode)"}, components/bi/BICommandModeTabs.tsx:41)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIBusinessTruthZone.tsx:65)
+[dynamic or icon-only label] (Button, {}, components/bi/BIBusinessTruthZone.tsx:77)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIBusinessTruthZone.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"card.actionLink.disabled"}, components/bi/BIKpiCard.tsx:67)
+[dynamic or icon-only label] (Link, {"href":"card.actionLink.href"}, components/bi/BIKpiCard.tsx:81)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:96)
+Proof-only drill-through needs a proof drawer host. (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:111)
+[dynamic or icon-only label] (Button, {}, components/bi/BIKpiCard.tsx:125)
+[dynamic or icon-only label] (Link, {"href":"drillThrough.href"}, components/bi/BIKpiCard.tsx:131)
+No proof subject was supplied. (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:46)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:62)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isLoading","onClick":"() => {\n          onOpenSubject?.(subject)\n          setOpen(true)\n        }"}, components/bi/BIProofDrawerHost.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIRiskOpportunityRadar.tsx:123)
+[dynamic or icon-only label] (Button, {}, components/bi/BIRiskOpportunityRadar.tsx:137)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIRiskOpportunityRadar.tsx:138)

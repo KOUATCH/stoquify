@@ -109,7 +109,7 @@ afterAll(() => {
 })
 
 // Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+if (typeof window !== 'undefined') Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation(query => ({
     matches: false,
@@ -124,7 +124,7 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 // Mock clipboard API
-Object.defineProperty(navigator, 'clipboard', {
+if (typeof navigator !== 'undefined') Object.defineProperty(navigator, 'clipboard', {
   value: {
     writeText: jest.fn(() => Promise.resolve()),
     readText: jest.fn(() => Promise.resolve('')),

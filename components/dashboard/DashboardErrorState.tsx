@@ -4,32 +4,34 @@ import { useEffect, type ReactNode } from "react"
 import Link from "next/link"
 import { AlertTriangle } from "lucide-react"
 
+import { dashboardSharedCopy, dashboardLocale } from "@/lib/dashboard/presentation"
+
 import { Button } from "@/components/ui/button"
 
 export type DashboardRouteError = Error & { digest?: string }
 
-const DEFAULT_MESSAGE =
-  "One command source failed or timed out. Retry the read-only dashboard without exposing internal details."
-
 export function DashboardErrorState({
   error,
   reset,
-  title = "Dashboard page could not load",
-  message = DEFAULT_MESSAGE,
-  retryLabel = "Try again",
+  title,
+  locale,
+  message,
+  retryLabel,
   dashboardHref,
-  dashboardLabel = "Open command center",
+  dashboardLabel,
   actions,
 }: {
   error?: DashboardRouteError | string | null
   reset?: () => void
   title?: string
+  locale?: "en" | "fr"
   message?: string
   retryLabel?: string
   dashboardHref?: string
   dashboardLabel?: string
   actions?: ReactNode
 }) {
+  const copy = dashboardSharedCopy[locale ?? dashboardLocale(dashboardHref)].error
   useEffect(() => {
     if (error) {
       console.error(error)
@@ -52,24 +54,24 @@ export function DashboardErrorState({
           <div className="flex h-14 w-14 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-danger-soft)]">
             <AlertTriangle className="h-7 w-7 text-[var(--dash-danger)]" aria-hidden="true" />
           </div>
-          <p className="text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]">Load failed</p>
-          <h1 className="text-lg font-semibold text-[var(--dash-text)]">{title}</h1>
-          <p className="text-sm leading-6 text-[var(--dash-text-soft)]">{message}</p>
+          <p className="text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]">{copy.eyebrow}</p>
+          <h1 className="text-lg font-semibold text-[var(--dash-text)]">{title ?? copy.title}</h1>
+          <p className="text-sm leading-6 text-[var(--dash-text-soft)]">{message ?? copy.message}</p>
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Button
               type="button"
               variant="outline"
-              className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
+              className="h-auto min-h-10 whitespace-normal rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]"
               onClick={handleRetry}
             >
-              {retryLabel}
+              {retryLabel ?? copy.retry}
             </Button>
             {dashboardHref ? (
               <Link
                 href={dashboardHref}
-                className="inline-flex h-10 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text-soft)] transition hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)]"
+                className="inline-flex min-h-10 max-w-full whitespace-normal py-2 break-words items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] px-4 text-sm font-semibold text-[var(--dash-text-soft)] transition hover:bg-[var(--dash-surface-raised)] hover:text-[var(--dash-text)]"
               >
-                {dashboardLabel}
+                {dashboardLabel ?? copy.dashboard}
               </Link>
             ) : null}
             {actions}

@@ -1,0 +1,48 @@
+{
+  "run": "f5523891-31e",
+  "mode": "before",
+  "at": "2026-09-07T13:33:50.201Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "ae598c6c94dde5a6ac56039741a2987f486b197d48ff7d27ed694ba3c52cd451",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "d72056ffa17f9decf20023146aa1c4c0d6b1bbc2dd81c905693e976c962abcec"
+  },
+  "checks": [
+    {
+      "name": "role change after review",
+      "status": "passed",
+      "rejected": false,
+      "unchanged": false
+    },
+    {
+      "name": "session change after review",
+      "status": "passed",
+      "rejected": false,
+      "unchanged": false
+    },
+    {
+      "name": "stale-line change after review",
+      "status": "passed",
+      "rejected": false,
+      "unchanged": false
+    },
+    {
+      "name": "freshness change after review",
+      "status": "passed",
+      "rejected": false,
+      "unchanged": false
+    },
+    {
+      "name": "Exact retry recovers one approval",
+      "status": "passed",
+      "recovered": false,
+      "code": "BUSINESS_RULE_VIOLATION",
+      "audits": 1,
+      "unchanged": true
+    }
+  ],
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchase-order/purchase-order.service.ts": "ae598c6c94dde5a6ac56039741a2987f486b197d48ff7d27ed694ba3c52cd451",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "d72056ffa17f9decf20023146aa1c4c0d6b1bbc2dd81c905693e976c962abcec"
+  }
+}

@@ -1,6 +1,6 @@
 # Payment Cash Truth Readiness Gate
 
-Generated: 2026-08-22T09:02:48.527Z
+Generated: 2026-08-29T16:18:57.942Z
 Mode: fail
 Status: ready
 

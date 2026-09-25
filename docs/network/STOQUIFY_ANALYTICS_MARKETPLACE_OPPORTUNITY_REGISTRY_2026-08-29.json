@@ -1,0 +1,864 @@
+{
+  "metadata": {
+    "title": "Stoquify Analytics, Marketplace, and Network-Effect Opportunity Registry",
+    "version": "2026-08-29",
+    "workspace": "E:/ohada saas/Focused projects/stoquify",
+    "assignment_type": "read_only_strategy_review",
+    "source_precedence": [
+      "live_source",
+      "current_generated_evidence",
+      "graph_reports",
+      "historical_strategy_documents",
+      "new_proposals"
+    ],
+    "certification": {
+      "legal": false,
+      "accounting": false,
+      "security": false,
+      "privacy": false,
+      "accessibility": false,
+      "release": false
+    },
+    "executive_verdict": "Deepen trusted analytics and accountant-led invite-only collaboration before any marketplace.",
+    "recommended_market_model": "no_marketplace_yet_accountant_led_controlled_collaboration_network",
+    "published_subfolder": "docs/network"
+  },
+  "evidence": {
+    "live_source": [
+      "app/[locale]/(dashboard)/dashboard/analytics/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts",
+      "services/analytics/sales-analytics.service.ts",
+      "services/analytics/business-pulse-contracts.ts",
+      "services/bi/bi-contracts.ts",
+      "services/referrals/referral-funnel-read-model.service.ts",
+      "services/accounting/accountant-access.service.ts",
+      "services/accounting/accountant-client-invite.service.ts",
+      "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "services/purchase-order/purchase-order.service.ts",
+      "services/cash-command/",
+      "services/stock-to-cash/stock-to-cash-flow.service.ts",
+      "services/modules/module-catalog.service.ts",
+      "services/modules/module-entitlement.service.ts",
+      "config/sidebar.ts",
+      "config/permissions.ts",
+      "prisma/schema.prisma"
+    ],
+    "generated_reports": [
+      "what-next/module-surface-inventory.md",
+      "what-next/system-evaluation-2026-08-28-comprehensive-report.md",
+      "what-next/system-evaluation-2026-08-28-risk-register.md",
+      "what-next/system-evaluation-2026-08-28-blocker-matrix.json",
+      "what-next/external-readiness/referral-target-readiness-2026-08-10/REFERRAL_TARGET_READINESS_APPROVAL_PACKET.md",
+      "what-next/purchase-order-analytics-modernization-2026-08-14.md"
+    ],
+    "graphs": [
+      {
+        "path": "graphify-out/GRAPH_REPORT.md",
+        "snapshot": "2026-06-14",
+        "use": "repository architecture context"
+      },
+      {
+        "path": "graphify-out/POST_SLICE_438_GRAPH_REFRESH_2026-08-09.md",
+        "snapshot": "2026-08-09",
+        "use": "ordered graph refresh and referral/accountant evidence"
+      },
+      {
+        "path": "graphify-out/GRAPH_REPORT_app.md",
+        "observations": [
+          "FinanceRouteAccess is a major route hub",
+          "AnalyticsPage is isolated in app Community 34"
+        ]
+      },
+      {
+        "path": "graphify-out/GRAPH_REPORT_actions.md",
+        "observations": [
+          "analytics functions form action Community 8",
+          "purchase-order workflow is a distinct action community"
+        ]
+      },
+      {
+        "path": "graphify-out/GRAPH_REPORT_components.md",
+        "observations": [
+          "PaymentReconciliationWorkbench is component Community 13",
+          "StockToCashFlowDashboard is component Community 69"
+        ]
+      }
+    ],
+    "limitations": [
+      "working_tree_dirty",
+      "production_release_blocked",
+      "referral_live_delivery_blocked",
+      "graph_snapshots_older_than_live_source",
+      "marketplace_domain_not_implemented"
+    ]
+  },
+  "existing_capabilities": [
+    {
+      "id": "CAP-BUSINESS-PULSE",
+      "name": "Business Pulse command read model",
+      "classification": "implemented_and_source_verified",
+      "owner": "Analytics",
+      "routes": ["/dashboard/analytics"],
+      "evidence": [
+        "services/analytics/sales-analytics.service.ts",
+        "services/analytics/business-pulse-contracts.ts",
+        "components/analytics/BusinessPulseDashboard.tsx"
+      ],
+      "strengths": [
+        "server_owned",
+        "evidence_grade",
+        "freshness",
+        "provenance",
+        "blockers",
+        "redactions",
+        "action_links"
+      ],
+      "gaps": [
+        "hard_coded_XAF_currency",
+        "server_local_time_boundary",
+        "no_explicit_module_entitlement_in_route_catalog"
+      ]
+    },
+    {
+      "id": "CAP-BI-PRIMITIVES",
+      "name": "Shared BI command and evidence primitives",
+      "classification": "implemented_and_source_verified",
+      "owner": "BI Platform",
+      "evidence": [
+        "services/bi/bi-contracts.ts",
+        "services/bi/bi-evidence-adapter.service.ts",
+        "components/bi/"
+      ],
+      "strengths": [
+        "command_brief",
+        "kpi_cards",
+        "action_priority",
+        "risk_radar",
+        "proof_drawer",
+        "robust_states"
+      ]
+    },
+    {
+      "id": "CAP-REFERRAL-FUNNEL",
+      "name": "Privacy-bounded referral funnel",
+      "classification": "implemented_and_source_verified",
+      "owner": "Referrals",
+      "routes": ["/dashboard/analytics/referrals"],
+      "evidence": [
+        "services/referrals/referral-funnel-read-model.service.ts",
+        "actions/referrals/referral-funnel.actions.ts",
+        "components/referrals/ReferralFunnelDashboard.tsx"
+      ],
+      "privacy_boundary": {
+        "tenant_scoped": true,
+        "aggregate_only": true,
+        "recipient_contacts": false,
+        "raw_request_data": false
+      },
+      "gaps": [
+        "all_time_only",
+        "no_delivery_stage",
+        "no_cohorts",
+        "no_first_trusted_value",
+        "no_retained_activation",
+        "no_revenue_attribution_quality"
+      ]
+    },
+    {
+      "id": "CAP-ACCOUNTANT-ACCESS",
+      "name": "Consent-bound accountant access and portfolio",
+      "classification": "implemented_and_source_verified",
+      "owner": "Accounting",
+      "routes": [
+        "/dashboard/accounting/accountant-access",
+        "/dashboard/accounting/accountant-portfolio",
+        "/dashboard/accounting/accountant-portal"
+      ],
+      "evidence": [
+        "services/accounting/accountant-access.service.ts",
+        "components/accounting/AccountantPortfolio.tsx"
+      ],
+      "controls": [
+        "tenant_scope",
+        "active_effective_expiring_grants",
+        "revocation",
+        "READ_EXPORT_REVIEW_capabilities",
+        "event_recording"
+      ]
+    },
+    {
+      "id": "CAP-ACCOUNTANT-INVITE",
+      "name": "Accountant-client invitation and attribution",
+      "classification": "implemented_but_operationally_unverified",
+      "owner": "Accounting and Referrals",
+      "evidence": [
+        "services/accounting/accountant-client-invite.service.ts",
+        "prisma/schema.prisma"
+      ],
+      "strengths": [
+        "signed_consent_evidence",
+        "token_acceptance",
+        "idempotency",
+        "referral_attribution",
+        "business_events"
+      ],
+      "blockers": [
+        "live_delivery_disabled",
+        "release_secrets_5_of_21",
+        "real_cohort_not_approved"
+      ]
+    },
+    {
+      "id": "CAP-SUPPLIER-PO-PARTICIPATION",
+      "name": "Invite-only supplier PO acknowledgement",
+      "classification": "implemented_but_operationally_unverified",
+      "owner": "Purchase Order",
+      "routes": ["/dashboard/purchase-orders/[id]/supplier-acknowledgement"],
+      "evidence": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx"
+      ],
+      "strengths": [
+        "immutable_envelope",
+        "token_scope",
+        "access_log",
+        "accept_reject_change_proposal",
+        "buyer_review",
+        "idempotency",
+        "hash_evidence"
+      ],
+      "authority_boundary": "external_response_is_proposal_internal_service_accepts_or_rejects"
+    },
+    {
+      "id": "CAP-PO-ANALYTICS",
+      "name": "Purchase-order analytics",
+      "classification": "implemented_and_source_verified",
+      "owner": "Purchasing",
+      "routes": ["/dashboard/purchase-orders/analytics"],
+      "metrics": [
+        "open_commitment",
+        "receipt",
+        "overdue",
+        "supplier_concentration",
+        "trend",
+        "status_mix",
+        "supplier_location_item_performance",
+        "open_order_aging"
+      ],
+      "gap": "no_historical_status_reconstruction"
+    },
+    {
+      "id": "CAP-CASH-STOCK-RECON-CLOSE",
+      "name": "Cash Command, Stock-to-Cash, reconciliation, and close evidence",
+      "classification": "implemented_and_source_verified_operationally_unverified_for_production",
+      "owners": [
+        "Finance",
+        "Payments",
+        "Inventory",
+        "Accounting",
+        "Close Assurance"
+      ],
+      "evidence": [
+        "services/cash-command/",
+        "services/stock-to-cash/stock-to-cash-flow.service.ts",
+        "services/payments/",
+        "services/accounting/close-assurance.service.ts"
+      ]
+    },
+    {
+      "id": "CAP-MODULE-CONTROL",
+      "name": "Module catalog and entitlement control",
+      "classification": "partial",
+      "owner": "Platform Modules",
+      "facts": {
+        "catalog_modules": 19,
+        "surfaces": 410,
+        "mapped": 369,
+        "unmapped": 5,
+        "missing_permission": 79,
+        "dashboard_only_risk": 77,
+        "enforcement_candidates": 293
+      },
+      "blocker": "mixed_observe_enforce_truth"
+    },
+    {
+      "id": "CAP-COMMERCIAL-AGENTS",
+      "name": "Commercial Agents module boundary",
+      "classification": "partial",
+      "owner": "Sales",
+      "evidence": ["services/modules/module-catalog.service.ts"],
+      "missing": [
+        "partner_profile",
+        "verification",
+        "lead_routing",
+        "service_catalog",
+        "commission",
+        "dispute",
+        "moderation"
+      ]
+    },
+    {
+      "id": "CAP-GENERAL-FORECAST",
+      "name": "General budget, scenario, and 13-week forecast",
+      "classification": "no_repository_evidence_found",
+      "owner": "not_assigned"
+    },
+    {
+      "id": "CAP-MARKETPLACE",
+      "name": "Marketplace identity, discovery, matching, reputation, dispute, payout, and moderation",
+      "classification": "no_repository_evidence_found",
+      "owner": "not_assigned"
+    },
+    {
+      "id": "CAP-BENCHMARKING",
+      "name": "Cross-tenant benchmarking",
+      "classification": "proposal_only",
+      "blockers": [
+        "explicit_consent",
+        "minimum_cohort",
+        "anonymization",
+        "anti_reidentification",
+        "qualified_privacy_review"
+      ]
+    }
+  ],
+  "kpi_definitions": [
+    {
+      "id": "KPI-CLOSING-CASH",
+      "name": "Projected closing cash",
+      "formula": "opening_cash + trusted_inflows - trusted_outflows",
+      "owner": "Cash Command",
+      "controls": ["currency_consistent", "source_deduplication", "coverage_state"]
+    },
+    {
+      "id": "KPI-FORECAST-ERROR",
+      "name": "Forecast error",
+      "formula": "abs(actual - prior_forecast) / max(abs(actual), materiality_floor)",
+      "owner": "Cash Command",
+      "controls": ["forecast_version_binding", "actual_source_binding"]
+    },
+    {
+      "id": "KPI-UNRECONCILED-EXPOSURE",
+      "name": "Unreconciled exposure",
+      "formula": "sum(unmatched_or_suspense_amounts_in_selected_scope)",
+      "owner": "Payments Reconciliation",
+      "controls": ["not_labeled_confirmed_loss", "provider_completeness"]
+    },
+    {
+      "id": "KPI-SIGNED-RUN-COVERAGE",
+      "name": "Signed reconciliation coverage",
+      "formula": "signed_in_scope_amount / total_in_scope_amount",
+      "owner": "Payments Reconciliation"
+    },
+    {
+      "id": "KPI-INVENTORY-DAYS",
+      "name": "Inventory days",
+      "formula": "average_inventory_value / approved_daily_COGS",
+      "owner": "Inventory and Accounting",
+      "controls": ["approved_valuation", "posted_or_labeled_operational_COGS"]
+    },
+    {
+      "id": "KPI-OPEN-COMMITMENT",
+      "name": "Open purchase commitment",
+      "formula": "sum(max(ordered_quantity - accepted_received_quantity, 0) * authoritative_unit_cost)",
+      "owner": "Purchasing"
+    },
+    {
+      "id": "KPI-DSO",
+      "name": "Days sales outstanding",
+      "formula": "average_accounts_receivable / credit_sales * days_in_period",
+      "owner": "Accounting Receivables",
+      "controls": ["credit_sales_only", "opening_balance_quality"]
+    },
+    {
+      "id": "KPI-INVITE-ACCEPTANCE",
+      "name": "Invite acceptance rate",
+      "formula": "accepted_unique_invites / delivered_unique_invites",
+      "owner": "Referrals",
+      "controls": ["delivery_denominator", "unique_invite", "bot_filtering"]
+    },
+    {
+      "id": "KPI-ACTIVATION",
+      "name": "Referral activation rate",
+      "formula": "organizations_reaching_activation / accepted_unique_invites",
+      "owner": "Referrals and Onboarding"
+    },
+    {
+      "id": "KPI-TIME-FIRST-TRUST",
+      "name": "Time to first trusted value",
+      "formula": "first_trusted_value_at - accepted_or_organization_created_at",
+      "owner": "Growth Analytics",
+      "controls": ["versioned_event_definition"]
+    },
+    {
+      "id": "KPI-K-FACTOR",
+      "name": "Viral coefficient",
+      "formula": "invites_per_active_organization * invite_acceptance_rate * activation_rate",
+      "owner": "Growth Analytics",
+      "controls": ["retained_activation_reported_separately", "no_spam_incentive"]
+    },
+    {
+      "id": "KPI-NO-REKEY",
+      "name": "External completion without staff re-keying",
+      "formula": "accepted_external_actions_without_manual_reentry / accepted_external_actions",
+      "owner": "Collaboration"
+    }
+  ],
+  "screens": [
+    {
+      "id": "SCR-CASH-13W",
+      "name": "Working Capital and 13-Week Cash Command",
+      "priority": "P0",
+      "build_ready": true,
+      "primary_personas": ["owner_founder", "finance_controller"],
+      "secondary_personas": ["accountant"],
+      "cadence": "daily_weekly",
+      "route": "/dashboard/finance/cash-command",
+      "route_action": "extend",
+      "service_owner": "Cash Command",
+      "source_owners": ["Finance", "Accounting", "Purchasing", "Payroll", "Compliance", "Inventory", "Payments"],
+      "read_model": "CashForecastCommandReadModel",
+      "kpis": ["KPI-CLOSING-CASH", "KPI-FORECAST-ERROR", "collection_coverage", "funding_gap", "minimum_cash_week"],
+      "permissions": ["finance.cash-flow.read", "finance.forecast.read_proposed"],
+      "module_entitlements": ["finance", "analytics_or_finance_intelligence"],
+      "actions": ["open_receivables", "open_payables", "open_purchase_commitment", "open_payroll_aggregate", "open_reconciliation"],
+      "robust_states": ["loading", "empty", "no_data", "stale", "partial", "degraded", "blocked", "permission_denied", "entitlement_denied", "error"],
+      "new_records_v1": [],
+      "new_records_later": ["CashForecastScenario", "CashForecastAssumption", "CashForecastSnapshot", "CashForecastApproval", "CashForecastActualVariance"],
+      "scores": {"value": 5, "readiness": 4, "trust": 4, "retention": 5, "referral": 3, "network": 2, "monetization": 5, "effort": 4, "risk": 3, "confidence": 4},
+      "principal_risks": ["double_counting", "false_confidence", "currency_timezone", "missing_due_dates"]
+    },
+    {
+      "id": "SCR-RECON-LEAKAGE",
+      "name": "Cash Leakage and Reconciliation Exception Control Tower",
+      "priority": "P0",
+      "build_ready": true,
+      "primary_personas": ["finance_controller", "cash_pos_supervisor"],
+      "secondary_personas": ["owner_founder", "accountant"],
+      "cadence": "intraday_daily",
+      "route": "/dashboard/finance/reconciliation",
+      "route_action": "extend",
+      "service_owner": "Payments Reconciliation",
+      "source_owners": ["Payments", "POS", "Cash Drawer", "Finance", "Accounting"],
+      "read_model": "ReconciliationLeakageReadModel",
+      "kpis": ["KPI-UNRECONCILED-EXPOSURE", "KPI-SIGNED-RUN-COVERAGE", "open_suspense", "critical_exception_amount", "median_resolution_time"],
+      "permissions": ["payments.reconciliation.read"],
+      "separate_sensitive_permissions": ["payments.reconciliation.override", "payments.reconciliation.sign", "payments.reconciliation.certificate.export"],
+      "scores": {"value": 5, "readiness": 5, "trust": 5, "retention": 5, "referral": 3, "network": 2, "monetization": 5, "effort": 3, "risk": 3, "confidence": 5},
+      "principal_risks": ["exposure_mislabeled_loss", "provider_incompleteness", "sensitive_account_disclosure"]
+    },
+    {
+      "id": "SCR-ACCOUNTANT-NETWORK",
+      "name": "Accountant Advisory and Network Portfolio",
+      "priority": "P0",
+      "build_ready": true,
+      "primary_personas": ["accountant", "accounting_firm"],
+      "secondary_personas": ["owner_founder"],
+      "cadence": "daily_weekly",
+      "route": "/dashboard/accounting/accountant-portfolio",
+      "route_action": "extend",
+      "service_owner": "Accounting Accountant Access",
+      "source_owners": ["Close Assurance", "Payments", "Finance", "Purchasing AP", "Referrals"],
+      "read_model": "AccountantAdvisoryPortfolioReadModel",
+      "kpis": ["clients_needing_action", "close_ready_clients", "mandates_expiring", "KPI-INVITE-ACCEPTANCE", "KPI-TIME-FIRST-TRUST", "clients_per_active_accountant"],
+      "permissions": ["accounting.audit.read", "per_client_active_grant"],
+      "privacy_rules": ["per_client_authorization", "no_cross_currency_sum", "aggregate_growth_only", "immediate_revocation"],
+      "scores": {"value": 5, "readiness": 4, "trust": 5, "retention": 5, "referral": 5, "network": 5, "monetization": 5, "effort": 3, "risk": 4, "confidence": 4},
+      "principal_risks": ["cross_tenant_exposure", "identity_verification", "live_delivery_blocked"]
+    },
+    {
+      "id": "SCR-INVENTORY-CASH",
+      "name": "Inventory-to-Cash Velocity",
+      "priority": "P1",
+      "build_ready": false,
+      "route": "/dashboard/finance/stock-to-cash",
+      "route_action": "extend",
+      "primary_personas": ["inventory_manager", "owner_founder"],
+      "service_owner": "Stock-to-Cash",
+      "source_owners": ["Inventory", "Sales", "Purchasing", "Accounting"],
+      "read_model": "InventoryCashVelocityReadModel",
+      "kpis": ["KPI-INVENTORY-DAYS", "turnover", "dead_stock_value", "stockout_at_risk_margin", "negative_stock_count"],
+      "scores": {"value": 5, "readiness": 4, "trust": 4, "retention": 5, "referral": 2, "network": 2, "monetization": 4, "effort": 3, "risk": 2, "confidence": 4}
+    },
+    {
+      "id": "SCR-SUPPLIER-AP",
+      "name": "Supplier Commitment and AP Risk",
+      "priority": "P1",
+      "build_ready": false,
+      "routes": ["/dashboard/purchase-orders/analytics", "/dashboard/purchases/payables"],
+      "route_action": "extend_shared_drillthrough",
+      "primary_personas": ["buyer_procurement", "finance_controller"],
+      "service_owner": "Purchasing AP",
+      "source_owners": ["Purchase Order", "Goods Receipt", "Supplier Invoice", "Supplier Payment"],
+      "read_model": "SupplierCommitmentRiskReadModel",
+      "kpis": ["KPI-OPEN-COMMITMENT", "acknowledgement_rate", "median_acknowledgement_time", "received_not_invoiced", "match_exception_amount", "supplier_concentration"],
+      "controls": ["tenant_private_transaction_facts", "no_public_rating", "bank_redaction", "maker_checker"],
+      "scores": {"value": 5, "readiness": 5, "trust": 5, "retention": 5, "referral": 4, "network": 4, "monetization": 5, "effort": 3, "risk": 4, "confidence": 5}
+    },
+    {
+      "id": "SCR-RECEIVABLES",
+      "name": "Receivables Collection and Customer Payment Behavior",
+      "priority": "P1",
+      "build_ready": false,
+      "route": "/dashboard/finance/receivables",
+      "route_action": "extend",
+      "primary_personas": ["finance_controller", "sales_customer_success"],
+      "service_owner": "Accounting Receivables",
+      "source_owners": ["Customer Statement", "Settlement", "Sales"],
+      "read_model": "ReceivablesCollectionReadModel",
+      "kpis": ["KPI-DSO", "aging", "promise_kept_rate", "dispute_aging", "statement_self_service_rate"],
+      "controls": ["no_credit_score", "transactional_vs_marketing_consent", "contact_redaction"],
+      "scores": {"value": 5, "readiness": 4, "trust": 4, "retention": 5, "referral": 4, "network": 3, "monetization": 4, "effort": 3, "risk": 4, "confidence": 4}
+    },
+    {
+      "id": "SCR-MARGIN",
+      "name": "Margin Leakage and Profitability Explanation",
+      "priority": "P1",
+      "build_ready": false,
+      "routes": ["/dashboard/finance/profitability", "/dashboard/finance/profit-loss", "/dashboard/finance/costs", "/dashboard/finance/sales"],
+      "route_action": "consolidate",
+      "primary_personas": ["owner_founder", "finance_controller"],
+      "service_owner": "Finance",
+      "source_owners": ["Accounting", "Sales", "Inventory", "Payments"],
+      "read_model": "MarginExplanationReadModel",
+      "kpis": ["gross_margin", "contribution_margin", "discount_leakage", "return_cost", "fee_ratio", "writeoff_exposure"],
+      "controls": ["posted_vs_operational_label", "approved_valuation", "no_false_profit_certification"],
+      "scores": {"value": 5, "readiness": 3, "trust": 3, "retention": 4, "referral": 2, "network": 1, "monetization": 5, "effort": 4, "risk": 4, "confidence": 3}
+    },
+    {
+      "id": "SCR-BRANCH-CONTROL",
+      "name": "Branch Operating Control Comparison",
+      "priority": "P1",
+      "build_ready": false,
+      "routes": ["/dashboard/owner-war-room", "/dashboard/manager-action-center"],
+      "route_action": "extend",
+      "primary_personas": ["branch_manager", "owner_founder"],
+      "service_owner": "Manager Action Center",
+      "source_owners": ["Sales", "POS", "Inventory", "Purchasing", "Payments", "Daily Close"],
+      "read_model": "BranchControlComparisonReadModel",
+      "controls": ["location_scope", "no_opaque_ranking", "volume_context", "payroll_redaction"],
+      "scores": {"value": 4, "readiness": 4, "trust": 4, "retention": 5, "referral": 2, "network": 2, "monetization": 4, "effort": 3, "risk": 4, "confidence": 4}
+    },
+    {
+      "id": "SCR-REFERRAL-PARTICIPATION",
+      "name": "Referral and External Participation Growth",
+      "priority": "P1",
+      "build_ready": false,
+      "route": "/dashboard/analytics/referrals",
+      "route_action": "extend",
+      "primary_personas": ["growth_product_operations", "owner_founder", "accountant", "implementation_partner"],
+      "service_owner": "Referrals",
+      "source_owners": ["Accounting Invitations", "Customer Statements", "Purchase Order", "Onboarding", "Billing"],
+      "read_model": "ParticipationFunnelReadModel",
+      "kpis": ["KPI-INVITE-ACCEPTANCE", "KPI-ACTIVATION", "KPI-TIME-FIRST-TRUST", "KPI-K-FACTOR", "retention_by_participation"],
+      "privacy_rules": ["aggregate_only", "minimum_cohort_for_breakdown", "no_recipient_identity", "purpose_consent"],
+      "scores": {"value": 4, "readiness": 4, "trust": 4, "retention": 4, "referral": 5, "network": 5, "monetization": 4, "effort": 2, "risk": 4, "confidence": 4}
+    },
+    {
+      "id": "SCR-COLLAB-HEALTH",
+      "name": "Counterparty Collaboration Health",
+      "priority": "P2",
+      "build_ready": false,
+      "route": "/dashboard/collaboration",
+      "route_action": "future_after_embedded_pilots",
+      "primary_personas": ["buyer_procurement", "finance_controller", "supplier", "customer", "accountant"],
+      "service_owner": "Future Counterparty Collaboration",
+      "read_model": "CollaborationHealthReadModel",
+      "kpis": ["digital_participation", "response_time", "KPI-NO-REKEY", "internal_acceptance", "cycle_time_reduction", "dispute_aging"],
+      "controls": ["invite_only", "proposal_boundary", "revocation", "disclosure_minimization"],
+      "scores": {"value": 4, "readiness": 3, "trust": 4, "retention": 5, "referral": 4, "network": 5, "monetization": 4, "effort": 4, "risk": 5, "confidence": 3}
+    },
+    {
+      "id": "SCR-CLOSE-PORTFOLIO",
+      "name": "Close and Compliance Readiness Portfolio",
+      "priority": "P2",
+      "build_ready": false,
+      "routes": ["/dashboard/accounting/close", "/dashboard/accounting/accountant-portfolio"],
+      "route_action": "extend_no_duplicate",
+      "primary_personas": ["accountant", "finance_controller", "owner_founder"],
+      "service_owner": "Close Assurance",
+      "read_model": "CloseReadinessPortfolioReadModel",
+      "kpis": ["readiness", "critical_blockers", "evidence_unavailable", "source_link_coverage", "days_to_close", "waiver_aging"],
+      "scores": {"value": 5, "readiness": 4, "trust": 5, "retention": 5, "referral": 4, "network": 3, "monetization": 5, "effort": 3, "risk": 4, "confidence": 4}
+    },
+    {
+      "id": "SCR-ECOSYSTEM-OPS",
+      "name": "Ecosystem Operations and Marketplace Health",
+      "priority": "CONDITIONAL",
+      "build_ready": false,
+      "route": "/dashboard/admin/ecosystem",
+      "route_action": "future",
+      "primary_personas": ["platform_administrator", "partner_operations"],
+      "service_owner": "Future Ecosystem Operations",
+      "read_model": "EcosystemHealthReadModel",
+      "kpis": ["verified_participants", "successful_pairs", "response_time", "dispute_rate", "abuse_rate", "support_cost", "retention_lift", "contribution_margin"],
+      "scores": {"value": 3, "readiness": 1, "trust": 2, "retention": 3, "referral": 4, "network": 5, "monetization": 4, "effort": 5, "risk": 5, "confidence": 1},
+      "gate": "do_not_build_until_phase_3_pilot_evidence"
+    }
+  ],
+  "marketplace_options": [
+    {
+      "id": "MKT-OPEN-SUPPLIER",
+      "name": "Open supplier marketplace",
+      "verdict": "reject",
+      "foundation": "tenant_supplier_and_PO_records_only",
+      "cold_start": "severe_two_sided",
+      "missing": ["shared_identity", "discovery", "matching", "catalog", "transaction_boundary", "disputes", "moderation", "fraud", "payouts", "support"],
+      "monetization": ["take_rate", "listing_fee"],
+      "network_strength": 5,
+      "risk": 5
+    },
+    {
+      "id": "MKT-INVITE-COLLAB",
+      "name": "Invite-only supplier/customer collaboration network",
+      "verdict": "pilot_after_named_prerequisites",
+      "foundation": "strong",
+      "cold_start": "low_known_counterparties",
+      "missing": ["live_delivery", "verified_identity", "relationship_grants", "support_dispute_policy", "common_action_contract"],
+      "monetization": ["collaboration_module", "premium_seats"],
+      "network_strength": 4
+    },
+    {
+      "id": "MKT-PARTNER-DIRECTORY",
+      "name": "Verified accountant and implementation-partner directory",
+      "verdict": "pilot_after_named_prerequisites",
+      "foundation": "accountant_access_invites_and_commercial_agents_catalog",
+      "missing": ["firm_identity", "verification", "categories", "service_areas", "moderation", "conflict_policy", "complaints"],
+      "monetization": ["partner_subscription", "qualified_lead_fee"],
+      "network_strength": 4
+    },
+    {
+      "id": "MKT-ACCOUNTANT-LED",
+      "name": "Accountant-led client acquisition and portfolio network",
+      "verdict": "build_analytics_now_pilot_acquisition_after_prerequisites",
+      "foundation": "strong",
+      "missing": ["live_delivery", "firm_verification", "partner_operations", "attribution_quality"],
+      "monetization": ["portfolio_subscription", "activation_package"],
+      "network_strength": 5
+    },
+    {
+      "id": "MKT-COUNTRY-ADAPTER",
+      "name": "Country-pack/compliance adapter marketplace",
+      "verdict": "defer",
+      "foundation": "conceptual_country_adapter_and_compliance_modules",
+      "missing": ["package_format", "code_signing", "sandbox", "review", "liability", "updates", "rollback", "qualified_approval"],
+      "monetization": ["certification_fee", "revenue_share"],
+      "network_strength": 5
+    },
+    {
+      "id": "MKT-INTEGRATION-CATALOG",
+      "name": "Integration/provider catalog",
+      "verdict": "defer_prepare_catalog_contract",
+      "foundation": "provider_boundaries_and_reconciliation_adapters",
+      "missing": ["developer_identity", "scopes", "secret_governance", "sandbox", "certification", "versioning", "SLA", "revocation"],
+      "monetization": ["integration_fee", "revenue_share"],
+      "network_strength": 4
+    },
+    {
+      "id": "MKT-B2B-DISCOVERY",
+      "name": "Curated B2B counterparty discovery network",
+      "verdict": "defer",
+      "foundation": "tenant_private_transaction_facts",
+      "missing": ["shared_identity", "consented_discovery", "matching", "moderation", "disputes", "anti_bribery", "privacy"],
+      "monetization": ["subscription", "qualified_introduction"],
+      "network_strength": 5
+    },
+    {
+      "id": "MKT-NONE-YET",
+      "name": "No marketplace yet; deepen referral and collaboration loops",
+      "verdict": "build_now",
+      "foundation": "strongest_repository_fit",
+      "monetization": ["module_bundles", "portfolio_seats", "collaboration_premium"],
+      "network_strength": 4,
+      "recommended": true
+    }
+  ],
+  "network_loops": [
+    {
+      "id": "LOOP-ACCOUNTANT",
+      "name": "Accountant-led client network",
+      "role": "primary",
+      "actors": ["accountant", "client_owner", "Stoquify"],
+      "trigger": "consent_bound_client_invitation",
+      "activation": ["invite_accepted", "organization_activated", "first_trusted_value"],
+      "recurring_value": ["advisory_queue", "mandate_health", "evidence_requests", "close_improvement"],
+      "reinforcement": "more_active_clients_increase_portfolio_value_and_productive_accountants_bring_more_clients",
+      "cold_start": "small_cohort_of_accounting_firms_with_existing_clients",
+      "drop_offs": ["delivery_failure", "consent_fear", "missing_setup", "low_source_coverage", "accountant_inactivity"],
+      "incentive": "portfolio_tooling_or_credits_based_on_activated_retained_clients",
+      "abuse_controls": ["rate_limit", "verified_sender", "consent_proof", "suppression", "anti_self_referral", "no_purchased_lists"],
+      "privacy": ["per_client_grant", "aggregate_growth", "no_cross_client_financial_total"],
+      "events": ["invite.issued", "invite.delivered", "invite.clicked", "invite.accepted", "organization.activated", "trusted_value.achieved", "grant.revoked", "grant.expired"],
+      "metrics": ["KPI-INVITE-ACCEPTANCE", "KPI-ACTIVATION", "KPI-TIME-FIRST-TRUST", "clients_per_active_accountant", "retention", "KPI-K-FACTOR"],
+      "shutdown": ["spam_threshold_breach", "cross_tenant_exposure", "consent_failure", "no_retention_lift"],
+      "true_network_effect_condition": "additional_active_clients_increase_accountant_portfolio_value_and_additional_accountants_improve_client_acquisition_or_support"
+    },
+    {
+      "id": "LOOP-SUPPLIER",
+      "name": "Buyer/supplier controlled transaction participation",
+      "role": "secondary",
+      "actors": ["buyer", "supplier", "Stoquify"],
+      "trigger": "trusted_PO_envelope",
+      "activation": ["supplier_proposal_submitted", "buyer_reviewed"],
+      "recurring_value": ["repeated_acknowledgements", "future_delivery_notice", "future_invoice_status"],
+      "abuse_controls": ["invite_only", "token_expiry", "revocation", "rate_limit", "tenant_private_performance", "proposal_boundary"],
+      "metrics": ["digital_participation", "response_latency", "KPI-NO-REKEY", "cycle_time_reduction"],
+      "true_network_effect_condition": "verified_supplier_can_participate_with_multiple_tenants_under_explicit_relationships"
+    },
+    {
+      "id": "LOOP-CUSTOMER-STATEMENT",
+      "name": "Customer statement and self-service referral",
+      "role": "secondary",
+      "actors": ["merchant", "customer", "referred_business"],
+      "trigger": "consented_signed_statement",
+      "activation": ["verified_statement_access", "meaningful_recipient_action"],
+      "privacy": ["transactional_delivery_separate_from_marketing", "token_expiry", "aggregate_analytics", "no_public_balance"],
+      "metrics": ["delivered", "opened", "actioned", "self_service_containment", "payment_conversion", "referred_activation"],
+      "true_network_effect_condition": "referred_businesses_create_reciprocal_value_for_existing_participants"
+    },
+    {
+      "id": "LOOP-PARTNER-TEMPLATE",
+      "name": "Implementation partner reusable onboarding",
+      "role": "secondary",
+      "actors": ["verified_partner", "tenant", "Stoquify"],
+      "trigger": "approved_onboarding_template",
+      "activation": ["control_totals_pass", "setup_milestones_complete", "first_trusted_value"],
+      "abuse_controls": ["signed_template_version", "tenant_preview_approval", "least_privilege", "audit", "rollback"],
+      "metrics": ["activation_time", "import_exception_rate", "retained_tenants", "clients_per_partner", "support_hours"],
+      "true_network_effect_condition": "reusable_partner_assets_raise_tenant_value_and_tenant_demand_attracts_qualified_partners"
+    }
+  ],
+  "dependencies": [
+    {"id": "DEP-METRIC", "name": "versioned_metric_registry", "phase": 0},
+    {"id": "DEP-CURRENCY-TIME", "name": "organization_currency_timezone_semantics", "phase": 0},
+    {"id": "DEP-ACCESS", "name": "pilot_scope_RBAC_and_module_entitlement_closure", "phase": 0},
+    {"id": "DEP-EVIDENCE", "name": "uniform_freshness_provenance_coverage", "phase": 0},
+    {"id": "DEP-DELIVERY", "name": "managed_secrets_HTTPS_provider_delivery_alerts", "phase": 2},
+    {"id": "DEP-CONSENT", "name": "signed_consent_revocation_retention", "phase": 2},
+    {"id": "DEP-IDENTITY", "name": "partner_and_counterparty_identity_verification", "phase": 3},
+    {"id": "DEP-MODERATION", "name": "moderation_dispute_support_appeal", "phase": 3},
+    {"id": "DEP-BENCHMARK", "name": "opt_in_minimum_cohort_anonymization_anti_reidentification", "phase": 5}
+  ],
+  "go_no_go_gates": [
+    "zero_unresolved_pilot_scope_permission_or_module_gaps",
+    "live_delivery_secrets_origin_provider_retry_abuse_and_alerting_pass",
+    "consent_and_revocation_independently_reviewed",
+    "participant_identity_controls_approved",
+    "closed_cohort_proves_repeat_participation_and_retention_lift",
+    "support_incident_dispute_moderation_and_rollback_staffed",
+    "privacy_retention_redaction_and_cross_tenant_negative_tests_pass",
+    "no_critical_release_blocker_on_pilot_path",
+    "network_has_recurring_value_without_public_discovery",
+    "marketplace_has_measured_two_sided_demand"
+  ],
+  "roadmap": [
+    {
+      "phase": 0,
+      "name": "Evidence and metric corrections",
+      "scope": ["currency_timezone", "referral_taxonomy", "coverage_freshness", "pilot_access", "dashboard_ownership"],
+      "success": ["no_hard_coded_Business_Pulse_currency", "distinct_funnel_events", "zero_pilot_access_gaps"],
+      "non_goals": ["marketplace", "benchmarking", "prediction"]
+    },
+    {
+      "phase": 1,
+      "name": "Highest-value analytical screens",
+      "scope": ["SCR-CASH-13W", "SCR-RECON-LEAKAGE", "SCR-ACCOUNTANT-NETWORK"],
+      "success": ["role_WAU", "action_completion", "source_coverage", "resolution_time", "forecast_review", "portfolio_engagement"],
+      "control_gates": ["source_owner_contract", "RBAC_negative", "redaction", "EN_FR", "accessibility", "performance", "feature_flag"],
+      "non_goals": ["analytics_mutations", "public_external_expansion"]
+    },
+    {
+      "phase": 2,
+      "name": "Referral and counterparty collaboration expansion",
+      "scope": ["cohort_funnel", "first_trusted_value", "delivery_health", "supplier_response", "customer_self_service"],
+      "success": ["acceptance", "activation", "time_to_trust", "digital_participation", "no_rekey", "approved_complaint_rate"],
+      "rollback": ["disable_live_sends", "disable_new_invites", "preserve_audit"],
+      "non_goals": ["public_discovery", "cross_tenant_matching", "star_rating"]
+    },
+    {
+      "phase": 3,
+      "name": "Controlled accountant, supplier, and partner network pilot",
+      "scope": ["verified_closed_cohort", "accountant_portfolio_loop", "supplier_participation", "two_partner_templates"],
+      "success": ["retained_multi_tenant_accountants", "repeat_supplier_participation", "cycle_time_saving", "retention_lift"],
+      "non_goals": ["take_rate", "marketplace_payment", "lending", "public_reputation"]
+    },
+    {
+      "phase": 4,
+      "name": "Curated marketplace only if gates pass",
+      "scope": ["one_verified_accountant_or_implementation_partner_category", "controlled_profile", "controlled_inquiry"],
+      "success": ["qualified_inquiry_conversion", "time_to_match", "low_dispute_rate", "retention_lift", "positive_contribution_margin"],
+      "rollback": ["remove_discovery_and_inquiry", "preserve_direct_grants_and_portfolios"],
+      "non_goals": ["supplier_goods_marketplace", "escrow", "credit_scoring", "public_transaction_rating"]
+    },
+    {
+      "phase": 5,
+      "name": "Privacy-safe benchmarking",
+      "scope": ["opt_in_cohorts", "minimum_threshold", "anonymization", "withdrawal"],
+      "success": ["benchmark_action_value", "no_privacy_incident", "anti_reidentification_pass"],
+      "non_goals": ["public_league_tables", "employee_ranking", "raw_cross_tenant_disclosure"]
+    }
+  ],
+  "risks": [
+    {"id": "AMN-01", "name": "analytics_becomes_second_ledger", "severity": "critical", "control": "source_owned_records_read_only_composition_tieout_tests"},
+    {"id": "AMN-02", "name": "cross_tenant_accountant_or_partner_leak", "severity": "critical", "control": "per_client_grant_tenant_filter_negative_tests_revocation"},
+    {"id": "AMN-03", "name": "currency_timezone_misstatement", "severity": "high", "control": "organization_semantics_boundary_tests"},
+    {"id": "AMN-04", "name": "evidence_overclaim", "severity": "high", "control": "evidence_grade_controlled_language_source_proof"},
+    {"id": "AMN-05", "name": "referral_PII_or_spam", "severity": "critical", "control": "aggregate_consent_threshold_rate_limit_suppression"},
+    {"id": "AMN-06", "name": "external_action_bypasses_authority", "severity": "critical", "control": "proposal_boundary_source_service_acceptance"},
+    {"id": "AMN-07", "name": "marketplace_impersonation_fraud_fake_review", "severity": "critical", "control": "reject_open_marketplace_verification_moderation_no_public_rating"},
+    {"id": "AMN-08", "name": "module_RBAC_leakage", "severity": "critical", "control": "surface_ratchet_server_entitlement"},
+    {"id": "AMN-09", "name": "duplicate_dashboard_adoption_failure", "severity": "high", "control": "command_screen_ownership_and_consolidation"},
+    {"id": "AMN-10", "name": "forecast_false_confidence", "severity": "high", "control": "assumptions_coverage_actual_vs_forecast"},
+    {"id": "AMN-11", "name": "defamatory_supplier_or_customer_score", "severity": "critical", "control": "tenant_private_facts_no_public_score"},
+    {"id": "AMN-12", "name": "silent_provider_failure", "severity": "critical", "control": "sandbox_retry_idempotency_heartbeat_alert_kill_switch"},
+    {"id": "AMN-13", "name": "support_and_dispute_overload", "severity": "high", "control": "closed_cohort_staffing_SLA_cost_gate_rollback"},
+    {"id": "AMN-14", "name": "benchmark_reidentification", "severity": "critical", "control": "defer_opt_in_minimum_cohort_anonymization_review"},
+    {"id": "AMN-15", "name": "feature_work_displaces_blocker_closure", "severity": "high", "control": "phase_0_WIP_limit_feature_flags_release_dependency"}
+  ],
+  "decisions": {
+    "do_now": [
+      "metric_and_access_corrections",
+      "top_three_read_model_contracts",
+      "Business_Pulse_currency_timezone",
+      "referral_cohort_taxonomy",
+      "dashboard_ownership_and_consolidation"
+    ],
+    "pilot_next": [
+      "accountant_led_client_loop",
+      "invite_only_supplier_acknowledgement",
+      "customer_statement_self_service",
+      "implementation_partner_templates",
+      "privacy_bounded_participation_analytics"
+    ],
+    "defer": [
+      "verified_partner_directory",
+      "integration_catalog",
+      "country_pack_adapter_ecosystem",
+      "shared_supplier_identity",
+      "cross_tenant_benchmark",
+      "curated_B2B_discovery"
+    ],
+    "reject": [
+      "open_supplier_marketplace_now",
+      "public_financial_or_reliability_scores",
+      "unaudited_star_ratings",
+      "tenant_data_resale",
+      "marketplace_payment_escrow_lending_credit_scoring_without_separate_review",
+      "analytics_side_source_mutation"
+    ]
+  },
+  "verification": [
+    {"command": "git status --short", "status": "passed", "note": "dirty_worktree_confirmed_and_preserved"},
+    {"command": "rg --files app actions services components hooks lib config prisma graphify-out what-next", "status": "passed"},
+    {"command": "rg -n -i analytics|referral|marketplace|accountant|supplier|counterparty|benchmark|commercial agent", "status": "passed"},
+    {"command": "npm run prisma:validate", "status": "passed", "note": "prisma_schema_valid"},
+    {
+      "command": "npm run policy:gates",
+      "status": "failed",
+      "classification": "expected_fail_closed",
+      "note": "statutory_country_pack_gate_11_of_12_source_artifact_expert_approval_blocked",
+      "environment_note": "initial_sandbox_EPERM_resolved_by_approved_rerun"
+    }
+  ]
+}

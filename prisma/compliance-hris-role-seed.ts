@@ -31,6 +31,7 @@ type ComplianceRolePersona = {
   primarySourceName?: { firstName: string; lastName: string };
   department: "EXECUTIVE" | "GOVERNANCE" | "OPERATIONS" | "FINANCE" | "PEOPLE" | "TECHNOLOGY" | "ASSURANCE";
   permissionTerms: string[];
+  explicitPermissions?: string[];
   readOnly?: boolean;
   allPermissions?: boolean;
   sourceClassification?: "SUPPLIED_CANDIDATE" | "SYNTHETIC_DEVELOPMENT_PERSONA" | "SYNTHETIC_QUALIFICATION_PENDING";
@@ -58,6 +59,7 @@ export const DOCUMENT_G1_CANDIDATE_ROLES = [
 ] as const;
 
 const BASE_ROLE_PERSONAS: ComplianceRolePersona[] = [
+  { code: "owner", nameEn: "Owner", nameFr: "Proprietaire", description: "Synthetic tenant owner for authenticated non-production control testing.", emailLocalPart: "owner", firstName: "Mireille", lastName: "Nkoa", department: "EXECUTIVE", permissionTerms: [], allPermissions: true },
   { code: "super_admin", nameEn: "Super Admin", nameFr: "Super administrateur", description: "Full local development tenant administration.", emailLocalPart: "super.admin", firstName: "Amina", lastName: "Ngono", department: "EXECUTIVE", permissionTerms: [], allPermissions: true },
   { code: "admin", nameEn: "Admin", nameFr: "Administrateur", description: "Local development organization administration.", emailLocalPart: "admin", firstName: "Marc", lastName: "Dubois", department: "EXECUTIVE", permissionTerms: [], allPermissions: true },
   { code: "branch_manager", nameEn: "Branch Manager", nameFr: "Responsable agence", description: "Branch operations and local control oversight.", emailLocalPart: "branch.manager", firstName: "Claire", lastName: "Mballa", department: "OPERATIONS", permissionTerms: ["LOCATION", "INVENTORY", "PURCHASE", "SALES", "POS", "CASH", "REPORT", "ANALYTICS", "APPROVE"] },
@@ -66,7 +68,48 @@ const BASE_ROLE_PERSONAS: ComplianceRolePersona[] = [
   { code: "cashier_pos_user", nameEn: "Cashier/POS User", nameFr: "Caissier POS", description: "Daily POS, receipt, payment and cash-drawer operation.", emailLocalPart: "cashier", firstName: "Grace", lastName: "Etame", department: "OPERATIONS", permissionTerms: ["POS", "CASH", "PAYMENT", "RECEIPT", "READ_ITEMS", "READ_CUSTOMERS"] },
   { code: "purchaser", nameEn: "Purchaser", nameFr: "Acheteur", description: "Supplier, purchase-order and goods-receipt operation.", emailLocalPart: "purchaser", firstName: "Patrick", lastName: "Fouda", department: "OPERATIONS", permissionTerms: ["PURCHASE", "SUPPLIER", "GOODS", "RECEIVE", "INVENTORY_COST"] },
   { code: "accountant", nameEn: "Accountant", nameFr: "Comptable", description: "Ledger, finance, reconciliation, tax and close operation.", emailLocalPart: "accountant", firstName: "Nadia", lastName: "Essomba", department: "FINANCE", permissionTerms: ["FINANCE", "FINANCIAL", "PAYABLE", "RECEIVABLE", "PAYMENT", "TAX", "CASH", "LEDGER", "JOURNAL", "BUDGET", "PROFIT"] },
+  {
+    code: "external_accountant",
+    nameEn: "External Accountant",
+    nameFr: "Comptable externe",
+    description: "Read-only external finance review. Export is limited to server-finalized, audited and redacted financial reports. Posting, editing, approving, deleting, reversing and period close or reopen are prohibited.",
+    emailLocalPart: "external.accountant",
+    firstName: "Carine",
+    lastName: "Manga",
+    department: "ASSURANCE",
+    permissionTerms: [],
+    explicitPermissions: [
+      PERMISSIONS.FINANCIAL_READ,
+      PERMISSIONS.FINANCIAL_DASHBOARD_ACCESS,
+      PERMISSIONS.CUSTOMER_RECEIVABLES_READ,
+      PERMISSIONS.CUSTOMER_AGING_REPORT,
+      PERMISSIONS.SUPPLIER_PAYABLES_READ,
+      PERMISSIONS.CASH_FLOW_READ,
+      PERMISSIONS.CASH_POSITION_READ,
+      PERMISSIONS.CASH_PROJECTIONS_READ,
+      PERMISSIONS.FINANCIAL_REPORTS_READ,
+      PERMISSIONS.FINANCIAL_REPORTS_EXPORT,
+      PERMISSIONS.FINANCIAL_ALERTS_READ,
+      PERMISSIONS.FINANCIAL_KPI_READ,
+      PERMISSIONS.FINANCE_READ,
+      PERMISSIONS.VIEW_FINANCIAL_REPORTS,
+      PERMISSIONS.VIEW_CASH_FLOW_STATEMENT,
+      PERMISSIONS.VIEW_GENERAL_LEDGER,
+      PERMISSIONS.VIEW_CHART_OF_ACCOUNTS,
+      PERMISSIONS.VIEW_JOURNAL_ENTRIES,
+      PERMISSIONS.VIEW_FINANCIAL_RATIOS,
+      PERMISSIONS.VIEW_FINANCIAL_TRENDS,
+      PERMISSIONS.VIEW_FINANCIAL_FORECASTS,
+      PERMISSIONS.VIEW_FINANCIAL_AUDIT_TRAIL,
+      PERMISSIONS.VIEW_COMPLIANCE_STATUS,
+      PERMISSIONS.VIEW_CASH_MANAGEMENT,
+    ],
+    readOnly: true,
+  },
   { code: "hr_manager", nameEn: "HR Manager", nameFr: "Responsable RH", description: "HRIS, employee, attendance and payroll administration.", emailLocalPart: "hr.manager", firstName: "Luc", lastName: "Biya", department: "PEOPLE", permissionTerms: ["USER", "PRESENCE", "PAYROLL", "SCHEDULE", "ATTENDANCE", "EMPLOYEE", "APPROVE"] },
+  { code: "hris_user", nameEn: "HRIS User", nameFr: "Utilisateur SIRH", description: "Read-only HRIS people and self-service persona for non-production authentication evidence.", emailLocalPart: "hris.user", firstName: "Brigitte", lastName: "Mballa", department: "PEOPLE", permissionTerms: [], explicitPermissions: [PERMISSIONS.HRIS_SELF_SERVICE_READ, PERMISSIONS.HRIS_PEOPLE_READ, PERMISSIONS.VIEW_OWN_PRESENCE, PERMISSIONS.VIEW_OWN_SCHEDULE, PERMISSIONS.VIEW_OWN_ATTENDANCE_REPORTS, PERMISSIONS.PAYROLL_READ], readOnly: true },
+  { code: "support", nameEn: "Support", nameFr: "Support", description: "Read-only support persona without financial, payroll or configuration mutation authority.", emailLocalPart: "support", firstName: "Adele", lastName: "Ngan", department: "OPERATIONS", permissionTerms: ["USER", "LOCATION", "REPORT", "READ"], readOnly: true },
+  { code: "pos_user", nameEn: "POS User", nameFr: "Utilisateur POS", description: "Non-production point-of-sale operator with no accounting administration authority.", emailLocalPart: "pos.user", firstName: "Joel", lastName: "Ewane", department: "OPERATIONS", permissionTerms: [], explicitPermissions: [PERMISSIONS.DASHBOARD_READ, PERMISSIONS.READ_ITEMS, PERMISSIONS.READ_CUSTOMERS, PERMISSIONS.OPERATE_POS, PERMISSIONS.PROCESS_PAYMENTS, PERMISSIONS.CASH_DRAWER_READ, PERMISSIONS.CASH_SYSTEM_READ, PERMISSIONS.NEW_POS_SESSION_READ, PERMISSIONS.POS_STATION_READ, PERMISSIONS.SESSION_POS_SYNC_READ, PERMISSIONS.VIEW_POS_REPORTS] },
   { code: "auditor", nameEn: "Auditor", nameFr: "Auditeur", description: "Read-only audit, evidence and compliance review.", emailLocalPart: "auditor", firstName: "Helene", lastName: "Mbarga", department: "ASSURANCE", permissionTerms: ["AUDIT", "COMPLIANCE", "REPORT"], readOnly: true },
   { code: "read_only", nameEn: "Read-only/User", nameFr: "Utilisateur lecture seule", description: "Read-only authenticated development persona.", emailLocalPart: "readonly", firstName: "Yann", lastName: "Njock", department: "ASSURANCE", permissionTerms: [], readOnly: true },
   { code: "user", nameEn: "User", nameFr: "Utilisateur", description: "Basic authenticated employee self-service persona.", emailLocalPart: "user", firstName: "Emma", lastName: "Fotso", department: "PEOPLE", permissionTerms: ["PROFILE", "OWN", "CLOCK"] },
@@ -116,6 +159,7 @@ const READ_ONLY_PERMISSIONS = ALL_PERMISSIONS.filter((permission) =>
 
 function selectedPermissions(persona: ComplianceRolePersona) {
   if (persona.allPermissions) return ["*", ...ALL_PERMISSIONS];
+  if (persona.explicitPermissions) return [...new Set(persona.explicitPermissions)];
   const selected = ALL_PERMISSIONS.filter((permission) =>
     persona.permissionTerms.some((term) => permission.includes(term)),
   );

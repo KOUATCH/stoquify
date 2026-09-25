@@ -1,0 +1,55 @@
+{
+  "run": "94ac5e19-ff3",
+  "mode": "before",
+  "at": "2026-09-07T11:44:16.418Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "Shipping-only update recalculates total",
+      "status": "passed",
+      "shipping": "175.25",
+      "total": "25050.00",
+      "expectedTotal": "25175.25"
+    },
+    {
+      "name": "Removing all draft lines preserves unchanged shipping in total",
+      "status": "passed",
+      "lines": 0,
+      "shipping": "50.00",
+      "total": "0.00",
+      "expectedTotal": "50.00"
+    },
+    {
+      "name": "Submitted order cannot be edited through the service",
+      "status": "passed",
+      "rejected": false
+    },
+    {
+      "name": "Approval committed before edit transaction prevents the stale edit",
+      "status": "APPROVED",
+      "rejected": false,
+      "notesChangedAfterApproval": true
+    },
+    {
+      "name": "Cancellation committed before approval transaction cannot be overwritten",
+      "status": "APPROVED",
+      "rejected": false,
+      "retainedCancellation": true
+    }
+  ],
+  "scope": "Owned local synthetic orders. Transaction-start interleaving commits a competing domain transition before the tested write transaction; no immutable evidence is modified.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchase-order/purchase-order.service.ts": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672",
+    "services/purchase-order/purchase-order.schemas.ts": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

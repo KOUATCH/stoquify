@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-09T08:56:24.977Z",
+  "mode": "after",
+  "run": "9fb81e65-030",
+  "checks": [
+    "Four incompatible requests reject without ledger mutation",
+    "Canonical source dedupe and historical null/v1 retry preserve the original batch",
+    "Conflicting key is rejected even when a separate canonical source batch also exists",
+    "Same key/source tuple in another tenant creates its own scoped batch",
+    "Concurrent creation has one durable batch; uniqueness/serialization losers safely replay on retry"
+  ],
+  "sourcesBefore": {
+    "services/accounting/posting.service.ts": "9c90308043373caaad342b110b812ec2ac39b118543bd898751dc900f4d5fdc7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": "Owned PostgreSQL synthetic ledger batch identity. No journals or live postings.",
+  "originalBefore": "7029a7e7eb959710c19839025d2a9082c4a66394214c7b6465289d0e7cb19f12",
+  "passed": true,
+  "defectReproduced": false,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/posting.service.ts": "9c90308043373caaad342b110b812ec2ac39b118543bd898751dc900f4d5fdc7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

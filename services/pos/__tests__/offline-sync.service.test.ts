@@ -7,11 +7,13 @@ jest.mock("@/prisma/db", () => ({
     pOSOfflineSyncCertificate: { count: jest.fn(), findMany: jest.fn() },
     salesOrder: { findFirst: jest.fn() },
     journalEntry: { findFirst: jest.fn() },
+    businessEvent: { findUnique: jest.fn() },
   },
 }))
 
 jest.mock("../pos.service", () => ({
   commitPOSSale: jest.fn(),
+  getPOSSaleCommitStatus: jest.fn(),
 }))
 
 jest.mock("../receipt.service", () => ({
@@ -22,7 +24,8 @@ import { generateKeyPairSync, sign } from "crypto"
 
 import { db } from "@/prisma/db"
 import { hashBusinessPayload } from "@/services/events/business-event.service"
-import { commitPOSSale } from "../pos.service"
+import { commitPOSSale, getPOSSaleCommitStatus } from "../pos.service"
+import { ApplicationError } from "@/services/_shared/action-errors"
 import { getSalesReceipt } from "../receipt.service"
 import {
   buildOfflineEventEntryHash,
@@ -39,8 +42,10 @@ const mockDb = db as unknown as {
   pOSOfflineSyncCertificate: { count: jest.Mock; findMany: jest.Mock }
   salesOrder: { findFirst: jest.Mock }
   journalEntry: { findFirst: jest.Mock }
+  businessEvent: { findUnique: jest.Mock }
 }
 const mockCommitPOSSale = commitPOSSale as jest.Mock
+const mockGetCommitStatus = getPOSSaleCommitStatus as jest.Mock
 const mockGetSalesReceipt = getSalesReceipt as jest.Mock
 const previousOfflineReplayTestAuthorization =
   process.env.AQSTOQFLOW_ENABLE_OFFLINE_POS_REPLAY_TESTS
@@ -50,7 +55,8 @@ const mockTx = {
   pOSSession: { findFirst: jest.fn() },
   pOSOfflineDevice: { findFirst: jest.fn(), update: jest.fn() },
   pOSOfflineSyncBatch: { create: jest.fn(), update: jest.fn() },
-  pOSOfflineEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn(), count: jest.fn() },
+  pOSOfflineEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn(), updateMany: jest.fn(), count: jest.fn() },
+  journalEntry: { findFirst: jest.fn() },
   pOSOfflineSyncConflict: { create: jest.fn(), count: jest.fn() },
   pOSOfflineSyncCertificate: { upsert: jest.fn() },
   businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
@@ -146,6 +152,7 @@ function offlineReplayEvent(overrides: Record<string, unknown> = {}) {
     signature: "signature-placeholder",
     capturedAtDevice: new Date("2026-06-15T09:00:00.000Z"),
     receivedAtServer: new Date("2026-06-15T09:01:00.000Z"),
+    updatedAt: new Date("2026-06-15T09:01:00.000Z"),
     status: "PENDING_REPLAY",
     payload,
     policySnapshotHash: null,
@@ -162,6 +169,13 @@ function offlineReplayEvent(overrides: Record<string, unknown> = {}) {
     },
     ...overrides,
   }
+}
+
+function recordedReplayFixture() {
+  const replay = { saleId: "sale-1", orderNumber: "POS-20260615-0001", postingBatchId: "posting-batch-1", documentHash: "document-hash", fiscalDocumentId: "fiscal-doc-1", fiscalDocumentStatus: "QUEUED", legalDeliveryBlocked: false }
+  const event = offlineReplayEvent({ status: "REPLAYED", postingBatchId: replay.postingBatchId, documentHash: replay.documentHash, blockerCode: null, blockerMessage: null, metadata: { offlineReplay: replay } })
+  const evidence = { eventType: "pos.offline.event.replayed", actorId: "user-1", sourceId: replay.saleId, locationId: event.locationId, registerId: event.terminalId, deviceId: event.deviceId, payloadHash: event.payloadHash, postingBatchId: replay.postingBatchId, payload: { ...replay, offlineEventId: event.id, salesOrderId: replay.saleId } }
+  return { event, evidence }
 }
 
 function receiptFixture(overrides: Record<string, unknown> = {}) {
@@ -289,7 +303,10 @@ describe("offline POS sync service", () => {
     mockDb.pOSOfflineSyncCertificate.findMany.mockResolvedValue([])
     mockDb.salesOrder.findFirst.mockResolvedValue(null)
     mockDb.journalEntry.findFirst.mockResolvedValue(null)
+    mockDb.businessEvent.findUnique.mockReset()
     mockCommitPOSSale.mockReset()
+    mockGetCommitStatus.mockReset()
+    mockGetCommitStatus.mockResolvedValue({ kind: "NOT_FOUND" })
     mockCommitPOSSale.mockResolvedValue(commitResult())
     mockGetSalesReceipt.mockReset()
     mockGetSalesReceipt.mockResolvedValue(receiptFixture())
@@ -310,7 +327,8 @@ describe("offline POS sync service", () => {
       createdAt: new Date("2026-06-15T09:01:00.000Z"),
       updatedAt: new Date("2026-06-15T09:01:00.000Z"),
     }))
-    mockTx.pOSOfflineEvent.update.mockResolvedValue({ id: "offline-event-1" })
+    mockTx.pOSOfflineEvent.updateMany.mockResolvedValue({ count: 1 })
+    mockTx.journalEntry.findFirst.mockResolvedValue({ id: "sale-je-1" })
     mockTx.pOSOfflineEvent.count.mockResolvedValue(1)
     mockTx.pOSOfflineSyncConflict.count.mockResolvedValue(0)
     mockTx.pOSOfflineDevice.update.mockImplementation(async ({ data }) => ({
@@ -583,9 +601,9 @@ describe("offline POS sync service", () => {
       organizationId: "org-1",
       userId: "user-1",
     })
-    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: event.id },
+        where: expect.objectContaining({ id: event.id, organizationId: "org-1", status: "PENDING_REPLAY", updatedAt: event.updatedAt }),
         data: expect.objectContaining({
           status: "REPLAYED",
           postingBatchId: "posting-batch-1",
@@ -610,10 +628,10 @@ describe("offline POS sync service", () => {
     const event = offlineReplayEvent()
     const receipt = receiptFixture()
     mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
-    mockDb.salesOrder.findFirst
-      .mockResolvedValueOnce(null)
+    mockGetCommitStatus
+      .mockResolvedValueOnce({ kind: "NOT_FOUND" })
       .mockResolvedValueOnce({
-        id: "sale-1",
+        kind: "RECORDED", currentStatus: "COMPLETED", saleId: "sale-1",
         orderNumber: "POS-20260615-0001",
       })
     mockDb.journalEntry.findFirst.mockResolvedValue({ postingBatchId: "posting-batch-1" })
@@ -640,7 +658,7 @@ describe("offline POS sync service", () => {
       salesOrderId: "sale-1",
       organizationId: "org-1",
     })
-    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           status: "REPLAYED",
@@ -680,7 +698,7 @@ describe("offline POS sync service", () => {
         }),
       }),
     )
-    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           status: "BLOCKED",
@@ -691,21 +709,11 @@ describe("offline POS sync service", () => {
   })
 
   it("does not finalize a duplicate replay that already has replay evidence", async () => {
-    const event = offlineReplayEvent({
-      status: "REPLAYED",
-      postingBatchId: "posting-batch-1",
-      metadata: {
-        offlineReplay: {
-          saleId: "sale-1",
-          orderNumber: "POS-20260615-0001",
-          postingBatchId: "posting-batch-1",
-          fiscalDocumentId: "fiscal-doc-1",
-          fiscalDocumentStatus: "QUEUED",
-          legalDeliveryBlocked: false,
-        },
-      },
-    })
+    const { event, evidence } = recordedReplayFixture()
     mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockGetCommitStatus.mockResolvedValue({ kind: "RECORDED", saleId: "sale-1", orderNumber: "POS-20260615-0001", currentStatus: "RETURNED", observedAt: "2026-09-13T12:00:00Z" })
+    mockDb.businessEvent.findUnique.mockResolvedValue(evidence)
+    mockDb.journalEntry.findFirst.mockResolvedValue({ id: "posted-entry" })
 
     const result = await replayPendingOfflineSaleEnvelope({
       organizationId: "org-1",
@@ -717,10 +725,34 @@ describe("offline POS sync service", () => {
       status: "DUPLICATE_REPLAY",
       saleId: "sale-1",
       postingBatchId: "posting-batch-1",
+      currentSaleStatus: "RETURNED",
     })
     expect(mockCommitPOSSale).not.toHaveBeenCalled()
-    expect(mockTx.pOSOfflineEvent.update).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineEvent.updateMany).not.toHaveBeenCalled()
     expect(mockTx.pOSOfflineSyncConflict.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects replayed metadata with no matching recorded original sale", async () => {
+    const event = offlineReplayEvent({ status: "REPLAYED", metadata: { offlineReplay: { saleId: "fabricated-sale", orderNumber: "fabricated-order", postingBatchId: "fabricated-batch" } } })
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+    expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineEvent.updateMany).not.toHaveBeenCalled()
+  })
+
+  it.each(["payload", "metadata", "event", "posting"])("rejects inconsistent terminal replay %s without changing history", async boundary => {
+    const { event, evidence } = recordedReplayFixture()
+    if (boundary === "payload") event.payloadHash = "damaged"
+    if (boundary === "metadata") event.metadata = { offlineReplay: { saleId: "different-sale" } }
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockGetCommitStatus.mockResolvedValue({ kind: "RECORDED", saleId: "sale-1", orderNumber: "POS-20260615-0001", currentStatus: "COMPLETED" })
+    mockDb.businessEvent.findUnique.mockResolvedValue(boundary === "event" ? null : evidence)
+    mockDb.journalEntry.findFirst.mockResolvedValue(boundary === "posting" ? null : { id: "posted-entry" })
+    await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })).rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+    expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineEvent.updateMany).not.toHaveBeenCalled()
   })
 
   it("blocks replay when POS finalization rolls back", async () => {
@@ -739,9 +771,9 @@ describe("offline POS sync service", () => {
       blockerCode: "OFFLINE_REPLAY_STOCK_BLOCKED",
       blockerMessage: "Insufficient stock at this location",
     })
-    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: event.id },
+        where: expect.objectContaining({ id: event.id, organizationId: "org-1", status: "PENDING_REPLAY", updatedAt: event.updatedAt }),
         data: expect.objectContaining({
           status: "BLOCKED",
           blockerCode: "OFFLINE_REPLAY_STOCK_BLOCKED",
@@ -758,6 +790,30 @@ describe("offline POS sync service", () => {
         }),
       }),
     )
+  })
+
+  it("cannot acknowledge a completed sale for a different original request", async () => {
+    const event = offlineReplayEvent()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockDb.salesOrder.findFirst.mockResolvedValue({ id: "sale-1", orderNumber: "OTHER-INTENT" })
+    const conflict = new ApplicationError("DUPLICATE_KEY_CONFLICT", "Different original request", 409)
+    mockGetCommitStatus.mockRejectedValue(conflict)
+    mockCommitPOSSale.mockRejectedValue(conflict)
+    const result = await replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })
+    expect(result).toMatchObject({ status: "BLOCKED", blockerCode: "OFFLINE_REPLAY_REQUEST_CONFLICT" })
+    expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "BLOCKED" }) }))
+    expect(mockTx.pOSOfflineEvent.updateMany.mock.calls.every(([args]) => !Object.hasOwn(args.data, "payload"))).toBe(true)
+  })
+
+  it("records a review-required blocker without silently amending an accepted payload", async () => {
+    const event = offlineReplayEvent()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockCommitPOSSale.mockRejectedValue(new ApplicationError("CONFLICT", "Review current cart", 409, true, { reason: "POS_CART_REVISION_CHANGED" }))
+    const result = await replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })
+    expect(result).toMatchObject({ status: "BLOCKED", blockerCode: "OFFLINE_REPLAY_CART_REVIEW_REQUIRED" })
+    expect(mockGetSalesReceipt).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineEvent.updateMany.mock.calls.every(([args]) => !Object.hasOwn(args.data, "payload"))).toBe(true)
   })
 
   it("blocks replay when accepted payload hash evidence no longer matches", async () => {
@@ -843,11 +899,65 @@ describe("offline POS sync service", () => {
     )
   })
 
+  it("does not acknowledge a completed sale when its posted evidence is missing", async () => {
+    const event = offlineReplayEvent()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockGetCommitStatus.mockResolvedValue({ kind: "RECORDED", currentStatus: "COMPLETED", saleId: "sale-1", orderNumber: "POS-20260615-0001" })
+    mockDb.journalEntry.findFirst.mockResolvedValue({ postingBatchId: "posting-batch-1" })
+    mockTx.journalEntry.findFirst.mockResolvedValue(null)
+    await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockTx.auditLog.create).not.toHaveBeenCalled()
+  })
+
+  it("does not overwrite a newer event when acknowledging a completed sale", async () => {
+    const event = offlineReplayEvent()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockGetCommitStatus.mockResolvedValue({ kind: "RECORDED", currentStatus: "COMPLETED", saleId: "sale-1", orderNumber: "POS-20260615-0001" })
+    mockDb.journalEntry.findFirst.mockResolvedValue({ postingBatchId: "posting-batch-1" })
+    mockTx.journalEntry.findFirst.mockResolvedValue({ id: "posting" })
+    mockTx.pOSOfflineEvent.updateMany.mockResolvedValue({ count: 0 })
+    await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockTx.auditLog.create).not.toHaveBeenCalled()
+  })
+
+  it("does not overwrite newer evidence when recording a replay failure", async () => {
+    const event = offlineReplayEvent()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockCommitPOSSale.mockRejectedValue(new Error("Finalization failed"))
+    mockTx.pOSOfflineEvent.updateMany.mockResolvedValue({ count: 0 })
+    await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockTx.businessEvent.create).not.toHaveBeenCalled()
+    expect(mockTx.auditLog.create).not.toHaveBeenCalled()
+  })
+
+  it("does not acknowledge a device revoked after the initial replay read", async () => {
+    const event = offlineReplayEvent()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockTx.pOSOfflineDevice.findFirst.mockResolvedValue(null)
+    await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockTx.pOSOfflineDevice.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: { id: event.deviceId, organizationId: "org-1", terminalId: event.terminalId, locationId: event.locationId, status: "ACTIVE" } }))
+    expect(mockTx.pOSOfflineEvent.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineSyncConflict.create).not.toHaveBeenCalled()
+  })
+
+  it("preserves the event after a committed sale loses acknowledgement prerequisites", async () => {
+    const event = offlineReplayEvent()
+    mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
+    mockTx.journalEntry.findFirst.mockResolvedValue(null)
+    await expect(replayPendingOfflineSaleEnvelope({ organizationId: "org-1", userId: "user-1", offlineEventId: event.id })).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockCommitPOSSale).toHaveBeenCalledTimes(1)
+    expect(mockTx.pOSOfflineEvent.updateMany).not.toHaveBeenCalled()
+    expect(mockTx.pOSOfflineSyncConflict.create).not.toHaveBeenCalled()
+    expect(mockTx.auditLog.create).not.toHaveBeenCalled()
+  })
+
   it("marks an already completed sale as duplicate replay instead of finalizing again", async () => {
     const event = offlineReplayEvent()
     mockDb.pOSOfflineEvent.findFirst.mockResolvedValue(event)
-    mockDb.salesOrder.findFirst.mockResolvedValue({
-      id: "sale-1",
+    mockGetCommitStatus.mockResolvedValue({
+      kind: "RECORDED", currentStatus: "COMPLETED", saleId: "sale-1",
       orderNumber: "POS-20260615-0001",
     })
     mockDb.journalEntry.findFirst.mockResolvedValue({ postingBatchId: "posting-batch-1" })
@@ -869,7 +979,7 @@ describe("offline POS sync service", () => {
       salesOrderId: "sale-1",
       organizationId: "org-1",
     })
-    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           status: "REPLAYED",
@@ -922,7 +1032,7 @@ describe("offline POS sync service", () => {
       fiscalDocumentStatus: "NOT_CREATED",
       legalDeliveryBlocked: false,
     })
-    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           status: "REPLAYED",
@@ -981,7 +1091,7 @@ describe("offline POS sync service", () => {
       fiscalDocumentStatus: "QUEUED",
       legalDeliveryBlocked: true,
     })
-    expect(mockTx.pOSOfflineEvent.update).toHaveBeenCalledWith(
+    expect(mockTx.pOSOfflineEvent.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           metadata: expect.objectContaining({

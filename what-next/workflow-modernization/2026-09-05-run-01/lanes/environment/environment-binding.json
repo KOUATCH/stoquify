@@ -1,0 +1,124 @@
+{
+  "recordedAt": "2026-09-05T17:18:31.221Z",
+  "evidence": [
+    {
+      "path": "ENVIRONMENT_REPORT.md",
+      "sha256": "434c1af89de995d3e048efbbd1cc6860396d09bf6e65567c0c428f80556d196b"
+    },
+    {
+      "path": "POSTGRES_FIXTURE_PROPOSAL.md",
+      "sha256": "9375c8977e15b822300e692f7cf5f8be287f6794372cbba7e60ca1f6e8c00c7a"
+    },
+    {
+      "path": "process-and-readiness.json",
+      "sha256": "6036035b05a1eeb9e3ceed3f369850867c1557690b890bebd0f2ea70c699764e"
+    },
+    {
+      "path": "preflight-model-name-failed.json",
+      "sha256": "3658cb3dd4d978c58e656ca6b007d9997dda02174ca8bef05a365f51c35ad715"
+    },
+    {
+      "path": "environment-baseline.json",
+      "sha256": "9514a2532a6ef72a4fd070aff78b72ba21c5555328ed862e657311f1e2915e6f"
+    },
+    {
+      "path": "environment-baseline-fr-retry.json",
+      "sha256": "bd33660fec04c6b7f29daf4f3aee9d14d566fab8422ae43c243e3b74b3ed2145"
+    },
+    {
+      "path": "postgres-preflight-c1e6d395cc37.json",
+      "sha256": "9205267f1445a5d0a4fb8aed457930c191a532c230c5088e7f10b89cfe8b3c0b"
+    },
+    {
+      "path": "postgres-run-f799fb30e867.json",
+      "sha256": "fe9df2b821cb2e190ba4eee54a6e21ff117330bd3b22c323aa5bed623c918085"
+    },
+    {
+      "path": "en-dashboard-desktop.png",
+      "sha256": "196cd94ef257def1d8bc8b7585c193596632550138f501832720fb3a9b5546fa"
+    },
+    {
+      "path": "en-modules-desktop.png",
+      "sha256": "bced48ef01bc10bfb14bf5d4a3a2648bfef8d14e4c4534675fae0b62663d981a"
+    },
+    {
+      "path": "fr-dashboard-desktop-fr-retry.png",
+      "sha256": "ef15c8135d8ef79ed2c93cd72f8c382f23c27ed2832c2e0ac416c469be441872"
+    },
+    {
+      "path": "fr-dashboard-mobile-fr-retry.png",
+      "sha256": "04a157c3dbc0b850e1587d20a6704b039c355c6193272e9ae279da6f7e59edd9"
+    },
+    {
+      "path": "fr-modules-desktop-fr-retry.png",
+      "sha256": "f6a3c43ece0a80a33fc28262919f5ea050fddc51a339deedfc9d08bea7c70c6d"
+    },
+    {
+      "path": "fr-modules-mobile-fr-retry.png",
+      "sha256": "77693b54f1bb30950b31cb714c651a979907e73c1453a981dfe8c1a384277038"
+    }
+  ],
+  "screenshotsVisuallyInspected": [
+    "en-dashboard-desktop.png",
+    "en-modules-desktop.png",
+    "fr-dashboard-desktop-fr-retry.png",
+    "fr-dashboard-mobile-fr-retry.png",
+    "fr-modules-desktop-fr-retry.png",
+    "fr-modules-mobile-fr-retry.png"
+  ],
+  "identityBindings": [
+    {
+      "path": "services/users/user-identity.service.ts",
+      "sha256": "96457d81c9c80d533b73f586ff2ca56baabf5f756acc505f607b7283ec4ebbc2",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "lib/security/auth-credentials.ts",
+      "sha256": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "lib/auth.ts",
+      "sha256": "f25dea0fb814f3be0e32d0431ba50614e53942953d6258a215df3c36f65d5e19",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "lib/password.ts",
+      "sha256": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "lib/security/password-utils.ts",
+      "sha256": "bf6f4b60c23f6251f42e0d434d9bdf07086b25cd8df1445164f2c91aca293295",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "services/auth/password-policy.ts",
+      "sha256": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "lib/security/hibp.ts",
+      "sha256": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "services/security/public-identity-abuse.service.ts",
+      "sha256": "b359eed84e7c0b30392acedbc29acb475a78d1fdcbef7f436c6c4d4c39204ccb",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    },
+    {
+      "path": "lib/security/audit-log.ts",
+      "sha256": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+      "matchesOriginalBeforeAndAfterFingerprint": true
+    }
+  ],
+  "identityScope": "Three grouped real-PostgreSQL reset checks passed; separate statement setup failed and remains a preserved failure.",
+  "originalFingerprintEncoding": "Initial PG driver fingerprinted JSON.stringify(Buffer) rather than raw bytes. Original receipt is untouched; mappings above verify those exact fingerprints and supply standard raw-byte SHA-256 values.",
+  "preflightEvidenceWriteFailure": {
+    "command": "verify-workflow-postgres.cjs preflight",
+    "result": "EPERM writing postgres-preflight-174e2a2c83e1.json before a receipt was saved; no data writes in preflight mode. Retried same read-only preflight with approved evidence-directory access; READY_READ_ONLY."
+  },
+  "serverSessionId": 87013,
+  "browserContextsClosed": true
+}

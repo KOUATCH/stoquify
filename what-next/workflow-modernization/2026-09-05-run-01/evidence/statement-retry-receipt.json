@@ -1,0 +1,215 @@
+{
+  "recordedAt": "2026-09-07T08:10:02.614Z",
+  "sourceBaseline": "evidence/source-baseline-v43.json",
+  "workflows": [
+    "NTF-DELIVERY-RECOVERY",
+    "CS-STATEMENT-DELIVERY-WORKER",
+    "CS-STATEMENT-HISTORY"
+  ],
+  "coverageMeaning": "A statement-specific branch of the existing communication recovery workflow; no new denominator entry. Statement worker notification aliases remain deduplicated.",
+  "sources": {
+    "services/accounting/customer-statement-retry.service.ts": "709da1ab5f944cdce472a842dcfabe3beb7a98bb34b3b3b93f0bfc969254b1f7",
+    "services/accounting/customer-statement-history.service.ts": "337acd530edfd0a9922173cad7231bf50809b43d7df065e7cd8c5ee04a0ae7ba",
+    "services/accounting/customer-statement-delivery-recovery.ts": "4953a59aee97b05b003dba4c168093afc875895678bd8330b782c8f71f3ad97c",
+    "services/accounting/customer-statement.schemas.ts": "7fb4d93d60b164b94d8b71d074c6547db50aee34ee1c1a1fece78274398649cb",
+    "services/communication/customer-statement-delivery-worker.service.ts": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/customer-statement-request.ts": "198035df0436e97cea0b80bbbca656b11a98688b84852f725f8fc265b6cb07c3",
+    "actions/accounting/customer-statement-history.actions.ts": "e424d9e004bea1fcebe2ed29182b903259014687b36bdd1bf7a0368a827a7630",
+    "components/customers/CustomerStatementHistory.tsx": "ead9a1bc678d9d8cb3b3d20b704b4d16b4c85d4a43c0a45ffc4a5987665fd6ee",
+    "components/customers/CustomerStatementWorkflow.tsx": "69763f35f5797c347df9a8955a33b559975aae80f03f9693bde906c8563c07ec",
+    "components/customers/__tests__/CustomerStatementWorkflow.test.tsx": "5a45d57cafa3faa14ef9fc1c40c135f14d77edbdef3aba7e0198254fde30e5f7",
+    "components/customers/__tests__/CustomerStatementHistory.test.tsx": "a80f59eea0cbdf391bf74ef78f12b81b90c5cf486cbdf9ffcc7ecb2448dd58bb",
+    "actions/accounting/__tests__/customer-statement-history.actions.test.ts": "7e977ef03c0655b1d8c2fb1b01db5d2763e69116ef3b39dfa62936d6ff6f76ab",
+    "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts": "f9faf9d7a63988ea9c8c935d870b0b6e4e49d7a80d2cb7e97ff0511bb8cf5871",
+    "services/accounting/__tests__/customer-statement-retry.service.test.ts": "d998cb405d181a024959bdcb26e0b015b6c7714979cd8924f2be56e907e2a77b",
+    "services/accounting/__tests__/customer-statement-history.service.test.ts": "5116580011a4a4fe2a970b516c2a6eed67baaef2183d6e26392f08883d3c08a4",
+    "hooks/__tests__/customer-statement-request.test.ts": "b50aa9b57ab93c2f3b903f78b804748734c5ddb137e7383e241cb0f6bf41ac7f",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "verification": {
+    "tests": {
+      "exitCode": 0,
+      "terminalReceipt": "b2a472",
+      "file": "evidence/statement-retry-tests-04.json",
+      "passed": 75,
+      "suites": 7
+    },
+    "postgres": {
+      "exitCode": 0,
+      "terminalReceipt": "27f37f",
+      "file": "lanes/environment/statement-retry-postgres-08415524-b71.json",
+      "checks": 10
+    },
+    "browser": {
+      "exitCode": 0,
+      "terminalReceipt": "62ed16",
+      "file": "lanes/environment/statement-retry-browser-74eb3c79-05c.json",
+      "journeys": 2,
+      "screenshots": 22,
+      "widthTextCases": 16
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "terminalReceipt": "3f3d54",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false"
+    },
+    "lint": {
+      "exitCode": 0,
+      "terminalReceipt": "510ca0",
+      "finalInterfaceReceipt": "c6da84",
+      "scope": "Thirteen changed service/action/hook/interface/test files; final interface label/focus changes rechecked."
+    },
+    "baseline": {
+      "exitCode": 0,
+      "terminalReceipt": "b84a5a",
+      "file": "evidence/source-baseline-v43.json"
+    },
+    "visualInspection": {
+      "scope": "EN recovered history and FR 320px/200% CSS text screenshot inspected. The action is in view with no measured horizontal clipping, but enlarged French labels wrap heavily; compact reflow improvement and native zoom/assistive-technology review remain open."
+    }
+  },
+  "postgres": "lanes/environment/statement-retry-postgres-08415524-b71.json",
+  "browser": "lanes/environment/statement-retry-browser-74eb3c79-05c.json",
+  "screenshots": [
+    {
+      "source": "lanes/environment/en-statement-retry-review-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-review-74eb3c79-05c.png",
+      "sha256": "f6fec10f62c01107466207455a18c8aaed341f8e4fd06a38df1db82f87aed7f3"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-320-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-320-100-74eb3c79-05c.png",
+      "sha256": "c06f7553fffc3d8090ae49e0ded48c4cbbb5df49c63248cf281d0d85e429e196"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-320-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-320-200-74eb3c79-05c.png",
+      "sha256": "30532a6e4e218961273f697a60f049c92652094f4166ed52b90c6eee8b009934"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-390-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-390-100-74eb3c79-05c.png",
+      "sha256": "eeeecad0e0896d4205a2e380fa735bf98cb864711179a5fd6fb73c887df578d5"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-390-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-390-200-74eb3c79-05c.png",
+      "sha256": "d1a4be20f8bbe35df38be46853a2367541c8a4abb5719398708e82d030fe6fad"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-768-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-768-100-74eb3c79-05c.png",
+      "sha256": "a521ac53b70f7c540904f99c8609cb9a39b7c803d2453a3badddb007868ccc8a"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-768-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-768-200-74eb3c79-05c.png",
+      "sha256": "0d3b1d26b69319e218e64ccbe9e2de4d34169d0bf9c4ab4285069fcad1a9c1a4"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-1440-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-1440-100-74eb3c79-05c.png",
+      "sha256": "c8430576ba01debc996e88f27f85afe4ef5a6026740b9e1fe5959bd7d0dcf23f"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-reflow-1440-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-reflow-1440-200-74eb3c79-05c.png",
+      "sha256": "56e39e961c638178bca923b15a3fe1996244e49344f9d66d3bd89c9d445889cd"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-unconfirmed-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-unconfirmed-74eb3c79-05c.png",
+      "sha256": "f763c746f4a3acf882384daf949f04dd0aadefe6e604a20db96d98045290f629"
+    },
+    {
+      "source": "lanes/environment/en-statement-retry-recovered-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/en-statement-retry-recovered-74eb3c79-05c.png",
+      "sha256": "ed9bf9fd745723c3c63bef899745dc243d042554f230047132954dd0864cf437"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-review-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-review-74eb3c79-05c.png",
+      "sha256": "f1de4b978dc3f31df9eca9ee00143002fa2653ee1062c65ba94749023de96acf"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-320-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-320-100-74eb3c79-05c.png",
+      "sha256": "d601b92a363e393025e31fa4b0e02b7fe34ea997d47b68b34af40ed7c22b8c8a"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-320-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-320-200-74eb3c79-05c.png",
+      "sha256": "882b117f3ac0454babf66bf9b6bbd2afc6e451ff6e62005f532621768b3d398f"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-390-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-390-100-74eb3c79-05c.png",
+      "sha256": "2a9963112c9ca77a1033c0996cd8873d9da9ec06756226da5f277ad772ace087"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-390-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-390-200-74eb3c79-05c.png",
+      "sha256": "aa4706bda8a8f2f2a827a4a6d17497097dc4140d92f2804832f8f4164fdf8af9"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-768-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-768-100-74eb3c79-05c.png",
+      "sha256": "30f092442fdc9f465528e059740bc88eb719ac66542ec814c232049fcfc0ccb9"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-768-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-768-200-74eb3c79-05c.png",
+      "sha256": "4d74374a6aebb01463ac187b0e2ffd6208d5c58948766ff19929bdf4aaa6070a"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-1440-100-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-1440-100-74eb3c79-05c.png",
+      "sha256": "86b1adfd33d52229f07be1616cbb1c59e199e3a925eca14e7192d65ed418221c"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-reflow-1440-200-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-reflow-1440-200-74eb3c79-05c.png",
+      "sha256": "10e7934d935517f6a7850082d0f67af1bcb17a655613c0c82d2cc7b8ccb64682"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-unconfirmed-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-unconfirmed-74eb3c79-05c.png",
+      "sha256": "2dc979e5eae826f909db2bb3b0ee61953d629ab5d46daed36a64a14c9a62b50b"
+    },
+    {
+      "source": "lanes/environment/fr-statement-retry-recovered-74eb3c79-05c.png",
+      "file": "evidence/statement-retry/fr-statement-retry-recovered-74eb3c79-05c.png",
+      "sha256": "7ecca3083030c67156ebaedd6ec372497d6f83383cc3fe71e67c7e355dc04d84"
+    }
+  ],
+  "developmentTimings": [
+    {
+      "locale": "en",
+      "routeReadyMs": 4032
+    },
+    {
+      "locale": "fr",
+      "routeReadyMs": 3137
+    }
+  ],
+  "latencyMeaning": "Local development route observations only; no controlled before/after or production budget claim.",
+  "failedAttempts": "evidence/statement-retry-attempts.md",
+  "limitations": [
+    "Only the known-not-sent statement setup branch has controlled retry. Unknown outcomes, exhausted/invalid records and other communication workers still need operator recovery/reconciliation work.",
+    "Provider configuration is rechecked by the worker. This form does not validate credentials, enable sending or authorize a live provider. No external message was sent.",
+    "Corrupt local command resolution, public recipient revocation races, populated receivable/ledger lifecycle and full communication lifecycle remain open.",
+    "French text wraps heavily at 320px with 200% CSS text; compact layout improvement, native zoom, actual screen readers and comprehensive contrast remain open.",
+    "No full build, production performance acceptance, deployment, migration, X1 clearance or professional certification."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

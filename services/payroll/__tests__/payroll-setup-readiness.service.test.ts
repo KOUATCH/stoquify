@@ -222,6 +222,9 @@ function payrollPostingRules() {
 
 function buildClient(overrides: Record<string, unknown> = {}) {
   return {
+    tenantModuleConfiguration: { findUnique: jest.fn().mockResolvedValue(null) },
+    tenantModuleGrant: { findMany: jest.fn().mockResolvedValue([]) },
+    tenantModuleConfigurationCommand: { count: jest.fn().mockResolvedValue(0) },
     organization: {
       findFirst: jest.fn().mockResolvedValue({
         id: "org-1",
@@ -323,6 +326,15 @@ describe("payroll setup readiness service", () => {
     mockedValidatePayrollCountryPackCalculationFixtures.mockReturnValue(
       passedCalculationFixtures(),
     );
+  });
+
+  it("does not restore legacy payroll readiness when managed grants are explicitly empty", async () => {
+    const client = buildClient({ tenantModuleConfiguration: { findUnique: jest.fn().mockResolvedValue({ organizationId: "org-1", revision: 1 }) } });
+    const result = await getPayrollSetupReadiness({ organizationId: "org-1", actorId: "payroll-admin-1", actorPermissions: ["PAYROLL_PROCESS"], countryCode: "CM", periodStart: "2026-06-01", periodEnd: "2026-06-30", payDate: "2026-06-30" }, client as any);
+    expect(result.status).toBe("BLOCKED");
+    expect(result.checks.tenant.payrollModuleEntitled).toBe(false);
+    expect(result.checks.tenant.accountingDependencyPresent).toBe(false);
+    expect(result.blockers.map(item => item.code)).toContain("PAYROLL_MODULE_NOT_READY");
   });
 
   it("returns ready when payroll entitlement, accounting, posting, period, country pack, and user mapping are ready", async () => {

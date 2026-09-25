@@ -24,7 +24,9 @@ import {
   openPOSShiftAction,
 } from "@/actions/pos/session.actions"
 import { commitPOSSaleAction, refundPOSSaleAction, voidPOSSaleAction } from "@/actions/pos/tender.actions"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { getPOSSaleCommitStatusAction } from "@/actions/pos/commit-recovery.actions"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { usePOSReadQuery } from "./usePOSReadQuery"
 
 export const posOperationsKeys = {
   all: ["pos-operations"] as const,
@@ -44,21 +46,27 @@ export const posOperationsKeys = {
 }
 
 export function usePOSLocations() {
-  return useQuery({
+  return usePOSReadQuery({
+    preserveDataOnError: true,
+    permission: "pos.use",
     queryKey: posOperationsKeys.locations(),
     queryFn: () => getPOSLocationsAction(),
   })
 }
 
 export function usePOSTerminals(locationId?: string) {
-  return useQuery({
+  return usePOSReadQuery({
+    preserveDataOnError: true,
+    permission: "pos.use",
     queryKey: posOperationsKeys.terminals(locationId),
     queryFn: () => getPOSTerminalsAction({ locationId }),
   })
 }
 
 export function useActivePOSShift(terminalId?: string) {
-  return useQuery({
+  return usePOSReadQuery({
+    preserveDataOnError: true,
+    permission: "pos.read",
     queryKey: posOperationsKeys.activeSession(terminalId),
     queryFn: () => getActivePOSSessionAction({ terminalId }),
     enabled: !!terminalId,
@@ -67,7 +75,9 @@ export function useActivePOSShift(terminalId?: string) {
 }
 
 export function useCurrentUserPOSShift() {
-  return useQuery({
+  return usePOSReadQuery({
+    preserveDataOnError: true,
+    permission: "pos.read",
     queryKey: posOperationsKeys.currentUserSession(),
     queryFn: () => getActivePOSSessionAction({}),
     refetchInterval: 30000,
@@ -75,7 +85,9 @@ export function useCurrentUserPOSShift() {
 }
 
 export function usePOSCatalog(params: { locationId?: string; search?: string; categoryId?: string }) {
-  return useQuery({
+  return usePOSReadQuery({
+    preserveDataOnError: true,
+    permission: "pos.use",
     queryKey: posOperationsKeys.catalog(params.locationId, params.search, params.categoryId),
     queryFn: () => getPOSCatalogAction({
       locationId: params.locationId,
@@ -87,7 +99,9 @@ export function usePOSCatalog(params: { locationId?: string; search?: string; ca
 }
 
 export function useActivePOSCart(params: { locationId?: string; terminalId?: string; sessionId?: string }) {
-  return useQuery({
+  return usePOSReadQuery({
+    preserveDataOnError: true,
+    permission: "pos.use",
     queryKey: posOperationsKeys.cart(params.locationId, params.terminalId, params.sessionId),
     queryFn: () => getActivePOSCartAction(params),
     enabled: !!params.locationId && !!params.terminalId,
@@ -95,7 +109,8 @@ export function useActivePOSCart(params: { locationId?: string; terminalId?: str
 }
 
 export function usePOSCustomers(params: { locationId?: string; search?: string }) {
-  return useQuery({
+  return usePOSReadQuery({
+    permission: "pos.use",
     queryKey: posOperationsKeys.customers(params.locationId, params.search),
     queryFn: () => getPOSCustomersAction({
       locationId: params.locationId,
@@ -106,7 +121,8 @@ export function usePOSCustomers(params: { locationId?: string; search?: string }
 }
 
 export function usePublicReceiptAccessTokens(salesOrderId?: string) {
-  return useQuery({
+  return usePOSReadQuery({
+    permission: "pos.receipts.revoke",
     queryKey: posOperationsKeys.receiptTokens(salesOrderId),
     queryFn: () => getPublicReceiptAccessTokensAction({ salesOrderId }),
     enabled: !!salesOrderId,
@@ -116,7 +132,8 @@ export function usePublicReceiptAccessTokens(salesOrderId?: string) {
 export function usePublicReceiptSalesSearch(query: string | null) {
   const normalizedQuery = query?.trim() ?? ""
 
-  return useQuery({
+  return usePOSReadQuery({
+    permission: "pos.receipts.revoke",
     queryKey: posOperationsKeys.receiptSales(normalizedQuery),
     queryFn: () => searchPublicReceiptSalesAction({ query: normalizedQuery || undefined }),
     enabled: query !== null,
@@ -124,7 +141,8 @@ export function usePublicReceiptSalesSearch(query: string | null) {
 }
 
 export function usePublicReceiptTokenManagementCapability() {
-  return useQuery({
+  return usePOSReadQuery({
+    permission: "pos.receipts.revoke",
     queryKey: posOperationsKeys.receiptTokenCapability(),
     queryFn: () => getPublicReceiptTokenManagementCapabilityAction({}),
   })
@@ -135,6 +153,8 @@ export function useOpenPOSShift() {
 
   return useMutation({
     mutationFn: openPOSShiftAction,
+    // The register owns localized outcome and retained opening-float recovery.
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     onSuccess: (_result, variables: any) => {
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.terminals(variables.locationId) })
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.activeSession(variables.terminalId) })
@@ -159,6 +179,7 @@ export function useAddPOSCartLine() {
 
   return useMutation({
     mutationFn: addPOSCartLineAction,
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     onSuccess: (_result, variables: any) => {
       queryClient.invalidateQueries({
         queryKey: posOperationsKeys.cart(variables.locationId, variables.terminalId, variables.sessionId),
@@ -175,6 +196,8 @@ export function useUpdatePOSCartLine() {
 
   return useMutation({
     mutationFn: updatePOSCartLineAction,
+    // The cashier owns localized, inline recovery and retained quantity drafts.
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.all })
     },
@@ -186,10 +209,15 @@ export function useRemovePOSCartLine() {
 
   return useMutation({
     mutationFn: removePOSCartLineAction,
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.all })
     },
   })
+}
+
+export function usePOSSaleCommitStatus() {
+  return useMutation({ mutationFn: getPOSSaleCommitStatusAction, meta: { suppressErrorNotification: true, suppressSuccessNotification: true } })
 }
 
 export function useCommitPOSSale() {
@@ -197,6 +225,7 @@ export function useCommitPOSSale() {
 
   return useMutation({
     mutationFn: commitPOSSaleAction,
+    meta: { suppressErrorNotification: true, suppressSuccessNotification: true },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: posOperationsKeys.all })
     },

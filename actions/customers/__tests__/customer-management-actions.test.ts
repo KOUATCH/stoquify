@@ -108,6 +108,7 @@ function rbacContext(permissions: string[]) {
 describe("customer management protected actions", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockRevalidatePath.mockReset()
     mockRequireFreshAuth.mockResolvedValue({
       claims: { lastAuthAt: new Date("2026-08-09T11:59:00.000Z").getTime() },
     })
@@ -187,6 +188,18 @@ describe("customer management protected actions", () => {
       "/[locale]/dashboard/finance/receivables",
       "page",
     )
+  })
+
+  it("keeps the committed receipt successful when cache invalidation fails", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext(["customers.create"]))
+    const receipt = { id: "saved-customer", organizationId: "org-1", name: "Acme", code: "CUST-1" }
+    mockCreateCustomer.mockResolvedValue(receipt)
+    mockRevalidatePath.mockImplementation(() => { throw new Error("Cache unavailable") })
+
+    const result = await createManagedCustomer("org-1", { name: "Acme", isActive: true, preferredLocale: "EN" })
+
+    expect(result).toEqual(expect.objectContaining({ success: true, data: { ...receipt, cacheStatus: "deferred" } }))
+    expect(mockCreateCustomer).toHaveBeenCalledTimes(1)
   })
 
   it("fails closed before permission or export work when fresh authentication is missing", async () => {

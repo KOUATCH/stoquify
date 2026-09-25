@@ -1,11 +1,11 @@
 {
   "summary": {
-    "generatedAt": "2026-08-22T08:00:21.294Z",
+    "generatedAt": "2026-08-28T12:36:45.783Z",
     "status": "blocked",
     "checkCount": 9,
-    "readyCount": 8,
-    "blockerCount": 1,
-    "migrationCount": 76,
+    "readyCount": 7,
+    "blockerCount": 3,
+    "migrationCount": 79,
     "riskFindingCount": 13,
     "approvedRiskCount": 0,
     "staleApprovalCount": 0,
@@ -13,17 +13,19 @@
     "secretValuePrinted": false
   },
   "deployment": {
-    "environment": "local",
-    "shouldDeploy": false,
-    "reason": "non_production_default_skip",
+    "environment": "production",
+    "shouldDeploy": true,
+    "reason": "vercel_production",
     "databaseConfigured": false,
-    "databaseTargetSafe": true,
+    "databaseTargetSafe": false,
     "targetAttestation": null,
-    "blockers": []
+    "blockers": [
+      "database_url_missing"
+    ]
   },
   "execution": {
     "attempted": false,
-    "status": "skipped",
+    "status": "pending",
     "exitCode": null
   },
   "checks": [
@@ -45,7 +47,7 @@
     },
     {
       "id": "deployment_target_is_safe",
-      "ready": true
+      "ready": false
     },
     {
       "id": "production_build_orders_secret_migration_and_app_gates",
@@ -225,6 +227,8 @@
   "staleApprovals": [],
   "revokedApprovals": [],
   "blockers": [
-    "destructive_sql_is_exact_hash_approved"
+    "destructive_sql_is_exact_hash_approved",
+    "deployment_target_is_safe",
+    "database_url_missing"
   ]
 }

@@ -4,6 +4,11 @@ import { render, screen, within } from "@testing-library/react"
 import type { ItemPerformanceReport } from "@/actions/analytics/financial-reports"
 import { ItemPerformanceReportComponent } from "../item-performance-report"
 
+jest.mock("next-intl", () => {
+  const copy = require("@/messages/en.json").operationalReports
+  return { useLocale: () => "en", useTranslations: () => (key: string, values: Record<string, unknown> = {}) => Object.entries(values).reduce((text, [name, value]) => text.replaceAll("{" + name + "}", String(value)), copy[key]) }
+})
+
 jest.mock("lucide-react", () => {
   const createIcon = (name: string) => {
     const Icon = (props: SVGProps<SVGSVGElement>) => <svg data-testid={`icon-${name}`} {...props} />
@@ -52,6 +57,9 @@ function report(overrides: Partial<ItemPerformanceReport> = {}): ItemPerformance
     brand: "AqStoq",
     quantitySold: 10,
     totalRevenue: 500,
+    netRevenue: 500,
+    itemNameFr: "Café Arabica",
+    costEvidence: { basis: "ORIGINAL_STOCK_ISSUES", coveredGroups: 1, uncoveredGroups: 0 },
     totalCost: 200,
     grossProfit: 300,
     profitMargin: 60,
@@ -79,14 +87,19 @@ describe("ItemPerformanceReportComponent stock clarity", () => {
 
     const card = screen.getByText("Arabica Coffee").closest(".dashboard-glass-panel") as HTMLElement
 
-    expect(screen.getByText("No Available Stock")).toBeInTheDocument()
-    expect(within(card).getByText("Stock Scope")).toBeInTheDocument()
+    expect(screen.getByText("No available stock")).toBeInTheDocument()
+    expect(within(card).getByText("Stock scope")).toBeInTheDocument()
     expect(within(card).getByText("Organization-wide stock")).toBeInTheDocument()
-    expect(within(card).getByText("On Hand")).toBeInTheDocument()
-    expect(within(card).getByText("Available to Sell")).toBeInTheDocument()
-    expect(within(card).getByText("Reserved / Committed")).toBeInTheDocument()
+    expect(within(card).getByText("On hand")).toBeInTheDocument()
+    expect(within(card).getByText("Available to sell")).toBeInTheDocument()
+    expect(within(card).getByText("Reserved / committed")).toBeInTheDocument()
     expect(within(card).getAllByText("12").length).toBeGreaterThanOrEqual(2)
     expect(within(card).getByText("0")).toBeInTheDocument()
     expect(within(card).getByText("0 days")).toBeInTheDocument()
+  })
+  it("renders missing cost as unavailable and explains the source review needed", () => {
+    render(<ItemPerformanceReportComponent reports={[report({ totalCost: null, grossProfit: null, profitMargin: null, costEvidence: { basis: "ORIGINAL_STOCK_ISSUES", coveredGroups: 0, uncoveredGroups: 1 } })]} />)
+    expect(screen.getAllByText("Unavailable")).toHaveLength(2)
+    expect(screen.getByText(/Ask inventory operations to review the original stock issues/)).toBeInTheDocument()
   })
 })

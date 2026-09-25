@@ -196,6 +196,7 @@ interface DataTableProps<TData> {
   locale?: TableLocale;
   copy?: Partial<TableCopy>;
   caption?: string;
+  scrollRegionLabel?: string;
   showSelectionSummary?: boolean;
 }
 
@@ -289,6 +290,7 @@ export default function DataTable<TData>({
   locale = "en",
   copy,
   caption,
+  scrollRegionLabel,
   showSelectionSummary = true,
 }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState({});
@@ -517,7 +519,7 @@ export default function DataTable<TData>({
               </div>
             </div>
           ) : null}
-          <Table>
+          <Table scrollRegionLabel={scrollRegionLabel}>
             <caption className="sr-only">{hasCaption}</caption>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

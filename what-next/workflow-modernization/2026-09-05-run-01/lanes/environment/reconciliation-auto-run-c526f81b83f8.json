@@ -1,0 +1,143 @@
+{
+  "mode": "run",
+  "attempt": "c526f81b83f8",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-05T19:53:54.381Z",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "f80de6ec8438029eae18e3a0a8d39443dc6b2f191450c6a2e9843980507877ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "484ecc3ac320d7422f11c7cff58a4d1f24fd9cb8c3d286afc0a56ef75c23410b",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/statement-import.service.ts": "645915ee0a04405235bbfa38a3f130d63fb735c45decedd780580293d56e8a3e",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "Mixed matching saves exact matched and suspense money with real captured evidence",
+      "passed": true,
+      "durationMs": 464,
+      "detail": {
+        "runId": "cmtoswks50011ma40y2dzq1yb",
+        "matched": "100.25",
+        "suspense": "100.25",
+        "internal": "200.50",
+        "matchCount": 1,
+        "exceptionCount": 2
+      }
+    },
+    {
+      "name": "Shared reference creates no arbitrary automatic match",
+      "passed": true,
+      "durationMs": 110,
+      "detail": {
+        "runId": "cmtoswkxj001zma4088su8bve",
+        "matches": 0,
+        "explainedInternalClaims": 2
+      }
+    },
+    {
+      "name": "Real statement import and provider capture agree on outbound direction; opposite event remains unresolved",
+      "passed": true,
+      "durationMs": 201,
+      "detail": {
+        "runId": "cmtoswl3e003gma40344y8co0",
+        "statementFileId": "cmtoswl11002tma40hf7xos5o",
+        "matchId": "cmtoswl3v003ima4070ovbgo0",
+        "unresolvedDirection": true
+      }
+    },
+    {
+      "name": "Missing direction survives signed capture as unknown and cannot become an inbound match",
+      "passed": true,
+      "durationMs": 92,
+      "detail": {
+        "eventId": "cmtoswl53003uma40kisk35r5",
+        "runId": "cmtoswl6a0044ma40i3b4w5pn",
+        "direction": null,
+        "signatureVerifiedByRealAdapter": true
+      }
+    },
+    {
+      "name": "Previously allocated evidence rolls back a subsequent run without duplicate obligations",
+      "passed": true,
+      "durationMs": 444,
+      "detail": {
+        "retainedRunId": "cmtoswl8n004qma40tj2hxr9m",
+        "unchangedCounts": [
+          5,
+          3,
+          6,
+          6,
+          17
+        ],
+        "failedRunPersisted": false
+      }
+    },
+    {
+      "name": "Foreign organization cannot reconcile the owned provider",
+      "passed": true,
+      "durationMs": 44,
+      "detail": {
+        "foreignDenied": true,
+        "changedRows": 0
+      }
+    },
+    {
+      "name": "Concurrent same-day commands commit one run and one match",
+      "passed": true,
+      "durationMs": 385,
+      "detail": {
+        "runId": "cmtoswlpz005cma40bn0b5xlj",
+        "fulfilled": 1,
+        "rejected": 1,
+        "retryCreatedRows": 0
+      }
+    },
+    {
+      "name": "Matching creates no ledger postings and retains itemized inbox evidence",
+      "passed": true,
+      "durationMs": 17,
+      "detail": {
+        "ledgerPostingBatches": 0,
+        "openSuspenseItems": 6,
+        "reconciliationInboxItems": 6
+      }
+    }
+  ],
+  "ownedOrganizations": [
+    "org_modules_service_smoke_recon_c526f81b83f8_main",
+    "org_modules_service_smoke_recon_c526f81b83f8_foreign"
+  ],
+  "limitations": [
+    "Internal CONFIRMED transactions and approved provider setup are explicitly synthetic preconditions; this does not verify production payment authority, settlement approval or sessions.",
+    "External provider events are captured through the real HMAC adapter with an ephemeral synthetic secret; no live provider communication.",
+    "Statement import, run matching, exceptions, suspense, inbox and rollback are real services/database effects. No sign-off, certificate, ledger posting, statutory certification or browser completion claimed.",
+    "Manual proposal/approval races and partial-allocation recovery remain open."
+  ],
+  "targetGuardPassed": true,
+  "fixture": {
+    "main": "org_modules_service_smoke_recon_c526f81b83f8_main",
+    "foreign": "org_modules_service_smoke_recon_c526f81b83f8_foreign",
+    "providerAccountId": "cmtoswki60007ma408idoms9z"
+  },
+  "completedAt": "2026-09-05T19:53:56.691Z",
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "f80de6ec8438029eae18e3a0a8d39443dc6b2f191450c6a2e9843980507877ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "484ecc3ac320d7422f11c7cff58a4d1f24fd9cb8c3d286afc0a56ef75c23410b",
+    "services/payments/provider-event.service.ts": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778",
+    "services/payments/statement-import.service.ts": "645915ee0a04405235bbfa38a3f130d63fb735c45decedd780580293d56e8a3e",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "blockedOutbound": [],
+  "driverSha256": "e4ea5dd7d4559bb697d8cf11eae2ea3fc4f9e1f95f10a8125750021a661e99d6",
+  "passed": 8,
+  "failed": 0
+}

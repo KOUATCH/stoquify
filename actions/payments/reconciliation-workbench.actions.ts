@@ -3,11 +3,11 @@
 import { protect } from "@/services/_shared/protect"
 import {
   getPaymentReconciliationWorkbench,
-  type PaymentReconciliationWorkbenchData,
+  type PaymentReconciliationWorkbenchData as WorkbenchServiceData,
 } from "@/services/payments/payment-reconciliation-workbench.service"
 import { paymentReconciliationWorkbenchInputSchema } from "@/services/payments/payment-reconciliation-workbench.schemas"
 
-export type { PaymentReconciliationWorkbenchData }
+export type PaymentReconciliationWorkbenchData = WorkbenchServiceData & { scope: { organizationId: string; actorId: string } }
 
 const getWorkbench = protect<unknown, PaymentReconciliationWorkbenchData>(
   {
@@ -25,10 +25,11 @@ const getWorkbench = protect<unknown, PaymentReconciliationWorkbenchData>(
   },
   async (input, ctx) => {
     const parsed = paymentReconciliationWorkbenchInputSchema.parse(input)
-    return getPaymentReconciliationWorkbench({
+    const data = await getPaymentReconciliationWorkbench({
       ...parsed,
       organizationId: ctx.orgId,
     })
+    return { ...data, scope: { organizationId: ctx.orgId, actorId: ctx.userId } }
   },
 )
 

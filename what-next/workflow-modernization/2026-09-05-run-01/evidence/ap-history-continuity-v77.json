@@ -1,0 +1,113 @@
+{
+  "at": "2026-09-08T15:37:37.873Z",
+  "sourceBaseline": "evidence/source-baseline-v77.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-revision.ts": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3",
+    "actions/purchasing/ap-history.actions.ts": "a16ac340274d02056c1f833b8b8fde84da6bb951f058ad2597b897eeb285eb3c",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "hooks/useAPHistoryWorkbench.ts": "abf844dad886187b2424e503ec53efc89d658317c26b195628fbfc8fd0081a06",
+    "messages/en.json": "d5aae1c903186be13f343e9da2ed409b302e3dd4b457f68bf09bf8a21981b2e3",
+    "messages/fr.json": "599a361450a537b7ce630cecd5a97c5d068d93472a0a93eb727d7363995c9170",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "hooks/__tests__/useAPHistoryWorkbench.scope.test.tsx": "619be0635861a2d899e2fc1d6038fd34c829204b4f3247c71ef14020fc20b8dc",
+    "components/purchasing/__tests__/APHistoryExportDialog.test.tsx": "5ef7a13c9369d27064ed6ba44b842383e597425a2202fe71e48289865a39aa9b",
+    "actions/purchasing/__tests__/ap-history-export.actions.test.ts": "cb5d5f09756417d9f3c690379e948621ec7a4144146babbca300101fd821cb4f",
+    "components/purchasing/__tests__/APHistoryWorkbench.test.tsx": "3d4175c91a4f1b35ab4edb693de73b251988a94031d05b71e06730bfbf29d370",
+    "services/purchasing/__tests__/ap-history-revision.test.ts": "7e2ffe863a806c9857519481802b8aa3720a3d0408004404214912638823a9fc",
+    "services/purchasing/__tests__/ap-history-financial.test.ts": "59520528000b50b52205da4790c3eead881948f84236530d236bcf5a97c0afa2",
+    "services/purchasing/__tests__/ap-history-export.service.test.ts": "0813f46e98616401dc67bb6bc95ee0ed043c971463872c0e1c477de160e76720",
+    "services/purchasing/__tests__/ap-history.service.test.ts": "47fe70ba9c73be246b87f0e9b10b030b4e84b934c29ff459196b7a70291a3ee9",
+    "hooks/__tests__/useAPHistoryWorkbench.test.ts": "7c2cd79ad3ba2bf6c067e10ee2737d2a1fe5c772e7f916f8a22ac2381c2c2c8d"
+  },
+  "tests": {
+    "file": "evidence/ap-history-cursor-tests-v77-final.json",
+    "passed": 65,
+    "suites": 9,
+    "session": 82103,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 72263,
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "eslint ten changed production/test files",
+      "session": 32549,
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "eslint actions/purchasing/__tests__/ap-history-export.actions.test.ts",
+      "chunk": "ccd19c",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "database": "lanes/environment/ap-history-cursor-after-82094088-185.json",
+  "browser": "lanes/environment/ap-history-cursor-browser-5083580f-f9e.json",
+  "screenshots": [
+    "lanes/environment/ap-history-cursor-en-second-page-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-en-second-page-detail-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-en-stale-desktop-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-en-stale-mobile-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-en-recovered-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-en-query-failure-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-fr-second-page-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-fr-second-page-detail-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-fr-stale-desktop-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-fr-stale-mobile-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-fr-recovered-5083580f-f9e.png",
+    "lanes/environment/ap-history-cursor-fr-query-failure-5083580f-f9e.png"
+  ],
+  "before": "lanes/environment/ap-history-cursor-before-5f81bc81-b0e.json",
+  "earlierEvidence": [
+    "evidence/ap-history-cursor-tests-v77.json",
+    "lanes/environment/ap-history-cursor-after-9e6848b3-408.json",
+    "lanes/environment/ap-history-cursor-browser-bb155cfc-8d5.json"
+  ],
+  "otherFailures": [
+    {
+      "session": 15720,
+      "kind": "typecheck",
+      "exitCode": 1,
+      "resolved": "Action-response code property narrowed explicitly"
+    },
+    {
+      "session": 48042,
+      "kind": "test receipt write",
+      "assertions": "63 passed in nine suites",
+      "exitCode": 1,
+      "resolved": "Final expanded 65-test run saved successfully after approved local write escalation"
+    }
+  ],
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2723,
+      "tests": 958,
+      "pages": 155,
+      "routeHandlers": 18,
+      "actionSources": 166,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2284,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 207,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "next": "Trace global supplier payment allocation and ledger consistency across unselected invoices",
+  "migration": "none",
+  "externalActions": "none",
+  "tradeoff": "Seven tenant source scans for pagination; unrelated AP changes may require restart; no large-volume certification"
+}

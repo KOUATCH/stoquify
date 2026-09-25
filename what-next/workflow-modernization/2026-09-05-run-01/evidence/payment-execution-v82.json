@@ -1,0 +1,246 @@
+{
+  "at": "2026-09-08T18:12:04.911Z",
+  "sourceBaseline": "evidence/source-baseline-v82.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "components/purchasing/PaymentExecutionWorkbench.tsx": "aabbac6fbd7f5987c6eac5f17a66201380befbbf2307ec5f0465ef07549976e9",
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-release-contracts.ts": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "12d71975bfdf0ffa811348930001accff117c06db7941ed237eb50f8fcb049af",
+    "actions/purchasing/payment-release.actions.ts": "fc88eaf0cecb36b1fe8ad7660b74065a0ec8c52b477d5263f4de1a0881a4e60e",
+    "actions/purchasing/ap-control.actions.ts": "46e6cdc26f3ad4f43c3e62a88b535ea71bef843a877f86841ad4f6a0ef08f3d1",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx": "bec844b1464db9fe8b6bfa83fbbbe7708d847b59511695af27da5c1ade5a6f12",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "d66268fce6c2c4d0660d9ea628c0da6874630eb8cbac75908f3a2b8909ca3815",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "73fac5a844b799dd62802501310be79dd81bae7ad24bc3ed9a0d4ea35b98ca76",
+    "i18n/request.ts": "c05310ca7f3be731b33477ff34aba2b049b986e531e4d45627dd9553f24eaf58",
+    "app/[locale]/layout.tsx": "8d69f9aeb68628a5dca069dbba29ff0cf7bda44a78c10622f3d2a0fdf19098dc",
+    "messages/payment-execution/en.json": "0e12e41879fbbd5696da2efd26a7b663e2fe7afb8194f81fe845afb5ddb7bbcc",
+    "messages/payment-execution/fr.json": "a8bef9ba63af78546481b14fbc965a797094fa06beead93c506450ca5692b906",
+    "services/purchasing/payment-request.service.ts": "849a9cb77abae98d91e72fca95f7cca8f54f493fe9cd524a882b8be630d84bb6",
+    "components/purchasing/__tests__/PaymentRequestWorkbench.test.tsx": "9f29bec0d3c6b51688aa855a5b2908ca258073d8f09031c8b2c26357760c4949",
+    "scripts/__tests__/module-purchases-route-evidence.test.js": "21f07212ad3ed2786d38fa0c1c42a7d6bce8c3d69342447a292161a8bcb2d029",
+    "components/purchasing/__tests__/PaymentExecutionWorkbench.test.tsx": "01ecba63f2b8640da4a3a70bbf4ccf09ed5679583698cbf902672ac3a25af961",
+    "services/purchasing/__tests__/payment-request-read.service.test.ts": "bacb9b6b532301b1c3197f97796ef9441d2a1040cb4fce1db6ba38000ea2a0db",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+    "actions/purchasing/__tests__/payment-request.actions.test.ts": "0d1c459518598c6aa4fe73d8da22e20f86ef1a20b85bb7ea1b4ca09e15a8e451",
+    "services/purchasing/__tests__/payment-release-evidence.test.ts": "32a74254e418a785ffa3258be5ceef686783c7b722f758094c5f90dfba849d2d",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "1db9488be214cd3a3d8344635c73789043eb1944909beb79c985e7ada6b06a7a",
+    "services/purchasing/__tests__/payment-request-evidence.test.ts": "f68442ff80469bcd5d85dc6570e057f0a7a881373d43191d944671f0678db16a",
+    "services/purchasing/__tests__/payment-request-contracts.test.ts": "227d6d35d702ae250d87549315abf689a8d0cf85dab3f53f4f08316324feca65",
+    "services/purchasing/__tests__/supplier-payment-balance.test.ts": "e6ae42ac0f5733062bfa7c3643248111a9651bd50a25d9274698e60b1886d87b",
+    "services/_shared/action-errors.ts": "41a2dbf4fe6f0c683aba1ff5656de42829bf566a7ea9517ecd465649591ef0ff",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e"
+  },
+  "tests": {
+    "file": "evidence/payment-execution-final-v82.json",
+    "passed": 156,
+    "suites": 11,
+    "session": 53794,
+    "exitCode": 0,
+    "finalComponentRecheck": {
+      "file": "evidence/payment-execution-links-v82.json",
+      "passed": 9,
+      "session": 14433,
+      "exitCode": 0,
+      "notAdditionalUniqueTests": true
+    }
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 46492,
+      "exitCode": 0,
+      "status": "passed",
+      "binding": "Only three link class strings changed afterward; final component tests, lint and real browser journeys repeated."
+    },
+    {
+      "command": "changed-file eslint; full exact list in PAYMENT_EXECUTION_VERIFICATION_COMMANDS_V82.md",
+      "session": 75688,
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js components/purchasing/PaymentExecutionWorkbench.tsx",
+      "chunk": "cc8dd8",
+      "exitCode": 0,
+      "status": "passed after final link correction"
+    }
+  ],
+  "database": {
+    "file": "lanes/environment/payment-release-16e32cdd-6f7.json",
+    "session": 35305,
+    "checks": 9,
+    "exitCode": 0,
+    "originalUnchanged": true,
+    "sourceStable": true,
+    "postingCases": [
+      "FAILED/BLOCKED_PENDING_RULES with SUSPENSE",
+      "POSTED with PENDING statement reconciliation"
+    ]
+  },
+  "browser": {
+    "file": "lanes/environment/payment-execution-browser-172681a1-87c.json",
+    "session": 84294,
+    "exitCode": 0,
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "stagesPerLocale": 4,
+    "screenshots": 18,
+    "originalUnchanged": true,
+    "sourceStable": true,
+    "pageErrors": [],
+    "externalExecutionEvidence": "synthetic operator-attestation fixture",
+    "actualBankExecution": false
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-evidence-desktop-172681a1-87c.png",
+      "sha256": "8a3592fd3f31ede201b81753b6168d92087f09c3b1b8eb82e6e0982592575bef"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-evidence-mobile-172681a1-87c.png",
+      "sha256": "37924ab8e7997bca0fada3e70d31e89683e098963be6fab742f837d92aa9bd57"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-review-mobile-172681a1-87c.png",
+      "sha256": "5480e2163dcf45c9ad4ae3d74eaf9313243211092b180d093d68cfa809b350b7"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-stale-draft-172681a1-87c.png",
+      "sha256": "8f18e65b4c80d448adaa8edac19d103143406c8e6001b1e39e9b1079a0687ded"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-recorded-mobile-172681a1-87c.png",
+      "sha256": "19239bc82277552ec1bb7d868e623f244f5e967298486687f6bfd60efd070db6"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-recorded-tablet-172681a1-87c.png",
+      "sha256": "ea7c9d4ddb415f3ae510c3621c76dbc23ed56ddd7f3250e678f0037a83274fdf"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-recorded-text200-172681a1-87c.png",
+      "sha256": "a6dfbb4ccbbed454d3fa09fa26de0b37c4af77a679dd17eb8e66585b959f7cb6"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-history-desktop-172681a1-87c.png",
+      "sha256": "6f2dc2b4f1031d743b63e58bc5829ed89a8fe29bba205ec58d74752e50312501"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/payment-execution-v82/payment-execution-en-denied-172681a1-87c.png",
+      "sha256": "1888013af54b3616123daf98bfe053debb6e26d4d534b1ce8ad943f6750fdd58"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-evidence-desktop-172681a1-87c.png",
+      "sha256": "31ddefa8baeb435bd8f64c8a19e670aa41f1a4806371309ff1bf1db1d4f5f8ba"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-evidence-mobile-172681a1-87c.png",
+      "sha256": "ff69b87090b152ef695dca34caa35b3e20482da0213686393996f2c0661673ee"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-review-mobile-172681a1-87c.png",
+      "sha256": "87f0edc2102e68537d23e306eea57b39bc2fa73194aeab2f8ace2fb84488d4e7"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-stale-draft-172681a1-87c.png",
+      "sha256": "7d82f5270db453d2d2fba65172a78e199c192823453c49afc820b30ccfd92548"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-recorded-mobile-172681a1-87c.png",
+      "sha256": "db9539d96c061a5c2ad23ab09826273e81b6a5835491c02ae4df1cbbd6143a5b"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-recorded-tablet-172681a1-87c.png",
+      "sha256": "c413f752c46d565f6b1e3e27005f004261ae76dd423d90b5bd6a795445cf3457"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-recorded-text200-172681a1-87c.png",
+      "sha256": "7d75bc18d8288542122cbbaa64eda17664d48e213dadcef8981dfb103c17ca9c"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-history-desktop-172681a1-87c.png",
+      "sha256": "94c024a84f7e13c916d404658cb0336382fbb0bf9df00885e538bdb059dfedfc"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/payment-execution-v82/payment-execution-fr-denied-172681a1-87c.png",
+      "sha256": "3b16e1224a655a8dfe5cde86ef99e9fba211303f6d0a1786a5fa3a7498d98b15"
+    }
+  ],
+  "failedAttempts": [
+    {
+      "session": 81113,
+      "reason": "Two new application error codes missing from typed contract; corrected before passing typecheck"
+    },
+    {
+      "session": 34675,
+      "reason": "EPERM writing ordinary verifier receipt; unrecorded result not counted"
+    },
+    {
+      "session": 36361,
+      "file": "lanes/environment/payment-release-ef86e358-b6d.json",
+      "reason": "Verifier expected BLOCKED_PENDING_RULES as persisted batch status; corrected to assert FAILED batch and blocked release event separately"
+    },
+    {
+      "session": 29437,
+      "testsPassed": 104,
+      "suitesPassed": 6,
+      "reason": "New UI test could not import localization ESM; adopted repository test mock, actual provider separately browser-verified"
+    },
+    {
+      "session": 58474,
+      "file": "lanes/environment/payment-execution-browser-2d8c4bf5-baa.json",
+      "reason": "No local app listener; checked port then restarted owned launcher"
+    }
+  ],
+  "earlierPassingBrowser": {
+    "session": 85711,
+    "file": "lanes/environment/payment-execution-browser-230406e4-48a.json",
+    "reasonForRepeat": "Scoped link contrast correction discovered in visual review"
+  },
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2752,
+      "tests": 967,
+      "pages": 158,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2342,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 210,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "fullBuild": "not run; actual application routes compiled and executed; no migration-bearing build",
+  "next": "Retained payment posting/reconciliation recovery, credit-aware invoice lifecycle, then remaining platform workflows"
+}

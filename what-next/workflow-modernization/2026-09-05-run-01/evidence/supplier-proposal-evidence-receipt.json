@@ -1,0 +1,532 @@
+{
+  "recordedAt": "2026-09-07T11:39:15.328Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceBaseline": "evidence/source-baseline-v48.json",
+  "priorCheckpoint": "evidence/supplier-buyer-receipt.json",
+  "changed": [
+    "services/purchase-order/supplier-po-acknowledgement.service.ts",
+    "services/purchase-order/supplier-po-proposal-evidence.ts",
+    "services/purchase-order/__tests__/supplier-po-proposal-evidence.test.ts",
+    "services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx",
+    "components/purchase-orders/__tests__/SupplierPoBuyerWorkflow.test.tsx"
+  ],
+  "sources": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "10b4be2c9af28440b134841ff1f8cab8529630c78211742e0067f52d5950e944",
+    "messages/fr.json": "6b78c30642fd2bd6f78c9ed352ad0667edf6de31815637c29f511c68c3e8c264",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+    "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+    "services/purchase-order/__tests__/supplier-po-proposal-evidence.test.ts": "19c0034ea0926dc1f94ca72f8964a4e8eb5cdeed975b6da2bb76a7a6eb8245c4",
+    "services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts": "c9db5613f8145b87bf6288f7bad14d80f3cf573e528174d8da8e5e9bbdb1f49c",
+    "components/purchase-orders/__tests__/SupplierPoBuyerWorkflow.test.tsx": "6ed3a633a4d217820be954da4f2a3ae941bf5e769b134500b2978d27209dcb9c",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/__tests__/page.test.tsx": "79f9f3e6054afd2fd744767705985d42fa6689d62828d7c3771585e2547b20e1",
+    "actions/purchaseOrderWorkflow/__tests__/supplier-po-buyer.actions.test.ts": "db82599a577523d1165a8c74db4f0d10405f0f28c4d0f91c959b40ed0f1c3061",
+    "services/purchase-order/__tests__/supplier-po-access-token.test.ts": "510aa13aa4da3ee0f3a393886dfeb509fd358ad696e19b7dd197525461e54193",
+    "services/purchase-order/__tests__/supplier-po-authority-boundary.test.ts": "230b4212870006a7598f13ed06f5675e4c3f2801998c279be335ca315e888b63",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba"
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-history-en-latest-desktop-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-en-latest-desktop-715db56b-393.png",
+      "sha256": "3e14bd249448b34e6d941eb740d1d144738f9c79207a03eb550f56527a7c151d"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-history-en-oldest-desktop-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-en-oldest-desktop-715db56b-393.png",
+      "sha256": "374434fffaa6caad38d7e09838b25fc9480e2fb254846d160a2cb51a83c546ba"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-history-en-oldest-mobile-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-en-oldest-mobile-715db56b-393.png",
+      "sha256": "1dd4525597f3b7284a5d24d4e3f845b22cb1d20169a3a3dbd625ab6054c6e565"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-history-en-oldest-text-reflow-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-en-oldest-text-reflow-715db56b-393.png",
+      "sha256": "2f5558a3129f4cea56e1feeaabcd575def8c211a72bcf5441d457dfbbd8f87a8"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-history-en-latest-restored-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-en-latest-restored-715db56b-393.png",
+      "sha256": "f7791bf10df242a4873def64657a12d6dbf0fbf42ee58288940e01d7f964ae38"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-history-fr-latest-desktop-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-fr-latest-desktop-715db56b-393.png",
+      "sha256": "53feae8b2ade9c37930b7edb595267281ad6fcc3fdff166dea8a292489480ffe"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-history-fr-oldest-desktop-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-fr-oldest-desktop-715db56b-393.png",
+      "sha256": "eb5942efceffb60d83145629dbea44e6585594bc56712877436a2920078d99af"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-history-fr-oldest-mobile-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-fr-oldest-mobile-715db56b-393.png",
+      "sha256": "64a380b93899fe0122725ad842ec61727b4f95824df430a34aa1f96afb6de1e7"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-history-fr-oldest-text-reflow-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-fr-oldest-text-reflow-715db56b-393.png",
+      "sha256": "d977a0e2790423f8cfb4a2e82ce74e3df887d04f20634b7f3b6e06a850a5b9f1"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-history-fr-latest-restored-715db56b-393.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-history-fr-latest-restored-715db56b-393.png",
+      "sha256": "ddb1ef539a2f9ed54cc92087fc3bd4cbf8fa8d90f0446cfc6bec78e2dad1aee1"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-empty-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-empty-ee28f50a-4cd.png",
+      "sha256": "01a72db801a9f3e353c4b64bbd6a346c927ec15767f38233cc846db0f4b3a7a3"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-restored-draft-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-restored-draft-ee28f50a-4cd.png",
+      "sha256": "14708627afa27249ac903eaccf5625e2ed712a0d21272c3057afb1910e7ce58b"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-password-recovery-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-password-recovery-ee28f50a-4cd.png",
+      "sha256": "936358422e0623b133679f5292350bb41fd77ea3ab9a5824ae2a71a06ada6a9d"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-invitation-recorded-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-invitation-recorded-ee28f50a-4cd.png",
+      "sha256": "7fc1df2ebc8d8e6e804981caa50dd89bd863720a2fd652dba046a8c40e80ac0e"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-supplier-response-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-supplier-response-ee28f50a-4cd.png",
+      "sha256": "001b4050fa73f9adde1368eab33ff32ff3d228abb335c96b52e3103440edc7ff"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-review-result-lost-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-review-result-lost-ee28f50a-4cd.png",
+      "sha256": "412192bb10944fb033fc3ded6e1ca13619064d6c2da6f1284e172cd09ffd715a"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-review-history-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-review-history-ee28f50a-4cd.png",
+      "sha256": "682688ecdb9d3bc32e3aefd4d858e3db8360bf0f07b5498617b3224a1b808976"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-mobile-history-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-mobile-history-ee28f50a-4cd.png",
+      "sha256": "da9a581b1eb0b4133024b1325d67f0a8a671ccb44bfb6a94ded2c58b6d591161"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-text-reflow-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-text-reflow-ee28f50a-4cd.png",
+      "sha256": "46a16c2fe8c1739eb91f3e43ecec490b51c934a31f6e802af33aef49ead50721"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-revoked-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-revoked-ee28f50a-4cd.png",
+      "sha256": "5ce2e3ff2d7bd8eb105427e4fa9cd9fa89185595ab878bbf4d08499827ff11eb"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-read-only-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-read-only-ee28f50a-4cd.png",
+      "sha256": "d75df8e2c13a102ab0598d8ddc9ca8edf941c9bfa04634749d2878817b67eb41"
+    },
+    {
+      "locale": "en",
+      "source": "lanes/environment/supplier-buyer-en-authority-denied-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-en-authority-denied-ee28f50a-4cd.png",
+      "sha256": "b7a9d4b863021d1ed9b9a8ab7c63e3bf25adbf1754cae4fe5d430a8f183df351"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-empty-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-empty-ee28f50a-4cd.png",
+      "sha256": "a06e1da4c5c5fe28d1f54ee9b9e021b8e6eb1bcab017efc1e507cdf9087c937d"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-restored-draft-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-restored-draft-ee28f50a-4cd.png",
+      "sha256": "58fd47ec6542a04d5a6189a63d9428a42c9f3f2775211ec4a5f01c90a43ba2a8"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-password-recovery-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-password-recovery-ee28f50a-4cd.png",
+      "sha256": "454cc3dc0b09a50bf96b501232747b8a07de8c9e0a044995f8ae272d053aae16"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-invitation-recorded-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-invitation-recorded-ee28f50a-4cd.png",
+      "sha256": "f78827c5fbe9490d08f2dc13f26d03ec152b3d2605adeae440098af5e2d582d1"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-supplier-response-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-supplier-response-ee28f50a-4cd.png",
+      "sha256": "2b7a4751f6417039b19fd8045ffe51397c987caea3911e7d3a7fb478b0e8133d"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-review-result-lost-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-review-result-lost-ee28f50a-4cd.png",
+      "sha256": "d34b58fd6cfa520d7b9157c7345ad3cdb08734f384dc9261b680ece37a396eb5"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-review-history-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-review-history-ee28f50a-4cd.png",
+      "sha256": "7bc862c7340a4f575728d738b4f488086c054ca3b341e90d025c93798838cb34"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-mobile-history-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-mobile-history-ee28f50a-4cd.png",
+      "sha256": "de7a83a896d66ec675e73196cc23258348b8807cc6c256ce804417a54083cfb2"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-text-reflow-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-text-reflow-ee28f50a-4cd.png",
+      "sha256": "1f013514c4a27f153cb7680d2357677de2861c2c6400b498455985431836118a"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-revoked-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-revoked-ee28f50a-4cd.png",
+      "sha256": "75734e01f4e36e167051a99e2a055d16cf92e1a68f014385d7727a681a07abec"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-read-only-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-read-only-ee28f50a-4cd.png",
+      "sha256": "ea68503e9d4f41ef46995f41b3b759a6044c186a183e81899a2be2855558d8aa"
+    },
+    {
+      "locale": "fr",
+      "source": "lanes/environment/supplier-buyer-fr-authority-denied-ee28f50a-4cd.png",
+      "file": "evidence/supplier-proposal-evidence-screenshots/supplier-buyer-fr-authority-denied-ee28f50a-4cd.png",
+      "sha256": "9ff046dfb031d9bb071493842b71abb6f41d843baac55357a8b2b560d8378bb1"
+    }
+  ],
+  "reviewMatrix": {
+    "architecture": "Reuses authenticated purchase-order route, shell, organization context, module entitlement service and existing envelope/proposal/event records. Shared route helper adds an optional presentation callback; guard behavior is unchanged.",
+    "backend_api": "All proposal result paths verify scoped applied events and actual quantity/date/note/request payloads. History batches event reads; failed queries propagate. The existing action identity, permissions and fresh-auth controls remain.",
+    "database_migrations": "No schema migration or evidence rewrite. Original event line ordering verifies legacy hashes despite reversed database row order. Real local before/after query-result fault injection verifies denial without business side effects.",
+    "security_iam_privacy": "Current active account, organization, known read/update permission, purchasing access and password assurance are required for writes/replays. Scope and cross-object attempts denied. Drafts do not retain passwords or bearer links; scope changes clear credentials and discard late results.",
+    "frontend_design_system": "Existing tokens and components preserved. Explicit historical selection survives a default-page route refresh. Changed order/authority invalidates the selection and failed in-flight reads keep data hidden.",
+    "workflow_accessibility_localization": "EN/FR connected buyer journeys plus six-envelope keyboard traversal and return to latest. Existing translated feedback reused; 320/390/768/1440 widths and CSS 200% text covered. Native assistive technology and zoom remain open.",
+    "product_operations": "Buyer can prepare a private invitation, inspect supplier consequences, record a reasoned decision and disable access. Current and earlier records support reconciliation. Creating a link does not send it.",
+    "finance_reconciliation_controls": "Original PO quantities/totals/approval and financial records unchanged by acknowledgement operations. Buyer acceptance cannot receive stock, authorize payment or alter AP/ledger. Downstream controlled operations remain separate.",
+    "statutory_country": "Not applicable to calculation changes: no statutory/country-pack/tax/posting rule changed. No OHADA/SYSCOHADA approval or certification is asserted.",
+    "audit_records": "Proposal content now reconstructs against the retained submission event; reviewer identity, time, source, payload, state and applied status must match. This is consistency verification, not signature or identity certification.",
+    "quality_release": "75 tests in seven suites; 18 real PostgreSQL integrity groups plus nine buyer regression groups; four EN/FR browser journeys; 34 screenshots; final typecheck and six-file lint pass. Earlier failed attempts remain explicit.",
+    "sre_performance_cost": "One tenant-scoped event batch per history page, no query for empty history. Recorded development route/pagination timings only; no approved production-budget comparison or certification.",
+    "purchasing_ap": "Preserved the distinction between a recorded buyer decision and operational order/stock/AP/ledger effects. Current edit/approval/concurrency and quantity-contract handoffs are the next unresolved workflow boundary.",
+    "saas_packaging": "Existing purchasing entitlement reused. Explicit empty/read-only/expired/suspended grants tested. No package pricing, billing provider or commercial activation added.",
+    "api_events": "No new public route. Existing supplier API exercised; current actions use existing applied events and mandatory audit. No external event/provider delivery.",
+    "rollout_support": "No migration. Retain original evidence and pending request references; do not replace missing events with fabricated applied records. Guide gives buyer/support inputs and their sources.",
+    "pos_offline": "Not applicable: no POS, stock replay or offline queue changes. Browser draft storage is not an offline transaction authority.",
+    "hris_payroll": "Not applicable: no employee, payroll, payslip or declaration behavior changes.",
+    "analytics_governance": "Bounded operational history is current source evidence; no analytics metric, export or warehouse changes. Data absence and failed reads remain distinct.",
+    "ai_agents": "Not applicable: no agent execution, AI approval or automated consequential decision introduced."
+  },
+  "remaining": [
+    "Ordinary PO approval, accepted-proposal amendment, receiving/AP/payment/ledger handoffs remain unverified. Approved-order edits are currently prohibited and fractional proposal quantities differ from integer order/receipt input contracts. These are engineering follow-up, not simulated approval or evidence clearance.",
+    "Current order update/approval/transition source reads state before writes; shipping-only update retains the existing total. Reproduce and correct these operational paths in the next owned-fixture batch.",
+    "Native assistive technology, native zoom, comprehensive contrast, full production build and production latency remain unverified. Some inherited shell labels remain English and the Next development issue indicator is visible in screenshots.",
+    "Earlier English browser submission timed out without a proven cause. Sanitized HTTP observation and subsequent complete EN/FR runs passed; the failed receipt remains for investigation if it recurs.",
+    "No schema migration, deployment, external communication, live customer activation, payment or X1 clearance. Whole-platform workflow discovery, remediation and verification remain unfinished."
+  ],
+  "completeWorkflowVerified": false,
+  "selectedSkill": "011-aqstoqflow-purchasing-ap-controls",
+  "nextRecommendedNumberedSkill": "012-aqstoqflow-payroll-presence-engine (suite sequence only; purchasing handoff remains the active dependency)",
+  "workflows": [
+    "CS-SUPPLIER-PUBLIC-VIEW",
+    "CS-SUPPLIER-ACCEPT",
+    "CS-SUPPLIER-REJECT",
+    "CS-SUPPLIER-CHANGE",
+    "CS-SUPPLIER-BUYER-REVIEW",
+    "CS-SUPPLIER-HISTORY"
+  ],
+  "verification": {
+    "paths": {
+      "baseline": "evidence/source-baseline-v48.json",
+      "tests": "evidence/supplier-proposal-evidence-tests-04.json",
+      "integrity": "lanes/environment/supplier-proposal-evidence-after-48ec1cd4-87f.json",
+      "buyerPostgres": "lanes/environment/supplier-buyer-postgres-a1d1f2ec-048.json",
+      "history": "lanes/environment/supplier-history-browser-715db56b-393.json",
+      "buyer": "lanes/environment/supplier-buyer-browser-ee28f50a-4cd.json"
+    },
+    "tests": {
+      "passed": 75,
+      "suites": 7,
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath 'components/purchase-orders/__tests__/SupplierPoBuyerWorkflow.test.tsx' 'app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/__tests__/page.test.tsx' 'services/purchase-order/__tests__/supplier-po-proposal-evidence.test.ts' 'services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts' 'actions/purchaseOrderWorkflow/__tests__/supplier-po-buyer.actions.test.ts' 'services/purchase-order/__tests__/supplier-po-access-token.test.ts' 'services/purchase-order/__tests__/supplier-po-authority-boundary.test.ts'"
+    },
+    "integrity": {
+      "groups": 18,
+      "receipt": "23100a",
+      "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-supplier-proposal-evidence-postgres.cjs"
+    },
+    "buyerPostgres": {
+      "groups": 9,
+      "receipt": "3fe29d",
+      "binding": "Domain/action/schema hashes verified; the later UI-only history correction is bound by final browser/component checks."
+    },
+    "browser": {
+      "locales": 2,
+      "journeys": 4,
+      "screenshots": 34,
+      "commands": [
+        "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-supplier-history-browser.cjs",
+        "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-supplier-buyer-browser.cjs"
+      ]
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "receipt": "6f1228",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+    },
+    "lint": {
+      "exitCode": 0,
+      "receipt": "c29577",
+      "command": "node node_modules/eslint/bin/eslint.js 'services/purchase-order/supplier-po-acknowledgement.service.ts' 'services/purchase-order/supplier-po-proposal-evidence.ts' 'services/purchase-order/__tests__/supplier-po-proposal-evidence.test.ts' 'services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts' 'components/purchase-orders/SupplierPoBuyerWorkflow.tsx' 'components/purchase-orders/__tests__/SupplierPoBuyerWorkflow.test.tsx'"
+    },
+    "build": {
+      "status": "not_run",
+      "reason": "Owned development app exercised; no production-build or migration claim."
+    },
+    "attempts": "evidence/supplier-proposal-evidence-attempts.md"
+  },
+  "developmentObservations": {
+    "history": [
+      {
+        "locale": "en",
+        "routeReadyMs": 8017,
+        "olderPageMs": 1902,
+        "layouts": [
+          {
+            "width": 768,
+            "scroll": 768,
+            "content": 548,
+            "available": 548
+          },
+          {
+            "width": 390,
+            "scroll": 390,
+            "content": 390,
+            "available": 390
+          },
+          {
+            "width": 320,
+            "scroll": 320,
+            "content": 320,
+            "available": 320
+          },
+          {
+            "textResize": "200%",
+            "content": 320,
+            "available": 320
+          }
+        ]
+      },
+      {
+        "locale": "fr",
+        "routeReadyMs": 4388,
+        "olderPageMs": 974,
+        "layouts": [
+          {
+            "width": 768,
+            "scroll": 768,
+            "content": 548,
+            "available": 548
+          },
+          {
+            "width": 390,
+            "scroll": 390,
+            "content": 390,
+            "available": 390
+          },
+          {
+            "width": 320,
+            "scroll": 320,
+            "content": 320,
+            "available": 320
+          },
+          {
+            "textResize": "200%",
+            "content": 320,
+            "available": 320
+          }
+        ]
+      }
+    ],
+    "buyer": [
+      {
+        "locale": "en",
+        "routeReadyMs": 3602,
+        "layouts": [
+          {
+            "width": 1440,
+            "height": 1000,
+            "scrollWidth": 1160,
+            "clientWidth": 1160,
+            "documentWidth": 1440,
+            "viewport": 1440
+          },
+          {
+            "width": 768,
+            "height": 1024,
+            "scrollWidth": 548,
+            "clientWidth": 548,
+            "documentWidth": 768,
+            "viewport": 768
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 390,
+            "clientWidth": 390,
+            "documentWidth": 390,
+            "viewport": 390
+          },
+          {
+            "width": 320,
+            "height": 800,
+            "scrollWidth": 320,
+            "clientWidth": 320,
+            "documentWidth": 320,
+            "viewport": 320
+          },
+          {
+            "textResize": "200%",
+            "scrollWidth": 320,
+            "clientWidth": 320
+          }
+        ],
+        "supplierHttp": [
+          {
+            "operation": "GET",
+            "submission": false,
+            "status": 200
+          },
+          {
+            "operation": "POST",
+            "submission": true,
+            "status": 201
+          }
+        ]
+      },
+      {
+        "locale": "fr",
+        "routeReadyMs": 4470,
+        "layouts": [
+          {
+            "width": 1440,
+            "height": 1000,
+            "scrollWidth": 1160,
+            "clientWidth": 1160,
+            "documentWidth": 1440,
+            "viewport": 1440
+          },
+          {
+            "width": 768,
+            "height": 1024,
+            "scrollWidth": 548,
+            "clientWidth": 548,
+            "documentWidth": 768,
+            "viewport": 768
+          },
+          {
+            "width": 390,
+            "height": 844,
+            "scrollWidth": 390,
+            "clientWidth": 390,
+            "documentWidth": 390,
+            "viewport": 390
+          },
+          {
+            "width": 320,
+            "height": 800,
+            "scrollWidth": 320,
+            "clientWidth": 320,
+            "documentWidth": 320,
+            "viewport": 320
+          },
+          {
+            "textResize": "200%",
+            "scrollWidth": 320,
+            "clientWidth": 320
+          }
+        ],
+        "supplierHttp": [
+          {
+            "operation": "GET",
+            "submission": false,
+            "status": 200
+          },
+          {
+            "operation": "POST",
+            "submission": true,
+            "status": 201
+          }
+        ]
+      }
+    ]
+  },
+  "verificationScripts": {
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-fixtures.cjs": "d31a92f0e49c9a923b72e54af93c0178126400b2f6d07aba86bc858bf7f96b10",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-supplier-proposal-evidence-postgres.cjs": "c7d7111f158eebbe3cb25769657a36d4b84c095ae8d0a7a73164a19f9d7f7ea4",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-supplier-history-browser.cjs": "32474f7e5955b0f6ac21e94f6785627bcd37c6d5309bb46bf494d8fd1376841b",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-supplier-buyer-browser.cjs": "c46a935d788835353803b5b357270e741b087a3e0697df6c11ff98b9ded8557c",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-supplier-buyer-postgres.cjs": "02172fdc18344c253c48a47727f62bfd7b10ed9aa7ae6205362283be8c8c9704"
+  }
+}

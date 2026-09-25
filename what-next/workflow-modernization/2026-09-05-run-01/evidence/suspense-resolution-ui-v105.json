@@ -1,0 +1,93 @@
+{
+  "at": "2026-09-09T14:13:36.626Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v105.json",
+  "sources": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "e39665f344987beff4f092756d9f06cfc41d0f0d37811a99e53d467d27774ec0",
+    "components/finance/PaymentSuspenseQueue.tsx": "8c2b36195e7c3c1381e3625908c0d5501ef1534777e038dd61d3f2639bddbf21",
+    "actions/payments/suspense-resolution.actions.ts": "f1005a1db5c4258b20d3ca6669a99455d0fe0397e84207afe1c01e1c3dc3f47b",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "26a84fadf8232881f64a5dcdf35517a74511201bf24a932cdf77b9f7820f4563",
+    "services/reconciliation/payment-suspense-resolution-read.contracts.ts": "58fac1515972b404f43f20d2b88bd93546f363fd739ac9f8354e223f78defd7f",
+    "services/reconciliation/payment-suspense-resolution.service.ts": "01e600364a7a75e64856c62b5cfe19fabf84fee85bd6b9f33a88109bdc9e91d2",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts": "05459e28fff50a6014abfe96336b5d8e16e37245e858f96bde00f8cefa799808",
+    "messages/en.json": "d85e71df77fa4192856ffc90f8ce8c2e0b872915f879ebf0b08822c926f2ddc5",
+    "messages/fr.json": "5b7f9b8f30e13d1b6b3c1358cf4ae7bfa2a57f12859295a738255d210434133f",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "8bbe05a9c6c8a16e09033634d5b584450e46a8577e458988693aa7e5210078ae",
+    "services/reconciliation/__tests__/payment-suspense-resolution-read.service.test.ts": "df7eebce701513c25bd49b740f43e24aae5a39146a65fed40abd203423efd030",
+    "components/finance/__tests__/PaymentSuspenseResolutionPanel.test.tsx": "f614529cfe4bc9f94239d2bc1e87684aa400d731dd1f563b93df09b354011bae",
+    "actions/payments/__tests__/suspense-resolution.actions.test.ts": "36cd7443d020cfff5ddfba6a688daa39b9d5b5a9c8a34ebe7fa50ce72b43a224",
+    "services/reconciliation/__tests__/payment-suspense-resolution-recovery-evidence.service.test.ts": "89da9482fc2c322107c4d570967e3df6e0ca951629f9a6c5ce040e2f2f8b3d71",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "3c57f12034975eac0de77a63232be658b766cfa3816f9018226876d8b4b3b932",
+    "services/accounting/__tests__/posting.service.test.ts": "3ccb4048cc856b5b31c8464a878c18b2eae582948c273990a396d6424fbdbf7c",
+    "services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts": "c692855a8e5c6298ce20302b268280580eaf38785654ff7eeb2718d9a198bb19",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "9be18911c7abb0db25182e026156467d0d84f2cfdb42011772426a6bbf6813b9",
+    "services/reconciliation/__tests__/payment-suspense-resolution-evidence.service.test.ts": "4a6602deec6ebd57606ca8903233681e31bdc596a0b229c0d6ca422c965d6eeb",
+    "services/reconciliation/__tests__/payment-suspense-resolution.contracts.test.ts": "c86f0f6de00a5962784f5c0bf70df796187ec5c9a301ad38529bb39cda5face5"
+  },
+  "tests": {
+    "file": "evidence/suspense-resolution-ui-v105-tests-regression.json",
+    "passed": 106,
+    "suites": 11,
+    "receipt": "4a8c40"
+  },
+  "browser": {
+    "file": "lanes/environment/suspense-resolution-ui-v105-browser-2ba8e3d5-69b.json",
+    "screenshots": 10,
+    "artifacts": "evidence/suspense-resolution-ui-v105-files",
+    "routeLoadMs": [
+      {
+        "locale": "en",
+        "values": [
+          15303,
+          26406,
+          10054
+        ]
+      },
+      {
+        "locale": "fr",
+        "values": [
+          14554,
+          10937,
+          12221
+        ]
+      }
+    ]
+  },
+  "typecheck": {
+    "session": 11603,
+    "receipt": "5ee08a",
+    "exitCode": 0
+  },
+  "lint": {
+    "session": 39670,
+    "files": 10,
+    "receipt": "437784",
+    "exitCode": 0
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 232,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2819,
+      "tests": 995,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 169,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2433,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat",
+  "nextNumberedSkillAfterCurrentBoundary": "010-aqstoqflow-inventory-valuation-kernel",
+  "previousTurnAssessment": "progress: v104 implemented and verified source recovery and its connected financial lifecycle",
+  "nextAction": "Finish resolution/recovery local-state accessibility recovery, durable exports and genuine exception/sign-off/export handoff"
+}

@@ -1,0 +1,29 @@
+{
+  "at": "2026-09-09T13:09:31.814Z",
+  "run": "3ab3d24d-5d6",
+  "sourcesBefore": {
+    "services/reconciliation/payment-suspense-resolution.service.ts": "827a0b3ea0c2bcd0706c8ce6dbeb95111e3cb2289f6e62dcc4ed07a02a52ae11",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "124908cd85a594e1b22bfacfc21ce8eddda22c0ea248dd227404dcfd2bab03b0",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "33a6069362511b0fec4cd3d0e04a87e2dcc174dd4b3590222ab848380cd90779",
+    "services/reconciliation/payment-suspense-correction.service.ts": "656069c8e5ec81aa8f50fe24e03d051f3eca6570b796fdb063e7f83743cfb6f6",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "f890155ba02e3566fe2fcbefb3443e65e5a8c32b8e9cbe680626f7e653a67c1d",
+    "services/accounting/posting.service.ts": "5e52c84e68d4726c18b2ac3b4185ede39f34623de2ccc6a4e2431c4d00b42a11"
+  },
+  "checks": [
+    "RESOLVED: actual original/clearing postings, pure preview, scope/permission/actor denials, idempotent proposal, independent fresh decision, no new journal, retained exact retry and generic clearing reversal refusal",
+    "WRITTEN_OFF: actual original/clearing postings, pure preview, scope/permission/actor denials, idempotent proposal, independent fresh decision, no new journal, retained exact retry and generic clearing reversal refusal"
+  ],
+  "scope": "Owned synthetic actual suspense posting, independently posted manual clearing and final resolution. No live financial operation or statutory write-off approval.",
+  "originalBefore": "28439214496b438426faae5f565aa879f935cf99adb83b7f44c97863578b44db",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-suspense-resolution.service.ts": "827a0b3ea0c2bcd0706c8ce6dbeb95111e3cb2289f6e62dcc4ed07a02a52ae11",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "124908cd85a594e1b22bfacfc21ce8eddda22c0ea248dd227404dcfd2bab03b0",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "33a6069362511b0fec4cd3d0e04a87e2dcc174dd4b3590222ab848380cd90779",
+    "services/reconciliation/payment-suspense-correction.service.ts": "656069c8e5ec81aa8f50fe24e03d051f3eca6570b796fdb063e7f83743cfb6f6",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "f890155ba02e3566fe2fcbefb3443e65e5a8c32b8e9cbe680626f7e653a67c1d",
+    "services/accounting/posting.service.ts": "5e52c84e68d4726c18b2ac3b4185ede39f34623de2ccc6a4e2431c4d00b42a11"
+  },
+  "sourceStable": true
+}

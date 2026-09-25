@@ -2,6 +2,7 @@ jest.mock("@/actions/pos/cash-payment-history.actions", () => ({
   getCashPaymentHistoryAction: jest.fn(),
   prepareCashPaymentHistoryExportAction: jest.fn(),
 }))
+jest.mock("@/hooks/usePermissions", () => ({ usePermissions: jest.fn() }))
 import {
   buildCashPaymentHistoryHref,
   filtersForCashPaymentHistoryAction,

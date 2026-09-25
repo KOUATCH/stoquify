@@ -1,8 +1,9 @@
 import { db } from "@/prisma/db"
 import { Prisma } from "@prisma/client"
+import { claimItemPictures } from "@/services/media/picture.service"
 import type { Item as ItemModel } from "@prisma/client"
 import { itemStandardInclude } from "@/lib/item/includes"
-import { ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { postOpeningStock } from "@/services/inventory/inventory-stock-event.service"
 import { requestManualItemStockAdjustment } from "@/services/inventory/inventory-adjustment.service"
 import {
@@ -672,6 +673,7 @@ export async function updateItemFromForm(
       }
     }
 
+    await claimItemPictures(tx, orgId, [input.imageUrls, ...input.retainedImageUrls], [...existing.imageUrls, existing.thumbnail ?? ""])
     const updated = await tx.item.update({
       where: { id },
       data: {
@@ -962,6 +964,8 @@ export async function createItem(
     })
     if (existing) throw new ConflictError(`Item with SKU "${sku}" already exists`)
 
+    if (!imageUrls.some(Boolean)) throw new BusinessRuleError("Upload an image before saving this item.")
+    await claimItemPictures(tx, orgId, [...imageUrls, input.thumbnail ?? ""])
     const newItem = await tx.item.create({
       data: {
         organizationId: orgId,
@@ -1040,6 +1044,8 @@ export async function createItemFromForm(
 
     await assertItemRelations(tx, orgId, input)
 
+    if (!imageUrlList(input.imageUrls).some(Boolean)) throw new BusinessRuleError("Upload an image before saving this item.")
+    await claimItemPictures(tx, orgId, [...imageUrlList(input.imageUrls), input.thumbnail ?? ""])
     const item = await tx.item.create({
       data: {
         organizationId: orgId,
@@ -1102,13 +1108,20 @@ export async function updateItem(
   id: string,
   input: ItemUpdateInput,
 ): Promise<ItemDTO> {
-  const existing = await db.item.findFirst({
+  return db.$transaction(async (tx) => {
+    if (input.imageUrls !== undefined || input.thumbnail !== undefined) {
+    const retained = await tx.item.findFirst({ where: { id, organizationId: orgId }, select: { imageUrls: true, thumbnail: true } })
+    if (!retained) throw new NotFoundError("Item not found")
+    await claimItemPictures(tx, orgId, [...(normalizeImageUrls(input.imageUrls) ?? []), typeof input.thumbnail === "string" ? input.thumbnail : ""], [...retained.imageUrls, retained.thumbnail ?? ""])
+    }
+
+  const existing = await tx.item.findFirst({
     where: { id, organizationId: orgId },
     select: { id: true },
   })
   if (!existing) throw new NotFoundError("Item not found")
 
-  const updated = await db.item.update({
+  const updated = await tx.item.update({
     where: { id },
     data: {
       ...(input.nameEn !== undefined ? { nameEn: input.nameEn } : {}),
@@ -1135,6 +1148,8 @@ export async function updateItem(
     },
   })
   return toDTO(updated)
+
+  })
 }
 
 export async function updateItemBasicInfoWithRelations(
@@ -1142,9 +1157,16 @@ export async function updateItemBasicInfoWithRelations(
   id: string,
   input: ItemBasicInfoUpdateInput,
 ): Promise<ItemWithRelations> {
-  await assertItemInTenant(db, orgId, id)
+  return db.$transaction(async (tx) => {
+    if (input.imageUrls !== undefined || input.thumbnail !== undefined) {
+    const retained = await tx.item.findFirst({ where: { id, organizationId: orgId }, select: { imageUrls: true, thumbnail: true } })
+    if (!retained) throw new NotFoundError("Item not found")
+    await claimItemPictures(tx, orgId, [...(normalizeImageUrls(input.imageUrls) ?? []), typeof input.thumbnail === "string" ? input.thumbnail : ""], [...retained.imageUrls, retained.thumbnail ?? ""])
+    }
 
-  return db.item.update({
+  await assertItemInTenant(tx, orgId, id)
+
+  return tx.item.update({
     where: { id },
     data: stripUndefined({
       nameEn: input.nameEn,
@@ -1155,6 +1177,8 @@ export async function updateItemBasicInfoWithRelations(
       imageUrls: normalizeImageUrls(input.imageUrls),
     }),
     include: itemStandardInclude,
+  })
+
   })
 }
 
@@ -1240,9 +1264,16 @@ export async function updateItemGenericWithRelations(
     include: { inventoryLevels: true; category: true; brand: true; unit: true }
   }>
 > {
+  return db.$transaction(async (tx) => {
+    if (input.imageUrls !== undefined || input.thumbnail !== undefined) {
+    const retained = await tx.item.findFirst({ where: { id, organizationId: orgId }, select: { imageUrls: true, thumbnail: true } })
+    if (!retained) throw new NotFoundError("Item not found")
+    await claimItemPictures(tx, orgId, [...(normalizeImageUrls(input.imageUrls) ?? []), typeof input.thumbnail === "string" ? input.thumbnail : ""], [...retained.imageUrls, retained.thumbnail ?? ""])
+    }
+
   const updateData = buildGenericItemUpdateData(input)
   if (Object.keys(updateData).length === 0) {
-    const item = await db.item.findFirst({
+    const item = await tx.item.findFirst({
       where: { id, organizationId: orgId, deletedAt: null },
       include: { inventoryLevels: true, category: true, brand: true, unit: true },
     })
@@ -1250,12 +1281,14 @@ export async function updateItemGenericWithRelations(
     return item
   }
 
-  await assertItemInTenant(db, orgId, id)
+  await assertItemInTenant(tx, orgId, id)
 
-  return db.item.update({
+  return tx.item.update({
     where: { id },
     data: updateData,
     include: { inventoryLevels: true, category: true, brand: true, unit: true },
+  })
+
   })
 }
 

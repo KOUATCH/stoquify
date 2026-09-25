@@ -67,6 +67,7 @@ export const accountingRouteCatalog: AccountingRouteSurface[] = [
     resource: "AccountingCloseCenter",
     title: "Close center",
     permissions: ["accounting.close.read"],
+    module: { moduleSlug: "close_assurance", surface: "accounting-close", accessIntent: "read", mode: "enforce" },
   },
   {
     key: "accounting-close-period",
@@ -74,6 +75,7 @@ export const accountingRouteCatalog: AccountingRouteSurface[] = [
     resource: "AccountingCloseCenter",
     title: "Close assurance details",
     permissions: ["accounting.close.read"],
+    module: { moduleSlug: "close_assurance", surface: "accounting-close-period", accessIntent: "read", mode: "enforce" },
   },
   {
     key: "accounting-control-center",

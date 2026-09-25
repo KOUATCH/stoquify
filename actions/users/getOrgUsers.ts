@@ -1,6 +1,6 @@
 "use server";
 
-import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
+import { safeSuccessActionErrorResult } from "@/actions/_shared/safe-action-responses";
 import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac";
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { listOrganizationUsers } from "@/services/users/user-identity.service";
@@ -22,13 +22,12 @@ const getOrgUsers = async (organizationId?: string | null) => {
       mode: "observe",
     });
 
-    return await listOrganizationUsers(ctx.orgId);
+    return { success: true as const, data: await listOrganizationUsers(ctx.orgId), asOf: new Date().toISOString() };
   } catch (error) {
-    logSafeActionWarning("Error fetching organization users", error, {
+    return safeSuccessActionErrorResult(error, {
       action: "users.read",
       component: "User",
     });
-    return [];
   }
 };
 

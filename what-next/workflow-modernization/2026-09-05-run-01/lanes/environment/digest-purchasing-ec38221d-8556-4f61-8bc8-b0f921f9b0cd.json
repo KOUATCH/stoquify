@@ -1,0 +1,53 @@
+{
+  "at": "2026-09-19T13:46:02.558Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "2055dbe37f000b82c42fd38614665eb39852c3484686d0b6bbf2725c1979422f",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "0cea03f6f05832e9023d62f9e1d624dab9c1d5f98d852cce707c624222c091a4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "435a2cba578216ee1d78564e391d7cf0ff3f00a52ba224d059f587a25c90e66a",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "0f2087bc7d7790a85dd7ba0e167e8c145acac587edfd564f4132ea2446657d6a"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "allowed": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-purchasing-ec38221d-8556-4f61-8bc8-b0f921f9b0cd-explicit-empty-en.png",
+          "destinationScreenshot": "digest-purchasing-ec38221d-8556-4f61-8bc8-b0f921f9b0cd-explicit-empty-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-purchasing-ec38221d-8556-4f61-8bc8-b0f921f9b0cd-explicit-empty-fr.png",
+          "destinationScreenshot": "digest-purchasing-ec38221d-8556-4f61-8bc8-b0f921f9b0cd-explicit-empty-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "allowed": true,
+      "details": true,
+      "locales": []
+    }
+  ],
+  "passed": false,
+  "error": "Expected values to be strictly equal:\n\nfalse !== true\n",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "2055dbe37f000b82c42fd38614665eb39852c3484686d0b6bbf2725c1979422f",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "0cea03f6f05832e9023d62f9e1d624dab9c1d5f98d852cce707c624222c091a4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts": "7e669e5976a4ff40ed4528e58bb5dadad6abe47b72058331ceafdb05c952caf7",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "435a2cba578216ee1d78564e391d7cf0ff3f00a52ba224d059f587a25c90e66a",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "0f2087bc7d7790a85dd7ba0e167e8c145acac587edfd564f4132ea2446657d6a"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,58 @@
+{
+  "records": [
+    {
+      "file": "actions/purchasing/invoice-correction.actions.ts",
+      "surface": "purchasing/invoice-correction.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.invoice.post",
+      "guard": "requirePermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+      "surface": "/dashboard/purchases/payables/correct",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
+    }
+  ],
+  "findings": [
+    {
+      "surfaceType": "page",
+      "surface": "/dashboard/purchases/payables/correct",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+      "moduleSlug": "purchasing",
+      "permission": null,
+      "guard": "none",
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+      "metadata": {},
+      "category": "MODULE_SURFACE_MISSING_PERMISSION",
+      "reason": "Protected user-facing surface has no RBAC permission evidence."
+    },
+    {
+      "surfaceType": "page",
+      "surface": "/dashboard/purchases/payables/correct",
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+      "moduleSlug": "purchasing",
+      "permission": null,
+      "guard": "none",
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
+      "metadata": {},
+      "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
+      "reason": "Dashboard page has no detected server-side guard."
+    }
+  ]
+}

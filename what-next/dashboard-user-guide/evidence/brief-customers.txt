@@ -1,0 +1,170 @@
+
+ROUTE /en/dashboard/customers/new
+FILE app/[locale]/(dashboard)/dashboard/customers/new/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/customers/new/page.tsx; components/customers/CustomerActionPage.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx; actions/customers/customer-management-actions.ts; hooks/useCustomerManagement.ts
+REDIRECTS []
+HEADINGS Edit customer / Create customer | Active customer | Create customer
+PROPS Customer record unavailable | The customer could not be loaded safely. Return to the customer list and try again. | Customer not found | This customer is not available in the active organization. | Create customer | Action readiness | Identity and contact | Keep the details used on orders, statements, receipts, and day-to-day communication accurate. | Customer name | e.g. Acme Distribution | Customer code | e.g. CUST-0042 | Email | billing@customer.com | Phone | +237 6 00 00 00 00 | Address | Street, city, country | Tax ID | Registration or tax reference | Commercial controls | Set payment timing, credit exposure, communication language, and sales availability. | Payment terms (days) | Credit limit | No managed limit | Preferred language | Operational notes | Capture internal context that helps sales and finance serve this customer consistently. | Notes | Add account context, service preferences, or follow-up information... | Create customer
+CONTROLS e.g. Acme Distribution (Input, {"onChange":"(event) => updateField(\"name\", event.target.value)"}, components/customers/CustomerActionPage.tsx:618)
+e.g. CUST-0042 (Input, {"onChange":"(event) => updateField(\"code\", event.target.value)"}, components/customers/CustomerActionPage.tsx:628)
+billing@customer.com (Input, {"type":"\"email\"","onChange":"(event) => updateField(\"email\", event.target.value)"}, components/customers/CustomerActionPage.tsx:637)
++237 6 00 00 00 00 (Input, {"type":"\"tel\"","onChange":"(event) => updateField(\"phone\", event.target.value)"}, components/customers/CustomerActionPage.tsx:648)
+Street, city, country (Input, {"onChange":"(event) => updateField(\"address\", event.target.value)"}, components/customers/CustomerActionPage.tsx:659)
+Registration or tax reference (Input, {"onChange":"(event) => updateField(\"taxId\", event.target.value)"}, components/customers/CustomerActionPage.tsx:669)
+customer-terms (Input, {"type":"\"number\"","onChange":"(event) => updateField(\"paymentTerms\", event.target.value)"}, components/customers/CustomerActionPage.tsx:684)
+No managed limit (Input, {"type":"\"number\"","onChange":"(event) => updateField(\"creditLimit\", event.target.value)"}, components/customers/CustomerActionPage.tsx:696)
+English (EN) Français (FR) (Select, {"onValueChange":"(value) => updateField(\"preferredLocale\", value as CustomerLocale)"}, components/customers/CustomerActionPage.tsx:708)
+Active customer Inactive customers stay in history but are unavailable to new downstream sales workflows. (Switch, {"onCheckedChange":"(checked) => updateField(\"isActive\", checked)"}, components/customers/CustomerActionPage.tsx:725)
+Add account context, service preferences, or follow-up information... (Textarea, {"onChange":"(event) => updateField(\"notes\", event.target.value)"}, components/customers/CustomerActionPage.tsx:732)
+Cancel (Button, {"type":"\"button\"","disabled":"isSaving","onClick":"() => router.push(isEdit && customerId ? `${basePath}/${customerId}` : basePath)"}, components/customers/CustomerActionPage.tsx:760)
+Saving changes / Creating customer / Save changes / Create customer (Button, {"type":"\"submit\"","disabled":"isSaving || (isEdit && changedFieldCount === 0)"}, components/customers/CustomerActionPage.tsx:763)
+
+ROUTE /en/dashboard/customers
+FILE app/[locale]/(dashboard)/dashboard/customers/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/customers/page.tsx; components/customers/CustomerManagementDashboard.tsx; components/DataTableComponents/DataTable.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DataTableViewOptions.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/SearchBar.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx; lib/utils.ts; actions/customers/customer-management-actions.ts; hooks/useCustomerManagement.ts; lib/dateFilters.ts
+REDIRECTS []
+HEADINGS Customers dashboard | Customer Management | Edit customer / Create customer | Active customer | Archive customer
+PROPS Credit Limit | Receivable | Sales Orders | Open Orders | Unpaid Orders | Sales Value | Top sales value | Highest receivables | Status | Activity | Preferred language | Contact | Customer name | Maison Retail Client | Code | CUST-0042 | Email | customer@example.com | Phone | +237 6 70 00 00 00 | Address | Commercial avenue, Douala | Tax ID | M0123456789 | Commercial | Payment terms | 30 | Credit limit | 500000 | Preferred language | Notes | Notes | Receivable notes, delivery preferences, loyalty details, or account instructions. | Customer analytics | Sales Orders | Unpaid Orders | Sales Value | Receivable | Sales Orders | Unpaid Orders | Sales Value | Receivable | Recent orders | Recent receivable activity | Recent payments | search
+CONTROLS Open customer actions (Button, {}, components/customers/CustomerManagementDashboard.tsx:820)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyCustomerId(customer)"}, components/customers/CustomerManagementDashboard.tsx:827)
+View analytics (DropdownMenuItem, {}, components/customers/CustomerManagementDashboard.tsx:832)
+View analytics (Link, {"href":"`${basePath}/${customer.id}`"}, components/customers/CustomerManagementDashboard.tsx:833)
+Create statement (DropdownMenuItem, {}, components/customers/CustomerManagementDashboard.tsx:838)
+Create statement (Link, {"href":"`${basePath}/${customer.id}/statement`"}, components/customers/CustomerManagementDashboard.tsx:839)
+Edit customer (DropdownMenuItem, {}, components/customers/CustomerManagementDashboard.tsx:844)
+Edit customer (Link, {"href":"`${basePath}/${customer.id}/edit`"}, components/customers/CustomerManagementDashboard.tsx:845)
+Archive (DropdownMenuItem, {"onClick":"() => setArchiveTarget(customer)"}, components/customers/CustomerManagementDashboard.tsx:851)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/customers/CustomerManagementDashboard.tsx:941)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/customers/CustomerManagementDashboard.tsx:970)
+Create customer (Button, {}, components/customers/CustomerManagementDashboard.tsx:980)
+Create customer (Link, {"href":"`${basePath}/new`"}, components/customers/CustomerManagementDashboard.tsx:981)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/customers/CustomerManagementDashboard.tsx:1035)
+Export (Button, {"type":"\"button\"","onClick":"exportCustomers","disabled":"exportMutation.isPending || visibleCustomerIds.length === 0"}, components/customers/CustomerManagementDashboard.tsx:1039)
+Clear (Button, {"type":"\"button\"","onClick":"() => {\n                    setStatusFilter(\"all\")\n                    setActivityFilter(\"all\")\n                    setLocaleFilter(\"all\")\n                  }"}, components/customers/CustomerManagementDashboard.tsx:1063)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/customers/CustomerManagementDashboard.tsx:1092)
+All Open orders Unpaid Over limit With orders No orders (Select, {"onValueChange":"(value) => setActivityFilter(value as ActivityFilter)"}, components/customers/CustomerManagementDashboard.tsx:1102)
+All EN FR (Select, {"onValueChange":"(value) => setLocaleFilter(value as LocaleFilter)"}, components/customers/CustomerManagementDashboard.tsx:1115)
+Maison Retail Client (Input, {"onChange":"(event) => updateFormField(\"name\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1166)
+CUST-0042 (Input, {"onChange":"(event) => updateFormField(\"code\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1169)
+customer@example.com (Input, {"type":"\"email\"","onChange":"(event) => updateFormField(\"email\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1172)
++237 6 70 00 00 00 (Input, {"onChange":"(event) => updateFormField(\"phone\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1175)
+Commercial avenue, Douala (Input, {"onChange":"(event) => updateFormField(\"address\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1179)
+M0123456789 (Input, {"onChange":"(event) => updateFormField(\"taxId\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1184)
+30 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"paymentTerms\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1194)
+500000 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"creditLimit\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1197)
+EN FR (Select, {"onValueChange":"(value) => updateFormField(\"preferredLocale\", value as CustomerLocale)"}, components/customers/CustomerManagementDashboard.tsx:1200)
+Active customer (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/customers/CustomerManagementDashboard.tsx:1212)
+Receivable notes, delivery preferences, loyalty details, or account instructions. (Textarea, {"onChange":"(event) => updateFormField(\"notes\", event.target.value)"}, components/customers/CustomerManagementDashboard.tsx:1219)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/customers/CustomerManagementDashboard.tsx:1243)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/customers/CustomerManagementDashboard.tsx:1246)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/customers/CustomerManagementDashboard.tsx:1377)
+orders | unpaid (button, {"type":"\"button\"","onClick":"() => onOpen(customer.id)"}, components/customers/CustomerManagementDashboard.tsx:1520)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRefresh","disabled":"isLoading"}, components/DataTableComponents/DataTable.tsx:394)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => actions.onExport?.(visibleData)"}, components/DataTableComponents/DataTable.tsx:407)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"actions.onAdd"}, components/DataTableComponents/DataTable.tsx:419)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"clearTableFilters"}, components/DataTableComponents/DataTable.tsx:493)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => header.column.toggleSorting(header.column.getIsSorted() === \"asc\")"}, components/DataTableComponents/DataTable.tsx:544)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Button, {}, components/DataTableComponents/DataTableViewOptions.tsx:27)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/DataTableComponents/DataTableViewOptions.tsx:48)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+search (input, {"name":"\"search\"","type":"\"text\"","onChange":"handleSearch"}, components/DataTableComponents/SearchBar.tsx:67)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"clearSearch"}, components/DataTableComponents/SearchBar.tsx:84)
+
+ROUTE /en/dashboard/customers/[id]/edit
+FILE app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx; components/customers/CustomerActionPage.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx; actions/customers/customer-management-actions.ts; hooks/useCustomerManagement.ts
+REDIRECTS []
+HEADINGS Edit customer / Create customer | Active customer | Create customer
+PROPS Customer record unavailable | The customer could not be loaded safely. Return to the customer list and try again. | Customer not found | This customer is not available in the active organization. | Create customer | Action readiness | Identity and contact | Keep the details used on orders, statements, receipts, and day-to-day communication accurate. | Customer name | e.g. Acme Distribution | Customer code | e.g. CUST-0042 | Email | billing@customer.com | Phone | +237 6 00 00 00 00 | Address | Street, city, country | Tax ID | Registration or tax reference | Commercial controls | Set payment timing, credit exposure, communication language, and sales availability. | Payment terms (days) | Credit limit | No managed limit | Preferred language | Operational notes | Capture internal context that helps sales and finance serve this customer consistently. | Notes | Add account context, service preferences, or follow-up information... | Create customer
+CONTROLS e.g. Acme Distribution (Input, {"onChange":"(event) => updateField(\"name\", event.target.value)"}, components/customers/CustomerActionPage.tsx:618)
+e.g. CUST-0042 (Input, {"onChange":"(event) => updateField(\"code\", event.target.value)"}, components/customers/CustomerActionPage.tsx:628)
+billing@customer.com (Input, {"type":"\"email\"","onChange":"(event) => updateField(\"email\", event.target.value)"}, components/customers/CustomerActionPage.tsx:637)
++237 6 00 00 00 00 (Input, {"type":"\"tel\"","onChange":"(event) => updateField(\"phone\", event.target.value)"}, components/customers/CustomerActionPage.tsx:648)
+Street, city, country (Input, {"onChange":"(event) => updateField(\"address\", event.target.value)"}, components/customers/CustomerActionPage.tsx:659)
+Registration or tax reference (Input, {"onChange":"(event) => updateField(\"taxId\", event.target.value)"}, components/customers/CustomerActionPage.tsx:669)
+customer-terms (Input, {"type":"\"number\"","onChange":"(event) => updateField(\"paymentTerms\", event.target.value)"}, components/customers/CustomerActionPage.tsx:684)
+No managed limit (Input, {"type":"\"number\"","onChange":"(event) => updateField(\"creditLimit\", event.target.value)"}, components/customers/CustomerActionPage.tsx:696)
+English (EN) Français (FR) (Select, {"onValueChange":"(value) => updateField(\"preferredLocale\", value as CustomerLocale)"}, components/customers/CustomerActionPage.tsx:708)
+Active customer Inactive customers stay in history but are unavailable to new downstream sales workflows. (Switch, {"onCheckedChange":"(checked) => updateField(\"isActive\", checked)"}, components/customers/CustomerActionPage.tsx:725)
+Add account context, service preferences, or follow-up information... (Textarea, {"onChange":"(event) => updateField(\"notes\", event.target.value)"}, components/customers/CustomerActionPage.tsx:732)
+Cancel (Button, {"type":"\"button\"","disabled":"isSaving","onClick":"() => router.push(isEdit && customerId ? `${basePath}/${customerId}` : basePath)"}, components/customers/CustomerActionPage.tsx:760)
+Saving changes / Creating customer / Save changes / Create customer (Button, {"type":"\"submit\"","disabled":"isSaving || (isEdit && changedFieldCount === 0)"}, components/customers/CustomerActionPage.tsx:763)
+
+ROUTE /en/dashboard/customers/[id]/orders
+FILE app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx; app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx; components/customers/CustomerQuickActions.tsx
+DEPENDENCIES lib/i18n/organization-money.ts; services/organization/organization-settings.service.ts; lib/security/rbac-permissions.ts; app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx; hooks/useCustomerQueries.ts; hooks/useCustomerManagement.ts; hooks/useFormatters.ts
+REDIRECTS []
+HEADINGS Navigation | Quick actions
+PROPS 
+CONTROLS [dynamic or icon-only label] (Button, {"onClick":"() => router.push(localizedHref(\"/dashboard/customers\"))"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:131)
+[dynamic or icon-only label] (Button, {"onClick":"() => router.push(localizedHref(`/dashboard/customers/${customer.id}`))"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:233)
+[dynamic or icon-only label] (Button, {"onClick":"() => {\n                    exportMutation.mutate({\n                      scope: \"customer-orders\",\n                      customerId: customer.id,\n                      purpose: \"CUSTOMER_ORDER_HISTORY_EXPORT\",\n                      filters: {\n                        search: searchQuery,\n                        orderStatus: ORDER_STATUS_EXPORT[statusFilter],\n                      },\n                    })\n                  }","disabled":"!capabilities.canExport || exportMutation.isPending"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:258)
+[dynamic or icon-only label] (Button, {"disabled":"!capabilities.canOpenSales","onClick":"() => {\n                    info(\"Create Order\", `Redirecting to create order for ${customer.name}`)\n                    router.push(localizedHref(`/dashboard/sales`))\n                  }"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:282)
+[dynamic or icon-only label] (Button, {"onClick":"() => {\n                          info(\"Navigate to Profile\", `Viewing ${customer.name}'s profile`)\n                          router.push(localizedHref(`/dashboard/customers/${customer.id}`))\n                        }"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:392)
+[dynamic or icon-only label] (Button, {"disabled":"!capabilities.canUpdate","onClick":"() => {\n                          info(\"Edit Customer\", `Editing ${customer.name}'s details`)\n                          router.push(localizedHref(`/dashboard/customers/${customer.id}/edit`))\n                        }"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:404)
+[dynamic or icon-only label] (Button, {"disabled":"!capabilities.canViewReceivables","onClick":"() => {\n                          info(\"Open Receivables\", \"Opening the finance receivables workspace\")\n                          router.push(localizedHref(\"/dashboard/finance/receivables\"))\n                        }"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:417)
+[dynamic or icon-only label] (Input, {"onChange":"(e) => setSearchQuery(e.target.value)"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:460)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setStatusFilter(value as OrderStatusFilter)"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:468)
+[dynamic or icon-only label] (Button, {"disabled":"!capabilities.canOpenSales","onClick":"() => {\n                          info(\"Open Sales\", `Redirecting to create first order for ${customer.name}`)\n                          router.push(localizedHref(`/dashboard/sales`))\n                        }"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:504)
+[dynamic or icon-only label] (Button, {"onClick":"() => handleSort(\"id\")"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:522)
+[dynamic or icon-only label] (Button, {"onClick":"() => handleSort(\"totalAmount\")"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:534)
+[dynamic or icon-only label] (Button, {"onClick":"() => handleSort(\"createdAt\")"}, app/[locale]/(dashboard)/dashboard/customers/[id]/orders/CustomerOrdersClientPage.tsx:546)
+Back to customers (Button, {"onClick":"() => router.push(localizedHref(\"/dashboard/customers\"))"}, components/customers/CustomerQuickActions.tsx:122)
+View profile (Button, {"disabled":"currentPage === \"profile\"","onClick":"() => navigate(\"profile\")"}, components/customers/CustomerQuickActions.tsx:162)
+Edit customer (Button, {"disabled":"currentPage === \"edit\"","onClick":"() => navigate(\"edit\")"}, components/customers/CustomerQuickActions.tsx:173)
+View orders (Button, {"disabled":"currentPage === \"orders\"","onClick":"() => navigate(\"orders\")"}, components/customers/CustomerQuickActions.tsx:185)
+Create statement (Button, {"onClick":"() => router.push(localizedHref(`/dashboard/customers/${customer.id}/statement`))"}, components/customers/CustomerQuickActions.tsx:206)
+Open sales workspace (Button, {"onClick":"() => router.push(localizedHref(\"/dashboard/sales\"))"}, components/customers/CustomerQuickActions.tsx:217)
+Send email (Button, {"onClick":"() => handleContact(\"email\")"}, components/customers/CustomerQuickActions.tsx:228)
+Call customer (Button, {"onClick":"() => handleContact(\"phone\")"}, components/customers/CustomerQuickActions.tsx:234)
+Export customer summary (Button, {"disabled":"exportMutation.isPending","onClick":"() => exportMutation.mutate({\n                scope: \"customer\",\n                customerId: customer.id,\n                purpose: \"CUSTOMER_PROFILE_EXPORT\",\n              })"}, components/customers/CustomerQuickActions.tsx:240)
+
+ROUTE /en/dashboard/customers/[id]
+FILE app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx; components/customers/CustomerProfilePage.tsx; components/customers/CustomerQuickActions.tsx
+DEPENDENCIES services/organization/organization-settings.service.ts; lib/security/rbac-permissions.ts; lib/i18n/organization-money.ts; app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx; hooks/useCustomerManagement.ts
+REDIRECTS []
+HEADINGS Customer details | Commercial terms | Navigation | Quick actions
+PROPS Customer profile unavailable | The protected customer read model could not be loaded. Retry or return to the customer list. | Customer not found | This customer is not available in the active organization. | Customer operating state | Customer details | Customer details | Customer details | Tax ID | Payment terms | Credit limit | Current balance | Recent orders | Recent receivable activity | Recent payments
+CONTROLS Back to customers (Button, {"onClick":"() => router.push(localizedHref(\"/dashboard/customers\"))"}, components/customers/CustomerQuickActions.tsx:122)
+View profile (Button, {"disabled":"currentPage === \"profile\"","onClick":"() => navigate(\"profile\")"}, components/customers/CustomerQuickActions.tsx:162)
+Edit customer (Button, {"disabled":"currentPage === \"edit\"","onClick":"() => navigate(\"edit\")"}, components/customers/CustomerQuickActions.tsx:173)
+View orders (Button, {"disabled":"currentPage === \"orders\"","onClick":"() => navigate(\"orders\")"}, components/customers/CustomerQuickActions.tsx:185)
+Create statement (Button, {"onClick":"() => router.push(localizedHref(`/dashboard/customers/${customer.id}/statement`))"}, components/customers/CustomerQuickActions.tsx:206)
+Open sales workspace (Button, {"onClick":"() => router.push(localizedHref(\"/dashboard/sales\"))"}, components/customers/CustomerQuickActions.tsx:217)
+Send email (Button, {"onClick":"() => handleContact(\"email\")"}, components/customers/CustomerQuickActions.tsx:228)
+Call customer (Button, {"onClick":"() => handleContact(\"phone\")"}, components/customers/CustomerQuickActions.tsx:234)
+Export customer summary (Button, {"disabled":"exportMutation.isPending","onClick":"() => exportMutation.mutate({\n                scope: \"customer\",\n                customerId: customer.id,\n                purpose: \"CUSTOMER_PROFILE_EXPORT\",\n              })"}, components/customers/CustomerQuickActions.tsx:240)
+
+ROUTE /en/dashboard/customers/[id]/statement
+FILE app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx; components/customers/CustomerStatementWorkflow.tsx
+DEPENDENCIES actions/customers/customerActions.ts; lib/i18n/organization-money.ts; services/organization/organization-settings.service.ts; app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx; actions/security/step-up-auth.actions.ts; actions/accounting/customer-statement.actions.ts; services/accounting/customer-statement.service.ts; services/accounting/customer-statement-delivery.service.ts
+REDIRECTS []
+HEADINGS 
+PROPS periodStart | periodEnd | currency | password | destination | consentConfirmed | allowDispute | allowPromiseToPay | password
+CONTROLS [dynamic or icon-only label] (Link, {"href":"localizePath(\"/dashboard/customers/\" + customer.id, locale)"}, components/customers/CustomerStatementWorkflow.tsx:218)
+periodStart (input, {"name":"\"periodStart\"","onChange":"(event) => setPeriodStartValue(event.target.value)","required":"true","type":"\"date\""}, components/customers/CustomerStatementWorkflow.tsx:231)
+periodEnd (input, {"name":"\"periodEnd\"","onChange":"(event) => setPeriodEndValue(event.target.value)","required":"true","type":"\"date\""}, components/customers/CustomerStatementWorkflow.tsx:235)
+currency (input, {"name":"\"currency\""}, components/customers/CustomerStatementWorkflow.tsx:239)
+password (input, {"name":"\"password\"","required":"true","type":"\"password\""}, components/customers/CustomerStatementWorkflow.tsx:243)
+[dynamic or icon-only label] (button, {"disabled":"creating","type":"\"submit\""}, components/customers/CustomerStatementWorkflow.tsx:245)
+Email WhatsApp (select, {"onChange":"(event) => setChannel(event.target.value as typeof channel)"}, components/customers/CustomerStatementWorkflow.tsx:303)
+destination (input, {"name":"\"destination\"","required":"true","type":"channel === \"EMAIL\" ? \"email\" : \"tel\""}, components/customers/CustomerStatementWorkflow.tsx:310)
+consentConfirmed (input, {"name":"\"consentConfirmed\"","required":"true","type":"\"checkbox\""}, components/customers/CustomerStatementWorkflow.tsx:313)
+allowDispute (input, {"name":"\"allowDispute\"","type":"\"checkbox\""}, components/customers/CustomerStatementWorkflow.tsx:317)
+allowPromiseToPay (input, {"name":"\"allowPromiseToPay\"","type":"\"checkbox\""}, components/customers/CustomerStatementWorkflow.tsx:321)
+password (input, {"name":"\"password\"","required":"true","type":"\"password\""}, components/customers/CustomerStatementWorkflow.tsx:326)
+[dynamic or icon-only label] (button, {"disabled":"delivering","type":"\"submit\""}, components/customers/CustomerStatementWorkflow.tsx:328)

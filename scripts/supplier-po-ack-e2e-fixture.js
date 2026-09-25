@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-// @inventory-boundary-demo-script
 // Local synthetic browser-certification fixture only. Runtime and production use are refused below.
 
 const { existsSync, mkdirSync, readFileSync, writeFileSync } = require("node:fs")
 const { dirname, resolve } = require("node:path")
 const argon2 = require("argon2")
 const { Locale, PrismaClient, PurchaseOrderStatus } = require("@prisma/client")
+const { assertDisposableDatabaseTarget, assertDisposableDatabaseIdentity } = require("./disposable-fixture-guard")
 
 function expandEnvValue(value) {
   return value.replace(/\$\{([A-Za-z_][A-Za-z0-9_]*)\}/g, (_, key) => process.env[key] || "")
@@ -40,18 +40,7 @@ const ONBOARDING_SOURCE = "local-playwright-supplier-po-ack"
 const PERMISSIONS = ["dashboard.read", "purchases.orders.read", "purchases.orders.update"]
 
 function resolvedDatabaseUrl() {
-  return expandEnvValue(process.env.DIRECT_URL || process.env.DATABASE_URL || "")
-}
-
-function assertLocalDatabase(databaseUrl) {
-  if (String(process.env.NODE_ENV || "").toLowerCase() === "production") {
-    throw new Error("Supplier PO acknowledgement fixture refuses production environments.")
-  }
-  if (!databaseUrl) throw new Error("DATABASE_URL or DIRECT_URL is required.")
-  const hostname = new URL(databaseUrl).hostname.toLowerCase()
-  if (!["127.0.0.1", "localhost", "::1", "[::1]"].includes(hostname) && process.env.AQSTOQFLOW_SUPPLIER_PO_ACK_E2E_ALLOW_NONLOCAL !== "1") {
-    throw new Error("Supplier PO acknowledgement fixture refuses a nonlocal database.")
-  }
+  return expandEnvValue(process.env.SUPPLIER_PO_ACK_FIXTURE_DATABASE_URL || "")
 }
 
 function runId() {
@@ -294,10 +283,11 @@ async function main() {
   const mode = String(process.argv[2] || "seed").trim().toLowerCase()
   if (!new Set(["seed", "assure"]).has(mode)) throw new Error("Unsupported mode: " + mode)
   const databaseUrl = resolvedDatabaseUrl()
-  assertLocalDatabase(databaseUrl)
+  const target = assertDisposableDatabaseTarget(databaseUrl, ["stoquify_supplier_po_ack_disposable"])
   process.env.DATABASE_URL = databaseUrl
   const prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } })
   try {
+    await assertDisposableDatabaseIdentity(prisma, target.database)
     const result = mode === "assure" ? await assure(prisma) : await seed(prisma)
     console.log(JSON.stringify({ mode, ...result }, null, 2))
   } finally {

@@ -1,0 +1,164 @@
+{
+  "recordedAt": "2026-09-06T05:04:04.475Z",
+  "sourceBaseline": "evidence/source-baseline-v12.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "wholeWorkflowComplete": false,
+  "sourceHashes": {
+    "services/users/user-identity.service.ts": "edf8968a79c4af924b443facb6ba75c50e600ae8828a27854f67d2510ca96482",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "components/Forms/InvitedUserRegistration.tsx": "a5c4e1a47abce6aa6cc3d8cc48f771ae9e90c953dc18148519c7793bcaa5288d",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "fa1a196e582a751522b9d118416f84755f9026e48b811e0ef8d8d0f78e758514",
+    "messages/fr.json": "5b33f510d00ac8db436f17898dea62a116b44543ed2a8f0b482fcf1429b56436",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "da50744da01871c8161b587fdb4aab0622d907f9d978a4e659b83bed90158378",
+    "components/analytics/__tests__/daily-sales-dashboard.test.tsx": "13ce69934133a1a0193410b81bebe2154b0290a9b256f8bf8effeecbf4d1383a",
+    "services/analytics/__tests__/financial-analytics.service.test.ts": "9586beaf63ac3bd6ec951beebe50ed85f4e35d2472f0d0a47cd062c7c87fb9ab",
+    "components/auth/v2/__tests__/RegisterV2Form.referral.test.tsx": "c9d58c5e7a4a87084b1f99317d06d92d1a4775b3f7b7e69b133fdeecb392f445",
+    "components/auth/v2/__tests__/VerifyV2Form.recovery.test.tsx": "814af7019f39e2a78775e8d41ffed0ff3d183cf36c487a294a9e163c342272bb",
+    "services/users/__tests__/user-identity.service.test.ts": "911ab69fa1166fd2d58ffdfdad1bb474c7e2f3131bf3b23aece29673b5daad63",
+    "actions/analytics/__tests__/daily-sales.actions.test.ts": "4d6bf0f7ffdafa6bbf4d2772af4be64319f65a456a0671253201a1982e14d8e3",
+    "services/analytics/__tests__/daily-sales-read.test.ts": "3c0dc87df4018ca04b0351ca43350de05e1cd4966302766395ac922ac570bd44",
+    "actions/users/__tests__/public-identity-actions.test.ts": "2eb4184c2c983693afcf54b1a014ce0dc20c7568cb080d1631ac92d75d72a00f"
+  },
+  "tests": {
+    "file": "evidence/invitation-final.json",
+    "passed": 122,
+    "suites": 9,
+    "exitCode": 0,
+    "chunk": "13e20d",
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx",
+      "components/analytics/__tests__/daily-sales-dashboard.test.tsx",
+      "services/analytics/__tests__/financial-analytics.service.test.ts",
+      "components/auth/v2/__tests__/RegisterV2Form.referral.test.tsx",
+      "components/auth/v2/__tests__/VerifyV2Form.recovery.test.tsx",
+      "services/users/__tests__/user-identity.service.test.ts",
+      "actions/analytics/__tests__/daily-sales.actions.test.ts",
+      "services/analytics/__tests__/daily-sales-read.test.ts",
+      "actions/users/__tests__/public-identity-actions.test.ts",
+      "--json",
+      "--outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/invitation-final.json"
+    ]
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "session": 75361,
+    "chunk": "82c56a"
+  },
+  "lint": {
+    "command": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "services/users/user-identity.service.ts",
+      "services/users/__tests__/user-identity.service.test.ts",
+      "components/Forms/InvitedUserRegistration.tsx",
+      "components/auth/v2/AuthV2Shell.tsx",
+      "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx",
+      "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx"
+    ],
+    "exitCode": 0,
+    "chunk": "32ce4d"
+  },
+  "diffCheck": {
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "--",
+      "services/users/user-identity.service.ts",
+      "services/users/__tests__/user-identity.service.test.ts",
+      "components/Forms/InvitedUserRegistration.tsx",
+      "components/auth/v2/AuthV2Shell.tsx",
+      "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx",
+      "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx",
+      "messages/en.json",
+      "messages/fr.json"
+    ],
+    "exitCode": 0
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-redemption-8152b922-f7b.json",
+    "passed": 9,
+    "failed": 0,
+    "sourceStable": true,
+    "originalAuthorityUnchanged": true,
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invitation-redemption.cjs"
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-browser-browser-af443af6-01c.json",
+    "passed": 2,
+    "failed": 0,
+    "sourceStable": true,
+    "originalAuthorityUnchanged": true,
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-invitation-browser.cjs browser",
+    "fixtureGeneration": 2,
+    "creationLinksConsumed": true
+  },
+  "screenshots": [
+    {
+      "file": "evidence/invitation-redemption/en-invitation-ready-af443af6-01c.png",
+      "sha256": "2ef5dd0d185c0299c0c75fb79abadb2334b1d084e3a9867960cc81baa598bd71",
+      "original": "lanes/environment/en-invitation-ready-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/en-invitation-recovery-af443af6-01c.png",
+      "sha256": "fbb486ff744d55d359f842072123355884b7ce5b5a2bac79c8762d1013a9f9b3",
+      "original": "lanes/environment/en-invitation-recovery-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/en-invitation-created-af443af6-01c.png",
+      "sha256": "fb45ddb9ac8aa6971ddd69c5f29350f6c43d72b26b815bb6d178d876358fad28",
+      "original": "lanes/environment/en-invitation-created-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/en-invitation-retained-link-af443af6-01c.png",
+      "sha256": "52fa5e0ae95f21c6f8edbd4ea523150a55256d0e79351aea140af0a8f36931e0",
+      "original": "lanes/environment/en-invitation-retained-link-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/en-invitation-expired-af443af6-01c.png",
+      "sha256": "52fa5e0ae95f21c6f8edbd4ea523150a55256d0e79351aea140af0a8f36931e0",
+      "original": "lanes/environment/en-invitation-expired-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/fr-invitation-ready-af443af6-01c.png",
+      "sha256": "ccb5d77d6548ee30970bcf6801c4f06f173aca591eeba56966f70ad20e0b9d1c",
+      "original": "lanes/environment/fr-invitation-ready-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/fr-invitation-recovery-af443af6-01c.png",
+      "sha256": "a83db7298a8f7dfbe83d001f0969a94ef17950f67ba3a39ab238baf22ac24f3c",
+      "original": "lanes/environment/fr-invitation-recovery-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/fr-invitation-created-af443af6-01c.png",
+      "sha256": "d3d5dd6298a533e8be0379e9875a72566a6b7d455f0437e929fb9f4cf3d28eb8",
+      "original": "lanes/environment/fr-invitation-created-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/fr-invitation-retained-link-af443af6-01c.png",
+      "sha256": "337eafe87283790c96a9e1707a70c775e291fff9d30f140da1a7393e5d1b64fd",
+      "original": "lanes/environment/fr-invitation-retained-link-af443af6-01c.png"
+    },
+    {
+      "file": "evidence/invitation-redemption/fr-invitation-expired-af443af6-01c.png",
+      "sha256": "337eafe87283790c96a9e1707a70c775e291fff9d30f140da1a7393e5d1b64fd",
+      "original": "lanes/environment/fr-invitation-expired-af443af6-01c.png"
+    }
+  ],
+  "limitations": "Invite does not retain issuer identity/permission snapshot, so original grant-ceiling revalidation remains an engineering/schema gap. Issuance/provider delivery and ambiguous delivery/reissue, complete administrative recovery, server profile-field bounds, native zoom/actual screen reader/comprehensive contrast, downstream onboarding and full build remain open. No X1, professional or platform-completion certification."
+}

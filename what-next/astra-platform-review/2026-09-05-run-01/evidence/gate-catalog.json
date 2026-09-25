@@ -1,0 +1,1385 @@
+[
+  {
+    "name": "build",
+    "command": "npm run release:secrets:preflight && npm run prisma:migrate:deploy:safe && npm run build:linted",
+    "dependencies": [
+      "release:secrets:preflight",
+      "prisma:migrate:deploy:safe",
+      "build:linted"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "prisma:migration:catalog:gate",
+    "command": "node scripts/prisma-migration-catalog-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/prisma-migration-catalog-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "prisma:migration:safety:gate",
+    "command": "node scripts/prisma-production-migration-gate.js --mode fail --environment local --out what-next/prisma-migration-deployment-readiness.md --json-out what-next/prisma-migration-deployment-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/prisma-production-migration-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "prisma:migration:evidence:gate",
+    "command": "node scripts/prisma-destructive-migration-evidence-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/prisma-destructive-migration-evidence-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "prisma:migration:release:preflight",
+    "command": "node scripts/prisma-production-migration-gate.js --mode fail --environment production --out what-next/prisma-migration-deployment-readiness.md --json-out what-next/prisma-migration-deployment-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/prisma-production-migration-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "service:boundary",
+    "command": "node scripts/service-boundary-gate.js --mode report",
+    "dependencies": [],
+    "directSources": [
+      "scripts/service-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "service:boundary:ratchet",
+    "command": "node scripts/service-boundary-gate.js --mode fail --baseline what-next/service-boundary-ratchet-baseline-current.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/service-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "service:boundary:fail",
+    "command": "node scripts/service-boundary-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/service-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:tool-registry:gate",
+    "command": "node scripts/agent-tool-registry-gate.js",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-tool-registry-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:prohibited-action:gate",
+    "command": "node scripts/agent-prohibited-action-gate.js",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-prohibited-action-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ai:copilot:guardrails:gate",
+    "command": "node scripts/ai-copilot-guardrails-gate.js",
+    "dependencies": [],
+    "directSources": [
+      "scripts/ai-copilot-guardrails-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "country:adapter:pilot:gate",
+    "command": "node scripts/country-adapter-pilot-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/country-adapter-pilot-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "pos:g1:contract:gate",
+    "command": "node scripts/pos-g1-contract-gate.js --mode fail --no-write",
+    "dependencies": [],
+    "directSources": [
+      "scripts/pos-g1-contract-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "pos:enterprise:program:gate",
+    "command": "node scripts/pos-enterprise-program-gate.js --mode fail --no-write",
+    "dependencies": [],
+    "directSources": [
+      "scripts/pos-enterprise-program-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "regulatory:boundary:fail",
+    "command": "node scripts/regulatory-boundary-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/regulatory-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:release-control:gate",
+    "command": "node scripts/agent-release-control-gate.js",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-release-control-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:credential-rotation:gate",
+    "command": "node scripts/agent-credential-rotation-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-credential-rotation-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:credential-rotation:evidence:gate",
+    "command": "node scripts/agent-credential-rotation-evidence-capture.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-credential-rotation-evidence-capture.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:operational-release:gate",
+    "command": "node scripts/agent-operational-release-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-operational-release-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:reconciler:evidence:gate",
+    "command": "node scripts/agent-reconciler-evidence-capture.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-reconciler-evidence-capture.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:scheduler:evidence:gate",
+    "command": "node scripts/agent-scheduler-deployment-evidence-capture.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-scheduler-deployment-evidence-capture.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:alert:evidence:gate",
+    "command": "node scripts/agent-alert-evidence-capture.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-alert-evidence-capture.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:governance:evidence:gate",
+    "command": "node scripts/agent-governance-evidence-capture.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-governance-evidence-capture.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:ci-release:evidence:gate",
+    "command": "node scripts/agent-ci-release-evidence-capture.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-ci-release-evidence-capture.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:runtime:gates",
+    "command": "npm run agent:tool-registry:gate && npm run agent:prohibited-action:gate && npm run agent:release-control:gate",
+    "dependencies": [
+      "agent:tool-registry:gate",
+      "agent:prohibited-action:gate",
+      "agent:release-control:gate"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:phased-execution:audit:gate",
+    "command": "node scripts/agent-phased-execution-requirements-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-phased-execution-requirements-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:phase2b:entry:gate",
+    "command": "node scripts/agent-phase-promotion-gate.js --target phase2b --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-phase-promotion-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:phase3:entry:gate",
+    "command": "node scripts/agent-phase-promotion-gate.js --target phase3 --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-phase-promotion-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:phase2a:gate",
+    "command": "node scripts/agent-phase2a-command-gate.js",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-phase2a-command-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "agent:phase2a:freeze:gate",
+    "command": "node scripts/agent-phase2a-freeze-commit-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/agent-phase2a-freeze-commit-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "error:boundary",
+    "command": "node scripts/raw-error-boundary-gate.js --mode report",
+    "dependencies": [],
+    "directSources": [
+      "scripts/raw-error-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "error:boundary:fail",
+    "command": "node scripts/raw-error-boundary-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/raw-error-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "inventory:boundary",
+    "command": "node scripts/inventory-boundary-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/inventory-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "inventory:boundary:fail",
+    "command": "node scripts/inventory-boundary-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/inventory-boundary-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "inventory:valuation:truth:gate",
+    "command": "node scripts/inventory-valuation-truth-gate.js --mode fail --out what-next/inventory-valuation-truth-readiness.md --json-out what-next/inventory-valuation-truth-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/inventory-valuation-truth-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "policy:gates:integration",
+    "command": "node scripts/run-policy-gates-integration.js",
+    "dependencies": [],
+    "directSources": [
+      "scripts/run-policy-gates-integration.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "policy:gates",
+    "command": "npm run inventory:boundary && npm run inventory:valuation:truth:gate && npm run service:boundary:fail && npm run regulatory:boundary:fail && npm run api:guard:inventory:fail && npm run public-identity:abuse:gate && npm run ledger:close-truth:gate && npm run payment:cash-truth:gate && npm run purchasing:ap:gate && npm run ap:fraud-control:gate && npm run offline:pos:replay:gate && npm run country:adapter:pilot:gate && npm run ai:copilot:guardrails:gate && npm run statutory:country-pack:gate && npm run report:trust:export:gate && npm run role:cockpit:gate && npm run settings:surface:fail && npm run workflow:assurance:runtime-check && npm run workflow:assurance:release-gate && npm run kontava:moat:release-gate && npm run receipt:token:config-gate && npm run payroll:presence:gate && npm run payroll:trust-spine:gate && npm run payroll:immutability:runtime && npm run payroll:trust-spine:postgres && npm run hard-delete:fail && npm run regulatory:hardcode:fail && npm run demo:trust:fail && npm run error:boundary:fail && npm run ci:release:gate && npm run prisma:migration:catalog:gate && npm run prisma:migration:safety:gate && npm run release:secrets:preflight && npm run release:evidence:gate",
+    "dependencies": [
+      "inventory:boundary",
+      "inventory:valuation:truth:gate",
+      "service:boundary:fail",
+      "regulatory:boundary:fail",
+      "api:guard:inventory:fail",
+      "public-identity:abuse:gate",
+      "ledger:close-truth:gate",
+      "payment:cash-truth:gate",
+      "purchasing:ap:gate",
+      "ap:fraud-control:gate",
+      "offline:pos:replay:gate",
+      "country:adapter:pilot:gate",
+      "ai:copilot:guardrails:gate",
+      "statutory:country-pack:gate",
+      "report:trust:export:gate",
+      "role:cockpit:gate",
+      "settings:surface:fail",
+      "workflow:assurance:runtime-check",
+      "workflow:assurance:release-gate",
+      "kontava:moat:release-gate",
+      "receipt:token:config-gate",
+      "payroll:presence:gate",
+      "payroll:trust-spine:gate",
+      "payroll:immutability:runtime",
+      "payroll:trust-spine:postgres",
+      "hard-delete:fail",
+      "regulatory:hardcode:fail",
+      "demo:trust:fail",
+      "error:boundary:fail",
+      "ci:release:gate",
+      "prisma:migration:catalog:gate",
+      "prisma:migration:safety:gate",
+      "release:secrets:preflight",
+      "release:evidence:gate"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "verify:repo",
+    "command": "npm run prisma:validate && npm run typecheck && npm run lint && npm run policy:gates:integration && npm run build:app && npm test -- --runInBand",
+    "dependencies": [
+      "prisma:validate",
+      "typecheck",
+      "lint",
+      "policy:gates:integration",
+      "build:app"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "verify:ci",
+    "command": "npm run ci:release:gate && npm run prisma:migrate:deploy && npm run prisma:migration:history:health && npm run prisma:migrate:status && npm run verify:repo",
+    "dependencies": [
+      "ci:release:gate",
+      "prisma:migrate:deploy",
+      "prisma:migration:history:health",
+      "prisma:migrate:status",
+      "verify:repo"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "verify:release",
+    "command": "npm run verify:repo && npm run policy:gates && npm run release:secrets:preflight:release && npm run prisma:migration:release:preflight && npm run prisma:migration:history:health && npm run public-identity:abuse:gate:release && npm run receipt:token:config-gate:release && npm run release:evidence:gate:release && npm run agent:phased-execution:audit:gate && npm run agent:phase2a:freeze:gate && npm run agent:credential-rotation:gate && npm run agent:operational-release:gate && npm run agent:phase2b:entry:gate",
+    "dependencies": [
+      "verify:repo",
+      "policy:gates",
+      "release:secrets:preflight:release",
+      "prisma:migration:release:preflight",
+      "prisma:migration:history:health",
+      "public-identity:abuse:gate:release",
+      "receipt:token:config-gate:release",
+      "release:evidence:gate:release",
+      "agent:phased-execution:audit:gate",
+      "agent:phase2a:freeze:gate",
+      "agent:credential-rotation:gate",
+      "agent:operational-release:gate",
+      "agent:phase2b:entry:gate"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "seed:verify:realistic",
+    "command": "npx ts-node --transpile-only --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\",\\\"moduleResolution\\\":\\\"node\\\"}\" -r ./scripts/register-server-only-shim.js -r tsconfig-paths/register scripts/verify-realistic-development-seed-readonly.ts",
+    "dependencies": [],
+    "directSources": [
+      "scripts/verify-realistic-development-seed-readonly.ts"
+    ],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "payroll:presence:gate",
+    "command": "node scripts/payroll-presence-readiness-gate.js --mode fail --out what-next/payroll/payroll-presence-readiness.md --json-out what-next/payroll/payroll-presence-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/payroll-presence-readiness-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "payroll:trust-spine:gate",
+    "command": "node scripts/payroll-trust-spine-readiness-gate.js --mode fail --out what-next/payroll/payroll-trust-spine-readiness.md --json-out what-next/payroll/payroll-trust-spine-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/payroll-trust-spine-readiness-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:payroll",
+    "command": "npm run prisma:migrate:deploy && npm run seed:e2e:payroll && npm run test:e2e -- --project=payroll-authenticated-smoke",
+    "dependencies": [
+      "prisma:migrate:deploy",
+      "seed:e2e:payroll",
+      "test:e2e"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:command-agent",
+    "command": "npm run prisma:migrate:deploy && npm run seed:e2e:payroll && npm run test:e2e -- --project=command-agent-kill-switch-desktop --project=command-agent-kill-switch-mobile",
+    "dependencies": [
+      "prisma:migrate:deploy",
+      "seed:e2e:payroll",
+      "test:e2e"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:command-agent:enabled",
+    "command": "npm run prisma:migrate:deploy && npm run seed:e2e:payroll && node scripts/seed-command-agent-cross-tenant-e2e-user.js && node scripts/run-agent-enabled-pilot-e2e.js",
+    "dependencies": [
+      "prisma:migrate:deploy",
+      "seed:e2e:payroll"
+    ],
+    "directSources": [
+      "scripts/seed-command-agent-cross-tenant-e2e-user.js",
+      "scripts/run-agent-enabled-pilot-e2e.js"
+    ],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:close-assurance:preflight",
+    "command": "node scripts/close-assurance-e2e-preflight.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/close-assurance-e2e-preflight.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:close-assurance:artifact-gate",
+    "command": "node scripts/close-assurance-smoke-artifact-gate.js --mode fail what-next/accounting",
+    "dependencies": [],
+    "directSources": [
+      "scripts/close-assurance-smoke-artifact-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:close-assurance",
+    "command": "npm run test:e2e:close-assurance:preflight && npm run prisma:migrate:deploy && npm run seed:e2e:payroll && npm run test:e2e -- --project=close-assurance-authenticated-smoke && npm run test:e2e:close-assurance:artifact-gate",
+    "dependencies": [
+      "test:e2e:close-assurance:preflight",
+      "prisma:migrate:deploy",
+      "seed:e2e:payroll",
+      "test:e2e",
+      "test:e2e:close-assurance:artifact-gate"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "table:x1:finance:evidence:gate",
+    "command": "npx ts-node --transpile-only --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\",\\\"moduleResolution\\\":\\\"node\\\"}\" scripts/validate-finance-x1-evidence.ts --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/validate-finance-x1-evidence.ts"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "table:x1:finance:evidence:preflight",
+    "command": "npx ts-node --transpile-only --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\",\\\"moduleResolution\\\":\\\"node\\\"}\" scripts/finance-x1-evidence-preflight.ts",
+    "dependencies": [],
+    "directSources": [
+      "scripts/finance-x1-evidence-preflight.ts"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "table:x1:approval:readiness",
+    "command": "node scripts/x1-approval-automation-orchestrator.js --mode report",
+    "dependencies": [],
+    "directSources": [
+      "scripts/x1-approval-automation-orchestrator.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:transaction-history",
+    "command": "npm run prisma:migrate:deploy && npm run seed:e2e:transaction-history && npm run test:e2e -- --project=transaction-history-authenticated-release",
+    "dependencies": [
+      "prisma:migrate:deploy",
+      "seed:e2e:transaction-history",
+      "test:e2e"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:supplier",
+    "command": "node node_modules/@playwright/test/cli.js test --config=playwright.supplier.certification.config.ts",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:supplier-po-ack",
+    "command": "npm run prisma:migrate:deploy && node node_modules/@playwright/test/cli.js test --config=playwright.supplier-po-ack.config.ts",
+    "dependencies": [
+      "prisma:migrate:deploy"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:master-data-onboarding",
+    "command": "npm run prisma:migrate:deploy && node node_modules/@playwright/test/cli.js test --config=playwright.master-data-onboarding.config.ts",
+    "dependencies": [
+      "prisma:migrate:deploy"
+    ],
+    "directSources": [],
+    "potentialEffects": {
+      "database": true,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e",
+    "command": "playwright test",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "test:e2e:ui",
+    "command": "playwright test --ui",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ui:gate:public-color",
+    "command": "jest scripts/__tests__/public-color-contract.test.js --runInBand",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ui:gate:public-content",
+    "command": "jest scripts/__tests__/landing-public-content.test.js --runInBand",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ui:gate:product-command-screenshot",
+    "command": "jest scripts/__tests__/landing-public-content.test.js --runInBand -t \"yesterday's branch-close screenshot\"",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ui:gate:landing-refinement",
+    "command": "jest scripts/__tests__/landing-refinement-content.test.js --runInBand",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "master-data:onboarding:gate",
+    "command": "node scripts/master-data-onboarding-release-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/master-data-onboarding-release-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "master-data:onboarding:release-gate",
+    "command": "node scripts/master-data-onboarding-release-gate.js --mode fail --require-browser-evidence",
+    "dependencies": [],
+    "directSources": [
+      "scripts/master-data-onboarding-release-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ap:fraud-control:readiness",
+    "command": "node scripts/ap-fraud-control-readiness.js --mode report --out what-next/ap-fraud-control-readiness.md --json-out what-next/ap-fraud-control-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/ap-fraud-control-readiness.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ap:fraud-control:gate",
+    "command": "node scripts/ap-fraud-control-readiness.js --mode fail --out what-next/ap-fraud-control-readiness.md --json-out what-next/ap-fraud-control-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/ap-fraud-control-readiness.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "public-identity:abuse:gate",
+    "command": "node scripts/public-identity-abuse-gate.js --mode fail --release auto --out what-next/public-identity-abuse-readiness.md --json-out what-next/public-identity-abuse-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/public-identity-abuse-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ledger:close-truth:gate",
+    "command": "node scripts/ledger-close-truth-gate.js --mode fail --out what-next/ledger-close-truth-readiness.md --json-out what-next/ledger-close-truth-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/ledger-close-truth-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "payment:cash-truth:gate",
+    "command": "node scripts/payment-cash-truth-gate.js --mode fail --out what-next/payment-cash-truth-readiness.md --json-out what-next/payment-cash-truth-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/payment-cash-truth-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "purchasing:ap:gate",
+    "command": "node scripts/purchasing-ap-consolidation-gate.js --mode fail --out what-next/purchasing-ap-consolidation-readiness.md --json-out what-next/purchasing-ap-consolidation-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/purchasing-ap-consolidation-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "offline:pos:replay:gate",
+    "command": "node scripts/offline-pos-fiscal-replay-gate.js --mode fail --out what-next/offline-pos-fiscal-replay-readiness.md --json-out what-next/offline-pos-fiscal-replay-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/offline-pos-fiscal-replay-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "statutory:country-pack:integration:gate",
+    "command": "node scripts/statutory-country-pack-integration-gate.js --mode fail --out what-next/statutory-country-pack-integration-readiness.md --json-out what-next/statutory-country-pack-integration-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/statutory-country-pack-integration-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "statutory:country-pack:dev:gate",
+    "command": "node scripts/statutory-country-pack-development-gate.js --mode fail --out what-next/statutory-country-pack-development-readiness.md --json-out what-next/statutory-country-pack-development-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/statutory-country-pack-development-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "payroll:payments-declarations:dev:gate",
+    "command": "node scripts/payroll-payments-declarations-development-gate.js --mode fail --out what-next/payroll/payments-declarations-development-readiness.md --json-out what-next/payroll/payments-declarations-development-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/payroll-payments-declarations-development-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "payroll:accounting-close:dev:gate",
+    "command": "node scripts/payroll-accounting-close-development-gate.js --mode fail --out what-next/payroll/accounting-close-development-readiness.md --json-out what-next/payroll/accounting-close-development-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/payroll-accounting-close-development-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "hris-payroll:migration:dev:gate",
+    "command": "node scripts/hris-payroll-migration-development-gate.js --mode fail --out what-next/payroll/migration-backfill-development-readiness.md --json-out what-next/payroll/migration-backfill-development-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/hris-payroll-migration-development-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "statutory:country-pack:review:preflight",
+    "command": "node scripts/statutory-country-pack-review-preflight.js --mode report --out what-next/statutory-country-pack-review-preflight.md --json-out what-next/statutory-country-pack-review-preflight.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/statutory-country-pack-review-preflight.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "statutory:country-pack:gate",
+    "command": "node scripts/statutory-country-pack-production-gate.js --mode fail --out what-next/statutory-country-pack-production-readiness.md --json-out what-next/statutory-country-pack-production-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/statutory-country-pack-production-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "report:trust:export:gate",
+    "command": "node scripts/report-trust-export-gate.js --mode fail --out what-next/report-trust-export-readiness.md --json-out what-next/report-trust-export-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/report-trust-export-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "role:cockpit:gate",
+    "command": "node scripts/role-based-operating-cockpit-gate.js --mode fail --out what-next/role-based-operating-cockpit-readiness.md --json-out what-next/role-based-operating-cockpit-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/role-based-operating-cockpit-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "release:evidence:gate",
+    "command": "node scripts/release-evidence-ratchet.js --mode fail --out what-next/skills-life-cycle/STOQUIFY_OHADA_LEADERSHIP_RELEASE_EVIDENCE_INDEX_2026-07-11.md --json-out what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/release-evidence-ratchet.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "release:evidence:gate:release",
+    "command": "node scripts/release-evidence-ratchet.js --mode fail --release on --out what-next/skills-life-cycle/STOQUIFY_OHADA_LEADERSHIP_RELEASE_EVIDENCE_INDEX_2026-07-11.md --json-out what-next/skills-life-cycle/stoquify-ohada-leadership-release-evidence-index-2026-07-11.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/release-evidence-ratchet.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "release:secrets:preflight",
+    "command": "node scripts/release-secret-preflight.js --mode fail --release auto --out what-next/release-secret-preflight.md --json-out what-next/release-secret-preflight.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/release-secret-preflight.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "release:secrets:preflight:release",
+    "command": "node scripts/release-secret-preflight.js --mode fail --release on --out what-next/release-secret-preflight.md --json-out what-next/release-secret-preflight.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/release-secret-preflight.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ci:release:gate",
+    "command": "node scripts/ci-release-readiness-gate.js --mode fail --out what-next/ci-release-readiness.md --json-out what-next/ci-release-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/ci-release-readiness-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "public-identity:abuse:gate:release",
+    "command": "node scripts/public-identity-abuse-gate.js --mode fail --release on --out what-next/public-identity-abuse-readiness.md --json-out what-next/public-identity-abuse-readiness.json",
+    "dependencies": [],
+    "directSources": [
+      "scripts/public-identity-abuse-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": true
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "receipt:token:config-gate",
+    "command": "node scripts/public-receipt-token-config-gate.js --mode fail --release auto",
+    "dependencies": [],
+    "directSources": [
+      "scripts/public-receipt-token-config-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "receipt:token:config-gate:release",
+    "command": "node scripts/public-receipt-token-config-gate.js --mode fail --release on",
+    "dependencies": [],
+    "directSources": [
+      "scripts/public-receipt-token-config-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "workflow:assurance:release-gate",
+    "command": "node scripts/workflow-assurance-release-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/workflow-assurance-release-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "kontava:moat:release-gate",
+    "command": "node scripts/kontava-moat-release-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/kontava-moat-release-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ui:gate:landing-packages",
+    "command": "jest scripts/__tests__/landing-packages-content.test.js --runInBand",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "ui:gate:landing-navigation-localization",
+    "command": "jest scripts/__tests__/landing-navigation-localization.test.js --runInBand",
+    "dependencies": [],
+    "directSources": [],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "referral:pilot:evidence:gate",
+    "command": "node scripts/customer-referral-pilot-evidence-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/customer-referral-pilot-evidence-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "referral:release:scope:gate",
+    "command": "node scripts/customer-referral-release-scope-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/customer-referral-release-scope-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  },
+  {
+    "name": "referral:release:hunks:gate",
+    "command": "node scripts/customer-referral-shared-hunk-gate.js --mode fail",
+    "dependencies": [],
+    "directSources": [
+      "scripts/customer-referral-shared-hunk-gate.js"
+    ],
+    "potentialEffects": {
+      "database": false,
+      "execution": false,
+      "reportWrites": false
+    },
+    "inspectionStatus": "cataloged; inspect implementation before execution"
+  }
+]

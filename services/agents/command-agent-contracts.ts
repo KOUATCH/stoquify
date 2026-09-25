@@ -11,12 +11,17 @@ export const READ_ROLE_DAILY_DIGEST_TOOL_KEY = "readRoleDailyDigest"
 export const ROLE_DAILY_BRIEF_PROMPT_HASH =
   "sha256:4f70962e7461bbac84276c74928f4877616afcb4a97c647e9d3d629e452e3e55"
 
+// Source handoffs are canonical dashboard paths, not arbitrary URLs or redirects.
+export const commandAgentSourcePathSchema = z.string().max(300)
+  .regex(/^\/dashboard\/[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)*\/?$/)
+
 export const commandAgentRequestSchema = z
   .object({
     requestId: z.string().uuid(),
     digestId: z.string().trim().min(1).max(80).regex(/^[a-z0-9][a-z0-9_-]*$/),
     periodStart: z.string().datetime().optional(),
     periodEnd: z.string().datetime().optional(),
+    locale: z.enum(["en", "fr"]).optional(),
   })
   .strict()
 
@@ -43,7 +48,7 @@ export const commandAgentPrioritySchema = z
     title: z.string().min(1).max(180),
     detail: z.string().min(1).max(500),
     severity: z.enum(["info", "low", "medium", "high", "critical"]),
-    href: z.string().startsWith("/dashboard/").max(300),
+    href: commandAgentSourcePathSchema,
     requiredPermission: z.string().min(1).max(120),
     evidenceIds: z.array(z.string().min(1).max(180)).min(1).max(12),
   })

@@ -41,6 +41,8 @@ export default async function ReportsPage({
           locationId={firstParam(resolvedSearchParams.locationId) || "all"}
           initialReport={firstParam(resolvedSearchParams.report)}
           initialPeriod={firstParam(resolvedSearchParams.period)}
+          initialFrom={firstParam(resolvedSearchParams.reportFrom)}
+          initialTo={firstParam(resolvedSearchParams.reportTo)}
           focusItemId={firstParam(resolvedSearchParams.itemId)}
         />
       )

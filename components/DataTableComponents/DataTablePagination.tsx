@@ -21,6 +21,11 @@ interface DataTablePaginationProps<TData> {
   variant?: "default" | "landing";
   locale?: "en" | "fr";
   showSelectionCount?: boolean;
+  pageSizeOptions?: readonly number[];
+  cursor?: {
+    hasMore: boolean; canPrevious: boolean; canFirst: boolean; pending: boolean;
+    onNext: () => void; onPrevious: () => void; onFirst: () => void; summary: string;
+  };
   copy?: {
     rowsPerPage?: string;
     page?: string;
@@ -38,6 +43,8 @@ export function DataTablePagination<TData>({
   variant = "default",
   locale = "en",
   showSelectionCount = true,
+  pageSizeOptions = [10, 20, 30, 40, 50],
+  cursor,
   copy,
 }: DataTablePaginationProps<TData>) {
   const isLanding = variant === "landing";
@@ -75,11 +82,12 @@ export function DataTablePagination<TData>({
           {selectedRowCount} {paginationCopy.of} {visibleRowCount} {paginationCopy.selectedRowsLabel}
         </div>
       ) : null}
-      <div className="flex flex-wrap items-center gap-3 sm:gap-4 lg:gap-6">
+      <div className={cn("flex flex-wrap items-center gap-3 sm:gap-4 lg:gap-6", !showSelectionCount && "ml-auto justify-end")}>
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium">{paginationCopy.rowsPerPage}</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
+            disabled={cursor?.pending}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
@@ -88,7 +96,7 @@ export function DataTablePagination<TData>({
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
-              {[10, 20, 30, 40, 50].map((pageSize) => (
+              {pageSizeOptions.map((pageSize) => (
                 <SelectItem key={pageSize} value={`${pageSize}`}>
                   {pageSize}
                 </SelectItem>
@@ -97,15 +105,14 @@ export function DataTablePagination<TData>({
           </Select>
         </div>
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          {paginationCopy.page} {table.getState().pagination.pageIndex + 1} {paginationCopy.of}{" "}
-          {table.getPageCount()}
+          {cursor ? cursor.summary : <>{paginationCopy.page} {table.getState().pagination.pageIndex + 1} {paginationCopy.of}{" "}{Math.max(1, table.getPageCount())}</>}
         </div>
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
             className={cn("hidden h-8 w-8 p-0 lg:flex", isLanding && "dashboard-button-secondary rounded-lg")}
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => cursor ? cursor.onFirst() : table.setPageIndex(0)}
+            disabled={cursor ? !cursor.canFirst || cursor.pending : !table.getCanPreviousPage()}
           >
             <span className="sr-only">{paginationCopy.firstPage}</span>
             <DoubleArrowLeftIcon className="h-4 w-4" />
@@ -113,8 +120,8 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             className={cn("h-8 w-8 p-0", isLanding && "dashboard-button-secondary rounded-lg")}
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => cursor ? cursor.onPrevious() : table.previousPage()}
+            disabled={cursor ? !cursor.canPrevious || cursor.pending : !table.getCanPreviousPage()}
           >
             <span className="sr-only">{paginationCopy.previousPage}</span>
             <ChevronLeftIcon className="h-4 w-4" />
@@ -122,21 +129,21 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             className={cn("h-8 w-8 p-0", isLanding && "dashboard-button-secondary rounded-lg")}
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+            onClick={() => cursor ? cursor.onNext() : table.nextPage()}
+            disabled={cursor ? !cursor.hasMore || cursor.pending : !table.getCanNextPage()}
           >
             <span className="sr-only">{paginationCopy.nextPage}</span>
             <ChevronRightIcon className="h-4 w-4" />
           </Button>
-          <Button
+          {!cursor && <Button
             variant="outline"
-            className={cn("hidden h-8 w-8 p-0 lg:flex", isLanding && "dashboard-button-secondary rounded-lg")}
+            className={cn("h-8 w-8 p-0", !cursor && "hidden lg:flex", isLanding && "dashboard-button-secondary rounded-lg")}
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
             <span className="sr-only">{paginationCopy.lastPage}</span>
             <DoubleArrowRightIcon className="h-4 w-4" />
-          </Button>
+          </Button>}
         </div>
       </div>
     </div>

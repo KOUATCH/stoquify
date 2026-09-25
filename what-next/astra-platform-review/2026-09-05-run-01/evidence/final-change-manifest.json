@@ -1,0 +1,182 @@
+{
+  "recordedAt": "2026-09-05T09:43:16.202Z",
+  "changedByThisRun": [
+    "lib/security/rbac.ts",
+    "lib/security/__tests__/rbac.test.ts",
+    "app/api/uploads/[...path]/route.ts",
+    "app/api/uploads/[...path]/__tests__/route.test.ts",
+    "components/finance/PaymentReconciliationWorkbench.tsx",
+    "services/accounting/finance-statement-export.service.ts",
+    "services/accounting/__tests__/finance-statement-export.service.test.ts",
+    "scripts/api-route-guard-inventory.js",
+    "scripts/__tests__/api-route-guard-inventory.test.js",
+    "middleware.ts",
+    "lib/security/__tests__/middleware-routing.test.ts",
+    "tmp-protocol-check.js",
+    "components/finance/FinanceCommandCenterDashboard.tsx",
+    "app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx",
+    "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+    "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts"
+  ],
+  "observedFingerprintDrift": [
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx",
+      "attributableToThisRun": true,
+      "before": "493b4922df4747130d189b2466c3c3648fdc46e8df8647a092a7254d370f86bf",
+      "after": "92d74801ef8fff7458aec74153ae0984d4845fcd61c9fce237cd2a6b47818335"
+    },
+    {
+      "path": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "attributableToThisRun": true,
+      "before": "67c0a1028fc1b8921143885360c344938f87c7d07dba18209629672cf15577e9",
+      "after": "6ea5d6a548545ba3df873319ccfa12c555a01a5390d65dcfc6ed16e16e3d187f"
+    },
+    {
+      "path": "app/api/uploads/[...path]/route.ts",
+      "attributableToThisRun": true,
+      "before": "24d56be3f9be9c1c63c350c84ccf699c312414393a2efc3bab511de9cd51f236",
+      "after": "56ebc4da4188180e0645519d8d3d8f90558ca54bf8bfd3daf671a5c82501c359"
+    },
+    {
+      "path": "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "attributableToThisRun": true,
+      "before": "b91c0fb45380ade24b023878e5bd459e01df7706cc83cbabe4244f2a4885cb23",
+      "after": "55051f868477cbe1c9eaaa84df57d363c5afac3ecc04c09478030835a3d01ad1"
+    },
+    {
+      "path": "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "attributableToThisRun": false,
+      "before": "a593140da5688a21f4d4b5520ef17c35f6dffa8c235921e351d2a94302f3ff94",
+      "after": "f712984675c472a9eec18a0a9b6f07c7a312ff86156a22004627c8c7dea5a579"
+    },
+    {
+      "path": "components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts",
+      "attributableToThisRun": false,
+      "before": "8a53f7faa5232d5d5342690b60d084d0637b756c0371ddb5ae8bedf69e405595",
+      "after": "6fb02c9f38d3f14a8ca642bd00bdde9663528e0e7220faf664359c73da5eff89"
+    },
+    {
+      "path": "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts",
+      "attributableToThisRun": true,
+      "before": "46b2fa15cf8de81b60331b33ddbf9a8df4a9d00bb45759511546fac8f3bc9dc7",
+      "after": "3973fbdef3aae6a4d4e22e49bb79fd290176627a36899fb82daba93f731044d1"
+    },
+    {
+      "path": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "attributableToThisRun": true,
+      "before": "129bb9e87deef449b5945eec7d23fcf506fc0d7e22898a5fcb1fcbf29c1f520b",
+      "after": "a8a0f977280618881e89f4f7623b480807a966aad149cfec905d2de3107d2942"
+    },
+    {
+      "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+      "attributableToThisRun": true,
+      "before": "f77b96b6bfb617736a22389ee39e4f03aeded9cec7a0c0775b79812cda13658e",
+      "after": "a7f668505d634bb1f8ab450a7179645e1e401fee84c8c80c7dd8e18329004ff4"
+    },
+    {
+      "path": "components/ui/scroll-area.tsx",
+      "attributableToThisRun": false,
+      "before": "edbaecbc4f5cb6e16ecb39d3678d81b26e1a968dfc273dbb77821de3c8626377",
+      "after": "da4bf02143bf8767494e9b235ec7e3b6e63d6d07f91766a3d62f6054af0d6a73"
+    },
+    {
+      "path": "lib/security/__tests__/rbac.test.ts",
+      "attributableToThisRun": true,
+      "before": "2a86209ec36d83490fd832e4541d0cc7bc90d62d5d06201def99b8cd1a0af088",
+      "after": "b655eaef01e12a83f047d1ca402be324f77c6e3b30eb2230ef79706c74bd299c"
+    },
+    {
+      "path": "lib/security/rbac.ts",
+      "attributableToThisRun": true,
+      "before": "e11edcd4856378945a289ec497fc5befbcb67478c4e3f67830a8a7dc3eea2d54",
+      "after": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+    },
+    {
+      "path": "middleware.ts",
+      "attributableToThisRun": true,
+      "before": "8446be6f74201904266ae8990cf3bebf2b446141c9f00d6a5115d9bdcf0895e3",
+      "after": "c9ecdfb09fc14fe85b2c99e742a4dfd00e0e09b22000b4cfddfd8c072e9ceaec"
+    },
+    {
+      "path": "scripts/__tests__/api-route-guard-inventory.test.js",
+      "attributableToThisRun": true,
+      "before": "846fd31ab0b3e9923b4a5d76923624ecdeaea5bdbf1e5eb9e1ae6be6329a4979",
+      "after": "03228ea1868a64f1e587fa13e822b6307385a2e5c87abb807e46d2ea6978f896"
+    },
+    {
+      "path": "scripts/api-route-guard-inventory.js",
+      "attributableToThisRun": true,
+      "before": "cbb03762720a3d7a58e1cdfe0947cec3078e0f9177ace510b4fe2472959a6f9f",
+      "after": "f39b0ae02ec4e26085d670a39e45f31611086aa6b08688e8b1c4097de1e47c75"
+    },
+    {
+      "path": "scripts/x1-approval-automation-orchestrator.js",
+      "attributableToThisRun": false,
+      "before": "8e8e3e057bbea951347ef4bf0fa71e9e19e26bd82997aea8028083bea6494f65",
+      "after": "e2c854d9e82a2310ee703282bf7094e4624e4583ce1b867e915c9ef474f276e3"
+    },
+    {
+      "path": "services/accounting/__tests__/finance-statement-export.service.test.ts",
+      "attributableToThisRun": true,
+      "before": "0479bece1127e2e196e8fbcc48683f823e86a0f36c97974274dea7a5d8b03a99",
+      "after": "578afeecc65ac9f3fe999099b90de45ec978e6f1aef86e05bcdcbe66cc472b80"
+    },
+    {
+      "path": "services/accounting/finance-statement-export.service.ts",
+      "attributableToThisRun": true,
+      "before": "4afeee67e163d12e4441d28730629ff80eccb60bcd5b33d758a91d987685a37b",
+      "after": "872f7e9b99cd0b0c727c04fc146563c89a8b87e44e676476b304b28adb0f91ee"
+    },
+    {
+      "path": "tests/e2e/finance-x1-route-observation.ts",
+      "attributableToThisRun": false,
+      "before": "a05b183dfc81706db487dd5ef107c0686227f4feb3df4e81bb52819282d15069",
+      "after": "fe93431e58741811d351b7aa92139967557ef49c392bd23eef6cee98101e6b25"
+    },
+    {
+      "path": "tmp-protocol-check.js",
+      "attributableToThisRun": true,
+      "before": "7363d8370b68e9dfba52f9b86d77b865cf925fdee7375505c2f08320a49a67b5",
+      "after": "70b9ca5043d7b48cc15f14aef81c1eb07118edd3820ceed3f577c3b68d3df19a"
+    }
+  ],
+  "unrelatedDrift": [
+    {
+      "path": "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+      "attributableToThisRun": false,
+      "before": "a593140da5688a21f4d4b5520ef17c35f6dffa8c235921e351d2a94302f3ff94",
+      "after": "f712984675c472a9eec18a0a9b6f07c7a312ff86156a22004627c8c7dea5a579"
+    },
+    {
+      "path": "components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts",
+      "attributableToThisRun": false,
+      "before": "8a53f7faa5232d5d5342690b60d084d0637b756c0371ddb5ae8bedf69e405595",
+      "after": "6fb02c9f38d3f14a8ca642bd00bdde9663528e0e7220faf664359c73da5eff89"
+    },
+    {
+      "path": "components/ui/scroll-area.tsx",
+      "attributableToThisRun": false,
+      "before": "edbaecbc4f5cb6e16ecb39d3678d81b26e1a968dfc273dbb77821de3c8626377",
+      "after": "da4bf02143bf8767494e9b235ec7e3b6e63d6d07f91766a3d62f6054af0d6a73"
+    },
+    {
+      "path": "scripts/x1-approval-automation-orchestrator.js",
+      "attributableToThisRun": false,
+      "before": "8e8e3e057bbea951347ef4bf0fa71e9e19e26bd82997aea8028083bea6494f65",
+      "after": "e2c854d9e82a2310ee703282bf7094e4624e4583ce1b867e915c9ef474f276e3"
+    },
+    {
+      "path": "tests/e2e/finance-x1-route-observation.ts",
+      "attributableToThisRun": false,
+      "before": "a05b183dfc81706db487dd5ef107c0686227f4feb3df4e81bb52819282d15069",
+      "after": "fe93431e58741811d351b7aa92139967557ef49c392bd23eef6cee98101e6b25"
+    }
+  ],
+  "note": "Baseline hashes include prior user edits. Listed edits are this audit scope; no reset, migration, deployment or approval issuance was performed. FinanceCommandCenterDashboard also contains concurrent edits; attributableToThisRun identifies files we touched, not sole authorship of their full baseline diff.",
+  "coEditedFiles": [
+    {
+      "path": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "auditChange": "Only adds dashboard-table-pagination to the existing footer; other changes belong to the concurrent workstream."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-08T14:14:05.192Z",
+  "run": "ec42d99c-b1f",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "8ba4db861bd9cbc3f05f9fe97a62be882720d33517a2596393a50cd2a82735e2",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a"
+  },
+  "checks": [
+    "Matched/unposted document remains 2500 but contributes zero recognized movement and remainder",
+    "Real independent approval creates the supplier ledger liability; read model recognizes exactly 2500",
+    "Approved/unreleased synthetic payment cannot reduce recognized liabilities",
+    "Released status without its supplier ledger evidence is unavailable, never zero or healthy",
+    "Matched recorded allocation reduces current invoice remainder once and preserves cents",
+    "Archived source retains its recognized obligation and explicit retained flag",
+    "Mixed currency creates separate totals and no false organization-currency scalar",
+    "Organization-local date filter includes the preceding UTC evening and applies current settlements beyond document date range",
+    "Invalid calendar dates are rejected",
+    "Changed records cannot masquerade as an unchanged prior read snapshot",
+    "Missing organization does not resolve another tenant’s history"
+  ],
+  "scope": "Owned local fixtures; real invoice preparation/approval, with explicitly synthetic payment/ledger states for read-model edge cases. No live payment release claim.",
+  "originalBefore": "e7549064f622b6ba1a2a0a62fe19b8f980f30cadda7dde4723e15cfc23aba42c",
+  "fixture": {
+    "organizationId": "workflow_supplier_ack_en_history-financial-ec42d99c-b1f",
+    "invoiceId": "cmtsr35p8001wma9smizxoywy"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "8ba4db861bd9cbc3f05f9fe97a62be882720d33517a2596393a50cd2a82735e2",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a"
+  },
+  "sourceStable": true
+}

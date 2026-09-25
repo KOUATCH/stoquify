@@ -79,6 +79,8 @@ export type CloseCertificationInvalidationSourceCode =
   | "PAYMENT_RECONCILIATION_SIGNED"
   | "PAYMENT_RECONCILIATION_CERTIFICATE_EXPORTED"
   | "PAYMENT_RECONCILIATION_CERTIFICATE_HASH_DRIFT"
+  | "PAYMENT_RECONCILIATION_SOURCE_REPAIRED"
+  | "PAYMENT_RECONCILIATION_EXCEPTION_DECIDED"
   | "PAYMENT_SUSPENSE_POSTING"
   | "CUSTOM";
 
@@ -316,6 +318,24 @@ export const CLOSE_CERTIFICATION_INVALIDATION_SOURCES = {
     sourceModel: "SuspenseItem",
     sourceTable: "suspense_items",
     sourceEventName: "payment.reconciliation.suspense.posted",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_RECONCILIATION_SOURCE_REPAIRED: {
+    sourceCode: "PAYMENT_RECONCILIATION_SOURCE_REPAIRED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationRun",
+    sourceTable: "reconciliation_runs",
+    sourceEventName: "payment.reconciliation.source.repaired",
+    closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
+  },
+  PAYMENT_RECONCILIATION_EXCEPTION_DECIDED: {
+    sourceCode: "PAYMENT_RECONCILIATION_EXCEPTION_DECIDED",
+    ring: "FIRST_RING",
+    domain: "payments",
+    sourceModel: "ReconciliationRun",
+    sourceTable: "reconciliation_runs",
+    sourceEventName: "payment.reconciliation.exception.decided",
     closeImpact: "CERTIFIED_CLOSE_EVIDENCE_STALE",
   },
 } as const satisfies Record<

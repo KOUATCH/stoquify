@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-13T12:47:07.409Z",
+  "phase": "before",
+  "sourceBefore": "f57ae943d546dc86ec9b7db140af4d5348481d01f2ad19a196de66dc9cb594bc",
+  "checks": [
+    {
+      "name": "Reproduced editing an active shift terminal to inactive",
+      "passed": true
+    },
+    {
+      "name": "Reproduced relocation while active shift/drawer remain at old store",
+      "passed": true
+    },
+    {
+      "name": "Reproduced omitted flags reactivating terminal and adding drawer",
+      "passed": true
+    }
+  ],
+  "scope": "Actual terminal edit/open services on owned PostgreSQL, with controlled concurrency. No sale/payment or external operation.",
+  "passed": true,
+  "sourceAfter": "f57ae943d546dc86ec9b7db140af4d5348481d01f2ad19a196de66dc9cb594bc",
+  "sourceStable": true
+}

@@ -22,11 +22,11 @@ export const changePasswordRouteCatalog: ChangePasswordRouteSurface[] = [
     route: "/dashboard/change-password",
     title: "Change password",
     resource: "ChangePasswordPage",
-    permissions: ["PASSWORD_READ"],
+    permissions: ["profile.password.update"],
     permissionMode: "single",
     noActiveOrgTitle: "Change password needs an active organization",
     permissionDeniedTitle: "Change password is not available for this role",
-    permissionDeniedMessage: "Changing credentials requires the password-read permission.",
+    permissionDeniedMessage: "Ask your administrator for permission to update your own password.",
   },
 ]
 

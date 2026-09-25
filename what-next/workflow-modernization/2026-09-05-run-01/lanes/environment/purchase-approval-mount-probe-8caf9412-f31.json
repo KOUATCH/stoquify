@@ -1,0 +1,4869 @@
+{
+  "run": "8caf9412-f31",
+  "at": "2026-09-07T15:06:14.446Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "a9acb8a6fba3964e10e80ccb2e781d2054f24ffa489302f0bce62ab6e36fb199",
+    "messages/fr.json": "66785b0b17faf481279b0fb9b3cb329a1c84d261f0f8a66218a9044b88941c17",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+    "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+    "services/purchase-order/purchase-order.service.ts": "2f7fb3282347c1a80d4c17fcd91c02e7bb147071db23ce9a8c2322e8ed9387f2",
+    "services/purchase-order/purchase-order-approval.ts": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0",
+    "services/purchase-order/purchase-order-approval-contracts.ts": "790e9fc8dc332a9c7ff79a0f10034b55036dfd61d829174a94b1cf325e85bb30",
+    "services/purchase-order/purchase-order-capabilities.ts": "4815c79b46ffe297f4377fa1b8a26901871f1ef4bd1cc536d69b0d2983785b8d",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "8ce3af5943121a7db0d50e4cb084904902ac292356c055c059088353c7b9a85f",
+    "components/purchase-orders/PurchaseOrderApprovalDialog.tsx": "1f2c5c7aaeb006a0995345a31172d6c4af83085aa5d4408c6d0ffc4b69bd4b74",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "ee3d959eb5bce238d82e4327432220752a4f0f4cb521a058c8ca86de330a4c3a",
+    "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx": "25bc1a41a713af960f868a9c8210c75fd8ff4f800adf481bd6f68e5c4fadbde3",
+    "hooks/useRecentPurchaseOrderQueries.ts": "cd183fe90ffbb0bf42be50147dd61c69ee7a1bbdedb8004f7fab6ea0cbc790af"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [],
+      "completed": [],
+      "layouts": [],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "register ready",
+          "ms": 12000
+        }
+      ],
+      "before": [
+        {
+          "mount": 1,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "input",
+          "typeId": null
+        },
+        {
+          "mount": 2,
+          "index": 1,
+          "tag": 11,
+          "key": null,
+          "name": "Input",
+          "typeId": 1
+        },
+        {
+          "mount": 3,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 4,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 5,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 6,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ModernPurchaseOrderTable",
+          "typeId": 2
+        },
+        {
+          "mount": 7,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "PurchaseOrderManagement",
+          "typeId": 3
+        },
+        {
+          "mount": 8,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 9,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 10,
+          "index": 1,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 11,
+          "index": 2,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 12,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 13,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 14,
+          "index": 0,
+          "tag": 0,
+          "key": "c-page",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 15,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 16,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 17,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 18,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 19,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 20,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 21,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 22,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 23,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 24,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 25,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 26,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 27,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 28,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 29,
+          "index": 0,
+          "tag": 10,
+          "key": "__PAGE__",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 30,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 31,
+          "index": 0,
+          "tag": 0,
+          "key": "__PAGE__",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 32,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 33,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 34,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 35,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 36,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 37,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 38,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 39,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 40,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 41,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 42,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 43,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 44,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 45,
+          "index": 0,
+          "tag": 10,
+          "key": "purchase-orders",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 46,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 47,
+          "index": 0,
+          "tag": 0,
+          "key": "purchase-orders",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 48,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 49,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 50,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 51,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 52,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 53,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 54,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 55,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 56,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 57,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 58,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 59,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 60,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 61,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 62,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 63,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 64,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 65,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 66,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 67,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 68,
+          "index": 0,
+          "tag": 10,
+          "key": "dashboard",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 69,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 70,
+          "index": 0,
+          "tag": 0,
+          "key": "dashboard",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 71,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 72,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 73,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 74,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 75,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 76,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 77,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 78,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 79,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 80,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 81,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 82,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 83,
+          "index": 0,
+          "tag": 10,
+          "key": "(dashboard)",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 84,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 85,
+          "index": 0,
+          "tag": 0,
+          "key": "(dashboard)",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 86,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 87,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 21
+        },
+        {
+          "mount": 88,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "IntlProvider",
+          "typeId": 22
+        },
+        {
+          "mount": 89,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "NextIntlClientProvider",
+          "typeId": 23
+        },
+        {
+          "mount": 90,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 91,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 92,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 93,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 94,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 95,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 96,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 97,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 98,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 99,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 100,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 101,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 102,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 103,
+          "index": 0,
+          "tag": 10,
+          "key": "locale|en|d",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 104,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 105,
+          "index": 0,
+          "tag": 0,
+          "key": "locale|en|d",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 106,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 107,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 24
+        },
+        {
+          "mount": 108,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "V",
+          "typeId": 25
+        },
+        {
+          "mount": 109,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "J",
+          "typeId": 26
+        },
+        {
+          "mount": 110,
+          "index": 0,
+          "tag": 7,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 111,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 27
+        },
+        {
+          "mount": 112,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "NotificationProvider",
+          "typeId": 28
+        },
+        {
+          "mount": 113,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AuthProvider",
+          "typeId": 29
+        },
+        {
+          "mount": 114,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 30
+        },
+        {
+          "mount": 115,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryClientProvider",
+          "typeId": 31
+        },
+        {
+          "mount": 116,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryProvider",
+          "typeId": 32
+        },
+        {
+          "mount": 117,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Providers",
+          "typeId": 33
+        },
+        {
+          "mount": 118,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 34
+        },
+        {
+          "mount": 119,
+          "index": 0,
+          "tag": 27,
+          "key": null,
+          "name": "body",
+          "typeId": null
+        },
+        {
+          "mount": 120,
+          "index": 1,
+          "tag": 27,
+          "key": null,
+          "name": "html",
+          "typeId": null
+        },
+        {
+          "mount": 121,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 122,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 123,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "__next_root_layout_boundary__",
+          "typeId": 35
+        },
+        {
+          "mount": 124,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 125,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 126,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 127,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 128,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "DevRootHTTPAccessFallbackBoundary",
+          "typeId": 36
+        },
+        {
+          "mount": 129,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "AppDevOverlayErrorBoundary",
+          "typeId": 37
+        },
+        {
+          "mount": 130,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HotReload",
+          "typeId": 38
+        },
+        {
+          "mount": 131,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 132,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "AppRouterContext",
+          "typeId": 39
+        },
+        {
+          "mount": 133,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "GlobalLayoutRouterContext",
+          "typeId": 40
+        },
+        {
+          "mount": 134,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "SearchParamsContext",
+          "typeId": 41
+        },
+        {
+          "mount": 135,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "PathnameContext",
+          "typeId": 42
+        },
+        {
+          "mount": 136,
+          "index": 2,
+          "tag": 10,
+          "key": null,
+          "name": "PathParamsContext",
+          "typeId": 43
+        },
+        {
+          "mount": 137,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Router",
+          "typeId": 44
+        },
+        {
+          "mount": 138,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 139,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 140,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RootErrorBoundary",
+          "typeId": 45
+        },
+        {
+          "mount": 141,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AppRouter",
+          "typeId": 46
+        },
+        {
+          "mount": 142,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 47
+        },
+        {
+          "mount": 143,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ServerRoot",
+          "typeId": 48
+        },
+        {
+          "mount": 144,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Root",
+          "typeId": 49
+        },
+        {
+          "mount": 145,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "HeadManagerContext",
+          "typeId": 50
+        },
+        {
+          "mount": 146,
+          "index": 0,
+          "tag": 8,
+          "key": null,
+          "name": "Symbol(react.strict_mode)",
+          "typeId": null
+        },
+        {
+          "mount": 147,
+          "index": 0,
+          "tag": 3,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        }
+      ],
+      "after": [
+        {
+          "mount": 1,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "input",
+          "typeId": null
+        },
+        {
+          "mount": 2,
+          "index": 1,
+          "tag": 11,
+          "key": null,
+          "name": "Input",
+          "typeId": 1
+        },
+        {
+          "mount": 3,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 4,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 5,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 6,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ModernPurchaseOrderTable",
+          "typeId": 2
+        },
+        {
+          "mount": 7,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "PurchaseOrderManagement",
+          "typeId": 3
+        },
+        {
+          "mount": 8,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 9,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 10,
+          "index": 1,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 11,
+          "index": 2,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 12,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 13,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 14,
+          "index": 0,
+          "tag": 0,
+          "key": "c-page",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 15,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 16,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 17,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 18,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 19,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 20,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 21,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 22,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 23,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 24,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 25,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 26,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 27,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 28,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 29,
+          "index": 0,
+          "tag": 10,
+          "key": "__PAGE__",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 30,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 31,
+          "index": 0,
+          "tag": 0,
+          "key": "__PAGE__",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 32,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 33,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 34,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 35,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 36,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 37,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 38,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 39,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 40,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 41,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 42,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 43,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 44,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 45,
+          "index": 0,
+          "tag": 10,
+          "key": "purchase-orders",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 46,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 47,
+          "index": 0,
+          "tag": 0,
+          "key": "purchase-orders",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 48,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 49,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 50,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 51,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 52,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 53,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 54,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 55,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 56,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 57,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 58,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 59,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 60,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 61,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 62,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 63,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 64,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 65,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 66,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 67,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 68,
+          "index": 0,
+          "tag": 10,
+          "key": "dashboard",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 69,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 70,
+          "index": 0,
+          "tag": 0,
+          "key": "dashboard",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 71,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 72,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 73,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 74,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 75,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 76,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 77,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 78,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 79,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 80,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 81,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 82,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 83,
+          "index": 0,
+          "tag": 10,
+          "key": "(dashboard)",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 84,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 85,
+          "index": 0,
+          "tag": 0,
+          "key": "(dashboard)",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 86,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 87,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 21
+        },
+        {
+          "mount": 88,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "IntlProvider",
+          "typeId": 22
+        },
+        {
+          "mount": 89,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "NextIntlClientProvider",
+          "typeId": 23
+        },
+        {
+          "mount": 90,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 91,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 92,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 93,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 94,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 95,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 96,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 97,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 98,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 99,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 100,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 101,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 102,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 103,
+          "index": 0,
+          "tag": 10,
+          "key": "locale|en|d",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 104,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 105,
+          "index": 0,
+          "tag": 0,
+          "key": "locale|en|d",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 106,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 107,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 24
+        },
+        {
+          "mount": 108,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "V",
+          "typeId": 25
+        },
+        {
+          "mount": 109,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "J",
+          "typeId": 26
+        },
+        {
+          "mount": 110,
+          "index": 0,
+          "tag": 7,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 111,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 27
+        },
+        {
+          "mount": 112,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "NotificationProvider",
+          "typeId": 28
+        },
+        {
+          "mount": 113,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AuthProvider",
+          "typeId": 29
+        },
+        {
+          "mount": 114,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 30
+        },
+        {
+          "mount": 115,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryClientProvider",
+          "typeId": 31
+        },
+        {
+          "mount": 116,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryProvider",
+          "typeId": 32
+        },
+        {
+          "mount": 117,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Providers",
+          "typeId": 33
+        },
+        {
+          "mount": 118,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 34
+        },
+        {
+          "mount": 119,
+          "index": 0,
+          "tag": 27,
+          "key": null,
+          "name": "body",
+          "typeId": null
+        },
+        {
+          "mount": 120,
+          "index": 1,
+          "tag": 27,
+          "key": null,
+          "name": "html",
+          "typeId": null
+        },
+        {
+          "mount": 121,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 122,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 123,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "__next_root_layout_boundary__",
+          "typeId": 35
+        },
+        {
+          "mount": 124,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 125,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 126,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 127,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 128,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "DevRootHTTPAccessFallbackBoundary",
+          "typeId": 36
+        },
+        {
+          "mount": 129,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "AppDevOverlayErrorBoundary",
+          "typeId": 37
+        },
+        {
+          "mount": 130,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HotReload",
+          "typeId": 38
+        },
+        {
+          "mount": 131,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 132,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "AppRouterContext",
+          "typeId": 39
+        },
+        {
+          "mount": 133,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "GlobalLayoutRouterContext",
+          "typeId": 40
+        },
+        {
+          "mount": 134,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "SearchParamsContext",
+          "typeId": 41
+        },
+        {
+          "mount": 135,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "PathnameContext",
+          "typeId": 42
+        },
+        {
+          "mount": 136,
+          "index": 2,
+          "tag": 10,
+          "key": null,
+          "name": "PathParamsContext",
+          "typeId": 43
+        },
+        {
+          "mount": 137,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Router",
+          "typeId": 44
+        },
+        {
+          "mount": 138,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 139,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 140,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RootErrorBoundary",
+          "typeId": 45
+        },
+        {
+          "mount": 141,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AppRouter",
+          "typeId": 46
+        },
+        {
+          "mount": 142,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 47
+        },
+        {
+          "mount": 143,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ServerRoot",
+          "typeId": 48
+        },
+        {
+          "mount": 144,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Root",
+          "typeId": 49
+        },
+        {
+          "mount": 145,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "HeadManagerContext",
+          "typeId": 50
+        },
+        {
+          "mount": 146,
+          "index": 0,
+          "tag": 8,
+          "key": null,
+          "name": "Symbol(react.strict_mode)",
+          "typeId": null
+        },
+        {
+          "mount": 147,
+          "index": 0,
+          "tag": 3,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        }
+      ],
+      "dialogStillOpen": true,
+      "history": [
+        {
+          "at": 1788793587950,
+          "name": "replaceState",
+          "path": "/en/dashboard/purchase-orders",
+          "search": "",
+          "stack": "Error\n    at history.<computed> [as replaceState] (<anonymous>:2:1179)\n    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:105:28)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23669:20)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at commitHookEffectListMount (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:12345:29)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13632:13)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13640:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13898:11)\n    at flushMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16022:13)\n    at commitRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15996:9)\n    at commitRootWhenReady (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15228:7)\n    at performWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15147:15)\n    at performWorkOnRootViaSchedulerTask (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16816:7)\n    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:45:48)"
+        },
+        {
+          "at": 1788793591484,
+          "name": "replaceState",
+          "path": "/en/dashboard/purchase-orders",
+          "search": "",
+          "stack": "Error\n    at history.<computed> (<anonymous>:2:1179)\n    at History.replaceState (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:319:24)\n    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:105:28)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23669:20)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at commitHookEffectListMount (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:12345:29)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13632:13)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13640:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13898:11)\n    at flushMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16022:13)\n    at commitRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15996:9)\n    at Object.onUnsuspend (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:21077:11)"
+        },
+        {
+          "at": 1788793594350,
+          "name": "replaceState",
+          "path": "/en/dashboard/purchase-orders",
+          "search": "",
+          "stack": "Error\n    at history.<computed> (<anonymous>:2:1179)\n    at History.replaceState (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:319:24)\n    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:105:28)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23669:20)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at commitHookEffectListMount (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:12345:29)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13632:13)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13640:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13898:11)\n    at flushMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16022:13)\n    at commitRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15996:9)\n    at Object.onUnsuspend (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:21077:11)"
+        }
+      ],
+      "currentPath": "/en/dashboard/purchase-orders"
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [],
+      "completed": [],
+      "layouts": [],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "register ready",
+          "ms": 5222
+        }
+      ],
+      "before": [
+        {
+          "mount": 1,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "input",
+          "typeId": null
+        },
+        {
+          "mount": 2,
+          "index": 1,
+          "tag": 11,
+          "key": null,
+          "name": "Input",
+          "typeId": 1
+        },
+        {
+          "mount": 3,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 4,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 5,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 6,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ModernPurchaseOrderTable",
+          "typeId": 2
+        },
+        {
+          "mount": 7,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "PurchaseOrderManagement",
+          "typeId": 3
+        },
+        {
+          "mount": 8,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 9,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 10,
+          "index": 1,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 11,
+          "index": 2,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 12,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 13,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 14,
+          "index": 0,
+          "tag": 0,
+          "key": "c-page",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 15,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 16,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 17,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 18,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 19,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 20,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 21,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 22,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 23,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 24,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 25,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 26,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 27,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 28,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 29,
+          "index": 0,
+          "tag": 10,
+          "key": "__PAGE__",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 30,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 31,
+          "index": 0,
+          "tag": 0,
+          "key": "__PAGE__",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 32,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 33,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 34,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 35,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 36,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 37,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 38,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 39,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 40,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 41,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 42,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 43,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 44,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 45,
+          "index": 0,
+          "tag": 10,
+          "key": "purchase-orders",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 46,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 47,
+          "index": 0,
+          "tag": 0,
+          "key": "purchase-orders",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 48,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 49,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 50,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 51,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 52,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 53,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 54,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 55,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 56,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 57,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 58,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 59,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 60,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 61,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 62,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 63,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 64,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 65,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 66,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 67,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 68,
+          "index": 0,
+          "tag": 10,
+          "key": "dashboard",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 69,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 70,
+          "index": 0,
+          "tag": 0,
+          "key": "dashboard",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 71,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 72,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 73,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 74,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 75,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 76,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 77,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 78,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 79,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 80,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 81,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 82,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 83,
+          "index": 0,
+          "tag": 10,
+          "key": "(dashboard)",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 84,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 85,
+          "index": 0,
+          "tag": 0,
+          "key": "(dashboard)",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 86,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 87,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 21
+        },
+        {
+          "mount": 88,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "IntlProvider",
+          "typeId": 22
+        },
+        {
+          "mount": 89,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "NextIntlClientProvider",
+          "typeId": 23
+        },
+        {
+          "mount": 90,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 91,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 92,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 93,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 94,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 95,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 96,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 97,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 98,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 99,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 100,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 101,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 102,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 103,
+          "index": 0,
+          "tag": 10,
+          "key": "locale|fr|d",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 104,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 105,
+          "index": 0,
+          "tag": 0,
+          "key": "locale|fr|d",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 106,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 107,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 24
+        },
+        {
+          "mount": 108,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "V",
+          "typeId": 25
+        },
+        {
+          "mount": 109,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "J",
+          "typeId": 26
+        },
+        {
+          "mount": 110,
+          "index": 0,
+          "tag": 7,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 111,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 27
+        },
+        {
+          "mount": 112,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "NotificationProvider",
+          "typeId": 28
+        },
+        {
+          "mount": 113,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AuthProvider",
+          "typeId": 29
+        },
+        {
+          "mount": 114,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 30
+        },
+        {
+          "mount": 115,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryClientProvider",
+          "typeId": 31
+        },
+        {
+          "mount": 116,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryProvider",
+          "typeId": 32
+        },
+        {
+          "mount": 117,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Providers",
+          "typeId": 33
+        },
+        {
+          "mount": 118,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 34
+        },
+        {
+          "mount": 119,
+          "index": 0,
+          "tag": 27,
+          "key": null,
+          "name": "body",
+          "typeId": null
+        },
+        {
+          "mount": 120,
+          "index": 1,
+          "tag": 27,
+          "key": null,
+          "name": "html",
+          "typeId": null
+        },
+        {
+          "mount": 121,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 122,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 123,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "__next_root_layout_boundary__",
+          "typeId": 35
+        },
+        {
+          "mount": 124,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 125,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 126,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 127,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 128,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "DevRootHTTPAccessFallbackBoundary",
+          "typeId": 36
+        },
+        {
+          "mount": 129,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "AppDevOverlayErrorBoundary",
+          "typeId": 37
+        },
+        {
+          "mount": 130,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HotReload",
+          "typeId": 38
+        },
+        {
+          "mount": 131,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 132,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "AppRouterContext",
+          "typeId": 39
+        },
+        {
+          "mount": 133,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "GlobalLayoutRouterContext",
+          "typeId": 40
+        },
+        {
+          "mount": 134,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "SearchParamsContext",
+          "typeId": 41
+        },
+        {
+          "mount": 135,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "PathnameContext",
+          "typeId": 42
+        },
+        {
+          "mount": 136,
+          "index": 2,
+          "tag": 10,
+          "key": null,
+          "name": "PathParamsContext",
+          "typeId": 43
+        },
+        {
+          "mount": 137,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Router",
+          "typeId": 44
+        },
+        {
+          "mount": 138,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 139,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 140,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RootErrorBoundary",
+          "typeId": 45
+        },
+        {
+          "mount": 141,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AppRouter",
+          "typeId": 46
+        },
+        {
+          "mount": 142,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 47
+        },
+        {
+          "mount": 143,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ServerRoot",
+          "typeId": 48
+        },
+        {
+          "mount": 144,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Root",
+          "typeId": 49
+        },
+        {
+          "mount": 145,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "HeadManagerContext",
+          "typeId": 50
+        },
+        {
+          "mount": 146,
+          "index": 0,
+          "tag": 8,
+          "key": null,
+          "name": "Symbol(react.strict_mode)",
+          "typeId": null
+        },
+        {
+          "mount": 147,
+          "index": 0,
+          "tag": 3,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        }
+      ],
+      "after": [
+        {
+          "mount": 1,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "input",
+          "typeId": null
+        },
+        {
+          "mount": 2,
+          "index": 1,
+          "tag": 11,
+          "key": null,
+          "name": "Input",
+          "typeId": 1
+        },
+        {
+          "mount": 3,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 4,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 5,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 6,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ModernPurchaseOrderTable",
+          "typeId": 2
+        },
+        {
+          "mount": 7,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "PurchaseOrderManagement",
+          "typeId": 3
+        },
+        {
+          "mount": 8,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 9,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 10,
+          "index": 1,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 11,
+          "index": 2,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 12,
+          "index": 0,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 13,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 14,
+          "index": 0,
+          "tag": 0,
+          "key": "c-page",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 15,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 16,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 17,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 18,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 19,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 20,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 21,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 22,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 23,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 24,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 25,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 26,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 27,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 28,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 29,
+          "index": 0,
+          "tag": 10,
+          "key": "__PAGE__",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 30,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 31,
+          "index": 0,
+          "tag": 0,
+          "key": "__PAGE__",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 32,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 33,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 34,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 35,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 36,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 37,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 38,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 39,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 40,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 41,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 42,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 43,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 44,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 45,
+          "index": 0,
+          "tag": 10,
+          "key": "purchase-orders",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 46,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 47,
+          "index": 0,
+          "tag": 0,
+          "key": "purchase-orders",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 48,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 49,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "main",
+          "typeId": null
+        },
+        {
+          "mount": 50,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 51,
+          "index": 1,
+          "tag": 5,
+          "key": null,
+          "name": "div",
+          "typeId": null
+        },
+        {
+          "mount": 52,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 53,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 54,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 55,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 56,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 57,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 58,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 59,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 60,
+          "index": 0,
+          "tag": 22,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 61,
+          "index": 0,
+          "tag": 13,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 62,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 63,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 64,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 65,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 66,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 67,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 68,
+          "index": 0,
+          "tag": 10,
+          "key": "dashboard",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 69,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 70,
+          "index": 0,
+          "tag": 0,
+          "key": "dashboard",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 71,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 72,
+          "index": 0,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 73,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 74,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 75,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 76,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 77,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 78,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 79,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 80,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 81,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 82,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 83,
+          "index": 0,
+          "tag": 10,
+          "key": "(dashboard)",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 84,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 85,
+          "index": 0,
+          "tag": 0,
+          "key": "(dashboard)",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 86,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 87,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 21
+        },
+        {
+          "mount": 88,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "IntlProvider",
+          "typeId": 22
+        },
+        {
+          "mount": 89,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "NextIntlClientProvider",
+          "typeId": 23
+        },
+        {
+          "mount": 90,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 91,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 92,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 93,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "InnerLayoutRouter",
+          "typeId": 6
+        },
+        {
+          "mount": 94,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 95,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 96,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 97,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 98,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "LoadingBoundary",
+          "typeId": 10
+        },
+        {
+          "mount": 99,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 100,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "InnerScrollAndFocusHandler",
+          "typeId": 13
+        },
+        {
+          "mount": 101,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ScrollAndFocusHandler",
+          "typeId": 14
+        },
+        {
+          "mount": 102,
+          "index": 2,
+          "tag": 0,
+          "key": null,
+          "name": "RenderFromTemplateContext",
+          "typeId": 15
+        },
+        {
+          "mount": 103,
+          "index": 0,
+          "tag": 10,
+          "key": "locale|fr|d",
+          "name": "TemplateContext",
+          "typeId": 16
+        },
+        {
+          "mount": 104,
+          "index": 0,
+          "tag": 10,
+          "key": "0",
+          "name": "[object Object]",
+          "typeId": 17
+        },
+        {
+          "mount": 105,
+          "index": 0,
+          "tag": 0,
+          "key": "locale|fr|d",
+          "name": "SegmentStateProvider",
+          "typeId": 18
+        },
+        {
+          "mount": 106,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "OuterLayoutRouter",
+          "typeId": 19
+        },
+        {
+          "mount": 107,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 24
+        },
+        {
+          "mount": 108,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "V",
+          "typeId": 25
+        },
+        {
+          "mount": 109,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "J",
+          "typeId": 26
+        },
+        {
+          "mount": 110,
+          "index": 0,
+          "tag": 7,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 111,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 27
+        },
+        {
+          "mount": 112,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "NotificationProvider",
+          "typeId": 28
+        },
+        {
+          "mount": 113,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AuthProvider",
+          "typeId": 29
+        },
+        {
+          "mount": 114,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 30
+        },
+        {
+          "mount": 115,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryClientProvider",
+          "typeId": 31
+        },
+        {
+          "mount": 116,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "QueryProvider",
+          "typeId": 32
+        },
+        {
+          "mount": 117,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Providers",
+          "typeId": 33
+        },
+        {
+          "mount": 118,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 34
+        },
+        {
+          "mount": 119,
+          "index": 0,
+          "tag": 27,
+          "key": null,
+          "name": "body",
+          "typeId": null
+        },
+        {
+          "mount": 120,
+          "index": 1,
+          "tag": 27,
+          "key": null,
+          "name": "html",
+          "typeId": null
+        },
+        {
+          "mount": 121,
+          "index": 1,
+          "tag": 7,
+          "key": "c",
+          "name": "null",
+          "typeId": null
+        },
+        {
+          "mount": 122,
+          "index": 0,
+          "tag": 0,
+          "key": "layout",
+          "name": "SegmentViewNode",
+          "typeId": 4
+        },
+        {
+          "mount": 123,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "__next_root_layout_boundary__",
+          "typeId": 35
+        },
+        {
+          "mount": 124,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "RedirectErrorBoundary",
+          "typeId": 7
+        },
+        {
+          "mount": 125,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RedirectBoundary",
+          "typeId": 8
+        },
+        {
+          "mount": 126,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "HTTPAccessFallbackErrorBoundary",
+          "typeId": 20
+        },
+        {
+          "mount": 127,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HTTPAccessFallbackBoundary",
+          "typeId": 9
+        },
+        {
+          "mount": 128,
+          "index": 1,
+          "tag": 0,
+          "key": null,
+          "name": "DevRootHTTPAccessFallbackBoundary",
+          "typeId": 36
+        },
+        {
+          "mount": 129,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "AppDevOverlayErrorBoundary",
+          "typeId": 37
+        },
+        {
+          "mount": 130,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "HotReload",
+          "typeId": 38
+        },
+        {
+          "mount": 131,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "LayoutRouterContext",
+          "typeId": 5
+        },
+        {
+          "mount": 132,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "AppRouterContext",
+          "typeId": 39
+        },
+        {
+          "mount": 133,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "GlobalLayoutRouterContext",
+          "typeId": 40
+        },
+        {
+          "mount": 134,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "SearchParamsContext",
+          "typeId": 41
+        },
+        {
+          "mount": 135,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "PathnameContext",
+          "typeId": 42
+        },
+        {
+          "mount": 136,
+          "index": 2,
+          "tag": 10,
+          "key": null,
+          "name": "PathParamsContext",
+          "typeId": 43
+        },
+        {
+          "mount": 137,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Router",
+          "typeId": 44
+        },
+        {
+          "mount": 138,
+          "index": 0,
+          "tag": 1,
+          "key": null,
+          "name": "ErrorBoundaryHandler",
+          "typeId": 11
+        },
+        {
+          "mount": 139,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ErrorBoundary",
+          "typeId": 12
+        },
+        {
+          "mount": 140,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "RootErrorBoundary",
+          "typeId": 45
+        },
+        {
+          "mount": 141,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "AppRouter",
+          "typeId": 46
+        },
+        {
+          "mount": 142,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "[object Object]",
+          "typeId": 47
+        },
+        {
+          "mount": 143,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "ServerRoot",
+          "typeId": 48
+        },
+        {
+          "mount": 144,
+          "index": 0,
+          "tag": 0,
+          "key": null,
+          "name": "Root",
+          "typeId": 49
+        },
+        {
+          "mount": 145,
+          "index": 0,
+          "tag": 10,
+          "key": null,
+          "name": "HeadManagerContext",
+          "typeId": 50
+        },
+        {
+          "mount": 146,
+          "index": 0,
+          "tag": 8,
+          "key": null,
+          "name": "Symbol(react.strict_mode)",
+          "typeId": null
+        },
+        {
+          "mount": 147,
+          "index": 0,
+          "tag": 3,
+          "key": null,
+          "name": "null",
+          "typeId": null
+        }
+      ],
+      "dialogStillOpen": true,
+      "history": [
+        {
+          "at": 1788793604451,
+          "name": "replaceState",
+          "path": "/fr/dashboard/purchase-orders",
+          "search": "",
+          "stack": "Error\n    at history.<computed> [as replaceState] (<anonymous>:2:1179)\n    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:105:28)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23669:20)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at commitHookEffectListMount (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:12345:29)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13632:13)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13640:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13898:11)\n    at flushMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16022:13)\n    at commitRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15996:9)\n    at commitRootWhenReady (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15228:7)\n    at performWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15147:15)\n    at performWorkOnRootViaSchedulerTask (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16816:7)\n    at MessagePort.performWorkUntilDeadline (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/scheduler/cjs/scheduler.development.js:45:48)"
+        },
+        {
+          "at": 1788793610154,
+          "name": "replaceState",
+          "path": "/fr/dashboard/purchase-orders",
+          "search": "",
+          "stack": "Error\n    at history.<computed> (<anonymous>:2:1179)\n    at History.replaceState (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:319:24)\n    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/client/components/app-router.js:105:28)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23669:20)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at commitHookEffectListMount (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:12345:29)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13632:13)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13640:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13624:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:14092:11)\n    at recursivelyTraverseMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13612:11)\n    at commitMutationEffectsOnFiber (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13898:11)\n    at flushMutationEffects (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16022:13)\n    at commitRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15996:9)\n    at Object.onUnsuspend (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:21077:11)"
+        }
+      ],
+      "currentPath": "/fr/dashboard/purchase-orders"
+    }
+  ],
+  "scope": "Actual local application 3110; synthetic purchase orders, real sign-in, external traffic fenced; no financial posting, real supplier messaging or production changes.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "a9acb8a6fba3964e10e80ccb2e781d2054f24ffa489302f0bce62ab6e36fb199",
+    "messages/fr.json": "66785b0b17faf481279b0fb9b3cb329a1c84d261f0f8a66218a9044b88941c17",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+    "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+    "services/purchase-order/purchase-order.service.ts": "2f7fb3282347c1a80d4c17fcd91c02e7bb147071db23ce9a8c2322e8ed9387f2",
+    "services/purchase-order/purchase-order-approval.ts": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0",
+    "services/purchase-order/purchase-order-approval-contracts.ts": "790e9fc8dc332a9c7ff79a0f10034b55036dfd61d829174a94b1cf325e85bb30",
+    "services/purchase-order/purchase-order-capabilities.ts": "4815c79b46ffe297f4377fa1b8a26901871f1ef4bd1cc536d69b0d2983785b8d",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "8ce3af5943121a7db0d50e4cb084904902ac292356c055c059088353c7b9a85f",
+    "components/purchase-orders/PurchaseOrderApprovalDialog.tsx": "1f2c5c7aaeb006a0995345a31172d6c4af83085aa5d4408c6d0ffc4b69bd4b74",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "ee3d959eb5bce238d82e4327432220752a4f0f4cb521a058c8ca86de330a4c3a",
+    "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx": "25bc1a41a713af960f868a9c8210c75fd8ff4f800adf481bd6f68e5c4fadbde3",
+    "hooks/useRecentPurchaseOrderQueries.ts": "cd183fe90ffbb0bf42be50147dd61c69ee7a1bbdedb8004f7fab6ea0cbc790af"
+  },
+  "sourceStable": true
+}

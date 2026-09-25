@@ -1,0 +1,74 @@
+{
+  "tests": {
+    "exitCode": 0,
+    "terminalReceipt": "639e7c",
+    "file": "evidence/statement-recipient-tests-03.json",
+    "passed": 80,
+    "suites": 10,
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath 'app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx' 'lib/security/__tests__/middleware-routing.test.ts' 'services/communication/__tests__/customer-statement-delivery-worker.service.test.ts' 'services/accounting/__tests__/customer-statement-history.service.test.ts' 'services/accounting/__tests__/customer-statement-recipient-action.service.test.ts' 'hooks/__tests__/statement-recipient-request.test.ts' 'app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts' 'services/accounting/__tests__/customer-statement-delivery.service.test.ts' 'services/accounting/__tests__/customer-statement-access.service.test.ts' 'app/api/customer-statements/[statementId]/__tests__/route.test.ts' --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-recipient-tests-03.json"
+  },
+  "postgres": {
+    "exitCode": 0,
+    "terminalReceipt": "d434dd",
+    "file": "lanes/environment/statement-recipient-postgres-96e7edbd-777.json",
+    "checks": 9,
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-recipient-postgres.cjs"
+  },
+  "browser": {
+    "exitCode": 0,
+    "terminalReceipt": "04dbfc",
+    "file": "lanes/environment/statement-recipient-browser-3749969d-5e4.json",
+    "journeys": 2,
+    "screenshots": 22,
+    "widthTextCases": 12,
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-recipient-browser.cjs"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "terminalReceipt": "83d197",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "lint": {
+    "exitCode": 0,
+    "terminalReceipt": "c22a36",
+    "invocationReceipt": "af53e6",
+    "scope": "Seventeen changed recipient service/schema/helper/portal/test/middleware files listed in the invocation.",
+    "paths": [
+      "middleware.ts",
+      "lib/security/__tests__/middleware-routing.test.ts",
+      "app/customer-statement/[statementId]/CustomerStatementPortal.tsx",
+      "app/customer-statement/[statementId]/statement-portal-copy.ts",
+      "app/customer-statement/[statementId]/page.tsx",
+      "app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx",
+      "app/api/customer-statements/[statementId]/route.ts",
+      "app/api/customer-statements/[statementId]/actions/route.ts",
+      "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+      "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+      "hooks/statement-recipient-request.ts",
+      "hooks/__tests__/statement-recipient-request.test.ts",
+      "services/accounting/customer-statement-http.ts",
+      "services/accounting/customer-statement.schemas.ts",
+      "services/accounting/customer-statement-recipient-action.service.ts",
+      "services/accounting/customer-statement-delivery.service.ts",
+      "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts"
+    ],
+    "command": "node node_modules/eslint/bin/eslint.js 'middleware.ts' 'lib/security/__tests__/middleware-routing.test.ts' 'app/customer-statement/[statementId]/CustomerStatementPortal.tsx' 'app/customer-statement/[statementId]/statement-portal-copy.ts' 'app/customer-statement/[statementId]/page.tsx' 'app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx' 'app/api/customer-statements/[statementId]/route.ts' 'app/api/customer-statements/[statementId]/actions/route.ts' 'app/api/customer-statements/[statementId]/__tests__/route.test.ts' 'app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts' 'hooks/statement-recipient-request.ts' 'hooks/__tests__/statement-recipient-request.test.ts' 'services/accounting/customer-statement-http.ts' 'services/accounting/customer-statement.schemas.ts' 'services/accounting/customer-statement-recipient-action.service.ts' 'services/accounting/customer-statement-delivery.service.ts' 'services/accounting/__tests__/customer-statement-recipient-action.service.test.ts'"
+  },
+  "baseline": {
+    "file": "evidence/source-baseline-v44.json",
+    "exitCode": 0,
+    "terminalReceipt": "3620b4"
+  },
+  "visualInspection": {
+    "scope": "Actual French desktop and 390px screenshots inspected; product colors and themed native dropdowns visible. Twelve measured width/text cases include 320px at 200% CSS text. Native browser zoom and actual screen readers remain unverified. Native date-control formatting follows the browser/platform."
+  },
+  "build": {
+    "status": "not_run",
+    "reason": "Actual owned Next development app compiled and served the affected pages/APIs and middleware. No full application build is claimed; default migration-bearing build was not invoked."
+  },
+  "before": {
+    "file": "lanes/environment/statement-recipient-before-648e606e-f46.json",
+    "terminalReceipt": "202717",
+    "defectsReproduced": 3
+  }
+}

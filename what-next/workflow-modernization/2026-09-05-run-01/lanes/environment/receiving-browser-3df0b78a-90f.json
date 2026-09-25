@@ -1,0 +1,172 @@
+{
+  "run": "3df0b78a-90f",
+  "at": "2026-09-07T18:20:53.721Z",
+  "sourcesBefore": {
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "9317bcaa4d81e24962e2de5d16f39c725d8302a50206d69f932fa6d863b32080",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "1d319ec2c1e0c536bf1e9b141a8f4e69c8aabd0fc6a0db11e45ff7bc5499a97f",
+    "messages/en.json": "7edd2dbf465492a29677f862152235d01a147512eab859444dd81030839f0636",
+    "messages/fr.json": "a51c42bfd143a058e52931b93b4446cc0b5bde4e3372b06ee5fea3ed0f849e5a"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "completed": [
+        "Partially entered receiving details survive an actual page refresh under the same tenant and actor",
+        "Held review shows fractional quantity, exact currency value and stock consequences; keyboard, responsive and text reflow checked",
+        "Stale submission has no receipt; lost committed response recovers after reload with one held receipt",
+        "Original inspector cannot accept own failed inspection; current password permits rejection without stock effects",
+        "Passed receipt posts exact 0.125 stock and history displays separate accounting review, not a journal success",
+        "Independent receiver resolves the held arrival through the actual authenticated application and posts stock once"
+      ],
+      "screenshots": [
+        "receiving-en-draft-after-refresh-3df0b78a-90f.png",
+        "receiving-en-review-held-desktop-3df0b78a-90f.png",
+        "receiving-en-review-768-3df0b78a-90f.png",
+        "receiving-en-review-390-3df0b78a-90f.png",
+        "receiving-en-review-320-3df0b78a-90f.png",
+        "receiving-en-text-reflow-3df0b78a-90f.png",
+        "receiving-en-stale-review-3df0b78a-90f.png",
+        "receiving-en-committed-response-lost-3df0b78a-90f.png",
+        "receiving-en-reload-recovery-3df0b78a-90f.png",
+        "receiving-en-recovered-held-3df0b78a-90f.png",
+        "receiving-en-rejected-no-stock-3df0b78a-90f.png",
+        "receiving-en-received-stock-accounting-review-3df0b78a-90f.png",
+        "receiving-en-receipt-history-3df0b78a-90f.png",
+        "receiving-en-independent-accepted-stock-3df0b78a-90f.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 254,
+          "clientWidth": 254
+        }
+      ],
+      "timings": [
+        {
+          "name": "order-detail",
+          "ms": 3993
+        },
+        {
+          "name": "order-detail",
+          "ms": 2260
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "completed": [
+        "Partially entered receiving details survive an actual page refresh under the same tenant and actor",
+        "Held review shows fractional quantity, exact currency value and stock consequences; keyboard, responsive and text reflow checked",
+        "Stale submission has no receipt; lost committed response recovers after reload with one held receipt",
+        "Original inspector cannot accept own failed inspection; current password permits rejection without stock effects",
+        "Passed receipt posts exact 0.125 stock and history displays separate accounting review, not a journal success",
+        "Independent receiver resolves the held arrival through the actual authenticated application and posts stock once"
+      ],
+      "screenshots": [
+        "receiving-fr-draft-after-refresh-3df0b78a-90f.png",
+        "receiving-fr-review-held-desktop-3df0b78a-90f.png",
+        "receiving-fr-review-768-3df0b78a-90f.png",
+        "receiving-fr-review-390-3df0b78a-90f.png",
+        "receiving-fr-review-320-3df0b78a-90f.png",
+        "receiving-fr-text-reflow-3df0b78a-90f.png",
+        "receiving-fr-stale-review-3df0b78a-90f.png",
+        "receiving-fr-committed-response-lost-3df0b78a-90f.png",
+        "receiving-fr-reload-recovery-3df0b78a-90f.png",
+        "receiving-fr-recovered-held-3df0b78a-90f.png",
+        "receiving-fr-rejected-no-stock-3df0b78a-90f.png",
+        "receiving-fr-received-stock-accounting-review-3df0b78a-90f.png",
+        "receiving-fr-receipt-history-3df0b78a-90f.png",
+        "receiving-fr-independent-accepted-stock-3df0b78a-90f.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 254,
+          "clientWidth": 254
+        }
+      ],
+      "timings": [
+        {
+          "name": "order-detail",
+          "ms": 2081
+        },
+        {
+          "name": "order-detail",
+          "ms": 2751
+        }
+      ],
+      "pageErrors": []
+    }
+  ],
+  "scope": "Actual authenticated owned local application 3110, synthetic approved-order setup, real receiving/inspection/stock effects. Accounting review remains explicitly outstanding.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "9317bcaa4d81e24962e2de5d16f39c725d8302a50206d69f932fa6d863b32080",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "1d319ec2c1e0c536bf1e9b141a8f4e69c8aabd0fc6a0db11e45ff7bc5499a97f",
+    "messages/en.json": "7edd2dbf465492a29677f862152235d01a147512eab859444dd81030839f0636",
+    "messages/fr.json": "a51c42bfd143a058e52931b93b4446cc0b5bde4e3372b06ee5fea3ed0f849e5a"
+  },
+  "sourceStable": true
+}

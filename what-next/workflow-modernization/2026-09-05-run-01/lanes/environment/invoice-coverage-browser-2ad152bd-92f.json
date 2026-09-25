@@ -1,0 +1,72 @@
+{
+  "at": "2026-09-08T19:34:23.021Z",
+  "run": "2ad152bd-92f",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx": "888cac21fb94a53b2d2019b971efa289d23f012297e75b7a9bbf50cc5083a30d",
+    "components/dashboard/primitives/command-center-primitives.tsx": "ab5cb123d0032fea3b2ced2670634c4df8dd3d4007913fc191d17bf58f47dbe5",
+    "components/purchasing/APHistoryWorkbench.tsx": "2b441b13f756273719d93b1a449aec435e397a7271fd300540ea65520b50a528",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-coverage-en-covered-desktop-2ad152bd-92f.png",
+        "invoice-coverage-en-covered-details-2ad152bd-92f.png",
+        "invoice-coverage-en-failure-2ad152bd-92f.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 15166
+        }
+      ],
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-2ad152bd-92f-en' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-2ad152bd-92f-en', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-2ad152bd-92f-en' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-2ad152bd-92f-en', exact: true })\n    112 × locator resolved to <button type=\"button\" aria-label=\"Details: REVIEWED-coverage-ui-2ad152bd-92f-en\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-8 px-3 text-xs dashboard-button-secondary min-h-10 rounded-lg\">…</button>\n        - unexpected value \"inactive\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-coverage-fr-covered-desktop-2ad152bd-92f.png",
+        "invoice-coverage-fr-covered-details-2ad152bd-92f.png",
+        "invoice-coverage-fr-failure-2ad152bd-92f.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 7323
+        }
+      ],
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-2ad152bd-92f-fr' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-2ad152bd-92f-fr', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-2ad152bd-92f-fr' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-2ad152bd-92f-fr', exact: true })\n    113 × locator resolved to <button type=\"button\" aria-label=\"Details: REVIEWED-coverage-ui-2ad152bd-92f-fr\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-8 px-3 text-xs dashboard-button-secondary min-h-10 rounded-lg\">…</button>\n        - unexpected value \"inactive\"\n"
+    }
+  ],
+  "scope": "Owned localhost invoice/payment/credit service fixtures; actual authenticated EN/FR history and financial read models. Credit/return calls use trusted domain fixture scope, not public-action authority proof. No real bank rail or notification delivery.",
+  "originalBefore": "6dc35a8d891933212fa9abf4dd209b5541c37d9082e9e4aad3ffaf5c2dc17eda",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx": "888cac21fb94a53b2d2019b971efa289d23f012297e75b7a9bbf50cc5083a30d",
+    "components/dashboard/primitives/command-center-primitives.tsx": "ab5cb123d0032fea3b2ced2670634c4df8dd3d4007913fc191d17bf58f47dbe5",
+    "components/purchasing/APHistoryWorkbench.tsx": "2b441b13f756273719d93b1a449aec435e397a7271fd300540ea65520b50a528",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "sourceStable": true
+}

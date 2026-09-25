@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-19T14:53:47.655Z",
+  "serviceMatrix": "digest-handoff-1eb3e1ad-9817-4c96-a139-ed87105a6829.json",
+  "browserAttempts": [
+    "digest-handoff-e8338071-0264-4b28-9329-a546a1486ef0.json",
+    "digest-handoff-a48db9b4-3c0c-4dce-90ee-9e21672b9010.json"
+  ],
+  "browserVerified": false,
+  "sourceHashes": {
+    "services/daily-habit/daily-habit-digest.service.ts": "958fbf944b0d650a8e50adb1a921395859f68f2083d783e395868e7ed5cfa507",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"services/operating-access/__tests__/operating-access-scope.service.test.ts\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/proposal-availability.test.tsx\" \"services/agents/__tests__/command-tool-adapters.test.ts\"",
+    "lint": "node node_modules/eslint/bin/eslint.js \"services/daily-habit/daily-habit-digest.service.ts\" \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/proposal-availability.test.tsx\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "runtime": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-operating-handoff.cjs --service-only"
+  },
+  "results": {
+    "tests": "bdbe5e: 118 passed in four suites",
+    "lint": "555296 passed, four files",
+    "diff": "128494 passed with existing line-ending warning",
+    "typecheck": "FAILED: 6229b6, exit 1. components/auth/BeautifulRegisterForm.tsx(607,20): TS2304 Cannot find name 'Rocket'. The unchanged check completed before the 20-minute stop acted (1a0214); it was not terminated. No Digest diagnostics were emitted. The unrelated registration file was left unchanged. First attempt failed TS6053 during local server restart.",
+    "service": "830ad8 passed: ten EN/FR persisted cases",
+    "browser": "Both attempts timed out at initial authenticated Digest navigation, before browser assertions. Login probes also timed out."
+  },
+  "environmentRecovery": {
+    "ownershipProof": "1c0c79: port-3110 server ancestry matched supplier-ack-local.cjs",
+    "memoryObservation": "924de6: approximately 1.5 GB free; causation not established",
+    "recovery": "ef5979: only verified task-owned server ancestry restarted; no database reset or other process stopped",
+    "readinessLog": "server-recovery-597c58cf-fc3b-42a2-8cdc-67a6d2bb95a2.out.log",
+    "typecheckFailure": "f3fd9f: TS6053 generated .next-workflow-supplier/types files disappeared during the restart; unchanged check rerun after server recovery"
+  },
+  "completeWorkflowVerified": false
+}

@@ -1,0 +1,93 @@
+{
+  "run": "432f0fa6-353",
+  "mode": "after",
+  "at": "2026-09-07T15:14:58.280Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "3cb09762507d74edeff596cbf197cb0e5362235494e94164d238eba1a0c3694b",
+    "services/purchase-order/purchase-order-approval.ts": "6659801624b5e22393790e31c06e88f074746e5cf1a4597215d6ec98431a7e4d",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "dcd984b9e0bf5902cf372676d61ae695e148486c3ff853b26cf1071d29e0ea63",
+    "services/purchase-order/purchase-order-approval-contracts.ts": "fc462db0310794bb5849c80b07d8ff45678c84268cb916ec059878c93de8f141",
+    "services/purchase-order/purchase-order-edit-record.ts": "ab364bd85dfbcbee570f722a6f09eaf4b4db69bde809cf7b6d4f67d19463e286",
+    "services/modules/module-entitlement.service.ts": "8ed20e814484b50d009025956f0217483342c1f674d75ccc2ca81edba72e0ff4",
+    "prisma/schema.prisma": "b8f3f803a9d1a7533ef67def7f9e875b89a251c8134907b21dcea840b68d5390",
+    "lib/security/rbac-permissions.ts": "e4e72ac192ea3bcdc9959e36187566800d49004de493baa835aee32657cbab84",
+    "services/roles/role-custodian-policy.ts": "fbc8a3155646811d4051f034bae07e94358752733b6a2da429e9f894e24156b1"
+  },
+  "checks": [
+    {
+      "name": "role change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "FORBIDDEN",
+      "unchanged": true
+    },
+    {
+      "name": "session change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "FORBIDDEN",
+      "unchanged": true
+    },
+    {
+      "name": "stale-line change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "CONFLICT",
+      "unchanged": true
+    },
+    {
+      "name": "freshness change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "FRESH_AUTH_REQUIRED",
+      "unchanged": true
+    },
+    {
+      "name": "Exact retry recovers one approval",
+      "status": "passed",
+      "recovered": true,
+      "audits": 1,
+      "unchanged": true
+    },
+    {
+      "name": "Unknown requester, self approval and cross-tenant records remain denied",
+      "status": "passed",
+      "deniedCases": 4
+    },
+    {
+      "name": "Concurrent identical approvals return one event and one audit",
+      "status": "passed",
+      "oneEffect": true
+    },
+    {
+      "name": "Request binding and recovery preserve later order state and omit credentials",
+      "status": "passed",
+      "laterStatePreserved": true,
+      "replayAfterRevocationDenied": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "Missing protocol fields and stopped, expired or suspended grants cannot approve",
+      "status": "passed",
+      "missingFields": 4,
+      "deniedGrants": 4
+    },
+    {
+      "name": "Evidence write failures roll back the approval and exact retry succeeds",
+      "status": "passed",
+      "rolledBackCases": 2
+    }
+  ],
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchase-order/purchase-order.service.ts": "3cb09762507d74edeff596cbf197cb0e5362235494e94164d238eba1a0c3694b",
+    "services/purchase-order/purchase-order-approval.ts": "6659801624b5e22393790e31c06e88f074746e5cf1a4597215d6ec98431a7e4d",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "dcd984b9e0bf5902cf372676d61ae695e148486c3ff853b26cf1071d29e0ea63",
+    "services/purchase-order/purchase-order-approval-contracts.ts": "fc462db0310794bb5849c80b07d8ff45678c84268cb916ec059878c93de8f141",
+    "services/purchase-order/purchase-order-edit-record.ts": "ab364bd85dfbcbee570f722a6f09eaf4b4db69bde809cf7b6d4f67d19463e286",
+    "services/modules/module-entitlement.service.ts": "8ed20e814484b50d009025956f0217483342c1f674d75ccc2ca81edba72e0ff4",
+    "prisma/schema.prisma": "b8f3f803a9d1a7533ef67def7f9e875b89a251c8134907b21dcea840b68d5390",
+    "lib/security/rbac-permissions.ts": "e4e72ac192ea3bcdc9959e36187566800d49004de493baa835aee32657cbab84",
+    "services/roles/role-custodian-policy.ts": "fbc8a3155646811d4051f034bae07e94358752733b6a2da429e9f894e24156b1"
+  }
+}

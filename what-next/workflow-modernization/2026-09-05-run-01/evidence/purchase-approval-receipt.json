@@ -1,0 +1,370 @@
+{
+  "recordedAt": "2026-09-07T15:18:03.192Z",
+  "source": {
+    "branch": "codex/migration-control-plane-release-2026-08-29",
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "hashes": {
+      "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+      "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+      "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+      "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+      "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+      "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+      "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+      "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+      "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+      "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+      "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+      "messages/en.json": "a9acb8a6fba3964e10e80ccb2e781d2054f24ffa489302f0bce62ab6e36fb199",
+      "messages/fr.json": "66785b0b17faf481279b0fb9b3cb329a1c84d261f0f8a66218a9044b88941c17",
+      "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+      "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+      "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+      "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+      "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+      "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+      "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+      "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+      "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+      "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+      "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+      "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+      "services/purchase-order/purchase-order.service.ts": "2f7fb3282347c1a80d4c17fcd91c02e7bb147071db23ce9a8c2322e8ed9387f2",
+      "services/purchase-order/purchase-order-approval.ts": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0",
+      "services/purchase-order/purchase-order-approval-contracts.ts": "790e9fc8dc332a9c7ff79a0f10034b55036dfd61d829174a94b1cf325e85bb30",
+      "services/purchase-order/purchase-order-capabilities.ts": "4815c79b46ffe297f4377fa1b8a26901871f1ef4bd1cc536d69b0d2983785b8d",
+      "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "8ce3af5943121a7db0d50e4cb084904902ac292356c055c059088353c7b9a85f",
+      "components/purchase-orders/PurchaseOrderApprovalDialog.tsx": "2236054355266b9001f473621470bdc433fdf92d1a0d24d7d9c2737af68b2f7e",
+      "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "ee3d959eb5bce238d82e4327432220752a4f0f4cb521a058c8ca86de330a4c3a",
+      "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx": "d6ff2a0d603c67907aa87192679244a7217df89c2737f078970289d7b57abe62",
+      "hooks/useRecentPurchaseOrderQueries.ts": "cd183fe90ffbb0bf42be50147dd61c69ee7a1bbdedb8004f7fab6ea0cbc790af",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx": "536f5075893d9ba9ce2288c52d3e65d7bc8bc0ad26aabfdfe36e6f198e4d8b8f",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx": "4552f782eb96deae1d69331ebb436092e4050c4f38d6843e1ad24f1431ed4805",
+      "services/purchase-order/purchase-order-edit-record.ts": "320e8a461d4b0385a1b5cd527b21e95b7dd91f17940ff5279585bdf8c47a3938",
+      "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+      "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+      "services/purchase-order/__tests__/purchase-order.service.test.ts": "052e18b5f061da68a25787200fda80a69ee9668e1769eb9caf595a737ecdfe02",
+      "services/purchase-order/__tests__/purchase-order-capabilities.test.ts": "4e76a9f3a493e949de5721050de1acfde9b2f9eff0696f204bf9c0d94a1503ec",
+      "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts": "5188d55fd0af26e635c97231939aaef76f1bbf907a715fd916d0f6db7f7be167",
+      "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx": "24cad7c9666dff900ee91cb8dfc6aa512936d44601858dc70f08d8c2a5adb8cf",
+      "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx": "f6e2f79dcfc97e7c623ceb64194b995e3bc0669be6dbf4c38c963dbea14935ec",
+      "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx": "2bfc92f2d6946572ef294caf5af4a1e1b945a192cdcaddd0210749e4eaff78db",
+      "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx": "352c8c0680f3e05fc1576d24c3705c2f85c0a8565e1891718580d7950b920e50",
+      "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "b1a987358c074d966b45cbcf9da283e13f0f8538b707e1c61ddce17e3467b20e",
+      "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts": "5a3151a3c8c3ea59b0232e3da077cf1d4b43bfcbc4b76e97c6f69043ef653878",
+      "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts": "a11ab9a15199ff319781eb3b77102d492e699e37d6c940ef54ceedd39d037326",
+      "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+      "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+      "services/_shared/action-errors.ts": "4cbfb642bddb1472c256ddf2ad952fe713982d91c872022f87730c05db89f2e6",
+      "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+      "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+      "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+      "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+      "components/DataTableComponents/useCanonicalTableUrlState.ts": "76cc0e6bc242002e668ad54d47af621774cc038fd11cfdf717679c122284d173",
+      "components/DataTableComponents/table-system-contract.ts": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2"
+    }
+  },
+  "paths": {
+    "baseline": "evidence/source-baseline-v52.json",
+    "tests": "evidence/purchase-approval-tests-06.json",
+    "checks": "evidence/purchase-approval-final-checks-38b1ef59-a0e.json",
+    "postgres": "lanes/environment/purchase-approval-after-432f0fa6-353.json",
+    "browser": "lanes/environment/purchase-approval-browser-9b11b60a-751.json",
+    "before": "lanes/environment/purchase-approval-before-f5523891-31e.json",
+    "attempts": "evidence/purchase-approval-attempts.md",
+    "guide": "lanes/purchasing-ap/PURCHASE_ORDER_APPROVAL.md"
+  },
+  "guide": "lanes/purchasing-ap/PURCHASE_ORDER_APPROVAL.md",
+  "verificationScripts": {
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-fixtures.cjs": "d31a92f0e49c9a923b72e54af93c0178126400b2f6d07aba86bc858bf7f96b10",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-local.cjs": "9fda9a8e13251bf6945c036accca4c18f2c03715d8cd164c4aa11ba32b3d49cd",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-approval-postgres.cjs": "02058541a838ebf359e44f3765c7caee09ac70d8687a2db33bf3c16cec175545",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-approval-browser.cjs": "3cd2b012c7210005b27f96f0f36ec2cd849b62cdb8500ef60601ed5f93533065",
+    "what-next/workflow-modernization/2026-09-05-run-01/verify-purchase-approval-final.cjs": "174eb3885f8f342c37ed8dafce24cfdf4ba2a4877b293c64d4d0d758138c6562",
+    "what-next/workflow-modernization/2026-09-05-run-01/publish-purchase-approval-v52.cjs": "e812c41b8e2b8956ef55aaa8b11413436ff266cda6bffde58d95afd25625d650"
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-detail-review-desktop-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-detail-review-desktop-9b11b60a-751.png",
+      "sha256": "76a074f8c88a41e36b716b3c7d29ac4006012f4df1b8e92401071a8bed5f4a5c"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-stale-review-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-stale-review-9b11b60a-751.png",
+      "sha256": "3b186e401e43cdb24a6cf3defbadb8a7db8e15c49d833e015bad159b482cc76c"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-review-768-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-review-768-9b11b60a-751.png",
+      "sha256": "756a0e0cddc3438251f69b71525af79f3c0f6d3afb2f8d0a9fcebc19bb50aeea"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-review-390-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-review-390-9b11b60a-751.png",
+      "sha256": "f53426786915071d4f536f2e1f446f8d305e6b9e2bf45188cc8aeb89f975e663"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-review-320-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-review-320-9b11b60a-751.png",
+      "sha256": "4692c51dbaa18a183a343f3b7b92240ee40ebafc9c1ccf8ce399a3347d656e9a"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-text-resize-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-text-resize-9b11b60a-751.png",
+      "sha256": "f03dc118fcdac9088532ba8c1646c5fc01724cab68838001e97dd87c71143240"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-approved-receipt-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-approved-receipt-9b11b60a-751.png",
+      "sha256": "c476a7fbd5bae0203d999f237f5b2d31dd47e57c6e3d68c2935c0049d9e76152"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-register-review-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-register-review-9b11b60a-751.png",
+      "sha256": "fe21f756cd910da64df03fd5cd4ca81c98d57165765278ac7650e6caf7dd35da"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-current-authority-denied-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-current-authority-denied-9b11b60a-751.png",
+      "sha256": "ada106c5c2ce006848f00b3da55e509df8e8248d45b6d8906f208fd878c39a39"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-unknown-outcome-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-unknown-outcome-9b11b60a-751.png",
+      "sha256": "afbf01223e727a9fcb7add2a85b59947d08d7477529044a9cd7e9d3448997d5e"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-reload-recovery-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-reload-recovery-9b11b60a-751.png",
+      "sha256": "922e76f32594aebbf9e6987d6317922dccee51a0201b3b9dc55fb156c9d28007"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-en-recovered-receipt-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-en-recovered-receipt-9b11b60a-751.png",
+      "sha256": "e11f8ef693f51c65143b99c7c9790f2a0febfd84e80cd50efec3d06cd72288df"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-detail-review-desktop-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-detail-review-desktop-9b11b60a-751.png",
+      "sha256": "2e357b05fa69338d3310447c55087ba35dbd1750d5178bfc4787bb8622264ece"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-stale-review-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-stale-review-9b11b60a-751.png",
+      "sha256": "14ad6f649d1b9da157a4bd3f282b50f4f1ef91339c0ab97e6f4887fb5cce3fe5"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-review-768-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-review-768-9b11b60a-751.png",
+      "sha256": "24b1c42901ba18d528c860010b9899e8a991e47045620f99c8a4816eecd1c883"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-review-390-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-review-390-9b11b60a-751.png",
+      "sha256": "c903ebc70801be3dcdce92b90f614f287cfa5813bddaa2435d77d2ec516af780"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-review-320-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-review-320-9b11b60a-751.png",
+      "sha256": "4316e8ba47947bada56faf373f3cb50b881bc5c15e15d1faf547c537352d1f78"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-text-resize-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-text-resize-9b11b60a-751.png",
+      "sha256": "d17b6256d89b1e97cdc003b5447f4aab81b92e71cca79af90b90ba27cb3e0c7b"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-approved-receipt-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-approved-receipt-9b11b60a-751.png",
+      "sha256": "424ab9311538e38cfed927e61c72cd75611da1110dba2dfe89b16c45b8c765e5"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-register-review-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-register-review-9b11b60a-751.png",
+      "sha256": "56f222a8c61bfd0031feedf12e1016a68da8b29e8ba3dcfb65fe13468e8f6e66"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-current-authority-denied-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-current-authority-denied-9b11b60a-751.png",
+      "sha256": "fae40c3862d20d6baf70d1e9d98653e5a30b773baf9a83be06e8fd806d9f10a9"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-unknown-outcome-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-unknown-outcome-9b11b60a-751.png",
+      "sha256": "c9d743b23a2ce05ad3e357ac6a8cd521463783a5d9f590277ace0990295af2a5"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-reload-recovery-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-reload-recovery-9b11b60a-751.png",
+      "sha256": "8e2c2d3829640ba0f8833350011a2512d1d04dfe77547a050d14391061b028b5"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-approval-screenshots/purchase-approval-fr-recovered-receipt-9b11b60a-751.png",
+      "source": "lanes/environment/purchase-approval-fr-recovered-receipt-9b11b60a-751.png",
+      "sha256": "181ec444c646fb2e9c1f8f16a930ace39c2c41df1baacf8675a62e66ec61e100"
+    }
+  ],
+  "results": {
+    "tests": 115,
+    "suites": 10,
+    "postgresGroups": 10,
+    "browserJourneys": 2,
+    "screenshots": 24,
+    "financialAndOriginalRoleInvariantsPreserved": true
+  },
+  "commands": [
+    {
+      "name": "tests",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx",
+        "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+        "services/purchase-order/__tests__/purchase-order-capabilities.test.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts",
+        "--json",
+        "--outputFile=what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\purchase-approval-tests-06.json"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 32086,
+      "stdout": "",
+      "stderr": "\nTest Suites: 10 passed, 10 total\nTests:       115 passed, 115 total\nSnapshots:   0 total\nTime:        21.477 s, estimated 29 s\nRan all test suites within paths \"components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx\", \"components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx\", \"components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx\", \"services/purchase-order/__tests__/purchase-order.service.test.ts\", \"actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts\", \"hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx\", \"services/purchase-order/__tests__/purchase-order-capabilities.test.ts\", \"services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts\", \"components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts\", \"components/purchase-orders/__tests__/purchase-order-edit-model.test.ts\".\nTest results written to: what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\purchase-approval-tests-06.json\n"
+    },
+    {
+      "name": "typecheck",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 53039,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "lint",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/purchase-order/purchase-order-approval.ts",
+        "services/purchase-order/purchase-order-approval-contracts.ts",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "services/purchase-order/__tests__/purchase-order-capabilities.test.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "hooks/useRecentPurchaseOrderQueries.ts",
+        "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+        "components/purchase-orders/PurchaseOrderApprovalDialog.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx",
+        "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+        "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx",
+        "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 7176,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "postgres",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-approval-postgres.cjs"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0
+    },
+    {
+      "name": "browser",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-approval-browser.cjs"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0
+    }
+  ],
+  "timings": [
+    {
+      "locale": "en",
+      "timings": [
+        {
+          "name": "detail ready",
+          "ms": 10190
+        },
+        {
+          "name": "register ready",
+          "ms": 17874
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "timings": [
+        {
+          "name": "detail ready",
+          "ms": 10026
+        },
+        {
+          "name": "register ready",
+          "ms": 11438
+        }
+      ]
+    }
+  ],
+  "completeWorkflowVerified": false,
+  "limitations": [
+    "All-platform discovery and remediation remain unfinished.",
+    "Ordinary submit/cancel/complete/archive authority and recovery remain open.",
+    "Approval-history traversal/export, approved-order amendments, fractional receiving and AP handoffs remain open.",
+    "Native assistive technology, native browser zoom, comprehensive contrast and a full release build remain unverified.",
+    "Development route timings are observations without a production performance pass.",
+    "No live deployment or X1 clearance; prior unrelated global auth/provider approval-review rejections remain respected."
+  ]
+}

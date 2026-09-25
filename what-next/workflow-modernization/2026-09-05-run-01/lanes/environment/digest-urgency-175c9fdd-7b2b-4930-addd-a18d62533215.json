@@ -1,0 +1,474 @@
+{
+  "at": "2026-09-15T13:40:41.756Z",
+  "sourceBefore": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "c46e4f280483f72a3f41582dcca3c3d0f50213eaedac27443b11aff550cfe280",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/bi/BICommandBriefHeader.tsx": "e365fdbaac7987cdf21d6d773cffff6f9d1fca13a20e3b2c7cd6c39f42677f03",
+    "components/evidence/EvidenceGradeBadge.tsx": "3a4f634a3c5b785653f59d1336436536b8ef203a63f2dd546dc999b6b471aaf0",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "fd783d7eee4fa8797d568a0f73359b8adaad6d431496cc1b87cc361aceed06e5"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "digest-urgency-175c9fdd-7b2b-4930-addd-a18d62533215-en-1440.png",
+        "digest-urgency-175c9fdd-7b2b-4930-addd-a18d62533215-en-768.png",
+        "digest-urgency-175c9fdd-7b2b-4930-addd-a18d62533215-en-320.png"
+      ],
+      "errors": [],
+      "accessibility": [
+        {
+          "width": 1440,
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "nodes": [
+                [
+                  ".p-4.dashboard-glass-panel.rounded-lg > .text-base"
+                ],
+                [
+                  ".mt-1.text-\\[var\\(--dash-text-soft\\)\\][role=\"status\"]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .text-base"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .mt-1.text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .py-1.px-2.border-\\[var\\(--dash-border-subtle\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .min-w-0 > p"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .bg-background.shadow-sm[href$=\"purchase-orders\"]"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-base"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".w-fit"
+                ],
+                [
+                  ".bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].focus\\:outline-none:nth-child(1)"
+                ],
+                [
+                  ".capitalize"
+                ],
+                [
+                  ".border-\\[var\\(--dash-success\\)\\].bg-\\[var\\(--dash-success-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  ".gap-1\\.5.py-1.px-2"
+                ],
+                [
+                  "h3"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(3)"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(4)"
+                ],
+                [
+                  ".min-h-9"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .bg-\\[rgba\\(37\\,57\\,67\\,0\\.34\\)\\].gap-1\\.5.focus\\:outline-none"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .border-\\[var\\(--dash-info\\)\\].bg-\\[var\\(--dash-info-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .gap-1\\.5.focus\\:outline-none.focus\\:ring-ring:nth-child(3)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(1)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(2)"
+                ],
+                [
+                  ".mt-3.flex-wrap.text-xs > .bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].py-1"
+                ]
+              ]
+            }
+          ],
+          "passes": [
+            "aria-allowed-attr",
+            "aria-conditional-attr",
+            "aria-deprecated-role",
+            "aria-hidden-focus",
+            "aria-prohibited-attr",
+            "aria-required-attr",
+            "aria-roles",
+            "aria-valid-attr-value",
+            "aria-valid-attr",
+            "duplicate-id-aria",
+            "link-name"
+          ],
+          "evidenceText": [
+            "evidence:",
+            "Raw",
+            "Evidence-backed daily priorities",
+            "Follow up pending purchase orders and receiving evidence.",
+            "evidence:",
+            "Raw",
+            "Follow up pending purchase orders and receiving evidence.",
+            "Follow up pending purchase orders and receiving evidence.",
+            "Follow up pending purchase orders and receiving evidence."
+          ],
+          "evidenceTextExposedInChromium": true
+        },
+        {
+          "width": 320,
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "nodes": [
+                [
+                  ".p-4.dashboard-glass-panel.rounded-lg > .text-base"
+                ],
+                [
+                  ".mt-1.text-\\[var\\(--dash-text-soft\\)\\][role=\"status\"]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .text-base"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .mt-1.text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .py-1.px-2.border-\\[var\\(--dash-border-subtle\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .min-w-0 > p"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .bg-background.shadow-sm[href$=\"purchase-orders\"]"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-base"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".w-fit"
+                ],
+                [
+                  ".bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].focus\\:outline-none:nth-child(1)"
+                ],
+                [
+                  ".capitalize"
+                ],
+                [
+                  ".border-\\[var\\(--dash-success\\)\\].bg-\\[var\\(--dash-success-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  ".gap-1\\.5.py-1.px-2"
+                ],
+                [
+                  "h3"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(3)"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(4)"
+                ],
+                [
+                  ".min-h-9"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .bg-\\[rgba\\(37\\,57\\,67\\,0\\.34\\)\\].gap-1\\.5.focus\\:outline-none"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .border-\\[var\\(--dash-info\\)\\].bg-\\[var\\(--dash-info-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .gap-1\\.5.focus\\:outline-none.focus\\:ring-ring:nth-child(3)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(1)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(2)"
+                ],
+                [
+                  ".mt-3.flex-wrap.text-xs > .bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].py-1"
+                ]
+              ]
+            }
+          ],
+          "passes": [
+            "aria-allowed-attr",
+            "aria-conditional-attr",
+            "aria-deprecated-role",
+            "aria-hidden-focus",
+            "aria-prohibited-attr",
+            "aria-required-attr",
+            "aria-roles",
+            "aria-valid-attr-value",
+            "aria-valid-attr",
+            "duplicate-id-aria",
+            "link-name"
+          ],
+          "evidenceText": [
+            "evidence:",
+            "Raw",
+            "Evidence-backed daily priorities",
+            "Follow up pending purchase orders and receiving evidence.",
+            "evidence:",
+            "Raw",
+            "Follow up pending purchase orders and receiving evidence.",
+            "Follow up pending purchase orders and receiving evidence.",
+            "Follow up pending purchase orders and receiving evidence."
+          ],
+          "evidenceTextExposedInChromium": true
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "digest-urgency-175c9fdd-7b2b-4930-addd-a18d62533215-fr-1440.png",
+        "digest-urgency-175c9fdd-7b2b-4930-addd-a18d62533215-fr-768.png",
+        "digest-urgency-175c9fdd-7b2b-4930-addd-a18d62533215-fr-320.png"
+      ],
+      "errors": [],
+      "accessibility": [
+        {
+          "width": 1440,
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "nodes": [
+                [
+                  ".p-4.dashboard-glass-panel.rounded-lg > .text-base"
+                ],
+                [
+                  ".mt-1.text-\\[var\\(--dash-text-soft\\)\\][role=\"status\"]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .text-base"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .mt-1.text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .py-1.px-2.border-\\[var\\(--dash-border-subtle\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .min-w-0 > p"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .bg-background.shadow-sm[href$=\"purchase-orders\"]"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-base"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".w-fit"
+                ],
+                [
+                  ".bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].focus\\:outline-none:nth-child(1)"
+                ],
+                [
+                  ".capitalize"
+                ],
+                [
+                  ".border-\\[var\\(--dash-success\\)\\].bg-\\[var\\(--dash-success-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  ".gap-1\\.5.py-1.px-2"
+                ],
+                [
+                  "h3"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(3)"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(4)"
+                ],
+                [
+                  ".min-h-9"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .bg-\\[rgba\\(37\\,57\\,67\\,0\\.34\\)\\].gap-1\\.5.focus\\:outline-none"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .border-\\[var\\(--dash-info\\)\\].bg-\\[var\\(--dash-info-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .gap-1\\.5.focus\\:outline-none.focus\\:ring-ring:nth-child(3)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(1)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(2)"
+                ],
+                [
+                  ".mt-3.flex-wrap.text-xs > .bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].py-1"
+                ]
+              ]
+            }
+          ],
+          "passes": [
+            "aria-allowed-attr",
+            "aria-conditional-attr",
+            "aria-deprecated-role",
+            "aria-hidden-focus",
+            "aria-prohibited-attr",
+            "aria-required-attr",
+            "aria-roles",
+            "aria-valid-attr-value",
+            "aria-valid-attr",
+            "duplicate-id-aria",
+            "link-name"
+          ],
+          "evidenceText": [
+            "preuve:",
+            "Brut",
+            "Priorites quotidiennes fondees sur les preuves",
+            "preuve:",
+            "Brut"
+          ],
+          "evidenceTextExposedInChromium": true
+        },
+        {
+          "width": 320,
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "nodes": [
+                [
+                  ".p-4.dashboard-glass-panel.rounded-lg > .text-base"
+                ],
+                [
+                  ".mt-1.text-\\[var\\(--dash-text-soft\\)\\][role=\"status\"]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .text-base"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .mt-1.text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .py-1.px-2.border-\\[var\\(--dash-border-subtle\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .min-w-0 > p"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .bg-background.shadow-sm[href$=\"purchase-orders\"]"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-base"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".w-fit"
+                ],
+                [
+                  ".bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].focus\\:outline-none:nth-child(1)"
+                ],
+                [
+                  ".capitalize"
+                ],
+                [
+                  ".border-\\[var\\(--dash-success\\)\\].bg-\\[var\\(--dash-success-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  ".gap-1\\.5.py-1.px-2"
+                ],
+                [
+                  "h3"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(3)"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(4)"
+                ],
+                [
+                  ".min-h-9"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .bg-\\[rgba\\(37\\,57\\,67\\,0\\.34\\)\\].gap-1\\.5.focus\\:outline-none"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .border-\\[var\\(--dash-info\\)\\].bg-\\[var\\(--dash-info-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .gap-1\\.5.focus\\:outline-none.focus\\:ring-ring:nth-child(3)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(1)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(2)"
+                ],
+                [
+                  ".mt-3.flex-wrap.text-xs > .bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].py-1"
+                ]
+              ]
+            }
+          ],
+          "passes": [
+            "aria-allowed-attr",
+            "aria-conditional-attr",
+            "aria-deprecated-role",
+            "aria-hidden-focus",
+            "aria-prohibited-attr",
+            "aria-required-attr",
+            "aria-roles",
+            "aria-valid-attr-value",
+            "aria-valid-attr",
+            "duplicate-id-aria",
+            "link-name"
+          ],
+          "evidenceText": [
+            "preuve:",
+            "Brut",
+            "Priorites quotidiennes fondees sur les preuves",
+            "preuve:",
+            "Brut"
+          ],
+          "evidenceTextExposedInChromium": true
+        }
+      ]
+    }
+  ],
+  "noFinancialEffects": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "c46e4f280483f72a3f41582dcca3c3d0f50213eaedac27443b11aff550cfe280",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/bi/BICommandBriefHeader.tsx": "e365fdbaac7987cdf21d6d773cffff6f9d1fca13a20e3b2c7cd6c39f42677f03",
+    "components/evidence/EvidenceGradeBadge.tsx": "3a4f634a3c5b785653f59d1336436536b8ef203a63f2dd546dc999b6b471aaf0",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "fd783d7eee4fa8797d568a0f73359b8adaad6d431496cc1b87cc361aceed06e5"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,119 @@
+{
+  "at": "2026-09-08T12:44:33.997Z",
+  "run": "87390cfa-cad",
+  "checks": [
+    {
+      "name": "stale preparation corrected with retained original evidence and one payable after independent approval",
+      "status": "passed"
+    },
+    {
+      "name": "legacy preparation corrected with retained original evidence and one payable after independent approval",
+      "status": "passed"
+    },
+    {
+      "name": "own reservation excluded exactly once while correcting full received quantity",
+      "status": "passed"
+    },
+    {
+      "name": "other invoices keep their receipt reservations",
+      "status": "passed"
+    },
+    {
+      "name": "invoiceNumber identity cannot be replaced by correction",
+      "status": "passed"
+    },
+    {
+      "name": "supplierId identity cannot be replaced by correction",
+      "status": "passed"
+    },
+    {
+      "name": "currency identity cannot be replaced by correction",
+      "status": "passed"
+    },
+    {
+      "name": "foreign authority failure preserves source",
+      "status": "passed"
+    },
+    {
+      "name": "maker authority failure preserves source",
+      "status": "passed"
+    },
+    {
+      "name": "role authority failure preserves source",
+      "status": "passed"
+    },
+    {
+      "name": "fresh authority failure preserves source",
+      "status": "passed"
+    },
+    {
+      "name": "stale correction revision preserves current source",
+      "status": "passed"
+    },
+    {
+      "name": "active exception cannot be silently invalidated",
+      "status": "passed"
+    },
+    {
+      "name": "correction event failure rolls back lines and source before exact retry",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent exact correction records once and repurposed key is denied",
+      "status": "passed"
+    },
+    {
+      "name": "invalid current preparation pointer does not fall back to original proof",
+      "status": "passed"
+    },
+    {
+      "name": "managed purchasing missing blocks correction",
+      "status": "passed"
+    },
+    {
+      "name": "managed purchasing expired blocks correction",
+      "status": "passed"
+    },
+    {
+      "name": "managed purchasing suspended blocks correction",
+      "status": "passed"
+    },
+    {
+      "name": "managed purchasing read_only blocks correction",
+      "status": "passed"
+    },
+    {
+      "name": "rejected exception retains evidence through source correction",
+      "status": "passed"
+    },
+    {
+      "name": "expired-approval exception retains evidence through source correction",
+      "status": "passed"
+    },
+    {
+      "name": "tampered correction command cannot establish current preparation proof",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c74a179426116fbeb25a8953ebaaab93337740aa943f6a502d8ed0c377a04874",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e"
+  },
+  "originalBefore": "0baf747a6f93a4a82d861dea3e092c93b7544e0714f5cc259db53a2be66f4ed2",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c74a179426116fbeb25a8953ebaaab93337740aa943f6a502d8ed0c377a04874",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,89 @@
+{
+  "run": "c2789699-ce1",
+  "mode": "after",
+  "at": "2026-09-07T12:40:23.674Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "963641ea7a66579eb3976d277fcc2e3690c9c5d91c8de630fe71a1c8b6ee45ed",
+    "services/purchase-order/purchase-order.schemas.ts": "66665cbe749324de4775a5e062e65ed5db34701aab91d71cde09dd5457488b9b",
+    "services/purchase-order/purchase-order-edit-record.ts": "320e8a461d4b0385a1b5cd527b21e95b7dd91f17940ff5279585bdf8c47a3938",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "afb08213aa5a8f56165f1cd3331aba221ac733689462da543d299b3369b05631",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "A second stale draft cannot overwrite a first editor save",
+      "status": "passed",
+      "rejected": true,
+      "code": "CONFLICT",
+      "firstTermsPreserved": true
+    },
+    {
+      "name": "Retrying one exact save produces one retained result without repeated line effects",
+      "status": "passed",
+      "retainedReceipt": true,
+      "lineAudits": 1,
+      "unchangedOnRetry": true
+    },
+    {
+      "name": "Revoked current update permission prevents a service save",
+      "status": "passed",
+      "rejected": true,
+      "unchanged": true
+    },
+    {
+      "name": "Revoked session prevents a service save",
+      "status": "passed",
+      "rejected": true,
+      "unchanged": true
+    },
+    {
+      "name": "Concurrent editors commit one reviewed revision; simultaneous exact requests replay one effect",
+      "status": "passed",
+      "staleRejected": 1,
+      "exactReplay": 1,
+      "committedDraftAudits": 2
+    },
+    {
+      "name": "Save references bind the original command, object and actor; credentials are excluded from retained evidence",
+      "status": "passed",
+      "changedPayloadRejected": true,
+      "otherOrderRejected": true,
+      "otherActorRejected": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "Revision detects a changed line even when the header timestamp is unchanged",
+      "status": "passed",
+      "changedLineRejected": true,
+      "headerTimestampUnchanged": true
+    },
+    {
+      "name": "Invalid session, expired session, unusable account, inactive organization and missing read permission are denied",
+      "status": "passed",
+      "denied": [
+        "wrong-token",
+        "expired-session",
+        "inactive-account",
+        "locked-account",
+        "inactive-organization",
+        "missing-read"
+      ]
+    },
+    {
+      "name": "Cross-tenant draft and comparison reads are rejected without exposing the foreign order",
+      "status": "passed",
+      "foreignEditRejected": true,
+      "foreignReadRejected": true
+    },
+    {
+      "name": "Audit or event failure rolls back header, lines and receipt; an unchanged request then safely retries",
+      "status": "failed",
+      "error": "The input did not match the regular expression /Owned deliberate evidence-write fault/. Input:\n\n'ApplicationError: Business event could not be recorded.'\n"
+    }
+  ],
+  "scope": "Owned local synthetic draft orders and authority changes. No external messages, migrations or financial postings.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "error": "The input did not match the regular expression /Owned deliberate evidence-write fault/. Input:\n\n'ApplicationError: Business event could not be recorded.'\n"
+}

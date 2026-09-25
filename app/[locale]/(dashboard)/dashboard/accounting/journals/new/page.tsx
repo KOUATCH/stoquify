@@ -1,9 +1,11 @@
-import { redirect } from "next/navigation"
+import { getTranslations } from "next-intl/server"
 import { FilePlus2, Scale } from "lucide-react"
 
 import { listChartAccountsAction } from "@/actions/accounting/accounts.actions"
 import { createManualJournalEntryAction, listJournalsAction } from "@/actions/accounting/journals.actions"
 import { checkPermission } from "@/config/useAuth"
+import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
+import ManualJournalDraftForm from "./ManualJournalDraftForm"
 import {
   AccountingLinkButton,
   AccountingMessage,
@@ -35,25 +37,19 @@ type PageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
-function resultPath(locale: string, ok: boolean, text: string) {
-  const key = ok ? "notice" : "error"
-  return `/${locale}/dashboard/accounting/journals${ok ? "" : "/new"}?${key}=${encodeURIComponent(text)}`
-}
-
 async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
   await checkPermission("accounting.journal.create")
   await checkPermission("accounting.journal.read")
 
   const { locale } = await params
+  const t = await getTranslations({ locale, namespace: "moduleComposition.accountingCreate" })
   const resolvedSearchParams = searchParams ? await searchParams : {}
   const [accountsResponse, journalsResponse] = await Promise.all([
     listChartAccountsAction({}),
     listJournalsAction({}),
   ])
-  const accounts = accountsResponse.success ? (accountsResponse.data as AccountRow[]) : []
-  const journals = journalsResponse.success ? (journalsResponse.data as JournalRow[]) : []
-  const postableAccounts = accounts.filter((account) => account.isActive && account.allowManualPost && account._count.children === 0)
-  const manualJournals = journals.filter((journal) => journal.isActive && journal.allowManualEntries)
+  const postableAccounts = accountsResponse.success ? (accountsResponse.data as AccountRow[]).filter((account) => account.isActive && account.allowManualPost && account._count.children === 0) : null
+  const manualJournals = journalsResponse.success ? (journalsResponse.data as JournalRow[]).filter((journal) => journal.isActive && journal.allowManualEntries) : null
   const today = new Date().toISOString().slice(0, 10)
 
   async function createEntry(formData: FormData) {
@@ -76,7 +72,8 @@ async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
       lines,
     })
 
-    redirect(resultPath(locale, result.success, result.success ? "Journal draft created" : result.error))
+    if (result.success) return { success: true as const }
+    return { success: false as const, error: result.error, code: result.code, reason: getModuleOperationErrorReason(result) }
   }
 
   return (
@@ -99,10 +96,18 @@ async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
         description={
           accountsResponse.success && journalsResponse.success
             ? "Only postable leaf accounts and manual journals are shown."
-            : accountsResponse.error || journalsResponse.error || "Accounting setup data unavailable."
+            : t("loadFailedDescription")
         }
       >
-        <form action={createEntry} className="space-y-5 p-5">
+        {!postableAccounts || !manualJournals ? <div className="space-y-4 p-5">
+          <AccountingMessage error={t("loadFailedTitle")} />
+          <AccountingLinkButton href="/dashboard/accounting/journals/new" variant="outline">{t("retryLoad")}</AccountingLinkButton>
+        </div> : postableAccounts.length === 0 || manualJournals.length === 0 ? <div className="p-5">
+          <AccountingMessage notice={t("emptySetup")} />
+        </div> : <ManualJournalDraftForm submitAction={createEntry}
+          queueHref={`/${locale}/dashboard/accounting/journals`}
+          successHref={`/${locale}/dashboard/accounting/journals?notice=${encodeURIComponent("Journal draft created")}`}
+          labels={{ stoppedTitle: t("stoppedTitle"), stoppedDescription: t("stoppedDescription"), reviewAccess: t("reviewAccess"), openQueue: t("openQueue"), failedTitle: t("failedTitle"), connectionFailure: t("connectionFailure"), creating: t("creating"), createDraft: t("createDraft") }}>
           <div className="grid gap-4 lg:grid-cols-4">
             <label className="space-y-2 text-sm lg:col-span-2">
               <span className="text-[var(--dash-text-soft)]">Journal</span>
@@ -148,7 +153,7 @@ async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
                 {[0, 1, 2, 3, 4, 5].map((index) => (
                   <tr key={index} className="border-b border-[var(--dash-border-subtle)]">
                     <td className="px-4 py-3">
-                      <select name={`accountId-${index}`} className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]">
+                      <select aria-label={`${locale === "fr" ? "Compte — ligne" : "Account — line"} ${index + 1}`} name={`accountId-${index}`} className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]">
                         <option value="">Select account</option>
                         {postableAccounts.map((account) => (
                           <option key={account.id} value={account.id}>{account.code} - {account.nameEn}</option>
@@ -156,13 +161,13 @@ async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
                       </select>
                     </td>
                     <td className="px-4 py-3">
-                      <input name={`description-${index}`} className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]" />
+                      <input aria-label={`${locale === "fr" ? "Description — ligne" : "Description — line"} ${index + 1}`} name={`description-${index}`} className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-[var(--dash-text)]" />
                     </td>
                     <td className="px-4 py-3">
-                      <input name={`debit-${index}`} inputMode="decimal" className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-right text-[var(--dash-text)]" />
+                      <input aria-label={`${locale === "fr" ? "Débit — ligne" : "Debit — line"} ${index + 1}`} name={`debit-${index}`} inputMode="decimal" className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-right text-[var(--dash-text)]" />
                     </td>
                     <td className="px-4 py-3">
-                      <input name={`credit-${index}`} inputMode="decimal" className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-right text-[var(--dash-text)]" />
+                      <input aria-label={`${locale === "fr" ? "Crédit — ligne" : "Credit — line"} ${index + 1}`} name={`credit-${index}`} inputMode="decimal" className="h-10 w-full rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] px-3 text-right text-[var(--dash-text)]" />
                     </td>
                   </tr>
                 ))}
@@ -170,8 +175,7 @@ async function NewJournalEntryPageImpl({ params, searchParams }: PageProps) {
             </table>
           </div>
 
-          <button className="dashboard-button-create h-10 rounded-lg px-4 text-sm font-medium">Create draft</button>
-        </form>
+        </ManualJournalDraftForm>}
       </AccountingPanel>
     </AccountingPageShell>
   )

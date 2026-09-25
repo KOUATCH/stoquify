@@ -4,6 +4,8 @@ import { requirePermission } from "@/lib/security/rbac"
 
 import ReportsPage from "../page"
 
+jest.mock("next-intl/server", () => ({ getTranslations: jest.fn() }))
+
 jest.mock("@/lib/security/rbac", () => ({
   RbacError: class MockRbacError extends Error {},
   requireAllPermissions: jest.fn(),

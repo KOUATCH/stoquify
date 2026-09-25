@@ -1,0 +1,1940 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "recommendation_catalog_not_live_program_status",
+  "date": "2026-09-02",
+  "capturedAtUtc": "2026-09-02 11:57:02 UTC",
+  "workspace": "E:/ohada saas/Focused projects/stoquify",
+  "scope": "Development-agent and reusable-skill portfolio proposal; no implementation, installation, database access or activation.",
+  "candidate": {
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "branch": "codex/migration-control-plane-release-2026-08-29",
+    "dirty": true,
+    "changedPathEntriesAtStart": 172,
+    "commitAloneIdentifiesInspectedState": false,
+    "sourceHashPolicy": "SHA-256 of inspected anchors records working-tree evidence, not an immutable release candidate."
+  },
+  "inventory": {
+    "codexSkillDirectories": 441,
+    "codexSkillMdFiles": 446,
+    "otherAgentsRootSkillMdFiles": 43,
+    "workspaceAgentsSkillMdFiles": 3,
+    "workspaceCodexSkillMdFiles": 2,
+    "codexAgentDefinitionTomlFiles": 242,
+    "stoquifyNamedAgentDefinitions": 9,
+    "scope": "Filesystem counts; nested/system skill files explain 441 versus 446. Availability to this session and qualification were not inferred from installation.",
+    "contentInspectedRelevantAssets": 25
+  },
+  "decision": {
+    "recommendation": "Compose nine development capabilities around the existing coordinator.",
+    "startingCapability": "D01",
+    "firstConcreteTechnicalOutcome": "Replace the AR-history local capture's loading-state false completion with an explicit data-ready/expected-empty acceptance contract, once assigned within current WIP.",
+    "nextProgramMilestone": "P0-02/P0-03 accepted with current typecheck disposition and accountable sign-offs, permitting P0-04/P0-06 under the existing two-package limit.",
+    "productionDecision": "NOT_EVALUATED_FOR_PROMOTION; inspected release/approval records remain blocked.",
+    "newInstalledCapabilities": 0,
+    "productAgentsActivated": 0
+  },
+  "rubric": {
+    "dimensions": [
+      "user_value",
+      "dependency_unlock",
+      "delivery_improvement",
+      "reuse",
+      "feasibility",
+      "risk_reduction",
+      "recurring_usefulness",
+      "differentiation"
+    ],
+    "weights": [
+      20,
+      20,
+      15,
+      10,
+      10,
+      15,
+      5,
+      5
+    ],
+    "ratingScale": "1 weak to 5 strong, comparative judgment not measured ROI.",
+    "formula": "sum(rating_i * weight_i / 5)",
+    "priorityPolicy": "Dependency-adjusted rank: D01 precedes higher-scoring D02 because it assigns current scope/ownership; D03 precedes later UI work because P0 semantics are active prerequisites. Equal scores use active-program fit and dependency order."
+  },
+  "recommendations": [
+    {
+      "id": "D01",
+      "rank": 1,
+      "name": "Delivery Coordinator and Current Evidence",
+      "type": "reusable_skill",
+      "decision": "EXTEND",
+      "problem": "Several programs and reports describe different candidates and environments; two analytics packages remain active while newer migration and local UI evidence changes what is actually missing.",
+      "evidence": [
+        "E01",
+        "E03",
+        "E04",
+        "E05",
+        "E32",
+        "E33",
+        "E41",
+        "E42"
+      ],
+      "beneficiary": "Developer/operator coordinating delivery; product owner deciding the next accepted milestone.",
+      "outcome": "A repeatable route from an approved work package to a verified user outcome, with fewer stale blockers and reopened decisions.",
+      "reuse": [
+        "001-aqstoqflow-program-orchestrator",
+        "stoquify-release-evidence-ratchet",
+        "workflow-architect"
+      ],
+      "responsibilities": "Maintain a source-referenced handoff for the active package, distinguish implementation/review/approval, reconcile evidence scope, assign file ownership and sequence dependencies.",
+      "boundary": "Coordinate existing domain owners; do not create another live program register or act as independent reviewer, signer or release authority.",
+      "trigger": "Start/resume a package, receive new evidence, encounter conflicting status, or prepare a handoff.",
+      "inputs": [
+        "Existing program/status and decision registers",
+        "Current candidate and relevant source hashes",
+        "Accepted objective and file ownership",
+        "Command results and scoped approval references"
+      ],
+      "outputs": [
+        "One active-package handoff and evidence-disposition delta",
+        "Explicit next action with receiving owner",
+        "Source links to existing canonical registers"
+      ],
+      "receivingOwner": "The selected implementation owner, with Product retaining prioritization authority.",
+      "prerequisites": [
+        "Identify the existing authoritative program register and its scope.",
+        "Separate technical readiness from human sign-off; do not infer approvals from seeded personas."
+      ],
+      "firstSlice": "Reconcile P0-02/P0-03 holds against the Aug 30 migration replay and Sept 1 local X1 captures; classify the four recorded typecheck errors as historical until rerun; prepare one closure handoff without activating P0-04/P0-06.",
+      "verification": [
+        "Every active item has one owner, input source/date/environment, acceptance criterion and next action.",
+        "No local simulation is promoted to release evidence.",
+        "No duplicate status register; reported WIP remains two until closure or explicit reprioritization."
+      ],
+      "completion": "An implementer can resume the current P0 closure work using the handoff without repeating platform-wide discovery.",
+      "metrics": {
+        "development": {
+          "name": "Accepted handoff latency",
+          "definition": "Elapsed time from complete handoff receipt to the first scoped implementation action",
+          "source": "Existing package/decision timestamps plus proposed handoff timestamps",
+          "owner": "Delivery coordinator",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "reduce",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Verified workflow delivery rate",
+          "definition": "Accepted end-to-end user workflows / started workflow slices, using a fixed reporting window",
+          "source": "Existing workflow acceptance records; instrumentation completeness must be checked",
+          "owner": "Product owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "S for the first handoff; M for a reusable scoped procedure",
+      "confidence": "High for reuse and coordination need; medium for measured delivery impact.",
+      "tradeoff": "Adds a small evidence-maintenance step; keep it to one handoff per package and avoid document-only workstreams.",
+      "whyAhead": "It is the dependency needed to assign the other capabilities safely and prevent a tenth competing roadmap.",
+      "ratings": [
+        4,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        3
+      ],
+      "dependsOnCapabilities": [],
+      "phase": "Start with existing active packages.",
+      "score": 94,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D02",
+      "rank": 2,
+      "name": "Independent Workflow Verification Engineer",
+      "type": "development_agent",
+      "decision": "COMPOSE",
+      "problem": "Local X1 capture can finish while AR history is still loading. Green contract tests and file hashes do not establish completion of the user's task.",
+      "evidence": [
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E40",
+        "E50",
+        "E52",
+        "E53"
+      ],
+      "beneficiary": "Implementers and independent QA; accountants and operators relying on complete screens and exports.",
+      "outcome": "A user can load the expected authorized records, inspect evidence and complete a scoped action or truthful empty-state flow.",
+      "reuse": [
+        "code-reviewer",
+        "aqstoqflow-entity-workflow-verifier",
+        "aqstoqflow-release-verification-foundation"
+      ],
+      "responsibilities": "Translate each workflow's acceptance into observable behavior, adversarial/failure cases, evidence classification and a reproducible independent review.",
+      "boundary": "Own test validity and findings; implementation owners fix domain code. Do not approve your own changes or issue product/statutory/production certification.",
+      "trigger": "A slice claims completion, a defect is fixed, or evidence must be rebound to a candidate.",
+      "inputs": [
+        "Expected route/persona/data states",
+        "Frozen or hash-identified source scope",
+        "Known fixture and allowed environment",
+        "Existing test harnesses and evidence manifest"
+      ],
+      "outputs": [
+        "Passed/failed/blocked acceptance matrix",
+        "Minimal reproducible findings",
+        "Candidate-bound evidence classified as unit, browser, local simulation or approved release evidence"
+      ],
+      "receivingOwner": "Responsible implementation owner for failures; human release reviewer for a complete evidence packet.",
+      "prerequisites": [
+        "D01 package boundary and owner.",
+        "Authenticated testing requires an authorized environment and data scope; fixture presence does not substitute for that authority."
+      ],
+      "firstSlice": "For X1 receivables history, make capture wait for an explicit terminal data state and verify known fixture expectations; separate data-ready timing from axe/screenshot elapsed time. Inspect the stronger authoritative harness before sharing helpers.",
+      "verification": [
+        "A delayed-loading fixture cannot pass as a completed-data capture.",
+        "A legitimate authorized empty state is distinguishable from loading, denial and failed data fetch.",
+        "Local and authoritative evidence classifications remain separate.",
+        "Known records, drill-through and export results are checked where promised by this slice."
+      ],
+      "completion": "The selected AR workflow has a truthful reproducible acceptance result; awaiting external approval is recorded separately.",
+      "metrics": {
+        "development": {
+          "name": "False completion rate",
+          "definition": "Previously accepted slices reopened for unmet original acceptance / accepted slices",
+          "source": "Acceptance matrix and linked defect records",
+          "owner": "Independent QA owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "reduce",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Verified task completion",
+          "definition": "Successful authorized task completions / eligible attempts, segmented by persona and locale",
+          "source": "Proposed task-based usability runs, not page-load counts",
+          "owner": "Product/QA owners",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M",
+      "confidence": "High: source and a captured loading state directly support the gap.",
+      "tradeoff": "Behavioral verification takes longer than checking route presence; use one representative workflow before expanding.",
+      "whyAhead": "It makes completion claims reliable across every later feature and addresses a directly observed issue.",
+      "ratings": [
+        5,
+        5,
+        5,
+        5,
+        4,
+        5,
+        5,
+        3
+      ],
+      "dependsOnCapabilities": [
+        "D01"
+      ],
+      "phase": "Prepare as a review capability; start its bounded implementation only in an available/explicitly assigned WIP slot.",
+      "score": 96,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D03",
+      "rank": 3,
+      "name": "Trusted Analytics and Decision Engineering",
+      "type": "development_agent",
+      "decision": "EXTEND",
+      "problem": "The new organization analytical context exists but Business Pulse still uses XAF and server-local day boundaries. Surface ownership describes target jobs that are not all implemented.",
+      "evidence": [
+        "E03",
+        "E04",
+        "E15",
+        "E16",
+        "E17",
+        "E18",
+        "E22",
+        "E35",
+        "E39",
+        "E49"
+      ],
+      "beneficiary": "Finance/data engineering; owners, finance teams and accountants making operating decisions.",
+      "outcome": "Organization-correct Business Pulse, source-linked cash outlook, reconciliation exposure explanations and consent-bound accountant triage on existing routes.",
+      "reuse": [
+        "data-engineer",
+        "kontava-workflow-bi-trust-gates",
+        "kontava-business-pulse-analytics",
+        "kontava-workflow-efficiency-telemetry"
+      ],
+      "responsibilities": "Define metric ownership, currency/time/period/grain, coverage/freshness, formulas, drill-through and deterministic read models before UI integration.",
+      "boundary": "Source services retain writes and balances. Business Pulse skill covers current pulse only; a later forecast is a separately scoped deterministic contract under the analytics roadmap, not an implicit expansion of that skill.",
+      "trigger": "A metric, analytical read model, forecast, cohort or cross-domain decision view is proposed or changed.",
+      "inputs": [
+        "P0 surface ownership and organization-context contracts",
+        "Source model definitions and permission boundaries",
+        "Metric definition and denominator",
+        "Accepted phase/work-package scope"
+      ],
+      "outputs": [
+        "Versioned metric contract or read model",
+        "Missing-data and authorization behavior",
+        "Source-to-display validation and outcome measurement plan"
+      ],
+      "receivingOwner": "Frontend owner for display; Finance/Data owners for semantics; independent QA for acceptance.",
+      "prerequisites": [
+        "P0-02/P0-03 acceptance and current typecheck disposition before P0-04.",
+        "P0-06 access evidence before cross-client or sensitive analytical delivery.",
+        "No new forecast UI before the applicable Phase 1 gates."
+      ],
+      "firstSlice": "After the active P0 closure, define P0-04's proposed_closing_cash metric and a bounded reconciliation exposure metric with explicit currency, organization timezone, period, source coverage and unknown states; identify the authorized Business Pulse integration change separately.",
+      "verification": [
+        "No implicit currency/timezone fallback and no mixed-currency sum.",
+        "Same inputs yield identical results; boundaries and missing coverage have explicit behavior.",
+        "Forecast, actual cash, unresolved exposure and proven loss cannot be conflated.",
+        "Metric keys have one canonical owner and authorized source drill-through."
+      ],
+      "completion": "The selected metric contract is reviewable and testable, tied to the existing route and source owners; future forecast activation is not implied.",
+      "metrics": {
+        "development": {
+          "name": "Metric contract reuse",
+          "definition": "Consumers using the canonical tested metric contract / consumers of that metric",
+          "source": "Surface ownership registry and import/reference audit",
+          "owner": "Data/BI owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Evidence-backed decision completion",
+          "definition": "Eligible users completing a source-linked cash/reconciliation review / eligible review attempts",
+          "source": "Proposed workflow outcomes linked to source evidence; baseline absent",
+          "owner": "Finance/Product owners",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M for metric contract; L for later cross-domain forecast workflow",
+      "confidence": "High for semantic gap and reuse; medium for forecast/advisory demand until user validation.",
+      "tradeoff": "Defining periods, coverage and ownership delays attractive dashboards but avoids misleading amounts.",
+      "whyAhead": "It unlocks the currently planned P0/P1 product value and creates reusable foundations for several innovations.",
+      "ratings": [
+        5,
+        5,
+        4,
+        5,
+        4,
+        5,
+        5,
+        4
+      ],
+      "dependsOnCapabilities": [
+        "D01"
+      ],
+      "phase": "P0-04 after current P0 acceptance; later features follow P0-09 and Phase 1 gates.",
+      "score": 94,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D04",
+      "rank": 4,
+      "name": "Tenant Access and Module Contract Engineering",
+      "type": "development_agent",
+      "decision": "COMPOSE",
+      "problem": "Explicit enforcement at selected wrappers coexists with legacy/default requestedModules-derived entitlements; broad scanner totals cannot establish actual route/action safety.",
+      "evidence": [
+        "E09",
+        "E10",
+        "E11",
+        "E12",
+        "E14",
+        "E18",
+        "E22",
+        "E35",
+        "E43",
+        "E46"
+      ],
+      "beneficiary": "Security/platform developers; tenant administrators and external accountants.",
+      "outcome": "Each permitted user reaches the appropriate workflow while unauthorized reads, exports and module access are blocked before data exposure.",
+      "reuse": [
+        "backend-architect",
+        "aqstoqflow-module-access-guard-contract",
+        "aqstoqflow-entity-workflow-verifier"
+      ],
+      "responsibilities": "Trace route/action/API/export guard order, tenant derivation, module intent, consent grants and denied states for one selected surface family.",
+      "boundary": "Do not turn observed requestedModules into a durable paid-subscription claim or broadly enable enforcement. Preserve current scope and independently reviewed activation decisions.",
+      "trigger": "A new surface, export, shared service, client grant or package entitlement is introduced.",
+      "inputs": [
+        "Route catalog and actual wrappers",
+        "Permission vocabulary and module catalog",
+        "Source service calls",
+        "Tenant/persona/grant test matrix"
+      ],
+      "outputs": [
+        "Source-backed access matrix",
+        "Focused negative tests and smallest fixes",
+        "Scanner false-positive/negative disposition"
+      ],
+      "receivingOwner": "Module/platform owner and independent security reviewer.",
+      "prerequisites": [
+        "D01 current scope.",
+        "P0-02 accepted for the P0-06 lane; explicit authorization for any new enforcement scope."
+      ],
+      "firstSlice": "Reconcile P0-06 for the Cash Command, Reconciliation and Accountant Portfolio route/action/export seams, including expired/revoked grants.",
+      "verification": [
+        "Foreign-tenant and expired-grant access fail before source reads.",
+        "Denied exports do not create or expose jobs.",
+        "Sidebar state and role-name matches are never treated as sufficient authorization.",
+        "Current observe/enforce semantics are documented per surface."
+      ],
+      "completion": "No unexplained access finding remains in the selected pilot surface family.",
+      "metrics": {
+        "development": {
+          "name": "Access classification coverage",
+          "definition": "Selected surfaces with traced guards and negative tests / selected surfaces",
+          "source": "Route catalog, source matrix and focused tests",
+          "owner": "Security/platform owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Correct access outcomes",
+          "definition": "Authorized successes plus correctly denied unauthorized attempts / all controlled scenario attempts",
+          "source": "Synthetic persona/grant acceptance matrix; later consented support outcomes",
+          "owner": "Security/Product owners",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M for the pilot family; durable subscription provisioning is separate L work",
+      "confidence": "High for mixed implementation; no new exploitable vulnerability is certified by this audit.",
+      "tradeoff": "Precise per-surface work is slower than enabling a global switch and avoids breaking legitimate legacy tenants.",
+      "whyAhead": "Sensitive analytics, advisor access, exports and eventual packaging depend on a known authorization contract.",
+      "ratings": [
+        5,
+        5,
+        4,
+        5,
+        3,
+        5,
+        5,
+        2
+      ],
+      "dependsOnCapabilities": [
+        "D01"
+      ],
+      "phase": "P0-06 after P0-02 and a free WIP slot.",
+      "score": 90,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D05",
+      "rank": 5,
+      "name": "Workflow UX and Accessibility Engineering",
+      "type": "development_agent",
+      "decision": "COMPOSE",
+      "problem": "Canonical finance table contracts now exist, but completed-data behavior, loading/empty/denied states and bilingual task usability still need end-to-end proof.",
+      "evidence": [
+        "E05",
+        "E06",
+        "E07",
+        "E08",
+        "E39",
+        "E40",
+        "E43",
+        "E45"
+      ],
+      "beneficiary": "Frontend developers; accountants, cashiers and managers across desktop/tablet/mobile.",
+      "outcome": "Consistent finance tables with usable filters, evidence drill-through, safe exports and clear recovery in English and French.",
+      "reuse": [
+        "frontend-developer",
+        "aqstoqflow-uiux-06-module-normalization",
+        "aqstoqflow-uiux-09-accessibility-visual-regression-governance",
+        "nextjs-service-layer-workflow"
+      ],
+      "responsibilities": "Implement one user workflow using existing shared components and server contracts; provide keyboard, focus, responsive, localization and complete state behavior.",
+      "boundary": "Do not rewrite domain services to fit a table, duplicate source metrics, or equate an axe pass with complete accessibility.",
+      "trigger": "A surface is normalized, a workflow-state defect is reported, or a canonical component contract changes.",
+      "inputs": [
+        "D02 acceptance scenarios",
+        "Existing canonical table/state contracts",
+        "Server-owned read model and permissions",
+        "Approved wording and task expectations"
+      ],
+      "outputs": [
+        "Scoped UI change",
+        "State/interaction matrix and browser evidence",
+        "EN/FR keyboard and responsive findings"
+      ],
+      "receivingOwner": "D02 independent verifier and Product/UX owner.",
+      "prerequisites": [
+        "D01 WIP assignment.",
+        "D02 establishes what successful data loading and task completion mean.",
+        "Use the existing fixture/evidence boundary; do not reseed by default."
+      ],
+      "firstSlice": "Resolve the selected receivables-history loading/data-ready journey once reproduced, then prove filter, evidence-link and export states; reuse the X1 family rather than expanding to X2-X4.",
+      "verification": [
+        "Loading, valid empty, denied, error and populated states are distinct.",
+        "Keyboard/focus/zoom and EN/FR task flows are inspected.",
+        "Known data and permissions agree with service outputs.",
+        "Timing claims use data-ready measurements and approved test conditions."
+      ],
+      "completion": "The selected finance user task is independently accepted in its bounded persona/locale/device matrix.",
+      "metrics": {
+        "development": {
+          "name": "Shared interaction reuse",
+          "definition": "In-scope surfaces using the canonical state/filter/export contracts / in-scope surfaces",
+          "source": "Component registry and scoped source audit",
+          "owner": "Frontend lead",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Time to complete finance task",
+          "definition": "Median elapsed time from authorized task start to correct evidence/export outcome, separated by locale/device",
+          "source": "Task-based browser/user sessions; baseline to collect",
+          "owner": "UX/Product owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "reduce",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M",
+      "confidence": "High for current UI/evidence need; user productivity gain is unmeasured.",
+      "tradeoff": "One complete workflow yields less apparent surface coverage than a mass visual rewrite.",
+      "whyAhead": "It converts existing financial functionality into a usable daily product without adding backend feature count.",
+      "ratings": [
+        5,
+        4,
+        5,
+        5,
+        4,
+        4,
+        5,
+        3
+      ],
+      "dependsOnCapabilities": [
+        "D01",
+        "D02"
+      ],
+      "phase": "Current X1 scope only, assigned after or within explicitly reprioritized WIP.",
+      "score": 89,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D06",
+      "rank": 6,
+      "name": "Migration and First-Value Onboarding Engineering",
+      "type": "development_agent",
+      "decision": "COMPOSE",
+      "problem": "Local replay and bounded customer/supplier/item import exist. Generic migration/onboarding claims can blur database schema replay, demo fixtures and customer financial-history migration.",
+      "evidence": [
+        "E09",
+        "E13",
+        "E14",
+        "E31",
+        "E32",
+        "E34",
+        "E47",
+        "E54"
+      ],
+      "beneficiary": "Database/onboarding engineers and implementation staff; new tenant administrators.",
+      "outcome": "A new organization can import validated master data and reach a first trusted operating workflow with a reproducible environment.",
+      "reuse": [
+        "database-optimizer",
+        "aqstoqflow-uiux-08-onboarding-demo-workspace",
+        "stoquify-customer-success-adoption-agent"
+      ],
+      "responsibilities": "Keep schema history, fixtures and customer imports as separate contracts; verify target identity, staged import, approval digest, idempotent commit and truthful progress.",
+      "boundary": "The Customer Success definition contributes outcome vocabulary, not active authority. Exclude historical balances/stock/ledger migration from the existing master-data workflow. Do not run the broad enterprise-db-seed instructions wholesale.",
+      "trigger": "Environment preparation, onboarding failure, new supported import type or migration-history discrepancy.",
+      "inputs": [
+        "Exact approved environment/target identity",
+        "Migration history and drift classification",
+        "Existing master-data import contract",
+        "Fixture/import source and persona scope"
+      ],
+      "outputs": [
+        "Reproducible target/fixture evidence",
+        "One-source import acceptance and first-value journey",
+        "Explicit unsupported-data list and retry/compensation instructions"
+      ],
+      "receivingOwner": "Onboarding/domain owner; DB/operator for authorized execution; D02 for workflow acceptance.",
+      "prerequisites": [
+        "D01 scope and current target evidence.",
+        "D04 target read/write permissions.",
+        "Explicit database/import authority before any write; analysis and dry-run remain available."
+      ],
+      "firstSlice": "Reuse the existing isolated baseline and master-data pipeline to specify one customer CSV import through review/approval/commit to one read-only verified record and adoption event; rerun only stale relevant checks.",
+      "verification": [
+        "Import totals/duplicates/errors reconcile to source rows.",
+        "High-risk uploader cannot self-approve and commit rechecks the digest.",
+        "Retry creates no duplicate authoritative records.",
+        "No financial balances or opening stock sneak into master-data import."
+      ],
+      "completion": "One bounded first-value journey is repeatable with source-to-record evidence and clearly stated data exclusions.",
+      "metrics": {
+        "development": {
+          "name": "Environment reproduction success",
+          "definition": "Successful authorized reproductions / attempts for the same declared target recipe",
+          "source": "Existing replay/fixture reports and command receipts",
+          "owner": "DB/onboarding owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Time to first trusted value",
+          "definition": "Elapsed time from onboarding start to first independently evidenced permitted workflow outcome",
+          "source": "Import batch timestamps plus proposed first-value outcome event",
+          "owner": "Product/adoption owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "reduce",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M for one source/outcome; financial-history migration remains separate L work",
+      "confidence": "High for existing substrate and separation need; medium for commercial impact.",
+      "tradeoff": "Master-data onboarding delivers narrower value than a universal migration promise, with much stronger traceability.",
+      "whyAhead": "It turns the substantial local fixture/import investment into repeatable customer activation.",
+      "ratings": [
+        5,
+        4,
+        4,
+        5,
+        4,
+        5,
+        4,
+        4
+      ],
+      "dependsOnCapabilities": [
+        "D01",
+        "D04"
+      ],
+      "phase": "Reuse baseline now; new import work only after WIP assignment.",
+      "score": 89,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D07",
+      "rank": 7,
+      "name": "Financial Event Integrity Engineering",
+      "type": "development_agent",
+      "decision": "COMPOSE",
+      "problem": "POS, purchasing/AP, payroll, inventory and close share money/event invariants. New features can be locally correct while breaking source links, reversal, replay or close invalidation across domains.",
+      "evidence": [
+        "E09",
+        "E19",
+        "E20",
+        "E21",
+        "E23",
+        "E24",
+        "E25"
+      ],
+      "beneficiary": "Backend/domain developers; finance controllers and operators relying on consistent records.",
+      "outcome": "A sale, refund, receipt or payroll event has consistent source, stock/cash, journal, audit and close effects.",
+      "reuse": [
+        "backend-architect",
+        "ledger-first-business-events",
+        "nextjs-service-layer-workflow",
+        "aqstoqflow-entity-workflow-verifier"
+      ],
+      "responsibilities": "Supply and implement a bounded event/transaction contract across existing source owners, including idempotency, money precision, reversal and post-commit delivery.",
+      "boundary": "Preserve domain services. Do not invent one universal posting recipe, change country rules or let an LLM perform financial approvals.",
+      "trigger": "A change affects money, stock, payments, payroll, posting, reversal or close evidence.",
+      "inputs": [
+        "One event/workflow boundary",
+        "Canonical domain writers and transaction seams",
+        "Country configuration provenance where relevant",
+        "Known failure/replay cases"
+      ],
+      "outputs": [
+        "Cross-domain invariant contract",
+        "Scoped implementation and failure-path tests",
+        "Source-to-ledger/close evidence handoff"
+      ],
+      "receivingOwner": "Domain engineer for implementation; independent finance/QA reviewer for evidence.",
+      "prerequisites": [
+        "D01 ownership; D02 acceptance method.",
+        "Use existing qualified domain rules; expert review for changed statutory behavior."
+      ],
+      "firstSlice": "Trace one existing POS refund or AP correction through source/event/journal/close invalidation and add only the missing cross-boundary replay/failure assertions found by that trace.",
+      "verification": [
+        "Same-key replay has one economic effect; conflicting payload fails with evidence.",
+        "Rollback preserves transactional consistency.",
+        "Reversal adds traceable correction rather than rewriting finalized truth.",
+        "Post-commit delivery failure does not silently change the accepted financial outcome."
+      ],
+      "completion": "The selected event's invariants are demonstrated across its actual service boundaries, with any external evidence requirement explicitly separate.",
+      "metrics": {
+        "development": {
+          "name": "Cross-domain regression escape",
+          "definition": "Accepted financial slices later reopened for invariant failure / accepted financial slices",
+          "source": "Linked event acceptance and defect records",
+          "owner": "Backend/finance owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "reduce",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Unexplained control variance",
+          "definition": "Unexplained source-to-ledger or stock/cash variances per selected reconciliation period",
+          "source": "Authoritative reconciliation and close findings; no arbitrary aggregation",
+          "owner": "Finance control owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "reduce",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M per event family",
+      "confidence": "High for architectural need; current completeness varies by event.",
+      "tradeoff": "Requires domain-specific reviews; avoids a broad event-platform rewrite.",
+      "whyAhead": "Protects the financial trust that differentiates every planned product feature.",
+      "ratings": [
+        5,
+        4,
+        4,
+        5,
+        3,
+        5,
+        5,
+        4
+      ],
+      "dependsOnCapabilities": [
+        "D01",
+        "D02"
+      ],
+      "phase": "On-demand prerequisite for any change to economic truth.",
+      "score": 88,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D08",
+      "rank": 8,
+      "name": "Agent Behavioral Evaluation and Runtime Qualification",
+      "type": "reusable_skill",
+      "decision": "EXTEND",
+      "problem": "The 999-case catalog is entirely NOT_TESTED and the existing harness intentionally prioritizes without executing behavior. Agent definitions and runtime records do not establish production qualification.",
+      "evidence": [
+        "E26",
+        "E27",
+        "E28",
+        "E29",
+        "E33",
+        "E44",
+        "E51"
+      ],
+      "beneficiary": "AI/runtime engineers and independent platform assurance; future copilot users.",
+      "outcome": "A role-specific daily brief can make supported statements, refuse unsupported requests and expose current evidence without unauthorized effects.",
+      "reuse": [
+        "016-aqstoqflow-ai-copilot-guardrails",
+        "stoquify-platform-assurance-agent",
+        "stoquify-release-evidence-ratchet"
+      ],
+      "responsibilities": "Extend the current evaluator with scoped adapters, expected/observed records, policy/abstention checks and evidence/cost/latency accounting.",
+      "boundary": "Keep development evaluation distinct from the product Platform Assurance runtime. Evaluation cannot self-approve activation or treat absent model/provider use as measured zero production cost.",
+      "trigger": "Change to prompt, model, tool, policy, registry, evidence contract or candidate runtime.",
+      "inputs": [
+        "Current catalog and risk selection",
+        "One callable capability contract",
+        "Synthetic authorized fixtures and prohibited-action list",
+        "Version/hash identities and scoped cost policy if a model is used"
+      ],
+      "outputs": [
+        "Observed case results with evidence",
+        "Explicit unsupported/unmapped/blocked cases",
+        "Independent qualification handoff"
+      ],
+      "receivingOwner": "Runtime implementation owner for failures; independent assurance and human release authority for activation decisions.",
+      "prerequisites": [
+        "D01 scope; D02 evidence method; D04 access contract.",
+        "Provider-free deterministic adapter first; separate environment/model permissions when later needed."
+      ],
+      "firstSlice": "Map the existing role-daily-brief capability's applicable cases to the deterministic Command Agent seam. Execute a small representative set, including stale evidence and denial, before expanding to the risk-ranked 150. Leave unmapped cases NOT_TESTED/BLOCKED.",
+      "verification": [
+        "PASS requires an observed result and evidence, not catalog validation.",
+        "Prohibited tool calls and unauthorized disclosures fail the run.",
+        "Failure, stale input and abstention behavior are exercised.",
+        "Run records bind versions and test scope; no Phase 2B/3 promotion is inferred."
+      ],
+      "completion": "One capability has reproducible observed behavioral evidence and an honest coverage denominator.",
+      "metrics": {
+        "development": {
+          "name": "Behavioral coverage",
+          "definition": "Catalog cases with valid observed results / applicable cases, with unmapped count reported separately",
+          "source": "Extended existing evaluation output",
+          "owner": "Runtime/assurance owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Supported brief acceptance",
+          "definition": "Reviewed briefs whose material claims are evidence-supported and useful / reviewed eligible briefs",
+          "source": "Proposed reviewer rubric plus AgentFeedback and evidence links",
+          "owner": "Copilot Product owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M for one deterministic adapter; L for portfolio expansion",
+      "confidence": "High for the evaluation gap; model-based user value remains unvalidated.",
+      "tradeoff": "This remains mandatory before product-agent expansion but does not need to block unrelated deterministic engineering.",
+      "whyAhead": "It is the right investment before introducing collections or advisor agents and reuses the existing catalog.",
+      "ratings": [
+        4,
+        4,
+        4,
+        5,
+        3,
+        5,
+        4,
+        4
+      ],
+      "dependsOnCapabilities": [
+        "D01",
+        "D02",
+        "D04"
+      ],
+      "phase": "Before any new product-agent activation; not a global prerequisite for all development.",
+      "score": 83,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    },
+    {
+      "id": "D09",
+      "rank": 9,
+      "name": "Connector and Offline Reliability Engineering",
+      "type": "development_agent",
+      "decision": "COMPOSE",
+      "problem": "Connector health and offline replay primitives exist, while supplier invitations still lack delivery outbox messages and production provider/operations evidence remains external.",
+      "evidence": [
+        "E20",
+        "E21",
+        "E23",
+        "E24",
+        "E30",
+        "E33",
+        "E35",
+        "E42"
+      ],
+      "beneficiary": "Integration/backend/SRE developers; cashiers, finance teams and invited counterparties.",
+      "outcome": "Late, duplicated or unavailable provider/device inputs become visible, recoverable states; later supplier participation avoids re-keying without mutating buyer truth.",
+      "reuse": [
+        "backend-architect",
+        "aqstoqflow-provider-health-recon-ops",
+        "014-aqstoqflow-offline-pos-sync-architect-builder"
+      ],
+      "responsibilities": "Test one boundary at a time for freshness, signature, tenant scope, duplicate/reorder, retry budgets, dead-letter, reconciliation and recovery evidence.",
+      "boundary": "Provider integrations and device replay share failure techniques, not one domain writer. Do not activate callbacks, send invitations or assign final fiscal numbers without the applicable separate authority.",
+      "trigger": "A connector/device/provider path is introduced or reports stale, missing, duplicate or failed events.",
+      "inputs": [
+        "One provider/file/device contract",
+        "Health/readiness model",
+        "Outbox/inbox and domain ownership",
+        "Synthetic failure scenarios and operator escalation contract"
+      ],
+      "outputs": [
+        "Boundary contract and replay/failure fixtures",
+        "Truthful health/readiness behavior",
+        "Recovery runbook with owner and last accepted evidence"
+      ],
+      "receivingOwner": "Integration/SRE owner; domain owner for authoritative correction; D02 for evidence review.",
+      "prerequisites": [
+        "D01 scope, D04 access and D07 relevant event invariant.",
+        "Live provider, scheduler, alert, consent and support owners before external activation."
+      ],
+      "firstSlice": "Choose one existing payment-file or offline replay path and prove duplicate, stale and retry/dead-letter behavior with fixtures. Treat supplier invitation delivery as a later explicitly assigned P0/P2 dependency.",
+      "verification": [
+        "Duplicate/reordered input does not duplicate economic effects.",
+        "Stale or unverifiable evidence changes reliance state.",
+        "Retry and dead-letter transitions are observable and bounded.",
+        "Operator recovery preserves evidence and source authority."
+      ],
+      "completion": "One selected integration boundary has demonstrated failure/recovery behavior and a clear activation prerequisite list.",
+      "metrics": {
+        "development": {
+          "name": "Integration failure reproducibility",
+          "definition": "Reported boundary failures reproducible from retained redacted fixtures / reported boundary failures",
+          "source": "Existing run IDs, safe fixtures and incident records",
+          "owner": "Integration/SRE owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "increase",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        },
+        "business": {
+          "name": "Exception resolution time",
+          "definition": "Median time from a source-backed stale/failed input incident to verified resolution",
+          "source": "Connector/outbox/assurance timestamps, where complete",
+          "owner": "Operations owner",
+          "baseline": null,
+          "target": null,
+          "targetPolicy": "Establish baseline before approving a numerical target.",
+          "direction": "reduce",
+          "reviewWindow": "Per accepted slice; aggregate after three comparable slices."
+        }
+      },
+      "effort": "M for one fixture-backed boundary; L with an external provider",
+      "confidence": "High for existing foundations and gaps; external delivery timing/cost unknown.",
+      "tradeoff": "External dependencies make calendar estimates unreliable; keep local contract work separate from activation.",
+      "whyAhead": "It supports real operating conditions and controlled-network participation once internal foundations are ready.",
+      "ratings": [
+        4,
+        4,
+        4,
+        4,
+        3,
+        5,
+        4,
+        4
+      ],
+      "dependsOnCapabilities": [
+        "D01",
+        "D04",
+        "D07"
+      ],
+      "phase": "Boundary engineering on demand; external delivery follows roadmap gates.",
+      "score": 81,
+      "status": "RECOMMENDED_NOT_ACTIVATED"
+    }
+  ],
+  "priorRoadmapDisposition": [
+    {
+      "priorId": "HC-01",
+      "decision": "REVISE",
+      "mapsTo": [
+        "D02",
+        "D08"
+      ],
+      "reason": "Separate ordinary development acceptance from product-agent behavioral qualification; retain runtime qualification before product-agent activation without making it a prerequisite for unrelated deterministic work."
+    },
+    {
+      "priorId": "HC-02",
+      "decision": "RETAIN_AND_NARROW",
+      "mapsTo": [
+        "D06",
+        "D05"
+      ],
+      "reason": "Reuse working bounded master-data import and isolated replay. Do not treat these as general financial-history migration."
+    },
+    {
+      "priorId": "HC-03",
+      "decision": "RETAIN",
+      "mapsTo": [
+        "D09"
+      ],
+      "reason": "Reuse connector health and provider/offline primitives; keep external activation separate."
+    },
+    {
+      "priorId": "HC-04",
+      "decision": "RETAIN_AND_PRIORITIZE",
+      "mapsTo": [
+        "D01"
+      ],
+      "reason": "Existing coordinator plus evidence discipline addresses stale scope/status; no new orchestrator or competing register."
+    },
+    {
+      "priorId": "HC-05",
+      "decision": "DEFER",
+      "mapsTo": [
+        "D06"
+      ],
+      "reason": "Document extraction is a later input adapter after one structured-source import proves value; no new OCR/product agent now."
+    },
+    {
+      "priorId": "HC-06",
+      "decision": "DEFER",
+      "mapsTo": [
+        "D03",
+        "D08",
+        "D09"
+      ],
+      "reason": "Collections is a future product outcome requiring qualified runtime, AR source truth, consent, delivery and human control."
+    },
+    {
+      "priorId": "HC-07",
+      "decision": "REVISE",
+      "mapsTo": [
+        "D03",
+        "D04",
+        "D05"
+      ],
+      "reason": "Prioritize the existing consent-bound Accountant Portfolio workflow. A specialist advisor agent is not required for the first deterministic advisory read model."
+    }
+  ],
+  "operatingModel": {
+    "coordinator": "001-aqstoqflow-program-orchestrator",
+    "existingLiveRegister": "E:/ohada saas/Focused projects/stoquify/what-next/analytics-network-program/PROGRAM_STATUS_REGISTER.json",
+    "wipLimit": 2,
+    "currentlyActivePackages": [
+      "P0-02",
+      "P0-03"
+    ],
+    "policy": "Recommendation ranks do not activate new workstreams. Keep existing package status; close or explicitly reprioritize current WIP before adding a major package.",
+    "stages": [
+      "discovery",
+      "prioritization",
+      "specification",
+      "implementation",
+      "independent_review",
+      "verification",
+      "human_release_decision",
+      "outcome_measurement"
+    ],
+    "independence": "The current audit applied review lenses sequentially; it is not independent multi-person approval. Future implementer and material reviewer must be distinct.",
+    "handoffFields": [
+      "package_id",
+      "objective",
+      "owner",
+      "file_scope",
+      "source_hashes",
+      "input_evidence_scope",
+      "acceptance",
+      "commands_and_results",
+      "blockers",
+      "next_action",
+      "receiving_owner"
+    ],
+    "resumePolicy": "Re-read the existing active register and source-hash delta, consume latest accepted handoff, rerun only invalidated evidence; do not redo platform discovery."
+  },
+  "verification": {
+    "focusedTests": {
+      "status": "PASS",
+      "suites": 3,
+      "tests": 19,
+      "jestReportedSeconds": 8.708,
+      "kind": "Unit/contract and prioritization-helper tests; Prisma and browser dependencies mocked; no model-catalog execution."
+    },
+    "localX1Integrity": {
+      "status": "PASS",
+      "manifestArtifactCount": 42,
+      "filesPresent": 42,
+      "sha256Matched": 42,
+      "localClassification": "LOCAL_SIMULATION_AUTHENTICATED_EVIDENCE_NOT_FOR_RELEASE",
+      "visualSampleCount": 1,
+      "visualFinding": "Desktop EN receivables history displays Loading AR history.",
+      "zeroTbodyRowCaptures": 21,
+      "elapsedMsRange": [
+        7800,
+        63200
+      ],
+      "timingInterpretation": "Local harness duration includes accessibility and screenshot work; not time to business-data readiness and not a benchmark or SLA finding."
+    },
+    "notRun": [
+      "Repository-wide typecheck",
+      "Build or release suites",
+      "Browser or accessibility runtime this turn",
+      "Database migrations, seeds, or live queries",
+      "Provider/model calls",
+      "999 behavioral catalog cases"
+    ],
+    "artifactValidation": {
+      "status": "PASS",
+      "validatedAt": "2026-09-02T12:01:48.370Z",
+      "recommendationCount": 9,
+      "requiredFields": true,
+      "scoreArithmetic": true,
+      "acyclicDependencies": true,
+      "priorRoadmapCoverage": 7,
+      "evidencePathsHashed": 54,
+      "assetPathsHashed": 25,
+      "markdownLinksChecked": 181,
+      "promptAnchorsPresent": true
+    },
+    "notes": [
+      "The historical four typecheck errors were not rerun, so their present status is unknown.",
+      "Readiness and approval blocker counts have different scopes; they are not added together.",
+      "Two guessed source paths did not exist and were corrected using rg; one rg no-match exited 1.",
+      "Git emitted permission warnings for the global ignore file; repo status/commit were readable."
+    ]
+  },
+  "evidence": [
+    {
+      "id": "E01",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/agents-skills/STOQUIFY_HIGH_LEVERAGE_AGENT_SKILL_GAP_AND_PRIORITY_ROADMAP_2026-08-20.md",
+      "claim": "Earlier seven-capability portfolio; comparison baseline, not current activation authority.",
+      "kind": "historical_report",
+      "sha256": "25502073f406cba514be50f85841ac4bef1f45f9272178385416081dfb19cbb3",
+      "bytes": 42348
+    },
+    {
+      "id": "E02",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/system-evaluation-2026-08-28-comprehensive-report.md",
+      "claim": "Older system-wide development and release assessment; dates/environment limit its claims.",
+      "kind": "historical_report",
+      "sha256": "34352676e855b2a17f77869a2264cae7944c9fa573b8e97ffe588d903a9602aa",
+      "bytes": 33887
+    },
+    {
+      "id": "E03",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/analytics-network-program/PROGRAM_STATUS_REGISTER.json",
+      "claim": "P0-02/P0-03 active, WIP two, downstream packages blocked; register dated August 30.",
+      "kind": "status_register",
+      "sha256": "8663241ff1c65398c2b9045bc910b72e50b13052bf19c474e98cc9d68112c49a",
+      "bytes": 9970
+    },
+    {
+      "id": "E04",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/analytics-network-program/P0_01_TO_P0_03_EXECUTION_REPORT.md",
+      "claim": "Analytical-context slice exists; Business Pulse wiring excluded; four historical typecheck errors and role-owner sign-offs recorded.",
+      "kind": "historical_report",
+      "sha256": "81fc11e61e069900400eaa2c0c92c6cd5087b4e9f8d84094f0daff202f6be232",
+      "bytes": 7509
+    },
+    {
+      "id": "E05",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/manifest.local-simulation.json",
+      "claim": "42 local authenticated artifacts; all file hashes checked this run; explicitly not release evidence.",
+      "kind": "local_capture_manifest",
+      "sha256": "4d540d077479567c22ed6a485f029b6ab1cffb5e31250c7870c7dc047e69c256",
+      "bytes": 50096
+    },
+    {
+      "id": "E06",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/screenshots/desktop/en/receivables-history.png",
+      "claim": "Visually inspected: Loading AR history and 0 AR items are still displayed.",
+      "kind": "visual_observation",
+      "sha256": "85717d72dc1796b75f025dcffa1eaeeeb3aac76bfa8540ad86cee42e547d6c6f",
+      "bytes": 407703
+    },
+    {
+      "id": "E07",
+      "path": "E:/ohada saas/Focused projects/stoquify/tests/e2e/finance-x1-local-authenticated-evidence.spec.ts",
+      "claim": "Local capture uses DOMContentLoaded/auth/axe/overflow then screenshot; no business-data readiness wait; timing ends after checks/capture.",
+      "kind": "source",
+      "sha256": "74c2e77c5c4973d995a082c14235901f6f8ddecd24688a8a7f67d755e75e2ef2",
+      "bytes": 7606
+    },
+    {
+      "id": "E08",
+      "path": "E:/ohada saas/Focused projects/stoquify/tests/e2e/finance-x1-authenticated-evidence.spec.ts",
+      "claim": "Separate authoritative harness waits for a visible table and requires approved evidence; not executed in this audit.",
+      "kind": "source",
+      "sha256": "3bb05d8c771a9c86e2d4e2a339f1883f4732c33ef25767fb56f4b9114f9e59b6",
+      "bytes": 10413
+    },
+    {
+      "id": "E09",
+      "path": "E:/ohada saas/Focused projects/stoquify/prisma/schema.prisma",
+      "claim": "Journal, business event/outbox, payroll, accountant grants, agent run/evidence/cost/activation and supplier-proposal models.",
+      "kind": "source",
+      "sha256": "e7fb0b6195946077eca67e18829826021f3637fbb1967af5e52dc132f3e9e143",
+      "bytes": 303055
+    },
+    {
+      "id": "E10",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-catalog.service.ts",
+      "claim": "Module ownership and dependencies; POS/sales, reconciliation/finance/accounting, close/accounting.",
+      "kind": "source",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+      "bytes": 11931
+    },
+    {
+      "id": "E11",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-entitlement.service.ts",
+      "claim": "Legacy requestedModules/default entitlement derivation; observed/enforced decisions vary by caller.",
+      "kind": "source",
+      "sha256": "137108e7b599d4bc6b8caa7d9d05838696940ffc2e4dc88b467248495ae7f9d2",
+      "bytes": 12951
+    },
+    {
+      "id": "E12",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/_shared/protect.ts",
+      "claim": "Shared server-action authorization wrapper; referenced by inspected reconciliation and export actions.",
+      "kind": "source_anchor",
+      "sha256": "99b35157477444da109683770f78965720e3f0151ea9450bfa3910d54f07d200",
+      "bytes": 6704
+    },
+    {
+      "id": "E13",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/onboarding/master-data-import.service.ts",
+      "claim": "Staged/approved import uses canonical customer/supplier/item writers; excludes balances, opening stock and ledgers.",
+      "kind": "source",
+      "sha256": "1ea6dc2cab1e1034151df210cd7054476a098f5ba3cddecc1ed7a4692e4ea6d7",
+      "bytes": 42713
+    },
+    {
+      "id": "E14",
+      "path": "E:/ohada saas/Focused projects/stoquify/actions/onboarding/master-data-onboarding.actions.ts",
+      "claim": "RBAC, enforced settings-module helper, validated input and server-derived organization.",
+      "kind": "source",
+      "sha256": "972dd5bacf05af7d5563f6c2e52f003d48306906e224fbdd542adfe852abb41b",
+      "bytes": 6014
+    },
+    {
+      "id": "E15",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/cash-command/cash-command.service.ts",
+      "claim": "Existing permission-aware composition of drawer, payment, close, inventory and operating snapshots.",
+      "kind": "source",
+      "sha256": "acdae1eb98ae24ef96d712d0ee52d8c8221c67c71811a303404cdee4189192a7",
+      "bytes": 57465
+    },
+    {
+      "id": "E16",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/analytics/sales-analytics.service.ts",
+      "claim": "BUSINESS_PULSE_CURRENCY=XAF and server-local day functions remain; context contract is not imported here.",
+      "kind": "source",
+      "sha256": "16042faff16c1e2fcacc86a9f3d14dabb129d879a0fa0f6bbdbc7d0b4856a772",
+      "bytes": 38384
+    },
+    {
+      "id": "E17",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/analytics/analytical-context-contracts.ts",
+      "claim": "Explicit organization currency/timezone/half-open period and ready/blocked contract; focused tests rerun.",
+      "kind": "source_and_unit_test",
+      "sha256": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+      "bytes": 6873
+    },
+    {
+      "id": "E18",
+      "path": "E:/ohada saas/Focused projects/stoquify/actions/payments/reconciliation-workbench.actions.ts",
+      "claim": "Protected read with payments.reconciliation.read, enforced module intent, server-derived org.",
+      "kind": "source",
+      "sha256": "5dd107a1431dc5c9b9e9635e3350e6440074870b0571d8b091515bd857b6bdab",
+      "bytes": 1204
+    },
+    {
+      "id": "E19",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/accounting/posting.service.ts",
+      "claim": "Transaction, balanced/open-period/account checks, sensitive-action decision, source linking and close invalidation.",
+      "kind": "source",
+      "sha256": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2",
+      "bytes": 16480
+    },
+    {
+      "id": "E20",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/events/business-event.service.ts",
+      "claim": "Payload hashes, same-key replay/conflict handling, transactional event/audit/outbox primitives.",
+      "kind": "source",
+      "sha256": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+      "bytes": 11020
+    },
+    {
+      "id": "E21",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/events/business-event-outbox.service.ts",
+      "claim": "Leased claims and transactional delivery/failure handling; dirty user-owned source.",
+      "kind": "source",
+      "sha256": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1",
+      "bytes": 13079
+    },
+    {
+      "id": "E22",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/accounting/accountant-access.service.ts",
+      "claim": "Effective, expiring active client grant with READ/EXPORT/REVIEW boundary and revocation events.",
+      "kind": "source",
+      "sha256": "264fc252c6b7bc80bfcc458878ca79990aff5feffc5b47e60a00c4ff98df831a",
+      "bytes": 15336
+    },
+    {
+      "id": "E23",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "claim": "Invite/proposal flow retains source authority; invite event still has empty outboxMessages.",
+      "kind": "source",
+      "sha256": "dd4533ae3e10a800c2304f0852acf082f5e2a4699b66b655ea109bcc4e16e154",
+      "bytes": 45021
+    },
+    {
+      "id": "E24",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/pos/offline-sync.service.ts",
+      "claim": "Device/signature/sequence/replay controls and canonical commitPOSSale dependency.",
+      "kind": "source",
+      "sha256": "1f145c236c445cea8ea34c37f49e0bcd9a1aed4dcc5a24c5c8503b1aa6bd0eb4",
+      "bytes": 63658
+    },
+    {
+      "id": "E25",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/payroll/payment-evidence.service.ts",
+      "claim": "Separate request/approve/apply permissions, redaction and attendance-source evidence dependencies.",
+      "kind": "source",
+      "sha256": "b6041a7d59478f2cf38c9e46dcfc3d9cb7a89a9b0a3c1c662acf25dd4ee2b635",
+      "bytes": 45850
+    },
+    {
+      "id": "E26",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/agents/command-agent.service.ts",
+      "claim": "Role daily brief uses rollout/release authorization, scoped context, registry and deterministic runner.",
+      "kind": "source",
+      "sha256": "8c984589ba46e4982eeda26bf7e27abff226b25142e1b395651a90def867aa4a",
+      "bytes": 7994
+    },
+    {
+      "id": "E27",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/agents/agent-runner.service.ts",
+      "claim": "Run provenance, durable steps/evidence and policy incidents; existence does not establish live qualification.",
+      "kind": "source",
+      "sha256": "7c41d0f24874814d56cc7b4b94fb04d24716f4267798cd949e3bb1df5ab2c393",
+      "bytes": 12169
+    },
+    {
+      "id": "E28",
+      "path": "E:/ohada saas/Focused projects/stoquify/scripts/top12-evaluation-harness.js",
+      "claim": "Prioritizes cases and emits NOT_TESTED, not observed model/runtime behavior; helper tests rerun.",
+      "kind": "source_and_unit_test",
+      "sha256": "747974714756412fef0b454d3c808c1656e65d3598bc3966442a11f62c2ad1f6",
+      "bytes": 12774
+    },
+    {
+      "id": "E29",
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json",
+      "claim": "All 999 entries remain NOT_TESTED in this catalog; not a claim about every test in the repository.",
+      "kind": "catalog_inspection",
+      "sha256": "fd04f5b662cde7b082ba03e4c78ea79aaf69ca21d39b99972268a3637fa1c255",
+      "bytes": 462487
+    },
+    {
+      "id": "E30",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/agents/portfolio/connector-health.service.ts",
+      "claim": "Deterministic freshness, signature, credential, duplicate, gap and dead-letter health contract exists.",
+      "kind": "source",
+      "sha256": "4a65251e021ad29324e6efdd4962411601f8519cb0f063620b359d19a61e4096",
+      "bytes": 11560
+    },
+    {
+      "id": "E31",
+      "path": "E:/ohada saas/Focused projects/stoquify/package.json",
+      "claim": "Actual scripts; build chains secret preflight and migration deployment; broad gates may mutate reports or require DB access.",
+      "kind": "source",
+      "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde",
+      "bytes": 33043
+    },
+    {
+      "id": "E32",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/migrations/isolated-next-level-fresh-replay-20260830.md",
+      "claim": "80/80 migrations on dedicated local replay; 226 intentionally classified residual drift statements, zero unexpected structural drift reported.",
+      "kind": "historical_local_runtime_report",
+      "sha256": "1c44cae69d8e3aac5954a1d16fc1c65235943195660bde5f7967d07963268fa9",
+      "bytes": 973
+    },
+    {
+      "id": "E33",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/enterprise-release-blocker-status.md",
+      "claim": "August 28 production posture blocked; 3/12 families ready, not freshly recomputed here.",
+      "kind": "historical_release_register",
+      "sha256": "7c60e39b576dc62f852847d797deea0b1f5058c939cf2a0704890ccb7010a49e",
+      "bytes": 3925
+    },
+    {
+      "id": "E34",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/master-data-onboarding-release-readiness.md",
+      "claim": "August 16 bounded master-data onboarding/browser pass; not full financial-history migration or fresh current candidate proof.",
+      "kind": "historical_report",
+      "sha256": "c2e887a99471f8922a7c9dff6683f73ed771ea109489558dd1c92a8bfe2089f3",
+      "bytes": 2607
+    },
+    {
+      "id": "E35",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md",
+      "claim": "Controlled analytics/network strategy, canonical routes, dependencies and program-specific north star.",
+      "kind": "strategy",
+      "sha256": "598e0e69b60bd4e9d35a77a75ac7f8f134f553d71c2bf7ef727d843f918f6014",
+      "bytes": 44459
+    },
+    {
+      "id": "E36",
+      "path": "E:/ohada saas/Focused projects/stoquify/graphify-out/graph_components.json",
+      "claim": "AgentCommandPanel community 72; PaymentReconciliationWorkbench community 13.",
+      "kind": "graph_navigation",
+      "sha256": "121586053933c16acf5cf873e9aaf42b9cb4b99848b29508a72dbee05308ada9",
+      "bytes": 888133
+    },
+    {
+      "id": "E37",
+      "path": "E:/ohada saas/Focused projects/stoquify/graphify-out/graph_app.json",
+      "claim": "FinanceRouteAccess community 1; CashCommandPage community 38.",
+      "kind": "graph_navigation",
+      "sha256": "e02493517df4c3f25f2c84252031d266064966c781988c0fd6726060863aeb1b",
+      "bytes": 433451
+    },
+    {
+      "id": "E38",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/graphify-out/graph.json",
+      "claim": "Cash Command community 2; posting 3; runCommandAgent 30; business-event writer 1. Some locations are dated.",
+      "kind": "graph_navigation",
+      "sha256": "d1c7d474ca54c6ae5d993bbf86369b551848ef87fdb989f3473ad00490c86774",
+      "bytes": 8244878
+    },
+    {
+      "id": "E39",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/analytics-network-program/SURFACE_OWNERSHIP_AND_DUPLICATION_MAP.md",
+      "claim": "12 canonical surfaces and planned metric ownership; target job descriptions are not proof those features exist.",
+      "kind": "design_and_status",
+      "sha256": "7a0b92e8720ad0ac63d9351421715ff1fa541e515f786dd2e568a479b168d0fe",
+      "bytes": 6651
+    },
+    {
+      "id": "E40",
+      "path": "E:/ohada saas/Focused projects/stoquify/components/DataTableComponents/finance-x1-evidence-binding.ts",
+      "claim": "Default authoritative binding still pending; schema distinguishes approved budget/evidence and captured artifacts.",
+      "kind": "source_and_unit_test",
+      "sha256": "3114dec10ee0fbcd84af7e217434b48d16ad4ae86fa3901eebb4fc993eb94d40",
+      "bytes": 13643
+    },
+    {
+      "id": "E41",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/evidence/finance-x1/X1_APPROVAL_INTAKE_PREFILLED_2026-09-01.md",
+      "claim": "Later intake recognizes local captures and missing traceable decisions; no inferred signatures.",
+      "kind": "historical_report",
+      "sha256": "3072b6ff43e336ef1e6bb0384a36300f320a3351b8dd3aaa1968800275eb9460",
+      "bytes": 2737
+    },
+    {
+      "id": "E42",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/evidence/finance-x1/X1_APPROVAL_AUTOMATION_READINESS_2026-08-31.md",
+      "claim": "Generated September 1; approval automation has configuration/signature blockers, different scope from evidence intake.",
+      "kind": "historical_report",
+      "sha256": "05113aa6aabeeb58136ce6f5a36ce0748dfea0cad489f9895a1fa8b60af3b7d6",
+      "bytes": 4412
+    },
+    {
+      "id": "E43",
+      "path": "E:/ohada saas/Focused projects/stoquify/actions/accounting/finance-statement-export.actions.ts",
+      "claim": "Fresh-auth, permission and module enforcement; org/actor passed server-side to export service.",
+      "kind": "source",
+      "sha256": "583a1830b85b9015dc243f633a98c59e04177ff3d1813ed041818539ef478399",
+      "bytes": 2740
+    },
+    {
+      "id": "E44",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/agents/agent-metrics.service.ts",
+      "claim": "Run logger provides status, duration, tool/evidence/redaction counts; no proof of live cost baseline.",
+      "kind": "source",
+      "sha256": "85171b9269b498e2a6867e790090bd81da7f80015d40b212193a95d45c980336",
+      "bytes": 829
+    },
+    {
+      "id": "E45",
+      "path": "E:/ohada saas/Focused projects/stoquify/hooks/payments/usePaymentReconciliationWorkbench.ts",
+      "claim": "TanStack query calls protected action and polls; service truth remains server-owned.",
+      "kind": "source",
+      "sha256": "382c709c44337e5e85130e6faed1e7ce87ea989194e61e2fbc3ebfae1d52b2b8",
+      "bytes": 1275
+    },
+    {
+      "id": "E46",
+      "path": "E:/ohada saas/Focused projects/stoquify/app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
+      "claim": "Finance wrapper supplies org/actor/roles to existing Cash Command service and UI.",
+      "kind": "source",
+      "sha256": "3d13fd3637ab3dfbeba9ca053106c786e0ec0ab16261ecb90670c41fbe1573f5",
+      "bytes": 1815
+    },
+    {
+      "id": "E47",
+      "path": "E:/ohada saas/Focused projects/stoquify/app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx",
+      "claim": "Settings wrapper limits target read/write capabilities and supplies onboarding workbench.",
+      "kind": "source",
+      "sha256": "69d66a0c1c27b05ad361562de2c00addfdbbd353dca718f9bef48d376f1df9c6",
+      "bytes": 1347
+    },
+    {
+      "id": "E48",
+      "path": "E:/ohada saas/Focused projects/stoquify/docs/stoquify-skills-agents/STOQUIFY_TOP_12_AGENTS_SKILLS_COMPLETE_EXECUTION_ROADMAP_2026-08-02.md",
+      "claim": "Older copilot-program metric is three outcomes across two workflows; differs legitimately from later network-program metric.",
+      "kind": "strategy",
+      "sha256": "c4caa7efb1c1fb290c411ae87efc17a3a305a8881028dcccda3c0aabee6d98c2",
+      "bytes": 66326
+    },
+    {
+      "id": "E49",
+      "path": "E:/ohada saas/Focused projects/stoquify/services/analytics/__tests__/analytical-context-contracts.test.ts",
+      "claim": "Eight analytical-context unit cases in the selected successful run.",
+      "kind": "unit_test_source",
+      "sha256": "036ca2680e12729b1bd5c24dbe968075d001f9f48209b3313b5eab47ef075aed",
+      "bytes": 4397
+    },
+    {
+      "id": "E50",
+      "path": "E:/ohada saas/Focused projects/stoquify/components/DataTableComponents/__tests__/FinanceX1EvidenceBinding.test.ts",
+      "claim": "Synthetic evidence-binding contract tests, not real approvals/captures.",
+      "kind": "unit_test_source",
+      "sha256": "323db048b4b7ab510d595133f6e83aa4bdcc3cc662d7c8a16279fc5206ff7b52",
+      "bytes": 5421
+    },
+    {
+      "id": "E51",
+      "path": "E:/ohada saas/Focused projects/stoquify/scripts/__tests__/top12-evaluation-harness.test.js",
+      "claim": "Tests assert prioritization with NOT_TESTED results and no behavioral activation claim.",
+      "kind": "unit_test_source",
+      "sha256": "4f2e2cf3b715eee03d65da7cb796d497796411f2c605e1cb83ce397a580f90e5",
+      "bytes": 5058
+    },
+    {
+      "id": "E52",
+      "path": "E:/ohada saas/Focused projects/stoquify/jest.config.ts",
+      "claim": "Existing Jest configuration; broad setup uses mocks.",
+      "kind": "source",
+      "sha256": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+      "bytes": 1417
+    },
+    {
+      "id": "E53",
+      "path": "E:/ohada saas/Focused projects/stoquify/jest.setup.ts",
+      "claim": "Prisma/navigation and other mocks; limits interpretation of focused unit evidence.",
+      "kind": "source",
+      "sha256": "2b51756991e4f072634f0f6bf89501e80a42080fac6d7bd809114c1babb78d2e",
+      "bytes": 3267
+    },
+    {
+      "id": "E54",
+      "path": "E:/ohada saas/Focused projects/stoquify/what-next/migrations/isolated-next-level-blocker-register-20260830.md",
+      "claim": "Isolated replay target-specific fixture, read-only verifier and outstanding process/authority limits.",
+      "kind": "historical_local_runtime_report",
+      "sha256": "9e37314960b3e6b7427dd7235bacfa0965d389f30eb1a0a4663456385ccf7575",
+      "bytes": 4160
+    }
+  ],
+  "assets": [
+    {
+      "name": "001-aqstoqflow-program-orchestrator",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/001-aqstoqflow-program-orchestrator/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "edbfaf399f08ee06cd18f05cb75ff71f2f49ec48e331eee976bada08477cc68f",
+      "bytes": 2325
+    },
+    {
+      "name": "stoquify-release-evidence-ratchet",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/stoquify-release-evidence-ratchet/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "67bed03015f17ad93d9e854edabc39fc23ea1f23453873aadaa6fc9ea10db73e",
+      "bytes": 1571
+    },
+    {
+      "name": "aqstoqflow-entity-workflow-verifier",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/aqstoqflow-entity-workflow-verifier/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "55c84797831bef4ffb496dea36052a91645cbe3384ba4f09964e873c053d5bde",
+      "bytes": 10914
+    },
+    {
+      "name": "aqstoqflow-release-verification-foundation",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/aqstoqflow-release-verification-foundation/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "541fff5b47f33ad0fdab8d9340ab54e858182bd6fd8f5b485c174ca3e31df6c4",
+      "bytes": 2104
+    },
+    {
+      "name": "kontava-workflow-bi-trust-gates",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/kontava-workflow-bi-trust-gates/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "53f9f69f216e776ee8f158653d5b54f5f9b073ae4446d7ec99ea6cd263182031",
+      "bytes": 3843
+    },
+    {
+      "name": "kontava-business-pulse-analytics",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/kontava-business-pulse-analytics/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "d7147f45158c5cfd8156911df9578fa578880c48f0493f84b128871d61dad8ab",
+      "bytes": 2035
+    },
+    {
+      "name": "aqstoqflow-module-access-guard-contract",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/aqstoqflow-module-access-guard-contract/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "8a4ed88123c811edbd88e085038c93943d3072aa244cc677a567e759796cce9c",
+      "bytes": 4548
+    },
+    {
+      "name": "aqstoqflow-uiux-06-module-normalization",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/aqstoqflow-uiux-06-module-normalization/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "8c22a804a3b1bdefdaee8f5b5ffc5d46d83e09af4e7268dc7e517588472630ae",
+      "bytes": 3436
+    },
+    {
+      "name": "aqstoqflow-uiux-09-accessibility-visual-regression-governance",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/aqstoqflow-uiux-09-accessibility-visual-regression-governance/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "38a01f2759747a7f6bc92464bde753679fa731e159ce2975bc2c2cbb58b8f704",
+      "bytes": 3291
+    },
+    {
+      "name": "aqstoqflow-uiux-08-onboarding-demo-workspace",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/aqstoqflow-uiux-08-onboarding-demo-workspace/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "856a28e18b6df11b3f3b72fc71e16cd55024bff1cd4567d519b026d7ca9fbae4",
+      "bytes": 3186
+    },
+    {
+      "name": "ledger-first-business-events",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/ledger-first-business-events/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "c8dd2672051bb239d69ab07788b1499dc5479c3dd7e1ffe9da868340fbf82a76",
+      "bytes": 10047
+    },
+    {
+      "name": "016-aqstoqflow-ai-copilot-guardrails",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/016-aqstoqflow-ai-copilot-guardrails/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "b440c92242f45d0fff654334bc9cb28b46a78ac0ee9c155e693896e7d60e2e28",
+      "bytes": 2392
+    },
+    {
+      "name": "aqstoqflow-provider-health-recon-ops",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/aqstoqflow-provider-health-recon-ops/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "b8a96edcbd2dd41d90476aa770c15cdc8569acdd47befd208815f443ea46df58",
+      "bytes": 1683
+    },
+    {
+      "name": "014-aqstoqflow-offline-pos-sync-architect-builder",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/014-aqstoqflow-offline-pos-sync-architect-builder/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "c4f3cf69a196b60d6910f352849d625ddfc566f24e76dc2584a590e1f0fda661",
+      "bytes": 6182
+    },
+    {
+      "name": "kontava-workflow-efficiency-telemetry",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/kontava-workflow-efficiency-telemetry/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "896f0c50fe9f31233226b652d96580ebec7ecb238503394ace7bdcb33fefc923",
+      "bytes": 3907
+    },
+    {
+      "name": "nextjs-service-layer-workflow",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/nextjs-service-layer-workflow/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "d55e2d80d620c2bdbe5382b21b87f6ffd30605f5ba1637cdd9aaa44157da9ef9",
+      "bytes": 5056
+    },
+    {
+      "name": "enterprise-db-seed",
+      "type": "skill",
+      "path": "C:/Users/J COMPUTER/.codex/skills/enterprise-db-seed/SKILL.md",
+      "inspection": "Purpose, workflow and boundary excerpts inspected; not executed.",
+      "sha256": "9cbd3b93f73f2bfd3be6718563d3dd4938a67add2f583cc461d9a8c45fb8e187",
+      "bytes": 8911
+    },
+    {
+      "name": "backend-architect",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/backend-architect.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "00f2ad14d5e21b441a1a4d80ef6f9888f9d04cb1a6dd0088e729a220baf4318f",
+      "bytes": 11082
+    },
+    {
+      "name": "data-engineer",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/data-engineer.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "1bfd7a05bdc45a956be0e7a4791feb62b92d09d5b8db97e5ff8d6373757c898e",
+      "bytes": 15130
+    },
+    {
+      "name": "code-reviewer",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/code-reviewer.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "119a56d90455079efb1e5a57722b8d1cfe1dc39c694b6ce6ad7f546a5769bb44",
+      "bytes": 3068
+    },
+    {
+      "name": "frontend-developer",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/frontend-developer.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "80f00fb78c659f0a4651441c0eb2d906e7ff6859510d6737af448e399921c072",
+      "bytes": 9449
+    },
+    {
+      "name": "database-optimizer",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/database-optimizer.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "173399c308f504bba37774e08da467c627de9e79c79fce00b8b7a98294107acb",
+      "bytes": 5619
+    },
+    {
+      "name": "workflow-architect",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/workflow-architect.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "fce62d84af0647276b3c4964bc52c3d6d24af479d2e9f0d4683238536266b86b",
+      "bytes": 27132
+    },
+    {
+      "name": "stoquify-platform-assurance-agent",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/stoquify-platform-assurance-agent.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "be78b2a416fdff7d5ae61da912d1f98fb4e42003b43853898757aecedacaeba1",
+      "bytes": 8288
+    },
+    {
+      "name": "stoquify-customer-success-adoption-agent",
+      "type": "agent_definition",
+      "path": "C:/Users/J COMPUTER/.codex/agents/stoquify-customer-success-adoption-agent.toml",
+      "inspection": "Identity and scope excerpts inspected; not activated.",
+      "sha256": "323cbcacaeafcc1dc0591c8e5c6797079cfdfa9bd9d196bebb2aa2c32a71c8d3",
+      "bytes": 8333
+    }
+  ],
+  "commandLog": [
+    {
+      "id": "CMD01",
+      "cmd": "Read attached pasted-text.txt",
+      "exit": 0
+    },
+    {
+      "id": "CMD02",
+      "cmd": "git rev-parse HEAD; git branch --show-current; git status --short; output/instructions inventory",
+      "exit": 0,
+      "note": "172 changed entries; global git ignore permission warning."
+    },
+    {
+      "id": "CMD03",
+      "cmd": "Get-Content -LiteralPath 'AGENTS.md' -TotalCount 85\n$roots = @('C:\\Users\\J COMPUTER\\.codex\\skills','C:\\Users\\J COMPUTER\\.codex\\agents','C:\\Users\\J COMPUTER\\.agents\\skills','.agents','.codex')\nforeach ($root in $roots) { if (Test-Path -LiteralPath $root) { $files = @(rg --files --hidden $root -g SKILL.md -g '*.toml' -g '!**/node_modules/**' -g '!**/.git/**'); [pscustomobject]@{Root=$root;DefinitionFiles=$files.Count} | ConvertTo-Json -Compress } }\nrg --files --hidden .agents .codex -g '*.md' -g '*.json' -g '*.toml' | Select-Object -First 50\nGet-ChildItem -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills' -Directory | Where-Object Name -Match 'current|readiness|release|workflow|agent|onboard|data-trust|provider|semantic|analytics|billing|access|baseline|uiux|migration' | Select-Object -ExpandProperty Name",
+      "exit": 0
+    },
+    {
+      "id": "CMD04",
+      "label": "current readiness and migration deltas",
+      "cmd": "Get-Content -LiteralPath 'what-next/migrations/isolated-next-level-fresh-replay-20260830.md' -TotalCount 130\nGet-Content -LiteralPath 'what-next/migrations/isolated-next-level-blocker-register-20260830.md' -TotalCount 110\nGet-Content -LiteralPath 'what-next/analytics-network-program/P0_01_TO_P0_03_EXECUTION_REPORT.md' | Select-Object -Skip 95 -First 100\nGet-Content -LiteralPath 'what-next/table-harmonization-x1-finance-execution-2026-08-31.md' | Select-Object -Skip 63 -First 65",
+      "exit": 0
+    },
+    {
+      "id": "CMD05",
+      "label": "agent evaluation and latest portfolio",
+      "cmd": "rg --files what-next docs scripts services/agents -g '!**/runs/**' -g '!**/isolated-workspace/**' -g '!**/*.pdf' -g '!**/*.docx' -g '*eval*' -g '*top*12*' -g '*connector*' -g '*onboarding*' -g '*phase2b*' -g '*phase3*' | Select-Object -First 65\nGet-Content -LiteralPath 'what-next/agents-skills/STOQUIFY_HIGH_LEVERAGE_AGENT_SKILL_GAP_AND_PRIORITY_ROADMAP_2026-08-20.md' | Select-Object -Skip 255 -First 105\nGet-ChildItem -LiteralPath 'what-next/agents-runtime' -File | Where-Object Extension -eq '.md' | Sort-Object LastWriteTime -Descending | Select-Object -First 8 Name,LastWriteTime",
+      "exit": 0
+    },
+    {
+      "id": "CMD06",
+      "label": "coordination and evidence skills",
+      "cmd": "Write-Output 'SKILL: 001-aqstoqflow-program-orchestrator'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\001-aqstoqflow-program-orchestrator\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: aqstoqflow-release-verification-foundation'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\aqstoqflow-release-verification-foundation\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: stoquify-release-evidence-ratchet'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\stoquify-release-evidence-ratchet\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: aqstoqflow-entity-workflow-verifier'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\aqstoqflow-entity-workflow-verifier\\SKILL.md' -TotalCount 68",
+      "exit": 0
+    },
+    {
+      "id": "CMD07",
+      "label": "product engineering skills",
+      "cmd": "Write-Output 'SKILL: aqstoqflow-uiux-06-module-normalization'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\aqstoqflow-uiux-06-module-normalization\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: aqstoqflow-uiux-09-accessibility-visual-regression-governance'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\aqstoqflow-uiux-09-accessibility-visual-regression-governance\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: kontava-business-pulse-analytics'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\kontava-business-pulse-analytics\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: aqstoqflow-module-access-guard-contract'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\aqstoqflow-module-access-guard-contract\\SKILL.md' -TotalCount 68",
+      "exit": 0
+    },
+    {
+      "id": "CMD08",
+      "label": "data integration and agent skills",
+      "cmd": "Write-Output 'SKILL: enterprise-db-seed'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\enterprise-db-seed\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: aqstoqflow-provider-health-recon-ops'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\aqstoqflow-provider-health-recon-ops\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: 016-aqstoqflow-ai-copilot-guardrails'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\016-aqstoqflow-ai-copilot-guardrails\\SKILL.md' -TotalCount 68\nWrite-Output 'SKILL: nextjs-service-layer-workflow'\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\nextjs-service-layer-workflow\\SKILL.md' -TotalCount 68",
+      "exit": 0
+    },
+    {
+      "id": "CMD09",
+      "label": "workflow ownership and financial invariants",
+      "cmd": "rg --files actions hooks 'app/[locale]/(dashboard)/dashboard' services -g '*cash-command*' -g '*master-data*' -g '*journal*' -g '*accountant*' -g '*posting*' -g '*reconciliation*' -g '*purchase-order*' -g '!**/graphify-out/**' | Select-Object -First 70\nrg -n 'export (async )?function|organizationId|requirePermission|requireModuleAccess|protect|assert|consent|expiresAt|revoked' services/accounting/accountant-access.service.ts services/cash-command/cash-command.service.ts services/modules/module-entitlement.service.ts | Select-Object -First 80\nrg -n 'export (async )?function|\\$transaction|idempot|sourceLink|close|reversal|balanced' services/accounting/accounting-posting.service.ts services/events/business-event-outbox.service.ts services/events/business-event.service.ts | Select-Object -First 85",
+      "exit": 1
+    },
+    {
+      "id": "CMD10",
+      "label": "analytics context and table implementation",
+      "cmd": "Get-Content -LiteralPath 'services/analytics/sales-analytics.service.ts' -TotalCount 105\nrg -n 'XAF|startOfDay|endOfDay|setHours|currency|timezone|resolveOrganizationAnalyticalContext' services/analytics/sales-analytics.service.ts services/analytics/analytical-context-contracts.ts\nGet-Content -LiteralPath 'actions/accounting/finance-statement-export.actions.ts' -TotalCount 150\nGet-Content -LiteralPath 'components/DataTableComponents/finance-x1-evidence-binding.ts' -TotalCount 110\nGet-Content -LiteralPath 'jest.config.js' -TotalCount 90",
+      "exit": 1
+    },
+    {
+      "id": "CMD11",
+      "label": "corrected source and test entrypoints",
+      "cmd": "rg --files -g 'jest.config*' -g 'jest.setup*' -g '*module-access*.ts' -g '*migration*control*' -g '!what-next/**' -g '!node_modules/**'\nGet-Content -LiteralPath 'services/accounting/posting.service.ts' -TotalCount 95\nrg -n 'export async function|\\$transaction|idempot|balance|period|invalidate|sourceLink|reversal|sensitive' services/accounting/posting.service.ts services/accounting/journals.service.ts | Select-Object -First 60\nGet-Content -LiteralPath 'actions/onboarding/master-data-onboarding.actions.ts' -TotalCount 120\nGet-Content -LiteralPath 'services/cash-command/cash-command.service.ts' -TotalCount 105",
+      "exit": 0
+    },
+    {
+      "id": "CMD12",
+      "label": "existing agent and evaluation behavior",
+      "cmd": "Get-Content -LiteralPath 'scripts/top12-evaluation-harness.js' -TotalCount 230\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\agents\\stoquify-platform-assurance-agent.toml' -TotalCount 115\nGet-Content -LiteralPath 'services/agents/portfolio/connector-health.service.ts' -TotalCount 85\nGet-Content -LiteralPath 'services/agents/command-agent.service.ts' -TotalCount 85",
+      "exit": 0
+    },
+    {
+      "id": "CMD13",
+      "label": "workflow route and hook traces",
+      "cmd": "rg --files 'app/[locale]/(dashboard)/dashboard' actions hooks components -g '*onboarding*' -g '*cash-command*' -g '*payroll*run*' -g '*pos-sale*' -g '*offline*replay*' -g '*reconciliation*' -g '!**/graphify-out/**' | Select-Object -First 55\nGet-Content -LiteralPath 'app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx' -TotalCount 75\nGet-Content -LiteralPath 'actions/payments/reconciliation-workbench.actions.ts' -TotalCount 90\nrg -n 'master-data-onboarding|reconciliation-workbench.actions|cash-command.actions' components hooks 'app/[locale]/(dashboard)/dashboard' -g '*.ts' -g '*.tsx' | Select-Object -First 25\nGet-Content -LiteralPath 'jest.config.ts' -TotalCount 120\nGet-Content -LiteralPath 'scripts/__tests__/top12-evaluation-harness.test.js' -TotalCount 65",
+      "exit": 0
+    },
+    {
+      "id": "CMD14",
+      "label": "domain controls samples",
+      "cmd": "rg --files services/pos services/payroll services/purchasing services/inventory -g '*.ts' -g '!**/__tests__/**' | Where-Object { $_ -match 'offline|sale|run.service|posting|valuation|supplier.*acknow|payment.*service' } | Select-Object -First 45\nrg -n 'recordBusinessEventInTx|recordBusinessEvent|postJournalEntry|record.*Close|InventoryMovement' services/pos services/payroll services/purchasing services/purchase-order -g '*.ts' -g '!**/__tests__/**' | Select-Object -First 55\nGet-Content -LiteralPath 'services/modules/module-entitlement.service.ts' -TotalCount 125\nGet-Content -LiteralPath 'services/accounting/accountant-access.service.ts' | Select-Object -Skip 365 -First 88",
+      "exit": 0
+    },
+    {
+      "id": "CMD15",
+      "label": "graph navigation and counts",
+      "cmd": "$specs=@(@{p='graphify-out/graph_app.json';labels=@('CashCommandPage()','FinanceRouteAccess()')},@{p='graphify-out/graph_components.json';labels=@('PaymentReconciliationWorkbench.tsx','AgentCommandPanel.tsx')},@{p='services/graphify-out/graph.json';labels=@('getCashCommandData()','recordBusinessEventInTx()','postJournalEntry()','commitMasterDataImport()','runCommandAgent()')})\nforeach($s in $specs){$g=Get-Content -LiteralPath $s.p -Raw | ConvertFrom-Json; $g.nodes | Where-Object {$s.labels -contains $_.label} | Select-Object @{n='graph';e={$s.p}},id,label,community,source_file,source_location | ConvertTo-Json -Depth 3}\n$catalog=Get-Content -LiteralPath 'docs/copilot/stoquify-agent-skill-definition-suite/evaluations/evaluation-catalog.json' -Raw | ConvertFrom-Json\n$catalog.cases | Group-Object execution_status | Select-Object Name,Count | ConvertTo-Json\n$pkg=Get-Content -LiteralPath package.json -Raw | ConvertFrom-Json\n$pkg.scripts.PSObject.Properties | Where-Object {$_.Name -match '^test$|^test:e2e:finance|^finance:x1|^agent:.*gate$|^prisma:.*(replay|safety)|^seed:verify:realistic'} | Select-Object Name,Value | ConvertTo-Json",
+      "exit": 0
+    },
+    {
+      "id": "CMD16",
+      "label": "test safety and precise inventory",
+      "cmd": "Get-Content -LiteralPath 'jest.setup.ts' -TotalCount 150\nGet-Content -LiteralPath 'services/analytics/__tests__/analytical-context-contracts.test.ts' -TotalCount 70\nGet-Content -LiteralPath 'components/DataTableComponents/__tests__/FinanceX1EvidenceBinding.test.ts' -TotalCount 80\nGet-Content -LiteralPath 'scripts/__tests__/top12-evaluation-harness.test.js' | Select-Object -Skip 65 -First 100\n$roots=@('C:\\Users\\J COMPUTER\\.codex\\skills','C:\\Users\\J COMPUTER\\.agents\\skills','.agents','.codex'); foreach($p in $roots){ $f=@(rg --files --hidden $p -g SKILL.md); [pscustomobject]@{root=$p;skillFiles=$f.Count} | ConvertTo-Json -Compress }\nGet-ChildItem -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\agents' -File | Where-Object Name -Match '^(backend|software|workflow|data|database|frontend|accessibility|code-reviewer|reality|product|sre|technical|stoquify)' | Select-Object -ExpandProperty Name",
+      "exit": 0
+    },
+    {
+      "id": "CMD17",
+      "label": "skill extension scope",
+      "cmd": "Get-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\kontava-workflow-bi-trust-gates\\SKILL.md' -TotalCount 100\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\ledger-first-business-events\\SKILL.md' -TotalCount 100\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\aqstoqflow-uiux-08-onboarding-demo-workspace\\SKILL.md' -TotalCount 95\nGet-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\kontava-workflow-efficiency-telemetry\\SKILL.md' -TotalCount 80",
+      "exit": 0
+    },
+    {
+      "id": "CMD18",
+      "label": "Focused current contract/evaluation tests",
+      "cmd": "npm test -- --runInBand --runTestsByPath services/analytics/__tests__/analytical-context-contracts.test.ts components/DataTableComponents/__tests__/FinanceX1EvidenceBinding.test.ts scripts/__tests__/top12-evaluation-harness.test.js --no-coverage",
+      "exit": 0,
+      "sessionId": 72544,
+      "result": "3 suites passed; 19 tests passed; Jest-reported 8.708s. Contracts and selection harness only; no behavior-catalog execution, browser run, DB or production verification."
+    },
+    {
+      "id": "CMD19",
+      "label": "development role contents",
+      "cmd": "$names=@('backend-architect','data-engineer','code-reviewer','frontend-developer','database-optimizer','workflow-architect');foreach($name in $names){$p='C:\\Users\\J COMPUTER\\.codex\\agents\\'+$name+'.toml';$raw=Get-Content -LiteralPath $p -Raw;Write-Output ('AGENT: '+$name);($raw -split \"`n\" | Where-Object {$_ -match '^(name|description)\\s*='}) ; $m=[regex]::Match($raw,'(?m)^developer_instructions\\s*=\\s*(\".*\")\\s*$');if($m.Success){$decoded=$m.Groups[1].Value | ConvertFrom-Json;($decoded -split \"`n\" | Select-Object -First 18) }}\n$names=@('stoquify-platform-assurance-agent','stoquify-customer-success-adoption-agent'); foreach($name in $names){$p='C:\\Users\\J COMPUTER\\.codex\\agents\\'+$name+'.toml';$raw=Get-Content -LiteralPath $p -Raw;Write-Output ('AGENT: '+$name);$m=[regex]::Match($raw,'(?m)^developer_instructions\\s*=\\s*(\".*\")\\s*$');if($m.Success){$decoded=$m.Groups[1].Value | ConvertFrom-Json;($decoded -split \"`n\" | Select-Object -First 25)}}",
+      "exit": 0
+    },
+    {
+      "id": "CMD20",
+      "label": "latest evidence and end-to-end source anchors",
+      "cmd": "Get-ChildItem -LiteralPath 'what-next/evidence/finance-x1' -Recurse -File | Where-Object Extension -In '.md','.json' | Sort-Object LastWriteTime -Descending | Select-Object -First 14 FullName,LastWriteTime\nrg -n 'evidenceStatus|budgetApproval|evidenceAuthorization|screenshotsAvailable|productionBudgetsApproved' components/DataTableComponents/finance-x1-evidence-binding.ts | Select-Object -Last 22\nGet-Content -LiteralPath 'app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx' -TotalCount 75\nGet-Content -LiteralPath 'hooks/payments/usePaymentReconciliationWorkbench.ts' -TotalCount 75\nGet-Content -LiteralPath 'services/pos/offline-sync.service.ts' -TotalCount 55\nGet-Content -LiteralPath 'services/purchase-order/supplier-po-acknowledgement.service.ts' | Select-Object -Skip 370 -First 60\nrg -n 'month.*organizations|three evidence|three.*outcomes|north.star|North.star|3.*outcomes' 'docs/stoquify-skills-agents/STOQUIFY_TOP_12_AGENTS_SKILLS_COMPLETE_EXECUTION_ROADMAP_2026-08-02.md' 'what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md'",
+      "exit": 0
+    },
+    {
+      "id": "CMD21",
+      "label": "newer X1 evidence classification",
+      "cmd": "Get-Content -LiteralPath 'what-next/evidence/finance-x1/X1_APPROVAL_AUTOMATION_READINESS_2026-08-31.md' -TotalCount 75\nGet-Content -LiteralPath 'what-next/evidence/finance-x1/X1_APPROVAL_INTAKE_PREFILLED_2026-09-01.md' -TotalCount 40\n$p='what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/manifest.json'\nif(Test-Path -LiteralPath $p){$j=Get-Content -LiteralPath $p -Raw|ConvertFrom-Json;$j|Select-Object runId,classification,status,evidenceClass,simulation,localOnly,productionActivationAuthorized,summary,blockers,stats|ConvertTo-Json -Depth 5}\nGet-ChildItem -LiteralPath 'what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339' -File | Select-Object Name,Length\nrg -n 'LOCAL_SIMULATION|local-simulation|simulation|production|qualified|status' scripts/finance-x1-local-evidence-preflight.js tests/e2e/finance-x1-local-authenticated-evidence.spec.ts | Select-Object -First 30",
+      "exit": 0
+    },
+    {
+      "id": "CMD22",
+      "label": "source and infrastructure findings",
+      "cmd": "rg -n '^model (Agent|BusinessEvent|MasterData|InventoryMovement|JournalEntry|PayrollRun|AccountantAccessGrant|SupplierPo)' prisma/schema.prisma | Select-Object -First 50\nrg -n 'outboxMessages|queued|invite' services/purchase-order/supplier-po-acknowledgement.service.ts | Select-Object -First 25\nGet-Content -LiteralPath 'what-next/master-data-onboarding-release-readiness.md' -TotalCount 65\nGet-Content -LiteralPath 'services/payroll/payment-evidence.service.ts' -TotalCount 70\nrg -n 'typecheck|watermarkId|json:' services/accounting/finance-statement-export.service.ts components/finance/PaymentReconciliationWorkbench.tsx | Select-Object -First 20",
+      "exit": 1
+    },
+    {
+      "id": "CMD23",
+      "label": "Inspect latest local X1 manifest",
+      "cmd": "$p='what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/manifest.local-simulation.json'\n$j=Get-Content -LiteralPath $p -Raw | ConvertFrom-Json\n$j.PSObject.Properties.Name\n$j | Select-Object runId,classification,status,generatedAt,localOnly,productionActivationAuthorized,releaseEligible,summary | ConvertTo-Json -Depth 5\n$j.artifacts | Select-Object -First 1 | ConvertTo-Json -Depth 5\n\"Artifact count: $(@($j.artifacts).Count)\"\nGet-Content -LiteralPath 'what-next/evidence/finance-x1/X1_APPROVAL_INTAKE_PREFILLED_2026-09-01.md' | Select-Object -Skip 38 -First 25",
+      "exit": 0
+    },
+    {
+      "id": "CMD24",
+      "label": "Verify local X1 artifact integrity and measurement scope",
+      "cmd": "$p='what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/manifest.local-simulation.json'\n$j=Get-Content -LiteralPath $p -Raw | ConvertFrom-Json\n$checks=@($j.artifacts|ForEach-Object{$a=$_;$exists=Test-Path -LiteralPath $a.artifactPath;$matches=$false;if($exists){$hash=(Get-FileHash -LiteralPath $a.artifactPath -Algorithm SHA256).Hash.ToLowerInvariant();$matches=$hash -eq $a.sha256};[pscustomobject]@{Exists=$exists;HashMatches=$matches;Rows=$a.measurements.renderedRowCount;ResultMs=$a.measurements.usefulResultMs;OverflowPx=$a.measurements.bodyOverflowPx}})\n[pscustomobject]@{Declared=$j.artifactCount;Observed=$checks.Count;Existing=@($checks|Where-Object Exists).Count;HashMatches=@($checks|Where-Object HashMatches).Count;ZeroRowCaptures=@($checks|Where-Object Rows -eq 0).Count;TimingMin=($checks.ResultMs|Measure-Object -Minimum).Minimum;TimingMax=($checks.ResultMs|Measure-Object -Maximum).Maximum;NonzeroOverflow=@($checks|Where-Object OverflowPx -gt 0).Count;Authoritative=$j.authoritative;ApprovedForReleaseEvidence=$j.approvedForReleaseEvidence;CapturedAt=$j.capturedAt} | ConvertTo-Json\nrg -n 'renderedRowCount|usefulResultMs|layoutUsable|accessibilityReviewed|axe|rowCount|overflow|Date.now|performance.now|routeLoaded' tests/e2e/finance-x1-local-authenticated-evidence.spec.ts | Select-Object -First 40",
+      "exit": 0,
+      "result": "{\r\n  \"Declared\": 42,\r\n  \"Observed\": 42,\r\n  \"Existing\": 42,\r\n  \"HashMatches\": 42,\r\n  \"ZeroRowCaptures\": 21,\r\n  \"TimingMin\": 7800.0,\r\n  \"TimingMax\": 63200.0,\r\n  \"NonzeroOverflow\": 0,\r\n  \"Authoritative\": false,\r\n  \"ApprovedForReleaseEvidence\": false,\r\n  \"CapturedAt\": \"2026-09-01T15:03:16.488Z\"\r\n}\r\n2:import axe from \"axe-core\"\r\n48:    routeLoaded: true\r\n52:    layoutUsable: true\r\n53:    accessibilityReviewed: true\r\n57:    renderedRowCount: number\r\n58:    usefulResultMs: number\r\n100:  await page.addScriptTag({ content: axe.source })\r\n102:    const engine = (window as unknown as { axe: typeof axe }).axe\r\n167:      const startedAt = Date.now()\r\n211:          routeLoaded: true,\r\n215:          layoutUsable: true,\r\n216:          accessibilityReviewed: true,\r\n220:          renderedRowCount: await page.locator(\"tbody tr\").count(),\r\n221:          usefulResultMs: Date.now() - startedAt,\r\n"
+    },
+    {
+      "id": "CMD25",
+      "label": "Inspect X1 capture readiness assertions",
+      "cmd": "Get-Content -LiteralPath 'tests/e2e/finance-x1-local-authenticated-evidence.spec.ts' | Select-Object -Skip 153 -First 86\nrg -n 'usefulResultMs|renderedRowCount|waitFor|toBeVisible|routeLoaded|loading' tests/e2e/finance-x1-authenticated-evidence.spec.ts | Select-Object -First 45\nGet-Content -LiteralPath 'what-next/analytics-network-program/PROGRAM_STATUS_REGISTER.json' | Select-Object -Skip 78 -First 38",
+      "exit": 0
+    },
+    {
+      "id": "VIS01",
+      "label": "Visual inspection",
+      "tool": "view_image",
+      "path": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/screenshots/desktop/en/receivables-history.png",
+      "result": "Screenshot visibly displays Loading AR history, 0 AR items, and proof pending; cannot establish completed business-data loading."
+    },
+    {
+      "id": "CMD27",
+      "label": "offline skill and authoritative evidence comparison",
+      "cmd": "Get-Content -LiteralPath 'C:\\Users\\J COMPUTER\\.codex\\skills\\014-aqstoqflow-offline-pos-sync-architect-builder\\SKILL.md' -TotalCount 95\nGet-Content -LiteralPath 'tests/e2e/finance-x1-authenticated-evidence.spec.ts' | Select-Object -Skip 227 -First 90\nGet-Content -LiteralPath 'what-next/analytics-network-program/SURFACE_OWNERSHIP_AND_DUPLICATION_MAP.md' -TotalCount 85",
+      "exit": 0
+    },
+    {
+      "id": "CMD28",
+      "label": "missing statutory/operations context and KPI northstar",
+      "cmd": "Get-Content -LiteralPath 'what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md' | Select-Object -Skip 322 -First 40\nGet-Content -LiteralPath 'what-next/enterprise-release-blocker-status.md' -TotalCount 60\nGet-Content -LiteralPath 'package.json' -TotalCount 26\nGet-Content -LiteralPath 'services/agents/agent-metrics.service.ts' -TotalCount 65",
+      "exit": 0
+    },
+    {
+      "id": "PACKAGE01",
+      "tool": "node via PowerShell stdin",
+      "purpose": "Validate package, source hashes, links and dependency/score consistency; persist results.",
+      "exit": 1,
+      "result": "Validation checks passed but Node writeFileSync could not persist the registry (EPERM). No application file was affected."
+    },
+    {
+      "id": "PACKAGE02",
+      "tool": "read-only Node verification, followed by apply_patch",
+      "purpose": "Repeat artifact consistency and hash collection without shell filesystem mutation; persist through the workspace patch tool.",
+      "exit": 0,
+      "result": {
+        "status": "PASS",
+        "validatedAt": "2026-09-02T12:01:48.370Z",
+        "recommendationCount": 9,
+        "requiredFields": true,
+        "scoreArithmetic": true,
+        "acyclicDependencies": true,
+        "priorRoadmapCoverage": 7,
+        "evidencePathsHashed": 54,
+        "assetPathsHashed": 25,
+        "markdownLinksChecked": 181,
+        "promptAnchorsPresent": true
+      }
+    }
+  ],
+  "limitations": [
+    "Targeted broad architecture study, not exhaustive per-route implementation/security audit.",
+    "No current production telemetry, customer interviews, staffing capacity or ROI baseline.",
+    "Graph relationships are navigational and were checked against current source where used.",
+    "Historical evidence retains its date/environment; hashes do not upgrade evidence authority.",
+    "No blanket accessibility, legal, accounting, privacy, security or release certification."
+  ],
+  "artifactNames": {
+    "report": "STOQUIFY_DEVELOPMENT_AGENT_SKILL_RECOMMENDATIONS_2026-09-02.md",
+    "registry": "STOQUIFY_DEVELOPMENT_AGENT_SKILL_REGISTRY_2026-09-02.json",
+    "playbook": "STOQUIFY_DEVELOPMENT_AGENT_SKILL_PLAYBOOK_2026-09-02.md"
+  },
+  "artifactHashes": {
+    "STOQUIFY_DEVELOPMENT_AGENT_SKILL_RECOMMENDATIONS_2026-09-02.md": "ca83b1bae588394b4ff0326e70bc31483d17cce2b8bd3fbff6a989822fe50d27",
+    "STOQUIFY_DEVELOPMENT_AGENT_SKILL_PLAYBOOK_2026-09-02.md": "d7f3866756c83ab90c7029b959bc7a06cb2101e1eded5cf9434b6fbe1c4f4683"
+  },
+  "provenanceCollectedAt": "2026-09-02T12:01:48.371Z"
+}

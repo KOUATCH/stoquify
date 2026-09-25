@@ -1,11 +1,15 @@
+jest.mock("@/components/purchase-orders/PurchaseOrderLifecycleDialog", () => ({ PurchaseOrderLifecycleDialog: () => null }))
+jest.mock("@/components/purchase-orders/PurchaseOrderDecisionHistory", () => ({ PurchaseOrderDecisionHistory: () => null }))
 import type { ReactNode, SVGProps } from "react"
 import { Component } from "react"
-import { fireEvent, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 
 import PurchaseOrdersError from "@/app/[locale]/(dashboard)/dashboard/purchase-orders/error"
 import { usePurchaseOrders } from "@/hooks/useRecentPurchaseOrderQueries"
 
 import PurchaseOrderManagement from "../PurchaseOrderManagement"
+jest.mock("@/components/purchase-orders/PurchaseOrderApprovalDialog", () => ({ PurchaseOrderApprovalDialog: () => null }))
+jest.mock("@/lib/auth-client", () => ({ useSession: () => ({ data: null }) }))
 
 jest.mock("lucide-react", () => {
   const createIcon = (name: string) => {
@@ -84,6 +88,12 @@ jest.mock("@/hooks/useRecentPurchaseOrderQueries", () => {
 })
 
 const mockUsePurchaseOrders = usePurchaseOrders as jest.Mock
+const mockRouter = { push: jest.fn(), replace: jest.fn(), prefetch: jest.fn() }
+jest.mock("next/navigation", () => ({
+  useRouter: () => mockRouter,
+  usePathname: () => "/en/dashboard/purchase-orders",
+  useSearchParams: () => new URLSearchParams(),
+}))
 
 function purchaseOrder(orderNumber: string, orderDate: string) {
   return {
@@ -176,6 +186,18 @@ describe("PurchaseOrderManagement error surface", () => {
 describe("PurchaseOrderManagement table controls", () => {
   afterEach(() => {
     jest.clearAllMocks()
+    jest.useRealTimers()
+  })
+
+  it("does not navigate on initial display but still updates an edited search", () => {
+    jest.useFakeTimers()
+    mockUsePurchaseOrders.mockReturnValue({ data: undefined, error: null, isLoading: false, refetch: jest.fn() })
+    render(<PurchaseOrderManagement title="Purchase orders" organizationId="org-1" initialPurchaseOrderData={[purchaseOrder("PO-AUG", "2026-08-31T12:00:00.000Z")]} initialSupplierData={[]} initialLocationData={[]} currency="XAF" canCreate={false} />)
+    act(() => jest.advanceTimersByTime(1000))
+    expect(mockRouter.replace).not.toHaveBeenCalled()
+    fireEvent.change(screen.getByPlaceholderText("Search purchase orders..."), { target: { value: "PO-AUG" } })
+    act(() => jest.advanceTimersByTime(1000))
+    expect(mockRouter.replace).toHaveBeenCalledWith(expect.stringContaining("PO-AUG"), { scroll: false })
   })
 
   it("keeps desktop controls on one row and filters by an inclusive order-date range", () => {
@@ -221,3 +243,5 @@ describe("PurchaseOrderManagement table controls", () => {
     expect(screen.getByText("PO-AUG")).toBeInTheDocument()
   })
 })
+
+jest.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }))

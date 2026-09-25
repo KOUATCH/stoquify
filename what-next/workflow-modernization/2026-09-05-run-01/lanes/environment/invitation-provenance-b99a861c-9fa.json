@@ -1,0 +1,174 @@
+{
+  "run": "b99a861c-9fa",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T06:53:02.837Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "two concurrent redemptions create exactly one complete identity and audit",
+      "passed": true,
+      "durationMs": 376,
+      "detail": {
+        "statuses": [
+          200,
+          409
+        ],
+        "invite": "ACCEPTED",
+        "userId": "cmtpgg8bs000jmakw2jwyqoa0",
+        "users": 1,
+        "accounts": 1,
+        "passwords": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "Credential failure rolls back claim and credentials; retry completes once",
+      "passed": true,
+      "durationMs": 250,
+      "detail": {
+        "rollback": {
+          "invite": "PENDING",
+          "userId": null,
+          "users": 0,
+          "accounts": 0,
+          "passwords": 0,
+          "audits": 0
+        },
+        "retry": {
+          "invite": "ACCEPTED",
+          "userId": "cmtpgg8ji001dmakwy50d92m8",
+          "users": 1,
+          "accounts": 1,
+          "passwords": 1,
+          "audits": 1
+        }
+      }
+    },
+    {
+      "name": "Audit failure rolls back claim and credentials; retry completes once",
+      "passed": true,
+      "durationMs": 238,
+      "detail": {
+        "rollback": {
+          "invite": "PENDING",
+          "userId": null,
+          "users": 0,
+          "accounts": 0,
+          "passwords": 0,
+          "audits": 0
+        },
+        "retry": {
+          "invite": "ACCEPTED",
+          "userId": "cmtpgg8q40029makwibknadjl",
+          "users": 1,
+          "accounts": 1,
+          "passwords": 1,
+          "audits": 1
+        }
+      }
+    },
+    {
+      "name": "cancel during password preparation prevents account creation",
+      "passed": true,
+      "durationMs": 93,
+      "detail": {
+        "code": "INVITATION_CHANGED",
+        "invite": "CANCELLED",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    },
+    {
+      "name": "reissue during password preparation prevents account creation",
+      "passed": true,
+      "durationMs": 90,
+      "detail": {
+        "code": "INVITATION_CHANGED",
+        "invite": "PENDING",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    },
+    {
+      "name": "disable during password preparation prevents account creation",
+      "passed": true,
+      "durationMs": 92,
+      "detail": {
+        "code": "INVITATION_REISSUE_REQUIRED",
+        "invite": "PENDING",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    },
+    {
+      "name": "wildcard during password preparation prevents account creation",
+      "passed": true,
+      "durationMs": 86,
+      "detail": {
+        "code": "INVITATION_REISSUE_REQUIRED",
+        "invite": "PENDING",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    }
+  ],
+  "limitations": [
+    "Owned synthetic issuers and roles are test preconditions; current invitation approval/outbox are created through the real issuance service. Legacy fixtures deliberately omit issuance evidence. No real email or external delivery.",
+    "Actual password hashing/credential writes and public abuse controls are used; HIBP network is blocked so its existing unavailable-network behavior is exercised.",
+    "Fault injection only affects an owned transaction's credential or audit write; it does not disable database constraints. Browser/onboarding proof is separate."
+  ],
+  "originalAuthorityBefore": "b7a64575d20d89dea686eb58279ac7fd544303bb83fad23486d000cc2c935d16",
+  "error": "Expected values to be strictly equal:\n\n400 !== 403\n",
+  "completedAt": "2026-09-06T06:53:04.391Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "network": {
+    "actualFetchRequests": 0,
+    "blockedOrigins": [
+      "https://api.pwnedpasswords.com"
+    ]
+  },
+  "passed": 7,
+  "failed": 1,
+  "driverSha256": "324dbd0833497b459a1eb1b048defad5c80a39c98cc3944e5288493692236701"
+}

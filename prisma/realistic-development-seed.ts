@@ -40,7 +40,7 @@ function assertSafeSeedTarget() {
   if (
     !["postgres:", "postgresql:"].includes(target.protocol) ||
     !LOCAL_HOSTS.has(target.hostname.toLowerCase()) ||
-    !/(?:dev|test|local|reconcile|referral)/i.test(databaseName)
+    !/(?:dev|test|local|reconcile|referral|replay|disposable)/i.test(databaseName)
   ) {
     throw new Error(
       "Realistic development seed requires an explicitly named local development/test PostgreSQL database.",

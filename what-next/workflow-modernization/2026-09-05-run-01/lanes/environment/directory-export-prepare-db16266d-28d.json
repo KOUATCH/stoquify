@@ -1,0 +1,55 @@
+{
+  "run": "db16266d-28d",
+  "mode": "prepare",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T15:58:33.067Z",
+  "sourcesBefore": {
+    "services/organization/organization-directory-input.ts": "a3091cfa11d5404cf1732481fc0e547efff470f7876dbcc95e6b0fa7c9dde98e",
+    "services/organization/organization-directory-export.service.ts": "20ac8eb07a632974307389cea64cc3bfce57b4ff741494f489618bd2fa4d64ac",
+    "services/organization/organization-settings.service.ts": "f63eae1907bf75d2244bc3acb531c55eecfa373ed95dbd2cc89122f4f79d7ea1",
+    "services/security/export-safety.service.ts": "9ca809ce39b3ae1b94610143bad050afed3a8d961cf6b1afcabf0276fb6945f3",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "actions/organization/organization-directory-export.actions.ts": "8600a2e0cb86bfb2d9d33857700fd89feea820ee0c86aa21f42fa5433b42561e",
+    "hooks/useOrganizationDirectoryExport.ts": "f963b92baa1fcdcb9d1c7a57fcc11f35911fb65acf71e63cb68d629a3a8a3efb",
+    "hooks/organization-directory-recovery.ts": "cf94f47cf9e3112fbc5f949d29ffea1bddbc0a29a38a1ba28a54c94b147936ee",
+    "components/settings/OrganizationDirectoryExport.tsx": "6d06133fb1f9334ebcd7311ca8a9515af75b1aa2f087ae018596f36b3535266e",
+    "components/settings/OrganizationManagementTable.tsx": "1f3097cd65ecaca67b9b10bb10b11ae0361071a49bf8b6bfdd8373b4425c6d08",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "create two owned export fixtures with exact synthetic payment totals",
+      "passed": true,
+      "organizations": 2
+    }
+  ],
+  "limitations": [
+    "Synthetic owned database only. No migration, external delivery, or real payment execution.",
+    "Network-response loss and audit-sink failure are injected; PostgreSQL transactions and browser downloads are real."
+  ],
+  "originalBefore": "4f2be114bc3d7a2315f2440e73ed981daabd17b1b5913b1ff9d6d08b8d4df805",
+  "originalAfter": "4f2be114bc3d7a2315f2440e73ed981daabd17b1b5913b1ff9d6d08b8d4df805",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T15:58:33.707Z",
+  "sourcesAfter": {
+    "services/organization/organization-directory-input.ts": "a3091cfa11d5404cf1732481fc0e547efff470f7876dbcc95e6b0fa7c9dde98e",
+    "services/organization/organization-directory-export.service.ts": "20ac8eb07a632974307389cea64cc3bfce57b4ff741494f489618bd2fa4d64ac",
+    "services/organization/organization-settings.service.ts": "f63eae1907bf75d2244bc3acb531c55eecfa373ed95dbd2cc89122f4f79d7ea1",
+    "services/security/export-safety.service.ts": "9ca809ce39b3ae1b94610143bad050afed3a8d961cf6b1afcabf0276fb6945f3",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "actions/organization/organization-directory-export.actions.ts": "8600a2e0cb86bfb2d9d33857700fd89feea820ee0c86aa21f42fa5433b42561e",
+    "hooks/useOrganizationDirectoryExport.ts": "f963b92baa1fcdcb9d1c7a57fcc11f35911fb65acf71e63cb68d629a3a8a3efb",
+    "hooks/organization-directory-recovery.ts": "cf94f47cf9e3112fbc5f949d29ffea1bddbc0a29a38a1ba28a54c94b147936ee",
+    "components/settings/OrganizationDirectoryExport.tsx": "6d06133fb1f9334ebcd7311ca8a9515af75b1aa2f087ae018596f36b3535266e",
+    "components/settings/OrganizationManagementTable.tsx": "1f3097cd65ecaca67b9b10bb10b11ae0361071a49bf8b6bfdd8373b4425c6d08",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "016036b175389664a0e241c0ae255ee915dc50b8de0d72560ae1e8abad2e61fd",
+  "passed": 1,
+  "failed": 0
+}

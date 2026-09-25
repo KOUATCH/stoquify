@@ -1,4 +1,5 @@
 export type PermissionMode = "single" | "all" | "any"
+export type PosRouteText = string | { en: string; fr: string }
 
 export type PosRouteSurface = {
   key: string
@@ -8,10 +9,10 @@ export type PosRouteSurface = {
   permissions: readonly string[]
   permissionMode?: PermissionMode
   module?: never
-  noActiveOrgTitle?: string
-  noActiveOrgMessage?: string
-  permissionDeniedTitle?: string
-  permissionDeniedMessage?: string
+  noActiveOrgTitle?: PosRouteText
+  noActiveOrgMessage?: PosRouteText
+  permissionDeniedTitle?: PosRouteText
+  permissionDeniedMessage?: PosRouteText
   noActiveOrgPrimaryHref?: string
   permissionDeniedPrimaryHref?: string
 }
@@ -24,9 +25,9 @@ export const posRouteCatalog: PosRouteSurface[] = [
     resource: "POSPage",
     permissions: ["OPERATE_POS"],
     permissionMode: "single",
-    noActiveOrgTitle: "POS dashboard needs an active organization",
-    permissionDeniedTitle: "POS dashboard is not available for this role",
-    permissionDeniedMessage: "POS access requires OPERATE_POS permission.",
+    noActiveOrgTitle: { en: "Choose an organization to open the point of sale", fr: "Choisissez une organisation pour ouvrir le point de vente" },
+    permissionDeniedTitle: { en: "Point of sale access is required", fr: "Un accès au point de vente est nécessaire" },
+    permissionDeniedMessage: { en: "Your current role cannot operate the point of sale. Ask your administrator for access or switch to an authorized account.", fr: "Votre rôle actuel ne permet pas d’utiliser le point de vente. Demandez un accès à votre administrateur ou utilisez un compte autorisé." },
   },
 ]
 

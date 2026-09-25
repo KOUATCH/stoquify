@@ -1,0 +1,111 @@
+{
+  "at": "2026-09-08T12:46:29.585Z",
+  "run": "3828430a-857",
+  "sourcesBefore": {
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "016d0cfc8075e7c57d8723c228b37dc4e88eb706dfe9d46a592684a7ba3514a0",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "263b8af8df34f009c5053366f8c6f80d14d706ccc3fc2c471813ab5919f57da5",
+    "messages/fr.json": "1c378e7893bdeace0bf1e873867c47d6801067cb41bdbfb8667c957e485a5a7c",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "8ec96335fbe8dd97fcfaf40f603694b2bcb275bb15cd126cb4623673b4735a52",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Existing AP entry, prefilled receipt source, final file hash, draft reload, EN/FR comparison, keyboard and responsive/zoom layouts",
+        "Wrong password and changed source deny correction; user edits survive",
+        "Lost response recovers one correction event, retained history and zero supplier liabilities before approval",
+        "Independent user cannot edit maker sources; approver reviews correction provenance and records one payable with explicit posting setup limitation",
+        "History reports current posted state; revoked correction permission denies the route"
+      ],
+      "screenshots": [
+        "invoice-correction-en-comparison-desktop-3828430a-857.png",
+        "invoice-correction-en-form-320-3828430a-857.png",
+        "invoice-correction-en-form-390-3828430a-857.png",
+        "invoice-correction-en-form-768-3828430a-857.png",
+        "invoice-correction-en-comparison-mobile-3828430a-857.png",
+        "invoice-correction-en-comparison-mobile-actions-3828430a-857.png",
+        "invoice-correction-en-comparison-zoom-3828430a-857.png",
+        "invoice-correction-en-stale-preserved-3828430a-857.png",
+        "invoice-correction-en-recovered-3828430a-857.png",
+        "invoice-correction-en-history-desktop-3828430a-857.png",
+        "invoice-correction-en-independent-user-no-maker-sources-3828430a-857.png",
+        "invoice-correction-en-independent-provenance-3828430a-857.png",
+        "invoice-correction-en-approved-posting-setup-visible-3828430a-857.png",
+        "invoice-correction-en-history-mobile-posted-3828430a-857.png",
+        "invoice-correction-en-permission-denied-3828430a-857.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "AP entry to source review development baseline",
+          "ms": 8732
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Existing AP entry, prefilled receipt source, final file hash, draft reload, EN/FR comparison, keyboard and responsive/zoom layouts",
+        "Wrong password and changed source deny correction; user edits survive",
+        "Lost response recovers one correction event, retained history and zero supplier liabilities before approval",
+        "Independent user cannot edit maker sources; approver reviews correction provenance and records one payable with explicit posting setup limitation",
+        "History reports current posted state; revoked correction permission denies the route"
+      ],
+      "screenshots": [
+        "invoice-correction-fr-comparison-desktop-3828430a-857.png",
+        "invoice-correction-fr-form-320-3828430a-857.png",
+        "invoice-correction-fr-form-390-3828430a-857.png",
+        "invoice-correction-fr-form-768-3828430a-857.png",
+        "invoice-correction-fr-comparison-mobile-3828430a-857.png",
+        "invoice-correction-fr-comparison-mobile-actions-3828430a-857.png",
+        "invoice-correction-fr-comparison-zoom-3828430a-857.png",
+        "invoice-correction-fr-stale-preserved-3828430a-857.png",
+        "invoice-correction-fr-recovered-3828430a-857.png",
+        "invoice-correction-fr-history-desktop-3828430a-857.png",
+        "invoice-correction-fr-independent-user-no-maker-sources-3828430a-857.png",
+        "invoice-correction-fr-independent-provenance-3828430a-857.png",
+        "invoice-correction-fr-approved-posting-setup-visible-3828430a-857.png",
+        "invoice-correction-fr-history-mobile-posted-3828430a-857.png",
+        "invoice-correction-fr-permission-denied-3828430a-857.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "AP entry to source review development baseline",
+          "ms": 10131
+        }
+      ]
+    }
+  ],
+  "originalBefore": "86b05169ad16ee9cc5a3c6a9fcc4c2a233aef912da5c983edc0ec45a5a8dcdd2",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "016d0cfc8075e7c57d8723c228b37dc4e88eb706dfe9d46a592684a7ba3514a0",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "263b8af8df34f009c5053366f8c6f80d14d706ccc3fc2c471813ab5919f57da5",
+    "messages/fr.json": "1c378e7893bdeace0bf1e873867c47d6801067cb41bdbfb8667c957e485a5a7c",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "8ec96335fbe8dd97fcfaf40f603694b2bcb275bb15cd126cb4623673b4735a52",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495"
+  },
+  "sourceStable": true
+}

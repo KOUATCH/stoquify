@@ -1,0 +1,427 @@
+[
+  {
+    "id": "api-inventory-tests",
+    "startedAt": "2026-09-05T09:09:40.271Z",
+    "finishedAt": "2026-09-05T09:09:52.270Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--runTestsByPath",
+      "scripts/__tests__/api-route-guard-inventory.test.js"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 1,
+    "signal": null,
+    "status": "failed",
+    "summary": {
+      "suites": 1,
+      "passedSuites": 0,
+      "failedSuites": 1,
+      "tests": 18,
+      "passedTests": 17,
+      "failedTests": 1,
+      "pendingTests": 0
+    },
+    "log": "api-inventory-tests.log"
+  },
+  {
+    "id": "baseline-security-tests",
+    "startedAt": "2026-09-05T09:01:01.306Z",
+    "finishedAt": "2026-09-05T09:03:09.104Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--testPathPatterns",
+      "lib/security/__tests__|services/_shared/__tests__|services/security/__tests__|app/api/.*/__tests__|actions/storage/__tests__"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": {
+      "suites": 35,
+      "passedSuites": 35,
+      "failedSuites": 0,
+      "tests": 171,
+      "passedTests": 171,
+      "failedTests": 0,
+      "pendingTests": 0
+    },
+    "log": "baseline-security-tests.log"
+  },
+  {
+    "id": "baseline-typecheck",
+    "startedAt": "2026-09-05T09:00:56.500Z",
+    "finishedAt": "2026-09-05T09:05:52.298Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "--max-old-space-size=4096",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "--incremental",
+      "false"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 2,
+    "signal": null,
+    "status": "failed",
+    "summary": null,
+    "log": "baseline-typecheck.log"
+  },
+  {
+    "id": "concurrent-final-typecheck",
+    "startedAt": "2026-09-05T09:36:16.537Z",
+    "finishedAt": "2026-09-05T09:39:55.104Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "--max-old-space-size=4096",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "--incremental",
+      "false"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "sourceBinding": "concurrent-final-typecheck-source-binding.json",
+    "changedDuringCheck": [],
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": null,
+    "log": "concurrent-final-typecheck.log"
+  },
+  {
+    "id": "concurrent-finance-recheck",
+    "startedAt": "2026-09-05T09:36:22.758Z",
+    "finishedAt": "2026-09-05T09:38:14.398Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--runTestsByPath",
+      "components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts",
+      "components/finance/__tests__/FinancePaymentsTable.test.tsx",
+      "components/finance/__tests__/CashFlowStatementTable.test.tsx",
+      "components/finance/__tests__/finance-final-two-section-route-matrix.test.ts",
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/DataTableComponents/__tests__/SystemTablePresentation.contract.test.ts",
+      "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts",
+      "scripts/__tests__/x1-approval-automation-orchestrator.test.js"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "sourceBinding": "concurrent-finance-recheck-source-binding.json",
+    "changedDuringCheck": [],
+    "exitCode": 1,
+    "signal": null,
+    "status": "failed",
+    "summary": {
+      "suites": 8,
+      "passedSuites": 5,
+      "failedSuites": 3,
+      "tests": 53,
+      "passedTests": 49,
+      "failedTests": 4,
+      "pendingTests": 0
+    },
+    "log": "concurrent-finance-recheck.log"
+  },
+  {
+    "id": "corrected-security-finance-tests",
+    "startedAt": "2026-09-05T09:08:42.014Z",
+    "finishedAt": "2026-09-05T09:09:51.532Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--testPathPatterns",
+      "lib/security/__tests__|services/_shared/__tests__|services/security/__tests__|app/api/.*/__tests__|actions/storage/__tests__|finance-statement-export|PaymentReconciliationWorkbench.test|finance-x1|finance-accounting-contracts"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": {
+      "suites": 42,
+      "passedSuites": 42,
+      "failedSuites": 0,
+      "tests": 204,
+      "passedTests": 204,
+      "failedTests": 0,
+      "pendingTests": 0
+    },
+    "log": "corrected-security-finance-tests.log"
+  },
+  {
+    "id": "critical-domain-tests",
+    "startedAt": "2026-09-05T09:11:32.272Z",
+    "finishedAt": "2026-09-05T09:12:03.018Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--testPathPatterns",
+      "posting.service.test|offline-sync.service.test|ap-control.service.test|payroll-run-approval-transition|payroll-privacy|self-service.service.test|payment-reconciliation-run|business-event-outbox.service.test|country-pack.service.test|agent-policy.service.test|agent-runner.service.test|agent-execution-control|module-entitlement.service.test|customer-statement-access|supplier-statement-access|public-receipt|api-route-guard-inventory.test"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": {
+      "suites": 19,
+      "passedSuites": 19,
+      "failedSuites": 0,
+      "tests": 188,
+      "passedTests": 188,
+      "failedTests": 0,
+      "pendingTests": 0
+    },
+    "log": "critical-domain-tests.log"
+  },
+  {
+    "id": "current-finance-verified",
+    "startedAt": "2026-09-05T09:40:52.268Z",
+    "finishedAt": "2026-09-05T09:41:23.009Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--runTestsByPath",
+      "components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts",
+      "components/finance/__tests__/FinancePaymentsTable.test.tsx",
+      "components/finance/__tests__/CashFlowStatementTable.test.tsx",
+      "components/finance/__tests__/finance-final-two-section-route-matrix.test.ts",
+      "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "components/DataTableComponents/__tests__/SystemTablePresentation.contract.test.ts",
+      "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts",
+      "scripts/__tests__/x1-approval-automation-orchestrator.test.js"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "sourceBinding": "current-finance-verified-source-binding.json",
+    "changedDuringCheck": [],
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": {
+      "suites": 8,
+      "passedSuites": 8,
+      "failedSuites": 0,
+      "tests": 61,
+      "passedTests": 61,
+      "failedTests": 0,
+      "pendingTests": 0
+    },
+    "log": "current-finance-verified.log"
+  },
+  {
+    "id": "current-gate-checks",
+    "startedAt": "2026-09-05T09:15:09.090Z",
+    "finishedAt": "2026-09-05T09:15:11.379Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "what-next/astra-platform-review/2026-09-05-run-01/evidence/current-checks.cjs"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": null,
+    "log": "current-gate-checks.log"
+  },
+  {
+    "id": "final-complete-typecheck",
+    "startedAt": "2026-09-05T09:17:51.168Z",
+    "finishedAt": "2026-09-05T09:22:25.928Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "--max-old-space-size=4096",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "--incremental",
+      "false"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": null,
+    "log": "final-complete-typecheck.log"
+  },
+  {
+    "id": "final-middleware-routing-tests",
+    "startedAt": "2026-09-05T09:17:31.671Z",
+    "finishedAt": "2026-09-05T09:17:50.884Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--runTestsByPath",
+      "lib/security/__tests__/middleware-routing.test.ts"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 1,
+    "signal": null,
+    "status": "failed",
+    "summary": {
+      "suites": 1,
+      "passedSuites": 0,
+      "failedSuites": 1,
+      "tests": 0,
+      "passedTests": 0,
+      "failedTests": 0,
+      "pendingTests": 0
+    },
+    "log": "final-middleware-routing-tests.log"
+  },
+  {
+    "id": "final-typecheck",
+    "startedAt": "2026-09-05T09:11:28.233Z",
+    "finishedAt": "2026-09-05T09:14:29.259Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "--max-old-space-size=4096",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false",
+      "--incremental",
+      "false"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": null,
+    "log": "final-typecheck.log"
+  },
+  {
+    "id": "middleware-routing-tests",
+    "startedAt": "2026-09-05T09:15:42.105Z",
+    "finishedAt": "2026-09-05T09:15:53.510Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--runTestsByPath",
+      "lib/security/__tests__/middleware-routing.test.ts"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 1,
+    "signal": null,
+    "status": "failed",
+    "summary": {
+      "suites": 1,
+      "passedSuites": 0,
+      "failedSuites": 1,
+      "tests": 0,
+      "passedTests": 0,
+      "failedTests": 0,
+      "pendingTests": 0
+    },
+    "log": "middleware-routing-tests.log"
+  },
+  {
+    "id": "middleware-routing-verified",
+    "startedAt": "2026-09-05T09:21:01.811Z",
+    "finishedAt": "2026-09-05T09:21:22.719Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--runTestsByPath",
+      "lib/security/__tests__/middleware-routing.test.ts"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": {
+      "suites": 1,
+      "passedSuites": 1,
+      "failedSuites": 0,
+      "tests": 3,
+      "passedTests": 3,
+      "failedTests": 0,
+      "pendingTests": 0
+    },
+    "log": "middleware-routing-verified.log"
+  },
+  {
+    "id": "prisma-schema-validate",
+    "startedAt": "2026-09-05T09:15:53.751Z",
+    "finishedAt": "2026-09-05T09:16:35.257Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/prisma/build/index.js",
+      "validate"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": null,
+    "log": "prisma-schema-validate.log"
+  },
+  {
+    "id": "regression-before-fixes",
+    "startedAt": "2026-09-05T09:05:26.903Z",
+    "finishedAt": "2026-09-05T09:05:52.156Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--runTestsByPath",
+      "lib/security/__tests__/rbac.test.ts",
+      "app/api/uploads/[...path]/__tests__/route.test.ts"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 1,
+    "signal": null,
+    "status": "failed",
+    "summary": {
+      "suites": 2,
+      "passedSuites": 0,
+      "failedSuites": 2,
+      "tests": 12,
+      "passedTests": 10,
+      "failedTests": 2,
+      "pendingTests": 0
+    },
+    "log": "regression-before-fixes.log"
+  },
+  {
+    "id": "x1-matrix-list",
+    "startedAt": "2026-09-05T09:16:47.017Z",
+    "finishedAt": "2026-09-05T09:16:52.048Z",
+    "command": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=playwright.finance-x1-evidence.config.ts",
+      "--list",
+      "--reporter=list"
+    ],
+    "target": "local workspace; database connection disabled with loopback port 1",
+    "exitCode": 0,
+    "signal": null,
+    "status": "passed",
+    "summary": null,
+    "log": "x1-matrix-list.log"
+  }
+]

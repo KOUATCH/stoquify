@@ -1,0 +1,31 @@
+
+ROUTE /en/dashboard
+FILE app/[locale]/(dashboard)/dashboard/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/page.tsx; components/dashboard/DashboardErrorState.tsx; components/dashboard/EnhancedEnterpriseDashboard.tsx; components/dashboard/SessionRecoverySignOutButton.tsx; config/error-boundary.tsx
+DEPENDENCIES actions/dashboard/getDashboardData.ts; config/error-boundary.tsx; lib/security/rbac.ts; hooks/useDashboardData.ts; lib/i18n/organization-money.ts; lib/utils.ts; lib/auth-client.ts
+REDIRECTS [{"name":"redirect","line":67,"args":"localizePath(\"/login\", locale)"}]
+HEADINGS Something went wrong
+PROPS Refresh your session | Your session points to an organization that no longer exists in this database. | Sign out
+CONTROLS [dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Link, {"href":"step.href"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:351)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as DashboardPeriod)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:487)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:503)
+[dynamic or icon-only label] (Button, {"onClick":"handleRefresh","disabled":"isFetching"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:518)
+[dynamic or icon-only label] (Button, {}, components/dashboard/EnhancedEnterpriseDashboard.tsx:540)
+[dynamic or icon-only label] (Link, {"href":"resolveDashboardHref(criticalAlert.href, dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:541)
+[dynamic or icon-only label] (Button, {}, components/dashboard/EnhancedEnterpriseDashboard.tsx:591)
+[dynamic or icon-only label] (Link, {"href":"action.href ?? dashboardBasePath"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:592)
+[dynamic or icon-only label] (TabsTrigger, {}, components/dashboard/EnhancedEnterpriseDashboard.tsx:607)
+[dynamic or icon-only label] (TabsTrigger, {}, components/dashboard/EnhancedEnterpriseDashboard.tsx:611)
+[dynamic or icon-only label] (TabsTrigger, {}, components/dashboard/EnhancedEnterpriseDashboard.tsx:615)
+· sold (Link, {"href":"resolveDashboardHref(product.href, dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:682)
+[dynamic or icon-only label] (Link, {"href":"resolveDashboardHref(item.href, dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:723)
+: (Link, {"href":"resolveDashboardHref(\"/dashboard/inventory/items?stock=available\", dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:744)
+: (Link, {"href":"resolveDashboardHref(\"/dashboard/inventory/items?stock=reserved\", dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:750)
+[dynamic or icon-only label] (Link, {"href":"resolveDashboardHref(alert.href, dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:818)
+[dynamic or icon-only label] (Link, {"href":"resolveDashboardHref(activity.href, dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:859)
+[dynamic or icon-only label] (Button, {}, components/dashboard/EnhancedEnterpriseDashboard.tsx:897)
+[dynamic or icon-only label] (Link, {"href":"resolveDashboardHref(action.href, dashboardBasePath)"}, components/dashboard/EnhancedEnterpriseDashboard.tsx:898)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isSigningOut","onClick":"handleSignOut"}, components/dashboard/SessionRecoverySignOutButton.tsx:30)
+Try again (button, {"onClick":"() => this.setState({ hasError: false })"}, config/error-boundary.tsx:35)

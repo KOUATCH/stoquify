@@ -1,0 +1,18 @@
+{
+  "recordedAt": "2026-09-08T12:10:29.461Z",
+  "requestedUrl": "http://localhost:3000/en/dashboard/accounting",
+  "observedUrl": "http://localhost:3000/en/login",
+  "title": "Stoquify - OHADA Operating System",
+  "screenshot": "login-boundary.png",
+  "result": "AUTHENTICATED_ACCOUNTING_UI_UNVERIFIED",
+  "observations": [
+    "Protected accounting navigation reached login",
+    "English email/password form and FR language switch visible",
+    "No credentials submitted and no session created"
+  ],
+  "limitations": [
+    "Login boundary is not proof of all action/RBAC enforcement",
+    "Accounting screenshots, keyboard journeys, accessibility and localization require an authenticated synthetic tenant",
+    "Development cold compilation times are not production performance measurements"
+  ]
+}

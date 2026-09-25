@@ -1,0 +1,266 @@
+{
+  "recordedAt": "2026-09-06T20:06:18.892Z",
+  "sourceBaseline": "evidence/source-baseline-v40.json",
+  "workflows": [
+    "CS-STATEMENT-SNAPSHOT",
+    "CS-STATEMENT-DELIVERY-QUEUE"
+  ],
+  "overlap": "NTF-STATEMENT-QUEUE refers to the same delivery workflow and is not added to platform coverage.",
+  "sources": {
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement-delivery-envelope.ts": "24da4d029b17e309a2b8531fa4bb68789bfd75a412f5b0b9d88244ff493fb3ad",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "components/customers/CustomerStatementWorkflow.tsx": "0fea91fbe5dac87e4c2b2fcea08ce6d0537bee0ed15e77f2d3cb6d618d8f4cea",
+    "hooks/customer-statement-request.ts": "ade236896224d6259199b8228ab9840963eec6e654ef3f55b1c895a34887ef2e",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx": "656d4a7ff665275c62ec681725d53533c17e2faf404489a96cb08dfc95578ab7",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx": "f6eca653b2d8d8c7d30ff55677b1bd5709fa9887eec9d4a6225e3a3655dda900",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts": "05038bc5ef2611c0afd28162c4557f93006ac052514b095a8ec725be816d823c",
+    "actions/accounting/customer-statement.actions.ts": "04afc8d016beabe8bd3a1a0dcfc0a89654f9d1f4968062bb5c6b2cf27d8c4620",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "components/customers/__tests__/CustomerStatementWorkflow.test.tsx": "70b2edf1dad99e3a62351ddb8f3e1c2056a75b6f3cf6289b4335a9909766d194",
+    "hooks/__tests__/customer-statement-request.test.ts": "bbc1129a4b78b75945b24044a2e4943b2f18fe9caa0631dafd4d3723841898cb",
+    "services/accounting/__tests__/customer-statement-delivery.service.test.ts": "5d10c0878379bc7694168bdc30dd2a0fe19dbae5830c0f0d40ffd65007981e0d",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx": "1d105107071c436922d6c43745eb93ad0d6fed757c0e23d8901383f615ed0059",
+    "app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx": "1e633e69f1a6aa4c9f13278a2d8f077b22f3ecac7e7fa264b383cae62f2d8974",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+  },
+  "browser": "lanes/environment/statement-recovery-browser-20159ffb-e8f.json",
+  "postgres": "lanes/environment/statement-recovery-postgres-7944ba04-69e.json",
+  "verification": {
+    "tests": {
+      "file": "evidence/statement-recovery-tests-03.json",
+      "passed": 36,
+      "suites": 5
+    },
+    "postgres": {
+      "checks": 6,
+      "chunk": "0d7490"
+    },
+    "browser": {
+      "journeys": 2,
+      "widthTextCases": 16,
+      "screenshots": 28
+    },
+    "tools": {
+      "recordedAt": "2026-09-06T20:04:50Z",
+      "workspace": "E:/ohada saas/Focused projects/stoquify",
+      "typecheck": {
+        "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false",
+        "exitCode": 0,
+        "terminalReceipt": "5ceb44",
+        "scope": "Existing tsconfig with its pre-existing exclusions; no full-build or excluded-source certification."
+      },
+      "lint": {
+        "command": "node node_modules/eslint/bin/eslint.js --no-cache <listed files>",
+        "exitCode": 0,
+        "terminalReceipt": "e70043",
+        "files": [
+          "components/customers/CustomerStatementWorkflow.tsx",
+          "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+          "hooks/customer-statement-request.ts",
+          "hooks/__tests__/customer-statement-request.test.ts",
+          "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+          "app/[locale]/(dashboard)/dashboard/customers/customers-route-access.tsx",
+          "app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx"
+        ]
+      },
+      "tests": {
+        "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath components/customers/__tests__/CustomerStatementWorkflow.test.tsx hooks/__tests__/customer-statement-request.test.ts services/accounting/__tests__/customer-statement-delivery.service.test.ts app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-recovery-tests-03.json",
+        "exitCode": 0,
+        "terminalReceipt": "7c78fb",
+        "passed": 36,
+        "suites": 5
+      },
+      "browser": {
+        "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-recovery-browser.cjs",
+        "exitCode": 0,
+        "terminalReceipt": "51f8f5",
+        "file": "lanes/environment/statement-recovery-browser-20159ffb-e8f.json",
+        "journeys": 2,
+        "widthTextCases": 16,
+        "screenshots": 28,
+        "visualReview": "Final French 320px/200% retry screenshot inspected; action word wrapping improved. This is CSS text enlargement, not native zoom or a complete contrast/assistive-technology review."
+      },
+      "baseline": {
+        "file": "evidence/source-baseline-v40.json",
+        "exitCode": 0,
+        "terminalReceipt": "411094"
+      }
+    }
+  },
+  "screenshots": [
+    {
+      "source": "lanes/environment/en-statement-recovery-denied-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-denied-20159ffb-e8f.png",
+      "sha256": "01b4e73e14b6435b8b4e03f1f6f2341a19a040b074a77bc630ef20c1499e963b"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-ready-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-ready-20159ffb-e8f.png",
+      "sha256": "1a1e56c7c1d7c4e042c2ac94e1a3dec86171122223c76bcc255d5f78ed576cb3"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-snapshot-unconfirmed-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-snapshot-unconfirmed-20159ffb-e8f.png",
+      "sha256": "68e4bf30b366af4651e3cb0b78f5102f47dcf6d9a6524d961a5a67181c54099b"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-delivery-unconfirmed-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-delivery-unconfirmed-20159ffb-e8f.png",
+      "sha256": "fecc9ce8ecf718a47d2d9f4a490eb4d1dcc6167015e8be8a29f2d104ac01764d"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-delivery-recovered-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-delivery-recovered-20159ffb-e8f.png",
+      "sha256": "e56c2b6c22b6eea330f2504dd74ff63c0a6e7e10674c2d5b5d700905e6fc2b45"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-320-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-320-100-20159ffb-e8f.png",
+      "sha256": "bbae73fe84cd015f67479f2a5a9b7537f745673d77f63869e9fae9513fb286c3"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-320-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-320-200-20159ffb-e8f.png",
+      "sha256": "0ec3d94e1a59c857760b0710fcc5b27a8934a58f7d2d00b2dce463339e696d8f"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-390-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-390-100-20159ffb-e8f.png",
+      "sha256": "53b4d92c865effe090bfff36c7b293ceb159549450e09ee37b92c2c403e9c9ae"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-390-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-390-200-20159ffb-e8f.png",
+      "sha256": "07007f5d4a87b60ef24ed902346e4db72266d11b3dbd6076286c8bfcb934117b"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-768-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-768-100-20159ffb-e8f.png",
+      "sha256": "8dce75d1970296f493a288abac288b0025e32a500a15b5584b108dd9db498260"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-768-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-768-200-20159ffb-e8f.png",
+      "sha256": "8dc7e49cfb4bac227cf4207092c268501f7f4fe7f53469ee03aa81c9de29cca9"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-1440-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-1440-100-20159ffb-e8f.png",
+      "sha256": "80d93343ef0c26c2a128037519482afdd9097ff5c18e6b48e9acb0b0ec51439a"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-reflow-1440-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-reflow-1440-200-20159ffb-e8f.png",
+      "sha256": "e49c5e5bfaa2a25eb23e22932e7a14bbea4a148941197d9a99672c80dd0e1fa0"
+    },
+    {
+      "source": "lanes/environment/en-statement-recovery-new-delivery-draft-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/en-statement-recovery-new-delivery-draft-20159ffb-e8f.png",
+      "sha256": "ece902d76dbf55a8bbaf71fe43b18ac9736fb65e83c61b51aad69cb601f6e4f0"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-denied-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-denied-20159ffb-e8f.png",
+      "sha256": "e2aea831660364388d2901c03d575b5c825538c5cd94c2e7d34304b768745a16"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-ready-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-ready-20159ffb-e8f.png",
+      "sha256": "33e693c8e1d413f5fb9217291198472ce1272cac8e6c4cc4ee319a0f2fbcddaa"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-snapshot-unconfirmed-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-snapshot-unconfirmed-20159ffb-e8f.png",
+      "sha256": "83999837cdd08d31288529919ab5b8a08ffeebe311fe937f40beb93f8e830a5f"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-delivery-unconfirmed-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-delivery-unconfirmed-20159ffb-e8f.png",
+      "sha256": "92302b001f520dbdc2be51e0eea025539c25f5ab9c769aa211a0d6b34ce9d515"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-delivery-recovered-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-delivery-recovered-20159ffb-e8f.png",
+      "sha256": "049eff8d407cf01366d69c7cf3f6de64a16e79ae5488089609f27a5b1e1fb52e"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-320-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-320-100-20159ffb-e8f.png",
+      "sha256": "59ebf9ea1a653fb5e3dabea6f9a9923afea10b07a99fbef6793477970f800b9c"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-320-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-320-200-20159ffb-e8f.png",
+      "sha256": "715adcd5e01aee31427cce85b6649a273db41dd4b573543a120089aedc3a2bcf"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-390-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-390-100-20159ffb-e8f.png",
+      "sha256": "fac976218bcf5cdebf82a3c547c4d6293eefd871158ce720f682acb847f2143e"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-390-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-390-200-20159ffb-e8f.png",
+      "sha256": "2fc6ed1e372a056deefde78007b9a2ff1201729eddb4c56e1bd3534c5ad74100"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-768-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-768-100-20159ffb-e8f.png",
+      "sha256": "81fa2d9646ca286d290f4268b973e5dd0c4d31f444a5bb39641771dd2838b3bc"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-768-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-768-200-20159ffb-e8f.png",
+      "sha256": "33e26554a92da0c05a76f5915fb27c3c9a19d2f6f1346b4b368bfd0500c3dd7e"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-1440-100-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-1440-100-20159ffb-e8f.png",
+      "sha256": "99c75712f3ca74b2f9db68e63fafc98256a4b76081310532dc44dfa67744619d"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-reflow-1440-200-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-reflow-1440-200-20159ffb-e8f.png",
+      "sha256": "7e28b3e3ae8566b462a78e3ca500baad1ba34bd75060166a6bfda53aa091db03"
+    },
+    {
+      "source": "lanes/environment/fr-statement-recovery-new-delivery-draft-20159ffb-e8f.png",
+      "file": "evidence/statement-recovery/fr-statement-recovery-new-delivery-draft-20159ffb-e8f.png",
+      "sha256": "3aa2ee72bb3d78d06e03085bdc40e9e5982c9232318a08d2c18951ed85b91aa9"
+    }
+  ],
+  "developmentTimings": [
+    {
+      "locale": "en",
+      "allowedRouteReadyMs": 4199
+    },
+    {
+      "locale": "fr",
+      "allowedRouteReadyMs": 9471
+    }
+  ],
+  "latencyMeaning": "Allowed-route reload in an already-running owned local development application. No approved budget or production performance claim.",
+  "failedAttempts": [
+    "evidence/statement-recovery-initial-attempts.md",
+    "evidence/statement-recovery-browser-attempts.md"
+  ],
+  "limitations": [
+    "Closing the tab, corrupt/missing metadata and retained sender history still need a controlled in-app recovery/read model.",
+    "Real empty-source snapshots were exercised; populated receivable/ledger calculations and full financial lifecycle remain unverified by this batch.",
+    "Provider worker execution, unknown outcomes, revocation/expiry presentation and complete retained delivery history remain separate incomplete workflows.",
+    "Native screen readers, native browser zoom, full contrast/accessibility audit and all route failure states remain open; CSS text enlargement is a bounded check.",
+    "No full build, production performance acceptance, deployment, external message or X1 approval/clearance."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

@@ -1,0 +1,141 @@
+
+ROUTE /en/dashboard/people/approvals
+FILE app/[locale]/(dashboard)/dashboard/people/approvals/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/people/approvals/page.tsx; components/hris/HrisApprovalInbox.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/dashboard/DashboardRouteState.tsx
+DEPENDENCIES services/hris/approval-inbox.service.ts; app/[locale]/(dashboard)/dashboard/people/people-route-access.tsx; actions/hris/approval-inbox.actions.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS Approval inbox | Approval queue | approval-decision-title
+PROPS Unable to load approval queue | This account does not have approval-read access to this people scope. | Close | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS People (Link, {"href":"localizePath(\"/dashboard/people\", locale)"}, app/[locale]/(dashboard)/dashboard/people/approvals/page.tsx:57)
+All / Review / Apply (button, {"type":"\"button\"","onClick":"() => setQueueFilter(filter)"}, components/hris/HrisApprovalInbox.tsx:175)
+All domains (select, {"onChange":"(event) => setDomainFilter(event.target.value as \"ALL\" | HrisApprovalDomain)"}, components/hris/HrisApprovalInbox.tsx:190)
+[dynamic or icon-only label] (a, {"href":"localizePath(item.reviewHref, locale)"}, components/hris/HrisApprovalInbox.tsx:236)
+[dynamic or icon-only label] (button, {"type":"\"button\"","disabled":"!item.decision.eligible","onClick":"() => openDecision(item, action)"}, components/hris/HrisApprovalInbox.tsx:278)
+Close (button, {"type":"\"button\"","onClick":"closeDecision","disabled":"isPending"}, components/hris/HrisApprovalInbox.tsx:325)
+Decision reason (textarea, {"onChange":"(event) => setDecisionReason(event.target.value)"}, components/hris/HrisApprovalInbox.tsx:340)
+Approval evidence hash (input, {"onChange":"(event) => setApprovalEvidenceHash(event.target.value)"}, components/hris/HrisApprovalInbox.tsx:354)
+Cancel (button, {"type":"\"button\"","onClick":"closeDecision","disabled":"isPending"}, components/hris/HrisApprovalInbox.tsx:370)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"submitDecision","disabled":"!decisionReady || isPending"}, components/hris/HrisApprovalInbox.tsx:378)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+
+ROUTE /en/dashboard/people/history
+FILE app/[locale]/(dashboard)/dashboard/people/history/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/people/history/page.tsx; components/dashboard/DashboardRouteState.tsx; components/hris/HrisMovementHistory.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES services/hris/movement-history.service.ts; app/[locale]/(dashboard)/dashboard/people/people-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Movement history | Movement history
+PROPS Movement history is unavailable | No movement history was available for your current account and tenant context. | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS People (Link, {"href":"localizePath(\"/dashboard/people\", locale)"}, app/[locale]/(dashboard)/dashboard/people/history/page.tsx:57)
+[dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+All domains (select, {"onChange":"(event) => setDomain(event.target.value as \"ALL\" | HrisMovementDomain)"}, components/hris/HrisMovementHistory.tsx:153)
+All proof states (select, {"onChange":"(event) => setProof(event.target.value as \"ALL\" | HrisMovementProofState)"}, components/hris/HrisMovementHistory.tsx:166)
+All risk (select, {"onChange":"(event) => setRisk(event.target.value as \"ALL\" | HrisMovementRisk)"}, components/hris/HrisMovementHistory.tsx:179)
+Open profile (Link, {"href":"localizePath(item.detailHref, locale)"}, components/hris/HrisMovementHistory.tsx:244)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/people/me
+FILE app/[locale]/(dashboard)/dashboard/people/me/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/people/me/page.tsx; components/hris/HrisEmployeeSelfService.tsx; components/hris/HrisOperationalTimeRequestPanel.tsx; components/dashboard/DashboardRouteState.tsx
+DEPENDENCIES services/_shared/action-errors.ts; services/hris/self-service.service.ts; app/[locale]/(dashboard)/dashboard/people/people-route-access.tsx; actions/hris/operational-time.actions.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS My HR | Employment profile | Documents | Latest certified attendance | Payment destination | Requests | Leave, overtime and attendance corrections
+PROPS Employee profile needs HR review | Your user account maps to more than one employee profile. HR must resolve the duplicate before self-service can open. | Employee profile is not linked | No employee profile is linked to your user account in the active organization. | requestedMinutes | periodStart | periodEnd | reason
+CONTROLS Payslips (Link, {"href":"payslipsHref"}, components/hris/HrisEmployeeSelfService.tsx:67)
+Leave Overtime Attendance correction (select, {"onChange":"(event) => setType(event.target.value)"}, components/hris/HrisOperationalTimeRequestPanel.tsx:87)
+Minutes (input, {"name":"\"requestedMinutes\"","type":"\"number\"","required":"true"}, components/hris/HrisOperationalTimeRequestPanel.tsx:101)
+Start (input, {"name":"\"periodStart\"","type":"\"date\"","required":"true"}, components/hris/HrisOperationalTimeRequestPanel.tsx:111)
+End (input, {"name":"\"periodEnd\"","type":"\"date\"","required":"true"}, components/hris/HrisOperationalTimeRequestPanel.tsx:120)
+Reason (textarea, {"name":"\"reason\"","required":"true"}, components/hris/HrisOperationalTimeRequestPanel.tsx:129)
+Submitting… / Submit request (button, {"type":"\"submit\"","disabled":"pending || (type === \"LEAVE\" && balances.length === 0)"}, components/hris/HrisOperationalTimeRequestPanel.tsx:136)
+[dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+
+ROUTE /en/dashboard/people
+FILE app/[locale]/(dashboard)/dashboard/people/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/people/page.tsx; components/hris/HrisEmployeeDirectoryTable.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES services/hris/employee.service.ts; app/[locale]/(dashboard)/dashboard/people/people-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Employee directory | People
+PROPS Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS History (Link, {"href":"localizePath(\"/dashboard/people/history\", locale)"}, app/[locale]/(dashboard)/dashboard/people/page.tsx:58)
+Approvals (Link, {"href":"localizePath(\"/dashboard/people/approvals\", locale)"}, app/[locale]/(dashboard)/dashboard/people/page.tsx:65)
+Open profile (Link, {"href":"localizePath(`/dashboard/people/${employee.id}`, locale)"}, components/hris/HrisEmployeeDirectoryTable.tsx:90)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/people/team
+FILE app/[locale]/(dashboard)/dashboard/people/team/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/people/team/page.tsx; components/dashboard/DashboardRouteState.tsx; components/hris/HrisManagerSelfService.tsx; components/hris/HrisOperationalTimeApprovalPanel.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES services/_shared/action-errors.ts; services/hris/manager-self-service.service.ts; app/[locale]/(dashboard)/dashboard/people/people-route-access.tsx; lib/utils.ts; actions/hris/operational-time.actions.ts
+REDIRECTS []
+HEADINGS Managed workforce | Responsibility scope | Workforce readiness | Pending HRIS changes | Operational boundaries | Time-management approvals
+PROPS No managed workforce scope is available | This account does not have tenant HRIS authority or a current managed-location responsibility. | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS [dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+Approval inbox (Link, {"href":"approvalsHref"}, components/hris/HrisManagerSelfService.tsx:71)
+[dynamic or icon-only label] (Link, {"href":"localizePath(employee.profileHref, locale)"}, components/hris/HrisManagerSelfService.tsx:133)
+[dynamic or icon-only label] (Link, {"href":"localizePath(item.employee.profileHref, locale)"}, components/hris/HrisManagerSelfService.tsx:194)
+Approve (button, {"type":"\"button\"","disabled":"pending || !request.canDecide","onClick":"() => decide(request, \"APPROVE\")"}, components/hris/HrisOperationalTimeApprovalPanel.tsx:83)
+Reject (button, {"type":"\"button\"","disabled":"pending || !request.canDecide","onClick":"() => decide(request, \"REJECT\")"}, components/hris/HrisOperationalTimeApprovalPanel.tsx:91)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/people/[employeeId]
+FILE app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx; components/dashboard/DashboardRouteState.tsx
+DEPENDENCIES services/_shared/action-errors.ts; services/hris/employee.service.ts; app/[locale]/(dashboard)/dashboard/people/people-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Employment | Readiness
+PROPS Employee profile not found | No employee profile with this reference exists in the active organization. | Employee profile is outside your current responsibility | Your HRIS access is limited to employees in locations currently assigned to you. Location responsibility is not reporting-line authority.
+CONTROLS People (Link, {"href":"peopleHref"}, app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx:100)
+[dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)

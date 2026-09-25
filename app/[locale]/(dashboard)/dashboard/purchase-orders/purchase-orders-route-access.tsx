@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { DashboardRouteState, type DashboardRouteStateKind } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { RbacError, requireAllPermissions, requireAnyPermission, requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
@@ -26,6 +26,8 @@ type PurchaseOrdersRouteAccessResult =
   | {
       kind: "blocked"
       node: ReactNode
+      reason: DashboardRouteStateKind
+      locale: Locale
     }
   | {
       kind: "allowed"
@@ -39,9 +41,6 @@ const NO_ACTIVE_ORG_MESSAGE =
   "Refresh your session from the dashboard so this route can load tenant-scoped data."
 const PERMISSION_DENIED_MESSAGE =
   "This route is protected by the server permission layer and cannot be loaded without the required access."
-const DEFAULT_MODULE_LOCKED_TITLE_SUFFIX = "is not enabled for this tenant"
-const DEFAULT_MODULE_LOCKED_MESSAGE =
-  "This workflow is protected by a module entitlement gate. Enable the required module before using this surface."
 
 function getModuleRequirements(surface: PurchaseOrdersRouteSurface): PurchaseOrdersRouteSurfaceModule[] {
   if (surface.modules && surface.modules.length > 0) return surface.modules
@@ -90,11 +89,13 @@ async function evaluatePurchaseOrdersRouteAccess(
 
       return {
         kind: "blocked",
+        reason: noActiveOrg ? "no_active_org" : "permission_denied",
+        locale,
         node: (
           <DashboardRouteState
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
-            message={noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE}
+            title={locale === "fr" ? (noActiveOrg ? "Une organisation active est requise" : "Accès aux commandes fournisseurs refusé") : (noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`)}
+            message={locale === "fr" ? (noActiveOrg ? "Actualisez votre session depuis le tableau de bord pour accéder aux données de votre organisation." : "Votre rôle ne dispose pas des autorisations nécessaires pour accéder à cette page.") : (noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE)}
             primaryHref={localizePath("/dashboard", locale)}
           />
         ),
@@ -123,11 +124,13 @@ async function evaluatePurchaseOrdersRouteAccess(
     if (moduleMode === "enforce" && !decision.allowed) {
       return {
         kind: "blocked",
+        reason: "locked_module",
+        locale,
         node: (
           <DashboardRouteState
             kind="locked_module"
-            title={moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`}
-            message={moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE}
+            title={moduleRequirement.moduleLockedTitle ?? (locale === "fr" ? "Les achats sont indisponibles" : "Purchasing is not available")}
+            message={moduleRequirement.moduleLockedMessage ?? (locale === "fr" ? "L’accès actuel de votre organisation ne permet pas de consulter les commandes fournisseurs. Demandez à votre administrateur de vérifier la configuration." : "Your organization’s current access does not allow purchase-order reads. Ask your administrator to review the configuration.")}
             primaryHref={localizePath("/dashboard", locale)}
           />
         ),
@@ -147,16 +150,18 @@ export async function withPurchaseOrdersSurfaceAccess({
   surface,
   permissionOptions,
   onAllowed,
+  onBlocked,
 }: {
   params: Promise<{ locale: string }>
   surface: PurchaseOrdersRouteSurface
   permissionOptions?: PermissionInput
   onAllowed: (context: PurchaseOrdersRouteContext, locale: Locale) => Promise<ReactNode> | ReactNode
+  onBlocked?: (kind: DashboardRouteStateKind, locale: Locale) => Promise<ReactNode> | ReactNode
 }) {
   const state = await evaluatePurchaseOrdersRouteAccess(surface, params, permissionOptions)
 
   if (state.kind === "blocked") {
-    return state.node
+    return onBlocked ? onBlocked(state.reason, state.locale) : state.node
   }
 
   return onAllowed(state.context, state.locale)

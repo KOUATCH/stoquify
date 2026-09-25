@@ -45,6 +45,8 @@ type BIActionPriorityBoardProps = {
   detail?: string
   className?: string
   maxItems?: number
+  emptyTitle?: string
+  emptyDetail?: string
 }
 
 export function BIActionPriorityBoard({
@@ -53,6 +55,8 @@ export function BIActionPriorityBoard({
   detail = "Permission-filtered actions ranked by urgency, risk, and business impact.",
   className,
   maxItems = 8,
+  emptyTitle = "No visible action is due",
+  emptyDetail = "There is no permission-filtered command action for this user and tenant right now.",
 }: BIActionPriorityBoardProps) {
   const visible = items.slice(0, maxItems)
 
@@ -124,8 +128,8 @@ export function BIActionPriorityBoard({
       ) : (
         <BIStateSurface
           state="empty"
-          title="No visible action is due"
-          detail="There is no permission-filtered command action for this user and tenant right now."
+          title={emptyTitle}
+          detail={emptyDetail}
           className="mt-4"
         />
       )}

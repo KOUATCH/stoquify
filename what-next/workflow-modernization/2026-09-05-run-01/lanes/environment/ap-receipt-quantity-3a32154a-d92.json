@@ -1,0 +1,41 @@
+{
+  "run": "3a32154a-d92",
+  "at": "2026-09-08T07:37:11.635Z",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "2354ea848c9308fa6437fe69aea1aaa4af72797b0ef3ef7ba50f766fcca61a46",
+    "services/purchasing/ap-control.schemas.ts": "194f6f10e5657cd53b9364abe6e5bff021ffd039d515899366d23a2bf4496484",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f"
+  },
+  "checks": [
+    {
+      "name": "Repeated receipt lines cannot consume 12 from 10 received",
+      "status": "passed",
+      "noInvoice": true
+    },
+    {
+      "name": "Concurrent invoices without optional PO reserve quantity once",
+      "status": "passed",
+      "totalReserved": "6",
+      "rejected": 1
+    },
+    {
+      "name": "Concurrent exact retries return the same invoice",
+      "status": "passed",
+      "invoiceCount": 1
+    },
+    {
+      "name": "Fractional split lines reserve exactly 0.3 and cannot consume more",
+      "status": "passed",
+      "quantity": "0.3",
+      "total": "750",
+      "ledgerStatus": "PENDING_APPROVAL"
+    }
+  ],
+  "scope": "Owned local PostgreSQL; real receiving and invoice services; no approval, payment or journal posting.",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "2354ea848c9308fa6437fe69aea1aaa4af72797b0ef3ef7ba50f766fcca61a46",
+    "services/purchasing/ap-control.schemas.ts": "194f6f10e5657cd53b9364abe6e5bff021ffd039d515899366d23a2bf4496484",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f"
+  }
+}

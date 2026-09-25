@@ -1,0 +1,2501 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-08T20:19:50.744Z",
+  "lane": "purchasing-ap",
+  "status": "IN_PROGRESS",
+  "workflowDenominator": 33,
+  "denominatorBasis": "Discovered business journeys/exceptional outcomes, not route count; cross-lane entries retained explicitly and may be linked/deduplicated by parent",
+  "sourceCommit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "graphHints": [
+    {
+      "file": "graphify-out/graph_actions.json",
+      "node": "purchaseorderworkflow_purchaseordersystemaction_ts",
+      "community": 2
+    },
+    {
+      "file": "graphify-out/graph_actions.json",
+      "node": "purchaseorderworkflow_goodsreceiptandsummary_ts",
+      "community": 68
+    },
+    {
+      "file": "graphify-out/graph_components.json",
+      "node": "purchase_orders_moderneditpurchaseorderform_tsx",
+      "community": 46
+    },
+    {
+      "file": "graphify-out/graph_components.json",
+      "node": "purchasing_apcontrolworkbench_tsx",
+      "community": 25
+    }
+  ],
+  "workflows": [
+    {
+      "id": "PA-001",
+      "name": "Create a purchase-order draft",
+      "purpose": "Create a purchase-order draft",
+      "personas": [
+        "Buyer"
+      ],
+      "authority": "purchases.orders.create",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/new"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:createPurchaseOrder",
+        "services/purchase-order/purchase-quantity.ts"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "PurchaseOrderLine"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "New → DRAFT",
+        "Preserve up to three decimal places and reject excess precision without silent rounding"
+      ],
+      "sideEffects": [
+        "Tenant numbering; purchasing admission gate; line/total persistence"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "interactive",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "not-yet-visited-in-current-workflow-run",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-amendment-receipt.json",
+        "PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace",
+        "The v54 quantity checks do not establish complete creation, receiving or downstream workflow verification."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-002",
+      "name": "Edit an existing draft",
+      "purpose": "Edit an existing draft",
+      "personas": [
+        "Buyer/editor"
+      ],
+      "authority": "Current server-derived tenant and session; usable account; purchasing write eligibility; purchases.orders.read and purchases.orders.update",
+      "tenantScope": "Current authority evaluated in transaction; foreign draft reads/writes denied in real PostgreSQL checks",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]/edit"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:updatePurchaseOrder",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/purchase-order-edit-record.ts",
+        "services/purchase-order/purchase-order.service.ts:getPurchaseOrderDraftForActor",
+        "services/purchase-order/purchase-quantity.ts"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "PurchaseOrderLine",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Open current DRAFT under current authority",
+        "Edit a scoped local working copy",
+        "Save against the reviewed revision or reject stale changes",
+        "Compare current record and explicitly resolve overlapping fields",
+        "Commit order/lines, audit and applied request receipt atomically",
+        "Recover an exact pending command without duplicate effects; preserve local draft through denial and restore after legitimate access returns",
+        "Preserve up to three decimal places and reject excess precision without silent rounding"
+      ],
+      "sideEffects": [
+        "Reconcile line identities; service-calculated totals; confirmed cache invalidation"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "current_authority_revision_comparison_and_exact_receipt_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_conflict_recovery_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "evidence/jest-edit-final.json",
+        "evidence/editor-browser-followup-receipt.json",
+        "evidence/editor-recovery-receipt.json",
+        "../environment/purchase-editor-browser-ef30b99c.json",
+        "../../evidence/purchase-order-lifecycle-receipt.json",
+        "PURCHASE_ORDER_LIFECYCLE.md",
+        "../../evidence/purchase-order-edit-receipt.json",
+        "PURCHASE_ORDER_DRAFT_RECOVERY.md",
+        "../../evidence/purchase-amendment-receipt.json",
+        "PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Reviewed current-authority commands are verified in v51–v53; older history/export and complete connected downstream journeys remain open.",
+        "Archiving now rejects linked obligations and retains read access to verified decisions; broader historical document/export support remains open.",
+        "Controlled amendments and three-decimal quantity boundaries are implemented in v54; complete receiving/inspection, supplier communication and retention handoffs remain open.",
+        "Full receiving/inspection/inventory/AP/ledger/reconciliation and retention handoffs remain unfinished.",
+        "French protected-route denial remains partly English; actual native AT/zoom, comprehensive contrast, production build, production performance and release evidence remain incomplete.",
+        "Complete actual screen-reader, native zoom, full contrast and release verification before claiming the entire workflow is complete.",
+        "The v54 quantity checks do not establish complete creation, receiving or downstream workflow verification."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-003",
+      "name": "Submit a purchase order",
+      "purpose": "Submit a purchase order",
+      "personas": [
+        "Buyer"
+      ],
+      "authority": "Current server organization/account/session, purchasing write eligibility, purchases.orders.read and purchases.orders.update",
+      "tenantScope": "Current same-tenant authority evaluated in transaction; cross-tenant decisions rejected in PostgreSQL",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:submitPurchaseOrder",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/purchase-order.service.ts:getPurchaseOrderLifecyclePreview",
+        "services/purchase-order/purchase-order.service.ts:executePurchaseOrderLifecycle",
+        "services/purchase-order/purchase-order-lifecycle.ts",
+        "services/purchase-order/purchase-order-lifecycle-contracts.ts",
+        "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Load current authoritative review",
+        "DRAFT → SUBMITTED with current eligible references and nonempty lines",
+        "Reject changed revision or authority before mutation",
+        "Persist order, audit and applied decision receipt atomically",
+        "Recover the exact pending command after an uncertain response or reload"
+      ],
+      "sideEffects": [
+        "Status/archive change, mandatory audit and verified decision event; no supplier message or payment"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "current_authority_reviewed_revision_atomic_decision_and_exact_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-order-lifecycle-receipt.json",
+        "PURCHASE_ORDER_LIFECYCLE.md",
+        "../../evidence/purchase-reviewed-lifecycle-receipt.json",
+        "PURCHASE_ORDER_REVIEWED_LIFECYCLE.md"
+      ],
+      "remaining": [
+        "Whole-platform discovery, connected workflow remediation and release verification remain unfinished.",
+        "Complete receiving/inspection/inventory/AP/ledger/reconciliation journeys remain open; completion fixtures use explicitly synthetic legacy received-goods evidence.",
+        "Controlled amendments and three-decimal quantity boundaries are implemented in v54; complete receiving/inspection, supplier communication and retention handoffs remain open.",
+        "Interactive batch review is absent; batch service partial retry is verified.",
+        "History covers the latest 100 reviewed lifecycle decisions; legacy synthesized history, older approval browsing and exports remain open.",
+        "Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified; development timings are not a production performance pass.",
+        "No deployment, external notification, payment, X1 clearance or professional certification; prior unrelated approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-004",
+      "name": "Approve a submitted purchase order",
+      "purpose": "Approve a submitted purchase order",
+      "personas": [
+        "Independent approver"
+      ],
+      "authority": "Current server tenant/account/session, purchasing write eligibility, read and approve permissions, independent known requester, password assurance within five minutes for a new approval",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:approvePurchaseOrder",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/purchase-order-approval.ts",
+        "services/purchase-order/purchase-order-approval-contracts.ts",
+        "services/purchase-order/purchase-order.service.ts:getPurchaseOrderApprovalPreview",
+        "components/purchase-orders/PurchaseOrderApprovalDialog.tsx"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Read authoritative submitted order review",
+        "Approve exact reviewed revision under current authority or reject",
+        "Commit order, audit and applied receipt atomically",
+        "Recover an exact uncertain request without duplicate effects, including after a later cancellation/archive"
+      ],
+      "sideEffects": [
+        "Approver/time recorded; approval audit"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "current_authority_reviewed_revision_atomic_approval_and_exact_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_runtime_review",
+      "runtimeStatus": "partial_real_postgres_en_fr_detail_and_register_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-order-lifecycle-receipt.json",
+        "PURCHASE_ORDER_LIFECYCLE.md",
+        "../../evidence/purchase-approval-receipt.json",
+        "PURCHASE_ORDER_APPROVAL.md"
+      ],
+      "remaining": [
+        "All-platform discovery and remediation remain unfinished.",
+        "Reviewed current-authority commands are verified in v51–v53; older history/export and complete connected downstream journeys remain open.",
+        "Approval-history traversal/export, approved-order amendments, fractional receiving and AP handoffs remain open.",
+        "Native assistive technology, native browser zoom, comprehensive contrast and a full release build remain unverified.",
+        "Development route timings are observations without a production performance pass.",
+        "No live deployment or X1 clearance; prior unrelated global auth/provider approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-005",
+      "name": "Cancel an eligible purchase order",
+      "purpose": "Cancel an eligible purchase order",
+      "personas": [
+        "Purchasing manager"
+      ],
+      "authority": "Current server organization/account/session, purchasing write eligibility, purchases.orders.read and purchases.orders.cancel; password assurance within five minutes for a new decision",
+      "tenantScope": "Current same-tenant authority evaluated in transaction; cross-tenant decisions rejected in PostgreSQL",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:cancelPurchaseOrder",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/purchase-order.service.ts:getPurchaseOrderLifecyclePreview",
+        "services/purchase-order/purchase-order.service.ts:executePurchaseOrderLifecycle",
+        "services/purchase-order/purchase-order-lifecycle.ts",
+        "services/purchase-order/purchase-order-lifecycle-contracts.ts",
+        "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Load current authoritative review",
+        "Eligible open order → CANCELLED; preserve original notes and linked obligations",
+        "Reject changed revision or authority before mutation",
+        "Persist order, audit and applied decision receipt atomically",
+        "Recover the exact pending command after an uncertain response or reload"
+      ],
+      "sideEffects": [
+        "Status/archive change, mandatory audit and verified decision event; no supplier message or payment"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "current_authority_reviewed_revision_atomic_decision_and_exact_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-order-lifecycle-receipt.json",
+        "PURCHASE_ORDER_LIFECYCLE.md",
+        "../../evidence/purchase-reviewed-lifecycle-receipt.json",
+        "PURCHASE_ORDER_REVIEWED_LIFECYCLE.md"
+      ],
+      "remaining": [
+        "Whole-platform discovery, connected workflow remediation and release verification remain unfinished.",
+        "Complete receiving/inspection/inventory/AP/ledger/reconciliation journeys remain open; completion fixtures use explicitly synthetic legacy received-goods evidence.",
+        "Controlled amendments and three-decimal quantity boundaries are implemented in v54; complete receiving/inspection, supplier communication and retention handoffs remain open.",
+        "Interactive batch review is absent; batch service partial retry is verified.",
+        "History covers the latest 100 reviewed lifecycle decisions; legacy synthesized history, older approval browsing and exports remain open.",
+        "Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified; development timings are not a production performance pass.",
+        "No deployment, external notification, payment, X1 clearance or professional certification; prior unrelated approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-006",
+      "name": "Archive an eligible order",
+      "purpose": "Archive an eligible order",
+      "personas": [
+        "Purchasing manager"
+      ],
+      "authority": "Current server organization/account/session, purchasing write eligibility, purchases.orders.read and purchases.delete; password assurance within five minutes for a new decision",
+      "tenantScope": "Current same-tenant authority evaluated in transaction; cross-tenant decisions rejected in PostgreSQL",
+      "entryPoints": [
+        "/dashboard/purchase-orders"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:deletePurchaseOrder",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/purchase-order.service.ts:getPurchaseOrderLifecyclePreview",
+        "services/purchase-order/purchase-order.service.ts:executePurchaseOrderLifecycle",
+        "services/purchase-order/purchase-order-lifecycle.ts",
+        "services/purchase-order/purchase-order-lifecycle-contracts.ts",
+        "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Load current authoritative review",
+        "DRAFT or CANCELLED without linked records → archived; retained order and decision remain readable",
+        "Reject changed revision or authority before mutation",
+        "Persist order, audit and applied decision receipt atomically",
+        "Recover the exact pending command after an uncertain response or reload"
+      ],
+      "sideEffects": [
+        "Status/archive change, mandatory audit and verified decision event; no supplier message or payment"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "current_authority_reviewed_revision_atomic_decision_and_exact_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-order-lifecycle-receipt.json",
+        "PURCHASE_ORDER_LIFECYCLE.md",
+        "../../evidence/purchase-order-edit-receipt.json",
+        "PURCHASE_ORDER_DRAFT_RECOVERY.md",
+        "../../evidence/purchase-reviewed-lifecycle-receipt.json",
+        "PURCHASE_ORDER_REVIEWED_LIFECYCLE.md"
+      ],
+      "remaining": [
+        "Whole-platform discovery, connected workflow remediation and release verification remain unfinished.",
+        "Complete receiving/inspection/inventory/AP/ledger/reconciliation journeys remain open; completion fixtures use explicitly synthetic legacy received-goods evidence.",
+        "Controlled amendments and three-decimal quantity boundaries are implemented in v54; complete receiving/inspection, supplier communication and retention handoffs remain open.",
+        "Interactive batch review is absent; batch service partial retry is verified.",
+        "History covers the latest 100 reviewed lifecycle decisions; legacy synthesized history, older approval browsing and exports remain open.",
+        "Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified; development timings are not a production performance pass.",
+        "No deployment, external notification, payment, X1 clearance or professional certification; prior unrelated approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-007",
+      "name": "Clone a previous order",
+      "purpose": "Clone a previous order",
+      "personas": [
+        "Buyer"
+      ],
+      "authority": "purchases.orders.create",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id] → Clone as a draft / Cloner en brouillon"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:clonePurchaseOrder"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "PurchaseOrderLine"
+      ],
+      "prerequisites": "Server-authorized purchases.orders.create, current same-tenant active/nondeleted supplier, delivery location and copied items; purchasing admission allows new orders. Current update permission opens editor; create/read-only users open the returned real draft detail.",
+      "transitions": [
+        "Existing order → new DRAFT; new receiving quantities zero"
+      ],
+      "sideEffects": [
+        "New tenant order number; purchasing admission gate; copied lines"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "interactive-implemented",
+      "reviewStatus": "source-and-focused-tests-passed",
+      "runtimeStatus": "ENFR-real-clone-passed-in-ef30b99c;new-draft-valid-tenant-distinct-number-preserved-amounts-received-zero-no-posting",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "hooks/usePurchaseOrderClone.ts",
+        "components/purchase-orders/PurchaseOrderCloneNotice.tsx",
+        "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+        "evidence/jest-clone-before.json",
+        "evidence/jest-clone-final.json",
+        "evidence/clone-correction-receipt.json",
+        "evidence/clone-transport-followup-receipt.json",
+        "evidence/editor-browser-followup-receipt.json",
+        "../environment/purchase-editor-browser-ef30b99c.json"
+      ],
+      "remaining": [
+        "No durable clone-command idempotency key: concurrent local triggers are suppressed and uncertain results block resubmission on the current page; inspecting newest saved records remains required",
+        "Current source/version and related-record concurrent mutation serialization remain separately tracked"
+      ],
+      "owner": "ui_integration_map"
+    },
+    {
+      "id": "PA-008",
+      "name": "Bulk status changes",
+      "purpose": "Bulk status changes",
+      "personas": [
+        "Purchasing operator"
+      ],
+      "authority": "Current server lifecycle authority for every reviewed order; exact per-order request binding; no bulk approval or fabricated receiving",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts:bulkUpdatePurchaseOrderStatus; unused composed hook"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:bulkUpdateStatus",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/purchase-order.service.ts:getPurchaseOrderLifecyclePreview",
+        "services/purchase-order/purchase-order.service.ts:executePurchaseOrderLifecycle",
+        "services/purchase-order/purchase-order-lifecycle.ts",
+        "services/purchase-order/purchase-order-lifecycle-contracts.ts",
+        "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Require one reviewed command per selected order",
+        "Deduplicate selected IDs and reject mismatched command sets",
+        "Execute each order atomically under its current authority",
+        "Report confirmed successes and scoped failures",
+        "Retry identical commands without duplicating completed effects"
+      ],
+      "sideEffects": [
+        "Multiple order status changes in transaction"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "reviewed_per_order_commands_and_partial_retry_implemented_interactive_batch_absent",
+      "reviewStatus": "bounded_current_source_and_database_review",
+      "runtimeStatus": "partial_real_postgres_batch_cross_tenant_and_retry_verified_no_browser_batch",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-order-lifecycle-receipt.json",
+        "PURCHASE_ORDER_LIFECYCLE.md",
+        "../../evidence/purchase-reviewed-lifecycle-receipt.json",
+        "PURCHASE_ORDER_REVIEWED_LIFECYCLE.md"
+      ],
+      "remaining": [
+        "Whole-platform discovery, connected workflow remediation and release verification remain unfinished.",
+        "Complete receiving/inspection/inventory/AP/ledger/reconciliation journeys remain open; completion fixtures use explicitly synthetic legacy received-goods evidence.",
+        "Controlled amendments and three-decimal quantity boundaries are implemented in v54; complete receiving/inspection, supplier communication and retention handoffs remain open.",
+        "Interactive batch review is absent; batch service partial retry is verified.",
+        "History covers the latest 100 reviewed lifecycle decisions; legacy synthesized history, older approval browsing and exports remain open.",
+        "Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified; development timings are not a production performance pass.",
+        "No deployment, external notification, payment, X1 clearance or professional certification; prior unrelated approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-009",
+      "name": "Find an order and review its details",
+      "purpose": "Find an order and review its details",
+      "personas": [
+        "Purchasing operator"
+      ],
+      "authority": "purchases.orders.read",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders",
+        "/dashboard/purchase-orders/[id]"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:listPurchaseOrders/getPurchaseOrderById"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "PurchaseOrderLine"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Query → rows/detail/denied/error/empty"
+      ],
+      "sideEffects": [
+        "Actor-derived action capabilities and organization currency"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "interactive",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "ENFR-saved-detail-exact243.50-and-denied-route-passed-in-ef30b99c;broader-list-behavior-unverified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "evidence/editor-browser-followup-receipt.json",
+        "../environment/purchase-editor-browser-ef30b99c.json"
+      ],
+      "remaining": [
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace"
+      ],
+      "owner": "ui_integration_map"
+    },
+    {
+      "id": "PA-010",
+      "name": "Record accepted goods receipt",
+      "purpose": "Record accepted goods receipt",
+      "personas": [
+        "Receiver"
+      ],
+      "authority": "Current server tenant/actor/session, order-read and receiving permissions, current purchasing eligibility; fresh password and independent acceptance for held inspection overrides.",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]",
+        "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+        "components/purchase-orders/PurchaseReceivingWorkbench.tsx"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:receiveItems",
+        "services/purchase-order/purchase-quantity.ts",
+        "services/purchase-order/purchase-receiving-authority.ts",
+        "services/purchase-order/purchase-receiving-contracts.ts",
+        "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/inventory/inventory-stock-event.service.ts"
+      ],
+      "records": [
+        "GoodsReceipt",
+        "GoodsReceiptLine",
+        "GoodsReceiptInspection",
+        "PurchaseOrderLine",
+        "GoodsReceiptInspectionResolution",
+        "BusinessEvent",
+        "AuditLog",
+        "InventoryTransaction",
+        "LedgerPostingBatch"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "APPROVED/PARTIALLY_RECEIVED → partial/full receiving after PASSED inspection",
+        "Preserve up to three decimal places and reject excess precision without silent rounding",
+        "Load server-owned received/held/available quantities and current authority",
+        "Review exact quantities, approved costs, destination and inspection disposition",
+        "Reject stale revisions, duplicate lines, foreign/inactive records and revoked or restricted access",
+        "Record held or accepted receipt with mandatory audit and reviewed decision in the same transaction",
+        "Resolve held inspection through current password and independent acceptance; retain cancelled parent status",
+        "Recover the same request after uncertainty or refresh without repeating stock",
+        "Distinguish actual receipt movements from the separate accounting review condition"
+      ],
+      "sideEffects": [
+        "PO lock; stable idempotency/payload hash; inventory/valuation event effects"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "reviewed_receiving_inspection_history_atomic_stock_evidence_and_exact_recovery_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-amendment-receipt.json",
+        "PURCHASE_ORDER_AMENDMENTS.md",
+        "../../evidence/receiving-receipt.json",
+        "RECEIVING_AND_INSPECTION.md"
+      ],
+      "remaining": [
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace",
+        "The v54 quantity checks do not establish complete creation, receiving or downstream workflow verification.",
+        "Whole-platform discovery, reconciliation of all entry sources and complete connected workflow verification remain unfinished.",
+        "Original order approval in these receiving fixtures is synthetic setup, not end-to-end purchase approval proof.",
+        "The existing stock owner still creates FAILED posting batches with GOODS_RECEIPT_LEDGER_REVIEW. No accounting journal is asserted or posted by this checkpoint. AP preparation, matching, posting, ledger-review resolution and downstream payment/reconciliation remain open.",
+        "Stock/outbox notification delivery, operator recovery, returns and complete receipt pagination/export remain open. Current history shows the latest 100 receipts and explicitly discloses older retained records.",
+        "Broader batch/serial/expiry runtime coverage, the older receipt-list getter, new action surface-registry mapping, remaining order-detail localization and other retained transport paths need further review.",
+        "Native assistive-technology and native zoom testing, comprehensive contrast and the full release build remain unverified. Text reflow and keyboard checks are bounded evidence.",
+        "Development timings are observations without an approved production budget or comparable original receiving-browser latency baseline.",
+        "No migration, deployment, payment, live customer activation, external message, X1 clearance or professional certification. Prior unrelated automatic approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-011",
+      "name": "Hold a failed or incomplete delivery inspection",
+      "purpose": "Hold a failed or incomplete delivery inspection",
+      "personas": [
+        "Receiver"
+      ],
+      "authority": "Current server tenant/actor/session, order-read and receiving permissions, current purchasing eligibility; fresh password and independent acceptance for held inspection overrides.",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]",
+        "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+        "components/purchase-orders/PurchaseReceivingWorkbench.tsx"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:receiveItems",
+        "services/purchase-order/purchase-receiving-authority.ts",
+        "services/purchase-order/purchase-receiving-contracts.ts",
+        "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/inventory/inventory-stock-event.service.ts"
+      ],
+      "records": [
+        "GoodsReceipt",
+        "GoodsReceiptLine",
+        "GoodsReceiptInspection",
+        "GoodsReceiptInspectionResolution",
+        "BusinessEvent",
+        "AuditLog",
+        "InventoryTransaction",
+        "LedgerPostingBatch"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "FAILED/INCOMPLETE inspection → HELD receipt",
+        "Load server-owned received/held/available quantities and current authority",
+        "Review exact quantities, approved costs, destination and inspection disposition",
+        "Reject stale revisions, duplicate lines, foreign/inactive records and revoked or restricted access",
+        "Record held or accepted receipt with mandatory audit and reviewed decision in the same transaction",
+        "Resolve held inspection through current password and independent acceptance; retain cancelled parent status",
+        "Recover the same request after uncertainty or refresh without repeating stock",
+        "Distinguish actual receipt movements from the separate accounting review condition"
+      ],
+      "sideEffects": [
+        "Inspection reason/evidence retained; accepted-stock side effects withheld"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "reviewed_receiving_inspection_history_atomic_stock_evidence_and_exact_recovery_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/receiving-receipt.json",
+        "RECEIVING_AND_INSPECTION.md"
+      ],
+      "remaining": [
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace",
+        "Whole-platform discovery, reconciliation of all entry sources and complete connected workflow verification remain unfinished.",
+        "Original order approval in these receiving fixtures is synthetic setup, not end-to-end purchase approval proof.",
+        "The existing stock owner still creates FAILED posting batches with GOODS_RECEIPT_LEDGER_REVIEW. No accounting journal is asserted or posted by this checkpoint. AP preparation, matching, posting, ledger-review resolution and downstream payment/reconciliation remain open.",
+        "Stock/outbox notification delivery, operator recovery, returns and complete receipt pagination/export remain open. Current history shows the latest 100 receipts and explicitly discloses older retained records.",
+        "Broader batch/serial/expiry runtime coverage, the older receipt-list getter, new action surface-registry mapping, remaining order-detail localization and other retained transport paths need further review.",
+        "Native assistive-technology and native zoom testing, comprehensive contrast and the full release build remain unverified. Text reflow and keyboard checks are bounded evidence.",
+        "Development timings are observations without an approved production budget or comparable original receiving-browser latency baseline.",
+        "No migration, deployment, payment, live customer activation, external message, X1 clearance or professional certification. Prior unrelated automatic approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-012",
+      "name": "Resolve a held receipt",
+      "purpose": "Resolve a held receipt",
+      "personas": [
+        "Inspection reviewer"
+      ],
+      "authority": "Current server tenant/actor/session, order-read and receiving permissions, current purchasing eligibility; fresh password and independent acceptance for held inspection overrides.",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts:resolveGoodsReceiptInspection (no UI caller found)",
+        "/dashboard/purchase-orders/[id]",
+        "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+        "components/purchase-orders/PurchaseReceivingWorkbench.tsx"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:resolveGoodsReceiptInspection",
+        "services/purchase-order/purchase-receiving-authority.ts",
+        "services/purchase-order/purchase-receiving-contracts.ts",
+        "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/inventory/inventory-stock-event.service.ts"
+      ],
+      "records": [
+        "GoodsReceiptInspectionResolution",
+        "GoodsReceipt",
+        "GoodsReceiptLine",
+        "GoodsReceiptInspection",
+        "BusinessEvent",
+        "AuditLog",
+        "InventoryTransaction",
+        "LedgerPostingBatch"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "HELD → ACCEPT/REJECT; replay same resolution safely",
+        "Load server-owned received/held/available quantities and current authority",
+        "Review exact quantities, approved costs, destination and inspection disposition",
+        "Reject stale revisions, duplicate lines, foreign/inactive records and revoked or restricted access",
+        "Record held or accepted receipt with mandatory audit and reviewed decision in the same transaction",
+        "Resolve held inspection through current password and independent acceptance; retain cancelled parent status",
+        "Recover the same request after uncertainty or refresh without repeating stock",
+        "Distinguish actual receipt movements from the separate accounting review condition"
+      ],
+      "sideEffects": [
+        "Durable idempotent resolution; conditional inventory effects"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "reviewed_receiving_inspection_history_atomic_stock_evidence_and_exact_recovery_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/receiving-receipt.json",
+        "RECEIVING_AND_INSPECTION.md"
+      ],
+      "remaining": [
+        "Required interactive workflow is not implemented; code-only app/components/hooks caller search found none",
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace",
+        "Whole-platform discovery, reconciliation of all entry sources and complete connected workflow verification remain unfinished.",
+        "Original order approval in these receiving fixtures is synthetic setup, not end-to-end purchase approval proof.",
+        "The existing stock owner still creates FAILED posting batches with GOODS_RECEIPT_LEDGER_REVIEW. No accounting journal is asserted or posted by this checkpoint. AP preparation, matching, posting, ledger-review resolution and downstream payment/reconciliation remain open.",
+        "Stock/outbox notification delivery, operator recovery, returns and complete receipt pagination/export remain open. Current history shows the latest 100 receipts and explicitly discloses older retained records.",
+        "Broader batch/serial/expiry runtime coverage, the older receipt-list getter, new action surface-registry mapping, remaining order-detail localization and other retained transport paths need further review.",
+        "Native assistive-technology and native zoom testing, comprehensive contrast and the full release build remain unverified. Text reflow and keyboard checks are bounded evidence.",
+        "Development timings are observations without an approved production budget or comparable original receiving-browser latency baseline.",
+        "No migration, deployment, payment, live customer activation, external message, X1 clearance or professional certification. Prior unrelated automatic approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-013",
+      "name": "Complete a fully received order",
+      "purpose": "Complete a fully received order",
+      "personas": [
+        "Purchasing operator"
+      ],
+      "authority": "Current server organization/account/session, purchasing write eligibility, purchases.orders.read and purchases.orders.update",
+      "tenantScope": "Current same-tenant authority evaluated in transaction; cross-tenant decisions rejected in PostgreSQL",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:closePurchaseOrder",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/purchase-order.service.ts:getPurchaseOrderLifecyclePreview",
+        "services/purchase-order/purchase-order.service.ts:executePurchaseOrderLifecycle",
+        "services/purchase-order/purchase-order-lifecycle.ts",
+        "services/purchase-order/purchase-order-lifecycle-contracts.ts",
+        "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "GoodsReceipt",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Load current authoritative review",
+        "Fully received order with finalized receipt evidence and resolved receiving → COMPLETED",
+        "Reject changed revision or authority before mutation",
+        "Persist order, audit and applied decision receipt atomically",
+        "Recover the exact pending command after an uncertain response or reload"
+      ],
+      "sideEffects": [
+        "Status/archive change, mandatory audit and verified decision event; no supplier message or payment"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "current_authority_reviewed_revision_atomic_decision_and_exact_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-order-lifecycle-receipt.json",
+        "PURCHASE_ORDER_LIFECYCLE.md",
+        "../../evidence/purchase-reviewed-lifecycle-receipt.json",
+        "PURCHASE_ORDER_REVIEWED_LIFECYCLE.md"
+      ],
+      "remaining": [
+        "Whole-platform discovery, connected workflow remediation and release verification remain unfinished.",
+        "Complete receiving/inspection/inventory/AP/ledger/reconciliation journeys remain open; completion fixtures use explicitly synthetic legacy received-goods evidence.",
+        "Controlled amendments and three-decimal quantity boundaries are implemented in v54; complete receiving/inspection, supplier communication and retention handoffs remain open.",
+        "Interactive batch review is absent; batch service partial retry is verified.",
+        "History covers the latest 100 reviewed lifecycle decisions; legacy synthesized history, older approval browsing and exports remain open.",
+        "Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified; development timings are not a production performance pass.",
+        "No deployment, external notification, payment, X1 clearance or professional certification; prior unrelated approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-014",
+      "name": "Review receiving and status evidence",
+      "purpose": "Review receiving and status evidence",
+      "personas": [
+        "Purchasing operator"
+      ],
+      "authority": "Current server tenant/actor/session, order-read and receiving permissions, current purchasing eligibility; fresh password and independent acceptance for held inspection overrides.",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]",
+        "/dashboard/purchase-orders",
+        "components/purchase-orders/PurchaseOrderDecisionHistory.tsx",
+        "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts",
+        "components/purchase-orders/PurchaseReceivingWorkbench.tsx"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:getGoodsReceipts/getStatusHistory",
+        "services/purchase-order/purchase-order-decision-history.ts",
+        "services/purchase-order/purchase-receiving-authority.ts",
+        "services/purchase-order/purchase-receiving-contracts.ts",
+        "services/purchase-order/purchase-receiving-workbench.service.ts",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/inventory/inventory-stock-event.service.ts"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "GoodsReceipt",
+        "GoodsReceiptInspectionResolution",
+        "BusinessEvent",
+        "GoodsReceiptLine",
+        "GoodsReceiptInspection",
+        "AuditLog",
+        "InventoryTransaction",
+        "LedgerPostingBatch"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Find exact order number or ID under current read authority",
+        "Verify internal event and receipt bindings",
+        "Display up to 100 reviewed decisions including archived orders",
+        "Retain explicit failure/unverified/empty distinctions and older-record notice",
+        "Load server-owned received/held/available quantities and current authority",
+        "Review exact quantities, approved costs, destination and inspection disposition",
+        "Reject stale revisions, duplicate lines, foreign/inactive records and revoked or restricted access",
+        "Record held or accepted receipt with mandatory audit and reviewed decision in the same transaction",
+        "Resolve held inspection through current password and independent acceptance; retain cancelled parent status",
+        "Recover the same request after uncertainty or refresh without repeating stock",
+        "Distinguish actual receipt movements from the separate accounting review condition"
+      ],
+      "sideEffects": [
+        "Read-only; current status history reconstructed from timestamps/receipts"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "reviewed_receiving_inspection_history_atomic_stock_evidence_and_exact_recovery_implemented",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "../../evidence/purchase-reviewed-lifecycle-receipt.json",
+        "PURCHASE_ORDER_REVIEWED_LIFECYCLE.md",
+        "../../evidence/receiving-receipt.json",
+        "RECEIVING_AND_INSPECTION.md"
+      ],
+      "remaining": [
+        "Whole-platform discovery, connected workflow remediation and release verification remain unfinished.",
+        "Complete receiving/inspection/inventory/AP/ledger/reconciliation journeys remain open; completion fixtures use explicitly synthetic legacy received-goods evidence.",
+        "Controlled amendments and three-decimal quantity boundaries are implemented in v54; complete receiving/inspection, supplier communication and retention handoffs remain open.",
+        "Interactive batch review is absent; batch service partial retry is verified.",
+        "History covers the latest 100 reviewed lifecycle decisions; legacy synthesized history, older approval browsing and exports remain open.",
+        "Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified; development timings are not a production performance pass.",
+        "No deployment, external notification, payment, X1 clearance or professional certification; prior unrelated approval-review rejections remain respected.",
+        "Whole-platform discovery, reconciliation of all entry sources and complete connected workflow verification remain unfinished.",
+        "Original order approval in these receiving fixtures is synthetic setup, not end-to-end purchase approval proof.",
+        "The existing stock owner still creates FAILED posting batches with GOODS_RECEIPT_LEDGER_REVIEW. No accounting journal is asserted or posted by this checkpoint. AP preparation, matching, posting, ledger-review resolution and downstream payment/reconciliation remain open.",
+        "Stock/outbox notification delivery, operator recovery, returns and complete receipt pagination/export remain open. Current history shows the latest 100 receipts and explicitly discloses older retained records.",
+        "Broader batch/serial/expiry runtime coverage, the older receipt-list getter, new action surface-registry mapping, remaining order-detail localization and other retained transport paths need further review.",
+        "Native assistive-technology and native zoom testing, comprehensive contrast and the full release build remain unverified. Text reflow and keyboard checks are bounded evidence.",
+        "Development timings are observations without an approved production budget or comparable original receiving-browser latency baseline.",
+        "No migration, deployment, payment, live customer activation, external message, X1 clearance or professional certification. Prior unrelated automatic approval-review rejections remain respected."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-015",
+      "name": "Analyze and export purchase orders",
+      "purpose": "Analyze and export purchase orders",
+      "personas": [
+        "Purchasing analyst"
+      ],
+      "authority": "Read/export policy (full export guard trace pending)",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/analytics",
+        "order-list export"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order.service.ts:getAnalytics/exportToCSV"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "PurchaseOrderLine",
+        "GoodsReceipt"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Filters → organization-scoped analytics/CSV"
+      ],
+      "sideEffects": [
+        "Read-only financial/operational data export"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "interactive",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "not-yet-visited-in-current-workflow-run",
+      "evidence": [
+        "services/purchase-order/purchase-order.service.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts"
+      ],
+      "remaining": [
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace"
+      ],
+      "owner": "ui_integration_map"
+    },
+    {
+      "id": "PA-016",
+      "name": "Prepare supplier invoice and evaluate three-way match",
+      "purpose": "Prepare and match a supplier invoice",
+      "personas": [
+        "AP maker"
+      ],
+      "authority": "purchasing.ap.invoice.post",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/ap-control.actions.ts:prepareSupplierInvoiceAction (no production form caller)",
+        "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx",
+        "components/purchasing/InvoicePreparationWorkbench.tsx",
+        "actions/purchasing/invoice-preparation.actions.ts"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:prepareSupplierInvoice/postSupplierInvoice",
+        "services/purchasing/invoice-preparation.service.ts",
+        "services/purchasing/invoice-preparation-authority.ts",
+        "services/purchasing/invoice-preparation-contracts.ts"
+      ],
+      "records": [
+        "SupplierInvoice",
+        "SupplierInvoiceLine",
+        "ThreeWayMatch"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Receipt-backed input → MATCHED/PENDING_APPROVAL or DISPUTED/PENDING_MATCH_EXCEPTION",
+        "Prepare an unposted invoice for accepted uninvoiced goods on a cancelled order under a locked parent",
+        "Reject draft/submitted/deleted parent or excess uninvoiced quantity; retain accounting setup prerequisites",
+        "Accumulate split receipt quantities; serialize supplier preparation before committed reservation and retry reads"
+      ],
+      "sideEffects": [
+        "Duplicate fingerprint; tenant/supplier/receipt scope; idempotency if supplied; no maker-only posting"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "preparation_and_exact_recovery_separate_recorded_evidence_from_current_source_status",
+      "reviewStatus": "current_vs_historical_source_missing_evidence_archived_status_authority_and_dialog_recovery_reviewed",
+      "runtimeStatus": "partial_10_observation_postgres_groups_87_combined_tests_en_fr_recovery_browser_passed",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "../../evidence/purchase-reviewed-lifecycle-receipt.json",
+        "PURCHASE_ORDER_REVIEWED_LIFECYCLE.md",
+        "AP_RECEIPT_QUANTITY.md",
+        "../../evidence/ap-receipt-quantity-v56.json",
+        "INVOICE_PREPARATION.md",
+        "../../evidence/invoice-preparation-v57.json",
+        "INVOICE_CORRECTION_SERVICE.md",
+        "../../evidence/invoice-correction-v70.json",
+        "INVOICE_CORRECTION_WORKBENCH.md",
+        "../../evidence/invoice-correction-ui-v71.json",
+        "PREPARATION_CURRENT_OBSERVATION.md",
+        "../../evidence/preparation-observation-v72.json",
+        "../../evidence/dashboard-localization-v73.json",
+        "../../SHARED_DASHBOARD_LANGUAGE_AND_RECOVERY.md"
+      ],
+      "remaining": [
+        "Continue broader retained-history access and connected reversal/retention/operator workflows; shared default French recovery and navigation verified in v73",
+        "Complete document retention/access validation, service-only invoices, supported currency conversion, retained decision discovery/export and all interrupted-session/access-change browser cases",
+        "Finish raw AP kernel and other callers authority/lifecycle audit; expose current country/tax setup consequences; production contention and release build remain unverified",
+        "Reconcile delegated route/service enforcement in the static module scanner; retained report flags are not a runtime denial pass"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/ap-control.schemas.ts:postSupplierInvoiceInputSchema",
+        "requiredUserInputs": [
+          "supplierId",
+          "invoiceNumber",
+          "one or more receipt-line IDs with description,quantity,unitCost"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "current command actor"
+        ],
+        "inputFields": [
+          "supplierId",
+          "purchaseOrderId (optional)",
+          "invoiceNumber",
+          "invoiceDate/dueDate",
+          "currency",
+          "idempotencyKey",
+          "actual document/evidence hashes",
+          "receipt-line-bound quantities/cost/tax/descriptions"
+        ],
+        "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+      },
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-017",
+      "name": "Request supplier-invoice matching exception",
+      "purpose": "Request an invoice matching exception",
+      "personas": [
+        "AP maker"
+      ],
+      "authority": "purchasing.ap.invoice.post",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/ap-control.actions.ts:requestSupplierInvoiceMatchExceptionAction (no production form caller) (legacy: REVIEW_REQUIRED, no effects)",
+        "actions/purchasing/invoice-match-exception.actions.ts (load/review/submit/history)",
+        "/en/dashboard/purchases/payables/exceptions/request",
+        "/fr/dashboard/purchases/payables/exceptions/request"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:requestSupplierInvoiceMatchException",
+        "services/purchasing/invoice-match-exception.service.ts",
+        "services/purchasing/invoice-match-exception-authority.ts"
+      ],
+      "records": [
+        "SupplierInvoiceMatchException",
+        "AuditLog",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Unresolved variance → OPEN exception request with evidence/expiry"
+      ],
+      "sideEffects": [
+        "Evidence reference; expiration updates; audit/event"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "audited_expiry_linked_replacement_and_independent_new_decision_implemented_invoice_source_correction_open",
+      "reviewStatus": "expiry_observation_effective_time_atomic_evidence_and_prior_request_preview_reviewed",
+      "runtimeStatus": "partial_6_renewal_12_refusal_database_groups_101_tests_en_fr_seven_stages_each_passed",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "MATCH_EXCEPTION_INTEGRITY.md",
+        "../../evidence/match-exception-integrity-v65.json",
+        "MATCH_EXCEPTION_SERVICE.md",
+        "../../evidence/match-exception-service-v66.json",
+        "MATCH_EXCEPTION_UI.md",
+        "../../evidence/match-exception-ui-v67.json",
+        "MATCH_EXCEPTION_REFUSAL.md",
+        "../../evidence/exception-refusal-v68.json",
+        "MATCH_EXCEPTION_RENEWAL.md",
+        "../../evidence/exception-renewal-v69.json"
+      ],
+      "remaining": [
+        "Implement correction/re-preparation of stale or legacy invoice source while preserving original evidence and obligations",
+        "Complete outbox delivery/operator visibility and full connected inventory/AP/ledger/close verification",
+        "Complete full assistive-technology and inherited French-shell audit"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/invoice-match-exception-contracts.ts:invoiceMatchExceptionCommandSchema",
+        "requiredUserInputs": [
+          "Disputed invoice",
+          "Reason",
+          "Evidence reference",
+          "Expiry with timezone",
+          "Own password for fresh assurance"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "actorId",
+          "current permissions/session",
+          "source revision"
+        ],
+        "submission": [
+          "draft",
+          "expectedRevision",
+          "idempotencyKey"
+        ]
+      },
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-018",
+      "name": "Review supplier-invoice matching exception",
+      "purpose": "Review a matching exception",
+      "personas": [
+        "Independent AP reviewer"
+      ],
+      "authority": "purchasing.ap.match.review; fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/ap-control.actions.ts:reviewSupplierInvoiceMatchExceptionAction (no production form caller) (legacy: REVIEW_REQUIRED, no effects)",
+        "actions/purchasing/invoice-match-exception.actions.ts (load/review/submit/history)",
+        "/en/dashboard/purchases/payables/exceptions/review",
+        "/fr/dashboard/purchases/payables/exceptions/review"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:reviewSupplierInvoiceMatchException",
+        "services/purchasing/invoice-match-exception.service.ts",
+        "services/purchasing/invoice-match-exception-authority.ts"
+      ],
+      "records": [
+        "SupplierInvoiceMatchException",
+        "ThreeWayMatch",
+        "AuditLog"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "OPEN → APPROVE/REJECT subject to freshness/authority"
+      ],
+      "sideEffects": [
+        "Reviewed reason/evidence; maker-checker controls"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "audited_expiry_linked_replacement_and_independent_new_decision_implemented_invoice_source_correction_open",
+      "reviewStatus": "expiry_observation_effective_time_atomic_evidence_and_prior_request_preview_reviewed",
+      "runtimeStatus": "partial_6_renewal_12_refusal_database_groups_101_tests_en_fr_seven_stages_each_passed",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "MATCH_EXCEPTION_INTEGRITY.md",
+        "../../evidence/match-exception-integrity-v65.json",
+        "MATCH_EXCEPTION_SERVICE.md",
+        "../../evidence/match-exception-service-v66.json",
+        "MATCH_EXCEPTION_UI.md",
+        "../../evidence/match-exception-ui-v67.json",
+        "MATCH_EXCEPTION_REFUSAL.md",
+        "../../evidence/exception-refusal-v68.json",
+        "MATCH_EXCEPTION_RENEWAL.md",
+        "../../evidence/exception-renewal-v69.json"
+      ],
+      "remaining": [
+        "Implement correction/re-preparation of stale or legacy invoice source while preserving original evidence and obligations",
+        "Complete outbox delivery/operator visibility and full connected inventory/AP/ledger/close verification",
+        "Complete full assistive-technology and inherited French-shell audit"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/invoice-match-exception-contracts.ts:invoiceMatchExceptionCommandSchema",
+        "requiredUserInputs": [
+          "Invoice and exception",
+          "APPROVE or REJECT",
+          "Rejection reason when rejecting",
+          "Own password for fresh assurance"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "actorId",
+          "current permissions/session",
+          "source revision"
+        ],
+        "submission": [
+          "draft",
+          "expectedRevision",
+          "idempotencyKey"
+        ]
+      },
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-019",
+      "name": "Approve and post prepared supplier invoice",
+      "purpose": "Approve and post a prepared supplier invoice",
+      "personas": [
+        "Independent AP approver"
+      ],
+      "authority": "purchasing.ap.invoice.post; fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/ap-control.actions.ts:postSupplierInvoiceAction (returns REVIEW_REQUIRED; no financial effects)",
+        "actions/purchasing/invoice-ledger-recovery.actions.ts",
+        "/en/dashboard/purchases/payables/recovery",
+        "/fr/dashboard/purchases/payables/recovery",
+        "actions/purchasing/invoice-approval.actions.ts (load/review/submit/history)",
+        "/en/dashboard/purchases/payables/approve",
+        "/fr/dashboard/purchases/payables/approve"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:approveSupplierInvoice",
+        "services/purchasing/invoice-ledger-recovery.service.ts",
+        "services/purchasing/invoice-ledger-recovery-authority.ts",
+        "services/purchasing/invoice-approval.service.ts",
+        "services/purchasing/invoice-source-evidence.ts"
+      ],
+      "records": [
+        "SupplierInvoice",
+        "SupplierLedgerEntry",
+        "LedgerPostingBatch",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Prepared invoice + resolved match → posted result or explicit ledger/control blocker"
+      ],
+      "sideEffects": [
+        "Supplier balance/ledger and event posting; required country/accounting controls"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "reviewed_original_approval_en_fr_ui_and_connected_posting_recovery_implemented_legacy_and_exception_work_open",
+      "reviewStatus": "current_authority_source_proof_preview_exact_retry_and_separate_payable_posting_outcomes_reviewed",
+      "runtimeStatus": "partial_en_fr_seven_browser_stages_each_and_83_focused_tests_passed",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "INVOICE_APPROVAL_INTEGRITY.md",
+        "../../evidence/invoice-approval-integrity-v58.json",
+        "AP_LEDGER_RETRY.md",
+        "../../evidence/ap-ledger-retry-v59.json",
+        "INVOICE_LEDGER_RECOVERY.md",
+        "../../evidence/invoice-ledger-recovery-v60.json",
+        "INVOICE_LEDGER_RECOVERY_UI.md",
+        "../../evidence/invoice-recovery-ui-v61.json",
+        "INVOICE_APPROVAL_SOURCE_INTEGRITY.md",
+        "../../evidence/invoice-approval-source-v62.json",
+        "INVOICE_APPROVAL_SERVICE.md",
+        "../../evidence/invoice-approval-service-v63.json",
+        "INVOICE_APPROVAL_UI.md",
+        "../../evidence/invoice-approval-ui-v64.json",
+        "INVOICE_CORRECTION_SERVICE.md",
+        "../../evidence/invoice-correction-v70.json",
+        "INVOICE_CORRECTION_WORKBENCH.md",
+        "../../evidence/invoice-correction-ui-v71.json",
+        "PREPARATION_CURRENT_OBSERVATION.md",
+        "../../evidence/preparation-observation-v72.json",
+        "../../evidence/dashboard-localization-v73.json",
+        "../../SHARED_DASHBOARD_LANGUAGE_AND_RECOVERY.md"
+      ],
+      "remaining": [
+        "Continue broader retained-history access and connected reversal/retention/operator workflows; shared default French recovery and navigation verified in v73",
+        "Implement controlled legacy-preparation re-attestation/reconciliation; do not fabricate missing source hashes",
+        "Complete current-session revision-bound match-exception request/review/recovery",
+        "Reconcile legacy posted and failed batches lacking original request/journal proof without fabricated evidence",
+        "Complete concurrency coverage of other supplier-balance writers and full inventory/AP/ledger/close cycle",
+        "Reconcile module surface scanner with delegated services and purchases route-catalog enforcement; retain findings until corrected",
+        "Complete inherited French shell localization and full assistive-technology audit"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/invoice-approval-contracts.ts:invoiceApprovalCommandSchema",
+        "requiredUserInputs": [
+          "Select prepared supplier invoice",
+          "Review source document and accounting consequences",
+          "Current account password when fresh assurance is required"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "actorId",
+          "current authority",
+          "reviewed revision"
+        ],
+        "submission": [
+          "invoiceId",
+          "expectedRevision",
+          "idempotencyKey"
+        ],
+        "note": "UI retains the exact pending command; original unreviewed action returns REVIEW_REQUIRED."
+      },
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-020",
+      "name": "Request supplier payment-destination change",
+      "purpose": "Request supplier payment-destination change",
+      "personas": [
+        "Supplier-data operator"
+      ],
+      "authority": "purchasing.supplier.bank.request",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "requestSupplierBankChangeAction (no production UI caller found)"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:requestSupplierBankChange"
+      ],
+      "records": [
+        "SupplierBankAccount",
+        "SupplierBankChangeRequest"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Destination proposal → PENDING"
+      ],
+      "sideEffects": [
+        "Evidence retained; pending change blocks AP release; sibling owns master data"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "backend-only",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "not-yet-visited-in-current-workflow-run",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts"
+      ],
+      "remaining": [
+        "Accessible EN/FR interactive workflow missing; action exists with no production UI caller found",
+        "Real isolated owner-service success/negative/retry evidence",
+        "Full service invariant/concurrency review"
+      ],
+      "owner": "configuration_persistence (cross-lane reference)"
+    },
+    {
+      "id": "PA-021",
+      "name": "Approve supplier payment-destination change",
+      "purpose": "Approve supplier payment-destination change",
+      "personas": [
+        "Independent approver"
+      ],
+      "authority": "purchasing.supplier.bank.approve + fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "approveSupplierBankChangeAction (no production UI caller found)"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:approveSupplierBankChangeWithControls"
+      ],
+      "records": [
+        "SupplierBankAccount",
+        "SupplierBankChangeRequest",
+        "AuditLog"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "PENDING → approved destination through current fraud controls"
+      ],
+      "sideEffects": [
+        "Maker-checker destination verification; sibling owns master data"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "backend-only",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "not-yet-visited-in-current-workflow-run",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts"
+      ],
+      "remaining": [
+        "Accessible EN/FR interactive workflow missing; action exists with no production UI caller found",
+        "Real isolated owner-service success/negative/retry evidence",
+        "Full service invariant/concurrency review"
+      ],
+      "owner": "configuration_persistence (cross-lane reference)"
+    },
+    {
+      "id": "PA-022",
+      "name": "Request and approve supplier-payment allocation plan",
+      "purpose": "Prepare and approve supplier-payment allocation",
+      "personas": [
+        "AP requester",
+        "independent approver"
+      ],
+      "authority": "Requester: purchasing.ap.payment.request; independent approver: purchasing.ap.payment.approve; current database session/role/module authority and fresh password assurance at confirmation",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/ap-control.actions.ts:approveSupplierPaymentAction (no production form caller)",
+        "/[locale]/dashboard/purchases/payables/payments/request",
+        "/[locale]/dashboard/purchases/payables/payments/approve",
+        "actions/purchasing/payment-request.actions.ts"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:approveSupplierPaymentWithControls",
+        "services/purchasing/supplier-payment-balance.ts",
+        "services/purchasing/payment-request.service.ts",
+        "services/purchasing/payment-request-authority.ts",
+        "services/purchasing/payment-request-evidence.ts",
+        "services/purchasing/payment-request-read.service.ts"
+      ],
+      "records": [
+        "SupplierPayment",
+        "SupplierPaymentAllocation",
+        "SupplierInvoice",
+        "SupplierCreditNote"
+      ],
+      "prerequisites": "Active organization, current authorized session, approved supplier destination with no pending bank change, eligible same-currency invoices with sufficient credit-adjusted balances, retained supporting document and independent approver",
+      "transitions": [
+        "Eligible unpaid invoices + approved destination → payment approval",
+        "Lock current sources → re-read posted credits/reversals and one-currency amount due → reject excessive allocation before writes; release additionally serializes payment/idempotency state",
+        "Authenticated requester creates one DRAFT with event/audit → current independent approver confirms exact reviewed revision on same payment → controlled release verifies request, approval timestamp and unchanged terms → exact retry observes current retained state",
+        "Choose supplier, approved destination and invoice allocations → review source revision → real password assurance → submit one request → recover lost response with same key → independent checker review/approval → inspect current request/approval history"
+      ],
+      "sideEffects": [
+        "Duplicate/allocation/outstanding checks; separate requester/approver; fraud preflight"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "authenticated_request_independent_approval_EN_FR_UI_sources_queue_history_and_exact_retry",
+      "reviewStatus": "bounded_source_unit_owned_browser_database_and_visual_review",
+      "runtimeStatus": "partial_EN_FR_maker_checker_password_stale_response_loss_history_and_denied_route_verified",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "../../evidence/payment-credit-controls-v79.json",
+        "../../SUPPLIER_PAYMENT_CREDIT_CONTROLS.md",
+        "../../evidence/payment-request-controls-v80.json",
+        "../../SUPPLIER_PAYMENT_REQUEST_CONTROLS.md",
+        "../../evidence/payment-workspace-v81.json",
+        "../../SUPPLIER_PAYMENT_WORKSPACE_GUIDE.md",
+        "../../evidence/payment-execution-v82.json",
+        "../../SUPPLIER_PAYMENT_EXECUTION_GUIDE.md",
+        "../../PAYMENT_EXECUTION_VERIFICATION_COMMANDS_V82.md"
+      ],
+      "remaining": [
+        "Full service invariant/concurrency review",
+        "Controlled recovery for approvals made stale by later credits, credit-aware invoice status and downstream SUSPENSE reconciliation remain open",
+        "Controlled legacy approval review, stale approval recovery and request rejection/withdrawal remain implementation work; do not fabricate request/approval evidence",
+        "Execution recording now has current-session and EN/FR browser proof (v82); full source pagination, cross-object/identity-switch cases, rejection/withdrawal and retained-obligation lifecycle remain incomplete"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/payment-request-contracts.ts:paymentRequestDraftSchema, paymentRequestCommandSchema, paymentRequestApprovalSchema",
+        "requiredUserInputs": [
+          "Request: supplierId, approved bankAccountId, method, paymentDate, documentReference, documentSha256 and positive invoice allocations",
+          "Approval: choose the retained payment request; confirm the server-reviewed revision"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "authenticated requester/approver identity",
+          "current role/module/session authority",
+          "source balances and reviewed revision",
+          "request/approval event IDs and recorded timestamps"
+        ],
+        "inputFields": [
+          "Request command: draft, expectedRevision, idempotencyKey",
+          "Approval command: paymentRequestId, expectedRevision, idempotencyKey"
+        ],
+        "optionalFieldsNote": "Only request notes are optional in the draft. Identity cannot be supplied by the requester. The interface retains the exact command and idempotency key for uncertain-outcome recovery."
+      },
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-023",
+      "name": "Record execution of an independently approved supplier payment",
+      "purpose": "Record an externally executed approved payment with retained execution evidence, truthful posting and reconciliation outcomes, and safe retry",
+      "personas": [
+        "Independent authorized execution recorder",
+        "Accounting/reconciliation operator"
+      ],
+      "authority": "purchasing.ap.payment.release; current database organization, role, module and session authority; fresh password assurance; recorder differs from requester and approver",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/ap-control.actions.ts:releaseSupplierPaymentAction (no production form caller)",
+        "/[locale]/dashboard/purchases/payables/payments/record",
+        "actions/purchasing/payment-release.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/record/page.tsx"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:releaseSupplierPaymentWithControls",
+        "services/purchasing/supplier-payment-balance.ts",
+        "services/purchasing/payment-request.service.ts",
+        "services/purchasing/payment-request-authority.ts",
+        "services/purchasing/payment-request-evidence.ts",
+        "services/purchasing/payment-release.service.ts",
+        "services/purchasing/payment-release-evidence.ts"
+      ],
+      "records": [
+        "SupplierPayment",
+        "SupplierPaymentAllocation",
+        "SupplierInvoice",
+        "SupplierLedgerEntry",
+        "LedgerPostingBatch",
+        "BusinessEvent",
+        "SupplierCreditNote",
+        "AuditLog",
+        "PaymentTransaction",
+        "PaymentException"
+      ],
+      "prerequisites": "Retained original request and independent approval, approved unchanged destination/terms, eligible invoice balances, actual external execution after approval on the approved date, unique full execution reference, retained evidence URI/hash, one open period and current independent recorder authority",
+      "transitions": [
+        "Approved payment → release/ledger/reconciliation state",
+        "Lock current sources → re-read posted credits/reversals and one-currency amount due → reject excessive allocation before writes; release additionally serializes payment/idempotency state",
+        "Authenticated requester creates one DRAFT with event/audit → current independent approver confirms exact reviewed revision on same payment → controlled release verifies request, approval timestamp and unchanged terms → exact retry observes current retained state",
+        "Approved request → current independent recorder enters executed-payment evidence → authoritative revision preview → fresh-password confirmation → one payment/ledger/reconciliation effect plus applied execution event → exact retry/current verified history; posting and settlement remain distinct"
+      ],
+      "sideEffects": [
+        "Revalidates stored destination/allocations/amounts; ledger and payment-event effects; no live release performed"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "authenticated_execution_record_EN_FR_UI_revision_bound_evidence_and_exact_retry",
+      "reviewStatus": "bounded_source_unit_owned_PostgreSQL_browser_and_visual_review",
+      "runtimeStatus": "partial_EN_FR_recording_response_loss_history_denial_and_posted_or_blocked_database_paths_verified",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "../../evidence/payment-credit-controls-v79.json",
+        "../../SUPPLIER_PAYMENT_CREDIT_CONTROLS.md",
+        "../../evidence/payment-request-controls-v80.json",
+        "../../SUPPLIER_PAYMENT_REQUEST_CONTROLS.md",
+        "../../evidence/payment-workspace-v81.json",
+        "../../evidence/payment-execution-v82.json",
+        "../../SUPPLIER_PAYMENT_EXECUTION_GUIDE.md",
+        "../../PAYMENT_EXECUTION_VERIFICATION_COMMANDS_V82.md",
+        "../../evidence/payment-posting-recovery-v83.json",
+        "../../SUPPLIER_PAYMENT_POSTING_RECOVERY_GUIDE.md",
+        "../../PAYMENT_POSTING_RECOVERY_VERIFICATION_V83.md",
+        "../../evidence/invoice-coverage-v84.json",
+        "../../SUPPLIER_INVOICE_COVERAGE_GUIDE.md",
+        "../../INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "remaining": [
+        "Controlled legacy approval/evidence adoption, changed-date or late execution and stale approval recovery remain unsupported; do not fabricate evidence",
+        "Request rejection/withdrawal and credit-aware final invoice status remain open in the connected AP lifecycle",
+        "High-volume/pagination, full cross-object/module/read-only/expired-session matrices, native screen-reader and browser-zoom checks remain unverified",
+        "No bank/provider execution, external evidence authenticity, live settlement, production release or professional certification is established",
+        "Retained failed payment posting recovery now verified under PA-031/v83; payment reversal and downstream statement/close lifecycle remain engineering work",
+        "v84: Full lifecycle remains unverified; see credit/return authority, historical status repair and no-journal reversal period finding in INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/payment-release-contracts.ts:paymentReleaseDraftSchema, paymentReleaseCommandSchema",
+        "requiredUserInputs": [
+          "Choose retained approved paymentRequestId",
+          "executionReference from the individual issued transaction/receipt including issuer",
+          "executedAt with explicit timezone from the execution evidence",
+          "evidenceUri and evidenceSha256 of the final retained execution record"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "actual recorder identity and current session authority",
+          "reviewed revision, approved terms and accounting readiness",
+          "actual recording timestamp and event/ledger/reconciliation IDs"
+        ],
+        "inputFields": [
+          "draft",
+          "expectedRevision",
+          "idempotencyKey"
+        ],
+        "optionalFieldsNote": "No approved-term or actor overrides. The UI retains the exact command on an unknown outcome. External evidence is operator-attested, not bank verification."
+      },
+      "completeWorkflowVerified": false,
+      "v84CoverageReview": {
+        "status": "bounded_checks_passed_whole_lifecycle_incomplete",
+        "finding": "Payment completion now uses locked remaining payable including net verified credits; amountPaid stays actual cash. Exact replay after credit reversal preserves reopened status.",
+        "publicCreditReturnAuthorityVerified": false
+      }
+    },
+    {
+      "id": "PA-024",
+      "name": "Post purchase return against received goods",
+      "purpose": "Post a purchase return",
+      "personas": [
+        "Inventory/AP return operator"
+      ],
+      "authority": "purchasing.returns.post; fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/purchase-return-credit.actions.ts:postPurchaseReturnAction (no production form caller)"
+      ],
+      "services": [
+        "services/purchasing/purchase-return-credit.service.ts:postPurchaseReturn"
+      ],
+      "records": [
+        "PurchaseReturn",
+        "PurchaseReturnLine",
+        "GoodsReceiptLine",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Accepted source receipt → posted return within returnable quantity"
+      ],
+      "sideEffects": [
+        "Source lock; command payload binding; stock/ledger compensation"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "not-yet-visited-in-current-workflow-run",
+      "evidence": [
+        "services/purchasing/purchase-return-credit.service.ts",
+        "actions/purchasing/purchase-return-credit.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "../../evidence/invoice-coverage-v84.json",
+        "../../SUPPLIER_INVOICE_COVERAGE_GUIDE.md",
+        "../../INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "remaining": [
+        "Eligible receipt-line picker, remaining returnable quantities and reviewed consequences",
+        "Accessible EN/FR interactive workflow missing; action exists with no production UI caller found",
+        "Real isolated owner-service success/negative/retry evidence",
+        "Full service invariant/concurrency review",
+        "v84: Full lifecycle remains unverified; see credit/return authority, historical status repair and no-journal reversal period finding in INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/purchase-return-credit.schemas.ts:postPurchaseReturnInputSchema",
+        "requiredUserInputs": [
+          "purchaseOrderId",
+          "goodsReceiptId",
+          "idempotencyKey",
+          "reason",
+          "one or more source receipt lines and quantities"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "current command actor"
+        ],
+        "inputFields": [
+          "purchaseOrderId",
+          "goodsReceiptId",
+          "idempotencyKey",
+          "reason",
+          "occurredAt",
+          "document/evidence hashes",
+          "source goods-receipt line IDs and quantities"
+        ],
+        "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+      },
+      "completeWorkflowVerified": false,
+      "v84CoverageReview": {
+        "status": "bounded_checks_passed_whole_lifecycle_incomplete",
+        "finding": "Actual return creation verified against received source lines; nested lines inherit the parent tenant. Full public-action authority and returns lifecycle remain open.",
+        "publicCreditReturnAuthorityVerified": false
+      }
+    },
+    {
+      "id": "PA-025",
+      "name": "Reverse posted purchase return",
+      "purpose": "Reverse an erroneous purchase return",
+      "personas": [
+        "Authorized correction operator"
+      ],
+      "authority": "purchasing.returns.post; fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/purchase-return-credit.actions.ts:reversePurchaseReturnAction (no production form caller)"
+      ],
+      "services": [
+        "services/purchasing/purchase-return-credit.service.ts:reversePurchaseReturn",
+        "services/purchasing/purchase-correction-ledger.service.ts"
+      ],
+      "records": [
+        "PurchaseReturn",
+        "PurchaseReturnLine",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Posted return → compensating reversal"
+      ],
+      "sideEffects": [
+        "Retained original evidence; reversal controls"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "reviewStatus": "source_unit_owned_database_review_public_authority_and_full_lifecycle_open",
+      "runtimeStatus": "partial_owned_domain_reversal_success_denial_retry_verified_production_UI_absent",
+      "evidence": [
+        "services/purchasing/purchase-return-credit.service.ts",
+        "actions/purchasing/purchase-return-credit.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "../../evidence/invoice-coverage-v84.json",
+        "../../SUPPLIER_INVOICE_COVERAGE_GUIDE.md",
+        "../../INVOICE_COVERAGE_VERIFICATION_V84.md",
+        "../../evidence/correction-reversal-v85.json",
+        "../../PURCHASE_CORRECTION_REVERSAL_GUIDE.md",
+        "../../CORRECTION_REVERSAL_VERIFICATION_V85.md",
+        "../../evidence/period-concurrency-v86.json"
+      ],
+      "remaining": [
+        "Current source effects, dependencies and reasoned confirmation; no delete/reset",
+        "Accessible EN/FR interactive workflow missing; action exists with no production UI caller found",
+        "Full service invariant/concurrency review",
+        "v84: Full lifecycle remains unverified; see credit/return authority, historical status repair and no-journal reversal period finding in INVOICE_COVERAGE_VERIFICATION_V84.md",
+        "v85 supersedes the specific v84 no-journal period bypass finding; broader concurrent period close/posting recovery, public authorization, EN/FR reversal forms and retained obligations remain open."
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/purchase-return-credit.schemas.ts:reversePurchaseReturnInputSchema",
+        "requiredUserInputs": [
+          "purchaseReturnId",
+          "idempotencyKey",
+          "reason"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "current command actor"
+        ],
+        "inputFields": [
+          "purchaseReturnId",
+          "idempotencyKey",
+          "reason",
+          "occurredAt",
+          "document/evidence hashes"
+        ],
+        "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+      },
+      "completeWorkflowVerified": false,
+      "v84CoverageReview": {
+        "status": "bounded_checks_passed_whole_lifecycle_incomplete",
+        "finding": "Actual return reversal after credit reversal verified with tenant-scoped nested lines and unchanged invoice/payment effects. Missing-journal period handling remains a known defect.",
+        "publicCreditReturnAuthorityVerified": false
+      },
+      "v85ReversalReview": {
+        "status": "domain_checks_passed_whole_lifecycle_incomplete",
+        "findings": [
+          "No-journal reversal requires open reversal period",
+          "Original tenant/source batch and journal provenance checked",
+          "Unposted correction reversal has explicit audit evidence",
+          "Concurrent duplicate credit reversal commits once; exact credit/return retries remain safe after closure",
+          "Stock and supplier effects verified"
+        ],
+        "publicAuthorityRuntimeVerified": false,
+        "productionReversalFormAvailable": false
+      },
+      "v86PeriodDependencyReview": {
+        "sharedPeriodProtocol": "verified_owned_database",
+        "reversalRegressionChecks": 17,
+        "wholeWorkflowVerified": false,
+        "remaining": "Independent period writers, public authority, reversal interfaces and retained obligations remain open."
+      }
+    },
+    {
+      "id": "PA-026",
+      "name": "Post supplier credit note for returned invoiced goods",
+      "purpose": "Post a supplier credit against returned invoiced goods",
+      "personas": [
+        "AP credit operator"
+      ],
+      "authority": "purchasing.ap.credit.post; fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/purchase-return-credit.actions.ts:postSupplierCreditNoteAction (no production form caller)"
+      ],
+      "services": [
+        "services/purchasing/purchase-return-credit.service.ts:postSupplierCreditNote"
+      ],
+      "records": [
+        "SupplierCreditNote",
+        "SupplierCreditNoteLine",
+        "PurchaseReturnLine",
+        "SupplierInvoiceLine"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Matched return/invoice lines → posted supplier credit"
+      ],
+      "sideEffects": [
+        "Source locks; normalized credit number/payload; supplier/ledger balance effects"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "not-yet-visited-in-current-workflow-run",
+      "evidence": [
+        "services/purchasing/purchase-return-credit.service.ts",
+        "actions/purchasing/purchase-return-credit.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "../../evidence/invoice-coverage-v84.json",
+        "../../SUPPLIER_INVOICE_COVERAGE_GUIDE.md",
+        "../../INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "remaining": [
+        "Source line mapping, real credit-document capture, balance effect preview",
+        "Accessible EN/FR interactive workflow missing; action exists with no production UI caller found",
+        "Real isolated owner-service success/negative/retry evidence",
+        "Full service invariant/concurrency review",
+        "v84: Full lifecycle remains unverified; see credit/return authority, historical status repair and no-journal reversal period finding in INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/purchase-return-credit.schemas.ts:postSupplierCreditNoteInputSchema",
+        "requiredUserInputs": [
+          "purchaseReturnId",
+          "supplierInvoiceId",
+          "idempotencyKey",
+          "creditNoteNumber",
+          "creditDate",
+          "documentHash",
+          "reason",
+          "source return/invoice line pairs"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "current command actor"
+        ],
+        "inputFields": [
+          "purchaseReturnId",
+          "supplierInvoiceId",
+          "idempotencyKey",
+          "creditNoteNumber",
+          "creditDate",
+          "required actual documentHash",
+          "reason",
+          "source return and supplier-invoice line pairs"
+        ],
+        "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+      },
+      "completeWorkflowVerified": false,
+      "v84CoverageReview": {
+        "status": "bounded_checks_passed_whole_lifecycle_incomplete",
+        "finding": "Actual supplier credit posting accepts receipt-based null-header invoices while requiring exact receipt/order/item lineage; invoice status refreshes without extra cash effects.",
+        "publicCreditReturnAuthorityVerified": false
+      }
+    },
+    {
+      "id": "PA-027",
+      "name": "Reverse posted supplier credit note",
+      "purpose": "Reverse a supplier credit",
+      "personas": [
+        "Authorized AP correction operator"
+      ],
+      "authority": "purchasing.ap.credit.post; fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "actions/purchasing/purchase-return-credit.actions.ts:reverseSupplierCreditNoteAction (no production form caller)"
+      ],
+      "services": [
+        "services/purchasing/purchase-return-credit.service.ts:reverseSupplierCreditNote",
+        "services/purchasing/purchase-correction-ledger.service.ts"
+      ],
+      "records": [
+        "SupplierCreditNote",
+        "SupplierCreditNoteLine",
+        "BusinessEvent"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Posted credit → compensating reversal"
+      ],
+      "sideEffects": [
+        "Retains source credit; ledger correction safeguards"
+      ],
+      "downstreamConsumers": [
+        "AP workbench/history",
+        "Accounting ledger",
+        "Reconciliation/close assurance where applicable"
+      ],
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "reviewStatus": "source_unit_owned_database_review_public_authority_and_full_lifecycle_open",
+      "runtimeStatus": "partial_owned_domain_reversal_success_denial_retry_verified_production_UI_absent",
+      "evidence": [
+        "services/purchasing/purchase-return-credit.service.ts",
+        "actions/purchasing/purchase-return-credit.actions.ts",
+        "AP_BACKEND_WORKFLOWS.json",
+        "../../evidence/invoice-coverage-v84.json",
+        "../../SUPPLIER_INVOICE_COVERAGE_GUIDE.md",
+        "../../INVOICE_COVERAGE_VERIFICATION_V84.md",
+        "../../evidence/correction-reversal-v85.json",
+        "../../PURCHASE_CORRECTION_REVERSAL_GUIDE.md",
+        "../../CORRECTION_REVERSAL_VERIFICATION_V85.md",
+        "../../evidence/period-concurrency-v86.json"
+      ],
+      "remaining": [
+        "Current credit/linked effects review and reasoned reversal form",
+        "Accessible EN/FR interactive workflow missing; action exists with no production UI caller found",
+        "Full service invariant/concurrency review",
+        "v84: Full lifecycle remains unverified; see credit/return authority, historical status repair and no-journal reversal period finding in INVOICE_COVERAGE_VERIFICATION_V84.md",
+        "v85 supersedes the specific v84 no-journal period bypass finding; broader concurrent period close/posting recovery, public authorization, EN/FR reversal forms and retained obligations remain open."
+      ],
+      "owner": "ui_integration_map",
+      "inputContract": {
+        "schema": "services/purchasing/purchase-return-credit.schemas.ts:reverseSupplierCreditNoteInputSchema",
+        "requiredUserInputs": [
+          "supplierCreditNoteId",
+          "idempotencyKey",
+          "creditNoteNumber",
+          "creditDate",
+          "documentHash",
+          "reason"
+        ],
+        "serverDerived": [
+          "organizationId",
+          "current command actor"
+        ],
+        "inputFields": [
+          "supplierCreditNoteId",
+          "idempotencyKey",
+          "creditNoteNumber",
+          "creditDate",
+          "required actual documentHash",
+          "reason"
+        ],
+        "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+      },
+      "completeWorkflowVerified": false,
+      "v84CoverageReview": {
+        "status": "bounded_checks_passed_whole_lifecycle_incomplete",
+        "finding": "Credit reversal locks invoice before supplier, reopens the payable and preserves cash. Concurrent execution/reversal and exact retries verified; full reversal authority/period matrix remains open.",
+        "publicCreditReturnAuthorityVerified": false
+      },
+      "v85ReversalReview": {
+        "status": "domain_checks_passed_whole_lifecycle_incomplete",
+        "findings": [
+          "No-journal reversal requires open reversal period",
+          "Original tenant/source batch and journal provenance checked",
+          "Unposted correction reversal has explicit audit evidence",
+          "Concurrent duplicate credit reversal commits once; exact credit/return retries remain safe after closure",
+          "Stock and supplier effects verified"
+        ],
+        "publicAuthorityRuntimeVerified": false,
+        "productionReversalFormAvailable": false
+      },
+      "v86PeriodDependencyReview": {
+        "sharedPeriodProtocol": "verified_owned_database",
+        "reversalRegressionChecks": 17,
+        "wholeWorkflowVerified": false,
+        "remaining": "Independent period writers, public authority, reversal interfaces and retained obligations remain open."
+      }
+    },
+    {
+      "id": "PA-028",
+      "name": "Review AP readiness and existing obligations",
+      "purpose": "Review AP readiness and existing obligations",
+      "personas": [
+        "AP operator"
+      ],
+      "authority": "purchasing.ap.invoice.view",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchases/payables",
+        "/dashboard/finance/payables"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:getAPWorkbenchData"
+      ],
+      "records": [
+        "SupplierInvoice",
+        "ThreeWayMatch",
+        "SupplierBankChangeRequest",
+        "SupplierPayment",
+        "LedgerPostingBatch"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Read snapshot → blocker/review/readiness queues"
+      ],
+      "sideEffects": [
+        "Tenant-scoped counts and real-source states; workbench currently read-only"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "interactive-read-only",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "not-yet-visited-in-current-workflow-run",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "actions/purchasing/ap-control.actions.ts",
+        "components/purchasing/APControlWorkbench.tsx"
+      ],
+      "remaining": [
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace"
+      ],
+      "owner": "ui_integration_map"
+    },
+    {
+      "id": "PA-029",
+      "name": "Review and export AP history",
+      "purpose": "Review and export AP history",
+      "personas": [
+        "AP analyst"
+      ],
+      "authority": "Any AP-read permission; export permission + fresh authentication",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchases/payables/history"
+      ],
+      "services": [
+        "services/purchasing/ap-history.service.ts:readAPHistory; prepareAPHistoryExportAction",
+        "services/purchasing/ap-history-financial.ts",
+        "lib/purchasing/ap-history-presentation.ts",
+        "services/purchasing/ap-history-export.service.ts",
+        "components/purchasing/APHistoryExportDialog.tsx",
+        "services/purchasing/ap-history-revision.ts"
+      ],
+      "records": [
+        "SupplierInvoice",
+        "SupplierPayment",
+        "SupplierLedgerEntry",
+        "SupplierPaymentAllocation",
+        "SupplierCreditNote",
+        "AuditLog"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Filter → cursor-bounded history; controlled export request",
+        "Review filtered current export scope → fresh password assurance if needed → current read/export/module checks → consistent read and audited file → revalidate authority → verify bytes → browser download or safe retry",
+        "Read a source-bound page → inspect details without losing continuation → reject changed sources or scope → discard stale cached pages → refresh current first page with retained filters",
+        "Read filtered invoice → inspect all allocations of its released payments → reject inconsistent settlement totals → recover after authorized source correction"
+      ],
+      "sideEffects": [
+        "Signed cursor binds tenant/filter/cutoff; export watermark/safety"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "evidence_aware_read_export_cursor_recovery_and_cross_invoice_allocation_integrity",
+      "reviewStatus": "bounded_source_database_and_en_fr_browser_review",
+      "runtimeStatus": "partial_owned_postgres_and_en_fr_allocation_scope_verified",
+      "evidence": [
+        "services/purchasing/ap-history.service.ts",
+        "actions/purchasing/ap-history.actions.ts",
+        "components/purchasing/APHistoryWorkbench.tsx",
+        "../../lanes/environment/ap-history-counterexample-v74.json",
+        "../../evidence/navigation-current-v74.json",
+        "../../evidence/ap-history-financial-v75.json",
+        "../../AP_HISTORY_FINANCIAL_MEANING.md",
+        "../../evidence/ap-history-export-v76.json",
+        "../../AP_HISTORY_EXPORT_GUIDE.md",
+        "../../evidence/ap-history-continuity-v77.json",
+        "../../AP_HISTORY_CONTINUITY_GUIDE.md",
+        "../../evidence/ap-allocation-integrity-v78.json",
+        "../../AP_ALLOCATION_INTEGRITY_GUIDE.md",
+        "../../evidence/invoice-coverage-v84.json",
+        "../../SUPPLIER_INVOICE_COVERAGE_GUIDE.md",
+        "../../INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "remaining": [
+        "Complete broader supplier-ledger reconciliation, credit/reversal and payment lifecycle invariants; this read-side over-allocation check does not certify the entire supplier balance",
+        "Measure large-volume history/revision/evidence queries and review full permission-denial audit coverage",
+        "Resolve truncated KPI/help text, technical source/filter wording, supplier-ID stale copy, full previous/back navigation and remaining accessibility verification",
+        "v84: Full lifecycle remains unverified; see credit/return authority, historical status repair and no-journal reversal period finding in INVOICE_COVERAGE_VERIFICATION_V84.md"
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false,
+      "v84CoverageReview": {
+        "status": "bounded_checks_passed_whole_lifecycle_incomplete",
+        "finding": "Actual EN/FR covered/reopened history, totals, localized detail and close control, keyboard return, mobile/tablet/text reflow and current-role denial verified.",
+        "publicCreditReturnAuthorityVerified": false
+      }
+    },
+    {
+      "id": "PA-030",
+      "name": "Send/review supplier PO acknowledgment",
+      "purpose": "Send/review supplier PO acknowledgment",
+      "personas": [
+        "Buyer",
+        "supplier recipient"
+      ],
+      "authority": "Owned by customer/supplier lane",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+        "external access link"
+      ],
+      "services": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts:supplier-po-acknowledgement.service"
+      ],
+      "records": [
+        "SupplierPoEnvelope",
+        "SupplierPoAccessToken",
+        "SupplierPoProposal"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "External recipient review/proposal → internal decision (sibling trace authoritative)",
+        "Accepted terms hand off to independent amendment approval under PA-032; current read users can inspect its verified receipt"
+      ],
+      "sideEffects": [
+        "Tokens/proposal evidence; no external message sent by this lane"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "cross-lane",
+      "reviewStatus": "source-reviewed-partial",
+      "runtimeStatus": "partial_real_services_and_en_fr_accepted_amendment_handoff_verified",
+      "evidence": [
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx",
+        "../../evidence/purchase-amendment-receipt.json",
+        "PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Complete runtime/negative/mobile/keyboard evidence and remaining detailed boundary trace"
+      ],
+      "owner": "configuration_persistence (cross-lane reference)",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "PA-031",
+      "name": "Carry accounting/reconciliation effects and retained obligations forward",
+      "purpose": "Carry accounting/reconciliation effects and retained obligations forward",
+      "personas": [
+        "AP/accounting/reconciliation operator"
+      ],
+      "authority": "Payment posting recovery: current purchasing.ap.payment.release, organization/session/module checks, fresh password, operator differs from original requester and approver. Other retained-obligation operations retain their owning authority and need detailed trace.",
+      "tenantScope": "Server-derived active organization; source objects tenant-filtered; full negative runtime proof pending",
+      "entryPoints": [
+        "AP service events, business-event outbox, module retained-work access",
+        "/[locale]/dashboard/purchases/payables/payments/recovery",
+        "app/[locale]/(dashboard)/dashboard/purchases/payables/payments/recovery/page.tsx",
+        "actions/purchasing/payment-release.actions.ts"
+      ],
+      "services": [
+        "services/purchasing/ap-control.service.ts:createAPLedgerPosting; postPurchaseCorrectionLedgerInTx; downstream event owners",
+        "services/purchasing/payment-posting-recovery.service.ts",
+        "services/purchasing/payment-posting-recovery-contracts.ts",
+        "services/purchasing/payment-release-evidence.ts"
+      ],
+      "records": [
+        "LedgerPostingBatch",
+        "BusinessEvent",
+        "SupplierLedgerEntry",
+        "SupplierPayment",
+        "PaymentTransaction",
+        "PaymentException",
+        "JournalEntry",
+        "AccountingSourceLink",
+        "AuditLog"
+      ],
+      "prerequisites": "Current session, owning permission and valid source records; see transitions and owner schema for domain inputs",
+      "transitions": [
+        "Source AP effect → ledger/outbox/reconciliation or visible blocker",
+        "Retained executed payment with failed posting → current evidence/configuration preview → fresh independent operator confirmation → existing batch posts once → original posting exception resolved with evidence preserved → separate missing-statement obligation remains open → exact retry/current recovery history"
+      ],
+      "sideEffects": [
+        "Owner services retain financial invariants; exact async delivery/runtime traces pending",
+        "Payment recovery preserves invoice amountPaid, supplier balances, payment allocations and supplier ledger credit; reuses the existing reconciliation transaction; adds one verified recovery event/audit"
+      ],
+      "downstreamConsumers": [
+        "Purchase-order detail/list",
+        "Receiving/AP when applicable"
+      ],
+      "implementationStatus": "retained_supplier_payment_posting_recovery_with_EN_FR_workbench_exact_retry_and_provenance",
+      "reviewStatus": "bounded_payment_recovery_source_unit_database_browser_and_visual_review",
+      "runtimeStatus": "partial_payment_recovery_EN_FR_verified_other_retained_obligation_paths_open",
+      "evidence": [
+        "services/purchasing/ap-control.service.ts",
+        "services/events/business-event-outbox.service.ts",
+        "services/modules/module-stop-policy.service.ts",
+        "../../evidence/payment-posting-recovery-v83.json",
+        "../../SUPPLIER_PAYMENT_POSTING_RECOVERY_GUIDE.md",
+        "../../PAYMENT_POSTING_RECOVERY_VERIFICATION_V83.md",
+        "../../evidence/invoice-coverage-v84.json",
+        "../../SUPPLIER_INVOICE_COVERAGE_GUIDE.md",
+        "../../INVOICE_COVERAGE_VERIFICATION_V84.md",
+        "../../evidence/correction-reversal-v85.json",
+        "../../PURCHASE_CORRECTION_REVERSAL_GUIDE.md",
+        "../../CORRECTION_REVERSAL_VERIFICATION_V85.md",
+        "../../evidence/period-concurrency-v86.json"
+      ],
+      "remaining": [
+        "Complete non-payment AP posting recovery, financial reversal, downstream statement matching, close and async delivery/operator paths",
+        "Broader legitimate post-recovery reversal/history behavior and current matching/suspense/settlement cases require separate proof",
+        "Missing legacy request/approval/execution evidence is not fabricated or adopted automatically",
+        "Richer account-level preview diagnostics, source pagination/high volume, full module/read-only/expired-session browser matrix and native assistive technology remain unverified",
+        "Inherited French desktop shell still displays the English Purchases title; scoped recovery workbench is localized",
+        "No bank execution authenticity, production deployment, statutory or release certification is established",
+        "v84: Full lifecycle remains unverified; see credit/return authority, historical status repair and no-journal reversal period finding in INVOICE_COVERAGE_VERIFICATION_V84.md",
+        "v85 supersedes the specific v84 no-journal period bypass finding; broader concurrent period close/posting recovery, public authorization, EN/FR reversal forms and retained obligations remain open."
+      ],
+      "owner": "ui_integration_map",
+      "completeWorkflowVerified": false,
+      "inputContract": {
+        "schema": "services/purchasing/payment-posting-recovery-contracts.ts",
+        "requiredUserInputs": [
+          "Select existing payment",
+          "Current password when requested"
+        ],
+        "serverDerived": [
+          "Organization and current operator/session authority",
+          "Original request/approval/execution provenance and terms",
+          "Current accounting/reconciliation conditions and revision",
+          "Durable recovery, journal and exception references"
+        ],
+        "inputFields": [
+          "paymentRequestId",
+          "expectedRevision",
+          "idempotencyKey"
+        ],
+        "note": "No payment amount, accounting date, destination, actor or execution-evidence override. Exact command retained after unknown response."
+      },
+      "v84CoverageReview": {
+        "status": "bounded_checks_passed_whole_lifecycle_incomplete",
+        "finding": "Credit-aware retained invoice status and reopening verified. Historical drift repair and missing-journal reversal period handling remain engineering work.",
+        "publicCreditReturnAuthorityVerified": false
+      },
+      "v85ReversalReview": {
+        "status": "domain_checks_passed_whole_lifecycle_incomplete",
+        "findings": [
+          "No-journal reversal requires open reversal period",
+          "Original tenant/source batch and journal provenance checked",
+          "Unposted correction reversal has explicit audit evidence",
+          "Concurrent duplicate credit reversal commits once; exact credit/return retries remain safe after closure",
+          "Stock and supplier effects verified"
+        ],
+        "publicAuthorityRuntimeVerified": false,
+        "productionReversalFormAvailable": false
+      },
+      "v86PeriodDependencyReview": {
+        "sharedPeriodProtocol": "verified_owned_database",
+        "reversalRegressionChecks": 17,
+        "wholeWorkflowVerified": false,
+        "remaining": "Independent period writers, public authority, reversal interfaces and retained obligations remain open."
+      }
+    },
+    {
+      "id": "PA-032",
+      "name": "Apply an accepted supplier proposal to an approved purchase order",
+      "purpose": "Keep approved terms effective until an independent approver authorizes the exact accepted delivery-date and quantity changes.",
+      "personas": [
+        "Buyer who accepts supplier terms",
+        "Independent purchase-order approver",
+        "Receiving and AP operators"
+      ],
+      "authority": "Current server tenant/account/session, purchasing write eligibility, order read and approval permissions, current password assurance; approver differs from requester and accepting buyer.",
+      "tenantScope": "Same-tenant order, proposal, references, receipts and invoices; current authority verified in the locked transaction.",
+      "entryPoints": [
+        "/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+        "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx",
+        "actions/purchaseOrderWorkflow/purchase-order-amendment.actions.ts",
+        "components/purchase-orders/SupplierPoBuyerWorkflow.tsx",
+        "components/purchase-orders/PurchaseOrderAmendmentDialog.tsx"
+      ],
+      "services": [
+        "services/purchase-order/purchase-order-amendment.service.ts",
+        "services/purchase-order/purchase-order-amendment-contracts.ts",
+        "services/purchase-order/purchase-order-amendment-record.ts",
+        "services/purchase-order/supplier-po-acknowledgement.service.ts",
+        "services/purchase-order/purchase-quantity.ts"
+      ],
+      "records": [
+        "PurchaseOrder",
+        "PurchaseOrderLine",
+        "SupplierPoProposal",
+        "BusinessEvent",
+        "AuditLog",
+        "Retained GoodsReceipt and SupplierInvoice obligations"
+      ],
+      "prerequisites": "An immutable accepted REQUEST_CHANGE proposal matching current commercial terms, active references and no unresolved receiving; independent current approver.",
+      "transitions": [
+        "Supplier proposes changed terms without amending the order",
+        "Buyer accepts proposal; order remains unchanged",
+        "Independent approver reviews current before/after date, quantities, totals and obligations",
+        "Reject stale authority, stale revision, incompatible terms or a reduction below obligations",
+        "Atomically amend retained line identities and order totals with mandatory event and audit",
+        "Recover the identical request after a lost response or reload; show verified evidence to current read users"
+      ],
+      "sideEffects": [
+        "Order date/quantities/totals and approval fields; one immutable amendment event and audit; no stock, invoice, payment or external-message effect"
+      ],
+      "downstreamConsumers": [
+        "Current purchase-order detail",
+        "Receiving",
+        "AP preparation",
+        "Buyer supplier-response history"
+      ],
+      "implementationStatus": "controlled_accepted_proposal_amendment_atomic_evidence_and_exact_recovery_implemented",
+      "reviewStatus": "bounded_current_source_and_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_application_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../evidence/purchase-amendment-receipt.json",
+        "PURCHASE_ORDER_AMENDMENTS.md"
+      ],
+      "remaining": [
+        "Whole-platform discovery and complete connected workflow verification remain unfinished.",
+        "Original order approval in these fixtures is explicitly synthetic legacy setup. The supplier proposal, buyer acceptance, amendment and recovery use real services; this is not full initial procurement proof.",
+        "Receiving browser checks enter a fractional quantity only. Receiving/inspection authority, exact retry, stock/valuation/AP/ledger/reconciliation and returns remain open.",
+        "The legacy receiving form still needs broader EN/FR and accessibility work. Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified.",
+        "Supplier notification, historical export and broader retention/operator recovery remain open. No external message is sent by amendment approval.",
+        "Development timings are observations, not an approved production performance pass.",
+        "No migration, deployment, payment, live customer activation, X1 clearance or professional certification. Prior unrelated approval-review rejections remain respected."
+      ],
+      "owner": "purchasing-ap"
+    },
+    {
+      "id": "PA-033",
+      "name": "Correct an unposted supplier invoice preparation",
+      "purpose": "Correct receipt-backed invoice inputs with new maker evidence while preserving original identity, history and financial obligations",
+      "personas": [
+        "Original AP invoice maker",
+        "Independent invoice approver at handoff"
+      ],
+      "authority": "Current purchasing.ap.invoice.post; original maker only; fresh password for submission",
+      "tenantScope": "Server-derived current organization/session; source, receipt and historical records tenant-scoped; runtime foreign-object denial verified",
+      "entryPoints": [
+        "/en|fr/dashboard/purchases/payables/correct",
+        "Existing Payables link scoped by purchasing.ap.invoice.post",
+        "actions/purchasing/invoice-correction.actions.ts"
+      ],
+      "services": [
+        "services/purchasing/invoice-correction.service.ts",
+        "services/purchasing/invoice-correction-authority.ts",
+        "services/purchasing/invoice-correction-contracts.ts",
+        "services/purchasing/invoice-preparation-evidence.ts",
+        "services/purchasing/ap-control.service.ts:buildInvoiceLinePlans/expireMatchExceptionInTx",
+        "services/purchasing/invoice-approval.service.ts"
+      ],
+      "records": [
+        "SupplierInvoice",
+        "SupplierInvoiceLine",
+        "ThreeWayMatch",
+        "SupplierInvoiceMatchException",
+        "BusinessEvent before-snapshot/current preparation pointer",
+        "AuditLog"
+      ],
+      "prerequisites": "Known original maker, current purchasing authority, fresh password, eligible unposted invoice, retained supplier document, supported currency, open original/corrected periods, no financial obligations or active exception decision",
+      "transitions": [
+        "Select existing invoice → review corrected receipt-backed draft",
+        "Reject foreign/missing authority, changed supplier/number/currency, excessive quantity, obligations or active exception",
+        "Record eligible expiry, corrected source, immutable before-snapshot and new preparation evidence atomically",
+        "Retain exact command for retry; stale preview requires re-review",
+        "Require new matching exception if variance remains → independent invoice approval → existing ledger controls"
+      ],
+      "sideEffects": [
+        "Preserve supplier/number/currency/original idempotency key",
+        "Replace unposted line rows with full prior snapshot retained; recompute match, totals, country state and duplicate fingerprint",
+        "Append reprepared event/audit and current preparation pointer; no payable/journal from correction"
+      ],
+      "downstreamConsumers": [
+        "PA-016 preparation history",
+        "PA-017/PA-018 matching exceptions",
+        "PA-019 independent approval",
+        "AP history and ledger/close"
+      ],
+      "implementationStatus": "maker_prefill_comparison_fresh_auth_exact_recovery_history_and_independent_approval_provenance_integrated",
+      "reviewStatus": "source_identity_obligations_current_authority_legacy_evidence_state_semantics_and_mobile_recovery_reviewed",
+      "runtimeStatus": "partial_28_postgres_groups_41_tests_en_fr_browser_15_screenshots_each_passed",
+      "evidence": [
+        "INVOICE_CORRECTION_SERVICE.md",
+        "../../evidence/invoice-correction-v70.json",
+        "INVOICE_CORRECTION_WORKBENCH.md",
+        "../../evidence/invoice-correction-ui-v71.json",
+        "PREPARATION_CURRENT_OBSERVATION.md",
+        "../../evidence/preparation-observation-v72.json",
+        "../../evidence/dashboard-localization-v73.json",
+        "../../SHARED_DASHBOARD_LANGUAGE_AND_RECOVERY.md"
+      ],
+      "remaining": [
+        "Continue broader retained-history access and connected reversal/retention/operator workflows; shared default French recovery and navigation verified in v73",
+        "Complete unknown-maker ownership reconciliation, unexpired approval revocation and financial reversal workflows separately",
+        "Verify broader document hosting/access/retention, outbox/operator recovery and end-to-end inventory/AP/ledger/close obligations",
+        "Reconcile action-level delegated authority in the static surface scanner; supported purchasing page wrapper evidence is now recognized"
+      ],
+      "owner": "workflow-modernization",
+      "inputContract": {
+        "schema": "services/purchasing/invoice-correction-contracts.ts:invoiceCorrectionCommandSchema",
+        "requiredUserInputs": [
+          "Existing invoice",
+          "Specific correction reason",
+          "Retained supplier document URI and actual SHA-256",
+          "Dates, receipt-line descriptions/quantities/costs/tax"
+        ],
+        "serverDerived": [
+          "Organization",
+          "Actor",
+          "Session",
+          "Reviewed source revision",
+          "Exact request reference"
+        ]
+      },
+      "completeWorkflowVerified": false
+    }
+  ],
+  "sourceBaseline": "../../evidence/source-baseline-v55.json",
+  "lifecycleVerification": {
+    "tests": 76,
+    "suites": 6,
+    "postgresGroups": 15,
+    "browserJourneys": 2,
+    "screenshots": 12,
+    "fullWorkflowVerified": false
+  },
+  "draftRecoveryVerification": {
+    "tests": 91,
+    "suites": 7,
+    "postgresGroups": 14,
+    "additionalArchiveCase": 1,
+    "browserJourneys": 2,
+    "screenshots": 24,
+    "typecheckExit": 0,
+    "lintExit": 0,
+    "productionBuild": "not run in this checkpoint",
+    "nativeScreenReader": "unverified",
+    "nativeZoom": "unverified",
+    "textResize": "CSS 200% at 320px; comparison and document reflow checked",
+    "workflowScreenshots": 16,
+    "supplementalViewportScreenshots": 8
+  }
+}

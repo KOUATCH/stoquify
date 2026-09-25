@@ -1,0 +1,100 @@
+{
+  "at": "2026-09-09T15:04:01.218Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v107.json",
+  "sources": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "3179583b616b3e147ae60f7fd841cb765bd9e99c26f907f7672d1fcfe3ef7aa3",
+    "components/finance/PaymentSuspenseQueue.tsx": "60ea5deb3dca35ccb53ab15223ac48f9b9cc0588b9553dd82a20aa483abb137b",
+    "actions/payments/suspense-resolution.actions.ts": "0670bc57f7cb617d5d08862ddf6b1a54f44355d741c5e9e25f802e729656ce0d",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "35dd00a7f210d98b7abc677c8c052291979639f6af2fb14d207ba670a46f0c43",
+    "services/reconciliation/payment-suspense-resolution-record.ts": "6b5272f655a9bd35c9a754baa2256f1bf7ea51f5f4c33a71851d87e24a1ff862",
+    "services/reconciliation/payment-suspense-resolution-archive.service.ts": "fe72452bb01bbd42ba0a0f246f38eb6f7e699688c4e06ee016b983416efd9072",
+    "services/reconciliation/payment-suspense-resolution-export.service.ts": "4b5c66ccab25fe973b3905a05cca2df1a825a8b1b93663381923b9b5a74c48bd",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "0d4bdcc42c8390b1a20ac5ad447405894e99db0bed825ac72299059222a08a5e",
+    "hooks/payments/resolution-export-download.ts": "15acfb7b7c66e0b05a72db14c7e42bf49356ee41b4e864987f6f322bbadd63da",
+    "messages/en.json": "08dd6ae9ff8c107aaf88bf31dcca40aefd4b92cf0886c83e02c11bca918299e8",
+    "messages/fr.json": "b2b1e8b798b53cca1a7cc3d8774de4f8622fa36224bfde853fb4cdfd939ddc40",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "8bbe05a9c6c8a16e09033634d5b584450e46a8577e458988693aa7e5210078ae",
+    "services/reconciliation/__tests__/payment-suspense-resolution-export.service.test.ts": "4637b977792299f9d2f9068e1917113182e137a7708db7a3e874185d55d2d846",
+    "components/finance/__tests__/PaymentSuspenseResolutionPanel.test.tsx": "e84e76d0d92f521bceb8a6f0765e9ee3ee67463e1430346b96b7fca437dbbfa8",
+    "actions/payments/__tests__/suspense-resolution.actions.test.ts": "eae004ec13997f09197fe724f39ad77f0c2fa7503bb381dfc38d0657521e03dc",
+    "services/reconciliation/__tests__/payment-suspense-resolution-read.service.test.ts": "df7eebce701513c25bd49b740f43e24aae5a39146a65fed40abd203423efd030",
+    "services/reconciliation/__tests__/payment-suspense-resolution-record.test.ts": "f264438c9f198ab1f40c5e22132563dba71c21dfd69dc363986431f6afdbaa35"
+  },
+  "tests": {
+    "file": "evidence/suspense-resolution-export-v107-tests-ui.json",
+    "passed": 65,
+    "suites": 6,
+    "receipt": "9e2c6c"
+  },
+  "runtime": {
+    "file": "lanes/environment/suspense-resolution-export-v107-4c58ba46-9f7.json",
+    "records": 28,
+    "kinds": {
+      "SUSPENSE_RESOLUTION_PROPOSED_V1": 8,
+      "SUSPENSE_RESOLUTION_REJECTED_V1": 2,
+      "SUSPENSE_RESOLUTION_APPROVED_V1": 6,
+      "SUSPENSE_RESOLUTION_RECOVERY_PROPOSED_V1": 6,
+      "SUSPENSE_RESOLUTION_RECOVERY_REJECTED_V1": 2,
+      "SUSPENSE_RESOLUTION_RECOVERY_APPROVED_V1": 4
+    },
+    "lateAuditFailureRollback": true,
+    "receipt": "d3b265"
+  },
+  "browser": {
+    "file": "lanes/environment/suspense-resolution-export-v107-browser-45f9b10b-b3e.json",
+    "screenshots": 8,
+    "downloads": 4,
+    "artifacts": "evidence/suspense-resolution-export-v107-files",
+    "routeLoadMs": [
+      {
+        "locale": "en",
+        "values": [
+          25030,
+          9603
+        ]
+      },
+      {
+        "locale": "fr",
+        "values": [
+          24332,
+          10008
+        ]
+      }
+    ]
+  },
+  "typecheck": {
+    "session": 41254,
+    "receipt": "499d92",
+    "exitCode": 0
+  },
+  "lint": {
+    "files": 13,
+    "receipt": "2e03c4",
+    "exitCode": 0
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 232,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2825,
+      "tests": 997,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 169,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2435,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat",
+  "nextNumberedSkillAfterCurrentBoundary": "010-aqstoqflow-inventory-valuation-kernel",
+  "previousTurnAssessment": "progress: v106 verified local draft and keyboard recovery",
+  "nextAction": "Complete the genuine connected exception/sign-off/export handoff and continue the complete workflow register"
+}

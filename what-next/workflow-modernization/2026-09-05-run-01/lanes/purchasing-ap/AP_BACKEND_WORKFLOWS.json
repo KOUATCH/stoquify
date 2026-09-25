@@ -1,0 +1,336 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-09-05",
+  "method": "Current source/actions/schemas plus code-only app/components/hooks caller search; excludes __tests__ and noncode reports. No command execution or simulated workflow success.",
+  "workflows": [
+    {
+      "id": "PA-016",
+      "name": "Prepare supplier invoice and evaluate three-way match",
+      "actionFile": "actions/purchasing/ap-control.actions.ts",
+      "action": "prepareSupplierInvoiceAction",
+      "schemaFile": "services/purchasing/ap-control.schemas.ts",
+      "schema": "postSupplierInvoiceInputSchema",
+      "permission": "purchasing.ap.invoice.post",
+      "freshAuth": false,
+      "requiredUserInputs": [
+        "supplierId",
+        "invoiceNumber",
+        "one or more receipt-line IDs with description,quantity,unitCost"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Prepared invoice with match/approval state; no automatic approval",
+      "missingUI": "Receipt and invoice-source selectors, real document capture, line match preview, recoverable preparation form",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "supplierId",
+        "purchaseOrderId (optional)",
+        "invoiceNumber",
+        "invoiceDate/dueDate",
+        "currency",
+        "idempotencyKey",
+        "actual document/evidence hashes",
+        "receipt-line-bound quantities/cost/tax/descriptions"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-017",
+      "name": "Request supplier-invoice matching exception",
+      "actionFile": "actions/purchasing/ap-control.actions.ts",
+      "action": "requestSupplierInvoiceMatchExceptionAction",
+      "schemaFile": "services/purchasing/ap-control.schemas.ts",
+      "schema": "requestSupplierInvoiceMatchExceptionInputSchema",
+      "permission": "purchasing.ap.invoice.post",
+      "freshAuth": false,
+      "requiredUserInputs": [
+        "supplierInvoiceId",
+        "reason",
+        "evidenceReference",
+        "expiresAt"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Pending bounded exception request; requester comes from session",
+      "missingUI": "Invoice-bound explanation, real evidence reference and expiry form",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "supplierInvoiceId",
+        "reason",
+        "evidenceReference",
+        "expiresAt"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-018",
+      "name": "Review supplier-invoice matching exception",
+      "actionFile": "actions/purchasing/ap-control.actions.ts",
+      "action": "reviewSupplierInvoiceMatchExceptionAction",
+      "schemaFile": "services/purchasing/ap-control.schemas.ts",
+      "schema": "reviewSupplierInvoiceMatchExceptionInputSchema",
+      "permission": "purchasing.ap.match.review",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "matchExceptionId",
+        "decision",
+        "decisionReason when rejecting"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Recorded independent exception decision; does not itself prove invoice posted",
+      "missingUI": "Current request evidence, expiry, independent review and refusal/recovery UI",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "matchExceptionId",
+        "APPROVE/REJECT decision",
+        "decisionReason (required for reject)"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-019",
+      "name": "Approve and post prepared supplier invoice",
+      "actionFile": "actions/purchasing/ap-control.actions.ts",
+      "action": "postSupplierInvoiceAction",
+      "schemaFile": "services/purchasing/ap-control.schemas.ts",
+      "schema": "approveSupplierInvoiceInputSchema",
+      "permission": "purchasing.ap.invoice.post",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "supplierInvoiceId"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Current matching, approval, country-pack and ledger rules evaluated; posting or explicit blocker",
+      "missingUI": "Read-only current invoice/matching/evidence preview, separate approver action and truthful posting result",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "supplierInvoiceId"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-022",
+      "name": "Approve supplier-payment allocation plan",
+      "actionFile": "actions/purchasing/ap-control.actions.ts",
+      "action": "approveSupplierPaymentAction",
+      "schemaFile": "services/purchasing/ap-control.schemas.ts",
+      "schema": "approveSupplierPaymentInputSchema",
+      "permission": "purchasing.ap.payment.approve",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "supplierId",
+        "bankAccountId",
+        "method",
+        "requestedById (untrusted origin gap)",
+        "one or more invoice allocations"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Creates APPROVED SupplierPayment; no provider transfer",
+      "missingUI": "Real authenticated payment request must precede independent approval; requester dropdown is insufficient; then approved destination/allocation preview",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "supplierId",
+        "approved bankAccountId",
+        "method",
+        "requestedById (current untrusted request-origin gap)",
+        "paymentDate",
+        "idempotencyKey",
+        "document/evidence hashes",
+        "invoice allocations/amounts"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-023",
+      "name": "Release previously approved supplier payment",
+      "actionFile": "actions/purchasing/ap-control.actions.ts",
+      "action": "releaseSupplierPaymentAction",
+      "schemaFile": "services/purchasing/ap-control.schemas.ts",
+      "schema": "releaseSupplierPaymentInputSchema",
+      "permission": "purchasing.ap.payment.release",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "supplierPaymentId"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Stored approval revalidated; separate release and ledger/reconciliation evidence; not a live-provider settlement certificate",
+      "missingUI": "Immutable approved allocation/destination evidence, separate actor step-up and actionable result; no live provider in implementation verification",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "supplierPaymentId",
+        "paymentDate",
+        "idempotencyKey",
+        "document/evidence hashes",
+        "notes"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-024",
+      "name": "Post purchase return against received goods",
+      "actionFile": "actions/purchasing/purchase-return-credit.actions.ts",
+      "action": "postPurchaseReturnAction",
+      "schemaFile": "services/purchasing/purchase-return-credit.schemas.ts",
+      "schema": "postPurchaseReturnInputSchema",
+      "permission": "purchasing.returns.post",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "purchaseOrderId",
+        "goodsReceiptId",
+        "idempotencyKey",
+        "reason",
+        "one or more source receipt lines and quantities"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Locked source return with inventory/accounting evidence",
+      "missingUI": "Eligible receipt-line picker, remaining returnable quantities and reviewed consequences",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "purchaseOrderId",
+        "goodsReceiptId",
+        "idempotencyKey",
+        "reason",
+        "occurredAt",
+        "document/evidence hashes",
+        "source goods-receipt line IDs and quantities"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-025",
+      "name": "Reverse posted purchase return",
+      "actionFile": "actions/purchasing/purchase-return-credit.actions.ts",
+      "action": "reversePurchaseReturnAction",
+      "schemaFile": "services/purchasing/purchase-return-credit.schemas.ts",
+      "schema": "reversePurchaseReturnInputSchema",
+      "permission": "purchasing.returns.post",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "purchaseReturnId",
+        "idempotencyKey",
+        "reason"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Compensating return reversal retaining original evidence",
+      "missingUI": "Current source effects, dependencies and reasoned confirmation; no delete/reset",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "purchaseReturnId",
+        "idempotencyKey",
+        "reason",
+        "occurredAt",
+        "document/evidence hashes"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-026",
+      "name": "Post supplier credit note for returned invoiced goods",
+      "actionFile": "actions/purchasing/purchase-return-credit.actions.ts",
+      "action": "postSupplierCreditNoteAction",
+      "schemaFile": "services/purchasing/purchase-return-credit.schemas.ts",
+      "schema": "postSupplierCreditNoteInputSchema",
+      "permission": "purchasing.ap.credit.post",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "purchaseReturnId",
+        "supplierInvoiceId",
+        "idempotencyKey",
+        "creditNoteNumber",
+        "creditDate",
+        "documentHash",
+        "reason",
+        "source return/invoice line pairs"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Credit evidence and AP/ledger effects bounded to return/invoice source",
+      "missingUI": "Source line mapping, real credit-document capture, balance effect preview",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "purchaseReturnId",
+        "supplierInvoiceId",
+        "idempotencyKey",
+        "creditNoteNumber",
+        "creditDate",
+        "required actual documentHash",
+        "reason",
+        "source return and supplier-invoice line pairs"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    },
+    {
+      "id": "PA-027",
+      "name": "Reverse posted supplier credit note",
+      "actionFile": "actions/purchasing/purchase-return-credit.actions.ts",
+      "action": "reverseSupplierCreditNoteAction",
+      "schemaFile": "services/purchasing/purchase-return-credit.schemas.ts",
+      "schema": "reverseSupplierCreditNoteInputSchema",
+      "permission": "purchasing.ap.credit.post",
+      "freshAuth": true,
+      "requiredUserInputs": [
+        "supplierCreditNoteId",
+        "idempotencyKey",
+        "creditNoteNumber",
+        "creditDate",
+        "documentHash",
+        "reason"
+      ],
+      "serverDerived": [
+        "organizationId",
+        "current command actor"
+      ],
+      "result": "Compensating credit reversal, original record retained",
+      "missingUI": "Current credit/linked effects review and reasoned reversal form",
+      "implementationStatus": "backend-only-no-production-UI-caller-found",
+      "runtimeStatus": "not-executed-by-this-read-only-review",
+      "inputFields": [
+        "supplierCreditNoteId",
+        "idempotencyKey",
+        "creditNoteNumber",
+        "creditDate",
+        "required actual documentHash",
+        "reason"
+      ],
+      "optionalFieldsNote": "Other listed inputs are optional in the present schema; UI defaults must come from real tenant/document context, and schema defaults are not evidence of verified setup."
+    }
+  ],
+  "crossLane": [
+    "PA-020 supplier bank change request",
+    "PA-021 supplier bank change approval"
+  ],
+  "nextPrerequisite": "Reproduce and close authenticated payment-request origin gap before exposing approval form; maintain independent actors, evidence and fresh authentication."
+}

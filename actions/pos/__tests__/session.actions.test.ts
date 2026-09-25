@@ -17,6 +17,7 @@ jest.mock("@/services/pos/pos.service", () => ({
 }))
 
 import { revalidateTag } from "next/cache"
+import { logger } from "@/lib/logger"
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { closePOSShift, getActivePOSSession } from "@/services/pos/pos.service"
@@ -95,6 +96,17 @@ describe("closePOSShiftAction", () => {
     )
   })
 
+  it("preserves a saved close when both cache and logging fail", async () => {
+    mockRevalidateTag.mockImplementationOnce(() => { throw new Error("cache unavailable") })
+    const warn = jest.spyOn(logger, "warn").mockImplementation(() => { throw new Error("logger unavailable") })
+    try {
+      const result = await closePOSShiftAction({ sessionId: "session-1", actualBalance: 0 })
+      expect(result).toMatchObject({ success: true, data: { sessionId: "session-1" } })
+      expect(mockClosePOSShift).toHaveBeenCalledTimes(1)
+      expect(mockRevalidateTag).toHaveBeenCalledWith("pos-terminal-terminal-1")
+    } finally { warn.mockRestore() }
+  })
+
   it("stops before the service when module observation cannot be recorded", async () => {
     mockObserveModuleAccess.mockRejectedValueOnce(new Error("module observation unavailable"))
 
@@ -137,7 +149,7 @@ describe("getActivePOSSessionAction", () => {
   it("scopes the active shift to the authenticated cashier", async () => {
     const response = await getActivePOSSessionAction({ terminalId: "terminal-1" })
 
-    expect(response).toEqual({ success: true, data: { id: "session-1" }, error: null })
+    expect(response).toEqual({ success: true, data: { id: "session-1" }, error: null, scope: { organizationId: "org-1", actorId: "cashier-1" } })
     expect(mockGetActivePOSSession).toHaveBeenCalledWith({
       terminalId: "terminal-1",
       organizationId: "org-1",

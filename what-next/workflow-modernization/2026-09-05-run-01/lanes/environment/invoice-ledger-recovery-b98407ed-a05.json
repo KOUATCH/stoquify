@@ -1,0 +1,88 @@
+{
+  "run": "b98407ed-a05",
+  "at": "2026-09-08T08:47:46.851Z",
+  "checks": [
+    {
+      "name": "Recover approved invoice and replay exact command without another liability",
+      "status": "passed",
+      "journalCount": 1,
+      "liabilityCount": 1,
+      "balance": "2500.00"
+    },
+    {
+      "name": "Concurrent exact recovery converges to one decision",
+      "status": "failed",
+      "message": "\nInvalid `prisma.$queryRaw()` invocation:\n\n\nRaw query failed. Code: `40001`. Message: `could not serialize access due to concurrent update`"
+    },
+    {
+      "name": "Changed configuration rejects stale review",
+      "status": "passed"
+    },
+    {
+      "name": "Revoked permission denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Expired session denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Stale fresh authentication denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Maker cannot recover own invoice",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign invoice is unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign session cannot supply current authority",
+      "status": "passed"
+    },
+    {
+      "name": "Changed approval payload fails evidence validation",
+      "status": "passed"
+    },
+    {
+      "name": "Duplicate supplier liability prevents recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Missing rules are displayed as a setup condition",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned local PostgreSQL, actual receipt/preparation/approval kernels and session-aware ledger recovery service. New synthetic organizations, users and journals only; no browser or statutory approval claim.",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "8f1fdda9e1232f13b4d84eefd54b0b0bcd05b511b8558cc80465277a87532101",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "dac3d6a77cbc1698a3db190146031d5013c6e8a31992d8c077c7665b331be735"
+  },
+  "originalUnchanged": true,
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-success",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-concurrent",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-stale",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-role",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-session",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-fresh",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-maker",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-tenant",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-other",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-foreign-session",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-foreign-session-owner",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-approval",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-duplicate-liability",
+    "workflow_supplier_ack_en_invoice-recovery-b98407ed-a05-rules"
+  ],
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "8f1fdda9e1232f13b4d84eefd54b0b0bcd05b511b8558cc80465277a87532101",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "dac3d6a77cbc1698a3db190146031d5013c6e8a31992d8c077c7665b331be735"
+  }
+}

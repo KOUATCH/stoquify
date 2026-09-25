@@ -1,6 +1,6 @@
 # Statutory Country Pack Production Readiness Gate
 
-Generated: 2026-08-22T08:45:45.709Z
+Generated: 2026-08-29T16:19:12.398Z
 Mode: fail
 Status: blocked
 

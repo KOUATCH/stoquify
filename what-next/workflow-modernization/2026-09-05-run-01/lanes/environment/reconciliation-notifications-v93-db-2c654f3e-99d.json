@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-09T08:01:33.610Z",
+  "run": "2c654f3e-99d",
+  "checks": [
+    "Sibling exception observations in one synthetic run remain distinct",
+    "Sibling suspense observations in one run remain distinct",
+    "Retry preserves original payload, hash, timestamps, correlation and attempts byte-for-byte",
+    "Eight concurrent deliveries insert exactly one observation",
+    "Notification and caller transaction roll back together",
+    "Identical event key is independently scoped by organization",
+    "Blank tenant rejected before persistence",
+    "Distinct proposal revisions retain separate observations",
+    "Sixty newer non-notification receipts cannot crowd observations out of dashboard",
+    "Dashboard returns the latest 25 notification records with deterministic ordering"
+  ],
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "f6060b1681a7a3c413e0df09b1947cfa454c30d80f23f6c55bd21d0961c1ffb2",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "93953ff65c4fc8830c7577db5afc367e49f5cb9460f449ae61eefe6e87c75935",
+    "components/finance/reconciliation-amount.ts": "fd648299e84c6d3ae846e3622598037aa43baf0a059343cda02b4925d722d9f4",
+    "messages/en.json": "930e251e909a619f4964be47b291ec59d185eda4d437042d50665bf9f8612a52",
+    "messages/fr.json": "0339228691d2f457db63b963637902fbf39be8298dde01a59daa3608c73e1d1e"
+  },
+  "scope": "Owned local PostgreSQL; synthetic notification observations, not real customer events or approvals.",
+  "originalBefore": "27d7671f81a5dad2ada29cb4e268449ec7cc5652f9c0f12b08c95401113f2a78",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "f6060b1681a7a3c413e0df09b1947cfa454c30d80f23f6c55bd21d0961c1ffb2",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "93953ff65c4fc8830c7577db5afc367e49f5cb9460f449ae61eefe6e87c75935",
+    "components/finance/reconciliation-amount.ts": "fd648299e84c6d3ae846e3622598037aa43baf0a059343cda02b4925d722d9f4",
+    "messages/en.json": "930e251e909a619f4964be47b291ec59d185eda4d437042d50665bf9f8612a52",
+    "messages/fr.json": "0339228691d2f457db63b963637902fbf39be8298dde01a59daa3608c73e1d1e"
+  },
+  "sourceStable": true
+}

@@ -1,4 +1,7 @@
 import type { ReactNode } from "react"
+import { getTranslations } from "next-intl/server"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import { localizePath } from "@/i18n/routing"
 import { RbacError, requireAllPermissions, requireAnyPermission, requirePermission } from "@/lib/security/rbac"
@@ -146,6 +149,11 @@ export async function withManagerActionSurfaceAccess({
     })
   }
 
+  const decision = await observeModuleAccess({ organizationId: state.context.orgId, userId: state.context.userId, actorPermissions: state.context.permissions, moduleSlug: "dashboard", surfaceType: "page", surface: surface.route, accessIntent: "read", mode: "enforce", audit: true })
+  if (!decision.allowed) {
+    const t = await getTranslations({ locale: state.locale, namespace: "operatingWorkspaceAccess" })
+    return <DashboardRouteState kind="locked_module" locale={state.locale} title={t("title")} message={t("message")} primaryHref={localizePath("/dashboard", state.locale)} />
+  }
   return onAllowed(state.context, state.locale)
 }
 

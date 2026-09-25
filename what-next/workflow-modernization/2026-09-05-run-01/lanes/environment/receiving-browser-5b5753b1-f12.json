@@ -1,0 +1,150 @@
+{
+  "run": "5b5753b1-f12",
+  "at": "2026-09-07T18:06:20.269Z",
+  "sourcesBefore": {
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "34a3fcc7753b453069854160b13e6af478ead6d944e36ab263799ab5635a582b",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "3826ff7ea1d4614e4775bd9784c7fd55d6bc132252489e23d68e5606ddd05fc3",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "22844f676ef87f8a83259ee9184c033e11f7b03e20c3b0e90ec44b4cdee318b0",
+    "messages/en.json": "30b720f67d4e957d122bafe5bb0ccadd4253f7d67ff9529c87d901e56c5c3efe",
+    "messages/fr.json": "99c364f38f60bf55e61131a290c89501a0ebb04c4664bebda928065bd3dd67a4"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "completed": [
+        "Held review shows fractional quantity, exact currency value and stock consequences; keyboard, responsive and text reflow checked",
+        "Stale submission has no receipt; lost committed response recovers after reload with one held receipt"
+      ],
+      "screenshots": [
+        "receiving-en-review-held-desktop-5b5753b1-f12.png",
+        "receiving-en-review-768-5b5753b1-f12.png",
+        "receiving-en-review-390-5b5753b1-f12.png",
+        "receiving-en-review-320-5b5753b1-f12.png",
+        "receiving-en-text-reflow-5b5753b1-f12.png",
+        "receiving-en-stale-review-5b5753b1-f12.png",
+        "receiving-en-committed-response-lost-5b5753b1-f12.png",
+        "receiving-en-reload-recovery-5b5753b1-f12.png",
+        "receiving-en-recovered-held-5b5753b1-f12.png",
+        "receiving-en-failure-5b5753b1-f12.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 254,
+          "clientWidth": 254
+        }
+      ],
+      "timings": [
+        {
+          "name": "order-detail",
+          "ms": 3335
+        }
+      ],
+      "pageErrors": [],
+      "error": "Expected values to be strictly equal:\n\n'HELD' !== 'REJECTED'\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "completed": [
+        "Held review shows fractional quantity, exact currency value and stock consequences; keyboard, responsive and text reflow checked",
+        "Stale submission has no receipt; lost committed response recovers after reload with one held receipt"
+      ],
+      "screenshots": [
+        "receiving-fr-review-held-desktop-5b5753b1-f12.png",
+        "receiving-fr-review-768-5b5753b1-f12.png",
+        "receiving-fr-review-390-5b5753b1-f12.png",
+        "receiving-fr-review-320-5b5753b1-f12.png",
+        "receiving-fr-text-reflow-5b5753b1-f12.png",
+        "receiving-fr-stale-review-5b5753b1-f12.png",
+        "receiving-fr-committed-response-lost-5b5753b1-f12.png",
+        "receiving-fr-reload-recovery-5b5753b1-f12.png",
+        "receiving-fr-recovered-held-5b5753b1-f12.png",
+        "receiving-fr-failure-5b5753b1-f12.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 254,
+          "clientWidth": 254
+        }
+      ],
+      "timings": [
+        {
+          "name": "order-detail",
+          "ms": 5900
+        }
+      ],
+      "pageErrors": [],
+      "error": "Expected values to be strictly equal:\n\n'HELD' !== 'REJECTED'\n"
+    }
+  ],
+  "scope": "Actual authenticated owned local application 3110, synthetic approved-order setup, real receiving/inspection/stock effects. Accounting review remains explicitly outstanding.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "34a3fcc7753b453069854160b13e6af478ead6d944e36ab263799ab5635a582b",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "3826ff7ea1d4614e4775bd9784c7fd55d6bc132252489e23d68e5606ddd05fc3",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "22844f676ef87f8a83259ee9184c033e11f7b03e20c3b0e90ec44b4cdee318b0",
+    "messages/en.json": "30b720f67d4e957d122bafe5bb0ccadd4253f7d67ff9529c87d901e56c5c3efe",
+    "messages/fr.json": "99c364f38f60bf55e61131a290c89501a0ebb04c4664bebda928065bd3dd67a4"
+  },
+  "sourceStable": true
+}

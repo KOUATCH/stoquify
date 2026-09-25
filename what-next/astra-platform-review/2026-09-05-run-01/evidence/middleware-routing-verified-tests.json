@@ -1,0 +1,30 @@
+{
+  "suites": 1,
+  "passedSuites": 1,
+  "failedSuites": 0,
+  "tests": 3,
+  "passedTests": 3,
+  "failedTests": 0,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "lib/security/__tests__/middleware-routing.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "dashboard session cookie routing lets __Secure-better-auth.session_token reach server authorization",
+          "status": "passed"
+        },
+        {
+          "title": "dashboard session cookie routing lets better-auth.session_token reach server authorization",
+          "status": "passed"
+        },
+        {
+          "title": "dashboard session cookie routing redirects missing or unrelated cookies to the localized login",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    }
+  ]
+}

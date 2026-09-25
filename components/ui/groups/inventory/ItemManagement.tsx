@@ -1,5 +1,17 @@
 "use client"
 
+import {
+  buildCanonicalTableExportIntent,
+  canonicalTableExportEvidenceRows,
+  CanonicalTableBoundary,
+  CanonicalTableDensityControl,
+  createCanonicalTableQuery,
+  createCanonicalTableSelection,
+  inventoryItemsTableContract,
+  useCanonicalTablePreferences,
+  useCanonicalTableUrlState,
+} from "@/components/DataTableComponents"
+
 import { notify } from "@/lib/notifications/notify"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
@@ -103,7 +115,7 @@ const itemFormSchema = z
       .max(100000, "Quantity seems too high"),
     sellingPrice: z.number().min(0, "Selling price must be positive").max(1000000, "Selling price seems too high"),
     createdAt: z.date().optional(),
-    thumbnail: z.string().url().optional().or(z.literal("")),
+    thumbnail: z.string().optional(),
     imageUrls: z.string().optional(),
     organizationId: z.string().min(1, "Organization ID is required"),
     sku: z
@@ -330,7 +342,15 @@ const ModernItemTable = ({
 }) => {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const {
+    columnVisibility,
+    columnOrder,
+    density,
+    setColumnVisibility,
+    setColumnOrder,
+    setDensity,
+  } = useCanonicalTablePreferences(inventoryItemsTableContract)
+  const { setSearch: setCanonicalSearch } = useCanonicalTableUrlState(inventoryItemsTableContract)
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState(initialSearch)
   const [dateFilteredData, setDateFilteredData] = useState(data)
@@ -351,6 +371,10 @@ const ModernItemTable = ({
   }, [initialSearch])
 
   useEffect(() => {
+    setCanonicalSearch(globalFilter)
+  }, [globalFilter, setCanonicalSearch])
+
+  useEffect(() => {
     setDateFilteredData(data)
     setIsDateFilterActive(false)
   }, [data])
@@ -358,6 +382,7 @@ const ModernItemTable = ({
   const table = useReactTable({
     data: isDateFilterActive ? dateFilteredData : data,
     columns,
+    getRowId: (row) => String(row.id),
     filterFns: {
       global: globalFilterFn,
     },
@@ -365,12 +390,14 @@ const ModernItemTable = ({
       sorting,
       columnFilters,
       columnVisibility,
+      columnOrder,
       rowSelection,
       globalFilter,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
@@ -428,6 +455,20 @@ const ModernItemTable = ({
     const queryString = nextParams.toString()
     void router.replace(queryString ? `${pathname}?${queryString}` : pathname)
   }, [pathname, router, searchParams])
+
+  const canonicalQuery = createCanonicalTableQuery(inventoryItemsTableContract, {
+    search: globalFilter,
+    filters: stockFilter === "all" ? {} : { stock: [stockFilter] },
+    sort: sorting.map((entry) => ({ id: entry.id, desc: entry.desc })),
+    pageIndex: table.getState().pagination.pageIndex,
+    pageSize: table.getState().pagination.pageSize,
+  })
+  const canonicalSelection = createCanonicalTableSelection(
+    "explicit",
+    canonicalQuery,
+    table.getSelectedRowModel().rows.map((row) => String(row.original.id)),
+    { kind: "known", total: table.getFilteredRowModel().rows.length },
+  )
 
   return (
     <div className="w-full min-w-0 space-y-4">
@@ -599,21 +640,47 @@ const ModernItemTable = ({
         </div>
 
         {/* Table */}
+      <div className="flex justify-end">
+        <CanonicalTableDensityControl
+          density={density}
+          locale={locale === "fr" ? "fr" : "en"}
+          onDensityChange={setDensity}
+        />
+      </div>
       <div className="dashboard-table-shell dashboard-data-table min-w-0 overflow-hidden rounded-lg">
         <div className="w-full overflow-x-auto">
+        <CanonicalTableBoundary
+          contract={inventoryItemsTableContract}
+          locale={locale === "fr" ? "fr" : "en"}
+          query={canonicalQuery}
+          selection={canonicalSelection}
+          state={isLoading ? "loading" : table.getFilteredRowModel().rows.length === 0 ? (globalFilter || stockFilter !== "all" ? "no-results" : "empty") : "ready"}
+          density={density}
+        >
         <Table className="min-w-[920px]">
           <TableHeader className="sticky top-0 z-10 bg-[rgba(16,27,32,0.94)] backdrop-blur">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="whitespace-nowrap">
+                    <TableHead
+                      key={header.id}
+                      className="whitespace-nowrap"
+                      aria-sort={header.column.getCanSort() ? (header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : "none") : undefined}
+                    >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        : header.column.getCanSort()
+                          ? (
+                            <button
+                              type="button"
+                              className="inline-flex min-h-10 items-center gap-1 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-focus)]"
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                            </button>
+                          )
+                          : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   )
                 })}
@@ -644,7 +711,7 @@ const ModernItemTable = ({
                   className="group border-[var(--dash-border-subtle)] hover:bg-[var(--dash-brand-soft)]"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="align-middle">
+                    <TableCell key={cell.id} className={density === "compact" ? "h-10 py-1 align-middle" : "align-middle"}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -686,6 +753,7 @@ const ModernItemTable = ({
             )}
           </TableBody>
         </Table>
+        </CanonicalTableBoundary>
         </div>
       </div>
 
@@ -754,12 +822,29 @@ const ItemManagement = memo<ItemManagementProps>(
     })
 
     // Local state
-    const [itemImageUrl, setItemImageUrl] = useState(DEFAULT_IMAGE_URL)
+    const [itemImageUrl, setItemImageUrl] = useState("")
+    const [isImageUploading, setIsImageUploading] = useState(false)
 
     // Export functionality
     const handleExport = useCallback(
       (filteredItems: ItemWithInventoryLevelsPayload[]) => {
         try {
+          const exportQuery = createCanonicalTableQuery(inventoryItemsTableContract, { pageSize: 100 })
+          const exportIntent = buildCanonicalTableExportIntent({
+            contract: inventoryItemsTableContract,
+            organizationId,
+            query: exportQuery,
+            selection: createCanonicalTableSelection(
+              "explicit",
+              exportQuery,
+              filteredItems.map((item) => String(item.id)),
+              { kind: "known", total: filteredItems.length },
+            ),
+            columns: inventoryItemsTableContract.columns.allowed.map((column) => column.id),
+            locale,
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+            format: "xlsx",
+          })
           const exportData = filteredItems.map((item) => ({
             Name: item.name,
             Slug: item.slug,
@@ -771,8 +856,10 @@ const ItemManagement = memo<ItemManagementProps>(
           }))
 
           const worksheet = XLSX.utils.json_to_sheet(exportData)
+          const evidenceWorksheet = XLSX.utils.json_to_sheet(canonicalTableExportEvidenceRows(exportIntent))
           const workbook = XLSX.utils.book_new()
           XLSX.utils.book_append_sheet(workbook, worksheet, "Items")
+          XLSX.utils.book_append_sheet(workbook, evidenceWorksheet, "Export Evidence")
 
           const fileName = `Items_${format(new Date(), "yyyy-MM-dd_HH-mm-ss")}.xlsx`
           XLSX.writeFile(workbook, fileName)
@@ -787,7 +874,7 @@ const ItemManagement = memo<ItemManagementProps>(
           })
         }
       },
-      [],
+      [locale, organizationId],
     )
 
     // Form handlers
@@ -798,7 +885,7 @@ const ItemManagement = memo<ItemManagementProps>(
           setTimeout(() => {
             resetFormToDefaults()
             form.reset()
-            setItemImageUrl(DEFAULT_IMAGE_URL)
+            setItemImageUrl("")
           }, 150)
         }
       },
@@ -817,20 +904,25 @@ const ItemManagement = memo<ItemManagementProps>(
     // Form submission
     const onSubmit = useCallback(
       async (data: ItemFormValues) => {
+        if (isImageUploading || createItemMutation.isPending) return
+        if (!itemImageUrl) {
+          notify.error("Upload an image before saving this item.")
+          return
+        }
         try {
           const { id, ...rest } = data
           const newItemData = {
             id: crypto.randomUUID(),
             ...rest,
             slug: data.name.toLowerCase().replace(/\s+/g, "-"),
-            thumbnail: itemImageUrl || DEFAULT_IMAGE_URL,
+            thumbnail: itemImageUrl,
             organizationId: organizationId,
             createdAt: new Date(),
             quantity: Number(data.quantity) || 0,
             costPrice: Number(data.costPrice) || 0,
             sellingPrice: Number(data.sellingPrice) || 0,
             sku: data.sku,
-            imageUrls: itemImageUrl ? "" : "",
+            imageUrls: itemImageUrl,
           }
 
           await createItemMutation.mutateAsync(newItemData)
@@ -842,7 +934,7 @@ const ItemManagement = memo<ItemManagementProps>(
           setFormDialogOpen(false)
           resetFormToDefaults()
           form.reset()
-          setItemImageUrl(itemImageUrl)
+          setItemImageUrl("")
           await refetch()
         } catch (error) {
           console.error("Submit error:", error)
@@ -851,7 +943,7 @@ const ItemManagement = memo<ItemManagementProps>(
           })
         }
       },
-      [itemImageUrl, organizationId, createItemMutation, setFormDialogOpen, resetFormToDefaults, form, refetch],
+      [itemImageUrl, isImageUploading, organizationId, createItemMutation, setFormDialogOpen, resetFormToDefaults, form, refetch, locale],
     )
 
     // Delete confirmation
@@ -920,7 +1012,7 @@ const ItemManagement = memo<ItemManagementProps>(
           form={form}
           size="lg"
           onSubmit={onSubmit}
-          isSubmitting={createItemMutation.isPending}
+          isSubmitting={createItemMutation.isPending || isImageUploading}
           submitLabel="Add Item"
         >
           <ItemForm2
@@ -928,6 +1020,10 @@ const ItemManagement = memo<ItemManagementProps>(
             itemImageUrl={itemImageUrl}
             setItemImageUrl={setItemImageUrl}
             organizationId={organizationId}
+            locale={locale}
+            onUploadStart={() => setIsImageUploading(true)}
+            onUploadComplete={() => setIsImageUploading(false)}
+            onUploadError={() => setIsImageUploading(false)}
           />
         </EntityForm>
 

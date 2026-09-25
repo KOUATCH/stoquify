@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useRegisterWorkflow } from "@/hooks/useRegisterWorkflow"
+import { RegistrationWorkflowError, useRegisterWorkflow } from "@/hooks/useRegisterWorkflow"
 import { localizePath } from "@/i18n/routing"
 import { cn } from "@/lib/utils"
 import type { Locale } from "@/types/bilingual"
@@ -32,8 +32,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import type { ReactNode } from "react"
-import { useEffect, useMemo, useState } from "react"
+import type { ReactElement, ReactNode } from "react"
+import { Children, cloneElement, isValidElement, useEffect, useId, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNotifications } from "../../notifications/NotificationProvider"
 
@@ -79,6 +79,17 @@ const setupRoles = [
   { value: "financial_partner", title: "Bank / fintech", body: "I am evaluating merchant operations data.", Icon: Banknote },
 ] as const
 
+const frenchOptions: Record<string, string> = {
+  Cameroon: "Cameroun", "Cote d'Ivoire": "Côte d’Ivoire", Senegal: "Sénégal", Benin: "Bénin",
+  Retail: "Commerce de détail", Wholesale: "Commerce de gros", Restaurant: "Restauration", Pharmacy: "Pharmacie", Distribution: "Distribution", Services: "Services", Manufacturing: "Fabrication",
+  "POS and cash control": "Caisse et contrôle des espèces", "Stock control": "Contrôle du stock", "Accounting cleanup": "Fiabilisation comptable", "Payment reconciliation": "Rapprochement des paiements", Payroll: "Paie", "Multi-branch control": "Contrôle des agences", "Full operating system": "Ensemble des activités",
+  POS: "Point de vente", Sales: "Ventes", Inventory: "Stock", Accounting: "Comptabilité", Compliance: "Conformité", "RBAC roles": "Rôles et droits",
+  "Owner / manager": "Propriétaire / responsable", "I am setting this up for my own business.": "Je configure l’espace de mon entreprise.",
+  Accountant: "Comptable", "I am setting this up for a client or portfolio.": "Je configure un espace pour un client ou un portefeuille.",
+  "Implementation partner": "Partenaire de mise en œuvre", "I deploy and support business systems.": "Je déploie et accompagne des systèmes de gestion.",
+  "Bank / fintech": "Banque / fintech", "I am evaluating merchant operations data.": "J’évalue les données d’activité des commerçants.",
+}
+
 const copy = {
   en: {
     badge: "Guided OHADA workspace setup",
@@ -86,7 +97,7 @@ const copy = {
     subtitle: "Set up country context, first branch, setup role, admin access, and recommended modules before operations begin.",
     steps: ["Context", "Role", "Company", "Admin", "Setup"],
     fields: {
-      country: "Country pack",
+      country: "Business country",
       currency: "Currency",
       businessType: "Business type",
       branchCount: "Branches",
@@ -120,7 +131,12 @@ const copy = {
       confirmPassword: "Confirm password",
     },
     reviewTitle: "Recommended setup",
-    reviewBody: "We will prepare the workspace with secure owner access, country-aware defaults, and a first operating branch.",
+    reviewBody: "We will record your setup choices and create an unverified administrator account and first branch. Selected capabilities and country defaults still require their normal activation and readiness checks.",
+    stepPosition: "Step",
+    characteristics: "Password characteristics",
+    unknown: "The workspace outcome could not be confirmed. Your entries are preserved. Check for a verification email or try signing in before submitting again.",
+    serverField: "Check this entry and the required acceptance.",
+    accountCreated: "Account created. Continue to email verification.",
     continue: "Continue",
     back: "Back",
     submit: "Create workspace",
@@ -143,31 +159,31 @@ const copy = {
     hidePassword: "Hide password",
   },
   fr: {
-    badge: "Configuration guidee OHADA",
-    title: "Creez votre espace entreprise.",
-    subtitle: "Definissez pays, premiere agence, role de configuration, acces admin et modules recommandes avant l'exploitation.",
-    steps: ["Contexte", "Role", "Entreprise", "Admin", "Setup"],
+    badge: "Configuration guidée OHADA",
+    title: "Créez votre espace entreprise.",
+    subtitle: "Définissez le pays, la première agence, le rôle de configuration, l’accès administrateur et les modules recommandés avant l’exploitation.",
+    steps: ["Contexte", "Rôle", "Entreprise", "Admin", "Configuration"],
     fields: {
-      country: "Pack pays",
+      country: "Pays de l’entreprise",
       currency: "Devise",
-      businessType: "Activite",
+      businessType: "Activité",
       branchCount: "Agences",
-      primaryPain: "Priorite",
-      companySize: "Taille equipe",
-      companyName: "Nom entreprise",
+      primaryPain: "Priorité",
+      companySize: "Taille de l’équipe",
+      companyName: "Nom de l’entreprise",
       tradeName: "Nom commercial",
       taxIdentifier: "Identifiant fiscal",
       industry: "Secteur",
-      firstBranchName: "Premiere agence",
+      firstBranchName: "Première agence",
       address: "Adresse",
-      firstName: "Prenom",
+      firstName: "Prénom",
       lastName: "Nom",
       email: "Email professionnel",
-      phone: "Telephone",
+      phone: "Téléphone",
       password: "Mot de passe",
       confirmPassword: "Confirmer",
-      terms: "J'accepte les conditions et la politique de confidentialite",
-      assisted: "Je souhaite un accompagnement ou une revue de preparation",
+      terms: "J’accepte les conditions et la politique de confidentialité",
+      assisted: "Je souhaite un accompagnement ou une revue de préparation",
     },
     placeholders: {
       companyName: "AqStoq Retail Group",
@@ -178,29 +194,34 @@ const copy = {
       firstName: "Jeanne",
       lastName: "Doe",
       email: "jeanne@entreprise.com",
-      password: "Creez un mot de passe fort",
+      password: "Créez un mot de passe fort",
       confirmPassword: "Confirmer le mot de passe",
     },
-    reviewTitle: "Configuration recommandee",
-    reviewBody: "Nous preparons un espace securise avec acces proprietaire, valeurs pays et premiere agence operationnelle.",
+    reviewTitle: "Configuration recommandée",
+    reviewBody: "Nous enregistrons vos choix et créons un compte administrateur non vérifié et une première agence. Les capacités sélectionnées et les valeurs du pays restent soumises aux contrôles habituels d’activation et de préparation.",
+    stepPosition: "Étape",
+    characteristics: "Caractéristiques du mot de passe",
+    unknown: "Le résultat de la création n’a pas pu être confirmé. Vos données sont conservées. Vérifiez vos emails ou essayez de vous connecter avant de renvoyer la demande.",
+    serverField: "Vérifiez cette donnée et l’acceptation requise.",
+    accountCreated: "Compte créé. Continuez vers la vérification de votre email.",
     continue: "Continuer",
     back: "Retour",
-    submit: "Creer l'espace",
-    submitting: "Creation",
-    already: "Vous avez deja un compte ?",
+    submit: "Créer l’espace",
+    submitting: "Création",
+    already: "Vous avez déjà un compte ?",
     login: "Connexion",
     errors: {
       required: "Ce champ est requis",
       email: "Veuillez entrer un email valide",
-      passwordMin: "Le mot de passe doit contenir au moins 12 caracteres",
+      passwordMin: "Le mot de passe doit contenir au moins 12 caractères",
       passwordMatch: "Les mots de passe ne correspondent pas",
       terms: "Vous devez accepter les conditions",
-      step: "Completez cette etape avant de continuer.",
-      failed: "Inscription echouee",
-      network: "Impossible de creer l'espace. Veuillez reessayer.",
+      step: "Complétez cette étape avant de continuer.",
+      failed: "Inscription échouée",
+      network: "Impossible de créer l’espace. Veuillez réessayer.",
     },
-    successTitle: "Espace cree",
-    successBody: "Verifiez votre email avant la connexion.",
+    successTitle: "Espace créé",
+    successBody: "Vérifiez votre email avant la connexion.",
     showPassword: "Afficher le mot de passe",
     hidePassword: "Masquer le mot de passe",
   },
@@ -221,7 +242,13 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const defaultCountry = countries[0]
-  const loading = registerWorkflow.isPending
+  const optionLabel = (value: string) => locale === "fr" ? frenchOptions[value] ?? value : value
+  const [ready, setReady] = useState(false), [submitting, setSubmitting] = useState(false), [formError, setFormError] = useState("")
+  const [completedHref, setCompletedHref] = useState("")
+  const submissionPending = useRef(false), navigationPending = useRef(false), feedback = useRef<HTMLDivElement>(null)
+  const loading = registerWorkflow.isPending || submitting
+  useEffect(() => setReady(true), [])
+  useEffect(() => { if (formError || completedHref) feedback.current?.focus() }, [formError, completedHref])
   const isAccountantInvite =
     params.get("role") === "accountant" &&
     Boolean(params.get("ref")) &&
@@ -232,6 +259,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
     handleSubmit,
     watch,
     setValue,
+    setError,
     trigger,
     formState: { errors },
   } = useForm<RegisterUserProps>({
@@ -246,7 +274,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
       businessType: businessTypes[0],
       primaryPain: pains[0],
       setupRole: "owner",
-      firstBranchName: "Main branch",
+      firstBranchName: locale === "fr" ? "Agence principale" : "Main branch",
       requestedModules: ["POS", "Sales", "Inventory", "Accounting", "Payment reconciliation"],
       assistedSetupRequested: params.get("intent") === "assisted" || params.get("intent") === "enterprise",
       onboardingSource: "aqstoqflow-register-v2",
@@ -301,32 +329,36 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
   }
 
   const goNext = async () => {
-    const valid = await trigger(stepFields[step])
-    if (!valid) {
-      warning(t.errors.failed, t.errors.step)
-      return
-    }
-    setStep((current) => Math.min(current + 1, 4) as StepId)
+    if (!ready || loading || navigationPending.current || completedHref) return
+    navigationPending.current = true
+    try {
+      const valid = await trigger(stepFields[step], { shouldFocus: true })
+      if (!valid) { warning(t.errors.failed, t.errors.step); return }
+      setStep((current) => current === step ? Math.min(current + 1, 4) as StepId : current)
+    } finally { navigationPending.current = false }
   }
 
   const goBack = () => setStep((current) => Math.max(current - 1, 0) as StepId)
 
   const onSubmit = async (data: RegisterUserProps) => {
-    const valid = await trigger(stepFields[3])
-    if (!valid) return
-
+    if (!ready || submissionPending.current || completedHref || step !== 4) return
+    submissionPending.current = true; setSubmitting(true); setFormError("")
     try {
       const result = await registerWorkflow.mutateAsync(data)
       const userId = result.data?.userId
-      const email = encodeURIComponent(data.email)
-      if (userId) {
-        router.push(`${localizePath(`/verify/${userId}`, locale)}?email=${email}`)
-      } else {
-        router.push(`${localizePath("/login-v2", locale)}?registered=true&email=${email}`)
+      if (!userId || !result.data?.organizationId || result.data.verificationRequired !== true) { setFormError(t.unknown); return }
+      const href = `${localizePath(`/verify/${encodeURIComponent(userId)}`, locale)}?email=${encodeURIComponent(result.data.email)}`
+      setCompletedHref(href)
+      router.push(href)
+    } catch (error) {
+      setFormError(error instanceof RegistrationWorkflowError ? error.message : t.unknown)
+      if (error instanceof RegistrationWorkflowError && error.fieldErrors) {
+        const fields = Object.keys(error.fieldErrors).filter(field => Object.values(stepFields).some(list => list.includes(field as keyof RegisterUserProps)))
+        for (const field of fields) setError(field as keyof RegisterUserProps, { type: "server", message: t.serverField })
+        const firstStep = ([0, 1, 2, 3] as const).find(value => stepFields[value].some(field => fields.includes(field)))
+        if (firstStep !== undefined) setStep(firstStep)
       }
-    } catch {
-      // useRegisterWorkflow owns the user-facing error notification.
-    }
+    } finally { submissionPending.current = false; setSubmitting(false) }
   }
 
   return (
@@ -345,14 +377,17 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
           <span>{t.steps[step]}</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 overflow-hidden rounded-full bg-[#d9e1dc]">
-          <div className="h-full rounded-full bg-[#178e83] transition-all duration-300" style={{ width: `${progress}%` }} />
+        <div role="progressbar" aria-label={t.stepPosition} aria-valuemin={1} aria-valuemax={5} aria-valuenow={step + 1} aria-valuetext={`${t.stepPosition} ${step + 1}: ${t.steps[step]}`} className="h-2 overflow-hidden rounded-full bg-[#d9e1dc]">
+          <div className="h-full rounded-full bg-[#178e83] transition-all duration-300 motion-reduce:transition-none" style={{ width: `${progress}%` }} />
         </div>
         <div className="mt-4 grid grid-cols-5 gap-2">
           {t.steps.map((label, index) => (
             <button
               key={label}
               type="button"
+              disabled={!ready || loading || Boolean(completedHref) || index > step}
+              aria-label={label}
+              aria-current={index === step ? "step" : undefined}
               onClick={() => index <= step && setStep(index as StepId)}
               className={cn(
                 "min-h-10 rounded-lg border px-2 py-2 text-xs font-black transition",
@@ -369,7 +404,10 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      {formError && <div ref={feedback} role="alert" tabIndex={-1} className="mb-5 rounded-lg border border-[#b42318]/30 bg-[#fff0ef] p-4 text-sm leading-6 text-[#912018] focus:outline-none focus:ring-2 focus:ring-[#b42318]">{formError}</div>}
+      {completedHref && <div ref={feedback} role="status" tabIndex={-1} className="mb-5 rounded-lg border border-[#178e83]/30 bg-[#edf5f2] p-4 text-sm leading-6 focus:outline-none focus:ring-2 focus:ring-[#178e83]"><Link className="font-bold underline" href={completedHref}>{t.accountCreated}</Link></div>}
+      <form method="post" onSubmit={event => { if (step < 4) { event.preventDefault(); void goNext() } else void handleSubmit(onSubmit)(event) }} className="space-y-5" aria-busy={loading}>
+        <fieldset disabled={!ready || loading || Boolean(completedHref)} className="min-w-0 space-y-5">
         <input type="hidden" {...register("countryCode")} />
         <input type="hidden" {...register("currency")} />
         <input type="hidden" {...register("timezone")} />
@@ -396,7 +434,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
               >
                 {countries.map((country) => (
                   <option key={country.code} value={country.name}>
-                    {country.name} - {country.currency}
+                    {optionLabel(country.name)} - {country.currency}
                   </option>
                 ))}
               </select>
@@ -404,7 +442,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
 
             <SelectField label={t.fields.businessType} icon={<Building2 className="h-4 w-4" />} error={errors.businessType?.message}>
               <select className="h-12 w-full rounded-lg border border-[#9fb4bb]/30 bg-white pl-11 pr-3 text-sm font-semibold text-[#132028] outline-none focus:border-[#178e83] focus:ring-4 focus:ring-[#178e83]/15" {...register("businessType", { required: t.errors.required })}>
-                {businessTypes.map((item) => <option key={item}>{item}</option>)}
+                {businessTypes.map((item) => <option key={item} value={item}>{optionLabel(item)}</option>)}
               </select>
             </SelectField>
 
@@ -423,7 +461,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
             <div className="sm:col-span-2">
               <SelectField label={t.fields.primaryPain} icon={<BadgeCheck className="h-4 w-4" />} error={errors.primaryPain?.message}>
                 <select className="h-12 w-full rounded-lg border border-[#9fb4bb]/30 bg-white pl-11 pr-3 text-sm font-semibold text-[#132028] outline-none focus:border-[#178e83] focus:ring-4 focus:ring-[#178e83]/15" {...register("primaryPain", { required: t.errors.required })}>
-                  {pains.map((item) => <option key={item}>{item}</option>)}
+                  {pains.map((item) => <option key={item} value={item}>{optionLabel(item)}</option>)}
                 </select>
               </SelectField>
             </div>
@@ -438,6 +476,8 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
                 <SetupRoleButton
                   key={role.value}
                   role={role}
+                  title={optionLabel(role.title)}
+                  description={optionLabel(role.body)}
                   selected={selectedSetupRole === role.value}
                   onSelect={() => setValue("setupRole", role.value, { shouldValidate: true })}
                 />
@@ -459,7 +499,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
             </Field>
             <SelectField label={t.fields.industry} icon={<Building2 className="h-4 w-4" />} error={errors.industry?.message}>
               <select className="h-12 w-full rounded-lg border border-[#9fb4bb]/30 bg-white pl-11 pr-3 text-sm font-semibold text-[#132028] outline-none focus:border-[#178e83] focus:ring-4 focus:ring-[#178e83]/15" {...register("industry", { required: t.errors.required })}>
-                {businessTypes.map((item) => <option key={item}>{item}</option>)}
+                {businessTypes.map((item) => <option key={item} value={item}>{optionLabel(item)}</option>)}
               </select>
             </SelectField>
             <Field label={t.fields.firstBranchName} error={errors.firstBranchName?.message} icon={<MapPin className="h-4 w-4" />}>
@@ -500,7 +540,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
             <div className="sm:col-span-2">
               <div className="rounded-lg border border-[#d9e1dc] bg-[#f7faf8] p-4">
                 <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-[#53675f]">
-                  <span>Password strength</span>
+                  <span>{t.characteristics}</span>
                   <span>{passwordScore}/5</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-[#d9e1dc]">
@@ -536,7 +576,7 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
               {modules.map((module) => (
                 <label key={module} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border border-[#d9e1dc] bg-[#f7faf8] px-4 py-3 text-sm font-black text-[#132028]">
                   <input type="checkbox" value={module} className="h-4 w-4 rounded border-[#9fb4bb]/40 text-[#178e83] focus:ring-[#178e83]/25" {...register("requestedModules")} />
-                  {module}
+                  {optionLabel(module)}
                 </label>
               ))}
             </div>
@@ -557,17 +597,19 @@ export function RegisterV2Form({ locale }: { locale: Locale }) {
             <span />
           )}
           {step < 4 ? (
-            <Button type="button" onClick={goNext} className="h-11 rounded-lg bg-[#132028] px-5 font-black text-white hover:bg-[#22323b]">
+            <Button key="continue" type="button" onClick={goNext} className="h-11 rounded-lg bg-[#132028] px-5 font-black text-white hover:bg-[#22323b]">
               {t.continue}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
-            <Button type="submit" disabled={loading} className="h-11 rounded-lg bg-[#132028] px-5 font-black text-white hover:bg-[#22323b]">
-              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            <Button key="create" type="submit" disabled={loading} className="h-11 rounded-lg bg-[#132028] px-5 font-black text-white hover:bg-[#22323b]">
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" /> : null}
               {loading ? t.submitting : t.submit}
             </Button>
           )}
         </div>
+        </fieldset>
+        <p role="status" className="sr-only" aria-live="polite">{loading ? t.submitting : ""}</p>
       </form>
 
       <p className="mt-5 text-center text-sm text-[#53675f]">
@@ -591,14 +633,22 @@ function Field({
   icon: ReactNode
   children: ReactNode
 }) {
+  const id = useId(), errorId = id + "-error"
+  const limits: Record<string, number> = { firstName: 100, lastName: 100, email: 254, phone: 32, companyName: 200, tradeName: 200, taxIdentifier: 100, firstBranchName: 100, address: 500, password: 128, confirmPassword: 128 }
+  const controls = Children.map(children, (child, index) => {
+    if (index !== 0 || !isValidElement(child)) return child
+    const element = child as ReactElement<{ id?: string; name?: string; maxLength?: number; autoComplete?: string; "aria-invalid"?: boolean; "aria-describedby"?: string }>
+    const name = element.props.name ?? ""
+    return cloneElement(element, { id, "aria-invalid": Boolean(error), "aria-describedby": error ? errorId : undefined, ...(limits[name] ? { maxLength: limits[name] } : {}), ...(["password", "confirmPassword"].includes(name) ? { autoComplete: "new-password" } : {}) })
+  })
   return (
     <div className="space-y-2">
-      <Label className="text-sm font-bold text-[#253943]">{label}</Label>
+      <Label htmlFor={id} className="text-sm font-bold text-[#253943]">{label}</Label>
       <div className="relative">
         <span className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[#7f969f]">{icon}</span>
-        {children}
+        {controls}
       </div>
-      {error ? <FieldError message={error} /> : null}
+      {error ? <FieldError id={errorId} message={error} /> : null}
     </div>
   )
 }
@@ -614,24 +664,19 @@ function SelectField({
   icon: ReactNode
   children: ReactNode
 }) {
-  return (
-    <div className="space-y-2">
-      <Label className="text-sm font-bold text-[#253943]">{label}</Label>
-      <div className="relative">
-        <span className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[#7f969f]">{icon}</span>
-        {children}
-      </div>
-      {error ? <FieldError message={error} /> : null}
-    </div>
-  )
+  return <Field label={label} error={error} icon={icon}>{children}</Field>
 }
 
 function SetupRoleButton({
   role,
+  title,
+  description,
   selected,
   onSelect,
 }: {
   role: (typeof setupRoles)[number]
+  title: string
+  description: string
   selected: boolean
   onSelect: () => void
 }) {
@@ -641,6 +686,7 @@ function SetupRoleButton({
     <button
       type="button"
       onClick={onSelect}
+      aria-pressed={selected}
       className={cn(
         "min-h-36 rounded-lg border p-4 text-left transition",
         selected
@@ -649,8 +695,8 @@ function SetupRoleButton({
       )}
     >
       <Icon className="h-6 w-6 text-[#178e83]" />
-      <p className="mt-5 text-base font-black text-[#132028]">{role.title}</p>
-      <p className="mt-2 text-sm leading-6 text-[#53675f]">{role.body}</p>
+      <p className="mt-5 text-base font-black text-[#132028]">{title}</p>
+      <p className="mt-2 text-sm leading-6 text-[#53675f]">{description}</p>
     </button>
   )
 }
@@ -672,16 +718,17 @@ function VisibilityButton({
       onClick={onClick}
       className="absolute right-3 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-lg text-[#7f969f] transition hover:bg-[#edf5f2] hover:text-[#132028]"
       aria-label={show ? hideLabel : showLabel}
+      aria-pressed={show}
     >
       {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
     </button>
   )
 }
 
-function FieldError({ message }: { message?: string }) {
+function FieldError({ message, id }: { message?: string; id?: string }) {
   if (!message) return null
   return (
-    <p className="flex items-center gap-1.5 text-sm font-semibold text-[#d44848]">
+    <p id={id} className="flex items-center gap-1.5 text-sm font-semibold text-[#b42318]">
       <AlertCircle className="h-4 w-4" />
       {message}
     </p>

@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-19T14:33:15.371Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "958fbf944b0d650a8e50adb1a921395859f68f2083d783e395868e7ed5cfa507",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295"
+  },
+  "checks": [
+    {
+      "name": "owner-label-only",
+      "owner": false,
+      "manager": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        }
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "page.goto: Timeout 120000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:3110/en/dashboard/daily-digest\", waiting until \"domcontentloaded\"\u001b[22m\n",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "958fbf944b0d650a8e50adb1a921395859f68f2083d783e395868e7ed5cfa507",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "6e1c54b362e0f9fa61aa4558abcfd8c11afb8fed2a0101fb1b06b280ff44726f",
+    "services/operating-access/operating-access-scope.service.ts": "feb63d9e355be7ec605025ac36bfa44c0946279986105060e34fa8ca32b53c26",
+    "services/operating-access/operating-access-scope-contracts.ts": "299be31987f9f233cdc9fdf82b337c4df35fc598dc355f6b3d4a4c44d88f0f10",
+    "services/owner-war-room/owner-war-room.service.ts": "a13549161db00118cc7a12aa8faba8e995446b6b04f3ea260d937c2b656853d3",
+    "services/manager-action-center/manager-action-center-query.service.ts": "1130125a5bafe096639f1e129dd68c5d9417beb532632bad1e6ba698c8840295"
+  },
+  "sourceStable": true
+}

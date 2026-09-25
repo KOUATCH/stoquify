@@ -1,0 +1,44 @@
+{
+  "at": "2026-09-13T14:42:58.730Z",
+  "sourcesBefore": {
+    "services/pos/pos.service.ts": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+    "actions/pos/commit-recovery.actions.ts": "8b1b6f844a55e0244993a60f83167b4183eb8b7afef80a2c313d501f246353b5",
+    "lib/pos/pending-sale.ts": "ebc667ca7fef0297c633734076d8d44666d7420d0a64f22709500ea5e4cc2dfd",
+    "components/pos/ProfessionalPOSSystem.tsx": "66b770613ee011187886f2f93c9bf7e7784b4e4fdaa15e311c46e89fd3a3d4b4",
+    "hooks/posHooks/usePosOperations.ts": "17a42f3d7056e6bbfae569e907ef96dceb54e1a36694d759901b3db7341fea67",
+    "messages/en.json": "e24d7fef8ee72007c4319145f73a0b6492fc0d97bd607b1ef88a56be7b9ada77",
+    "messages/fr.json": "afad6e998005d23abd81b014b1a90644fa470dbaf79a6cd730a7cdbf95c61def"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "dropPoint": "after",
+      "pageErrors": [
+        "Event"
+      ],
+      "screenshots": [],
+      "readyMs": 12189,
+      "originalRequestRetainedBeforeLostResponse": true,
+      "reloadPreservesOriginalRequest": true,
+      "failedReadDoesNotBecomeNotFound": true,
+      "failurePages": [
+        {
+          "url": "http://127.0.0.1:3110/en/dashboard/pos",
+          "body": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Tender recovery-browser-en-after\n\nOWNED CASHIER\nSession\nMODULES\n0\nNo modules match your search.\nR\n\nrecovery-browser-en-aftercb346bc6-8d3a-4cc6-9c93-108b9f25ecac@example.invalid\n\nrecovery-browser-en-aftercb346bc6-8d3a-4cc6-9c93-108b9f25ecac@example.invalid\n\nPos\n\ndashboard / pos\n\nFR\nR\nPoint of sale\n\nFocused cashier workstation\n\nShift SES-20260913-S7LNX7\nScanner ready\nTouch mode\nResolve the previous sale attempt\n\nThe original request is retained in this browser tab. Check its recorded outcome before starting another sale. Checking cannot charge or post anything.\n\nRequest: pos:8737bab5-321f-4fe7-9f3f-de663e4249c1\n\nThe result could not be verified. Your request is retained. Check your access or connection and try checking again.\n\nCheck previous result\nOffline sync status requires POS transaction access.\nRetry\nRegister setup\nActive register\nLOCATION\nChoose location\nOwned store\nTERMINAL\nChoose terminal\nOWNED - Owned terminal - In use\nShift\n\nOwned store / Owned terminal\n\nOpen\nSession sales\nFCFA 100\nTransactions\n1\nCash drawer\nFCFA 100\nClose\n1 items\nAdd customer\nExact cash\nReceipt\nPark sale\nOverride\nEnd shift\nScanner\nReady\nDrawer\nOpen\nPrinter\nStandby\nNetwork\nOnline\nAll items\nFavorites\n0\nRecent\n0\nOwned item\nFCFA 100\n19 available\nSKU\nOWNED\nBARCODE\nNo barcode\nUncategorized\nNo brand\nOn hand\n19\nAvailable\n19\nIn cart\n0\nAdd\nCustomer\nWI\nWalk-in customer\nCounter sale\nWalk-in customer\nChoose customer\nWalk-in customer\nCart\nWalk-in customer\n0 lines\nScan or select an item to start a persisted draft sale.\nSubtotal\nFCFA 0\nDiscount\nFCFA"
+        }
+      ]
+    }
+  ],
+  "scope": "Actual cashier requests and controlled lost responses on owned local PostgreSQL. FR void is a service fixture; no external payment/delivery or live approval.",
+  "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('pos-commit-recovery').getByRole('status')\nExpected substring: \"Completed\"\nReceived string:    \"\"\nTimeout: 60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByTestId('pos-commit-recovery').getByRole('status')\n    7 × locator resolved to <div role=\"status\" aria-live=\"polite\">Checking the recorded result…</div>\n      - unexpected value \"Checking the recorded result…\"\n    110 × locator resolved to <div role=\"status\" aria-live=\"polite\"></div>\n        - unexpected value \"\"\n",
+  "sourcesAfter": {
+    "services/pos/pos.service.ts": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+    "actions/pos/commit-recovery.actions.ts": "8b1b6f844a55e0244993a60f83167b4183eb8b7afef80a2c313d501f246353b5",
+    "lib/pos/pending-sale.ts": "ebc667ca7fef0297c633734076d8d44666d7420d0a64f22709500ea5e4cc2dfd",
+    "components/pos/ProfessionalPOSSystem.tsx": "66b770613ee011187886f2f93c9bf7e7784b4e4fdaa15e311c46e89fd3a3d4b4",
+    "hooks/posHooks/usePosOperations.ts": "17a42f3d7056e6bbfae569e907ef96dceb54e1a36694d759901b3db7341fea67",
+    "messages/en.json": "e24d7fef8ee72007c4319145f73a0b6492fc0d97bd607b1ef88a56be7b9ada77",
+    "messages/fr.json": "afad6e998005d23abd81b014b1a90644fa470dbaf79a6cd730a7cdbf95c61def"
+  },
+  "sourceStable": true
+}

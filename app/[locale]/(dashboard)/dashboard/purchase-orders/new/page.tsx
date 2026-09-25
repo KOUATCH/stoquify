@@ -1,6 +1,7 @@
 import { getLocale } from "next-intl/server"
 
 import { createPurchaseOrder } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction"
+import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 import { ModernCreatePurchaseOrderForm } from "@/components/purchase-orders/ModernCreatePurchaseOrderForm"
 import { getAuthenticatedUser } from "@/config/useAuth"
 import { pickLocale } from "@/i18n/routing"
@@ -29,6 +30,7 @@ async function handleCreatePurchaseOrder(formData: FormData) {
   })
 
   if (!result.success) {
+    if (getModuleOperationErrorReason(result)) return { success: false as const, error: result.error || "New work is stopped", code: result.code, reason: result.reason }
     throw new Error(result.error || "Failed to create purchase order")
   }
 

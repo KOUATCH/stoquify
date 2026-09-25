@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-13T16:29:41.689Z",
+  "checks": [
+    "Independent reviewer and tenant scope enforced; same-timestamp evidence changes reject stale preview without financial writes",
+    "Concurrent resolution has one winner and audit; exact retry and terminal replay are read-only; financial/outbox/payload unchanged; other conflict and certification sequence retained",
+    "Revocation, changed replay evidence and signature dispute remain blocked; failed query propagates instead of reporting ready",
+    "Missing posted journal denies resolution; orphan blocked events retain the close blocker; only exhausted operational blockers reopen without certifying or advancing sequence"
+  ],
+  "scope": "Owned synthetic historical stale-block conflict after real POS cash commit and test-only replay; no signature/ingestion certification.",
+  "passed": true,
+  "sources": {
+    "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58",
+    "services/pos/offline-resolution.service.ts": "51969079dd8da5964e769345d4e7c6d373eb6dc783569689a713b9a93588490e"
+  }
+}

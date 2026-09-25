@@ -1,0 +1,143 @@
+{
+  "at": "2026-09-15T13:24:26.778Z",
+  "sourceBefore": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "f7683a38ccac82f7797c6e5f6f335c548211a7309c070434fd0024d464d9784f"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "digest-urgency-28ba1f25-beb9-403e-a42d-2cf796c59193-en-1440.png",
+        "digest-urgency-28ba1f25-beb9-403e-a42d-2cf796c59193-en-768.png",
+        "digest-urgency-28ba1f25-beb9-403e-a42d-2cf796c59193-en-320.png"
+      ],
+      "errors": [],
+      "accessibility": [
+        {
+          "width": 1440,
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "aria-prohibited-attr",
+              "nodes": [
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .bg-\\[rgba\\(37\\,57\\,67\\,0\\.34\\)\\].gap-1\\.5[aria-label=\"Raw evidence\"]"
+                ]
+              ]
+            },
+            {
+              "id": "color-contrast",
+              "nodes": [
+                [
+                  ".p-4.dashboard-glass-panel.rounded-lg > .text-base"
+                ],
+                [
+                  ".mt-1.text-\\[var\\(--dash-text-soft\\)\\][role=\"status\"]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > div > .text-base"
+                ],
+                [
+                  ".p-4.dashboard-glass-panel:nth-child(1) > .items-start.justify-between.gap-3 > div > .mt-1.text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .py-1.px-2.border-\\[var\\(--dash-border-subtle\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .min-w-0 > p:nth-child(1)"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .min-w-0 > .mt-1.text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".items-start.justify-between.gap-3 > .bg-background.shadow-sm[href$=\"purchase-orders\"]"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-base"
+                ],
+                [
+                  ".sm\\:flex-row > div:nth-child(1) > .text-\\[var\\(--dash-text-soft\\)\\]"
+                ],
+                [
+                  ".w-fit"
+                ],
+                [
+                  ".bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].focus\\:outline-none:nth-child(1)"
+                ],
+                [
+                  ".capitalize"
+                ],
+                [
+                  ".border-\\[var\\(--dash-success\\)\\].bg-\\[var\\(--dash-success-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  ".gap-1\\.5.py-1.px-2"
+                ],
+                [
+                  "h3"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(3)"
+                ],
+                [
+                  ".leading-6.mt-1.text-\\[var\\(--dash-text-soft\\)\\]:nth-child(4)"
+                ],
+                [
+                  ".lg\\:items-end > .bg-background.shadow-sm[href$=\"purchase-orders\"]"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .bg-\\[rgba\\(37\\,57\\,67\\,0\\.34\\)\\].gap-1\\.5[aria-label=\"Raw evidence\"]"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .border-\\[var\\(--dash-info\\)\\].bg-\\[var\\(--dash-info-soft\\)\\].gap-1\\.5"
+                ],
+                [
+                  "article > .mt-3.flex-wrap.gap-2:nth-child(2) > .gap-1\\.5.focus\\:outline-none.focus\\:ring-ring:nth-child(3)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(1)"
+                ],
+                [
+                  ".border-\\[var\\(--dash-danger\\)\\].bg-\\[var\\(--dash-danger-soft\\)\\].py-1:nth-child(2)"
+                ],
+                [
+                  ".mt-3.flex-wrap.text-xs > .bg-\\[var\\(--dash-gold-soft\\)\\].border-\\[var\\(--dash-gold\\)\\].py-1"
+                ]
+              ]
+            }
+          ],
+          "passes": [
+            "aria-allowed-attr",
+            "aria-conditional-attr",
+            "aria-deprecated-role",
+            "aria-hidden-focus",
+            "aria-prohibited-attr",
+            "aria-required-attr",
+            "aria-roles",
+            "aria-valid-attr-value",
+            "aria-valid-attr",
+            "duplicate-id-aria",
+            "link-name"
+          ]
+        }
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "Expected values to be strictly equal:\n\ntrue !== false\n",
+  "failureState": "Read-only\nSignal-backed\nNo automation\nDaily Habit Digest\n\nYour permission-aware daily and weekly workspaces, built from existing operating signals.\n\nWorkflow registration Urgency 28ba1f25-beb9-403e-a42d-2cf796c59193\nGenerated (Africa/Douala)\nSep 15, 02:24 PM\nPeriod\nSep 15 - Sep 16\nCurrency\nXAF\nVisible workspaces\n2\nManager\nEnd of day\nCommand Agent\n\nEvidence-backed daily priorities\n\nRead-only. No posting, approval, payment, filing, payroll, stock, cash, or permission authority.\n\nGenerate brief\nCommand Agent is disabled for this organization.\nPartial\nCommand brief\npartial\nManager run sheet digest\n\nVisible operational actions for today's branch, stock, payment, and receiving work.\n\n1 visible action(s) need review for this digest.\n\nRaw\nOperational\npartial\n10 sources\nSource hash\nBrief\nCommand\nInvestigate\n\nPeriod: Sep 15 - Sep 16\n\nGenerated: Sep 15, 02:24 PM\n\nSources: dashboard, sales, payments, inventory, purchasing, hris, payroll, accounting, close, compliance\n\nReview: not_started\n\nFollow up pending purchase orders and receiving evidence.\nSource limitations\n\nBlockers: 4 · Redactions: 1\n\nNo active provider account\nNo accounting period covers this snapshot\nNo active provider account\nNo accounting period covers this snapshot\nInspect sources\nActions and risks\n\nOpen the permitted source workflows to act. This digest does not execute or approve work.\n\nDigest actions\n\nRead-only links to the source workflow.\n\n1\n\nFollow up pending purchase orders and receiving evidence.\n\npurchases.orders.read\n\nOpen\nDigest risk radar\n\nVisible signal-backed risks ranked for the selected role.\n\n1 signal\n#1\n",
+  "sourceAfter": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "f7683a38ccac82f7797c6e5f6f335c548211a7309c070434fd0024d464d9784f"
+  },
+  "sourceStable": true
+}

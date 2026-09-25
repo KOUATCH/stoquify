@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-13T18:25:57.021Z",
+  "phase": "after",
+  "sourceBefore": {
+    "services/analytics/sales-analytics.service.ts": "9e1aaad390ba524e5fb837d72d69aab62b1fc61d6dcaaa15ab3f87563bb0860f",
+    "services/analytics/business-pulse-contracts.ts": "01e3fe9bf29e2fd4608f49d5f0506a1f923b8c9cf7fce3231779ef935d99977d",
+    "components/analytics/BusinessPulseDashboard.tsx": "80166e11c50b0eba95e441239638ebf65ea7348d4b24059f8b79b24433eefc47"
+  },
+  "checks": [
+    {
+      "name": "organization_currency",
+      "expected": "EUR",
+      "observed": "EUR"
+    },
+    {
+      "name": "calendar_period",
+      "passed": true
+    },
+    {
+      "name": "no_location_context",
+      "currency": "EUR",
+      "state": "blocked"
+    },
+    {
+      "name": "repeatable_snapshot_during_real_concurrent_close",
+      "reportedActive": 1,
+      "currentActive": 0,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "sourceAfter": {
+    "services/analytics/sales-analytics.service.ts": "9e1aaad390ba524e5fb837d72d69aab62b1fc61d6dcaaa15ab3f87563bb0860f",
+    "services/analytics/business-pulse-contracts.ts": "01e3fe9bf29e2fd4608f49d5f0506a1f923b8c9cf7fce3231779ef935d99977d",
+    "components/analytics/BusinessPulseDashboard.tsx": "80166e11c50b0eba95e441239638ebf65ea7348d4b24059f8b79b24433eefc47"
+  },
+  "sourceStable": true
+}

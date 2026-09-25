@@ -1,0 +1,74 @@
+{
+  "at": "2026-09-09T13:58:27.324Z",
+  "run": "cd6f9d68-553",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "29173e9bb84c695ceddfadcc99d019466330c3287210fcbe36f1eef2ab37587c",
+    "components/finance/PaymentSuspenseQueue.tsx": "8c2b36195e7c3c1381e3625908c0d5501ef1534777e038dd61d3f2639bddbf21",
+    "actions/payments/suspense-resolution.actions.ts": "f1005a1db5c4258b20d3ca6669a99455d0fe0397e84207afe1c01e1c3dc3f47b",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "26a84fadf8232881f64a5dcdf35517a74511201bf24a932cdf77b9f7820f4563",
+    "services/reconciliation/payment-suspense-resolution-read.contracts.ts": "58fac1515972b404f43f20d2b88bd93546f363fd739ac9f8354e223f78defd7f",
+    "services/reconciliation/payment-suspense-resolution.service.ts": "01e600364a7a75e64856c62b5cfe19fabf84fee85bd6b9f33a88109bdc9e91d2",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts": "05459e28fff50a6014abfe96336b5d8e16e37245e858f96bde00f8cefa799808",
+    "messages/en.json": "1ba4a24ed455b35700bd08d2d03fe956406aa48fbc38d50dee8eccb1f11cd045",
+    "messages/fr.json": "c2efe61b75691997dc603b077cf9a083b3e395b4375e3ff77fd99929b2f0c107"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "suspense-resolution-ui-v105-en-preview-desktop-cd6f9d68-553.png",
+        "suspense-resolution-ui-v105-en-preview-320-cd6f9d68-553.png",
+        "suspense-resolution-ui-v105-en-preview-768-cd6f9d68-553.png",
+        "suspense-resolution-ui-v105-en-resolved-cd6f9d68-553.png",
+        "suspense-resolution-ui-v105-en-recovered-history-cd6f9d68-553.png"
+      ],
+      "stages": [
+        "Actual maker searches/selects clearing journal, previews consequences and proposes; maker approval unavailable; desktop/mobile/tablet verified",
+        "Independent actual password step-up has no posting effect; reload restores exact approval request; explicit retry resolves without another journal",
+        "Previously final item discovered through retained history; separate reviewer authenticates, reloads and confirms recovery; exact clearing reversal and durable decision history visible"
+      ],
+      "pageErrors": [],
+      "routeLoadMs": [
+        27256,
+        17563,
+        21002
+      ],
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "suspense-resolution-ui-v105-fr-failure-cd6f9d68-553.png"
+      ],
+      "stages": [],
+      "pageErrors": [],
+      "routeLoadMs": [
+        12320
+      ],
+      "error": "locator.selectOption: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Résoudre ou rouvrir le compte d’attente', exact: true }).getByLabel('Résultat proposé', { exact: true })\u001b[22m\n",
+      "failureLocation": [
+        "    at journey (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-suspense-resolution-ui-v105.cjs:58:156)",
+        "    at async E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-suspense-resolution-ui-v105.cjs:81:124"
+      ]
+    }
+  ],
+  "scope": "Owned actual application. Normal password sign-in and step-up. Synthetic accounting setup; no live approval or external delivery.",
+  "originalBefore": "418e759840f6d3124cae252bbc740c71f021db214468b2afe7a5cbec80ce6609",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseResolutionPanel.tsx": "7eb72c8190fa9ac26de9f25ca24127485656f8ca14261e2018f136623ede825d",
+    "components/finance/PaymentSuspenseQueue.tsx": "8c2b36195e7c3c1381e3625908c0d5501ef1534777e038dd61d3f2639bddbf21",
+    "actions/payments/suspense-resolution.actions.ts": "f1005a1db5c4258b20d3ca6669a99455d0fe0397e84207afe1c01e1c3dc3f47b",
+    "services/reconciliation/payment-suspense-resolution-read.service.ts": "26a84fadf8232881f64a5dcdf35517a74511201bf24a932cdf77b9f7820f4563",
+    "services/reconciliation/payment-suspense-resolution-read.contracts.ts": "58fac1515972b404f43f20d2b88bd93546f363fd739ac9f8354e223f78defd7f",
+    "services/reconciliation/payment-suspense-resolution.service.ts": "01e600364a7a75e64856c62b5cfe19fabf84fee85bd6b9f33a88109bdc9e91d2",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "services/reconciliation/payment-suspense-resolution-recovery-evidence.service.ts": "05459e28fff50a6014abfe96336b5d8e16e37245e858f96bde00f8cefa799808",
+    "messages/en.json": "1ba4a24ed455b35700bd08d2d03fe956406aa48fbc38d50dee8eccb1f11cd045",
+    "messages/fr.json": "c2efe61b75691997dc603b077cf9a083b3e395b4375e3ff77fd99929b2f0c107"
+  },
+  "sourceStable": false
+}

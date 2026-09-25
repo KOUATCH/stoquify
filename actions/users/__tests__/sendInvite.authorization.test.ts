@@ -85,7 +85,14 @@ describe("sendInvite grant authorization", () => {
       actorPermissions: permissions,
       email: "user@example.com",
       roleId: "role-1",
-      roleName: "Cashier",
     })
+  })
+
+  it.each([null, undefined, {}, { email: 42, roleId: "role-1" }, { email: "bad", roleId: "role-1" }, { email: "user@example.invalid", roleId: "" }])("rejects malformed input after checking authority without invoking the service", async data => {
+    mockRequireAllPermissions.mockResolvedValue({ orgId: "org-1", userId: "admin-1", permissions: ["users.invite", "users.roles.assign"], user: { id: "admin-1", organizationId: "org-1" } })
+    expect(await sendInvite(data)).toMatchObject({ status: 400, code: "INVITATION_INPUT_INVALID", data: null })
+    expect(mockRequireFreshAuth).toHaveBeenCalledWith(300)
+    expect(mockSendInviteWorkflow).not.toHaveBeenCalled()
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled()
   })
 })

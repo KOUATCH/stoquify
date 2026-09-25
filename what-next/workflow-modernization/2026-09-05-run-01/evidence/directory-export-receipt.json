@@ -1,0 +1,180 @@
+{
+  "recordedAt": "2026-09-06T16:15:24.991Z",
+  "baseline": "evidence/source-baseline-v33.json",
+  "sources": {
+    "services/organization/organization-directory-input.ts": "a3091cfa11d5404cf1732481fc0e547efff470f7876dbcc95e6b0fa7c9dde98e",
+    "services/organization/organization-directory-export.service.ts": "20ac8eb07a632974307389cea64cc3bfce57b4ff741494f489618bd2fa4d64ac",
+    "services/organization/organization-settings.service.ts": "f63eae1907bf75d2244bc3acb531c55eecfa373ed95dbd2cc89122f4f79d7ea1",
+    "services/security/export-safety.service.ts": "9ca809ce39b3ae1b94610143bad050afed3a8d961cf6b1afcabf0276fb6945f3",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "actions/organization/organization-directory-export.actions.ts": "8600a2e0cb86bfb2d9d33857700fd89feea820ee0c86aa21f42fa5433b42561e",
+    "hooks/useOrganizationDirectoryExport.ts": "f963b92baa1fcdcb9d1c7a57fcc11f35911fb65acf71e63cb68d629a3a8a3efb",
+    "hooks/organization-directory-recovery.ts": "cf94f47cf9e3112fbc5f949d29ffea1bddbc0a29a38a1ba28a54c94b147936ee",
+    "components/settings/OrganizationDirectoryExport.tsx": "6d06133fb1f9334ebcd7311ca8a9515af75b1aa2f087ae018596f36b3535266e",
+    "components/settings/OrganizationManagementTable.tsx": "1f3097cd65ecaca67b9b10bb10b11ae0361071a49bf8b6bfdd8373b4425c6d08",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/__tests__/useOrganizationDirectoryExport.test.tsx": "5f2aa39541c3ea9278bbcdfa9d351002a21bfcf68fa50ce9b94b864dc06585ed",
+    "components/settings/__tests__/OrganizationDirectoryExport.workflow.test.tsx": "0405aac4dde17d8308d5ecf6f61277fd5c905cea25d1276ff123ee85b659b071",
+    "services/security/__tests__/export-safety.service.test.ts": "248796cc54210ede94c05a08e1718d4c5199c080419159ccb9d45c267223a357",
+    "services/organization/__tests__/organization-directory-export.service.test.ts": "737f56f77b5536615e7ebf9585d4598e1e11d1c2a1a5a69cfa50651ee53b29c4",
+    "services/users/__tests__/member-history.service.test.ts": "b3a9214b62f274cd45404304d669b2b5538025df509f49175b09d607c1ff58ca",
+    "services/organization/__tests__/organization-management-scope.service.test.ts": "aa7a50457205ca1fc05613ffe1de400a031185379b238d3718d037aafbe58edf",
+    "hooks/__tests__/organization-directory-recovery.test.ts": "2b5b1133c6b845192d7d37d97059e59de6c66e6dee60e4c7059a388e0a385168",
+    "actions/organization/__tests__/organization-directory-export.actions.test.ts": "fc86ac642e6f5ca098d86cc50d3a48d4d06480851f8c0a0f241e6643569c5f8f"
+  },
+  "scope": [
+    "OA-DIRECTORY",
+    "OA-DIRECTORY-EXPORT"
+  ],
+  "before": {
+    "file": "lanes/environment/organization-directory-before-95156237-87c.json",
+    "defectReproduced": true,
+    "workflowPassed": false,
+    "chunk": "2181c8",
+    "finding": "Read-only account downloaded CSV with no reports.export permission and zero controlled export audits."
+  },
+  "tests": {
+    "file": "evidence/directory-export-tests-02.json",
+    "passed": 87,
+    "failed": 0,
+    "suites": 8,
+    "chunk": "7f706b",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"hooks/__tests__/useOrganizationDirectoryExport.test.tsx\" \"components/settings/__tests__/OrganizationDirectoryExport.workflow.test.tsx\" \"services/security/__tests__/export-safety.service.test.ts\" \"services/organization/__tests__/organization-directory-export.service.test.ts\" \"services/users/__tests__/member-history.service.test.ts\" \"services/organization/__tests__/organization-management-scope.service.test.ts\" \"hooks/__tests__/organization-directory-recovery.test.ts\" \"actions/organization/__tests__/organization-directory-export.actions.test.ts\" --json --outputFile=evidence/directory-export-tests-02.json"
+  },
+  "postgres": {
+    "file": "lanes/environment/directory-export-postgres-82096455-a37.json",
+    "passed": 7,
+    "failed": 0,
+    "chunk": "68415f",
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-directory-export.cjs postgres",
+    "originalUnchanged": true,
+    "faultInjection": "One audit create throws inside a real database transaction; other checks use real records and locks."
+  },
+  "browser": {
+    "file": "lanes/environment/directory-export-browser-ccbdde7f-f3c.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "d39046",
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-directory-export.cjs browser",
+    "screenshots": [
+      "evidence/directory-export/en-directory-export-reader-denied-ccbdde7f-f3c.png",
+      "evidence/directory-export/en-directory-export-review-390-ccbdde7f-f3c.png",
+      "evidence/directory-export/en-directory-export-review-768-ccbdde7f-f3c.png",
+      "evidence/directory-export/en-directory-export-review-1440-ccbdde7f-f3c.png",
+      "evidence/directory-export/en-directory-export-prepared-ccbdde7f-f3c.png",
+      "evidence/directory-export/en-directory-export-interrupted-ccbdde7f-f3c.png",
+      "evidence/directory-export/en-directory-export-recovered-mobile-ccbdde7f-f3c.png",
+      "evidence/directory-export/en-directory-export-preview-failure-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-reader-denied-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-review-390-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-review-768-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-review-1440-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-prepared-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-interrupted-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-recovered-mobile-ccbdde7f-f3c.png",
+      "evidence/directory-export/fr-directory-export-preview-failure-ccbdde7f-f3c.png"
+    ],
+    "downloads": [
+      {
+        "file": "evidence/directory-export/en-directory-export-prepared-ccbdde7f-f3c.csv",
+        "bytes": 1097,
+        "sha256": "bbdac6b1cffb897bba23002d422bf169fca051045175d0eeec0c896fb81c11da"
+      },
+      {
+        "file": "evidence/directory-export/en-directory-export-download-again-ccbdde7f-f3c.csv",
+        "bytes": 1097,
+        "sha256": "bbdac6b1cffb897bba23002d422bf169fca051045175d0eeec0c896fb81c11da"
+      },
+      {
+        "file": "evidence/directory-export/en-directory-export-recovered-ccbdde7f-f3c.csv",
+        "bytes": 1097,
+        "sha256": "65a37b4ea5fa4bf069df5e1bdbeb598cb495c81a0957bd501e9985411db0a1fc"
+      },
+      {
+        "file": "evidence/directory-export/fr-directory-export-prepared-ccbdde7f-f3c.csv",
+        "bytes": 1181,
+        "sha256": "e9edd2cacdb35d6ec0f58a3161c16ca677e46b3299b8272bfdf08d295fb4f8d2"
+      },
+      {
+        "file": "evidence/directory-export/fr-directory-export-download-again-ccbdde7f-f3c.csv",
+        "bytes": 1181,
+        "sha256": "e9edd2cacdb35d6ec0f58a3161c16ca677e46b3299b8272bfdf08d295fb4f8d2"
+      },
+      {
+        "file": "evidence/directory-export/fr-directory-export-recovered-ccbdde7f-f3c.csv",
+        "bytes": 1181,
+        "sha256": "46a5383e15bd7043dc2c2aec83b48f0adcd222143d0b8b07ec86da1b3b4005c9"
+      }
+    ],
+    "originalUnchanged": true,
+    "credentialUrlRequests": 0,
+    "faultInjection": "Browser drops acknowledgement after actual committed export; separately returns HTTP 503 for one preview request."
+  },
+  "verification": {
+    "typecheckAndProductionLint": {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false; node node_modules/eslint/bin/eslint.js services/organization/organization-directory-input.ts services/organization/organization-directory-export.service.ts services/organization/organization-settings.service.ts services/security/export-safety.service.ts actions/organization/organization-directory-export.actions.ts hooks/useOrganizationDirectoryExport.ts hooks/organization-directory-recovery.ts components/settings/OrganizationDirectoryExport.tsx components/settings/OrganizationManagementTable.tsx",
+      "exitCode": 0,
+      "diagnostics": [],
+      "chunk": "355448",
+      "individualProcessExitCodes": "Not separately captured; combined shell command returned 0 with no diagnostics."
+    },
+    "testLint": {
+      "command": "node node_modules/eslint/bin/eslint.js hooks/__tests__/useOrganizationDirectoryExport.test.tsx components/settings/__tests__/OrganizationDirectoryExport.workflow.test.tsx services/security/__tests__/export-safety.service.test.ts services/organization/__tests__/organization-directory-export.service.test.ts services/organization/__tests__/organization-management-scope.service.test.ts hooks/__tests__/organization-directory-recovery.test.ts actions/organization/__tests__/organization-directory-export.actions.test.ts",
+      "status": "passed",
+      "exitCode": 0,
+      "chunk": "5c6552"
+    },
+    "boundaries": {
+      "file": "evidence/directory-export-boundaries.json",
+      "passed": 9,
+      "failed": 0
+    }
+  },
+  "failedAttempts": [
+    {
+      "chunks": [
+        "c4d9ac",
+        "144f85"
+      ],
+      "assertionsPassed": 52,
+      "result": "Jest assertions passed; exit 1 occurred when filesystem restrictions prevented saving JSON output. Final escalated consolidated run retained its receipt."
+    },
+    {
+      "file": "evidence/directory-export-ui-tests-01.json",
+      "chunk": "aa0da3",
+      "passed": 0,
+      "result": "Decorative lucide ESM import was incompatible with Jest configuration. Added icon stubs without replacing the actual dialog; seven UI tests then passed and are included in final 87."
+    },
+    {
+      "chunk": "1359ae",
+      "result": "Evidence publication stopped before writes because its assertion treated every scanner entry as a violation. Read-only diagnostic 22afa1 showed all nine entries explicitly classified allowed SERVICE_LAYER_OWNER. The publisher now rejects every disallowed entry while retaining all classifications. Application source and scanner rules were unchanged."
+    }
+  ],
+  "performance": {
+    "classification": "Owned development observations only",
+    "routeReadyMs": [
+      {
+        "locale": "en",
+        "value": 8409
+      },
+      {
+        "locale": "fr",
+        "value": 9794
+      }
+    ]
+  },
+  "remaining": [
+    "Native screen-reader, actual browser zoom and comprehensive contrast verification are still open.",
+    "Session-storage recovery lasts 24 hours in the same tab; tab-close recovery and operator-facing export history need separate review.",
+    "Formal retention/hold/revocation policy and organization-delete audit cascades remain open.",
+    "Full shell permission refresh, continuously active cross-tab updates, personal-account administration and other platform workflows remain open.",
+    "The local development timing observations do not establish a production budget, load assurance or before/after performance improvement.",
+    "Previously rejected global authentication/provider hooks and live invitation-delivery adapter remain unapplied."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

@@ -7,6 +7,14 @@ import {
 } from "../export-safety.service"
 
 describe("Kontava export safety service", () => {
+  it("retains a supplied durable audit ID without changing ordinary audit IDs", async () => {
+    const tx = { auditLog: { create: jest.fn() } } as unknown as Prisma.TransactionClient
+    const decision = evaluateExportSafety({ action: "report.export", actorId: "actor", organizationId: "org", actorPermissions: ["reports.export"], lastAuthAt: Date.now(), exportContext: { scope: "ORGANIZATION_DIRECTORY", filtersHash: "reviewed", rowCount: 1, fileType: "csv", sensitivity: "financial", watermarkId: "wm-reviewed" } })
+    await auditExportSafetyDecision(tx, decision, "durable-request-id")
+    expect(tx.auditLog.create).toHaveBeenLastCalledWith(expect.objectContaining({ data: expect.objectContaining({ id: "durable-request-id" }) }))
+    await auditExportSafetyDecision(tx, decision)
+    expect((tx.auditLog.create as jest.Mock).mock.calls[1][0].data).not.toHaveProperty("id")
+  })
   it("requires fresh authentication before controlled accounting exports", () => {
     const decision = evaluateExportSafety({
       action: "accounting.export",

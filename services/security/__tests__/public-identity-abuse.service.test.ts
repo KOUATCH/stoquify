@@ -43,6 +43,17 @@ describe("public identity abuse service", () => {
     expect(first).not.toContain("owner@example.com")
   })
 
+  it("blocks a fourth resend within the existing fifteen-minute subject window", async () => {
+    const now = new Date("2026-09-05T12:00:00Z")
+    const tx = { publicIdentityAbuseBucket: {
+      findUnique: jest.fn().mockResolvedValue({ id: "resend-bucket", windowStartedAt: new Date("2026-09-05T11:59:00Z"), requestCount: 3, blockedUntil: null }),
+      update: jest.fn(),
+    } }
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    expect(await enforcePublicIdentityAbuseLimits({ operation: "email_otp_resend", subject: "user-1", now })).toMatchObject({ allowed: false, operation: "email_otp_resend", retryAfterSeconds: 1800 })
+    expect(tx.publicIdentityAbuseBucket.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ requestCount: 4, blockedUntil: new Date("2026-09-05T12:30:00Z") }) }))
+  })
+
   it("starts a new window and blocks the first request above the policy maximum", () => {
     const now = new Date("2026-07-11T12:00:00.000Z")
     const allowed = evaluatePublicIdentityAbuseBucket({

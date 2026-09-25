@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-09T08:34:38.078Z",
+  "mode": "after",
+  "run": "931aa4ee-b5f",
+  "checks": [
+    "Actual approved suspense posting starts with consistent operational and ledger evidence",
+    "Generic reversal is durably refused without changing suspense, journals, batches, source links or notification evidence",
+    "Repeated refusal preserves ledger consistency and does not post a reversal",
+    "Foreign tenant cannot reach or alter the source journal"
+  ],
+  "sourcesBefore": {
+    "services/accounting/posting.service.ts": "f426c9c00125f4db4d256e782129e511aa51ec6e3e0e226efe9defa118b1abcf",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+  },
+  "scope": "Owned PostgreSQL; synthetic posted suspense and controlled generic reversal reproduction. No live customer data or professional approval.",
+  "originalBefore": "4938feca6399517cc6ccc2de8c9ec201765caf7f367e332b690b5d15548870f2",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/posting.service.ts": "f426c9c00125f4db4d256e782129e511aa51ec6e3e0e226efe9defa118b1abcf",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+  },
+  "sourceStable": true
+}

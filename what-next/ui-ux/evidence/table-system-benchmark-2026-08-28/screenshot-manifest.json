@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-08-28",
+  "captures": [],
+  "status": "not-captured",
+  "reason": "No approved authenticated competitor tenant or Stoquify seeded demo session was available. Public documentation images were not copied into the repository because they do not establish runtime behavior and redistribution permission was not independently verified.",
+  "existingLocalEvidence": {
+    "path": "what-next/ui-ux/ui-route-smoke-2026-08-06.json",
+    "scope": "public routes only",
+    "usableForAuthenticatedTableClaims": false
+  },
+  "recommendedFutureCaptures": [
+    { "route": "/dashboard/inventory/items", "viewports": ["1440x900", "1024x768", "390x844"], "states": ["default", "filtered", "selected", "empty-filtered", "permission-denied"] },
+    { "route": "/dashboard/purchase-orders", "viewports": ["1440x900", "1024x768", "390x844"], "states": ["default", "saved-view", "bulk-action", "partial-failure"] },
+    { "route": "/dashboard/finance/reconciliation", "viewports": ["1440x900", "1024x768", "390x844"], "states": ["default", "filtered", "exception", "evidence", "module-locked"] }
+  ]
+}
+

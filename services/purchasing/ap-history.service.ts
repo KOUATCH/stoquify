@@ -6,6 +6,8 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { BusinessRuleError, ConflictError } from "@/services/_shared/action-errors"
+import { readAPHistorySourceRevision, type APHistoryRevisionClient } from "./ap-history-revision"
 import {
   configuredHistoryCursorCodec,
   hashNormalizedHistoryFilters,
@@ -19,14 +21,19 @@ import {
 import { evaluateRedaction, type AppliedRedaction } from "@/services/security/redaction-policy.service"
 import { apHistoryInputSchema, type APHistoryInput } from "./ap-history.schemas"
 
-const AP_HISTORY_ADAPTER_ID = "supplier-ap-history.v1"
+import { dailySalesPeriod } from "@/services/analytics/daily-sales-period"
+import { resolveAPHistoryFinancials, type APCurrencyTotals, type APMovement } from "./ap-history-financial"
+
+const AP_HISTORY_ADAPTER_ID = "supplier-ap-history.v3"
 
 type APHistoryClient = Pick<
   Prisma.TransactionClient,
-  "organization" | "supplierInvoice" | "supplierPayment"
->
+  "organization" | "supplierInvoice" | "supplierPayment" | "supplierLedgerEntry"
+> & APHistoryRevisionClient
 
 export type APHistoryOptions = {
+  /** Internal export ceiling, never accepted from URL/action input. Rejects rather than truncates. */
+  exportRowLimit?: number
   client?: APHistoryClient
   cursorCodec?: HistoryCursorCodec
   now?: () => Date
@@ -53,7 +60,9 @@ export type APHistoryRow = {
   sourceId: string
   supplier: { id: string; name: string }
   amount: string
-  signedPayableMovement: string
+  signedPayableMovement: string | null
+  movementState: APMovement["state"]
+  retained: boolean
   currency: string
   effectiveAt: string
   recordedAt: string
@@ -83,10 +92,13 @@ export type APHistorySummary = {
   transactionCount: number
   invoiceCount: number
   paymentCount: number
-  invoiceTotal: string
-  paidTotal: string
-  releasedPaymentTotal: string
-  openPayable: string
+  invoiceTotal: string | null
+  paidTotal: string | null
+  releasedPaymentTotal: string | null
+  openPayable: string | null
+  currencyTotals: APCurrencyTotals[]
+  unverifiedCount: number
+  financialBasis: "current_remainder_of_filtered_recognized_invoices"
   postedInvoiceCount: number
   releasedPaymentCount: number
   ledgerBlockerCount: number
@@ -97,7 +109,7 @@ export type APHistoryResult = TransactionHistoryResult<
   APHistoryRow,
   APHistorySummary,
   APHistoryAppliedFilters
->
+> & { scope: { organizationId: string; actorUserId: string } }
 
 type InvoiceRow = Prisma.SupplierInvoiceGetPayload<{
   include: { supplier: { select: { id: true; name: true } } }
@@ -134,21 +146,9 @@ function decimalText(value: Prisma.Decimal | Prisma.Decimal.Value | null | undef
   return decimal(value).toFixed(2)
 }
 
-function parseCalendarDate(value: string) {
-  const parsed = new Date(`${value}T00:00:00.000Z`)
-  if (Number.isNaN(parsed.getTime())) invalidHistoryInput(`Invalid calendar date: ${value}.`)
-  return parsed
-}
-
-function addDay(value: Date) {
-  const next = new Date(value)
-  next.setUTCDate(next.getUTCDate() + 1)
-  return next
-}
-
 function historyCompleteness(): HistoryCompleteness {
   return {
-    state: "complete",
+    state: "partial",
     sources: [
       { source: "supplier_invoices", state: "complete" },
       { source: "supplier_payments", state: "complete" },
@@ -162,26 +162,26 @@ function historyCompleteness(): HistoryCompleteness {
   }
 }
 
-function invoiceCursorPredicate(payload: { effectiveAt: string; recordedAt: string; id: string }) {
+function invoiceCursorPredicate(payload: { effectiveAt: string; recordedAt: string }, position: { lane: string; id: string }) {
   const effectiveAt = new Date(payload.effectiveAt)
   const recordedAt = new Date(payload.recordedAt)
   return {
     OR: [
       { invoiceDate: { lt: effectiveAt } },
       { invoiceDate: effectiveAt, createdAt: { lt: recordedAt } },
-      { invoiceDate: effectiveAt, createdAt: recordedAt, id: { lt: payload.id } },
+      ...(position.lane === "invoice" ? [{ invoiceDate: effectiveAt, createdAt: recordedAt, id: { lt: position.id } }] : []),
     ],
   }
 }
 
-function paymentCursorPredicate(payload: { effectiveAt: string; recordedAt: string; id: string }) {
+function paymentCursorPredicate(payload: { effectiveAt: string; recordedAt: string }, position: { lane: string; id: string }) {
   const effectiveAt = new Date(payload.effectiveAt)
   const recordedAt = new Date(payload.recordedAt)
   return {
     OR: [
       { paymentDate: { lt: effectiveAt } },
       { paymentDate: effectiveAt, createdAt: { lt: recordedAt } },
-      { paymentDate: effectiveAt, createdAt: recordedAt, id: { lt: payload.id } },
+      { paymentDate: effectiveAt, createdAt: recordedAt, ...(position.lane === "payment" ? { id: { lt: position.id } } : {}) },
     ],
   }
 }
@@ -251,6 +251,7 @@ export async function readAPHistory(
   options: APHistoryOptions = {},
 ): Promise<APHistoryResult> {
   const parsed = apHistoryInputSchema.parse(rawInput)
+  if (!options.client) return db.$transaction(tx => readAPHistory(parsed, { ...options, client: tx }), { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead, timeout: 20000 })
   const client = options.client ?? db
   const generatedAt = (options.now ?? (() => new Date()))()
   const organization = await client.organization.findFirst({
@@ -260,8 +261,10 @@ export async function readAPHistory(
   if (!organization) invalidHistoryInput("Organization AP history scope was not found.")
 
   const filters = parsed.filters ?? { pageSize: 50 }
-  const dateStart = filters.dateFrom ? parseCalendarDate(filters.dateFrom) : undefined
-  const dateEnd = filters.dateTo ? addDay(parseCalendarDate(filters.dateTo)) : undefined
+  const rowLimit = options.exportRowLimit ?? filters.pageSize
+  if (!Number.isInteger(rowLimit) || rowLimit < 1 || rowLimit > 5000 || (options.exportRowLimit && filters.cursor)) invalidHistoryInput("Invalid export row boundary.")
+  const dateStart = filters.dateFrom ? dailySalesPeriod(filters.dateFrom, organization.timezone).start : undefined
+  const dateEnd = filters.dateTo ? dailySalesPeriod(filters.dateTo, organization.timezone).endExclusive : undefined
   if (dateStart && dateEnd && dateStart.getTime() >= dateEnd.getTime()) {
     invalidHistoryInput("dateFrom must not be later than dateTo.")
   }
@@ -281,16 +284,22 @@ export async function readAPHistory(
     effectiveAsOf: effectiveAsOf?.toISOString() ?? null,
     timezone: organization.timezone,
   }
-  const filterHash = hashNormalizedHistoryFilters(filterIdentity)
+  let filterHash = hashNormalizedHistoryFilters(filterIdentity)
   const cursorCodec = options.cursorCodec ?? configuredHistoryCursorCodec()
   const cursorPayload = filters.cursor ? cursorCodec.decode(filters.cursor) : undefined
   if (
     cursorPayload &&
-    (cursorPayload.tenantId !== organization.id ||
-      cursorPayload.adapterId !== AP_HISTORY_ADAPTER_ID ||
-      cursorPayload.filterHash !== filterHash)
+    cursorPayload.tenantId !== organization.id
   ) {
     invalidHistoryInput("AP history cursor does not match the trusted tenant or filters.")
+  }
+  if (cursorPayload && cursorPayload.adapterId !== AP_HISTORY_ADAPTER_ID) throw new ConflictError("AP history version changed. Refresh from the first page.")
+  let cursorPosition: { lane: "invoice" | "payment"; id: string } | undefined
+  if (cursorPayload) {
+    let position: unknown
+    try { position = JSON.parse(cursorPayload.id) } catch { invalidHistoryInput("Invalid AP cursor position.") }
+    if (!Array.isArray(position) || position.length !== 2 || !["invoice", "payment"].includes(position[0]) || typeof position[1] !== "string" || !position[1]) invalidHistoryInput("Invalid AP cursor position.")
+    cursorPosition = { lane: position[0], id: position[1] }
   }
 
   const recordedThrough = cursorPayload
@@ -314,24 +323,24 @@ export async function readAPHistory(
 
   const invoiceBaseWhere: Prisma.SupplierInvoiceWhereInput = {
     organizationId: organization.id,
-    deletedAt: null,
+    createdAt: { lte: recordedThrough },
     invoiceDate,
     ...(filters.supplierId ? { supplierId: filters.supplierId } : {}),
     ...(filters.invoiceStatus ? { status: filters.invoiceStatus } : {}),
   }
   const paymentBaseWhere: Prisma.SupplierPaymentWhereInput = {
     organizationId: organization.id,
-    deletedAt: null,
+    createdAt: { lte: recordedThrough },
     paymentDate,
     ...(filters.supplierId ? { supplierId: filters.supplierId } : {}),
     ...(filters.paymentStatus ? { status: filters.paymentStatus } : {}),
     ...(filters.paymentMethod ? { method: filters.paymentMethod } : {}),
   }
   const invoiceWhere: Prisma.SupplierInvoiceWhereInput = cursorPayload
-    ? { AND: [invoiceBaseWhere, invoiceCursorPredicate(cursorPayload)] }
+    ? { AND: [invoiceBaseWhere, invoiceCursorPredicate(cursorPayload, cursorPosition!)] }
     : invoiceBaseWhere
   const paymentWhere: Prisma.SupplierPaymentWhereInput = cursorPayload
-    ? { AND: [paymentBaseWhere, paymentCursorPredicate(cursorPayload)] }
+    ? { AND: [paymentBaseWhere, paymentCursorPredicate(cursorPayload, cursorPosition!)] }
     : paymentBaseWhere
 
   const readInvoices = (filters.lane ?? "all") !== "payment"
@@ -343,7 +352,7 @@ export async function readAPHistory(
           where: invoiceWhere,
           include: { supplier: { select: { id: true, name: true } } },
           orderBy: [{ invoiceDate: "desc" }, { createdAt: "desc" }, { id: "desc" }],
-          take: filters.pageSize + 1,
+          take: rowLimit + 1,
         })
       : Promise.resolve([]),
     readPayments
@@ -361,22 +370,33 @@ export async function readAPHistory(
             },
           },
           orderBy: [{ paymentDate: "desc" }, { createdAt: "desc" }, { id: "desc" }],
-          take: filters.pageSize + 1,
+          take: rowLimit + 1,
         })
       : Promise.resolve([]),
     readInvoices
       ? client.supplierInvoice.findMany({
           where: invoiceBaseWhere,
-          select: { status: true, total: true, amountPaid: true, ledgerPostingBatchId: true },
+          include: { paymentAllocations: { include: { supplierPayment: true } }, supplierCreditNotes: true },
+          ...(options.exportRowLimit ? { take: rowLimit + 1 } : {}),
         })
       : Promise.resolve([]),
     readPayments
       ? client.supplierPayment.findMany({
           where: paymentBaseWhere,
-          select: { status: true, amount: true, ledgerPostingBatchId: true },
+          ...(options.exportRowLimit ? { take: rowLimit + 1 } : {}),
         })
       : Promise.resolve([]),
   ])
+
+  if (options.exportRowLimit && invoiceSummaryRows.length + paymentSummaryRows.length > rowLimit) {
+    throw new BusinessRuleError("Export exceeds 5000 rows. Narrow the date or supplier filters.")
+  }
+
+  if ([...invoiceSummaryRows, ...paymentSummaryRows].some(row => row.updatedAt > recordedThrough)) {
+    throw new ConflictError("AP source records changed after this read boundary. Refresh history to obtain a current view.")
+  }
+  const financial = await resolveAPHistoryFinancials(client, organization.id, invoiceSummaryRows, paymentSummaryRows, recordedThrough, organization.currency)
+  const singleCurrency = financial.currencyTotals.length === 1 ? financial.currencyTotals[0] : null
 
   const combined: CombinedRow[] = [
     ...invoiceRows.map((row) => ({
@@ -398,11 +418,17 @@ export async function readAPHistory(
     if (effective !== 0) return effective
     const recorded = right.recordedAt.getTime() - left.recordedAt.getTime()
     if (recorded !== 0) return recorded
-    return right.id.localeCompare(left.id)
+    // Stable sort preserves each table's database ID ordering. Lane resolves cross-table ID collisions.
+    return left.lane === right.lane ? 0 : left.lane === "invoice" ? -1 : 1
   })
 
-  const pageRows = combined.slice(0, filters.pageSize)
-  const hasMore = combined.length > filters.pageSize
+  const pageRows = combined.slice(0, rowLimit)
+  const hasMore = combined.length > rowLimit
+  if (hasMore || cursorPayload) {
+    const revision = await readAPHistorySourceRevision(client, organization.id)
+    filterHash = hashNormalizedHistoryFilters({ filters: filterIdentity, currency: organization.currency, permissions: [...parsed.actorPermissions].sort(), revision })
+    if (cursorPayload && cursorPayload.filterHash !== filterHash) throw new ConflictError("AP history sources or scope changed. Refresh from the first page.")
+  }
   const lastRow = pageRows.at(-1)
   const nextCursor =
     hasMore && lastRow
@@ -415,7 +441,7 @@ export async function readAPHistory(
           recordedThrough: recordedThrough.toISOString(),
           effectiveAt: lastRow.effectiveAt.toISOString(),
           recordedAt: lastRow.recordedAt.toISOString(),
-          id: lastRow.id,
+          id: JSON.stringify([lastRow.lane, lastRow.id]),
         })
       : null
 
@@ -429,7 +455,9 @@ export async function readAPHistory(
         sourceId: entry.row.id,
         supplier: entry.row.supplier,
         amount: decimalText(total),
-        signedPayableMovement: decimalText(total),
+        signedPayableMovement: financial.movements.get(`invoice:${entry.row.id}`)?.amount ?? null,
+        movementState: financial.movements.get(`invoice:${entry.row.id}`)?.state ?? "unverified",
+        retained: entry.row.deletedAt !== null,
         currency: entry.row.currency,
         effectiveAt: entry.effectiveAt.toISOString(),
         recordedAt: entry.recordedAt.toISOString(),
@@ -461,7 +489,9 @@ export async function readAPHistory(
       sourceId: entry.row.id,
       supplier: entry.row.supplier,
       amount: decimalText(amount),
-      signedPayableMovement: decimalText(amount.neg()),
+      signedPayableMovement: financial.movements.get(`payment:${entry.row.id}`)?.amount ?? null,
+      movementState: financial.movements.get(`payment:${entry.row.id}`)?.state ?? "unverified",
+      retained: entry.row.deletedAt !== null,
       currency: entry.row.currency,
       effectiveAt: entry.effectiveAt.toISOString(),
       recordedAt: entry.recordedAt.toISOString(),
@@ -488,17 +518,6 @@ export async function readAPHistory(
     }
   })
 
-  const invoiceTotal = invoiceSummaryRows.reduce(
-    (total, row) => total.plus(decimal(row.total)),
-    new Prisma.Decimal(0),
-  )
-  const paidTotal = invoiceSummaryRows.reduce(
-    (total, row) => total.plus(decimal(row.amountPaid)),
-    new Prisma.Decimal(0),
-  )
-  const releasedPaymentTotal = paymentSummaryRows
-    .filter((row) => RELEASED_PAYMENT_STATUSES.has(row.status))
-    .reduce((total, row) => total.plus(decimal(row.amount)), new Prisma.Decimal(0))
   const postedInvoiceCount = invoiceSummaryRows.filter((row) =>
     POSTED_INVOICE_STATUSES.has(row.status),
   ).length
@@ -515,6 +534,7 @@ export async function readAPHistory(
     ).length
 
   return {
+    scope: { organizationId: organization.id, actorUserId: parsed.actorUserId },
     rows,
     pageInfo: { nextCursor, hasMore },
     appliedFilters: {
@@ -525,14 +545,17 @@ export async function readAPHistory(
       transactionCount: invoiceSummaryRows.length + paymentSummaryRows.length,
       invoiceCount: invoiceSummaryRows.length,
       paymentCount: paymentSummaryRows.length,
-      invoiceTotal: decimalText(invoiceTotal),
-      paidTotal: decimalText(paidTotal),
-      releasedPaymentTotal: decimalText(releasedPaymentTotal),
-      openPayable: decimalText(invoiceTotal.minus(paidTotal)),
+      invoiceTotal: singleCurrency?.invoiceTotal ?? null,
+      paidTotal: singleCurrency?.paidTotal ?? null,
+      releasedPaymentTotal: singleCurrency?.releasedPaymentTotal ?? null,
+      openPayable: singleCurrency?.openPayable ?? null,
+      currencyTotals: financial.currencyTotals,
+      unverifiedCount: financial.unverifiedCount,
+      financialBasis: "current_remainder_of_filtered_recognized_invoices",
       postedInvoiceCount,
       releasedPaymentCount,
       ledgerBlockerCount,
-      currency: organization.currency,
+      currency: singleCurrency?.currency ?? organization.currency,
     },
     snapshot: {
       ...(effectiveAsOf ? { effectiveAsOf: effectiveAsOf.toISOString() } : {}),

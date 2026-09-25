@@ -4,15 +4,15 @@ import { Prisma } from "@prisma/client"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   MODULE_CONTROL_MODE,
+  isCommercialModuleSlug,
   type CommercialModuleSlug,
   type ModuleAccessObserveInput,
   type ModuleControlCenterData,
   type ModuleEntitlementDecision,
   type ModuleEntitlementEvaluationInput,
-  type ModuleEntitlementStatus,
   type TenantModuleActivationResult,
   type TenantModuleEntitlement,
 } from "./module-control-contracts"
@@ -21,8 +21,29 @@ import {
   getModuleCatalogEntry,
   normalizeRequestedModuleSlugs,
 } from "./module-catalog.service"
-
-const READ_ONLY_ALLOWED_SURFACES = new Set(["navigation", "page", "report"])
+/** A configuration row establishes managed-grant authority, including zero grants.
+ * Failed reads must propagate; they must never restore legacy access. */
+export async function getManagedModuleState(organizationId: string, client: Prisma.TransactionClient = db) {
+  const [configuration, grants] = await Promise.all([
+    client.tenantModuleConfiguration.findUnique({ where: { organizationId } }),
+    client.tenantModuleGrant.findMany({ where: { organizationId } }),
+  ])
+  if (!configuration) {
+    const retainedCommands = await client.tenantModuleConfigurationCommand.count({ where: { organizationId } })
+    if (grants.length || retainedCommands) throw new ConflictError("Module grants and history require their retained configuration record")
+    return { configuration: null, explicitEntitlements: undefined }
+  }
+  const explicitEntitlements: TenantModuleEntitlement[] = grants.filter((grant) => isCommercialModuleSlug(grant.moduleSlug)).map((grant) => ({
+    moduleSlug: grant.moduleSlug as CommercialModuleSlug,
+    status: grant.status as TenantModuleEntitlement["status"],
+    source: grant.source as TenantModuleEntitlement["source"],
+    startsAt: grant.startsAt?.toISOString() ?? null,
+    endsAt: grant.endsAt?.toISOString() ?? null,
+    readOnly: grant.readOnly,
+    trial: grant.trial,
+  }))
+  return { configuration, explicitEntitlements }
+}
 
 export function deriveLegacyEntitlements(input: {
   requestedModules?: readonly string[] | null
@@ -32,7 +53,7 @@ export function deriveLegacyEntitlements(input: {
   normalizedRequestedModules: CommercialModuleSlug[]
   unknownRequestedModules: string[]
 } {
-  if (input.explicitEntitlements?.length) {
+  if (input.explicitEntitlements != null) {
     return {
       entitlements: [...input.explicitEntitlements],
       normalizedRequestedModules: input.explicitEntitlements.map((item) => item.moduleSlug),
@@ -74,16 +95,29 @@ export function evaluateModuleEntitlement(input: ModuleEntitlementEvaluationInpu
     requestedModules: input.requestedModules,
     explicitEntitlements: input.explicitEntitlements,
   })
-  const entitlements = new Map(derived.entitlements.map((item) => [item.moduleSlug, item]))
+  const entitlements = new Map<CommercialModuleSlug, TenantModuleEntitlement>()
+  const duplicates = new Set<CommercialModuleSlug>()
+  for (const grant of derived.entitlements) {
+    if (entitlements.has(grant.moduleSlug)) duplicates.add(grant.moduleSlug)
+    entitlements.set(grant.moduleSlug, grant)
+  }
   const entitlement = entitlements.get(input.moduleSlug) ?? null
+  const supportsOperation = (slug: CommercialModuleSlug, path = new Set<CommercialModuleSlug>()): boolean => {
+    if (path.has(slug) || duplicates.has(slug)) return false
+    const entry = getModuleCatalogEntry(slug)
+    if (!entry || entitlementBlockReason(entitlements.get(slug) ?? null, accessIntent, now)) return false
+    const nextPath = new Set(path).add(slug)
+    return entry.dependencies.every((dependency) => dependency.dependencyType !== "required" || supportsOperation(dependency.dependsOnSlug, nextPath))
+  }
   const requiredMissingDependencies = (catalogEntry?.dependencies ?? []).filter(
-    (dependency) => dependency.dependencyType === "required" && !entitlements.has(dependency.dependsOnSlug),
+    (dependency) => dependency.dependencyType === "required" && !supportsOperation(dependency.dependsOnSlug, new Set([input.moduleSlug])),
   )
 
-  const status = entitlement?.status ?? "unavailable"
-  const statusWouldBlock = statusBlocksAccess(status, input.surfaceType, accessIntent)
+  const blockReason = duplicates.has(input.moduleSlug)
+    ? "Duplicate module grants are ambiguous and require reconciliation."
+    : entitlementBlockReason(entitlement, accessIntent, now)
   const dependencyWouldBlock = requiredMissingDependencies.length > 0
-  const wouldBlock = !catalogEntry || !entitlement || statusWouldBlock || dependencyWouldBlock
+  const wouldBlock = !catalogEntry || Boolean(blockReason) || dependencyWouldBlock
   const rbacWildcardPresent = Boolean(input.actorPermissions?.includes("*"))
   const allowed = mode === "observe" ? true : !wouldBlock
   const result = wouldBlock ? (mode === "observe" ? "would_block" : "deny") : "allow"
@@ -99,30 +133,28 @@ export function evaluateModuleEntitlement(input: ModuleEntitlementEvaluationInpu
     result,
     allowed,
     wouldBlock,
-    reason: decisionReason({
-      catalogFound: Boolean(catalogEntry),
-      entitlement,
-      status,
-      dependencyCount: requiredMissingDependencies.length,
-      accessIntent,
-    }),
+    reason: !catalogEntry ? "Module is not in the canonical catalog." : blockReason ??
+      (dependencyWouldBlock ? "Required module dependencies are missing or unavailable for this operation." : "Tenant module entitlement is available."),
     entitlement,
     missingDependencies: requiredMissingDependencies,
     rbacWildcardPresent,
     rbacWildcardBypassedEntitlement: false,
-    hardEnforcementEnabled: false,
+    hardEnforcementEnabled: mode === "enforce",
     evaluatedAt: now.toISOString(),
   }
 }
 
 export async function observeModuleAccess(input: ModuleAccessObserveInput): Promise<ModuleEntitlementDecision> {
   const organization = await db.organization.findFirst({
-    where: { id: input.organizationId, deletedAt: null },
+    where: { id: input.organizationId, isActive: true, deletedAt: null },
     select: { id: true, requestedModules: true },
   })
+  if (!organization) throw new NotFoundError("Organization not found")
+  const managed = await getManagedModuleState(organization.id)
   const decision = evaluateModuleEntitlement({
     ...input,
-    requestedModules: input.requestedModules ?? organization?.requestedModules ?? [],
+    explicitEntitlements: managed.explicitEntitlements ?? input.explicitEntitlements,
+    requestedModules: input.requestedModules ?? organization.requestedModules,
     mode: input.mode ?? MODULE_CONTROL_MODE,
   })
 
@@ -133,6 +165,34 @@ export async function observeModuleAccess(input: ModuleAccessObserveInput): Prom
   return decision
 }
 
+/** Evaluate persisted authority inside the caller's write transaction. The
+ * organization lock uses the same order as composition changes, including the
+ * first transition from legacy intent to managed grants. Audit/denial handling
+ * belongs to the caller so a denial can be committed without business effects. */
+export async function evaluateModuleAccessInTx(
+  tx: Prisma.TransactionClient,
+  input: Omit<ModuleEntitlementEvaluationInput, "requestedModules" | "explicitEntitlements" | "now">,
+): Promise<ModuleEntitlementDecision> {
+  const organizations = await tx.$queryRaw<Array<{ id: string; requestedModules: string[] }>>(Prisma.sql`
+    SELECT "id", "requestedModules" FROM "organizations"
+    WHERE "id" = ${input.organizationId} AND "isActive" = true AND "deletedAt" IS NULL
+    FOR SHARE`)
+  if (organizations.length !== 1) throw new NotFoundError("Organization not found")
+  // Lock stored authority too: Serializable snapshots established while waiting
+  // on the organization lock must retry if a grant changed in the meantime.
+  await tx.$queryRaw(Prisma.sql`SELECT "organizationId" FROM "tenant_module_configurations"
+    WHERE "organizationId" = ${input.organizationId} FOR SHARE`)
+  await tx.$queryRaw(Prisma.sql`SELECT "id" FROM "tenant_module_grants"
+    WHERE "organizationId" = ${input.organizationId} ORDER BY "moduleSlug", "id" FOR SHARE`)
+  const managed = await getManagedModuleState(input.organizationId, tx)
+  return evaluateModuleEntitlement({
+    ...input,
+    requestedModules: organizations[0].requestedModules,
+    explicitEntitlements: managed.explicitEntitlements,
+    now: new Date(),
+  })
+}
+
 export async function getModuleControlCenterData(input: {
   organizationId: string
   actorId?: string | null
@@ -141,15 +201,17 @@ export async function getModuleControlCenterData(input: {
 }): Promise<ModuleControlCenterData> {
   const now = normalizeNow(input.now)
   const organization = await db.organization.findFirst({
-    where: { id: input.organizationId, deletedAt: null },
+    where: { id: input.organizationId, isActive: true, deletedAt: null },
     select: {
       id: true,
       name: true,
       requestedModules: true,
     },
   })
-  const requestedModules = organization?.requestedModules ?? []
-  const derived = deriveLegacyEntitlements({ requestedModules })
+  if (!organization) throw new NotFoundError("Organization not found")
+  const requestedModules = organization.requestedModules
+  const managed = await getManagedModuleState(organization.id)
+  const derived = deriveLegacyEntitlements({ requestedModules, explicitEntitlements: managed.explicitEntitlements })
   const items = getModuleCatalog().map((module) => {
     const decision = evaluateModuleEntitlement({
       organizationId: input.organizationId,
@@ -157,6 +219,7 @@ export async function getModuleControlCenterData(input: {
       actorPermissions: input.actorPermissions,
       moduleSlug: module.slug,
       requestedModules,
+      explicitEntitlements: managed.explicitEntitlements,
       surfaceType: "navigation",
       surface: module.routePrefixes[0] ?? module.slug,
       accessIntent: "read",
@@ -208,7 +271,7 @@ export async function activateTenantModule(input: {
   return db.$transaction(
     async (tx) => {
       const organization = await tx.organization.findFirst({
-        where: { id: input.organizationId, deletedAt: null },
+        where: { id: input.organizationId, isActive: true, deletedAt: null },
         select: { id: true, requestedModules: true },
       })
 
@@ -216,7 +279,14 @@ export async function activateTenantModule(input: {
         throw new NotFoundError("Organization not found")
       }
 
-      const normalized = new Set(normalizeRequestedModuleSlugs(organization.requestedModules).slugs)
+      const managed = await getManagedModuleState(organization.id, tx)
+      if (managed.configuration) {
+        throw new BusinessRuleError("Use the module workspace review to change a managed configuration")
+      }
+
+      // Empty legacy intent means the full suite. Provisioning one capability must
+      // never turn that into a restrictive list of only its dependencies.
+      const normalized = new Set(deriveLegacyEntitlements({ requestedModules: organization.requestedModules }).entitlements.map((grant) => grant.moduleSlug))
       const activationOrder = requiredModuleActivationOrder(input.moduleSlug)
       const addedModules = activationOrder.filter((moduleSlug) => !normalized.has(moduleSlug))
       const requestedModules = [...organization.requestedModules, ...addedModules]
@@ -265,7 +335,7 @@ export async function recordModuleEntitlementDecision(decision: ModuleEntitlemen
       data: {
         entityType: "ModuleEntitlementDecision",
         entityId: `${decision.moduleSlug}:${decision.surfaceType}:${decision.surface}`,
-        action: "MODULE_ENTITLEMENT_OBSERVED",
+        action: decision.mode === "enforce" ? "MODULE_ENTITLEMENT_ENFORCED" : "MODULE_ENTITLEMENT_OBSERVED",
         organizationId: decision.organizationId,
         userId: decision.userId ?? undefined,
         changes: {
@@ -295,34 +365,23 @@ export async function recordModuleEntitlementDecision(decision: ModuleEntitlemen
   }
 }
 
-function statusBlocksAccess(
-  status: ModuleEntitlementStatus,
-  surfaceType: ModuleEntitlementEvaluationInput["surfaceType"],
-  accessIntent: ModuleEntitlementEvaluationInput["accessIntent"],
-) {
-  if (status === "suspended" || status === "expired" || status === "unavailable") return true
-  if (status === "read_only" && (accessIntent !== "read" || !READ_ONLY_ALLOWED_SURFACES.has(surfaceType))) {
-    return true
+function entitlementBlockReason(entitlement: TenantModuleEntitlement | null, intent: ModuleEntitlementEvaluationInput["accessIntent"], now: Date): string | null {
+  if (!entitlement) return "Tenant is not entitled to this module."
+  const start = entitlement.startsAt === null ? null : Date.parse(entitlement.startsAt)
+  const end = entitlement.endsAt === null ? null : Date.parse(entitlement.endsAt)
+  if ((start !== null && !Number.isFinite(start)) || (end !== null && !Number.isFinite(end)) ||
+    (start !== null && end !== null && start >= end)) return "Tenant module grant has an invalid validity interval."
+  if (start !== null && now.getTime() < start) return "Tenant module grant is not yet effective."
+  if (end !== null && now.getTime() >= end) return "Tenant module grant has expired."
+  if (!["active", "trial", "read_only", "legacy_default", "system_default"].includes(entitlement.status)) {
+    return `Tenant module entitlement is ${entitlement.status}.`
   }
-  return false
-}
-
-function decisionReason(input: {
-  catalogFound: boolean
-  entitlement: TenantModuleEntitlement | null
-  status: ModuleEntitlementStatus
-  dependencyCount: number
-  accessIntent: ModuleEntitlementEvaluationInput["accessIntent"]
-}) {
-  if (!input.catalogFound) return "Module is not in the canonical catalog."
-  if (!input.entitlement) return "Tenant is not entitled to this module in observe mode."
-  if (input.status === "suspended") return "Tenant module entitlement is suspended."
-  if (input.status === "expired") return "Tenant module entitlement is expired."
-  if (input.status === "read_only" && input.accessIntent !== "read") {
+  // Read-only is an operation restriction, independent of page/API/action transport.
+  // Export and background jobs require their own authority and are not plain reads.
+  if ((entitlement.status === "read_only" || entitlement.readOnly) && intent !== "read") {
     return "Tenant module entitlement is read-only for this operation."
   }
-  if (input.dependencyCount > 0) return "Required module dependencies are missing."
-  return "Tenant module entitlement is available."
+  return null
 }
 
 function normalizeNow(value: Date | string | null | undefined) {
@@ -337,15 +396,19 @@ function normalizeNow(value: Date | string | null | undefined) {
 function requiredModuleActivationOrder(moduleSlug: CommercialModuleSlug) {
   const ordered: CommercialModuleSlug[] = []
   const visited = new Set<CommercialModuleSlug>()
+  const visiting = new Set<CommercialModuleSlug>()
 
   function visit(current: CommercialModuleSlug) {
+    if (visiting.has(current)) throw new BusinessRuleError("Module dependency cycle requires reconciliation")
     if (visited.has(current)) return
-    visited.add(current)
+    visiting.add(current)
 
     for (const dependency of getModuleCatalogEntry(current)?.dependencies ?? []) {
       if (dependency.dependencyType === "required") visit(dependency.dependsOnSlug)
     }
 
+    visiting.delete(current)
+    visited.add(current)
     ordered.push(current)
   }
 

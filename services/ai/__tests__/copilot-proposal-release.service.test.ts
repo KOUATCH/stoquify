@@ -3,6 +3,7 @@ jest.mock("server-only", () => ({}))
 import {
   COPILOT_PROPOSAL_RELEASE_MANIFEST_HASH,
   authorizeCopilotProposalRelease,
+  isCopilotProposalReleaseAvailable,
 } from "../copilot-proposal-release.service"
 
 const now = new Date("2026-07-27T12:00:00.000Z")
@@ -55,6 +56,14 @@ describe("copilot proposal release authorization", () => {
       organizationId: "org-1",
       environment: "pilot",
     })
+  })
+
+  it("uses the same governed release validation for the display hint", async () => {
+    const input = { organizationId: "org-1", roleCodes: ["finance_manager"], environment: "pilot", now }
+    await expect(isCopilotProposalReleaseAvailable(input, { loadRelease: jest.fn().mockResolvedValue(releaseFixture()) })).resolves.toBe(true)
+    await expect(isCopilotProposalReleaseAvailable(input, { loadRelease: jest.fn().mockResolvedValue(null) })).resolves.toBe(false)
+    const unavailable = new Error("database unavailable")
+    await expect(isCopilotProposalReleaseAvailable(input, { loadRelease: jest.fn().mockRejectedValue(unavailable) })).rejects.toBe(unavailable)
   })
 
   it.each([

@@ -1,0 +1,114 @@
+{
+  "recordedAt": "2026-09-05T13:18:07.024Z",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "binding": "Post-run source hashes after final consistency edits; no before-run hash capture for these executions. Parent performs final coordinated source/build binding.",
+  "tests": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/modules/__tests__/module-composition.service.test.ts services/modules/__tests__/module-lifecycle-readiness.service.test.ts actions/modules/__tests__/module-composition.actions.test.ts services/payroll/__tests__/payroll-setup-readiness.service.test.ts services/payroll/__tests__/payroll-control.service.test.ts services/purchase-order/__tests__/purchase-order.service.test.ts",
+    "exitCode": 0,
+    "suitesPassed": 6,
+    "suitesTotal": 6,
+    "testsPassed": 122,
+    "testsTotal": 122,
+    "failed": 0,
+    "skipped": 0,
+    "jestDurationSeconds": 25.089,
+    "sessionId": 60957
+  },
+  "lint": {
+    "command": "node node_modules/eslint/bin/eslint.js services/modules/module-composition-contracts.ts services/modules/module-composition.service.ts services/modules/module-lifecycle.service.ts services/modules/module-lifecycle-readiness.service.ts actions/modules/module-composition.actions.ts services/modules/__tests__/module-composition.service.test.ts services/modules/__tests__/module-lifecycle-readiness.service.test.ts actions/modules/__tests__/module-composition.actions.test.ts services/payroll/payroll-setup-readiness.service.ts services/payroll/__tests__/payroll-setup-readiness.service.test.ts services/payroll/__tests__/payroll-control.service.test.ts services/purchase-order/__tests__/purchase-order.service.test.ts",
+    "exitCode": 0,
+    "diagnostics": [],
+    "sessionId": 46196
+  },
+  "scope": [
+    "Durable preparation, retry, retained records, reactivation and previous active state",
+    "Canonical JSONB hashes, immutable requests, scoped authority and stale review rejection",
+    "Real readiness adapters, selected payroll/compliance scope and metadata permission boundaries",
+    "Purchasing/payroll admission reader integration, duplicate replay and correction controls"
+  ],
+  "limitations": [
+    "Unit checks mock database/domain boundaries; real PostgreSQL and authenticated browser verification are separate.",
+    "Production compliance remains unavailable under existing owner controls.",
+    "No professional or release certification is asserted."
+  ],
+  "sourceHashes": [
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "a16a5913ad9fd1f09a7958b12df2cea95cc0f358ef253afb654ae154d495263b"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "eecb236e32167fedb1dacd27151599fc42590823078fe4d5cb62a2d5cbcb2aff"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "9189fe3acf416afff975c5f39947c23668f724521cfc3627fc212719b5737724"
+    },
+    {
+      "path": "services/modules/__tests__/module-lifecycle-readiness.service.test.ts",
+      "sha256": "77caaf6191a54a4b861387871c62d1a2c0d1705650b2aac720f96c8506967999"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "2ae12d7a4b2d95f1c5b5100678cfc8dff50575d3ee8d9be53ed054d74de9249d"
+    },
+    {
+      "path": "services/payroll/payroll-setup-readiness.service.ts",
+      "sha256": "28c53d5da7ea67f5171846189109edac2164812ef8bea1c3cc1d192bccebc292"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-setup-readiness.service.test.ts",
+      "sha256": "b8f7960b12e9087852e91a42e5f7b2ce9220165aec8d0c0bc3af90066efedb58"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "sha256": "8f60aeee129132419a0da707d9843ffcfa6594b06d16a065b0653ffa389eb472"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order.service.test.ts",
+      "sha256": "1aa833a4040c08f733b0ee6139a16ce615a338d884e114cf8d7b7f167dbcb115"
+    }
+  ],
+  "dependencyHashes": [
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "2dd910be6c62d976487e8f5e7ee1e6a3685b39ed9fb0fbc22f65cb19ffebe8a1"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    }
+  ]
+}

@@ -119,7 +119,10 @@ export type PaymentTruthMetrics = {
   openExceptionCount: number;
   criticalExceptionCount: number;
   openSuspenseCount: number;
-  openSuspenseAmount: number;
+  /** Organization-currency total; null when source currencies cannot be combined without conversion evidence. */
+  openSuspenseAmount: number | null;
+  suspenseCurrencyCode?: string;
+  openSuspenseByCurrency?: { currencyCode: string; amount: number; count: number }[];
   pendingTransactionCount: number;
 };
 
@@ -181,6 +184,8 @@ export type BranchOperatingMetrics = {
   inventoryValue: number;
   inventoryTransactionCount: number;
   pendingPurchaseOrderCount: number;
+  /** Absent/null on older or unavailable snapshots; never infer delay from pending count. */
+  overduePurchaseOrderCount?: number | null;
   openTransferCount: number;
   postedJournalLineCount: number;
   posShiftCount: number;
@@ -231,6 +236,8 @@ export type TenantOperatingMetrics = {
   completedSalesRevenue: number;
   cashCollected: number;
   pendingPurchaseOrderCount: number;
+  /** Pending orders whose stored expected delivery timestamp precedes snapshot time. */
+  overduePurchaseOrderCount?: number | null;
   approvedOrPaidPayrollRunCount: number;
   activeEmployeeBalanceCaseCount: number;
   openEmployeeBalanceCaseCount: number;

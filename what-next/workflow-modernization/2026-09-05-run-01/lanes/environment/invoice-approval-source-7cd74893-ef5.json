@@ -1,0 +1,77 @@
+{
+  "run": "7cd74893-ef5",
+  "at": "2026-09-08T09:24:38.257Z",
+  "checks": [
+    {
+      "name": "Changed invoice total cannot create a liability",
+      "status": "passed"
+    },
+    {
+      "name": "Changed line tax cannot create a liability",
+      "status": "passed"
+    },
+    {
+      "name": "Missing received-goods state cannot approve an old match",
+      "status": "passed"
+    },
+    {
+      "name": "Cross-organization invoice line cannot be approved",
+      "status": "passed"
+    },
+    {
+      "name": "Changed match variance cannot be trusted as matched",
+      "status": "passed"
+    },
+    {
+      "name": "Ambiguous match evidence requires reconciliation",
+      "status": "passed"
+    },
+    {
+      "name": "Previously created liability cannot be created again",
+      "status": "passed"
+    },
+    {
+      "name": "Exception approval must cover the actual variance",
+      "status": "passed"
+    },
+    {
+      "name": "Valid source remains approvable and exact replay creates one liability",
+      "status": "passed"
+    },
+    {
+      "name": "Valid independently approved exception still resolves and creates one liability",
+      "status": "passed"
+    },
+    {
+      "name": "Cancelled remaining order preserves approval for goods already received",
+      "status": "passed"
+    },
+    {
+      "name": "All received quantity can be approved without double-counting its own reservation",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned isolated PostgreSQL, actual receiving and invoice preparation/approval kernel; synthetic source-corruption fixtures, no current-session approval UI or professional certification.",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "6dea48f361ab55f455f92d236ac8d3bf3c7d5646ef89370f7736587a8214e444"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "6dea48f361ab55f455f92d236ac8d3bf3c7d5646ef89370f7736587a8214e444"
+  },
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-total",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-tax",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-receipt",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-line-scope",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-foreign",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-variance",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-ambiguous",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-liability",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-exception",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-valid",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-exception-valid",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-cancelled-order",
+    "workflow_supplier_ack_en_approval-source-7cd74893-ef5-full-quantity"
+  ]
+}

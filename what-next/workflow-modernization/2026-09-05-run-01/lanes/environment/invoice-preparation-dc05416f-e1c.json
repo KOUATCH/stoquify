@@ -1,0 +1,63 @@
+{
+  "run": "dc05416f-e1c",
+  "at": "2026-09-08T07:49:45.661Z",
+  "checks": [
+    {
+      "name": "Scoped sources, decimal preview, preparation and concurrent exact replay",
+      "status": "passed"
+    },
+    {
+      "name": "Stale preview after another reservation creates no second invoice",
+      "status": "passed"
+    },
+    {
+      "name": "Revoked role and expired session reject preview and exact replay",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign supplier, foreign receipt and foreign session are denied",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module missing prevents preparation",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module expired prevents preparation",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module suspended prevents preparation",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module read_only prevents preparation",
+      "status": "passed"
+    },
+    {
+      "name": "Decision failure atomically rolls back preparation and safe retry succeeds",
+      "status": "passed"
+    },
+    {
+      "name": "Tampered decision remains uncertain and does not create another invoice",
+      "status": "passed"
+    },
+    {
+      "name": "Price variance is disputed preparation, not approval",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "services/purchasing/ap-control.service.ts": "54ba7d6afb127d1647623b1bc1727a740acfcadffa645aa13e624de9d5eef32f"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "services/purchasing/ap-control.service.ts": "54ba7d6afb127d1647623b1bc1727a740acfcadffa645aa13e624de9d5eef32f"
+  }
+}

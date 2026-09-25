@@ -12,6 +12,7 @@ import {
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
     stockTransfer: { findFirst: jest.fn(), update: jest.fn(), create: jest.fn() },
     location: { findFirst: jest.fn() },
     item: { findMany: jest.fn() },
@@ -27,6 +28,7 @@ jest.mock("@/prisma/db", () => ({
 }))
 
 const mockedDb = db as unknown as {
+  $queryRaw: jest.Mock
   $transaction: jest.Mock
   stockTransfer: { findFirst: jest.Mock; update: jest.Mock; create: jest.Mock }
   location: { findFirst: jest.Mock }
@@ -182,6 +184,7 @@ function inventoryItem(overrides: Record<string, unknown> = {}) {
 
 beforeEach(() => {
   jest.clearAllMocks()
+  mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: [], newWorkStoppedAt: {} }])
   mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
   mockedDb.accountingPeriod.findFirst.mockResolvedValue({
     id: "period-1",
@@ -228,6 +231,12 @@ beforeEach(() => {
 })
 
 describe("createStockTransfer", () => {
+  it("blocks a new transfer after a reviewed inventory stop before stock effects", async () => {
+    mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["inventory"], newWorkStoppedAt: { inventory: "2026-09-05T10:00:00Z" } }])
+    await expect(createStockTransfer({ organizationId: "org-1", fromLocationId: "loc-source", toLocationId: "loc-dest", createdById: "maker-1", lines: [{ itemId: "item-1", requestedQuantity: 5 }] })).rejects.toMatchObject({ metadata: { reason: "MODULE_NEW_WORK_STOPPED" } })
+    expect(mockedDb.stockTransfer.create).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+  })
   it("creates an audited draft transfer from tenant-scoped active locations and inventory-tracked items", async () => {
     mockedDb.stockTransfer.findFirst.mockResolvedValueOnce({ transferNumber: "TR-000041" })
     mockedDb.stockTransfer.create.mockResolvedValueOnce(transfer({ transferNumber: "TR-000042" }))

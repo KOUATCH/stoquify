@@ -1,0 +1,52 @@
+{
+  "at": "2026-09-09T15:22:28.166Z",
+  "run": "7614fbba-e73",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "e8c1ca1f576e8c6558d15c56ff4d4fa4ee8e09fac9d08262d4e5fbbe42b1d95e",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "c76eb0b30ca1f36873f8441c5d23d822f9c39d7935cf174472cdc59cf41651ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "282e5f3c51bc78751cc041d535e576c10e0afe2e1fee362ce47c0639b06fcef5"
+  },
+  "checks": [
+    {
+      "type": "MISSING_PROVIDER_EVENT",
+      "bidirectionalLink": true,
+      "assignmentReachedException": true,
+      "proposalReachedException": true,
+      "priorMetadataRetained": true
+    },
+    {
+      "type": "MISSING_INTERNAL_PAYMENT",
+      "bidirectionalLink": true,
+      "assignmentReachedException": true,
+      "proposalReachedException": true,
+      "priorMetadataRetained": true
+    },
+    {
+      "type": "MISSING_INTERNAL_PAYMENT",
+      "bidirectionalLink": true,
+      "assignmentReachedException": true,
+      "proposalReachedException": true,
+      "priorMetadataRetained": true
+    },
+    {
+      "duplicateRunRefusedWithoutDuplicatePairs": true,
+      "runStillNeedsReview": true
+    },
+    {
+      "concurrentExceptionChangeRollsBackAssignmentAndNotifications": true,
+      "method": "Injected zero-row compare-and-set result in the real transaction; not a two-client race test"
+    },
+    {
+      "failedLinkRollsBackRunExceptionSuspenseAndNotifications": true
+    }
+  ],
+  "scope": "Owned isolated database; real HMAC event capture, statement import, automatic run, assignment and proposal. Internal payment and settlement setup are synthetic preconditions, not real approvals. No sign-off, live payment or external delivery.",
+  "originalBefore": "cfa439d1958ff7aa1f9e98acdac7a4a994d6d2993a62c07c5dbd546ad2fc8001",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "e8c1ca1f576e8c6558d15c56ff4d4fa4ee8e09fac9d08262d4e5fbbe42b1d95e",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "c76eb0b30ca1f36873f8441c5d23d822f9c39d7935cf174472cdc59cf41651ae",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "282e5f3c51bc78751cc041d535e576c10e0afe2e1fee362ce47c0639b06fcef5"
+  },
+  "sourceStable": true
+}

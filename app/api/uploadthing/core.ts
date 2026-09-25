@@ -4,7 +4,7 @@ import {
   requireApiModuleAccess,
   requireApiSessionForCurrentOrg,
 } from "@/lib/security/server-authz";
-import { AuthRequiredError, ForbiddenError } from "@/services/_shared/action-errors";
+import { AuthRequiredError, BusinessRuleError, ForbiddenError } from "@/services/_shared/action-errors";
 
 const f = createUploadthing();
 const UPLOADTHING_SURFACE = "POST /api/uploadthing";
@@ -46,13 +46,11 @@ export async function requireUploadAuth() {
 
 export const ourFileRouter = {
   itemImageUpload: f({ image: { maxFileSize: "1MB" } })
-    .middleware(requireUploadAuth)
-    .onUploadComplete(async ({ metadata }) => {
-      return {
-        uploadedBy: metadata.userId,
-        organizationId: metadata.organizationId,
-      };
-    }),
+    .middleware(async () => {
+      await requireUploadAuth()
+      throw new BusinessRuleError("Use the managed image upload control to upload pictures.")
+    })
+    .onUploadComplete(async () => ({})),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

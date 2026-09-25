@@ -6,6 +6,7 @@ import { getRoleById } from "@/actions/roles/getRoleById"
 import { updateRole } from "@/actions/roles/updateRole"
 import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-session"
 import { requirePermission } from "@/lib/security/rbac"
+import { ForbiddenError } from "@/services/_shared/action-errors"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
   createOrganizationRole,
@@ -66,7 +67,7 @@ function rbacContext(permissions: string[]) {
 
 beforeEach(() => {
   mockRequireFreshAuth.mockReset()
-  mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now() } })
+  mockRequireFreshAuth.mockResolvedValue({ claims: { lastAuthAt: Date.now(), userId: "user-1", tenantId: "org-1", sessionId: "session-1", sessionToken: "test-private-session" } })
   mockRequirePermission.mockReset()
   mockObserveModuleAccess.mockReset()
   mockObserveModuleAccess.mockResolvedValue({ allowed: true })
@@ -78,6 +79,36 @@ beforeEach(() => {
 })
 
 describe("role actions service boundary", () => {
+  it("preserves the service denial for removing permissions without authority", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext(["roles.update"]))
+    mockUpdateOrganizationRole.mockRejectedValue(new ForbiddenError("Removal authority required"))
+    const result = await updateRole("role-1", { permissions: [] })
+    expect(result).toMatchObject({ success: false, code: "FORBIDDEN" })
+    expect(mockUpdateOrganizationRole).toHaveBeenCalledWith(expect.objectContaining({ data: { permissions: [] } }))
+  })
+
+  it("preserves a current service grant-ceiling denial even for wildcard actors", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext(["*", "roles.update", "roles.permissions.assign"]))
+    mockUpdateOrganizationRole.mockRejectedValue(new ForbiddenError("Grant ceiling exceeded"))
+    const result = await updateRole("role-1", { permissions: ["accounting.journal.post"] })
+    expect(result).toMatchObject({ success: false, code: "FORBIDDEN" })
+    expect(mockUpdateOrganizationRole).toHaveBeenCalledTimes(1)
+  })
+
+  it("allows an authorized empty permission selection without treating it as an omitted change", async () => {
+    const ctx = rbacContext(["roles.update", "roles.permissions.assign"])
+    mockRequirePermission.mockResolvedValue(ctx)
+    mockUpdateOrganizationRole.mockResolvedValue({ id: "role-1", permissions: [] })
+    await expect(updateRole("role-1", { permissions: [] })).resolves.toMatchObject({ success: true })
+    expect(mockUpdateOrganizationRole).toHaveBeenCalledWith({ ctx: { ...ctx, session: { id: "session-1", token: "test-private-session" } }, id: "role-1", data: { permissions: [] }, command: undefined })
+  })
+
+  it("keeps metadata-only edits independent of permission-assignment authority", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext(["roles.update"]))
+    mockUpdateOrganizationRole.mockResolvedValue({ id: "role-1", description: "Clarified role" })
+    await expect(updateRole("role-1", { description: "Clarified role" })).resolves.toMatchObject({ success: true })
+  })
+
   it("does not call the role service when the user lacks roles.read", async () => {
     mockRequirePermission.mockRejectedValue(new Error("Forbidden"))
 
@@ -146,13 +177,14 @@ describe("role actions service boundary", () => {
     mockRequirePermission.mockResolvedValue(
       rbacContext(["roles.update", "roles.permissions.assign", "dashboard.read"]),
     )
+    mockUpdateOrganizationRole.mockRejectedValue(new ForbiddenError("Grant ceiling exceeded"))
 
     const result = await updateRole("role-1", {
       permissions: ["finance.read"],
     })
 
     expect(result.success).toBe(false)
-    expect(mockUpdateOrganizationRole).not.toHaveBeenCalled()
+    expect(mockUpdateOrganizationRole).toHaveBeenCalledTimes(1)
   })
 
   it("creates and updates roles through the service and revalidates the roles page", async () => {
@@ -185,11 +217,12 @@ describe("role actions service boundary", () => {
 
     expect(created).toEqual({ success: true, data: createdRole, error: null })
     expect(updated).toEqual({ success: true, data: createdRole, error: null })
-    expect(mockCreateOrganizationRole).toHaveBeenCalledWith({ ctx, data: roleInput })
+    expect(mockCreateOrganizationRole).toHaveBeenCalledWith({ ctx: { ...ctx, session: { id: "session-1", token: "test-private-session" } }, data: roleInput, command: undefined })
     expect(mockUpdateOrganizationRole).toHaveBeenCalledWith({
-      ctx,
+      ctx: { ...ctx, session: { id: "session-1", token: "test-private-session" } },
       id: "role-1",
       data: roleInput,
+      command: undefined,
     })
     expect(mockRequireFreshAuth).toHaveBeenCalledTimes(2)
     expect(mockObserveModuleAccess).toHaveBeenCalledWith(expect.objectContaining({
@@ -204,7 +237,7 @@ describe("role actions service boundary", () => {
       accessIntent: "write",
       mode: "observe",
     }))
-    expect(revalidatePath).toHaveBeenCalledWith("/dashboard/settings/roles")
+    expect(revalidatePath).toHaveBeenCalledWith("/[locale]/dashboard/settings/roles", "page")
   })
 
   it("lists roles through the service with optional organization override", async () => {
@@ -219,5 +252,20 @@ describe("role actions service boundary", () => {
       ctx,
       organizationId: "org-2",
     })
+  })
+
+  it("rejects an assurance identity or tenant that disagrees with current RBAC", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext(["roles.update"]))
+    mockRequireFreshAuth.mockResolvedValue({ claims: { userId: "foreign-user", tenantId: "org-2", sessionId: "foreign", sessionToken: "foreign" } })
+    await expect(updateRole("role-1", { description: "Wrong session" })).resolves.toMatchObject({ success: false, code: "FORBIDDEN" })
+    expect(mockUpdateOrganizationRole).not.toHaveBeenCalled()
+  })
+
+  it("passes the reviewed version and request identity unchanged", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext(["roles.update"]))
+    mockUpdateOrganizationRole.mockResolvedValue({ id: "role-1" })
+    const command = { requestId: "09ba28c2-5a3a-48ae-b8c5-46e7abff3991", expectedUpdatedAt: "2026-09-06T09:00:00.000Z" }
+    await updateRole("role-1", { description: "Reviewed" }, command)
+    expect(mockUpdateOrganizationRole).toHaveBeenCalledWith(expect.objectContaining({ command }))
   })
 })

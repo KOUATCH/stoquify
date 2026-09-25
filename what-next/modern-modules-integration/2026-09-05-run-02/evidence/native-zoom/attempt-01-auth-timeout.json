@@ -1,0 +1,44 @@
+{
+  "classification": "ISOLATED_APPLICATION_VERIFICATION",
+  "startedAt": "2026-09-05T14:29:11.215Z",
+  "productionApproval": false,
+  "browserMechanism": "chrome.tabs.setZoom, automatic mode, per-tab scope",
+  "profile": {
+    "freshOwnedTemporaryProfile": true,
+    "userProfileUsed": false,
+    "closed": true
+  },
+  "viewportEmulation": false,
+  "cssZoomUsed": false,
+  "pageScaleEmulationUsed": false,
+  "fixture": "service_en_desktop",
+  "readOnlyConfiguration": true,
+  "sources": [
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "22dc997434afc2d7f5d2332e226e7fe3a41887f9ecad7b3bcbf3e03d0d96fc06"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "8766c25d759076bcd8d2de7d150e671dbb7dfb46bd66568c3833260a637552a0"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "sha256": "09ba3c156ed0d00f27bc964671fee2b20e85edd0d7269dd903c0a22138831c13"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    }
+  ],
+  "cases": [],
+  "browserVersion": "151.0.7922.34",
+  "executable": {
+    "path": "C:\\Users\\J COMPUTER\\AppData\\Local\\ms-playwright\\chromium-1234\\chrome-win64\\chrome.exe",
+    "sha256": "409805a16d6416087e6b2f778df1cf8f7bbb267d6b99f6b5bb0a618eace234f2"
+  },
+  "status": "blocked",
+  "error": "apiRequestContext.post: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - → POST http://127.0.0.1:3107/api/auth/sign-in/email\u001b[22m\n\u001b[2m    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36\u001b[22m\n\u001b[2m    - accept: */*\u001b[22m\n\u001b[2m    - accept-encoding: gzip,deflate,br\u001b[22m\n\u001b[2m    - Origin: http://127.0.0.1:3107\u001b[22m\n\u001b[2m    - content-type: application/json\u001b[22m\n\u001b[2m    - content-length: 125\u001b[22m\n",
+  "finishedAt": "2026-09-05T14:30:45.113Z",
+  "helperSha256": "a7ca54042032203555f5f38b3c42f79c65100ba63592fe65c00d9f707e96a5a3"
+}

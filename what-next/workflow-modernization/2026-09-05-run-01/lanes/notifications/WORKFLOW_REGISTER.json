@@ -1,0 +1,1178 @@
+{
+  "schemaVersion": 1,
+  "lane": "notifications",
+  "evidenceDate": "2026-09-09T08:28:09.150Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "workingTree": "shared dirty tree preserved; current file hashes in SOURCE_BINDING.json",
+  "coverage": {
+    "discoveredWorkflows": 16,
+    "runtimeVisited": 7,
+    "completeWorkflowVerified": 0,
+    "sourceFindings": 14,
+    "denominatorStatus": "bounded_semantic_workflow_discovery_only_not_platform_denominator"
+  },
+  "scope": {
+    "included": "services/communication, current notification UI, reconciliation notifications, signal digest helpers, direct queue owners and worker entry points",
+    "excluded": "Identity email and recipient acceptance owned by other lanes; generic financial processing; live provider activation; rejected POS/offline continuation",
+    "crossLaneOverlaps": [
+      "CS-STATEMENT-DELIVERY-QUEUE",
+      "CS-STATEMENT-DELIVERY-WORKER"
+    ],
+    "warning": "Do not sum overlaps as separate customer journeys or treat exports, route counts, graph nodes, test files or service existence as runtime verification."
+  },
+  "graphs": [
+    {
+      "file": "graphify-out/graph_components.json",
+      "nodes": [
+        "notificationmenu_tsx",
+        "notifications_notificationprovider_tsx",
+        "notifications_notificationsystem_tsx"
+      ],
+      "communities": [
+        139,
+        3,
+        37
+      ]
+    },
+    {
+      "file": "graphify-out/graph_app.json",
+      "communities": [
+        13,
+        163,
+        214
+      ],
+      "note": "settings and demo hints verified against source"
+    },
+    {
+      "file": "graphify-out/graph_hooks.json",
+      "communities": [
+        2
+      ],
+      "note": "reconciliation notification hooks"
+    },
+    {
+      "file": "services/graphify-out/graph.json",
+      "communities": [
+        1,
+        32,
+        97,
+        153,
+        168,
+        17
+      ],
+      "note": "workers, providers, signals and reconciliation producers; historical graph, current source checked"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "NTF-FEEDBACK",
+      "name": "Receive feedback from a completed operation",
+      "purpose": "Present operation progress, success, warning and failure near the current work.",
+      "personas": [
+        "authenticated application user",
+        "public authentication user"
+      ],
+      "authority": {
+        "permissions": [
+          "Inherited from the originating action; local notification API adds no authority"
+        ],
+        "scope": "Browser custom events and provider context; no organization/user field is required in NotificationData."
+      },
+      "entryPoints": [
+        "components/Providers.tsx:24",
+        "components/notifications/NotificationProvider.tsx:773",
+        "lib/notifications/notify.ts",
+        "lib/error-handling/crud-notifications.ts",
+        "lib/error-handling/notification-integration.ts"
+      ],
+      "services": [
+        "components/notifications/NotificationProvider.tsx",
+        "components/notifications/NotificationSystem.tsx",
+        "lib/notifications/notify.ts",
+        "lib/notifications/presentation.ts"
+      ],
+      "records": [
+        "React NotificationData[]; no durable inbox row"
+      ],
+      "transitions": [
+        "browser/provider event -> normalize -> append/dedupe by ID -> show -> read/dismiss/timeout"
+      ],
+      "sideEffects": [
+        "Local React state, sound when enabled; no email/SMS/provider send"
+      ],
+      "implementationStatus": "honest_local_state_localized_controls_and_timer_focus_recovery_implemented",
+      "reviewStatus": "source_focused_tests_and_real_en_fr_local_browser_verified_remaining_boundaries_open",
+      "runtimeStatus": "partial_real_en_fr_local_journey_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ],
+      "findings": [
+        "NTF-F09",
+        "NTF-F10",
+        "NTF-F12",
+        "NTF-F14"
+      ],
+      "remaining": [
+        "Native screen-reader testing, native browser zoom and complete contrast audit remain open; CSS text enlargement is not native zoom.",
+        "The queue remains temporary and global; actor/tenant transition isolation and all originating message producers still need review.",
+        "Actual audio playback and production provider/network delivery are not established by the sound switch or local notices.",
+        "Legacy bell, durable alerts, worker unknown outcomes and controlled recovery remain separate incomplete workflows.",
+        "No full build, production performance acceptance, professional approval, X1 clearance or deployment."
+      ]
+    },
+    {
+      "id": "NTF-INBOX",
+      "name": "Review and acknowledge current session notifications",
+      "purpose": "Filter the current queue, mark one/all read, or dismiss/clear local entries.",
+      "personas": [
+        "settings reader"
+      ],
+      "authority": {
+        "permissions": [
+          "communication.notifications.read"
+        ],
+        "scope": "Settings route uses current RBAC/active organization. Queue contents and read state are local browser memory, not server authorization or an audit record."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/notifications",
+        "app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx:17",
+        "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:209"
+      ],
+      "services": [
+        "components/notifications/NotificationProvider.tsx",
+        "components/notifications/NotificationSystem.tsx",
+        "lib/notifications/presentation.ts"
+      ],
+      "records": [
+        "Session-memory queue, readAt/deliveryState"
+      ],
+      "transitions": [
+        "permission check -> queue/filter -> mark read/all read -> dismiss/clear -> entries lost on provider reload or timeout"
+      ],
+      "sideEffects": [
+        "Local state only; acknowledgement is not stored in server evidence"
+      ],
+      "implementationStatus": "honest_local_state_localized_controls_and_timer_focus_recovery_implemented",
+      "reviewStatus": "source_focused_tests_and_real_en_fr_local_browser_verified_remaining_boundaries_open",
+      "runtimeStatus": "partial_real_en_fr_local_journey_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../lanes/environment/notification-settings-before-afce0a5e-533.json",
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ],
+      "findings": [
+        "NTF-F10",
+        "NTF-F12",
+        "NTF-F14"
+      ],
+      "remaining": [
+        "Native screen-reader testing, native browser zoom and complete contrast audit remain open; CSS text enlargement is not native zoom.",
+        "The queue remains temporary and global; actor/tenant transition isolation and all originating message producers still need review.",
+        "Actual audio playback and production provider/network delivery are not established by the sound switch or local notices.",
+        "Legacy bell, durable alerts, worker unknown outcomes and controlled recovery remain separate incomplete workflows.",
+        "No full build, production performance acceptance, professional approval, X1 clearance or deployment."
+      ]
+    },
+    {
+      "id": "NTF-SOUND",
+      "name": "Set local notification sound preference",
+      "purpose": "Enable or disable sounds for this browser.",
+      "personas": [
+        "application user"
+      ],
+      "authority": {
+        "permissions": [
+          "communication.notifications.read"
+        ],
+        "scope": "Settings route uses current RBAC/active organization. Queue contents and read state are local browser memory, not server authorization or an audit record."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/notifications",
+        "components/dashboard/Navbar.tsx:86",
+        "components/notifications/NotificationProvider.tsx:124"
+      ],
+      "services": [
+        "components/notifications/NotificationProvider.tsx",
+        "components/notifications/NotificationSystem.tsx",
+        "lib/notifications/presentation.ts"
+      ],
+      "records": [
+        "localStorage notification-sound-enabled boolean"
+      ],
+      "transitions": [
+        "read browser preference -> toggle -> best-effort store -> sound for notifications"
+      ],
+      "sideEffects": [
+        "Browser storage and local audio only"
+      ],
+      "implementationStatus": "strict_boolean_no_initial_write_storage_recovery_and_cross_tab_sync_implemented",
+      "reviewStatus": "source_focused_tests_and_real_en_fr_local_browser_verified_remaining_boundaries_open",
+      "runtimeStatus": "partial_real_en_fr_local_journey_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ],
+      "findings": [
+        "NTF-F13"
+      ],
+      "remaining": [
+        "Native screen-reader testing, native browser zoom and complete contrast audit remain open; CSS text enlargement is not native zoom.",
+        "The queue remains temporary and global; actor/tenant transition isolation and all originating message producers still need review.",
+        "Actual audio playback and production provider/network delivery are not established by the sound switch or local notices.",
+        "Legacy bell, durable alerts, worker unknown outcomes and controlled recovery remain separate incomplete workflows.",
+        "No full build, production performance acceptance, professional approval, X1 clearance or deployment."
+      ]
+    },
+    {
+      "id": "NTF-DIAGNOSTICS",
+      "name": "Exercise notification presentation",
+      "purpose": "Show sample feedback and verify notification styling/sound without a business operation.",
+      "personas": [
+        "notification settings reader",
+        "developer"
+      ],
+      "authority": {
+        "permissions": [
+          "communication.notifications.read"
+        ],
+        "scope": "Settings route uses current RBAC/active organization. Queue contents and read state are local browser memory, not server authorization or an audit record."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/notifications",
+        "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:283",
+        "/[locale]/dashboard/notifications-demo",
+        "app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx:11"
+      ],
+      "services": [
+        "components/notifications/NotificationProvider.tsx",
+        "components/notifications/EnhancedNotificationTest.tsx",
+        "lib/notifications/presentation.ts"
+      ],
+      "records": [
+        "Synthetic local NotificationData only"
+      ],
+      "transitions": [
+        "test button -> local sample event -> display/dismiss"
+      ],
+      "sideEffects": [
+        "No real payment, security approval, or external send occurs"
+      ],
+      "implementationStatus": "honest_local_example_and_development_route_gate_verified",
+      "reviewStatus": "source_focused_tests_and_real_en_fr_local_browser_verified_remaining_boundaries_open",
+      "runtimeStatus": "partial_real_en_fr_local_journey_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../lanes/environment/notification-settings-before-afce0a5e-533.json",
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ],
+      "findings": [
+        "NTF-F02"
+      ],
+      "remaining": [
+        "Native screen-reader testing, native browser zoom and complete contrast audit remain open; CSS text enlargement is not native zoom.",
+        "The queue remains temporary and global; actor/tenant transition isolation and all originating message producers still need review.",
+        "Actual audio playback and production provider/network delivery are not established by the sound switch or local notices.",
+        "Legacy bell, durable alerts, worker unknown outcomes and controlled recovery remain separate incomplete workflows.",
+        "No full build, production performance acceptance, professional approval, X1 clearance or deployment."
+      ]
+    },
+    {
+      "id": "NTF-LEGACY-BELL",
+      "name": "Open dashboard notification bell",
+      "purpose": "Find relevant notifications from the authenticated shell.",
+      "personas": [
+        "dashboard user"
+      ],
+      "authority": {
+        "permissions": [
+          "Authenticated dashboard shell; no row-level notification action currently wired"
+        ],
+        "scope": "Sidebar receives no notification data from current dashboard layout and defaults to an empty array."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/layout.tsx:58",
+        "components/dashboard/Sidebar.tsx:123",
+        "components/NotificationMenu.tsx:28"
+      ],
+      "services": [
+        "components/NotificationMenu.tsx"
+      ],
+      "records": [
+        "Legacy notifications prop; no current server source"
+      ],
+      "transitions": [
+        "open bell -> empty drawer in current shell; supplied rows have a no-op mark-read handler"
+      ],
+      "sideEffects": [
+        "If a row is supplied, click reports removed successfully without mutation"
+      ],
+      "implementationStatus": "disconnected_source_path",
+      "reviewStatus": "selected_current_source_paths_traced_not_complete_assurance",
+      "runtimeStatus": "not_visited_not_executed",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json"
+      ],
+      "findings": [
+        "NTF-F01"
+      ],
+      "remaining": [
+        "Choose existing real queue source and role-appropriate links; preserve session versus durable meanings.",
+        "Replace or remove false-success row handler only after agreeing the actual acknowledgement owner.",
+        "Current normal shell cannot exercise the nonempty row action; do not label it a runtime-tested defect."
+      ]
+    },
+    {
+      "id": "NTF-RECON-ALERT",
+      "name": "Publish reconciliation operational alerts",
+      "purpose": "Record exception, suspense, manual-match, run and close-control notices from real evidence.",
+      "personas": [
+        "reconciliation operator",
+        "accountant",
+        "background domain owner"
+      ],
+      "authority": {
+        "permissions": [
+          "Domain producer controls; dashboard generation entered through payments.reconciliation.read"
+        ],
+        "scope": "Explicit organizationId and domain evidence references; shared tenant inbox, not a per-user mailbox."
+      },
+      "entryPoints": [
+        "services/reconciliation/payment-reconciliation-notifications.ts:82",
+        "services/reconciliation/payment-reconciliation-run.service.ts",
+        "services/reconciliation/payment-suspense-workflow.service.ts",
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts:230",
+        "scripts/reconciliation-alert-worker.ts"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-notifications.ts",
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        "services/reconciliation/payment-reconciliation-alert-scan.service.ts"
+      ],
+      "records": [
+        "PaymentReconciliationInboxItem payloadSummary.notification; logs"
+      ],
+      "transitions": [
+        "Explicit tenant/worker/scan command",
+        "Insert or reopen original control receipt",
+        "Lock checkpoint and read next source page",
+        "Commit alerts and checkpoint together",
+        "Retain failure without advancing cursor",
+        "Resume same scan after interruption",
+        "Complete final review signal",
+        "Begin a fresh pass for new evidence"
+      ],
+      "sideEffects": [
+        "Durable in-app observations and scan checkpoints; old dashboard trigger remains active; no external delivery"
+      ],
+      "implementationStatus": "resumable_worker_staged_legacy_trigger_retained",
+      "reviewStatus": "partial_engineering_review_v93",
+      "runtimeStatus": "staged_worker_and_en_fr_progress_states_verified_v94",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "../../evidence/reconciliation-notifications-v93.json",
+        "../../RECONCILIATION_NOTIFICATION_GUIDE.md",
+        "../../RECONCILIATION_NOTIFICATION_VERIFICATION_V93.md",
+        "../../evidence/alert-scan-v94.json",
+        "../../ALERT_SCAN_GUIDE_AND_CUTOVER.md",
+        "../../ALERT_SCAN_VERIFICATION_V94.md"
+      ],
+      "findings": [
+        "NTF-F11"
+      ],
+      "remaining": [
+        "Deploy and verify the replacement schedule/monitoring on an authorized target before requesting removal of dashboard-triggered delivery. Automatic approval review held that removal in v94.",
+        "Dashboard still generates bounded notices and can fail when their writes fail; it is not yet read-only.",
+        "Full inbox history/acknowledgements, current-domain navigation, historical overwritten-evidence reconstruction and full accessibility remain incomplete.",
+        "Worker reads per-page current state under an initial creation/deadline boundary; a new pass is required for newly eligible records. No atomic whole-domain snapshot or scheduler health certification."
+      ],
+      "completeWorkflowVerified": false,
+      "v93": {
+        "receipt": "evidence/reconciliation-notifications-v93.json",
+        "wholeWorkflowComplete": false,
+        "notificationTransportIsNotReadReceipt": true
+      },
+      "v94": {
+        "receipt": "evidence/alert-scan-v94.json",
+        "workerPageSize": 100,
+        "cutoverApplied": false,
+        "automaticReviewHeldRemoval": true
+      }
+    },
+    {
+      "id": "NTF-RECON-INBOX",
+      "name": "Review reconciliation alert queue",
+      "purpose": "Read scoped operational alerts alongside reconciliation work.",
+      "personas": [
+        "user with reconciliation read permission"
+      ],
+      "authority": {
+        "permissions": [
+          "payments.reconciliation.read"
+        ],
+        "scope": "Server-derived tenant in protected action. Inbox query is tenant-level; ownerId is metadata, not a recipient filter."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/finance/reconciliation",
+        "actions/payments/reconciliation.actions.ts:125",
+        "hooks/payments/usePaymentReconciliationDashboard.ts:89",
+        "components/finance/PaymentReconciliationWorkbench.tsx:1496",
+        "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx:5",
+        "components/finance/PaymentReconciliationWorkbench.tsx:398"
+      ],
+      "services": [
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        "services/reconciliation/payment-reconciliation-alert-scan.service.ts"
+      ],
+      "records": [
+        "PaymentReconciliationInboxItem read model"
+      ],
+      "transitions": [
+        "Protected tenant read",
+        "Filter notification category before latest-25 limit",
+        "Display localized recorded observation and exact currency",
+        "Reload and inspect current domain evidence"
+      ],
+      "sideEffects": [
+        "Dashboard load also publishes current alerts; UI has no durable read/dismiss command"
+      ],
+      "implementationStatus": "worker_scan_progress_visible_legacy_delivery_retained",
+      "reviewStatus": "partial_engineering_review_v93",
+      "runtimeStatus": "staged_worker_and_en_fr_progress_states_verified_v94",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "../../evidence/reconciliation-notifications-v93.json",
+        "../../RECONCILIATION_NOTIFICATION_GUIDE.md",
+        "../../RECONCILIATION_NOTIFICATION_VERIFICATION_V93.md",
+        "../../evidence/alert-scan-v94.json",
+        "../../ALERT_SCAN_GUIDE_AND_CUTOVER.md",
+        "../../ALERT_SCAN_VERIFICATION_V94.md"
+      ],
+      "findings": [
+        "NTF-F11"
+      ],
+      "remaining": [
+        "Deploy and verify the replacement schedule/monitoring on an authorized target before requesting removal of dashboard-triggered delivery. Automatic approval review held that removal in v94.",
+        "Dashboard still generates bounded notices and can fail when their writes fail; it is not yet read-only.",
+        "Full inbox history/acknowledgements, current-domain navigation, historical overwritten-evidence reconstruction and full accessibility remain incomplete.",
+        "Worker reads per-page current state under an initial creation/deadline boundary; a new pass is required for newly eligible records. No atomic whole-domain snapshot or scheduler health certification."
+      ],
+      "completeWorkflowVerified": false,
+      "v93": {
+        "receipt": "evidence/reconciliation-notifications-v93.json",
+        "wholeWorkflowComplete": false,
+        "notificationTransportIsNotReadReceipt": true
+      },
+      "v94": {
+        "receipt": "evidence/alert-scan-v94.json",
+        "workerPageSize": 100,
+        "cutoverApplied": false,
+        "automaticReviewHeldRemoval": true
+      }
+    },
+    {
+      "id": "NTF-SIGNAL-DIGEST",
+      "name": "Prepare a business-signal digest under notification preferences",
+      "purpose": "Filter business signals by tenant, type, severity, channel and quiet hours.",
+      "personas": [
+        "future signal subscriber",
+        "service caller"
+      ],
+      "authority": {
+        "permissions": [
+          "No authenticated delivery entry found"
+        ],
+        "scope": "Pure helper accepts signal/preference objects; caller must own permission and recipient scope."
+      },
+      "entryPoints": [
+        "services/signals/signal-notification.service.ts:17",
+        "services/signals/signal-notification.service.ts:30",
+        "services/signals/business-signal-contracts.ts:191"
+      ],
+      "services": [
+        "services/signals/signal-notification.service.ts"
+      ],
+      "records": [
+        "Typed NotificationPreference; computed digest only"
+      ],
+      "transitions": [
+        "input signals/preference -> filter -> digest object; no persistence/schedule/send"
+      ],
+      "sideEffects": [
+        "None outside returned memory object"
+      ],
+      "implementationStatus": "service_only_not_connected",
+      "reviewStatus": "selected_current_source_paths_traced_not_complete_assurance",
+      "runtimeStatus": "not_visited_not_executed",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json"
+      ],
+      "findings": [
+        "NTF-F08"
+      ],
+      "remaining": [
+        "No production caller found for shouldNotifyForSignal/buildSignalDigest.",
+        "Before integration, validate requested org/user versus preference, honor timezone, and separate digest inclusion from immediate-delivery suppression.",
+        "No preference CRUD or real digest delivery found."
+      ]
+    },
+    {
+      "id": "NTF-STATEMENT-QUEUE",
+      "name": "Request a consented customer statement delivery",
+      "purpose": "Queue an expiring, revocable statement link for email or WhatsApp with explicit consent and immutable source evidence.",
+      "personas": [
+        "authorized customer/accounting operator"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.exports.create",
+          "fresh authentication within 300 seconds",
+          "accounting export module guard"
+        ],
+        "scope": "Action derives organization and actor; service validates scoped snapshot, active actor, consent evidence, destination, idempotency and encrypted envelope."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/customers/[id]/statement",
+        "components/customers/CustomerStatementWorkflow.tsx:150",
+        "actions/accounting/customer-statement.actions.ts:48",
+        "services/accounting/customer-statement-delivery.service.ts:201"
+      ],
+      "services": [
+        "services/accounting/customer-statement-delivery.service.ts",
+        "services/accounting/customer-statement-access.service.ts",
+        "services/accounting/customer-statement-delivery-envelope.ts",
+        "hooks/customer-statement-request.ts"
+      ],
+      "records": [
+        "CustomerStatementDelivery",
+        "CustomerStatementDeliveryState",
+        "CustomerStatementAccessToken",
+        "ReferralAttribution",
+        "BusinessEvent/BusinessEventOutbox",
+        "AuditLog"
+      ],
+      "transitions": [
+        "fresh-auth + explicit consent -> validate existing snapshot -> exact replay or atomic token/envelope/outbox/history -> QUEUED"
+      ],
+      "sideEffects": [
+        "Database writes only; no immediate external send"
+      ],
+      "implementationStatus": "exact_command_recovery_and_scoped_sender_history_verified_provider_open",
+      "reviewStatus": "bounded_sender_recovery_reviewed_full_lifecycle_open",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "../../evidence/statement-recovery-receipt.json",
+        "../customer-supplier/STATEMENT_SENDER_RECOVERY.md",
+        "../../evidence/statement-history-receipt.json",
+        "../customer-supplier/STATEMENT_HISTORY_AND_LINK_ACCESS.md"
+      ],
+      "findings": [
+        "NTF-F07"
+      ],
+      "remaining": [
+        "Unreadable local command metadata can be inspected alongside history but still needs a controlled resolution workflow before another request is enabled in that tab.",
+        "Empty-source snapshots and recorded zero balances were exercised; populated receivable/ledger calculations and the complete financial lifecycle remain unverified by this batch.",
+        "Provider worker processing, unknown provider outcomes, public recipient revocation races and complete retained-obligation lifecycle remain open workflows.",
+        "Native screen readers, native browser zoom and full contrast/accessibility audit remain open; sixteen CSS text-enlargement cases are bounded layout evidence.",
+        "The existing foreign-object not-found heading remains English in the French route; broader not-found localization remains an engineering issue.",
+        "No full build, production performance acceptance, deployment, external message, X1 approval/clearance or professional certification."
+      ]
+    },
+    {
+      "id": "NTF-STATEMENT-DELIVER",
+      "name": "Deliver queued statements through email or WhatsApp",
+      "purpose": "Process recorded consented statement deliveries and retain the provider outcome.",
+      "personas": [
+        "authorized operator running tenant-scoped worker"
+      ],
+      "authority": {
+        "permissions": [
+          "Operational worker process/DB access; no end-user permission check inside worker"
+        ],
+        "scope": "CLI requires organizationId and workerId; worker claims its event type with a conditional lease, resolves stored organization/object evidence. Direct service accepts optional organizationId; deployments and scheduler identity were not inspected."
+      },
+      "entryPoints": [
+        "scripts/referral-delivery-worker.ts:109",
+        "npm run worker:referrals -- --organization-id <id> --worker-id <id>",
+        "services/communication/customer-statement-delivery-worker.service.ts:305",
+        "services/communication/customer-statement-delivery-worker.service.ts:370"
+      ],
+      "services": [
+        "services/communication/customer-statement-delivery-worker.service.ts",
+        "services/communication/customer-statement-delivery.provider.ts"
+      ],
+      "records": [
+        "BusinessEventOutbox",
+        "CustomerStatementDeliveryState and delivery history",
+        "CustomerStatementAccessToken",
+        "BusinessEvent/AuditLog"
+      ],
+      "transitions": [
+        "PENDING/FAILED due or stale LOCKED -> claim/increment -> envelope/source/token/expiry/consent binding -> gated provider call -> SENT/DEFERRED/FAILED/DEAD_LETTER"
+      ],
+      "sideEffects": [
+        "External Resend email or Meta WhatsApp only when configured and enabled; acceptance is not recipient delivery/read proof"
+      ],
+      "implementationStatus": "known_unsent_retry_with_current_authority_revision_and_retained_command_implemented",
+      "reviewStatus": "bounded_current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "../../evidence/statement-worker-receipt.json",
+        "../../evidence/statement-retry-receipt.json"
+      ],
+      "findings": [
+        "NTF-F03",
+        "NTF-F04",
+        "NTF-F06"
+      ],
+      "remaining": [
+        "Only the known-not-sent statement setup branch has controlled retry. Unknown outcomes, exhausted/invalid records and other communication workers still need operator recovery/reconciliation work.",
+        "Provider configuration is rechecked by the worker. This form does not validate credentials, enable sending or authorize a live provider. No external message was sent.",
+        "Corrupt local command resolution, public recipient revocation races, populated receivable/ledger lifecycle and full communication lifecycle remain open.",
+        "French text wraps heavily at 320px with 200% CSS text; compact layout improvement, native zoom, actual screen readers and comprehensive contrast remain open.",
+        "No full build, production performance acceptance, deployment, migration, X1 clearance or professional certification."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "NTF-ACCOUNTANT-INVITE",
+      "name": "Queue accountant collaboration invitation",
+      "purpose": "For a new accountant, record consent and send an expiring invitation; existing active users follow the separate direct-grant branch.",
+      "personas": [
+        "accounting administrator"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.close.accountant.invite",
+          "fresh authentication within 300 seconds"
+        ],
+        "scope": "Protected action derives actor/tenant; signed-consent evidence, role, expiry and destination belong to invite service. This register does not assert professional approval."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/accounting/accountant-access",
+        "components/accounting/AccountantAccessManager.tsx:41",
+        "actions/accounting/accountant-access.actions.ts:68",
+        "services/accounting/accountant-client-invite.service.ts:474"
+      ],
+      "services": [
+        "services/accounting/accountant-client-invite.service.ts",
+        "services/accounting/accountant-client-invite-envelope.ts"
+      ],
+      "records": [
+        "AccountantClientInvite + append-only states",
+        "ReferralAttribution",
+        "BusinessEvent/BusinessEventOutbox",
+        "AuditLog"
+      ],
+      "transitions": [
+        "permission/fresh auth -> active existing user GRANTED or new user PENDING invite -> encrypted outbox -> queued receipt"
+      ],
+      "sideEffects": [
+        "New invite branch has DB effects only; direct grant is separate controlled access behavior"
+      ],
+      "implementationStatus": "existing_action_and_ui",
+      "reviewStatus": "selected_current_source_paths_traced_not_complete_assurance",
+      "runtimeStatus": "not_visited_not_executed",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json"
+      ],
+      "findings": [],
+      "remaining": [
+        "Verify EN/FR and explicit step-up recovery; current manager text is English and has no password challenge.",
+        "Pending invites/delivery outcomes are not represented by initialGrants table; verify an actual recipient/admin recovery path.",
+        "Recipient acceptance belongs to identity/accountant-access lane, not asserted verified here."
+      ]
+    },
+    {
+      "id": "NTF-ACCOUNTANT-DELIVER",
+      "name": "Deliver queued accountant invitation",
+      "purpose": "Send the still-current consented invitation while preserving provider and delivery evidence.",
+      "personas": [
+        "authorized operator running tenant-scoped worker"
+      ],
+      "authority": {
+        "permissions": [
+          "Operational worker process/DB access; no end-user permission check inside worker"
+        ],
+        "scope": "CLI requires organizationId and workerId; worker claims its event type with a conditional lease, resolves stored organization/object evidence. Direct service accepts optional organizationId; deployments and scheduler identity were not inspected."
+      },
+      "entryPoints": [
+        "scripts/referral-delivery-worker.ts:124",
+        "services/communication/accountant-client-invite-worker.service.ts:195",
+        "services/communication/accountant-client-invite-worker.service.ts:260"
+      ],
+      "services": [
+        "services/communication/accountant-client-invite-worker.service.ts",
+        "services/communication/accountant-client-invite.provider.ts"
+      ],
+      "records": [
+        "AccountantClientInvite/state",
+        "AccountantClientInviteDelivery",
+        "BusinessEventOutbox",
+        "BusinessEvent/AuditLog"
+      ],
+      "transitions": [
+        "claim -> envelope/hash/current PENDING/expiry/consent/URL checks -> Resend with stable Idempotency-Key -> SENT/DEFERRED/FAILED/DEAD_LETTER"
+      ],
+      "sideEffects": [
+        "Configured enabled external Resend send; no client access granted by delivery itself"
+      ],
+      "implementationStatus": "existing_worker_and_provider_adapter_not_live_verified",
+      "reviewStatus": "selected_current_source_paths_traced_not_complete_assurance",
+      "runtimeStatus": "not_visited_not_executed",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json"
+      ],
+      "findings": [
+        "NTF-F03",
+        "NTF-F06"
+      ],
+      "remaining": [
+        "Verify provider retry/idempotency retention limits, lease takeover and revoked/expired invite before send.",
+        "Deferred requeue owner absent; validation catch may leave delivery evidence unappended while outbox fails."
+      ]
+    },
+    {
+      "id": "NTF-RECEIPT-REQUEST",
+      "name": "Request customer receipt delivery",
+      "purpose": "Record a receipt channel choice and queue a WhatsApp request for an existing sale.",
+      "personas": [
+        "cashier/service caller"
+      ],
+      "authority": {
+        "permissions": [
+          "No production action/route caller found for sendReceipt; service has no protect wrapper"
+        ],
+        "scope": "Service parses supplied tenant/user and loads receipt within tenant; a future transport must derive identity and enforce permission before invoking it."
+      },
+      "entryPoints": [
+        "services/pos/receipt.service.ts:643",
+        "services/communication/whatsapp-receipt-outbox.service.ts:84"
+      ],
+      "services": [
+        "services/pos/receipt.service.ts",
+        "services/communication/whatsapp-receipt-outbox.service.ts"
+      ],
+      "records": [
+        "SalesOrder receipt source",
+        "BusinessEvent/BusinessEventOutbox",
+        "AuditLog"
+      ],
+      "transitions": [
+        "existing receipt -> NONE skip or current fiscal-delivery guard -> normalize destination -> WHATSAPP queue; PRINT/EMAIL/SMS return explicit stub PENDING"
+      ],
+      "sideEffects": [
+        "WhatsApp branch only queues; default print/email/SMS adapters do not transmit"
+      ],
+      "implementationStatus": "service_only_no_current_application_caller_found",
+      "reviewStatus": "selected_current_source_paths_traced_not_complete_assurance",
+      "runtimeStatus": "not_visited_not_executed",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json"
+      ],
+      "findings": [],
+      "remaining": [
+        "Do not claim cashier receipt sending integrated from an exported service.",
+        "Preserve legal-delivery controls and establish actual authorized transport/UI before enabling.",
+        "Other default receipt adapters are honest stubs; do not equate PENDING with delivery."
+      ]
+    },
+    {
+      "id": "NTF-RECEIPT-DELIVER",
+      "name": "Send queued WhatsApp receipts",
+      "purpose": "Deliver the queued receipt to its destination and record provider acceptance.",
+      "personas": [
+        "authorized tenant worker operator"
+      ],
+      "authority": {
+        "permissions": [
+          "Operational worker process/DB access; no end-user permission check inside worker"
+        ],
+        "scope": "CLI requires organizationId and workerId; worker claims its event type with a conditional lease, resolves stored organization/object evidence. Direct service accepts optional organizationId; deployments and scheduler identity were not inspected."
+      },
+      "entryPoints": [
+        "scripts/whatsapp-receipt-worker.ts:94",
+        "services/communication/whatsapp-receipt-worker.service.ts:167",
+        "services/communication/whatsapp-receipt-worker.service.ts:235"
+      ],
+      "services": [
+        "services/communication/whatsapp-receipt-worker.service.ts",
+        "services/communication/whatsapp-receipt.provider.ts"
+      ],
+      "records": [
+        "BusinessEventOutbox",
+        "SalesOrder receipt source",
+        "BusinessEvent sent evidence"
+      ],
+      "transitions": [
+        "claim -> config check -> current receipt + fingerprint -> provider send -> SENT or retry/defer/dead letter"
+      ],
+      "sideEffects": [
+        "External Meta WhatsApp call only if live send enabled/configured; current source not executed here"
+      ],
+      "implementationStatus": "existing_worker_and_provider_adapter_not_live_verified",
+      "reviewStatus": "selected_current_source_paths_traced_not_complete_assurance",
+      "runtimeStatus": "not_visited_not_executed",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json"
+      ],
+      "findings": [
+        "NTF-F04",
+        "NTF-F05"
+      ],
+      "remaining": [
+        "Current receipt is reread but worker does not reject current certification.legalDeliveryBlocked before send; fingerprint covers sale ID/order/total/URL/destination, not changed certification.",
+        "Verify acceptance uncertainty and stale lease overlap; no stable provider idempotency contract or delivery callback found.",
+        "Keep all rejected POS/offline continuation changes unapplied."
+      ]
+    },
+    {
+      "id": "NTF-DELIVERY-RECOVERY",
+      "name": "Resume a deferred or exhausted communication safely",
+      "purpose": "Recover a legitimate queued message after missing setup or retry exhaustion without duplicates or invalid evidence.",
+      "personas": [
+        "operations administrator"
+      ],
+      "authority": {
+        "permissions": [
+          "Statement branch: accounting.exports.create and customers.read; current Accounting export eligibility; fresh authentication"
+        ],
+        "scope": "Server-derived organization and actor; customer, statement, delivery and displayed queue revision. Other communication branches still lack this control."
+      },
+      "entryPoints": [
+        "services/communication/customer-statement-delivery-worker.service.ts:305",
+        "services/communication/accountant-client-invite-worker.service.ts:195",
+        "services/communication/whatsapp-receipt-worker.service.ts:167",
+        "services/events/business-event-outbox.service.ts:112",
+        "components/customers/CustomerStatementHistory.tsx",
+        "actions/accounting/customer-statement-history.actions.ts:retry"
+      ],
+      "services": [
+        "services/communication/customer-statement-delivery-worker.service.ts",
+        "services/communication/accountant-client-invite-worker.service.ts",
+        "services/communication/whatsapp-receipt-worker.service.ts",
+        "services/accounting/customer-statement-retry.service.ts"
+      ],
+      "records": [
+        "BusinessEventOutbox",
+        "Domain delivery evidence",
+        "BusinessEvent retry command and AuditLog"
+      ],
+      "transitions": [
+        "Known NOT_SENT + setup DEFERRED → review current record → reason/password/confirmation → revision-fenced atomic PENDING request → worker revalidation → actual outcome",
+        "Lost acknowledgement → retained exact command → replay original receipt without requeue",
+        "Unknown, revoked, expired, exhausted, invalid or stale state → reject/hold; retain history"
+      ],
+      "sideEffects": [
+        "Same outbox request becomes PENDING; no replacement delivery/link and no external call in retry service. Event/audit durable; attempts retained."
+      ],
+      "implementationStatus": "known_unsent_statement_retry_implemented_other_outcomes_and_workers_open",
+      "reviewStatus": "bounded_current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "../../evidence/statement-retry-receipt.json"
+      ],
+      "findings": [
+        "NTF-F03"
+      ],
+      "remaining": [
+        "Only the known-not-sent statement setup branch has controlled retry. Unknown outcomes, exhausted/invalid records and other communication workers still need operator recovery/reconciliation work.",
+        "Provider configuration is rechecked by the worker. This form does not validate credentials, enable sending or authorize a live provider. No external message was sent.",
+        "Corrupt local command resolution, public recipient revocation races, populated receivable/ledger lifecycle and full communication lifecycle remain open.",
+        "French text wraps heavily at 320px with 200% CSS text; compact layout improvement, native zoom, actual screen readers and comprehensive contrast remain open.",
+        "No full build, production performance acceptance, deployment, migration, X1 clearance or professional certification."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "NTF-DELIVERY-MONITOR",
+      "name": "Inspect communication backlog and delivery state",
+      "purpose": "Understand pending, failed, deferred and dead-letter work and distinguish provider acceptance from completion.",
+      "personas": [
+        "operations/accounting reader"
+      ],
+      "authority": {
+        "permissions": [
+          "accounting.setup.manage through current protected control-center page/action; standalone receipt summary has no UI caller found"
+        ],
+        "scope": "Queue summary reads are tenant scoped; source read failures propagate."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/accounting/control-center",
+        "services/accounting/control-center.service.ts:707",
+        "services/communication/whatsapp-receipt-worker.service.ts:393",
+        "services/events/business-event-outbox.service.ts:400",
+        "app/[locale]/(dashboard)/dashboard/accounting/control-center/page.tsx:27",
+        "actions/accounting/settings.actions.ts"
+      ],
+      "services": [
+        "services/accounting/control-center.service.ts",
+        "services/communication/whatsapp-receipt-worker.service.ts",
+        "services/events/business-event-outbox.service.ts"
+      ],
+      "records": [
+        "BusinessEventOutbox grouped statuses",
+        "Domain delivery histories"
+      ],
+      "transitions": [
+        "scoped counts -> readiness/backlog indicators; no dedicated communication work queue currently traced"
+      ],
+      "sideEffects": [
+        "Read queries; no sends or recovery mutations"
+      ],
+      "implementationStatus": "partial_generic_operational_visibility",
+      "reviewStatus": "selected_current_source_paths_traced_not_complete_assurance",
+      "runtimeStatus": "not_visited_not_executed",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json"
+      ],
+      "findings": [],
+      "remaining": [
+        "Verify control-center runtime filtering; source confirms route and accounting.setup.manage. Generic outbox counts are not a complete communications console.",
+        "Receipt queue summary is exported without a production caller found.",
+        "Add no delivery/read certification without provider callbacks or recipient evidence."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "NTF-F01",
+      "status": "source_confirmed_not_runtime_reproduced",
+      "summary": "Legacy bell disconnected; supplied-row read handler reports false success.",
+      "sources": [
+        "app/[locale]/(dashboard)/dashboard/layout.tsx:58",
+        "components/dashboard/Sidebar.tsx:45",
+        "components/NotificationMenu.tsx:28"
+      ],
+      "impact": "Normal shell shows empty independent of provider queue. Nonempty legacy handler does not persist or remove anything."
+    },
+    {
+      "id": "NTF-F02",
+      "status": "reproduced_corrected_and_verified_for_normal_settings_examples",
+      "summary": "Normal settings samples claim a real payment/security event without test labeling.",
+      "sources": [
+        "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:75",
+        "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx:283"
+      ],
+      "impact": "Payment received and privileged action queued for review are synthetic local calls with business-looking source types. Development-only demo guard does not cover these controls.",
+      "evidence": [
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../lanes/environment/notification-settings-before-afce0a5e-533.json",
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F03",
+      "status": "statement_known_unsent_branch_corrected_other_recovery_open",
+      "summary": "DEFERRED messages are excluded from all communication claimers and no controlled requeue path was found.",
+      "sources": [
+        "services/communication/customer-statement-delivery-worker.service.ts:305",
+        "services/communication/accountant-client-invite-worker.service.ts:195",
+        "services/communication/whatsapp-receipt-worker.service.ts:167",
+        "services/events/business-event-outbox.service.ts:112"
+      ],
+      "impact": "Providing missing provider configuration alone does not resume previously deferred messages. No production recovery was executed.",
+      "remediation": "Current guarded statement retry, revision/command replay, mandatory audit, real PostgreSQL concurrency/rollback and EN/FR lost-response recovery verified. Unknown and other worker outcomes remain open.",
+      "evidence": [
+        "../../evidence/statement-retry-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F04",
+      "status": "statement_worker_reproduced_and_corrected_other_workers_open",
+      "summary": "External acceptance before durable completion can cause duplicate sends on retry.",
+      "sources": [
+        "services/communication/customer-statement-delivery.provider.ts:76",
+        "services/communication/customer-statement-delivery-worker.service.ts:473",
+        "services/communication/whatsapp-receipt-worker.service.ts:284",
+        "services/communication/accountant-client-invite.provider.ts:115"
+      ],
+      "impact": "Statement email lacks provider idempotency identity; WhatsApp adapters expose none. Five-minute lease reclaim plus no heartbeat or request timeout can overlap slow sends. Accountant email does supply an Idempotency-Key; provider retention guarantees remain unverified.",
+      "remediation": "Durable statement dispatch reservation, generation fence and conservative unknown-outcome hold passed real PostgreSQL failure/concurrency checks. Other adapters and live provider behavior remain open.",
+      "evidence": [
+        "../../evidence/statement-worker-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F05",
+      "status": "source_confirmed_missing_revalidation",
+      "summary": "WhatsApp receipt worker does not reapply current fiscal-delivery blocking state.",
+      "sources": [
+        "services/pos/receipt.service.ts:663",
+        "services/communication/whatsapp-receipt-worker.service.ts:144",
+        "services/communication/whatsapp-receipt-worker.service.ts:277"
+      ],
+      "impact": "Initial queue checks certification, but a changed blocked certification between queue and worker is absent from fingerprint and worker decision. Focused test required; no send attempted."
+    },
+    {
+      "id": "NTF-F06",
+      "status": "statement_atomic_domain_transport_outcomes_corrected_accountant_open",
+      "summary": "Statement/invite validation exceptions update transport status without corresponding domain delivery state.",
+      "sources": [
+        "services/communication/customer-statement-delivery-worker.service.ts:531",
+        "services/communication/accountant-client-invite-worker.service.ts:415"
+      ],
+      "impact": "Invalid/expired evidence may leave domain status QUEUED while outbox is FAILED/DEAD_LETTER; verify intended read-model precedence and append failure evidence.",
+      "remediation": "Statement validation/provider outcomes now append domain and transport evidence atomically. Accountant delivery remains open.",
+      "evidence": [
+        "../../evidence/statement-worker-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F07",
+      "status": "reproduced_corrected_and_real_postgres_en_fr_tab_recovery_verified_history_open",
+      "summary": "Customer statement UI creates fresh command identity and consent timestamp on every retry.",
+      "sources": [
+        "components/customers/CustomerStatementWorkflow.tsx:161",
+        "components/customers/CustomerStatementWorkflow.tsx:186",
+        "services/accounting/customer-statement-delivery.service.ts:247"
+      ],
+      "impact": "If queue committed but response is lost, user retry produces another valid delivery/token/outbox rather than replaying the same request. Share with CS lane.",
+      "evidence": [
+        "../../evidence/statement-recovery-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F08",
+      "status": "latent_unconnected_service_defects",
+      "summary": "Signal digest helper uses immediate-notification suppression and ignores configured timezone.",
+      "sources": [
+        "services/signals/signal-notification.service.ts:24",
+        "services/signals/signal-notification.service.ts:38",
+        "services/signals/signal-notification.service.ts:62",
+        "services/signals/business-signal-contracts.ts:191"
+      ],
+      "impact": "digestOnly removes noncritical signals even when building a digest; quietHours uses UTC despite timezone field. Digest output org/user are not compared with preference identity. No production caller found; not a demonstrated leak."
+    },
+    {
+      "id": "NTF-F09",
+      "status": "source_risk_runtime_needed",
+      "summary": "Session notification queue lacks actor/tenant binding and reset.",
+      "sources": [
+        "components/Providers.tsx:24",
+        "components/notifications/NotificationProvider.tsx:117"
+      ],
+      "impact": "Provider remains global with business labels/amounts in local memory; actor or tenant switch lifetime must be tested before claiming isolation."
+    },
+    {
+      "id": "NTF-F10",
+      "status": "shared_en_fr_controls_live_regions_and_timer_focus_corrected_native_at_and_all_producer_copy_open",
+      "summary": "Shared transient notifications lack a live-region role and contain English-only controls.",
+      "sources": [
+        "components/notifications/NotificationSystem.tsx:381",
+        "components/notifications/NotificationSystem.tsx:411",
+        "components/notifications/NotificationSystem.tsx:426"
+      ],
+      "impact": "No role/status/aria-live found in notification tree; New, High priority, Dismiss and convenience strings remain English. Actual assistive-technology and EN/FR behavior not tested.",
+      "evidence": [
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F11",
+      "status": "source_confirmed_partial_workflow",
+      "summary": "Reconciliation notification view has no acknowledgement or preference persistence.",
+      "sources": [
+        "services/reconciliation/payment-reconciliation-notifications.ts:93",
+        "services/reconciliation/payment-reconciliation-notifications.ts:126",
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts:320",
+        "components/finance/PaymentReconciliationWorkbench.tsx:1496",
+        "hooks/payments/usePaymentReconciliationDashboard.ts:105"
+      ],
+      "impact": "Every publication upserts UNREAD; repeated dashboard loads increment attempts and refresh processedAt. UI shows only eight without acknowledgement; domain read triggers writes. This may be intentional shared alert behavior but must not be presented as a completed user inbox."
+    },
+    {
+      "id": "NTF-F12",
+      "summary": "Narrow/enlarged-text review overflow and a hover state stranded after the read button disappears.",
+      "status": "reproduced_corrected_and_bounded_browser_verified",
+      "impact": "Reading controls clipped or notices remained indefinitely. Container-based layout and hover reconciliation correct these paths.",
+      "evidence": [
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F13",
+      "summary": "Stored non-booleans entered sound state and mount temporarily overwrote an existing disabled preference.",
+      "status": "reproduced_corrected_unit_and_real_en_fr_storage_recovery_verified",
+      "impact": "Only explicit toggles now write; invalid values use a boolean default, failed saves are visible and other tabs synchronize.",
+      "evidence": [
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ]
+    },
+    {
+      "id": "NTF-F14",
+      "summary": "Local read and read-all overwrote an explicitly external delivery failure with read.",
+      "status": "reproduced_corrected_unit_and_real_en_fr_browser_verified",
+      "impact": "Local acknowledgement now preserves the external delivery state. No recipient-read or delivery evidence is manufactured.",
+      "evidence": [
+        "LOCAL_NOTIFICATION_SETTINGS_REVIEW.md",
+        "../../evidence/local-notification-receipt.json"
+      ]
+    }
+  ],
+  "verification": {
+    "executed": [
+      {
+        "scope": "NTF-F02 local settings sample claims",
+        "evidence": "lanes/environment/notification-settings-before-afce0a5e-533.json",
+        "languages": 2,
+        "reproduced": 2,
+        "realRecordCountsUnchanged": true,
+        "temporaryGrantsRestored": true,
+        "screenshots": 4,
+        "productionChanges": 0
+      },
+      {
+        "scope": [
+          "NTF-FEEDBACK",
+          "NTF-INBOX",
+          "NTF-SOUND",
+          "NTF-DIAGNOSTICS"
+        ],
+        "receipt": "../../evidence/local-notification-receipt.json",
+        "tests": 29,
+        "browserJourneys": 2,
+        "screenshots": 32,
+        "completeWorkflowVerified": false
+      }
+    ],
+    "notExecuted": [
+      "Native assistive technology, native browser zoom and full contrast audit",
+      "All external provider/network sends and actual audio playback",
+      "All worker execution for this batch",
+      "Other notification workflows remain individually incomplete; current local verification does not certify them."
+    ],
+    "existingTestFiles": "Communication/provider/outbox and signal suites exist, plus prior CS limited tests. Their existence or previous receipts is not verification of this lane."
+  },
+  "sourceBaseline": "../../evidence/source-baseline-v43.json"
+}

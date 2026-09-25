@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOCAL_SIMULATION_AUTHENTICATED_EVIDENCE_FRAGMENT",
+  "authoritative": false,
+  "approvedForReleaseEvidence": false,
+  "releaseGate": "BLOCKED_EXTERNAL_APPROVAL_REQUIRED",
+  "status": "FAIL",
+  "runId": "LOCAL-X1-20260905091534",
+  "viewport": "desktop",
+  "artifacts": [
+    {
+      "artifactId": "LOCAL-X1-20260905091534-desktop-en-receivables-history",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534/screenshots/desktop/en/receivables-history.png",
+      "runId": "LOCAL-X1-20260905091534",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/en/dashboard/finance/receivables/history",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:19:22.912Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 1440,
+        "measurementVersion": 2,
+        "renderedRowCount": 12,
+        "resultKind": "table-rows",
+        "navigationMs": 116429,
+        "usefulResultMs": 123002,
+        "authCheckMs": 18087,
+        "accessibilityMs": 2449,
+        "screenshotMs": 2257,
+        "captureElapsedMs": 146480,
+        "bodyOverflowPx": 0
+      }
+    },
+    {
+      "artifactId": "LOCAL-X1-20260905091534-desktop-en-payables",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534/screenshots/desktop/en/payables.png",
+      "runId": "LOCAL-X1-20260905091534",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/en/dashboard/finance/payables",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:20:15.056Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 1440,
+        "measurementVersion": 2,
+        "renderedRowCount": 0,
+        "resultKind": "table-empty",
+        "navigationMs": 37733,
+        "usefulResultMs": 45376,
+        "authCheckMs": 1383,
+        "accessibilityMs": 1391,
+        "screenshotMs": 2198,
+        "captureElapsedMs": 50739,
+        "bodyOverflowPx": 0
+      }
+    }
+  ]
+}

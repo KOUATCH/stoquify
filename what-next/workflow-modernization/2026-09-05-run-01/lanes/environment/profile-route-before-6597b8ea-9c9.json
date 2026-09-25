@@ -1,0 +1,33 @@
+{
+  "run": "6597b8ea-9c9",
+  "startedAt": "2026-09-06T16:33:52.153Z",
+  "sourcesBefore": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "status": 404,
+      "durationMs": 25686,
+      "screenshot": "en-profile-route-before-6597b8ea-9c9.png",
+      "defectReproduced": true
+    },
+    {
+      "locale": "fr",
+      "status": 404,
+      "durationMs": 698,
+      "screenshot": "fr-profile-route-before-6597b8ea-9c9.png",
+      "defectReproduced": true
+    }
+  ],
+  "workflowPassed": false,
+  "scope": "Direct route existence only. The earlier account-menu click did not produce a visible menu and is still unverified.",
+  "completedAt": "2026-09-06T16:34:21.852Z",
+  "sourcesAfter": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6"
+  },
+  "sourceStable": true,
+  "driverSha256": "3bc40fe501f7fa4f6e4e3e027afae99da37eaffed68cd199ca29440aef95b5e1"
+}

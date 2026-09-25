@@ -1,0 +1,186 @@
+{
+  "run": "ddca551a-a10",
+  "startedAt": "2026-09-07T07:38:07.848Z",
+  "sourcesBefore": {
+    "services/communication/customer-statement-delivery-worker.service.ts": "5a4498f398b473ff5e38b9c08b6f3ec949b3c1bec2ebc34c5c9d96cc0fc79174",
+    "services/communication/customer-statement-delivery.provider.ts": "b6b03caa98c5b9373e7fd6ed21eaf56de2535bface6a678c042953094e3cc064",
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "actions/accounting/customer-statement-history.actions.ts": "1ff57815a13397c7fdfe7cfb4236afaab98132c1a0f85eea135221bdd7b6ad4e",
+    "components/customers/CustomerStatementHistory.tsx": "778ddc168a79285cf8326dccb4361318d6ab49a8b7240ee9eb14e85366c757e1",
+    "components/customers/CustomerStatementWorkflow.tsx": "dff49be7603465584649dddfe528f93af52432f820f25894005353a1dcb4745f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "states": [
+        {
+          "kind": "unknown",
+          "status": "DEFERRED",
+          "code": "PROVIDER_OUTCOME_UNKNOWN"
+        },
+        {
+          "kind": "setup",
+          "status": "DEFERRED",
+          "code": "PROVIDER_NOT_CONFIGURED"
+        },
+        {
+          "kind": "revoked",
+          "status": "CANCELLED",
+          "code": "STATEMENT_ACCESS_UNAVAILABLE"
+        }
+      ],
+      "screenshots": [
+        "en-statement-worker-history-ddca551a-a10.png",
+        "en-statement-worker-reflow-320-100-ddca551a-a10.png",
+        "en-statement-worker-reflow-320-200-ddca551a-a10.png",
+        "en-statement-worker-reflow-390-100-ddca551a-a10.png",
+        "en-statement-worker-reflow-390-200-ddca551a-a10.png",
+        "en-statement-worker-reflow-768-100-ddca551a-a10.png",
+        "en-statement-worker-reflow-768-200-ddca551a-a10.png",
+        "en-statement-worker-reflow-1440-100-ddca551a-a10.png",
+        "en-statement-worker-reflow-1440-200-ddca551a-a10.png"
+      ],
+      "reflow": [
+        {
+          "width": 320,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "horizontalOverflow": false
+        }
+      ],
+      "routeReadyMs": 5493,
+      "keyboardRefresh": true,
+      "historyCreatedNoAdditionalDeliveries": true,
+      "originalPermissionsRestored": true
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "states": [
+        {
+          "kind": "unknown",
+          "status": "DEFERRED",
+          "code": "PROVIDER_OUTCOME_UNKNOWN"
+        },
+        {
+          "kind": "setup",
+          "status": "DEFERRED",
+          "code": "PROVIDER_NOT_CONFIGURED"
+        },
+        {
+          "kind": "revoked",
+          "status": "CANCELLED",
+          "code": "STATEMENT_ACCESS_UNAVAILABLE"
+        }
+      ],
+      "screenshots": [
+        "fr-statement-worker-history-ddca551a-a10.png",
+        "fr-statement-worker-reflow-320-100-ddca551a-a10.png",
+        "fr-statement-worker-reflow-320-200-ddca551a-a10.png",
+        "fr-statement-worker-reflow-390-100-ddca551a-a10.png",
+        "fr-statement-worker-reflow-390-200-ddca551a-a10.png",
+        "fr-statement-worker-reflow-768-100-ddca551a-a10.png",
+        "fr-statement-worker-reflow-768-200-ddca551a-a10.png",
+        "fr-statement-worker-reflow-1440-100-ddca551a-a10.png",
+        "fr-statement-worker-reflow-1440-200-ddca551a-a10.png"
+      ],
+      "reflow": [
+        {
+          "width": 320,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "horizontalOverflow": false
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "horizontalOverflow": false
+        }
+      ],
+      "routeReadyMs": 3534,
+      "keyboardRefresh": true,
+      "historyCreatedNoAdditionalDeliveries": true,
+      "originalPermissionsRestored": true
+    }
+  ],
+  "scope": "Owned real PostgreSQL worker outcomes and authenticated EN/FR history. Only scoped synthetic fixtures; no external provider calls.",
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T07:38:39.029Z",
+  "sourcesAfter": {
+    "services/communication/customer-statement-delivery-worker.service.ts": "5a4498f398b473ff5e38b9c08b6f3ec949b3c1bec2ebc34c5c9d96cc0fc79174",
+    "services/communication/customer-statement-delivery.provider.ts": "b6b03caa98c5b9373e7fd6ed21eaf56de2535bface6a678c042953094e3cc064",
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "actions/accounting/customer-statement-history.actions.ts": "1ff57815a13397c7fdfe7cfb4236afaab98132c1a0f85eea135221bdd7b6ad4e",
+    "components/customers/CustomerStatementHistory.tsx": "778ddc168a79285cf8326dccb4361318d6ab49a8b7240ee9eb14e85366c757e1",
+    "components/customers/CustomerStatementWorkflow.tsx": "dff49be7603465584649dddfe528f93af52432f820f25894005353a1dcb4745f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

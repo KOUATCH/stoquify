@@ -36,6 +36,11 @@ jest.mock("lucide-react", () => {
     React.createElement("svg", props);
 
   return {
+    Search: Icon,
+    X: Icon,
+    Check: Icon,
+    ChevronDown: Icon,
+    ChevronUp: Icon,
     BadgeCheck: Icon,
     BarChart3: Icon,
     BookOpenText: Icon,

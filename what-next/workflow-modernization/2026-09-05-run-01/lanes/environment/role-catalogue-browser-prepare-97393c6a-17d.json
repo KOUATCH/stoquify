@@ -1,0 +1,49 @@
+{
+  "run": "97393c6a-17d",
+  "mode": "prepare",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T11:27:55.799Z",
+  "sourcesBefore": {
+    "app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx": "633e680226f937833891855a47016dee47de248780d0e035c73e9cf390d30ce4",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx": "efd55d6c1658610430d2a3d52c7d610b9779bd23720729cbf421b74949c5d17a",
+    "actions/roles/getOrgRoles.ts": "fb44435011405aff0914235e9015ded367c9170b8bb2a8cc234b845e17b4acbe",
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "components/ui/dropdown-menu.tsx": "6d60afe0821a1972277bf5fadce7454153cd459b16ac8f25fee4de525e49f4e2",
+    "components/DataTableComponents/DataTable.tsx": "cfd2eff50cc19dd3b06e8874c5f50b7cf745f832eb39a9fbbb00fe24fe897470",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "checks": [
+    {
+      "name": "owned EN/FR read-only users",
+      "passed": true,
+      "users": 2,
+      "roles": 2,
+      "existingCredentialsChanged": false
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "New read-only synthetic users are added only to the existing owned role-fixture organizations. Existing accounts, passwords, grants and registration throttles are unchanged.",
+    "Browser verification reads role lists, permission-aware row controls, localized navigation and overlay behavior. It performs no role mutation.",
+    "Query-failure behavior is covered by source/unit verification separately. No native screen reader or complete accessibility certification."
+  ],
+  "originalAuthorityBefore": "464efa9ffb01d9b05a6a6223a0fb7a7e341165638d682b8689da443b59e26bff",
+  "originalAuthorityAfter": "464efa9ffb01d9b05a6a6223a0fb7a7e341165638d682b8689da443b59e26bff",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T11:27:56.377Z",
+  "sourcesAfter": {
+    "app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx": "633e680226f937833891855a47016dee47de248780d0e035c73e9cf390d30ce4",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx": "efd55d6c1658610430d2a3d52c7d610b9779bd23720729cbf421b74949c5d17a",
+    "actions/roles/getOrgRoles.ts": "fb44435011405aff0914235e9015ded367c9170b8bb2a8cc234b845e17b4acbe",
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "components/ui/dropdown-menu.tsx": "6d60afe0821a1972277bf5fadce7454153cd459b16ac8f25fee4de525e49f4e2",
+    "components/DataTableComponents/DataTable.tsx": "cfd2eff50cc19dd3b06e8874c5f50b7cf745f832eb39a9fbbb00fe24fe897470",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "sourceStable": true,
+  "driverSha256": "3bd279f62d1be894a8c166a5a78c7aee8fe1e7be0e0973d2dc892a39bc4c74e9",
+  "passed": 1,
+  "failed": 0
+}

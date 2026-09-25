@@ -1,0 +1,128 @@
+{
+  "recordedAt": "2026-09-06T10:28:49.917Z",
+  "baseline": "evidence/source-baseline-v23.json",
+  "sources": {
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "services/referrals/referral-attribution.service.ts": "50bf6b94547b11f290bd2c41d2aa941f78ab9ac11bf027434d52c10eab9ff3fd",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "priorUnchangedTestEvidence": "evidence/registration-receipt.json",
+  "browser": {
+    "file": "lanes/environment/registration-browser-1370a173-fb5.json",
+    "passed": 4,
+    "failed": 0,
+    "createdUnverifiedAccounts": 3,
+    "ordinaryIpLimitDenials": 1,
+    "chunk": "d1b35b"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "b9329b"
+  },
+  "cooldown": {
+    "previousExpiredAt": "2026-09-06T10:25:18.544Z",
+    "clockCheckedBeforeRun": "2026-09-06T10:25:29Z",
+    "nextBlockedUntil": "2026-09-06T11:26:17.046Z",
+    "readOnlyCheckAt": "2026-09-06T10:27:19.930Z",
+    "chunk": "0f175d",
+    "countersReset": false,
+    "clientIdentityChanged": false
+  },
+  "screenshots": [
+    {
+      "file": "evidence/registration-completion/register-v2-en-entry-1370a173-fb5.png",
+      "sha256": "e97075190baaabc93cacbdc6cad3214f8e16067c1f9ae79395f0d33b6f43cde7"
+    },
+    {
+      "file": "evidence/registration-completion/register-v2-en-ready-1370a173-fb5.png",
+      "sha256": "c3c56733bab5c91ba68ae6ae98a4b449606bb2788aae9baa8de118fda0447614"
+    },
+    {
+      "file": "evidence/registration-completion/register-v2-en-recovery-1370a173-fb5.png",
+      "sha256": "51504a474f33ebe1a3c0480588d18804e694d4ce08bdee53e75e2be333126308"
+    },
+    {
+      "file": "evidence/registration-completion/register-v2-en-verification-1370a173-fb5.png",
+      "sha256": "630cf9830cc327f2de939ef885d91fd8459fced69a1ed98123507f6f0d357906"
+    },
+    {
+      "file": "evidence/registration-completion/register-v2-fr-entry-1370a173-fb5.png",
+      "sha256": "7e271d34a05000289d561095ab4829c68a17ca32ba77622643170e938f16c7a1"
+    },
+    {
+      "file": "evidence/registration-completion/register-v2-fr-ready-1370a173-fb5.png",
+      "sha256": "f0a2fa012dc9f636a977837ad258a7b8975140cb0643cc87fef7d482c830d7d7"
+    },
+    {
+      "file": "evidence/registration-completion/register-v2-fr-recovery-1370a173-fb5.png",
+      "sha256": "95dfa0f3a8ea86f55546a32581807b5cc6962b263343dc7505cb12f1b523e53a"
+    },
+    {
+      "file": "evidence/registration-completion/register-v2-fr-verification-1370a173-fb5.png",
+      "sha256": "29ba8e6f847063de1de0b6a718766b2a609b2d7329cd21efb448c2962bc095cd"
+    },
+    {
+      "file": "evidence/registration-completion/register-en-entry-1370a173-fb5.png",
+      "sha256": "02edc9d08cf1c7e3486aa4659e6e8885a24d890dddaae478bc7f4347a2f6ea46"
+    },
+    {
+      "file": "evidence/registration-completion/register-en-required-1370a173-fb5.png",
+      "sha256": "7321d93d1d59fc71a601f1b1a26024b9cad584b9fc61ade48e710a3ae9edb063"
+    },
+    {
+      "file": "evidence/registration-completion/register-en-company-1370a173-fb5.png",
+      "sha256": "aa4c4db720abb2d7ef61ad12429edf84b11db4f90871945971e962540d45ce7c"
+    },
+    {
+      "file": "evidence/registration-completion/register-en-ready-1370a173-fb5.png",
+      "sha256": "af53b49e00546eb942f5bd8239ec205910ae1cee6c0358e7caabe38998128487"
+    },
+    {
+      "file": "evidence/registration-completion/register-en-recovery-1370a173-fb5.png",
+      "sha256": "48b1ebf8280a729a74445deddd3340a712f95c1b918fba31a86bddc0f870c27e"
+    },
+    {
+      "file": "evidence/registration-completion/register-en-verification-1370a173-fb5.png",
+      "sha256": "88183c9203439b517ead142e1348d8b727c421a4b3d71111e2412af25b3e0dde"
+    },
+    {
+      "file": "evidence/registration-completion/register-fr-entry-1370a173-fb5.png",
+      "sha256": "0d4e7be761558c7ee6098e60524cf2bc79753ff43c5d979b483541a2ffbbad1e"
+    },
+    {
+      "file": "evidence/registration-completion/register-fr-required-1370a173-fb5.png",
+      "sha256": "c50d56c858ffb48b8b2991678d84a95f5aae705aa1e7c7c05f336339afa42ec9"
+    },
+    {
+      "file": "evidence/registration-completion/register-fr-company-1370a173-fb5.png",
+      "sha256": "36055aa5359be9eed0ca62aedddb954b3d95b970c6f4dbb69725e1b92a8abe3e"
+    },
+    {
+      "file": "evidence/registration-completion/register-fr-ready-1370a173-fb5.png",
+      "sha256": "c9c01e1592b4839a90baec1c8204b49133348880144951e699bff412ffcf695c"
+    },
+    {
+      "file": "evidence/registration-completion/register-fr-recovery-1370a173-fb5.png",
+      "sha256": "05570ddcc4c26e6100ccee6f3589f6c4bb3c60352441472bc61a723d4091adf7"
+    },
+    {
+      "file": "evidence/registration-completion/register-fr-rate-limited-1370a173-fb5.png",
+      "sha256": "63b4fd00ddac299e3aa8fd66c3602844e3ac28c8b9a8b703e777cd80e40e06a6"
+    }
+  ],
+  "liveEmailsSent": 0,
+  "productionMutations": 0,
+  "completeWorkflowVerified": false,
+  "pending": "French standard-form positive completion after the normal cooldown, plus wider delivery/onboarding/accessibility work."
+}

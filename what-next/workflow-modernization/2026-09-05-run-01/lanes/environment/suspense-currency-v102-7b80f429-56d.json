@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-09T12:43:24.920Z",
+  "run": "7b80f429-56d",
+  "checks": [
+    "EUR source / XAF base: authoritative approval and retry refused; item, journals, batches, source links, receipts and audit unchanged",
+    "Missing settings: authoritative approval and retry refused; item, journals, batches, source links, receipts and audit unchanged",
+    "XAF / XAF: actual posting retains exact fractional values and configured basis; replay preserves original evidence after a subsequent settings change",
+    "XAF: modified retained rate and base debit fail ledger verification; original fixture evidence restored",
+    "EUR / EUR: actual posting retains exact fractional values and configured basis; replay preserves original evidence after a subsequent settings change",
+    "EUR: modified retained rate and base debit fail ledger verification; original fixture evidence restored"
+  ],
+  "sourcesBefore": {
+    "services/_shared/action-errors.ts": "c5b3cc54a453d880208a183964ad0473c35f6ce5e22978817664d8ceea5ba7ab",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "6848a9066df6e367716e76c38fab41c1a5132e0e694ae7d8b912b650b1cb656f",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "329d8eebe7bbfb6e2d8b55ccd5303e75076664e1a8e4d6e5c217365e17060139",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0"
+  },
+  "scope": "Owned synthetic accounting currency and real posting/approval. No production, external delivery or professional approval.",
+  "originalBefore": "6d33590561e044629e800c15c1c0a53440330d9500db0c9daf0f1d03cb790c0e",
+  "error": "P2010",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/_shared/action-errors.ts": "c5b3cc54a453d880208a183964ad0473c35f6ce5e22978817664d8ceea5ba7ab",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "6848a9066df6e367716e76c38fab41c1a5132e0e694ae7d8b912b650b1cb656f",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "329d8eebe7bbfb6e2d8b55ccd5303e75076664e1a8e4d6e5c217365e17060139",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0"
+  },
+  "sourceStable": true
+}

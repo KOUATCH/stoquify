@@ -112,6 +112,40 @@ function createClient(input: {
 }
 
 describe("inventory movement history read model", () => {
+  it("applies item/reference search to rows, totals and exports within one tenant", async () => {
+    const { client, mocks } = createClient({ transactions: [[movement()], [movement()]] })
+    const options = { client, cursorCodec: codec, now: () => firstRequestTime }
+    const result = await readInventoryMovementHistory({ organizationId: "org-1", filters: { search: " Coffee " } }, options)
+    const where = mocks.inventoryTransaction.findMany.mock.calls[0][0].where
+    expect(where).toMatchObject({ organizationId: "org-1", OR: expect.arrayContaining([
+      { item: { nameEn: { contains: "Coffee", mode: "insensitive" } } },
+      { item: { nameFr: { contains: "Coffee", mode: "insensitive" } } },
+      { item: { sku: { contains: "Coffee", mode: "insensitive" } } },
+      { referenceNumber: { contains: "Coffee", mode: "insensitive" } },
+    ]) })
+    expect(mocks.inventoryTransaction.groupBy.mock.calls[0][0].where).toEqual(where)
+    expect(result.appliedFilters.search).toBe("Coffee")
+    const exportPages = streamInventoryMovementHistoryExport({ organizationId: "org-1", filters: { search: "Coffee" } }, options)
+    await exportPages.next()
+    expect(mocks.inventoryTransaction.findMany.mock.calls[1][0].where).toEqual(where)
+  })
+
+  it("traverses backward using a signed tuple cursor and keeps the snapshot after reload", async () => {
+    const firstRows = Array.from({ length: 26 }, (_, index) => movement({ id: `movement-${String(99 - index).padStart(3, "0")}` }))
+    const secondRows = [movement({ id: "movement-074" })]
+    const { client, mocks } = createClient({ transactions: [firstRows, secondRows, firstRows.slice(0, 25).reverse()] })
+    const options = { client, cursorCodec: codec, now: () => firstRequestTime }
+    const first = await readInventoryMovementHistory({ organizationId: "org-1", filters: { pageSize: 25, search: "Coffee" } }, options)
+    const second = await readInventoryMovementHistory({ organizationId: "org-1", filters: { pageSize: 25, search: "Coffee", cursor: first.pageInfo.nextCursor! } }, options)
+    expect(second.pageInfo.previousCursor).toBeTruthy()
+    const previous = await readInventoryMovementHistory({ organizationId: "org-1", filters: { pageSize: 25, search: "Coffee", cursor: second.pageInfo.previousCursor!, direction: "previous" } }, options)
+    expect(previous.rows.map((row) => row.id)).toEqual(first.rows.map((row) => row.id))
+    expect(previous.pageInfo).toMatchObject({ previousCursor: null, hasMore: true })
+    expect(previous.snapshot.recordedThrough).toBe(first.snapshot.recordedThrough)
+    expect(mocks.inventoryTransaction.findMany.mock.calls[2][0]).toMatchObject({ orderBy: [{ effectiveAt: "asc" }, { recordedAt: "asc" }, { id: "asc" }], where: { AND: [expect.anything(), { OR: expect.arrayContaining([{ effectiveAt: { gt: firstRows[0].effectiveAt } }]) }] } })
+    await expect(readInventoryMovementHistory({ organizationId: "org-1", filters: { cursor: first.pageInfo.nextCursor!, search: "Other" } }, options)).rejects.toThrow("does not match")
+  })
+
   it("uses a frozen cutoff and a strict tuple cursor across equal-time pages", async () => {
     const equalTimeRows = Array.from({ length: 26 }, (_, index) =>
       movement({

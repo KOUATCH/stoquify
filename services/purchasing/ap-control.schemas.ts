@@ -95,6 +95,7 @@ export const supplierPaymentAllocationInputSchema = z.object({
 })
 
 export const approveSupplierPaymentInputSchema = z.object({
+  supplierPaymentRequestId: idSchema.optional(),
   organizationId: idSchema,
   supplierId: idSchema,
   bankAccountId: idSchema,

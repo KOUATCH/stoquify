@@ -1,0 +1,797 @@
+{
+  "schemaVersion": 1,
+  "lane": "pos-offline",
+  "evidenceDate": "2026-09-13T16:54:04.572Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "graphs": [
+    {
+      "file": "graphify-out/graph_actions.json",
+      "community": 78,
+      "meaning": "Historical cart relationship hints verified against current source"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "POS-CATALOG",
+      "name": "Choose a store, terminal, item and customer",
+      "purpose": "Discover tenant locations/terminals; search available items and scoped customers before sale",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/catalog.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/pos.service.ts#listPOSCatalogItems"
+      ],
+      "records": [
+        "User",
+        "Location",
+        "POSStation",
+        "Item",
+        "InventoryLevel",
+        "Customer"
+      ],
+      "transitions": [
+        "Discover tenant locations/terminals",
+        "search available items and scoped customers before sale"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "existing_source_discovered_lifecycle_review_pending",
+      "reviewStatus": "initial_source_discovery",
+      "runtimeStatus": "partial_en_fr_scoped_reads_transport_failure_recovery_and_retained_quantity_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../POS_READ_V123.md",
+        "../../evidence/pos-read-v123.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification."
+      ],
+      "readStateReview": {
+        "serverScope": true,
+        "currentPermission": true,
+        "failedReadsExplicit": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "POS-CART",
+      "name": "Build and revise an active cashier cart",
+      "purpose": "Select own shift; add items; revise or explicitly remove quantities; retain rejected drafts; hand saved cart to payment",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action pos.use; server-derived tenant/actor; own active terminal-linked shift and draft; transaction-checked writable POS and dependency access for add/update/remove.",
+      "entryPoints": [
+        "actions/pos/cart.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/pos.service.ts#addPOSCartLine/updatePOSCartLine/removePOSCartLine"
+      ],
+      "records": [
+        "SalesOrder",
+        "SalesOrderLine",
+        "InventoryLevel",
+        "POSSession"
+      ],
+      "transitions": [
+        "Select own shift",
+        "add items",
+        "revise or explicitly remove quantities",
+        "retain rejected drafts",
+        "hand saved cart to payment"
+      ],
+      "sideEffects": [
+        "Transactional draft lines/totals only; no payment/posting"
+      ],
+      "implementationStatus": "transactional_cart_write_eligibility_denial_audit_retained_draft_and_accurate_stock",
+      "reviewStatus": "source_owned_postgres_commercial_matrix_concurrency_and_en_fr_browser",
+      "runtimeStatus": "partial_restricted_cart_denial_retained_read_closure_and_explicit_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../POS_READ_V123.md",
+        "../../evidence/pos-read-v123.json",
+        "../../CART_ACCESS_V130.md",
+        "../../evidence/pos-cart-access-v130.json",
+        "../../evidence/pos-cart-access-policy-v130.json"
+      ],
+      "remaining": [
+        "Durable client identity for additive unknown-outcome retry; full checkout/financial handoff and native accessibility remain open. Cart add/update/remove commercial enforcement is verified in v130; terminal, sale/refund/void/replay and global policy governance require their own review."
+      ],
+      "readStateReview": {
+        "serverScope": true,
+        "currentPermission": true,
+        "failedReadsExplicit": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "POS-SHIFT-OPEN",
+      "name": "Open a cashier shift and drawer",
+      "purpose": "Identify own terminal/location; enter float; link active session and drawer opening evidence",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/session.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/pos.service.ts#openPOSShift"
+      ],
+      "records": [
+        "POSSession",
+        "POSStation",
+        "CashDrawer",
+        "CashDrawerTransaction"
+      ],
+      "transitions": [
+        "Identify own terminal/location",
+        "enter float",
+        "link active session and drawer opening evidence"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "transactional_writable_entitlement_and_dependency_admission_with_denial_audit",
+      "reviewStatus": "source_owned_commercial_matrix_and_actual_en_fr_opening",
+      "runtimeStatus": "partial_commercial_admission_legacy_and_explicit_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../POS_READ_V123.md",
+        "../../evidence/pos-read-v123.json",
+        "../../POS_POLICY_RECOVERY_V128.md",
+        "../../evidence/pos-policy-recovery-v128.json",
+        "../../POS_SHIFT_ACCESS_V129.md",
+        "../../evidence/pos-shift-access-v129.json",
+        "../../evidence/pos-shift-access-policy-v129.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification.",
+        "Complete registered commercial admission, retained refund/void/replay policy, role controls, opening validation, unknown outcomes and native accessibility.",
+        "The reproduced commercial shift-opening defect is corrected in v129; remaining POS cart/terminal/refund/void/replay, complete opening validation/unknown outcomes and global enforcement governance are not covered by this correction."
+      ],
+      "readStateReview": {
+        "serverScope": true,
+        "currentPermission": true,
+        "failedReadsExplicit": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "POS-SHIFT-CLOSE",
+      "name": "Count and close an active cashier shift",
+      "purpose": "Enter actual count and variance reason; validate retained blockers; close and retain event/audit evidence; replay exact close",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/session.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/pos.service.ts#closePOSShift"
+      ],
+      "records": [
+        "POSSession",
+        "CashDrawer",
+        "BusinessEvent",
+        "BusinessEventAudit"
+      ],
+      "transitions": [
+        "Enter actual count and variance reason",
+        "validate retained blockers",
+        "close and retain event/audit evidence",
+        "replay exact close"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "existing_source_discovered_lifecycle_review_pending",
+      "reviewStatus": "source_owned_commercial_matrix_and_actual_en_fr_opening",
+      "runtimeStatus": "partial_retained_closure_after_commercial_restriction_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../POS_READ_V123.md",
+        "../../evidence/pos-read-v123.json",
+        "../../POS_POLICY_RECOVERY_V128.md",
+        "../../evidence/pos-policy-recovery-v128.json",
+        "../../POS_SHIFT_ACCESS_V129.md",
+        "../../evidence/pos-shift-access-v129.json",
+        "../../evidence/pos-shift-access-policy-v129.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification.",
+        "Complete registered commercial admission, retained refund/void/replay policy, role controls, opening validation, unknown outcomes and native accessibility.",
+        "The reproduced commercial shift-opening defect is corrected in v129; remaining POS cart/terminal/refund/void/replay, complete opening validation/unknown outcomes and global enforcement governance are not covered by this correction."
+      ],
+      "readStateReview": {
+        "serverScope": true,
+        "currentPermission": true,
+        "failedReadsExplicit": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "POS-CHECKOUT",
+      "name": "Finalize a tendered sale and recover its result",
+      "purpose": "Review saved cart/tenders; submit client commit identity; atomically commit sale/payment/stock/posting; recover retained result and receipt",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/tender.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx",
+        "actions/pos/commit-recovery.actions.ts"
+      ],
+      "services": [
+        "services/pos/pos.service.ts#commitPOSSale",
+        "services/pos/pos.service.ts#getPOSSaleCommitStatus"
+      ],
+      "records": [
+        "POSCommitResult",
+        "SalesOrder",
+        "Payment",
+        "InventoryTransaction",
+        "JournalEntry",
+        "FiscalDocument"
+      ],
+      "transitions": [
+        "Review saved cart/tenders",
+        "submit client commit identity",
+        "atomically commit sale/payment/stock/posting",
+        "recover retained result and receipt"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "legacy_unrecorded_request_explicit_review_with_original_identifier",
+      "reviewStatus": "retained_recovery_and_bounded_conflict_error_verified",
+      "runtimeStatus": "partial_en_fr_legacy_browser_review_and_scoped_postgres_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../TENDER_ACCESS_V131.md",
+        "../../evidence/pos-tender-access-v131.json",
+        "../../evidence/pos-tender-access-policy-v131.json",
+        "../../COMMIT_RECOVERY_V132.md",
+        "../../evidence/pos-commit-recovery-v132.json",
+        "../../evidence/pos-commit-recovery-policy-v132.json",
+        "../../COMMIT_CONFLICT_V133.md",
+        "../../evidence/pos-commit-conflict-v133.json",
+        "../../CART_REVISION_V134.md",
+        "../../evidence/pos-cart-revision-v134.json",
+        "../../LEGACY_REVIEW_V135.md",
+        "../../evidence/pos-legacy-review-v135.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification.",
+        "v135: browser legacy review is implemented; audited offline resolution/supersession, already-replayed metadata verification, full ingestion/offline lifecycle, closed-tab discovery and other unfinished checkout paths remain."
+      ]
+    },
+    {
+      "id": "POS-REFUND",
+      "name": "Refund a completed POS sale",
+      "purpose": "Obtain current refund authority and fresh authentication; validate original sale and refund limits; record compensation",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/tender.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/pos.service.ts#refundPOSSale"
+      ],
+      "records": [
+        "SalesOrder",
+        "Refund",
+        "InventoryTransaction",
+        "JournalEntry"
+      ],
+      "transitions": [
+        "Obtain current refund authority and fresh authentication",
+        "validate original sale and refund limits",
+        "record compensation"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "transactional_writable_pos_admission_denial_audit",
+      "reviewStatus": "source_and_owned_financial_access_interleaving",
+      "runtimeStatus": "partial_owned_postgres_denial_and_authorized_balanced_reversal_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../TENDER_ACCESS_V131.md",
+        "../../evidence/pos-tender-access-v131.json",
+        "../../evidence/pos-tender-access-policy-v131.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification.",
+        "v131: action-level committed-result recovery after grant loss, durable unknown-outcome browser request identity, retained-obligation correction policy, refund/void browser and full receipt/offline lifecycle remain open."
+      ]
+    },
+    {
+      "id": "POS-VOID",
+      "name": "Void a completed POS sale",
+      "purpose": "Obtain current void authority and fresh authentication; validate original sale; record compensating effects",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/tender.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/pos.service.ts#voidPOSSale"
+      ],
+      "records": [
+        "SalesOrder",
+        "InventoryTransaction",
+        "JournalEntry"
+      ],
+      "transitions": [
+        "Obtain current void authority and fresh authentication",
+        "validate original sale",
+        "record compensating effects"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "transactional_writable_pos_admission_denial_audit",
+      "reviewStatus": "source_and_owned_financial_access_interleaving",
+      "runtimeStatus": "partial_owned_postgres_denial_and_authorized_balanced_reversal_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../TENDER_ACCESS_V131.md",
+        "../../evidence/pos-tender-access-v131.json",
+        "../../evidence/pos-tender-access-policy-v131.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification.",
+        "v131: action-level committed-result recovery after grant loss, durable unknown-outcome browser request identity, retained-obligation correction policy, refund/void browser and full receipt/offline lifecycle remain open."
+      ]
+    },
+    {
+      "id": "POS-TERMINAL-READ",
+      "name": "Review terminal setup and availability",
+      "purpose": "Read current scoped terminal/location state for operating setup",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/terminal-management.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx"
+      ],
+      "services": [
+        "services/pos/terminal-management.service.ts#getTerminalManagementDataForOrg"
+      ],
+      "records": [
+        "POSStation",
+        "POSSession",
+        "Location"
+      ],
+      "transitions": [
+        "Read current scoped terminal/location state for operating setup"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "required_revision_scoped_reads_and_explicit_retained_draft_review",
+      "reviewStatus": "source_owned_postgres_and_actual_en_fr_browser",
+      "runtimeStatus": "partial_stale_review_save_and_actual_role_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../TERMINAL_REVIEW_V126.md",
+        "../../evidence/terminal-review-v126.json"
+      ],
+      "remaining": [
+        "Complete module/read-only and operation-role consistency, archive revision binding, creation/history journeys and native accessibility remain open."
+      ]
+    },
+    {
+      "id": "POS-TERMINAL-CREATE",
+      "name": "Create a checkout terminal",
+      "purpose": "Validate location and terminal configuration; create and reload scoped terminal",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/terminal-management.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx"
+      ],
+      "services": [
+        "services/pos/terminal-management.service.ts#createTerminalForManagement"
+      ],
+      "records": [
+        "POSStation",
+        "Location"
+      ],
+      "transitions": [
+        "Validate location and terminal configuration",
+        "create and reload scoped terminal"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "existing_source_discovered_lifecycle_review_pending",
+      "reviewStatus": "initial_source_discovery",
+      "runtimeStatus": "not_visited_in_current_review",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification."
+      ]
+    },
+    {
+      "id": "POS-TERMINAL-UPDATE",
+      "name": "Revise terminal operating configuration",
+      "purpose": "Validate requested configuration and active-session/drawer constraints; update and reload",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/terminal-management.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx"
+      ],
+      "services": [
+        "services/pos/terminal-management.service.ts#updateTerminalForManagement"
+      ],
+      "records": [
+        "POSStation",
+        "POSSession",
+        "CashDrawer"
+      ],
+      "transitions": [
+        "Validate requested configuration and active-session/drawer constraints",
+        "update and reload"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "required_revision_scoped_reads_and_explicit_retained_draft_review",
+      "reviewStatus": "source_owned_postgres_and_actual_en_fr_browser",
+      "runtimeStatus": "partial_stale_review_save_and_actual_role_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../TERMINAL_EDIT_V125.md",
+        "../../evidence/terminal-edit-v125.json",
+        "../../TERMINAL_REVIEW_V126.md",
+        "../../evidence/terminal-review-v126.json"
+      ],
+      "remaining": [
+        "Complete module/read-only and operation-role consistency, archive revision binding, creation/history journeys and native accessibility remain open."
+      ]
+    },
+    {
+      "id": "POS-TERMINAL-ARCHIVE",
+      "name": "Stop use of a terminal",
+      "purpose": "Check active session; mark terminal inactive; preserve history. Concurrent opening/archive requires verification",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/terminal-management.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx"
+      ],
+      "services": [
+        "services/pos/terminal-management.service.ts#archiveTerminalForManagement"
+      ],
+      "records": [
+        "POSStation",
+        "POSSession"
+      ],
+      "transitions": [
+        "Check active session",
+        "mark terminal inactive",
+        "preserve history. Concurrent opening/archive requires verification"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "required_review_revision_atomic_deactivation_and_explicit_fresh_review",
+      "reviewStatus": "source_owned_postgres_and_actual_en_fr_browser",
+      "runtimeStatus": "partial_stale_confirmation_review_keyboard_and_inactive_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../TERMINAL_ARCHIVE_V124.md",
+        "../../evidence/terminal-archive-v124.json",
+        "../../TERMINAL_EDIT_V125.md",
+        "../../evidence/terminal-edit-v125.json",
+        "../../TERMINAL_ARCHIVE_REVIEW_V127.md",
+        "../../evidence/terminal-archive-v127.json"
+      ],
+      "remaining": [
+        "Complete module/commercial/read-only and operation-role consistency, terminal audit/history and native accessibility remain open."
+      ]
+    },
+    {
+      "id": "POS-RECEIPT-ACCESS",
+      "name": "Review and revoke public receipt access",
+      "purpose": "Search permitted sale evidence; inspect access records; reauthenticate and revoke a selected token",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/receipt-token.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/public-receipt-token-registry.service.ts#listPublicReceiptAccessTokens/revokePublicReceiptAccessToken"
+      ],
+      "records": [
+        "PublicReceiptAccessToken",
+        "SalesOrder"
+      ],
+      "transitions": [
+        "Search permitted sale evidence",
+        "inspect access records",
+        "reauthenticate and revoke a selected token"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "existing_source_discovered_lifecycle_review_pending",
+      "reviewStatus": "initial_source_discovery",
+      "runtimeStatus": "not_visited_in_current_review",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../POS_READ_V123.md",
+        "../../evidence/pos-read-v123.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification."
+      ],
+      "readStateReview": {
+        "serverScope": true,
+        "currentPermission": true,
+        "failedReadsExplicit": true,
+        "wholeWorkflowComplete": false
+      }
+    },
+    {
+      "id": "POS-OFFLINE-DEVICE",
+      "name": "Register an offline checkout device",
+      "purpose": "Submit device setup through current POS authority; persist device/policy identity",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/sync.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/offline-sync.service.ts#registerOfflineDevice"
+      ],
+      "records": [
+        "POSOfflineDevice"
+      ],
+      "transitions": [
+        "Submit device setup through current POS authority",
+        "persist device/policy identity"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "existing_source_discovered_lifecycle_review_pending",
+      "reviewStatus": "initial_source_discovery",
+      "runtimeStatus": "not_visited_in_current_review",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification."
+      ]
+    },
+    {
+      "id": "POS-OFFLINE-INGEST",
+      "name": "Ingest queued offline sale events",
+      "purpose": "Submit bounded signed device batch; verify identity/sequence/policy; persist accepted or blocked events",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/sync.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/offline-sync.service.ts#ingestOfflineSyncBatch"
+      ],
+      "records": [
+        "POSOfflineDevice",
+        "POSOfflineEvent"
+      ],
+      "transitions": [
+        "Submit bounded signed device batch",
+        "verify identity/sequence/policy",
+        "persist accepted or blocked events"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "existing_source_discovered_lifecycle_review_pending",
+      "reviewStatus": "initial_source_discovery",
+      "runtimeStatus": "not_visited_in_current_review",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification."
+      ]
+    },
+    {
+      "id": "POS-OFFLINE-REPLAY",
+      "name": "Replay a retained offline sale envelope",
+      "purpose": "Select retained envelope; validate current replay prerequisites; call sale/receipt boundaries; retain result/blockers",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current action-defined POS permission, tenant and applicable freshness/module checks; full per-operation authority review pending.",
+      "entryPoints": [
+        "actions/pos/sync.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx"
+      ],
+      "services": [
+        "services/pos/offline-sync.service.ts#replayPendingOfflineSaleEnvelope"
+      ],
+      "records": [
+        "POSOfflineEvent",
+        "POSCommitResult",
+        "SalesOrder"
+      ],
+      "transitions": [
+        "Select retained envelope",
+        "validate current replay prerequisites",
+        "call sale/receipt boundaries",
+        "retain result/blockers"
+      ],
+      "sideEffects": [
+        "Operation-specific effects named in records; complete effect/recovery trace pending"
+      ],
+      "implementationStatus": "review_and_independent_recorded_replay_resolution_with_revision_and_durable_audit",
+      "reviewStatus": "source_unit_postgres_and_actual_en_fr_browser_verified_bounded_resolution",
+      "runtimeStatus": "partial_recorded_replay_resolution_and_failure_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../LEGACY_REVIEW_V135.md",
+        "../../evidence/pos-legacy-review-v135.json",
+        "../../TERMINAL_REPLAY_V136.md",
+        "../../evidence/pos-terminal-replay-v136.json",
+        "../../REPLAY_TRANSITION_V138.md",
+        "../../evidence/pos-replay-transition-v138.json",
+        "../../OFFLINE_RESOLUTION_V139.md",
+        "../../evidence/pos-offline-resolution-v139.json",
+        "../../OFFLINE_HISTORY_V140.md",
+        "../../evidence/pos-offline-history-v140.json"
+      ],
+      "remaining": [
+        "Complete current source and runtime trace including authority, concurrent/failure/retained-history paths required. Discovery is not verification.",
+        "v136 verifies terminal replay evidence and current sale status; audited conflict correction, full ingestion/signature/revocation/close workflow, operator UI, rollout and broader platform review remain open.",
+        "v140 provides paged open/closed conflict history, whitelisted review/resolution audits and scoped same-tab notes. Actual unposted-event correction/supersession, complete signature/ingestion/revocation/close behavior, cross-device/server drafts if required and rollout remain open."
+      ]
+    },
+    {
+      "id": "POS-OFFLINE-REVIEW",
+      "name": "Inspect, review, reconcile and retrieve offline conflicts",
+      "purpose": "Find current and retained conflict records, review their durable audit evidence, record ownership or independently reconcile proven recorded replay, and recover notes across record switches and same-tab refresh.",
+      "domain": "pos-offline",
+      "personas": [
+        "Authorized cashier; terminal administrator or receipt/replay reviewer where required"
+      ],
+      "authority": "Current pos.transactions.read to inspect; controls.manage plus pos.transactions.read and five-minute password session assurance to record. Server-derived organization/member identity; display access inherited from checkout.",
+      "entryPoints": [
+        "actions/pos/sync.actions.ts",
+        "app/[locale]/(dashboard)/dashboard/pos/page.tsx",
+        "actions/pos/offline-review.actions.ts",
+        "components/pos/offline/OfflineConflictReview.tsx",
+        "components/pos/offline/OfflineConflictHistory.tsx"
+      ],
+      "services": [
+        "services/pos/offline-sync.service.ts#getOfflineSyncDashboard",
+        "services/pos/offline-review.service.ts#getOfflineConflictReview/acknowledgeOfflineConflict",
+        "services/pos/offline-resolution.service.ts",
+        "services/pos/offline-review.service.ts#listOfflineConflictHistory/listOfflineConflictTimeline"
+      ],
+      "records": [
+        "POSOfflineDevice",
+        "POSOfflineEvent",
+        "POSOfflineSyncCertificate",
+        "POSOfflineSyncConflict",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Choose current terminal scope",
+        "Inspect server-owned conflict revision",
+        "Write review note and next action",
+        "Confirm identity if required",
+        "Explicitly acknowledge current revision",
+        "Retain blocker until separately verified correction"
+      ],
+      "sideEffects": [
+        "Atomic OPEN/ACKNOWLEDGED review metadata and named review audit only; no payment/posting/replay/certificate changes"
+      ],
+      "implementationStatus": "paged_conflict_and_review_history_with_resolution_detail_and_scoped_tab_drafts",
+      "reviewStatus": "source_unit_owned_postgres_and_en_fr_browser_history_recovery_verified",
+      "runtimeStatus": "partial_paging_resolution_history_draft_and_permission_recovery_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../POS_CART_V122.md",
+        "../../evidence/pos-cart-v122.json",
+        "../../OFFLINE_REVIEW_V137.md",
+        "../../evidence/pos-offline-review-v137.json",
+        "../../OFFLINE_RESOLUTION_V139.md",
+        "../../evidence/pos-offline-resolution-v139.json",
+        "../../OFFLINE_HISTORY_V140.md",
+        "../../evidence/pos-offline-history-v140.json"
+      ],
+      "remaining": [
+        "Device signature/ingestion/revocation/replay/close lifecycle, full accessibility audit and production rollout/recovery verification remain open.",
+        "v140 provides paged open/closed conflict history, whitelisted review/resolution audits and scoped same-tab notes. Actual unposted-event correction/supersession, complete signature/ingestion/revocation/close behavior, cross-device/server drafts if required and rollout remain open."
+      ]
+    }
+  ]
+}

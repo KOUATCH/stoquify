@@ -6,6 +6,9 @@ const WILDCARD_PERMISSION = "*"
 const WILDCARD_DENIED_RISKS = new Set<PermissionRisk>(["high", "crit"])
 
 const EXPLICIT_PERMISSION_RISKS = {
+  "users.deactivate": "high",
+  "users.activate": "high",
+  "users.roles.remove": "crit",
   "admin.role.assign": "crit",
   "admin.user.invite": "crit",
   "agent.release.prepare": "high",
@@ -175,6 +178,7 @@ export const PERMISSION_ALIASES = {
   "inventory.units.delete": ["DELETE_UNITS"],
   "inventory.stock.adjust": ["CREATE_STOCK_ADJUSTMENTS", "ADJUSTMENTS_CREATE"],
   "inventory.stock.transfer": ["CREATE_STOCK_TRANSFERS", "TRANSFERS_CREATE"],
+  "inventory.transfers.read": ["TRANSFERS_READ"],
   "inventory.adjust.approve": ["APPROVE_STOCK_ADJUSTMENTS"],
   "inventory.transfer.approve": ["APPROVE_STOCK_TRANSFERS"],
 
@@ -464,9 +468,12 @@ export function expandPermissions(permissions: readonly string[] | null | undefi
   return Array.from(
     new Set(
       permissions.flatMap((permission) =>
-        permission === WILDCARD_PERMISSION
-          ? [WILDCARD_PERMISSION]
-          : permissionCandidates(permission),
+        // Legacy grants may name several canonical operations. A narrow canonical
+        // grant must not manufacture that broader legacy authority in reverse.
+        // Keep expansion idempotent because server boundaries can normalize twice.
+        permission.includes(".") || permission === WILDCARD_PERMISSION
+          ? [permission]
+          : [permission, ...(reverseAliases[permission] ?? [])],
       ),
     ),
   )

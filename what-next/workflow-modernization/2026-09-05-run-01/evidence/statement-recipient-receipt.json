@@ -1,0 +1,283 @@
+{
+  "recordedAt": "2026-09-07T08:51:16.921Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceBaseline": "evidence/source-baseline-v44.json",
+  "workflows": [
+    "CS-STATEMENT-PUBLIC-VIEW",
+    "CS-STATEMENT-DISPUTE",
+    "CS-STATEMENT-PROMISE"
+  ],
+  "sources": {
+    "app/customer-statement/[statementId]/CustomerStatementPortal.tsx": "8487768a84e3098b2a3c3b61e4e25fccce7b5873b93ed33e759706bb2bb10021",
+    "app/customer-statement/[statementId]/page.tsx": "7ebe0e2d01f729c99bb1fec6552de836da56809ced39207cf1c7ed1996763f0e",
+    "app/api/customer-statements/[statementId]/route.ts": "e8aa985f476ba20c2a90a49b7dedf04ecd8a767e2f625c6e96c1113ab29c7e3f",
+    "app/api/customer-statements/[statementId]/actions/route.ts": "160a7db42370beb533b085eddb004662c50df9704045f366f23ab4f2027694c0",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "9fddc91b4591f41d36daab1747ca14c8163cc9b875c46b170be853a3e6b17de8",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/statement-recipient-request.ts": "80ef7b0138324f5bccd177dd16cba5fcf7850dea6dc488f8bc685963b023a91a",
+    "app/customer-statement/[statementId]/statement-portal-copy.ts": "4737fac1f6bce06ac72cb0956f985dd36304a13a05e693f987b4bddf9d4c2fb7",
+    "services/accounting/customer-statement.schemas.ts": "8a80048d0a8765040be5b0491012a093729aae3274e5f6b9b7acb3489f5ba602",
+    "services/accounting/customer-statement-http.ts": "624442851d2ea42453a258f840e365beae79d4091f844fe54cb6e573f58d171d",
+    "services/accounting/customer-statement-delivery.service.ts": "21e3f90d05a8996ad852853a8e6833b85c88d8430f5a17269d649dfb4f248214",
+    "middleware.ts": "4a0271f27c93a9c7d50211377091a1b6ce69679bf15b47106639b5bd09f10f3c",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx": "7487e978d28377cfbaeda466b073a24c9217308693d8554442906858341adf41",
+    "lib/security/__tests__/middleware-routing.test.ts": "1c2c4d61ac4abab983cae4a2d18b524482b94e03f83409a4f94d52e6952580cb",
+    "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts": "f9faf9d7a63988ea9c8c935d870b0b6e4e49d7a80d2cb7e97ff0511bb8cf5871",
+    "services/accounting/__tests__/customer-statement-history.service.test.ts": "5116580011a4a4fe2a970b516c2a6eed67baaef2183d6e26392f08883d3c08a4",
+    "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts": "9e828e6fc3b2d0263721af408eba7cb2450aba8b996a6e71616e3b400dd916be",
+    "hooks/__tests__/statement-recipient-request.test.ts": "2779d4ba71bfc8e2fdeb1086ce414222307bb87a98324befcae201f0efa6854a",
+    "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts": "90e355a44c9c8c471967d7dec586f5362165cf9dc25b30e8eb050067c7e930a8",
+    "services/accounting/__tests__/customer-statement-delivery.service.test.ts": "5d10c0878379bc7694168bdc30dd2a0fe19dbae5830c0f0d40ffd65007981e0d",
+    "services/accounting/__tests__/customer-statement-access.service.test.ts": "e4274102c1ef0dbb831da28baa81aa856c0e4ee712f356f308b96d9f517caefe",
+    "app/api/customer-statements/[statementId]/__tests__/route.test.ts": "da2453071f8d2178c51e5ee1648d71717dbdb2f04bdc85de636b986d2e3c5cb9",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "services/_shared/signed-external-access-token.ts": "700a36ed768edbffdba5554ac66cd3604a9fada074aa5370793ebd0538d96e6e",
+    "lib/error-handling/route-response.ts": "d87b1ad064dbc2cb4f6af6fc0e3fc0681d7ced08fc0a36b8acaefd17620eb268",
+    "lib/error-handling/canonical.ts": "9b9a3f0d241c788a795bc28675b033cca8b3641919aa0346c44d32fac142dbed",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "verification": {
+    "tests": {
+      "exitCode": 0,
+      "terminalReceipt": "639e7c",
+      "file": "evidence/statement-recipient-tests-03.json",
+      "passed": 80,
+      "suites": 10,
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath 'app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx' 'lib/security/__tests__/middleware-routing.test.ts' 'services/communication/__tests__/customer-statement-delivery-worker.service.test.ts' 'services/accounting/__tests__/customer-statement-history.service.test.ts' 'services/accounting/__tests__/customer-statement-recipient-action.service.test.ts' 'hooks/__tests__/statement-recipient-request.test.ts' 'app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts' 'services/accounting/__tests__/customer-statement-delivery.service.test.ts' 'services/accounting/__tests__/customer-statement-access.service.test.ts' 'app/api/customer-statements/[statementId]/__tests__/route.test.ts' --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-recipient-tests-03.json"
+    },
+    "postgres": {
+      "exitCode": 0,
+      "terminalReceipt": "d434dd",
+      "file": "lanes/environment/statement-recipient-postgres-96e7edbd-777.json",
+      "checks": 9,
+      "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-recipient-postgres.cjs"
+    },
+    "browser": {
+      "exitCode": 0,
+      "terminalReceipt": "04dbfc",
+      "file": "lanes/environment/statement-recipient-browser-3749969d-5e4.json",
+      "journeys": 2,
+      "screenshots": 22,
+      "widthTextCases": 12,
+      "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-recipient-browser.cjs"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "terminalReceipt": "83d197",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+    },
+    "lint": {
+      "exitCode": 0,
+      "terminalReceipt": "c22a36",
+      "invocationReceipt": "af53e6",
+      "scope": "Seventeen changed recipient service/schema/helper/portal/test/middleware files listed in the invocation.",
+      "paths": [
+        "middleware.ts",
+        "lib/security/__tests__/middleware-routing.test.ts",
+        "app/customer-statement/[statementId]/CustomerStatementPortal.tsx",
+        "app/customer-statement/[statementId]/statement-portal-copy.ts",
+        "app/customer-statement/[statementId]/page.tsx",
+        "app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx",
+        "app/api/customer-statements/[statementId]/route.ts",
+        "app/api/customer-statements/[statementId]/actions/route.ts",
+        "app/api/customer-statements/[statementId]/__tests__/route.test.ts",
+        "app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts",
+        "hooks/statement-recipient-request.ts",
+        "hooks/__tests__/statement-recipient-request.test.ts",
+        "services/accounting/customer-statement-http.ts",
+        "services/accounting/customer-statement.schemas.ts",
+        "services/accounting/customer-statement-recipient-action.service.ts",
+        "services/accounting/customer-statement-delivery.service.ts",
+        "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts"
+      ],
+      "command": "node node_modules/eslint/bin/eslint.js 'middleware.ts' 'lib/security/__tests__/middleware-routing.test.ts' 'app/customer-statement/[statementId]/CustomerStatementPortal.tsx' 'app/customer-statement/[statementId]/statement-portal-copy.ts' 'app/customer-statement/[statementId]/page.tsx' 'app/customer-statement/[statementId]/__tests__/CustomerStatementPortal.test.tsx' 'app/api/customer-statements/[statementId]/route.ts' 'app/api/customer-statements/[statementId]/actions/route.ts' 'app/api/customer-statements/[statementId]/__tests__/route.test.ts' 'app/api/customer-statements/[statementId]/actions/__tests__/route.test.ts' 'hooks/statement-recipient-request.ts' 'hooks/__tests__/statement-recipient-request.test.ts' 'services/accounting/customer-statement-http.ts' 'services/accounting/customer-statement.schemas.ts' 'services/accounting/customer-statement-recipient-action.service.ts' 'services/accounting/customer-statement-delivery.service.ts' 'services/accounting/__tests__/customer-statement-recipient-action.service.test.ts'"
+    },
+    "baseline": {
+      "file": "evidence/source-baseline-v44.json",
+      "exitCode": 0,
+      "terminalReceipt": "3620b4"
+    },
+    "visualInspection": {
+      "scope": "Actual French desktop and 390px screenshots inspected; product colors and themed native dropdowns visible. Twelve measured width/text cases include 320px at 200% CSS text. Native browser zoom and actual screen readers remain unverified. Native date-control formatting follows the browser/platform."
+    },
+    "build": {
+      "status": "not_run",
+      "reason": "Actual owned Next development app compiled and served the affected pages/APIs and middleware. No full application build is claimed; default migration-bearing build was not invoked."
+    },
+    "before": {
+      "file": "lanes/environment/statement-recipient-before-648e606e-f46.json",
+      "terminalReceipt": "202717",
+      "defectsReproduced": 3
+    }
+  },
+  "screenshots": [
+    {
+      "source": "lanes/environment/statement-recipient-en-1440-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-1440-1-3749969d-5e4.png",
+      "sha256": "a9c435a63c13c427a883149d11b31365c105450dd4f9dfa6b841dd58f6df64e5"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-1024-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-1024-1-3749969d-5e4.png",
+      "sha256": "c2c1e20c4c28179e136c94f2d3df9c9e85d7a7e86fa021b9b42e5fea36a231e1"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-768-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-768-1-3749969d-5e4.png",
+      "sha256": "60babe7e63545dd9cea73308e6ec7fd7ec6d4e491b0b9051e3b13752efb2ac13"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-390-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-390-1-3749969d-5e4.png",
+      "sha256": "ba2612a6e089b2a73d1436aad3bed3820f1d2d72e3778a8b0cae3ca3450af1a7"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-320-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-320-1-3749969d-5e4.png",
+      "sha256": "f61ef6537408a321bbc8121275cfce4f261dc983e037e0b3c96da41a0605ac55"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-320-2-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-320-2-3749969d-5e4.png",
+      "sha256": "c01b89478a4150614958c368c1ad334ccdbe74d2d570da7648f51e3da3c789de"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-lost-response-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-lost-response-3749969d-5e4.png",
+      "sha256": "2fec03c5d85501b8696466f491a860e68315315c2ca7bcd28eaf755bcd28d466"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-promise-receipt-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-promise-receipt-3749969d-5e4.png",
+      "sha256": "2b0f8bd45c411efac376d2df6ec1b1c0d4d897ee27d5f0d220c35fe54a69ef7d"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-dispute-receipt-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-dispute-receipt-3749969d-5e4.png",
+      "sha256": "4ab087ccd40f4f160d7ab1a825198f2c959908f4687af2a1e71f4afc97e5e16d"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-revoked-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-revoked-3749969d-5e4.png",
+      "sha256": "cf7bd57abf66d5238a3952a447e66e3ebb3b730e5c0f951f177aef69c38e7237"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-en-view-only-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-en-view-only-3749969d-5e4.png",
+      "sha256": "dbb1d825c7a646366b82e20590be1d97a3497bd4eb8e32eaf8c7dbbe6b5ccff9"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-1440-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-1440-1-3749969d-5e4.png",
+      "sha256": "e3580683899e4019b0a40d6ed135c63c03397cad5fdc862e22f4a431a2afa472"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-1024-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-1024-1-3749969d-5e4.png",
+      "sha256": "78e76e78317e6bf1230bb6b72d00e4d4829506217ca0540d0963c2a139d70d27"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-768-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-768-1-3749969d-5e4.png",
+      "sha256": "b0991872286e298a742de693e544499bb146748410329001f7b31a256d76469a"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-390-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-390-1-3749969d-5e4.png",
+      "sha256": "9eb00e9b3906e768e9d0208298afaafb518d167f805da76231dcd51777272885"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-320-1-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-320-1-3749969d-5e4.png",
+      "sha256": "0d6e81047470d1f4027bf028546a1ce66e326d66ffd23fecfb2b2db35fed8529"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-320-2-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-320-2-3749969d-5e4.png",
+      "sha256": "ceb5cbff0873bc88d8228e840a8305197c0bc9639b6e21bd6010ad3e51059f92"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-lost-response-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-lost-response-3749969d-5e4.png",
+      "sha256": "8d9548affb8eaa71629bff77dac9e84c335d9c998c2f26840f1457343c1096a3"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-promise-receipt-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-promise-receipt-3749969d-5e4.png",
+      "sha256": "c257d6b1c2a409ec436b7da71ccc223c2a2151f17b98953a5087e6055286d05b"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-dispute-receipt-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-dispute-receipt-3749969d-5e4.png",
+      "sha256": "f00fedd4aeeb5badf6c62f67fcf8ce8b52b14f9ff73ec77b2d7c09b01d902a79"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-revoked-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-revoked-3749969d-5e4.png",
+      "sha256": "2ca848b130aa81c77c86762851273144148ac27ae41e64056ff1640c15a5ca29"
+    },
+    {
+      "source": "lanes/environment/statement-recipient-fr-view-only-3749969d-5e4.png",
+      "file": "evidence/statement-recipient/statement-recipient-fr-view-only-3749969d-5e4.png",
+      "sha256": "8e877f3650f4eef995111a798dcbf0d1f30a6fc25c632e8429c67b6f47d44c13"
+    }
+  ],
+  "reviewMatrix": {
+    "architecture": "Existing public route and accounting service owners retained; client recovery holds intent, not authority. No duplicate shell or ledger.",
+    "backend_api": "Strict bounded command schema; finite positive amounts; current signed scope/action permission; exact retry and receipt validation. GET/POST private headers and scoped middleware/429 handling verified.",
+    "database_migrations": "Serializable real PostgreSQL race tests show revoked in-flight response and event writes roll back. One immutable action/state/event/audit on success. No schema migration.",
+    "security_iam_privacy": "Token signature, current registry, expiry, revocation, foreign statement/document and view-only denials exercised. Browser stores a token fingerprint, never the raw bearer token. General auth behavior preserved and regression tested.",
+    "frontend_design_system": "Product tokens, established dark native controls, brand actions, neutral snapshot information, warning recovery and success receipt with text/icons. Responsive document cards and explicit grid width fix.",
+    "workflow_accessibility_localization": "EN/FR form, feedback, recovery and history text; retained draft requires renewed confirmation; keyboard dispute and receipt focus verified. Twelve CSS viewport/text cases, reduced-motion browser context; native AT/zoom not certified.",
+    "product_process": "Lost acknowledgement plus reload previously created two promises; retained identity now yields one. Clear statement period and consequences distinguish a response from a payment or current balance.",
+    "finance_reconciliation_controls": "Posted statement/document bounds and unchanged original payments/journals verified. OPEN promises/disputes cannot post payment or balance adjustments. Full financial lifecycle remains outside this completed slice.",
+    "statutory_country": "Not applicable to calculation changes: no country pack, statutory computation or filing rules changed. No statutory/accounting approval claimed.",
+    "audit_records": "Immutable recipient/state/event records and redacted note audit checked. The sender must review retained references before replacement requests; no deletion or key resets.",
+    "quality_release": "80 tests/ten suites; nine PostgreSQL scenarios; two actual EN/FR journeys/22 screenshots; typecheck and changed-file lint. Failed attempts retained, source hashes bound.",
+    "sre_performance_cost": "Development route-ready observations retained as local measurements only. Middleware denial policy stays private without weakening rate limits. No external provider costs incurred.",
+    "integrations_events_providers": "Actual applied business-event linkage and worker/history regression coverage; new delivery links carry locale. No external provider sends or fabricated acceptance.",
+    "pos_offline": "Not applicable to POS behavior: no POS/sync changes. Recipient interruption recovery reuses a command and requires online server verification.",
+    "purchasing_ap": "Not applicable to this statement recipient patch. Supplier signed-link private-header and response workflows remain separately inventoried and unverified.",
+    "hris_payroll": "Not applicable: no employee, payroll or workforce behavior/data changed.",
+    "analytics_data_governance": "Snapshot values and missing-data semantics clarified. No metrics, exports, analytics pipeline or data-sharing changes.",
+    "ai_agents": "Not applicable: no agent tool, autonomous decision or AI model behavior changed.",
+    "saas_packaging": "Not applicable to commercial changes: no entitlement, billing, pricing or subscription mutation. Link permissions remain independent authority.",
+    "rollout_support": "Release page/helpers/API policy together; retain old signed records and pending commands. Guide identifies each recipient input and its source. Full sender response-resolution operations remain open."
+  },
+  "developmentTimings": [
+    {
+      "locale": "en",
+      "routeReadyMs": 3404
+    },
+    {
+      "locale": "fr",
+      "routeReadyMs": 3688
+    }
+  ],
+  "latencyMeaning": "Actual local development observations, not controlled before/after comparison or an approved performance-budget result.",
+  "before": {
+    "file": "lanes/environment/statement-recipient-before-648e606e-f46.json",
+    "terminalReceipt": "202717",
+    "defectsReproduced": 3
+  },
+  "failedAttempts": "evidence/statement-recipient-attempts.md",
+  "limitations": [
+    "Recipient view/OPEN response/replay/revocation paths are verified in the owned app and database. Sender acknowledgement, dispute resolution, settlement and the complete downstream accounting lifecycle remain engineering review/implementation work.",
+    "Fixtures start with synthetic sales sources followed by actual posted-receivable and statement services. No complete real order-to-cash, allocation, reversal or journal-posting lifecycle is claimed.",
+    "Corrupt/unavailable browser recovery storage safely prevents new submission but still needs operator-assisted reconciliation. Recovery does not transfer automatically to another browser session or newly issued link.",
+    "Native zoom, actual screen readers and comprehensive contrast remain unverified. Native date formatting follows the browser/platform. Public API expired/foreign denial is covered at service/database level; the final browser journey covers valid/view-only/revoked links.",
+    "Sender history narrow enlarged French wrapping, unknown delivery outcomes, other communication workers and the remaining workflow register remain open.",
+    "No full application build, production performance acceptance, live send, deployment, migration, X1 clearance or professional certification."
+  ],
+  "completeWorkflowVerified": false,
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false
+}

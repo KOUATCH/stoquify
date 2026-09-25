@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-08T18:02:18.619Z",
+  "run": "16e32cdd-6f7",
+  "sourcesBefore": {
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-release-contracts.ts": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412",
+    "services/purchasing/payment-request.service.ts": "849a9cb77abae98d91e72fca95f7cca8f54f493fe9cd524a882b8be630d84bb6",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "12d71975bfdf0ffa811348930001accff117c06db7941ed237eb50f8fcb049af",
+    "actions/purchasing/payment-release.actions.ts": "fc88eaf0cecb36b1fe8ad7660b74065a0ec8c52b477d5263f4de1a0881a4e60e",
+    "actions/purchasing/ap-control.actions.ts": "46e6cdc26f3ad4f43c3e62a88b535ea71bef843a877f86841ad4f6a0ef08f3d1"
+  },
+  "checks": [
+    "Preview distinguishes recording execution from bank settlement and exposes unavailable posting rules",
+    "Requester, approver, foreign tenant, future and pre-approval execution evidence are denied",
+    "Stale preview cannot change paid balances",
+    "Expired assurance and revoked current role deny confirmation",
+    "Concurrent exact confirmation records one financial effect, original request hash, actual recording time, blocked ledger and suspense reconciliation",
+    "Exact retry reports current outcome; changed retry evidence is rejected",
+    "An external execution reference cannot pay a second request",
+    "Rehashed execution evidence with a false approval link is rejected; restored original links verify",
+    "Configured payment posts through the existing ledger once and remains pending statement reconciliation"
+  ],
+  "scope": "Owned localhost database and synthetic operator-attested execution evidence only. No bank execution, outbound message, migration or live customer changes.",
+  "originalBefore": "95a4452e9a55fd10e79a7b060c7aa16f5f6ac2fedd6708a85af164829f515c49",
+  "fixture": {
+    "organizationId": "workflow_supplier_ack_en_payment-execution-16e32cdd-6f7",
+    "paymentRequestId": "28ee269a-cde7-4aa3-a342-362c92f68445",
+    "postedPaymentRequestId": "8ef0880f-4040-444c-a480-b2005bcb03d4"
+  },
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/payment-release.service.ts": "39a93414d56288cc7a6e2a347d4413fd90e17847a0610d2a272445cd82e5792b",
+    "services/purchasing/payment-release-evidence.ts": "4136d8017f125cf2cc96188f9da6c3f5816cb69bd32478959da3d0cbfa3742cb",
+    "services/purchasing/payment-release-contracts.ts": "c9690026216baa90cedb9b64ccb29d210594861d96061a0c5a59e660adbc1412",
+    "services/purchasing/payment-request.service.ts": "849a9cb77abae98d91e72fca95f7cca8f54f493fe9cd524a882b8be630d84bb6",
+    "services/purchasing/payment-request-authority.ts": "4a99d00aea5713b5359108d6ea9ca51ac7f0024fba950757a52bcf4145664f6e",
+    "services/purchasing/ap-control.service.ts": "12d71975bfdf0ffa811348930001accff117c06db7941ed237eb50f8fcb049af",
+    "actions/purchasing/payment-release.actions.ts": "fc88eaf0cecb36b1fe8ad7660b74065a0ec8c52b477d5263f4de1a0881a4e60e",
+    "actions/purchasing/ap-control.actions.ts": "46e6cdc26f3ad4f43c3e62a88b535ea71bef843a877f86841ad4f6a0ef08f3d1"
+  },
+  "sourceStable": true
+}

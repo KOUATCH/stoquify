@@ -1,0 +1,80 @@
+{
+  "at": "2026-09-12T19:16:18.962Z",
+  "run": "569ba115-c3f",
+  "sourcesBefore": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed",
+    "actions/payments/exception-link.actions.ts": "bac00653e10b2b984e401b49c5ae862ff61fb86f8d1cc00476e6ac2c5a1ab6f3",
+    "components/finance/PaymentExceptionLinkPanel.tsx": "363db9048d8cd0c13eb2ae367eadcce4d26771f62ec6c9ef2ab6298689087e38",
+    "components/finance/PaymentSuspenseQueue.tsx": "34f9f9f546fdbdbf3594daa991985ac31415c479c2bf3c4761d7328cebe415e3",
+    "messages/en.json": "1cbd47eb4aa7709b50167875f962be11a0052bb786db49c11e89be2528724a34",
+    "messages/fr.json": "3906916c164c3e010b3750d39071d2f32882169289e2ae69d5aa65ce9f8f94a2"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "exception-link-repair-v109-en-step-up-320-569ba115-c3f.png",
+        "exception-link-repair-v109-en-repaired-320-569ba115-c3f.png",
+        "exception-link-repair-v109-en-linked-768-569ba115-c3f.png",
+        "exception-link-repair-v109-en-linked-1440-569ba115-c3f.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240587731 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240617606 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": [
+        8618,
+        7800
+      ],
+      "deniedWithoutMutation": true,
+      "actualRepairAndRetainedReview": true,
+      "receiptId": "af70c978-6735-4bdd-8d08-c20a14d96efd",
+      "exactReplayOneReceipt": true,
+      "focusReturned": true,
+      "financialUnchanged": true,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "exception-link-repair-v109-fr-step-up-320-569ba115-c3f.png",
+        "exception-link-repair-v109-fr-repaired-320-569ba115-c3f.png",
+        "exception-link-repair-v109-fr-linked-768-569ba115-c3f.png",
+        "exception-link-repair-v109-fr-linked-1440-569ba115-c3f.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240656980 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789240672895 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": [
+        11907,
+        11426
+      ],
+      "deniedWithoutMutation": true,
+      "actualRepairAndRetainedReview": true,
+      "receiptId": "ddf7e01e-b27d-4c0b-a02d-c042f79c0fb4",
+      "exactReplayOneReceipt": true,
+      "focusReturned": true,
+      "financialUnchanged": true,
+      "passed": true
+    }
+  ],
+  "scope": "Actual EN/FR source-link review and repair in owned fixtures with the historical missing link reproduced. Password step-up, explicit retry/reload and real persisted records; no synthetic SIGNED state, live approval or financial posting.",
+  "sourcesAfter": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed",
+    "actions/payments/exception-link.actions.ts": "bac00653e10b2b984e401b49c5ae862ff61fb86f8d1cc00476e6ac2c5a1ab6f3",
+    "components/finance/PaymentExceptionLinkPanel.tsx": "363db9048d8cd0c13eb2ae367eadcce4d26771f62ec6c9ef2ab6298689087e38",
+    "components/finance/PaymentSuspenseQueue.tsx": "34f9f9f546fdbdbf3594daa991985ac31415c479c2bf3c4761d7328cebe415e3",
+    "messages/en.json": "1cbd47eb4aa7709b50167875f962be11a0052bb786db49c11e89be2528724a34",
+    "messages/fr.json": "3906916c164c3e010b3750d39071d2f32882169289e2ae69d5aa65ce9f8f94a2"
+  },
+  "sourceStable": true
+}

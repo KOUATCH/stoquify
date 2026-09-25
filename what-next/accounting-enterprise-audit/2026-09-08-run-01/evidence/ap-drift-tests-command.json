@@ -1,0 +1,26 @@
+{
+  "label": "ap-drift-tests",
+  "executable": "node",
+  "args": [
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--roots",
+    "services/purchasing",
+    "actions/purchasing",
+    "--cacheDirectory",
+    "what-next/accounting-enterprise-audit/2026-09-08-run-01/evidence/jest-cache-focused",
+    "--json",
+    "--outputFile",
+    "what-next/accounting-enterprise-audit/2026-09-08-run-01/evidence/ap-drift-tests.json",
+    "--runTestsByPath",
+    "services/purchasing/__tests__/ap-control.service.test.ts",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts",
+    "services/purchasing/__tests__/invoice-approval-contracts.test.ts",
+    "services/purchasing/__tests__/invoice-correction-contracts.test.ts",
+    "actions/purchasing/__tests__/invoice-correction.actions.test.ts"
+  ],
+  "startedAt": "2026-09-08T12:11:59.344Z",
+  "endedAt": "2026-09-08T12:12:38.013Z",
+  "exitCode": 0,
+  "log": "ap-drift-tests.log"
+}

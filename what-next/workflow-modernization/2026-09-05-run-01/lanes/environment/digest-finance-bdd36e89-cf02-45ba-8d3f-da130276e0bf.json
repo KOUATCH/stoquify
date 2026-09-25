@@ -1,0 +1,50 @@
+{
+  "at": "2026-09-19T12:56:23.410Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "6076866b86f93ecb7690ed3daf3b542cd044a3240baa28720350f609eff08593",
+    "services/daily-habit/daily-habit-source-visibility.ts": "b4505ef4f38ae4d6d50b1ba21ee163b640e7208b81af4f895d66ec3648143bc4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "finance": false,
+      "reconciliation": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-finance-bdd36e89-cf02-45ba-8d3f-da130276e0bf-explicit-empty-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-finance-bdd36e89-cf02-45ba-8d3f-da130276e0bf-explicit-empty-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "finance": true,
+      "reconciliation": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        }
+      ]
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: locator('#daily-digest-view').locator('a[href$=\"/finance/reconciliation\"]').first()\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for locator('#daily-digest-view').locator('a[href$=\"/finance/reconciliation\"]').first()\n",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "6076866b86f93ecb7690ed3daf3b542cd044a3240baa28720350f609eff08593",
+    "services/daily-habit/daily-habit-source-visibility.ts": "b4505ef4f38ae4d6d50b1ba21ee163b640e7208b81af4f895d66ec3648143bc4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e"
+  },
+  "sourceStable": true
+}

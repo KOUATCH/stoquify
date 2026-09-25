@@ -3,6 +3,7 @@ import { RegisterV2Form } from "@/components/auth/v2/RegisterV2Form"
 import { pickLocale } from "@/i18n/routing"
 
 export const dynamic = "force-dynamic"
+export const metadata = { referrer: "no-referrer" as const, robots: { index: false, follow: false } }
 
 type PageProps = {
   params: Promise<{ locale: string }>

@@ -57,6 +57,7 @@ jest.mock("@/lib/security/auth-session", () => {
 jest.mock("@/lib/logger", () => ({
   logger: {
     error: jest.fn(),
+    warn: jest.fn(),
   },
 }))
 
@@ -146,10 +147,18 @@ describe("receipt token actions", () => {
     ])
   })
 
+  it("preserves confirmed revocation when cache refresh fails", async () => {
+    mockRevalidateTag.mockImplementationOnce(() => { throw new Error("Cache unavailable") })
+    const result = await revokePublicReceiptAccessTokenAction({ tokenId: "token-row-1", salesOrderId: "sale-1", reason: "Customer requested revocation" })
+    expect(result).toMatchObject({ success: true, data: { tokenId: "token-row-1", status: "REVOKED" } })
+    expect(mockRevokePublicReceiptAccessToken).toHaveBeenCalledTimes(1)
+  })
+
   it("reports receipt token management capability through the protected POS module gate", async () => {
     const result = await getPublicReceiptTokenManagementCapabilityAction({})
 
     expect(result).toEqual({
+      scope: { organizationId: "org-1", actorId: "operator-1" },
       success: true,
       data: {
         canManageReceiptTokens: true,
@@ -204,6 +213,7 @@ describe("receipt token actions", () => {
     const result = await getPublicReceiptAccessTokensAction({ salesOrderId: "sale-1" })
 
     expect(result).toEqual({
+      scope: { organizationId: "org-1", actorId: "operator-1" },
       success: true,
       data: [
         {
@@ -287,6 +297,7 @@ describe("receipt token actions", () => {
     const result = await searchPublicReceiptSalesAction({ query: "POS-20260703", limit: 5 })
 
     expect(result).toEqual({
+      scope: { organizationId: "org-1", actorId: "operator-1" },
       success: true,
       data: [
         {

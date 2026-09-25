@@ -28,6 +28,7 @@ import { postPayment } from "./post-payment"
 const mockRecordPostedCloseInvalidation = recordPostedJournalCloseInvalidationInTx as jest.Mock
 
 const mockTx = {
+  $queryRaw: jest.fn(),
   payment: {
     findFirst: jest.fn(),
   },
@@ -256,6 +257,7 @@ function arrangeNewPaymentPosting() {
   mockTx.ledgerPostingBatch.create.mockResolvedValue(pendingBatch)
   mockTx.journalEntry.findFirst.mockResolvedValue(null)
   mockTx.accountingPeriod.findFirst.mockResolvedValue(openPeriod)
+  mockTx.$queryRaw.mockResolvedValue([openPeriod])
   mockTx.postingRule.findFirst.mockResolvedValue(paymentReceiptRule)
   mockTx.chartOfAccount.findMany.mockResolvedValue(accounts)
   mockTx.journal.findFirst.mockResolvedValue(bankJournal)

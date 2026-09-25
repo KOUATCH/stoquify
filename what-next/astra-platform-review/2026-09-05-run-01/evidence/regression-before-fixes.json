@@ -1,0 +1,28 @@
+{
+  "id": "regression-before-fixes",
+  "startedAt": "2026-09-05T09:05:26.903Z",
+  "finishedAt": "2026-09-05T09:05:52.156Z",
+  "command": [
+    "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--json",
+    "--runTestsByPath",
+    "lib/security/__tests__/rbac.test.ts",
+    "app/api/uploads/[...path]/__tests__/route.test.ts"
+  ],
+  "target": "local workspace; database connection disabled with loopback port 1",
+  "exitCode": 1,
+  "signal": null,
+  "status": "failed",
+  "summary": {
+    "suites": 2,
+    "passedSuites": 0,
+    "failedSuites": 2,
+    "tests": 12,
+    "passedTests": 10,
+    "failedTests": 2,
+    "pendingTests": 0
+  },
+  "log": "regression-before-fixes.log"
+}

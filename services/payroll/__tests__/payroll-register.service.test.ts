@@ -993,7 +993,8 @@ describe("payroll register service", () => {
     expect(client.businessEvent.create).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
         eventType: "payroll.register.exported",
-        sourceType: "PAYROLL_REGISTER",
+        sourceType: undefined,
+        metadata: expect.objectContaining({ sourceEntityType: "PAYROLL_REGISTER" }),
         sourceId: "run-1",
         documentHash: result.contentHash,
       }),

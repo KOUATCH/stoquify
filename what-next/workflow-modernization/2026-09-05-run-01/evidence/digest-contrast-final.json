@@ -1,0 +1,395 @@
+{
+  "at": "2026-09-19T11:43:49.593Z",
+  "receipt": "digest-contrast-4e7576e0-4418-45c3-bf2c-647b7318aa7f.json",
+  "sourceHashes": {
+    "services/bi/bi-contracts.ts": "82a31dc9c85153995b497a991cd3cd4c9d0a0f7b599a56aa14b870d864d73178",
+    "services/bi/bi-evidence-adapter.service.ts": "930f408239d00219cf0cdb87c0252efdd379545fed77a84857d5370b6e4a66df",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "components/bi/BIRiskOpportunityRadar.tsx": "cdcff5922f4233a1ea55486d4868b649b7624ce2e6d5d16fb8ab27cfd8f667b2",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/bi/BICommandBriefHeader.tsx": "e365fdbaac7987cdf21d6d773cffff6f9d1fca13a20e3b2c7cd6c39f42677f03",
+    "components/evidence/EvidenceGradeBadge.tsx": "3a4f634a3c5b785653f59d1336436536b8ef203a63f2dd546dc999b6b471aaf0",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "a9357ca90715ace608cdfaebff2ba6e329486728a17944df9b15be14348ba784",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "components/ui/button.tsx": "5bc624855cdeadbcde67dcd15ce7ef02bda974571021aef7d4579c7b2fcad1b7",
+    "components/bi/BIEvidenceBadgeRow.tsx": "11c8b2b2f03b8d50e8ac13a6875b7444abe5f398b6035f6471f610defee3cb0b",
+    "components/daily-habit/DailyHabitDigestDashboard.module.css": "5c251e4844803ad09ea1edb476b3892bf9c3e7e9da888aae86b27d11b03257e3",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/measure-rendered-contrast.cjs": "0095e8e948367f7f2809510fe81babdf0b0446a9c267c7a0b81ac9567d2dc591"
+  },
+  "before": "digest-contrast-a595f8aa-1b2e-41d3-8fa5-38c3e92f29c8.json",
+  "scans": [
+    {
+      "locale": "en",
+      "scans": [
+        {
+          "mode": "Brief",
+          "measured": 79,
+          "minimum": 5.099005297497487,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ],
+          "reflow": {
+            "content": 1440,
+            "viewport": 1440
+          }
+        },
+        {
+          "mode": "Command",
+          "measured": 75,
+          "minimum": 5.099005297497487,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ],
+          "reflow": {
+            "content": 1440,
+            "viewport": 1440
+          }
+        },
+        {
+          "mode": "Investigate",
+          "measured": 70,
+          "minimum": 5.099005297497487,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ],
+          "reflow": {
+            "content": 1440,
+            "viewport": 1440
+          }
+        }
+      ],
+      "primaryStates": [
+        {
+          "selector": ".dashboard-landing-content button.dashboard-button-primary",
+          "hover": [
+            {
+              "target": [
+                ".dashboard-landing-content button.dashboard-button-primary"
+              ],
+              "text": "Manager",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 6.00061982125433,
+              "sample": {
+                "x": 408,
+                "y": 345,
+                "background": [
+                  54,
+                  98,
+                  172
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "focus": {
+            "visible": true,
+            "width": "2px",
+            "offset": "3px",
+            "color": "rgb(247, 250, 248)"
+          },
+          "focusedContrast": [
+            {
+              "target": [
+                ".dashboard-landing-content button.dashboard-button-primary"
+              ],
+              "text": "Manager",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.249268536989181,
+              "sample": {
+                "x": 408,
+                "y": 343,
+                "background": [
+                  58,
+                  107,
+                  187
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "screenshot": "digest-contrast-4e7576e0-4418-45c3-bf2c-647b7318aa7f-en-focus-0.png"
+        },
+        {
+          "selector": ".dashboard-landing-content a.dashboard-button-primary",
+          "hover": [
+            {
+              "target": [
+                ".dashboard-landing-content a.dashboard-button-primary"
+              ],
+              "text": "Follow up pending purchase orders and receiving evidence.",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.771022922139862,
+              "sample": {
+                "x": 1346,
+                "y": 859,
+                "background": [
+                  57,
+                  101,
+                  173
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "focus": {
+            "visible": true,
+            "width": "2px",
+            "offset": "3px",
+            "color": "rgb(247, 250, 248)"
+          },
+          "focusedContrast": [
+            {
+              "target": [
+                ".dashboard-landing-content a.dashboard-button-primary"
+              ],
+              "text": "Follow up pending purchase orders and receiving evidence.",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.099005297497487,
+              "sample": {
+                "x": 1348,
+                "y": 857,
+                "background": [
+                  62,
+                  109,
+                  188
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "screenshot": "digest-contrast-4e7576e0-4418-45c3-bf2c-647b7318aa7f-en-focus-1.png"
+        }
+      ],
+      "screenshot": "digest-contrast-4e7576e0-4418-45c3-bf2c-647b7318aa7f-en.png"
+    },
+    {
+      "locale": "fr",
+      "scans": [
+        {
+          "mode": "Synthèse",
+          "measured": 79,
+          "minimum": 5.106949653734568,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ],
+          "reflow": {
+            "content": 320,
+            "viewport": 320
+          }
+        },
+        {
+          "mode": "Pilotage",
+          "measured": 75,
+          "minimum": 5.106949653734568,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ],
+          "reflow": {
+            "content": 320,
+            "viewport": 320
+          }
+        },
+        {
+          "mode": "Examiner",
+          "measured": 70,
+          "minimum": 5.106949653734568,
+          "axeViolations": 0,
+          "axeIncomplete": [
+            "color-contrast"
+          ],
+          "reflow": {
+            "content": 320,
+            "viewport": 320
+          }
+        }
+      ],
+      "primaryStates": [
+        {
+          "selector": ".dashboard-landing-content button.dashboard-button-primary",
+          "hover": [
+            {
+              "target": [
+                ".dashboard-landing-content button.dashboard-button-primary"
+              ],
+              "text": "Responsable",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.923809546148442,
+              "sample": {
+                "x": 133,
+                "y": 566,
+                "background": [
+                  54,
+                  99,
+                  173
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "focus": {
+            "visible": true,
+            "width": "2px",
+            "offset": "3px",
+            "color": "rgb(247, 250, 248)"
+          },
+          "focusedContrast": [
+            {
+              "target": [
+                ".dashboard-landing-content button.dashboard-button-primary"
+              ],
+              "text": "Responsable",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.190066818918504,
+              "sample": {
+                "x": 133,
+                "y": 578,
+                "background": [
+                  60,
+                  108,
+                  186
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "screenshot": "digest-contrast-4e7576e0-4418-45c3-bf2c-647b7318aa7f-fr-focus-0.png"
+        },
+        {
+          "selector": ".dashboard-landing-content a.dashboard-button-primary",
+          "hover": [
+            {
+              "target": [
+                ".dashboard-landing-content a.dashboard-button-primary"
+              ],
+              "text": "Vérifiez les commandes en attente et les justificatifs de réception.",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.842348050973327,
+              "sample": {
+                "x": 268,
+                "y": 1685,
+                "background": [
+                  56,
+                  100,
+                  173
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "focus": {
+            "visible": true,
+            "width": "2px",
+            "offset": "3px",
+            "color": "rgb(247, 250, 248)"
+          },
+          "focusedContrast": [
+            {
+              "target": [
+                ".dashboard-landing-content a.dashboard-button-primary"
+              ],
+              "text": "Vérifiez les commandes en attente et les justificatifs de réception.",
+              "color": "rgb(255, 255, 255)",
+              "unsupported": [],
+              "disabled": false,
+              "expected": 4.5,
+              "measured": true,
+              "minimumRatio": 5.106949653734568,
+              "sample": {
+                "x": 268,
+                "y": 1685,
+                "background": [
+                  61,
+                  109,
+                  188
+                ],
+                "foreground": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              "passes": true
+            }
+          ],
+          "screenshot": "digest-contrast-4e7576e0-4418-45c3-bf2c-647b7318aa7f-fr-focus-1.png"
+        }
+      ],
+      "screenshot": "digest-contrast-4e7576e0-4418-45c3-bf2c-647b7318aa7f-fr.png"
+    }
+  ],
+  "checks": {
+    "focusedTests": "21 passed, 2 suites (e248d8)",
+    "lintAndDiff": "passed (4d78ef)",
+    "typecheck": "passed (eb15d7), preceding final class-only focus-spacing change",
+    "browser": "passed (4276e9)"
+  },
+  "completeWorkflowVerified": false
+}

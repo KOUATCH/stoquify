@@ -17,6 +17,7 @@ interface NotificationContextType {
   notifications: NotificationData[]
   unreadCount: number
   soundEnabled: boolean
+  soundPreferenceStatus: "loading" | "default" | "saved" | "session_only"
   addNotification: (notification: Omit<NotificationData, "id"> & { id?: string }) => string
   removeNotification: (id: string) => void
   markAsRead: (id: string) => void
@@ -70,23 +71,23 @@ const severityByType: Record<NotificationData["type"], NonNullable<NotificationD
 }
 
 function safeReadBoolean(key: string, fallback: boolean) {
-  if (typeof window === "undefined") return fallback
-
   try {
     const storedValue = window.localStorage.getItem(key)
-    return storedValue === null ? fallback : JSON.parse(storedValue)
+    const parsed: unknown = storedValue === null ? undefined : JSON.parse(storedValue)
+    return typeof parsed === "boolean"
+      ? { enabled: parsed, status: "saved" as const }
+      : { enabled: fallback, status: "default" as const }
   } catch {
-    return fallback
+    return { enabled: fallback, status: "session_only" as const }
   }
 }
 
 function safeWriteBoolean(key: string, value: boolean) {
-  if (typeof window === "undefined") return
-
   try {
     window.localStorage.setItem(key, JSON.stringify(value))
+    return true
   } catch {
-    // Sound preference persistence is non-critical.
+    return false
   }
 }
 
@@ -116,18 +117,26 @@ export function NotificationProvider({
 
   const [notifications, setNotifications] = useState<NotificationData[]>([])
   const [soundEnabled, setSoundEnabled] = useState(defaultSoundEnabled)
+  const soundEnabledRef = useRef(defaultSoundEnabled)
+  const [soundPreferenceStatus, setSoundPreferenceStatus] = useState<NotificationContextType["soundPreferenceStatus"]>("loading")
   const notificationCounter = useRef(0)
   const unreadCount = useMemo(() => notifications.filter((notification) => !notification.readAt).length, [notifications])
 
-  // Load sound preference from localStorage
+  // Read without overwriting another tab's saved preference during initialization.
   useEffect(() => {
-    setSoundEnabled(safeReadBoolean("notification-sound-enabled", defaultSoundEnabled))
+    const load = () => {
+      const preference = safeReadBoolean("notification-sound-enabled", defaultSoundEnabled)
+      soundEnabledRef.current = preference.enabled
+      setSoundEnabled(preference.enabled)
+      setSoundPreferenceStatus(preference.status)
+    }
+    load()
+    const sync = (event: StorageEvent) => {
+      if (event.key === "notification-sound-enabled" || event.key === null) load()
+    }
+    window.addEventListener("storage", sync)
+    return () => window.removeEventListener("storage", sync)
   }, [defaultSoundEnabled])
-
-  // Save sound preference to localStorage
-  useEffect(() => {
-    safeWriteBoolean("notification-sound-enabled", soundEnabled)
-  }, [soundEnabled])
 
   const addNotification = useCallback((notification: Omit<NotificationData, "id"> & { id?: string }) => {
     const id = notification.id || `notification-${Date.now()}-${++notificationCounter.current}`
@@ -171,7 +180,7 @@ export function NotificationProvider({
           ? {
               ...notification,
               readAt: notification.readAt || readAt,
-              deliveryState: "read",
+              deliveryState: !notification.channel || notification.channel === "in_app" ? "read" : notification.deliveryState,
             }
           : notification
       )
@@ -184,7 +193,7 @@ export function NotificationProvider({
       prev.map((notification) => ({
         ...notification,
         readAt: notification.readAt || readAt,
-        deliveryState: notification.deliveryState === "dismissed" ? notification.deliveryState : "read",
+        deliveryState: notification.deliveryState === "dismissed" || (notification.channel && notification.channel !== "in_app") ? notification.deliveryState : "read",
       }))
     )
   }, [])
@@ -194,7 +203,10 @@ export function NotificationProvider({
   }, [])
 
   const toggleSound = useCallback(() => {
-    setSoundEnabled((prev) => !prev)
+    const enabled = !soundEnabledRef.current
+    soundEnabledRef.current = enabled
+    setSoundEnabled(enabled)
+    setSoundPreferenceStatus(safeWriteBoolean("notification-sound-enabled", enabled) ? "saved" : "session_only")
   }, [])
 
   // Convenience methods for different notification types
@@ -868,6 +880,7 @@ export function NotificationProvider({
     notifications,
     unreadCount,
     soundEnabled,
+    soundPreferenceStatus,
     addNotification,
     removeNotification,
     markAsRead,

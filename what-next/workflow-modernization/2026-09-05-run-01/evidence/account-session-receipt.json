@@ -1,0 +1,244 @@
+{
+  "recordedAt": "2026-09-06T17:19:36.353Z",
+  "baseline": "evidence/source-baseline-v35.json",
+  "earlierBaseline": "evidence/source-baseline-v34.json",
+  "sources": {
+    "services/security/account-session-input.ts": "9b2199b5d58a5bbdaeb7a32e26a70729e101fc25e595e7ce8d578b75fe6ec612",
+    "services/security/account-session.service.ts": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279",
+    "actions/security/account-session.actions.ts": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+    "hooks/account-session-recovery.ts": "51b76e45e3daf8d11eb3d27b52d28bcd1ccf0f112a7afaceca5da6addaefe5c2",
+    "hooks/useAccountSessions.ts": "5bbf90b1bfa22381b83cf51c991997cb87bca5dec61cf7e5c11aa791042f8671",
+    "components/settings/AccountSessions.tsx": "382858360910cc38be4a24d363346a186c5cf99f798db88d4b38a33ea334a207",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "3cef34c77414195b097fae7af0c9eb1a29bde3afb10c63783b0ff928f55f3794",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/__tests__/useAccountSessions.test.tsx": "fd2b5898f6a9b9b928ec87e663fb7844764f4c4bf8e60156595e56b813688ef9",
+    "services/security/__tests__/account-session.service.test.ts": "580c0c8199914109953a6c628c644ac55ec0d904af2f7a3af7b09bf50676ae83",
+    "lib/security/__tests__/auth-session.test.ts": "2f0a15a52d33434bede0db6bbfa0d218effbead85b38feeb07f3511d6275efc2",
+    "components/settings/__tests__/AccountSessions.workflow.test.tsx": "1fc1db29d2d13ec9be843f5f1e82674b49d874390e85fa27679a3a6f1935aa3b",
+    "lib/security/__tests__/rbac.test.ts": "b655eaef01e12a83f047d1ca402be324f77c6e3b30eb2230ef79706c74bd299c",
+    "app/[locale]/(dashboard)/dashboard/settings/__tests__/route-audit.test.ts": "189e6cab7953cff14a50c5d06fe10a6ea5bdeb6ec4f3fb3489a67dd7f3fed83e",
+    "actions/security/__tests__/account-session.actions.test.ts": "6852f9d839ad374563a26520de20ae1cdc39d9f3774c65f16db17b31dd40573b",
+    "hooks/__tests__/account-session-recovery.test.ts": "95037e8edc9d1e32c9ba881d4ba58fe3a9b9bc92518bc3cf669fe250792abe13",
+    "app/[locale]/(dashboard)/dashboard/settings/__tests__/security-access.test.ts": "40ec969d5100394c11ce613755a51dbc2dc7d45359a40038467034be47e5cc6c"
+  },
+  "scope": [
+    "OA-SECURITY-READ",
+    "OA-SESSION-REVOKE"
+  ],
+  "before": {
+    "file": "lanes/environment/security-success-before-1daeb9dc-15e.json",
+    "forgedSuccessReproduced": 2,
+    "sessionsAndRevocationAuditUnchanged": true,
+    "menuDiagnostic": "Menu is visibly open in screenshots; post-open background trigger lookup caused diagnostic failure."
+  },
+  "tests": {
+    "file": "evidence/account-session-tests-03.json",
+    "passed": 44,
+    "failed": 0,
+    "suites": 9,
+    "chunk": "01af4a",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"hooks/__tests__/useAccountSessions.test.tsx\" \"services/security/__tests__/account-session.service.test.ts\" \"lib/security/__tests__/auth-session.test.ts\" \"components/settings/__tests__/AccountSessions.workflow.test.tsx\" \"lib/security/__tests__/rbac.test.ts\" \"app/[locale]/(dashboard)/dashboard/settings/__tests__/route-audit.test.ts\" \"actions/security/__tests__/account-session.actions.test.ts\" \"hooks/__tests__/account-session-recovery.test.ts\" \"app/[locale]/(dashboard)/dashboard/settings/__tests__/security-access.test.ts\" --json --outputFile=evidence/account-session-tests-03.json"
+  },
+  "postgres": {
+    "file": "lanes/environment/account-sessions-postgres-264fec2c-504.json",
+    "passed": 8,
+    "failed": 0,
+    "chunk": "32d6a5",
+    "unchangedServiceBindings": true,
+    "displayOnlyChangesSinceRun": [
+      {
+        "file": "components/settings/AccountSessions.tsx",
+        "postgresHash": "8f1cde5d8332686b8bc9d158aa65bb2620677908d64047f7dbeacaf176105e58",
+        "currentHash": "382858360910cc38be4a24d363346a186c5cf99f798db88d4b38a33ea334a207",
+        "coverage": "Final UI tests and EN/FR browser; database service source unchanged."
+      }
+    ],
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-account-sessions.cjs postgres"
+  },
+  "browser": {
+    "file": "lanes/environment/account-sessions-browser-5c6b104d-476.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "b0e83c",
+    "screenshots": [
+      {
+        "source": "lanes/environment/en-account-sessions-denied-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-denied-5c6b104d-476.png",
+        "sha256": "5e58312c303b8e4426e1d6be34398a64ae9a8d2f58444d49c4ff59ba22da707c"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-review-390-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-review-390-5c6b104d-476.png",
+        "sha256": "df7d852e7479a54de0665aee22c9eb47c50ae0a9181c8d12382e990d6362380d"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-review-768-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-review-768-5c6b104d-476.png",
+        "sha256": "e02359b4c802e004df87197919e7bc9b663a267e0366e4a2e6da9c7afc66cb77"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-review-1440-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-review-1440-5c6b104d-476.png",
+        "sha256": "69acbb717e74462fca328687d77cc93e13ead347e88174ce023f5d1f0100a0de"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-completed-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-completed-5c6b104d-476.png",
+        "sha256": "f1970002fd7b589d4b763ae0b1e1e998e3bc77ace5deea99adf4df5b84714f3c"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-interrupted-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-interrupted-5c6b104d-476.png",
+        "sha256": "7a98a84bb96aba24fed1c6375b4602839e4a800320e1df24946af18ff3d0e0ed"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-recovered-mobile-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-recovered-mobile-5c6b104d-476.png",
+        "sha256": "805ace00158a41e2f0239cd9d5a32e0d60d76e51aab6a0edd9f59a499d2c230b"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-read-failed-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-read-failed-5c6b104d-476.png",
+        "sha256": "712acc076423e629cefebad1c2c892118cb834c6aca7c0786a9c803ff74ef86e"
+      },
+      {
+        "source": "lanes/environment/en-account-sessions-history-mobile-5c6b104d-476.png",
+        "file": "evidence/account-sessions/en-account-sessions-history-mobile-5c6b104d-476.png",
+        "sha256": "35601214d2e13647922028c0b9df4030897a63eeef09c533dfcf78bc9ea51319"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-denied-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-denied-5c6b104d-476.png",
+        "sha256": "9aea111e0ad558f5538c07826965fc6f195b9b4d7860d67b0dd78621ff46b00c"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-review-390-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-review-390-5c6b104d-476.png",
+        "sha256": "9fb51d9ce62a65d2bcf891d7265aa16e6fb1892f4e89c3eb119529fef23f2466"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-review-768-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-review-768-5c6b104d-476.png",
+        "sha256": "60250c73fdedb1c73d92be8757a4bbb5bbd2023cd70193aef38cb0904d3b87f3"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-review-1440-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-review-1440-5c6b104d-476.png",
+        "sha256": "5dd0c8f57811eac32b4c84a7b90e75ea2cf79e46fcead25d4fa7ce730f45ee81"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-completed-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-completed-5c6b104d-476.png",
+        "sha256": "1614d4b3bd17804cb82fd5c2a5c7e34df612e6290a0d219a4c6016647ed9174d"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-interrupted-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-interrupted-5c6b104d-476.png",
+        "sha256": "6a80d4a1173af2248976f8e2892e0d695435dd7a1f3bcb963980c8c178cb042a"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-recovered-mobile-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-recovered-mobile-5c6b104d-476.png",
+        "sha256": "b6b1c512e1181545f09bd8920149f44f2dda7ca2ce5bffd409a8a87ea7a3fccc"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-read-failed-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-read-failed-5c6b104d-476.png",
+        "sha256": "8cd6e1ef903d96aad352894bc6d8f272465bd1734c32af8933e3cc8a8393cf77"
+      },
+      {
+        "source": "lanes/environment/fr-account-sessions-history-mobile-5c6b104d-476.png",
+        "file": "evidence/account-sessions/fr-account-sessions-history-mobile-5c6b104d-476.png",
+        "sha256": "659fc925bd2bf23b379e1dc9a8102d4e235af67010525dc10d95b2859ddddf2f"
+      }
+    ],
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-account-sessions.cjs browser"
+  },
+  "verification": {
+    "typecheck": {
+      "status": "passed",
+      "exitCode": 0,
+      "chunk": "b36d3e",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+    },
+    "lint": {
+      "exitCode": 0,
+      "chunk": "3a81cf",
+      "files": [
+        "services/security/account-session-input.ts",
+        "services/security/account-session.service.ts",
+        "actions/security/account-session.actions.ts",
+        "hooks/account-session-recovery.ts",
+        "hooks/useAccountSessions.ts",
+        "components/settings/AccountSessions.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts"
+      ]
+    },
+    "finalDisplayLint": {
+      "exitCode": 0,
+      "chunk": "47b751",
+      "files": [
+        "components/settings/AccountSessions.tsx",
+        "components/settings/__tests__/AccountSessions.workflow.test.tsx"
+      ]
+    },
+    "boundaries": {
+      "file": "evidence/account-session-boundaries.json",
+      "passed": 8,
+      "failed": 0
+    }
+  },
+  "failedAttempts": [
+    {
+      "file": "lanes/environment/security-success-before-59ca484b-96a.json",
+      "result": "Intermediate profile.read plus unknown PASSWORD_READ check still denied both languages. Removed the invalid requirement; global permission rules unchanged."
+    },
+    {
+      "file": "lanes/environment/security-success-before-1daeb9dc-15e.json",
+      "result": "Both forged URL success messages reproduced. Menu diagnostic failed after opening when background trigger was inaccessible."
+    },
+    {
+      "file": "lanes/environment/account-sessions-browser-218effc7-729.json",
+      "result": "English permission GET timed out at 30 seconds before revocation; French completed. Synthetic cookie header in the timeout was redacted and its exact isolated session invalidated (5cc337). Extended only verifier timeout; unchanged-source English rerun passed (3ae511). Final display correction then passed both languages."
+    },
+    {
+      "chunks": [
+        "ef943a",
+        "6b9233"
+      ],
+      "result": "Node page write failed before applying the change; native Windows file write applied the same reviewed candidate. No automatic-review rejection occurred for this batch."
+    }
+  ],
+  "performance": {
+    "classification": "Development observations; no approved production budget or demonstrated speed improvement.",
+    "routeReadyMs": [
+      {
+        "locale": "en",
+        "value": 6583
+      },
+      {
+        "locale": "fr",
+        "value": 7402
+      }
+    ]
+  },
+  "remaining": [
+    "Global session/cache/provider behavior and all session-sensitive transports are not fully verified; previously rejected global hooks/cache changes remain unapplied.",
+    "Native screen-reader, actual zoom and comprehensive contrast verification remain open.",
+    "Formal retention/hold, organization-delete audit cascade and comprehensive legacy session-event history remain open.",
+    "Profile route/service workflow and bilingual account menu/unsupported role and plan labels remain open.",
+    "Twenty-four-hour same-tab retry metadata cannot be recovered in a new requesting session; current-account recent receipts remain available.",
+    "Whole-platform workflow discovery, connected remediation and final requirement audit remain incomplete."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

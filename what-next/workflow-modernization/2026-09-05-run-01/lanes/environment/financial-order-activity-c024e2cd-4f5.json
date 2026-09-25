@@ -1,0 +1,194 @@
+{
+  "startedAt": "2026-09-06T04:37:24.641Z",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "fixtureSource": "daily-sales-postgres-af424ca5-101.json",
+  "sourcesBefore": {
+    "services/analytics/financial-order-activity.service.ts": "5748a3879309d7ac31631dda7d49903860cb9ae61274ff9650f67a38c4fee9c2",
+    "services/analytics/financial-analytics.service.ts": "2822cfe26a965da38ec089944408df5cab6d1231eebd9f84571204120465d86a",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a",
+    "services/analytics/analytical-context-contracts.ts": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+    "actions/analytics/financial-analytics.ts": "8d695d6bdbb972baea551c4443df803d240876e123e0336db073a3e507cbbc4f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "douala exact adjacent current/previous order periods",
+      "passed": true,
+      "durationMs": 46,
+      "detail": {
+        "context": {
+          "schemaVersion": "organization-analytical-context.v1",
+          "organizationId": "org_modules_service_smoke_daily_af424ca5-101_douala",
+          "generatedAt": "2026-09-06T04:37:24.864Z",
+          "currency": {
+            "code": "XAF",
+            "minorUnit": 0,
+            "source": "ORGANIZATION",
+            "aggregationPrecision": "DECIMAL_SOURCE_AGGREGATION"
+          },
+          "timezone": {
+            "iana": "Africa/Douala",
+            "calendar": "gregory",
+            "source": "ORGANIZATION"
+          },
+          "period": {
+            "periodStart": "2026-09-05T23:00:00.000Z",
+            "periodEndExclusive": "2026-09-06T23:00:00.000Z",
+            "boundaryConvention": "INCLUSIVE_START_EXCLUSIVE_END",
+            "timezone": "Africa/Douala"
+          },
+          "scope": {
+            "kind": "LOCATION",
+            "locationId": "cmtpaxnhn0001mahkidt1g26j"
+          }
+        },
+        "source": "CONFIRMED_ORDER_TOTALS",
+        "statuses": [
+          "CONFIRMED",
+          "PROCESSING",
+          "SHIPPED",
+          "DELIVERED",
+          "COMPLETED"
+        ],
+        "current": {
+          "value": "26.00",
+          "count": 2,
+          "periodStart": "2026-09-05T23:00:00.000Z",
+          "periodEndExclusive": "2026-09-06T23:00:00.000Z"
+        },
+        "previous": {
+          "value": "900.00",
+          "count": 1,
+          "periodStart": "2026-09-04T23:00:00.000Z",
+          "periodEndExclusive": "2026-09-05T23:00:00.000Z"
+        },
+        "valueGrowthPercent": "-97.11",
+        "comparison": "PRECEDING_EQUAL_CALENDAR_DAYS"
+      }
+    },
+    {
+      "name": "douala all-location, retained location and foreign object isolation",
+      "passed": true,
+      "durationMs": 29,
+      "detail": {
+        "allLocations": {
+          "value": "26.00",
+          "count": 2,
+          "periodStart": "2026-09-05T23:00:00.000Z",
+          "periodEndExclusive": "2026-09-06T23:00:00.000Z"
+        },
+        "retainedZero": {
+          "value": "0.00",
+          "count": 0,
+          "periodStart": "2026-09-05T23:00:00.000Z",
+          "periodEndExclusive": "2026-09-06T23:00:00.000Z"
+        },
+        "foreignLocationDenied": true
+      }
+    },
+    {
+      "name": "paris exact adjacent current/previous order periods",
+      "passed": true,
+      "durationMs": 12,
+      "detail": {
+        "context": {
+          "schemaVersion": "organization-analytical-context.v1",
+          "organizationId": "org_modules_service_smoke_daily_af424ca5-101_paris",
+          "generatedAt": "2026-09-06T04:37:24.916Z",
+          "currency": {
+            "code": "XAF",
+            "minorUnit": 0,
+            "source": "ORGANIZATION",
+            "aggregationPrecision": "DECIMAL_SOURCE_AGGREGATION"
+          },
+          "timezone": {
+            "iana": "Europe/Paris",
+            "calendar": "gregory",
+            "source": "ORGANIZATION"
+          },
+          "period": {
+            "periodStart": "2026-03-28T23:00:00.000Z",
+            "periodEndExclusive": "2026-03-29T22:00:00.000Z",
+            "boundaryConvention": "INCLUSIVE_START_EXCLUSIVE_END",
+            "timezone": "Europe/Paris"
+          },
+          "scope": {
+            "kind": "LOCATION",
+            "locationId": "cmtpaxnly000vmahk9p2bajyu"
+          }
+        },
+        "source": "CONFIRMED_ORDER_TOTALS",
+        "statuses": [
+          "CONFIRMED",
+          "PROCESSING",
+          "SHIPPED",
+          "DELIVERED",
+          "COMPLETED"
+        ],
+        "current": {
+          "value": "26.00",
+          "count": 2,
+          "periodStart": "2026-03-28T23:00:00.000Z",
+          "periodEndExclusive": "2026-03-29T22:00:00.000Z"
+        },
+        "previous": {
+          "value": "900.00",
+          "count": 1,
+          "periodStart": "2026-03-27T23:00:00.000Z",
+          "periodEndExclusive": "2026-03-28T23:00:00.000Z"
+        },
+        "valueGrowthPercent": "-97.11",
+        "comparison": "PRECEDING_EQUAL_CALENDAR_DAYS"
+      }
+    },
+    {
+      "name": "paris all-location, retained location and foreign object isolation",
+      "passed": true,
+      "durationMs": 27,
+      "detail": {
+        "allLocations": {
+          "value": "26.00",
+          "count": 2,
+          "periodStart": "2026-03-28T23:00:00.000Z",
+          "periodEndExclusive": "2026-03-29T22:00:00.000Z"
+        },
+        "retainedZero": {
+          "value": "0.00",
+          "count": 0,
+          "periodStart": "2026-03-28T23:00:00.000Z",
+          "periodEndExclusive": "2026-03-29T22:00:00.000Z"
+        },
+        "foreignLocationDenied": true
+      }
+    },
+    {
+      "name": "missing organization and malformed interval remain failures",
+      "passed": true,
+      "durationMs": 5,
+      "detail": {
+        "missingDenied": true,
+        "invalidRangeDenied": true
+      }
+    }
+  ],
+  "limitations": [
+    "Read-only real PostgreSQL checks reuse explicitly synthetic local orders; no seed, reset, migration or financial writes.",
+    "No production UI caller found for the legacy financial endpoint; this is service/database proof, not browser or full payroll lifecycle verification."
+  ],
+  "authorityAndRecordsBefore": "aa91a4f52be592b2476785a27a5f185e23d5669163e0389fc70a924d792c999d",
+  "authorityAndRecordsAfter": "aa91a4f52be592b2476785a27a5f185e23d5669163e0389fc70a924d792c999d",
+  "authorityAndRecordsUnchanged": true,
+  "completedAt": "2026-09-06T04:37:24.979Z",
+  "sourcesAfter": {
+    "services/analytics/financial-order-activity.service.ts": "5748a3879309d7ac31631dda7d49903860cb9ae61274ff9650f67a38c4fee9c2",
+    "services/analytics/financial-analytics.service.ts": "2822cfe26a965da38ec089944408df5cab6d1231eebd9f84571204120465d86a",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a",
+    "services/analytics/analytical-context-contracts.ts": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+    "actions/analytics/financial-analytics.ts": "8d695d6bdbb972baea551c4443df803d240876e123e0336db073a3e507cbbc4f",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "passed": 5,
+  "failed": 0,
+  "driverSha256": "da9371523aa1218a68f22054d50f02c9e41fd579e4b7eba7325bda3ba57aba5c"
+}

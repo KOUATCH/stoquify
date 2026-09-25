@@ -13,6 +13,7 @@ import {
 
 import { db } from "@/prisma/db"
 import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 import { createCustomerLedgerEntry } from "@/services/accounting/customer-ledger.service"
 import {
   CUSTOMER_RECEIVABLE_REFERENCE_TYPE,
@@ -267,6 +268,12 @@ export async function createDeliveryOrder(input: CreateDeliveryOrderInput) {
     if (replayedSourceId) {
       return { order: await loadDeliveryOrderInTx(tx, input.organizationId, replayedSourceId), replayed: true }
     }
+
+    await assertModuleNewWorkInTx(tx, {
+      organizationId: input.organizationId,
+      moduleSlug: "sales",
+      operation: "sales.delivery-order.create",
+    })
 
     const itemIds = input.lines.map((line) => line.itemId)
     if (new Set(itemIds).size !== itemIds.length) {

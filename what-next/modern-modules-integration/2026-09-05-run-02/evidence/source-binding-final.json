@@ -1,0 +1,1141 @@
+{
+  "recordedAt": "2026-09-05T16:28:26.777Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "dirtyTree": true,
+  "scope": "Current native composition sources, focused follow-ups and retained run02 artifacts. Historical tests remain bound to their own recorded revisions. No global release or professional certification.",
+  "sources": [
+    {
+      "path": ".gitignore",
+      "sha256": "4a8da678fd4fa08975c59017cba8382252207d624d467ffbdb07b31dc33cbb95"
+    },
+    {
+      "path": "actions/accounting/accounts.actions.ts",
+      "sha256": "2ca2940a47151f474975e76c0e65b93bd60ec738c9945cf93fac84675c913202"
+    },
+    {
+      "path": "actions/accounting/journals.actions.ts",
+      "sha256": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "90561f3fa5e211f01e5e8583b28183f2d5bf67e600174f8828643bc2812b9846"
+    },
+    {
+      "path": "actions/modules/__tests__/module-control.actions.test.ts",
+      "sha256": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "sha256": "f119bbcfb3112d7771b940870baaf17ab2c9b12e9424dbb95274191852f77c33"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "ad2f77b1b50648dd6329d481ed59a3aa494b115ceaf888e97d73bdcc04b4cd20"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx",
+      "sha256": "1efe879fa0a6955bb738427e35100b9587d930f1bc6fe2f22a2216e32f3cc1de"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/__tests__/page.test.tsx",
+      "sha256": "47a22428e6e28be2cf7881f8d0136d1167bc98723f59e33162e4232519f72ed5"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx",
+      "sha256": "0767f4638a72a8465af0855c289b104817461ee9716742fac41f4511094f2467"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "sha256": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/__tests__/page.test.tsx",
+      "sha256": "b853a62aecc8eab8b933247f80f9a0277a66b6be491930ebcd57c8d41e4d407f"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
+      "sha256": "733ad820495ce389ca99266826f3a702b9725b81ec2eb16634468c5c322f8a48"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/error.tsx",
+      "sha256": "67f27e55eb0c53f061bb515a19a3d35f76928ecae0fe87bafdd76fb8c3984c54"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/loading.tsx",
+      "sha256": "137d531237b9399ad95c6fab981074bc3a1cb102acf718ae56faa69b98c65342"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "4b998875ef69a4f3a635c2902fddd431c131219e1b00c30af5f0435256ee0bc0"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "87b4ceeec07f61dbf4d0e7daf2438371f908b227227dd2040b3a7bdd95ef27f2"
+    },
+    {
+      "path": "components/finance/FinanceCommandCenterDashboard.tsx",
+      "sha256": "2169f212764fcba878d062f82b3351acfe243e5f3d5bba40ea29377c2a948a7e"
+    },
+    {
+      "path": "components/inventory/transfers/CreateTransferModal.tsx",
+      "sha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb"
+    },
+    {
+      "path": "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx",
+      "sha256": "0aea85d176a01294958a0cc958b0facc78126045a07408003193c414b93fd81a"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+    },
+    {
+      "path": "components/modules/TenantModuleActivationButton.tsx",
+      "sha256": "5c7512eae51f34bf1162c666d46fffed8fcf5eabecb1da5a03913c450ccf65ca"
+    },
+    {
+      "path": "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+      "sha256": "2928b31c274b72bcaa4a56b1571ab7c8f50daa2e3a81dcc28b8322430ca9127b"
+    },
+    {
+      "path": "components/modules/__tests__/TenantModuleActivationButton.test.tsx",
+      "sha256": "720915f30107842f0daea2998a7f211e1fab1bff242681a3818a90e6a8bd17a4"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "8766c25d759076bcd8d2de7d150e671dbb7dfb46bd66568c3833260a637552a0"
+    },
+    {
+      "path": "components/payroll/PayrollRunActionPanel.tsx",
+      "sha256": "ddd0859c93420bee1467c5f554352d32bb7b31393d34c1c3c63bf5fa13ead800"
+    },
+    {
+      "path": "components/payroll/__tests__/PayrollRunWorkbench.test.tsx",
+      "sha256": "82885b770d6c78cbb3be84db357824ec19ed90264e3744e10206b3844c7ec392"
+    },
+    {
+      "path": "components/purchase-orders/ModernCreatePurchaseOrderForm.tsx",
+      "sha256": "08408c0a9e955b98ea8d8f040bea48eccc0e005d826937dfdc4398127506094b"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "sha256": "09ba3c156ed0d00f27bc964671fee2b20e85edd0d7269dd903c0a22138831c13"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "ca426baa0072391a390550c735546c6fe5d031d415c9d2430a6ac2cab81401a0"
+    },
+    {
+      "path": "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+      "sha256": "0dae15f305540da7e5694265cb85a4bada6d06d881dad4f289f644a812539a6e"
+    },
+    {
+      "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+      "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+    },
+    {
+      "path": "hooks/payroll/usePayrollWorkbench.ts",
+      "sha256": "6fc19e3dafe74f4960e439519bf06a115befcab5fc743a7e7ef85888b975206e"
+    },
+    {
+      "path": "hooks/useRecentPurchaseOrderQueries.ts",
+      "sha256": "d2fc29309b0387a133d19f8e00f76e556dc3b6908c86c9f25279c1057aca076f"
+    },
+    {
+      "path": "hooks/useTransferQueries.ts",
+      "sha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1"
+    },
+    {
+      "path": "lib/error-handling/server-action-wrapper.ts",
+      "sha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d"
+    },
+    {
+      "path": "lib/error-handling/types.ts",
+      "sha256": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b"
+    },
+    {
+      "path": "lib/modules/__tests__/module-operation-error.test.ts",
+      "sha256": "f5b1d81ef1d2f184ece213f0af982fda26a4bf9c6ab35aec370d6225f931d506"
+    },
+    {
+      "path": "lib/modules/module-operation-error.ts",
+      "sha256": "b61ed2a4d548d8808c851af2f05bd3712c947fa47ead7d837227cfdd7071c06f"
+    },
+    {
+      "path": "lib/modules/navigation.ts",
+      "sha256": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932"
+    },
+    {
+      "path": "lib/security/__tests__/rbac-permissions.test.ts",
+      "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "5e10711b9dd0b4cfbc0c320d37f81e63b6f90602841b1373a0eee674df2a29cd"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "ba0b6ce96ef5c706fff415c93c2e8cdb6efaf215f41d9a53caf13394305b4e94"
+    },
+    {
+      "path": "next-env.d.ts",
+      "sha256": "098ab75b8b6ad90d038558eeccc3ab1a1af12051c31c6dc84234987b944e9944"
+    },
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "797525d6a694c8e31ca078acd9fecaa0784f47e3a422c2c37b3c62ce4f99484f"
+    },
+    {
+      "path": "package.json",
+      "sha256": "a2565504781647fd922edbad513b6c25783216b9b1dffc97d9a92ebed4dbbb4f"
+    },
+    {
+      "path": "playwright.modern-modules.config.ts",
+      "sha256": "8dcdd148e8b0a77f9a982ab2e3a91a20df5dda38810e2a691139777516bb6e63"
+    },
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "c931a56edbcd535c812e1442aa1261917e4ccf8442025c160a9a9940b17acc30"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory.test.js",
+      "sha256": "55e96fdaaa6bf423a8209130b034ca9084cf40433472c1a08cf6fde26472031b"
+    },
+    {
+      "path": "scripts/modern-modules-lifecycle-fixture.ts",
+      "sha256": "a5bd229bb1e487938c3befa3edb2f24a793e2cf1925f16466c85ec546f4905d2"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb"
+    },
+    {
+      "path": "scripts/module-surface-inventory.js",
+      "sha256": "75e43fb85fc74535473a52811037a099dff27a125d061c90a3469dddf368d2e2"
+    },
+    {
+      "path": "scripts/run-modern-modules-postgres-smoke.js",
+      "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+    },
+    {
+      "path": "services/_shared/__tests__/protect.test.ts",
+      "sha256": "d6bf7d5a69aba6f2ea6b4b8b31ec52a0509155718fb312bf531ecc86c364fc4d"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+    },
+    {
+      "path": "services/accounting/__tests__/manual-journal.test.ts",
+      "sha256": "2077478a0ceb2ba413f4d378f7f7f3c57eb3479fc1c0112823f94e40a2357d5a"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-adjustment.service.test.ts",
+      "sha256": "1b52254495fb3194360da684f3facba764045a669ac6318b43d20c5a924bae26"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-count.service.test.ts",
+      "sha256": "00396afa26bd9de41d039cbcdd11379c1b35fb20c271d654f7d019370754ea55"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-transfer.service.test.ts",
+      "sha256": "8d9bc16786160c7ab00039564f792dc1268bd88056dfd9667ac51ec200f221bf"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "b2b99b3b868ca33ba13b3f9e6610c21a8a879ddcf7beb0ecac766153e8b6d6fb"
+    },
+    {
+      "path": "services/inventory/inventory-count.service.ts",
+      "sha256": "0476fbb5691b41a0965a4186842b88fdc3f801c34ea94cbc7a32d1d0bc70517e"
+    },
+    {
+      "path": "services/inventory/inventory-transfer.service.ts",
+      "sha256": "ad1aee0a3cb2deb570581600eaf19125962f1ffd89835845a20937b8310015d3"
+    },
+    {
+      "path": "services/modules/__tests__/module-access-regressions.test.ts",
+      "sha256": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b"
+    },
+    {
+      "path": "services/modules/__tests__/module-admission.service.test.ts",
+      "sha256": "182bbc671ba489bff1b732db5570ca2abaf3800a29c8912a31c698f099696f72"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "015aee6c71be00dc13caa8b2193c9ed4d753a802ddfc5b679ab87db43ee31850"
+    },
+    {
+      "path": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "sha256": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc"
+    },
+    {
+      "path": "services/modules/__tests__/module-inventory-continuation.service.test.ts",
+      "sha256": "8d674e95b459d9422bccb9e0183825f56569a5e1b7dcd7cbbef2ff3a9fb467bd"
+    },
+    {
+      "path": "services/modules/__tests__/module-lifecycle-readiness.service.test.ts",
+      "sha256": "77caaf6191a54a4b861387871c62d1a2c0d1705650b2aac720f96c8506967999"
+    },
+    {
+      "path": "services/modules/__tests__/module-navigation.test.ts",
+      "sha256": "0b354d84a14420c1fe67b7ed9eec394260eb89329445c96fffe871a53d50991a"
+    },
+    {
+      "path": "services/modules/__tests__/module-reconciliation-obligations.postgres.test.ts",
+      "sha256": "9468fdd9949a1ed8e392181c455a4b70e38956bc16c7a4c55496aa559ed52e7a"
+    },
+    {
+      "path": "services/modules/__tests__/module-reconciliation-obligations.service.test.ts",
+      "sha256": "1d9862e6dca138a3b326014acc2e234227a11535ec7611db86ee010685817a9a"
+    },
+    {
+      "path": "services/modules/__tests__/module-stop-policy.service.test.ts",
+      "sha256": "e39cb5e35792ba35dea756c227bfd1d9b0da4c708bc411ab23eccea6dd527901"
+    },
+    {
+      "path": "services/modules/__tests__/module-transport.integration.test.ts",
+      "sha256": "b429064df5453dac57bc67178afe7a5cb3a4c05fa77eb05b9040c3b1a6fe661d"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "291bd003d161570251a54772fe38ca2e6cca9801fa1126461771caf56aaadd18"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-inventory-continuation.service.ts",
+      "sha256": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "services/modules/module-operational-dependencies.ts",
+      "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+    },
+    {
+      "path": "services/modules/module-reconciliation-obligations.service.ts",
+      "sha256": "38ce6fe4b3f74ab85199227eb7235177e0733a17e1ce1faf672ca8b40f82d0d6"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    },
+    {
+      "path": "services/order-to-cash/__tests__/delivery-order.service.test.ts",
+      "sha256": "3849ac48a555292ddccdd425d1988a4d6fa0d30dece8e3ef2bc675c18127e61e"
+    },
+    {
+      "path": "services/order-to-cash/delivery-order.service.ts",
+      "sha256": "f7529c1f9c3acd0080c3a8190a57bbfebf477622861e4415f7a9a45f8e71a4ec"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "sha256": "8f60aeee129132419a0da707d9843ffcfa6594b06d16a065b0653ffa389eb472"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-setup-readiness.service.test.ts",
+      "sha256": "b8f7960b12e9087852e91a42e5f7b2ce9220165aec8d0c0bc3af90066efedb58"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9"
+    },
+    {
+      "path": "services/payroll/payroll-setup-readiness.service.ts",
+      "sha256": "28c53d5da7ea67f5171846189109edac2164812ef8bea1c3cc1d192bccebc292"
+    },
+    {
+      "path": "services/pos/__tests__/offline-sync.service.test.ts",
+      "sha256": "337b9259c5931f9c3b3f9a7ded70f83012c9cf5ae53d84a3361432ed40672584"
+    },
+    {
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "sha256": "0f02fb15f53cb9a3c6e8d0525426a13dba81d7dab4055988618874f2da55c47d"
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "sha256": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order.service.test.ts",
+      "sha256": "1aa833a4040c08f733b0ee6139a16ce615a338d884e114cf8d7b7f167dbcb115"
+    },
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "7c6c366c1b6c0fda87feba20d905adebe6f9d5bbeb5ab8d39242abaa9ca56108"
+    },
+    {
+      "path": "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "sha256": "e19911b4ac24ef38b7099adc011d069e212e745675331c2a25b56dd4ef03ff95"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-run.service.ts",
+      "sha256": "0d8c80ef828dd406ade1632f4d250bda1a8906d7118340465c0d22cd42e64a15"
+    },
+    {
+      "path": "tests/e2e/modern-modules.spec.ts",
+      "sha256": "d47af5e915e254fc888a7f45438481dea5be90882ec3c2feff41fe8b0ab61ba8"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "1a77d11041360abf02fee09af94d8f3259ca484313f0bcf3fb6d653e1f6bd167"
+    },
+    {
+      "path": "types/purchase-orders-system-types.ts",
+      "sha256": "869eb5d3192c645ceedd160d7089735777dd42a146f810b4066783389a859806"
+    },
+    {
+      "path": "what-next/module-system/execution-status.md",
+      "sha256": "c39d28f3fe705de6d1bce9fc19d4d71c0b6d3adf1613a891f5eb25d74bf49856"
+    }
+  ],
+  "buildDrift": [
+    "components/modules/ModuleCompositionWorkbench.tsx",
+    "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+    "messages/en.json",
+    "messages/fr.json",
+    "next-env.d.ts",
+    "services/modules/__tests__/module-composition.service.test.ts",
+    "services/modules/module-composition-contracts.ts",
+    "services/modules/module-composition.service.ts"
+  ],
+  "artifacts": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/ACCOUNTING_CREATE_BROWSER_PROOF.md",
+      "bytes": 3312,
+      "sha256": "1e7cf121beb84fd5e4408a87af89253e7d6b503d3e86f9da98540b3baa0527f7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/ACCOUNTING_CREATE_FAILURE.md",
+      "bytes": 2432,
+      "sha256": "3f1429ca7b0a312d1998fae618b0a3995850107c5826a5cdddd47648c37ac955"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/ACCOUNTING_CREATE_FOLLOWUP.md",
+      "bytes": 3795,
+      "sha256": "19ef697315689186b60ff68f5d09f0eea29d4adcdd196e9cfdfcaa052db4182b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/AUTH_SSR_DIAGNOSIS.md",
+      "bytes": 7087,
+      "sha256": "d6556aa3d44b26b585591dbeaf3721906e43258fc765254a3a5f87a2b22906c1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/bind-final-evidence.cjs",
+      "bytes": 3840,
+      "sha256": "431f8f2d4a857d05ed84f04cbba70ef4186a7257734e977d569252b26a3c2003"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/BUILD_FOLLOWUP.md",
+      "bytes": 3562,
+      "sha256": "92d49927bee2098dd2cd37158b8391811c3f1d478d6c5d48832b0b139eb3ab49"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/COMPLETION_REVIEW.md",
+      "bytes": 13241,
+      "sha256": "90d238d57b3c316f2e9403e90ae60132be53f58961720d31484f2cfc5d18d196"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/CONTINUATION_AUDIT.md",
+      "bytes": 3596,
+      "sha256": "3565df434e43c617e4278297dd0834a7d6498c1781fc2c164145f869c06af727"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/DESIGN_SYSTEM_MAPPING.md",
+      "bytes": 13340,
+      "sha256": "f0d67326012c7e920906a277ab91f82ae889623e58c05b2fd25f32740c9e1ffb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/accounting-stop-control-en.png",
+      "bytes": 476062,
+      "sha256": "963874bc21d02912d4699243957f5fae325116acf079e1011b3a413e6e9a6e72"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/accounting-stop-control-fr.png",
+      "bytes": 476949,
+      "sha256": "23d9cba9c6a1743f26b7f5a65ca6b2f9963a3b866771a927231c92ee2574c37e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/accounting-stop-preview-browser.cjs",
+      "bytes": 7166,
+      "sha256": "8ffef6a8a81864c95f8b880916f84a236cb853b7443cdfdb300c35ce24e41a54"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/accounting-stop-preview-browser.json",
+      "bytes": 3527,
+      "sha256": "bfeb4e86650a2816619ec93c5d062ea5682bc3bb058a4a166b9485eb96d77ffe"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/accounting-stop-preview-en.png",
+      "bytes": 22854,
+      "sha256": "4028a8892d846385ef5fe3c2b0bdb8549a70caa5049613d816fb3fddbd084041"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/accounting-stop-preview-fr.png",
+      "bytes": 24843,
+      "sha256": "f56746c9e06a7ecb8bdd4f287bc9c6c61ad0644d2cdfcae9d0584738c996d88a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/auth-bundling-browser-cold-timeout.json",
+      "bytes": 2714,
+      "sha256": "275c2dd74dcd9df98b3a1949c9d600c37c3d717a6e6091c27145a57454784558"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/auth-bundling-browser-success-locator-ambiguity.json",
+      "bytes": 3936,
+      "sha256": "daab5e00adeff03300a126a898fd20af648e9d5f93c43b8fa27d51356181cc48"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/auth-bundling-browser-webpack-runtime-failure.json",
+      "bytes": 2933,
+      "sha256": "ad0894306bee95ea670d81fde613c34d2d83398edada5fc21a112e952f5a6722"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/auth-bundling-browser.cjs",
+      "bytes": 9578,
+      "sha256": "9c9ff4b4f26d05815489acf58d4154232e5420ca675f1c645b60e4f183633f20"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/auth-bundling-browser.json",
+      "bytes": 4217,
+      "sha256": "5d94a292428776007c7dce3c12e9330196afa31909a5c1e49a1410b3dc1a0bff"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/auth-react-ssr-probe.cjs",
+      "bytes": 4736,
+      "sha256": "3a08a70f7d49f95e3dbdcf113bc635929e3e1aa8374949c759d61e60fccbcff1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/auth-react-ssr-probe.json",
+      "bytes": 4517,
+      "sha256": "6da0d02d26ea837d3571f4bd2bc8e2184b1e547a014bd3e455658ecdadac2949"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/AUTH_AND_ACCOUNTING_VERIFICATION_BINDINGS.json",
+      "bytes": 8444,
+      "sha256": "2c5729ef01abdc10dfd97b494e69d8c8804919305edfa944010c4214af5023bf"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/bind-auth-accounting-evidence.cjs",
+      "bytes": 4050,
+      "sha256": "e9ca02285587698768725148ba59539be84d08c1f6a7c5758b6a93203c253b33"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/bind-history-evidence.cjs",
+      "bytes": 2815,
+      "sha256": "0c291629ccfb4a6bc48c5efa11e67f3133fbfa38be067130a7cb226cad4c6a35"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-older-applied-configuration-first.png",
+      "bytes": 12942,
+      "sha256": "7c383fb86244dd615dabd185a23f23fce27b6897f3cd21d11e1fc7d5e2e5397e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-older-applied-configuration.png",
+      "bytes": 12934,
+      "sha256": "539b8d1f0df093b701f10dfbb9f825246d1ecc79d4d4647528c9019bf91c0e88"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-browser-history-reset-failed.json",
+      "bytes": 3140,
+      "sha256": "de71c8661d45f1ea219bf891f73fcc86bdd24c1ccd9d8a232ce03d28d1a8cf0e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-browser-reopen-locator-failed.json",
+      "bytes": 2977,
+      "sha256": "1bac8e91c47031e6dd27c8e2d604c1e86b28410afd2bb0044991c72c3640e903"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-browser.cjs",
+      "bytes": 9907,
+      "sha256": "6a9a45b25610630f300d5fa2a6166a81d527d166ace2e81322cb6dd20e7ce801"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-browser.json",
+      "bytes": 3590,
+      "sha256": "ad16917bbe4f520bb23ea79b90328689afd9261d7a96f80a91b5fbd6564052bd"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-inspect-initial.json",
+      "bytes": 1506,
+      "sha256": "19b14e2d5a3adba7c34cc01087df54a79429de1f0acda5b3c462dd782e2f8909"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-inspect.json",
+      "bytes": 1510,
+      "sha256": "1de738616d7b801854629d3ad50b1e03606f9b567344d2883c6148114f7fa302"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-prepare.json",
+      "bytes": 1537,
+      "sha256": "e59df49e5ec5904952cc5e8cdf36ed8de74cead55d2f7020afb4d4ad59ce32a4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-service.cjs",
+      "bytes": 11214,
+      "sha256": "931a90f9a0a48d2c693779cbc1a2a2eda171f65bf3818dbf0775ac2fca7a9c9e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-ties-fixture-failed.json",
+      "bytes": 940,
+      "sha256": "6aeb12b5ef8c37a0ceab1062ceb7487f560260942ebaeb4f3e88a2836c766a3f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-ties.json",
+      "bytes": 940,
+      "sha256": "6aeb12b5ef8c37a0ceab1062ceb7487f560260942ebaeb4f3e88a2836c766a3f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-pagination-verify.json",
+      "bytes": 2339,
+      "sha256": "cb389037132ece517e0d0373c8825bdb2bdf03f754f754b80ff64ef4dbd71765"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-reopen-failure-context.png",
+      "bytes": 397714,
+      "sha256": "602acabc3e8058480657b9d2d46f40192e6766c8cedc8f93b6af840926935e26"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-reopen-history-reset-context.png",
+      "bytes": 397714,
+      "sha256": "602acabc3e8058480657b9d2d46f40192e6766c8cedc8f93b6af840926935e26"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/history-reopened-draft.png",
+      "bytes": 774637,
+      "sha256": "bbeb4bf6052d8966669faae2226bdee5b97fd77da71bb5f514e553bbc0fc0dfc"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/HISTORY_VERIFICATION.md",
+      "bytes": 6505,
+      "sha256": "5d19c19b49b7a3a33bd92d91e8d199fba4daa98f83aaeb8e1e548f732c7e1c3d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/HISTORY_VERIFICATION_BINDINGS.json",
+      "bytes": 6699,
+      "sha256": "0ae66348567406ffc7b8b5881feaaacd0373bac7b75066551f6cc0d5587b3486"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/isolated-dev-restart.json",
+      "bytes": 904,
+      "sha256": "a960e4e693971b68653e19f2ef2e5aae95a962874048b65880c22245c528bd36"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/isolated-dev-stop.json",
+      "bytes": 975,
+      "sha256": "d8e0e81fa0908e3ca7a0d76173d76010fe555ff4e56e8f7de50b15b83e7e075f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/journal-stopped-submit-2026-09-05T16-17-06-656Z/journal-stopped-submit-en.png",
+      "bytes": 79925,
+      "sha256": "001762cc84fe2ca8552000b10cd5cc50e16e63f33ef21caba6a528285b3890fa"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/journal-stopped-submit-2026-09-05T16-17-06-656Z/journal-stopped-submit-fr.png",
+      "bytes": 84601,
+      "sha256": "784ad1eb895f65afc41f5c881003185a3d4ec2b66afb8af6dd30bd770b5d2e4a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/journal-stopped-submit-2026-09-05T16-17-06-656Z/receipt.json",
+      "bytes": 68403,
+      "sha256": "0e62c19294e692425ba03545042ac9ac5e0594b8b5b80d9d3a7004cf9c545fdd"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/journal-stopped-submit-browser.cjs",
+      "bytes": 18509,
+      "sha256": "c7f66dfcc6342e8b7079044563ca8df4d8d13e60a1596c760e80cb0d75ebe1aa"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/modules-after-auth-bundling.png",
+      "bytes": 869329,
+      "sha256": "f140e7d8c1eef503edf02449576cdb113a30f35436148f891b160bc14863668f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/selected-development-server-output.txt",
+      "bytes": 1331,
+      "sha256": "e638a8d355ea66d72168ac898c640149ebc430d3aa143cd29a818dc04ef18f20"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/diagnostics/transfer-after-auth-bundling.png",
+      "bytes": 732302,
+      "sha256": "cf52e0786b1ae6776ddf61d3e3157f4af5cacd2eb4c8dbed1806a73d749143bd"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/ACCOUNTING_ADMISSION_VERIFICATION.json",
+      "bytes": 9251,
+      "sha256": "cdf3077a7d46d49e3b8daf744f15918fba33da51a1ad38d19418ad672c05391b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/ACCOUNTING_CREATE_FAILURE_VERIFICATION.json",
+      "bytes": 5834,
+      "sha256": "df835acc3d4e34f4b808538b2368bb950593731cff0456e4a2b598696894c0a0"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/ACCOUNTING_CREATE_FOLLOWUP_VERIFICATION.json",
+      "bytes": 3435,
+      "sha256": "4d2c6f5cf6aac28ce30cb17d6705584ac19c63b94fbf73af05aa0965f8633b47"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/history-refresh-full.json",
+      "bytes": 34276,
+      "sha256": "a51e504ad84bf64a53f079f4024eec2868f6e330cbdf569d35368f9b39e6fd03"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/history-refresh-regression.json",
+      "bytes": 55421,
+      "sha256": "4dbd20a3638e96d185bafb300afaf2dcc47d58ce1d3f37c289699c410c366dc8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/history-workbench-tests.json",
+      "bytes": 11453,
+      "sha256": "4d773f69f7e4f6d098368b124210d7006391d0f7330398091ddddf94a3825cad"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/HISTORY_PARENT_VERIFICATION.json",
+      "bytes": 2185,
+      "sha256": "c160b2d3ec14baaf7117f9cd5b60c38baba02febf34e12ee45f43792ec74868b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/HISTORY_REFRESH_VERIFICATION.json",
+      "bytes": 2207,
+      "sha256": "7b5e29e13a4a0cb67416009cf66828714e58f34f734b8de41b2bb4bc7b85b023"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-final-receipt.json",
+      "bytes": 28827,
+      "sha256": "407587869121dfd572fa33bb8a536d760d1e9fc0f60476976915e555468a87bd"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-final-start.json",
+      "bytes": 14342,
+      "sha256": "a3521cdb4c325c5e04205dd341692bd6ac7a419d420629c7a926897d2db20b58"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-final.log",
+      "bytes": 2448,
+      "sha256": "f2e28e91fca0923d5ef5b76b096baeebf85d9f928f7f0678790fa207fbada2b9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-receipt.json",
+      "bytes": 28542,
+      "sha256": "24e2949d8151b680a73dbf6fd87760fd3c0b00affc12ac12a225144c02bd6dea"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-start.json",
+      "bytes": 14214,
+      "sha256": "efe4ad2daf5883e65a9b9933778b63528639fc05cdd8f9d2451c1f51c20bc19a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-validated-receipt.json",
+      "bytes": 28827,
+      "sha256": "216e755ac51b416eaba43cb2e659096df4e0440d30b334296f73dc229d842bae"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-validated-start.json",
+      "bytes": 14342,
+      "sha256": "84fe28f587adb1511199e5e90f8f69060e47b5b12bc9ef346fee461ef9420894"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build-validated.log",
+      "bytes": 2917,
+      "sha256": "1f9475513ae26430934a72be9809b447d1587ac1c024b4671ecc144c4b37a333"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/isolated-build.log",
+      "bytes": 3348,
+      "sha256": "fbc3c9a11334bf1fa56d142d639478d07056e0b9a44d96b321221d58b6b2a15b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/module-surfaces.json",
+      "bytes": 222261,
+      "sha256": "cf58914200613bb0eb856eef8d1214a3662bcc9c3789b437cc1a35a6520621e6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/module-surfaces.md",
+      "bytes": 76645,
+      "sha256": "2168e1b75fd7f018bdaee36021f1016434701271b2137428f33a6225ca4080f6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-01-auth-timeout.json",
+      "bytes": 2073,
+      "sha256": "da1351c80452a136543be9c66f613b5407f8dae5781b5a298155806e0298369e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-02-driver-issues.json",
+      "bytes": 6859,
+      "sha256": "340b5ca2798792792aaf019871699095df7a2004ec60e1107b32260c78ced7f5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-02-driver.cjs",
+      "bytes": 11370,
+      "sha256": "4311126617281292b64d3ae1150e3a7e93fbbc9e7c8c8d418318bb75110816c1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-03-en-200-builder-top.png",
+      "bytes": 41825,
+      "sha256": "2783f63cc68fdba3ef5cc25c7a876031d647786b26825bbc5a94ab756c8442db"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-03-en-200-dialog-actions.png",
+      "bytes": 41825,
+      "sha256": "2783f63cc68fdba3ef5cc25c7a876031d647786b26825bbc5a94ab756c8442db"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-03-en-200-dialog-top.png",
+      "bytes": 41825,
+      "sha256": "2783f63cc68fdba3ef5cc25c7a876031d647786b26825bbc5a94ab756c8442db"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-03-en-200-review-focus.png",
+      "bytes": 41825,
+      "sha256": "2783f63cc68fdba3ef5cc25c7a876031d647786b26825bbc5a94ab756c8442db"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-03-interrupted-driver.cjs",
+      "bytes": 12712,
+      "sha256": "40974a74fb9f935b3b785d86366cec5dc5d1ae94ed384ae60f1cfc00c9b4e464"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-03-parent-interrupted.json",
+      "bytes": 1175,
+      "sha256": "03e42768034a4d4ef15b9988fc393be7510c5267b906d5d0b7d1ec947796b373"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-builder-top.png",
+      "bytes": 280602,
+      "sha256": "b5d249646e74b4e6f52d92b758e25f2a605bf1a5bdcb6dd8746adb391a1b8d47"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-dialog-actions.png",
+      "bytes": 138315,
+      "sha256": "8f72ec7723de08b0cb4ccc752435b3cead6988768f687faae4f2d121e23eb11e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-dialog-top.png",
+      "bytes": 88097,
+      "sha256": "c40dca6e445562dbebd9044c3b02577120b74d1be6bc8e702dae71cabfad0e86"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-200-review-focus.png",
+      "bytes": 202921,
+      "sha256": "c357e57bc3b8c42f9846d050cce6633b7b2d29b7eb0c459980f72f9a8e51b89f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-builder-top.png",
+      "bytes": 316765,
+      "sha256": "723ef4340320cdec5d6734aa9da6cebef4e580ce92d63892526576562df0856f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-dialog-actions.png",
+      "bytes": 165440,
+      "sha256": "83ba20c24146297d1bd3e716321f70a87966966ab61b08c3399cfa67a65f261d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-dialog-top.png",
+      "bytes": 110034,
+      "sha256": "52b3f4a713b81c8d8d50fce151553edd3e23438ed6b41b1e8b4847c2c059ee9a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-en-400-review-focus.png",
+      "bytes": 202570,
+      "sha256": "3541401c4687b5ea631d23d784e8ebde8004a912991adc3ee180f456bfb2dc98"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-builder-top.png",
+      "bytes": 288231,
+      "sha256": "10f656256e35504c44361beef2ec82d63585030fb4c26d99538003cdc5d6d58f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-dialog-actions.png",
+      "bytes": 141780,
+      "sha256": "41cfe486d25890a0b58cea412321378369455f616eedbdcb85e2892b34efd2fe"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-dialog-top.png",
+      "bytes": 90964,
+      "sha256": "2b3278875cd42f2564701adb0d1369d333a5771ef1f5aa4395b6d37337db1979"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-200-review-focus.png",
+      "bytes": 200883,
+      "sha256": "6d7df09fbc15f73ce1a78de7834b027e5d34c3a5a47df942792dc416b90cdcd7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-builder-top.png",
+      "bytes": 305368,
+      "sha256": "632b729beb34408629b4ecf4cec2e459be0a8d4c872d071ee76d54cbaf9f9bc7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-dialog-actions.png",
+      "bytes": 156951,
+      "sha256": "b8256ea8b8593924eef6246a5346b0a4552d27eedf3bbf8feca2da709fd03063"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-dialog-top.png",
+      "bytes": 110110,
+      "sha256": "a05b46448facb03c8d727a1f4fce70bb2d5f12eeb3289901af01a799a5181ed1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-history-loaded-reopen-focus.png",
+      "bytes": 139529,
+      "sha256": "ef34ae85fe30bd429886837ef9502e0ad7e6350198903ab0498617c86a1bf7b9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-history-older-focus.png",
+      "bytes": 139368,
+      "sha256": "4c25953d370dd659e7c7de800465f00a0d10105afa6ad2e403bbf6104c0f7c77"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/attempt-04-fr-400-review-focus.png",
+      "bytes": 204601,
+      "sha256": "6f0e9804ea2759ad6ce442cf77081d8a9563877e3dce0c8bc197540468c6c11a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/capture-probe-receipt.json",
+      "bytes": 773,
+      "sha256": "a114ab2db23810f17793b16b0b2754a7a56a445878f069601aab64b677fa3e9f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/capture-probe-surface-false.png",
+      "bytes": 41825,
+      "sha256": "2783f63cc68fdba3ef5cc25c7a876031d647786b26825bbc5a94ab756c8442db"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/capture-probe-surface-true.png",
+      "bytes": 73084,
+      "sha256": "00e34f40b1ec27eb8d4e4f8d039aabf4f49b35d90512d2502f1423de794622c6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/capture-probe.cjs",
+      "bytes": 2461,
+      "sha256": "07c317c39c82bf102545949587d8d5e3a1dcfc7f3e0b80075ee8c1dbf85ce6d9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/en-200-failure.png",
+      "bytes": 610626,
+      "sha256": "c67941d5cec163b828841f18881ef0d5cfbd1ce45b1140e4840586a21ff0e9dc"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/en-400-failure.png",
+      "bytes": 5952,
+      "sha256": "1996be6f842632510df364bb6c2f2dc57eff8ef9822630445b19130b6e417a23"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/extension/manifest.json",
+      "bytes": 197,
+      "sha256": "df23e00795169e2c334173e41190de41cc71d830e680f7d434436556a9c6c487"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/extension/worker.js",
+      "bytes": 137,
+      "sha256": "87df44263819696fb00ab4d19451ba48cb34b5f163d42f27d05ae21dae871074"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/final-binding.json",
+      "bytes": 10254,
+      "sha256": "4f883fe256c960bd49487173e4b89a9f8834fc16b703cebcefb7e4467100eee3"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/fr-200-failure.png",
+      "bytes": 600540,
+      "sha256": "97cd573531a9976beb5aa5d337b39da1eef0f23baaa0a528632df93248d412ea"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/fr-400-failure.png",
+      "bytes": 6260,
+      "sha256": "d7b1125ff2e830055b12e6cad62f936709aeed401e41e4757784dcfe3c56bb6a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/README.md",
+      "bytes": 4578,
+      "sha256": "36a3c79aaeb638e07c933a51ba0a2dea8e00171ece76cbd86c6e21295ce72edb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/receipt.json",
+      "bytes": 19382,
+      "sha256": "3f9db6b01f0a679b9aba44ead6e50faa392ea492e103594998ddaf885a6b6305"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/native-zoom/verify-native-zoom.cjs",
+      "bytes": 15371,
+      "sha256": "38418edec5a3e0c2ecea2e5a2aff2bbdeecc8461c3230cbb5952f413e17d540d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/OFFLINE_CANDIDATE_BASE_REVALIDATION.json",
+      "bytes": 4731,
+      "sha256": "c2e64daddce3ebfcff2d614e8039229efe506f909483d4bc1727e16cc4606b09"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/PARENT_FOCUSED_CHECKS.json",
+      "bytes": 1118,
+      "sha256": "73deb989c55fa078031f0e7fbcb04a6b5a81184b2203be6eea6e717b7a7e8e39"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/evidence/RETAINED_RECONCILIATION_SOURCE_HASHES.json",
+      "bytes": 3977,
+      "sha256": "f6909b5fd591aa12d332781be84cd0e85083d61300b56cae630308484dfb2bab"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/FEATURE_STATUS.md",
+      "bytes": 3808,
+      "sha256": "72b62dccdbca05229662b653ce9a0bb9ddb32e311dae51c2ff478b6046fc04ab"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/FINAL_COMPLETION_AUDIT.md",
+      "bytes": 9447,
+      "sha256": "c1a581474d88f2235d7231ae3b338746245d65a22ad317f3a5804012eed1e079"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/HISTORY_REFRESH_CORRECTION.md",
+      "bytes": 3071,
+      "sha256": "c507ab52ee8c0411c9165d44a6e6ae2e9c1d44a99d22c533eb61cfe05a6cb67e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/IMPLEMENTATION_REPORT.md",
+      "bytes": 7199,
+      "sha256": "c7beba7cdec154cd042649f80586f5097827d464fb0be27df47b2d2dd355fcff"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/OFFLINE_CANDIDATE_REVALIDATION.md",
+      "bytes": 2794,
+      "sha256": "68d73dcb0532d63fe7fadb4b027165dfa46b1ac55536f3d7d0dcc77b1e8d41a7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/prepare-final-build.cjs",
+      "bytes": 1319,
+      "sha256": "592d17d758c2ea1ef986f1b384dd6a9f5284478f12895282fcc380c9e2afacd8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/prepare-validated-build.cjs",
+      "bytes": 814,
+      "sha256": "cf3b85ade5ed3338a1caad1f44c05bc9b761d2b6d4d37bba8fabc9143f6ceeb5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/record-history-refresh.cjs",
+      "bytes": 1777,
+      "sha256": "bb799c01ebcb2dc612658afb8e81d307578d92ff5633301879b264cfdc2ca11b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/RETAINED_RECONCILIATION_CONTRACT.md",
+      "bytes": 18232,
+      "sha256": "e150f0035359fad1eb0198eba0b6ce3fd22dd14c5a2bcbecb684c123eb1a09e9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/revalidate-offline-review.cjs",
+      "bytes": 2012,
+      "sha256": "96d45cc7973995d3f1be130fd99667c35d9f67c9b4dd996b8cd55f9f9ee7cf47"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/ROLLOUT_AND_RECOVERY.md",
+      "bytes": 5687,
+      "sha256": "1b554b489a8c77bdbce8bd9555866ba63fb07621801205d955d3cc5579f819dd"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/USER_GUIDE.md",
+      "bytes": 14793,
+      "sha256": "ff3431cb7a9cd9afd33c49013e0ad6a63566660d4852457bbb76f201811480d0"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/VERIFICATION.md",
+      "bytes": 8740,
+      "sha256": "9d58cadcfd43ad503fcf4bbfa49d6013f5c7e8f7596852eca808bea5ee2ec593"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/verify-isolated-build-final.cjs",
+      "bytes": 7398,
+      "sha256": "9b07ae3a2c231400c6d34a26fe330492ce5a0daf4e85ff31d709cd4899cf1d2b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/verify-isolated-build-validated.cjs",
+      "bytes": 7449,
+      "sha256": "1cc54e8759a2262f14c7e95bc092e02af903cace1e46813d31e21d54a7bfdbaa"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/verify-isolated-build.cjs",
+      "bytes": 7325,
+      "sha256": "7df6d4a2e4ff1d488f1ba84867d1cda8db146f0d480f309b607665402f9bc8bf"
+    }
+  ],
+  "privateFixtureScan": {
+    "checkedTextFiles": 90,
+    "matches": 0,
+    "scope": "Exact synthetic password, auth secret and synthetic database URL; no claim of exhaustive secret or image OCR audit"
+  }
+}

@@ -1,0 +1,14 @@
+const fs=require("node:fs"); const path="components/purchase-orders/ModernPurchaseOrderDetailPage.tsx"; let raw=fs.readFileSync(path,"utf8");
+raw=raw.replace('import { useSession } from "@/lib/auth-client"', 'import { usePurchaseOrderClone } from "@/hooks/usePurchaseOrderClone"\nimport { PurchaseOrderCloneNotice } from "./PurchaseOrderCloneNotice"\nimport { useTranslations } from "next-intl"\nimport { useSession } from "@/lib/auth-client"');
+raw=raw.replace('  const { data: purchaseOrder, isLoading, error, refetch } = usePurchaseOrderById(id, organizationId)', '  const { data: purchaseOrder, isLoading, error, refetch } = usePurchaseOrderById(id, organizationId)\n  const cloneText = useTranslations("purchaseOrderClone")\n  const cloneController = usePurchaseOrderClone({ id, organizationId: organizationId ?? "", locale, allowed: Boolean(purchaseOrder?.capabilities.clone.allowed && organizationId) })');
+const start=raw.indexOf('  const handleClone = useCallback('); const end=raw.indexOf('  if (isLoading)',start); if(start<0||end<0)throw Error("Missing handler");
+raw=raw.slice(0,start)+raw.slice(end);
+raw=raw.replaceAll('onClick={handleClone}', 'onClick={() => { void cloneController.clone() }}\n                  disabled={cloneController.pending || cloneController.retryBlocked}');
+raw=raw.replace('                  Clone\r\n','                  {cloneController.pending ? cloneText("pending") : cloneText("button")}\r\n').replace('                  Clone\n','                  {cloneController.pending ? cloneText("pending") : cloneText("button")}\n');
+const quickStart=raw.indexOf('                          <Button',raw.indexOf('Print Order'));
+const quickEnd=raw.indexOf('</Button>',quickStart)+9;
+if(!raw.slice(quickStart,quickEnd).includes('Clone Order'))throw Error("Missing quick clone");
+raw=raw.slice(0,quickStart)+'                          {purchaseOrder.capabilities.clone.allowed ? (\n'+raw.slice(quickStart,quickEnd).replace('Clone Order','{cloneController.pending ? cloneText("pending") : cloneText("button")}')+'\n                          ) : null}'+raw.slice(quickEnd);
+const marker='        <div className="dashboard-glass-panel mb-6 rounded-lg p-5 sm:mb-8 sm:p-6">';
+raw=raw.replace(marker,'        {purchaseOrder.capabilities.clone.allowed || cloneController.failure ? <PurchaseOrderCloneNotice pending={cloneController.pending} failure={cloneController.failure} ordersHref={localizedHref("/dashboard/purchase-orders")} /> : null}\n'+marker);
+fs.writeFileSync(path,raw);

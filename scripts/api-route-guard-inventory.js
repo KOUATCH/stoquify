@@ -108,6 +108,8 @@ function detectGuard(source) {
   if (source.includes("verifyPublicReceiptAccessToken")) return "verifyPublicReceiptAccessToken"
   if (source.includes("requireRbacContext")) return "requireRbacContext"
   if (source.includes("getOptionalRbacContext")) return "getOptionalRbacContext"
+  if (source.includes("requireSession")) return "requireSession"
+  if (source.includes("toNextJsHandler(auth)")) return "better-auth-handler"
   if (source.includes("auth.handler")) return "better-auth-handler"
   return "none"
 }
@@ -155,10 +157,10 @@ function expectedModuleAccessFor(file) {
   if (isReceiptServiceEvidence(file)) {
     return { applicability: "not_applicable_public_service", expectedModuleSlug: null, reason: "Public receipt service is token-gated and redacted rather than module-entitled." }
   }
-  if (file.includes("/api/auth/") || file.includes("/api/security-txt/") || file.includes("/.well-known/security.txt/") || file.includes("/api/receipts/")) {
+  if (file.endsWith("/api/auth/[...all]/route.ts") || file.includes("/api/security-txt/") || file.includes("/.well-known/security.txt/") || file.includes("/api/receipts/")) {
     return { applicability: "not_applicable_public", expectedModuleSlug: null, reason: "Intentional public/provider/tokenized route." }
   }
-  if (file.includes("/api/me/permissions/")) {
+  if (file.includes("/api/me/permissions/") || file.endsWith("/api/auth/permissions/route.ts")) {
     return { applicability: "not_applicable_session_claims", expectedModuleSlug: null, reason: "Returns current RBAC/session claims, not domain module data." }
   }
   if (file.endsWith("/api/v1/organisations/route.ts")) {
@@ -182,13 +184,13 @@ function expectedModuleAccessFor(file) {
 function classifyRoute(file, source) {
   if (isReceiptServiceEvidence(file)) return "public-receipt-service-evidence"
   if (file.includes("/api/security-txt/") || file.includes("/.well-known/security.txt/")) return "public-intentional"
-  if (file.includes("/api/auth/")) return "public-auth-provider"
+  if (file.endsWith("/api/auth/[...all]/route.ts")) return "public-auth-provider"
   if (file.includes("/api/receipts/")) return "public-receipt-lookup"
   if (source.includes("requireApiSessionForCurrentOrg")) return "tenant-scoped"
   if (source.includes("requireApiSessionForOrg")) return "tenant-scoped"
   if (source.includes("createRouteHandler") && file.includes("/api/uploadthing/route.ts")) return "delegated-upload-handler"
   if (source.includes("requireUploadAuth")) return "authenticated-upload"
-  if (source.includes("requireRbacContext") || source.includes("getOptionalRbacContext")) return "authenticated"
+  if (source.includes("requireRbacContext") || source.includes("getOptionalRbacContext") || source.includes("requireSession")) return "authenticated"
   return "unclassified"
 }
 
@@ -228,6 +230,8 @@ function responseEnvelopeFor(file, source) {
 
 function detectIssues(file, source, now, moduleAccess, expectedModuleAccess) {
   const issues = []
+  if (classifyRoute(file, source) === "unclassified") issues.push("unclassified_route_requires_review")
+  if (expectedModuleAccess.applicability === "review_required") issues.push("module_applicability_requires_review")
   if ((file.includes("/items/route.ts") || file.includes("/briefItems/route.ts")) && !source.includes("inventory.items.read")) {
     issues.push("missing_permission_inventory_items_read")
   }

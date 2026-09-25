@@ -1,3 +1,7 @@
+import { confirmPaymentRequestApproval } from "@/services/purchasing/payment-request.service"
+import { confirmPaymentRelease } from "@/services/purchasing/payment-release.service"
+jest.mock("@/services/purchasing/payment-release.service", () => ({ confirmPaymentRelease: jest.fn() }))
+jest.mock("@/services/purchasing/payment-request.service", () => ({ confirmPaymentRequestApproval: jest.fn() }))
 import { revalidatePath } from "next/cache"
 
 import { requireFreshAuth, FreshAuthRequiredError } from "@/lib/security/auth-session"
@@ -143,7 +147,7 @@ describe("AP control actions", () => {
     })
   })
 
-  it("prepares a matched supplier invoice with tenant and maker derived from the authenticated context", async () => {
+  it("requires reviewed preparation and never forwards a legacy client command to the writer", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("maker-1", ["purchasing.ap.invoice.post"]))
     mockPrepareSupplierInvoice.mockResolvedValue({
       supplierInvoice: { id: "invoice-1", status: "MATCHED" },
@@ -152,23 +156,13 @@ describe("AP control actions", () => {
 
     const result = await prepareSupplierInvoiceAction(invoiceInput())
 
-    expect(result.success).toBe(true)
+    expect(result.success).toBe(false)
+    expect(result).toMatchObject({ code: "REVIEW_REQUIRED" })
     expect(mockRequireFreshAuth).not.toHaveBeenCalled()
-    expect(mockPrepareSupplierInvoice).toHaveBeenCalledWith(
-      expect.objectContaining({
-        organizationId: "org-1",
-        supplierId: "supplier-1",
-        createdById: "maker-1",
-        approvedById: undefined,
-      }),
-    )
-    expect(mockPrepareSupplierInvoice.mock.calls[0][0]).not.toMatchObject({
-      organizationId: "client-org",
-      approvedById: "client-approver",
-    })
+    expect(mockPrepareSupplierInvoice).not.toHaveBeenCalled()
   })
 
-  it("requires fresh auth and derives the checker for supplier invoice posting", async () => {
+  it("requires fresh auth but directs legacy posting to a reviewed approval command", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("checker-1", ["purchasing.ap.invoice.post"]))
     mockApproveSupplierInvoice.mockResolvedValue({
       supplierInvoice: { id: "invoice-1", status: "POSTED" },
@@ -181,14 +175,10 @@ describe("AP control actions", () => {
       approvedById: "client-approver",
     })
 
-    expect(result.success).toBe(true)
+    expect(result).toEqual(expect.objectContaining({ success: false, code: "REVIEW_REQUIRED" }))
     expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
-    expect(mockApproveSupplierInvoice).toHaveBeenCalledWith({
-      organizationId: "org-1",
-      supplierInvoiceId: "invoice-1",
-      approvedById: "checker-1",
-    })
-    expect(mockRevalidatePath).toHaveBeenCalledWith("/dashboard/purchases/payables", "page")
+    expect(mockApproveSupplierInvoice).not.toHaveBeenCalled()
+    expect(mockRevalidatePath).not.toHaveBeenCalled()
   })
 
   it("fails closed before invoice posting when fresh authentication is unavailable", async () => {
@@ -209,7 +199,7 @@ describe("AP control actions", () => {
     expect(mockApproveSupplierInvoice).not.toHaveBeenCalled()
   })
 
-  it("derives tenant and requester for match-exception requests", async () => {
+  it("requires reviewed submission for legacy match-exception requests without effects", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("maker-1", ["purchasing.ap.invoice.post"]))
     mockRequestSupplierInvoiceMatchException.mockResolvedValue({
       matchException: { id: "exception-1", status: "OPEN" },
@@ -224,19 +214,9 @@ describe("AP control actions", () => {
       expiresAt: "2099-06-30T00:00:00.000Z",
     })
 
-    expect(result.success).toBe(true)
+    expect(result).toMatchObject({ success: false, code: "REVIEW_REQUIRED" })
     expect(mockRequireFreshAuth).not.toHaveBeenCalled()
-    expect(mockRequestSupplierInvoiceMatchException).toHaveBeenCalledWith(
-      expect.objectContaining({
-        organizationId: "org-1",
-        supplierInvoiceId: "invoice-disputed",
-        requestedById: "maker-1",
-      }),
-    )
-    expect(mockRequestSupplierInvoiceMatchException.mock.calls[0][0]).not.toMatchObject({
-      organizationId: "client-org",
-      requestedById: "client-requester",
-    })
+    expect(mockRequestSupplierInvoiceMatchException).not.toHaveBeenCalled()
   })
 
   it("denies match-exception review without the dedicated review permission", async () => {
@@ -262,7 +242,7 @@ describe("AP control actions", () => {
     expect(mockReviewSupplierInvoiceMatchException).not.toHaveBeenCalled()
   })
 
-  it("requires fresh auth and derives the independent match-exception reviewer", async () => {
+  it("retains fresh auth but requires reviewed submission for legacy exception decisions", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("checker-1", ["purchasing.ap.match.review"]))
     mockReviewSupplierInvoiceMatchException.mockResolvedValue({
       kind: "reviewed",
@@ -276,14 +256,9 @@ describe("AP control actions", () => {
       decision: "APPROVE",
     })
 
-    expect(result.success).toBe(true)
+    expect(result).toMatchObject({ success: false, code: "REVIEW_REQUIRED" })
     expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
-    expect(mockReviewSupplierInvoiceMatchException).toHaveBeenCalledWith({
-      organizationId: "org-1",
-      matchExceptionId: "exception-1",
-      reviewedById: "checker-1",
-      decision: "APPROVE",
-    })
+    expect(mockReviewSupplierInvoiceMatchException).not.toHaveBeenCalled()
   })
 
   it("returns a client-safe RBAC denial for the AP workbench", async () => {
@@ -362,52 +337,24 @@ describe("AP control actions", () => {
     })
   })
 
-  it("injects the approver ID for supplier payment approval", async () => {
+  it("rejects the former approval payload that supplied a requester", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.ap.payment.approve"]))
-    mockApproveSupplierPaymentWithControls.mockResolvedValue({
-      supplierPayment: { id: "payment-approval-1" },
-      approvalStatus: "APPROVED",
-    })
-
-    const result = await approveSupplierPaymentAction({
-      organizationId: "client-org",
-      supplierId: "supplier-1",
-      bankAccountId: "bank-1",
-      method: "BANK_TRANSFER",
-      requestedById: "requester-1",
-      approvedById: "client-approver",
-      paymentDate: "2026-07-02T12:30:00.000Z",
-      documentHash: "payment-document-hash",
-      evidenceHash: "payment-evidence-hash",
-      allocations: [{ supplierInvoiceId: "invoice-1", amount: "1500.00" }],
-      idempotencyKey: "supplier-payment-approval-1",
-    })
-
-    expect(result.success).toBe(true)
+    const result = await approveSupplierPaymentAction({supplierId:"supplier-1",requestedById:"other",allocations:[]})
+    expect(result.success).toBe(false)
+    expect(confirmPaymentRequestApproval).not.toHaveBeenCalled()
+    expect(mockApproveSupplierPaymentWithControls).not.toHaveBeenCalled()
+  })
+  it("binds approval to a retained request and the current verified session", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("approver-1", ["purchasing.ap.payment.approve"]))
+    mockRequireFreshAuth.mockResolvedValue({claims:{sessionId:"session-1",sessionToken:"session-token",lastAuthAt:new Date().toISOString()}})
+    ;(confirmPaymentRequestApproval as jest.Mock).mockResolvedValue({paymentRequestId:"p",status:"APPROVED",replayed:false})
+    const command={paymentRequestId:"p",expectedRevision:"a".repeat(64),idempotencyKey:"approval-1"}
+    expect((await approveSupplierPaymentAction(command)).success).toBe(true)
+    expect(confirmPaymentRequestApproval).toHaveBeenCalledWith(command,{organizationId:"org-1",actorId:"approver-1",sessionId:"session-1",sessionToken:"session-token"})
     expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
-    expect(mockApproveSupplierPaymentWithControls).toHaveBeenCalledWith(
-      expect.objectContaining({
-        organizationId: "org-1",
-        supplierId: "supplier-1",
-        bankAccountId: "bank-1",
-        requestedById: "requester-1",
-        approvedById: "approver-1",
-        paymentDate: "2026-07-02T12:30:00.000Z",
-      }),
-      expect.objectContaining({
-        organizationId: "org-1",
-        actorId: "approver-1",
-        actorPermissions: ["purchasing.ap.payment.approve"],
-        lastAuthAt: expect.any(Number),
-      }),
-    )
-    expect(mockApproveSupplierPaymentWithControls.mock.calls[0][0]).not.toMatchObject({
-      organizationId: "client-org",
-      approvedById: "client-approver",
-    })
   })
 
-  it("injects only the releaser ID for supplier payment release", async () => {
+  it("rejects the former release payload rather than inventing execution evidence", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("treasury-1", ["purchasing.ap.payment.release"]))
     mockReleaseSupplierPaymentWithControls.mockResolvedValue({
       supplierPayment: { id: "payment-1" },
@@ -428,30 +375,19 @@ describe("AP control actions", () => {
       idempotencyKey: "supplier-payment-release-1",
     })
 
-    expect(result.success).toBe(true)
+    expect(result.success).toBe(false)
     expect(mockRequireFreshAuth).toHaveBeenCalledTimes(1)
-    expect(mockReleaseSupplierPaymentWithControls).toHaveBeenCalledWith(
-      expect.objectContaining({
-        organizationId: "org-1",
-        supplierPaymentId: "payment-approval-1",
-        releasedById: "treasury-1",
-        paymentDate: "2026-07-02T12:30:00.000Z",
-        documentHash: "payment-document-hash",
-        evidenceHash: "payment-evidence-hash",
-      }),
-      expect.objectContaining({
-        organizationId: "org-1",
-        actorId: "treasury-1",
-        actorPermissions: ["purchasing.ap.payment.release"],
-        lastAuthAt: expect.any(Number),
-      }),
-    )
-    expect(mockReleaseSupplierPaymentWithControls.mock.calls[0][0]).not.toMatchObject({
-      supplierId: "client-supplier",
-      requestedById: "client-requester",
-      approvedById: "client-approver",
-      releasedById: "client-release",
-    })
+    expect(mockReleaseSupplierPaymentWithControls).not.toHaveBeenCalled()
+    expect(confirmPaymentRelease).not.toHaveBeenCalled()
+  })
+  it("records execution using the authenticated session and reviewed strict command", async () => {
+    mockRequirePermission.mockResolvedValue(rbacContext("treasury-1", ["purchasing.ap.payment.release"]))
+    mockRequireFreshAuth.mockResolvedValue({claims:{sessionId:"session-1",sessionToken:"token-1"}})
+    ;(confirmPaymentRelease as jest.Mock).mockResolvedValue({paymentRequestId:"p",status:"RELEASED",replayed:false})
+    const command={draft:{paymentRequestId:"p",executionReference:"BANK/TXN-1",executedAt:"2026-09-08T12:00:00Z",evidenceUri:"https://example.invalid/record",evidenceSha256:"a".repeat(64)},expectedRevision:"b".repeat(64),idempotencyKey:"record-1"}
+    expect((await releaseSupplierPaymentAction(command)).success).toBe(true)
+    expect(confirmPaymentRelease).toHaveBeenCalledWith(command,{organizationId:"org-1",actorId:"treasury-1",sessionId:"session-1",sessionToken:"token-1"})
+    expect(mockReleaseSupplierPaymentWithControls).not.toHaveBeenCalled()
   })
   it("injects the requester ID for supplier bank change requests", async () => {
     mockRequirePermission.mockResolvedValue(rbacContext("requester-1", ["purchasing.supplier.bank.request"]))

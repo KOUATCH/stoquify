@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-15T14:44:21.468Z",
+  "sourceBefore": {
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/daily-habit/daily-habit-digest.service.ts": "c46e4f280483f72a3f41582dcca3c3d0f50213eaedac27443b11aff550cfe280",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "ef5669d321fd479ed72f9068826fdb69c80fa6de07a007fbe356966434993557",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "b1b20bd1602bb9ecb5599917ef3350feb16cc7e4193f25c424a7a46f0b2a44b8",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "3df54266f40342ab5ba64341cb68a3a1c0502728e31de1534c777f585420223b"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [
+        "digest-payment-1a341a85-5bbf-4034-a4a8-0fb08362aa01-en-source.png"
+      ],
+      "handoffMs": 11278
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toHaveAttribute(expected) failed\n\nLocator:  getByRole('button', { name: 'Command', exact: true })\nExpected: \"true\"\nReceived: \"false\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.attribute.value\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Command', exact: true })\n    120 × locator resolved to <button type=\"button\" aria-pressed=\"false\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-8 rounded-md px-3 text-xs text-[var(--dash-text-soft)]\">…</button>\n        - unexpected value \"false\"\n",
+  "failureState": "Read-only\nSignal-backed\nNo automation\nDaily Habit Digest\n\nYour permission-aware daily and weekly workspaces, built from existing operating signals.\n\nWorkflow registration Payment digest 1a341a85-5bbf-4034-a4a8-0fb08362aa01\nGenerated (Africa/Douala)\nSep 15, 03:44 PM\nPeriod\nSep 15 - Sep 16\nCurrency\nXAF\nVisible workspaces\n1\nFinance\nCommand Agent\n\nEvidence-backed daily priorities\n\nRead-only. No posting, approval, payment, filing, payroll, stock, cash, or permission authority.\n\nGenerate brief\nCommand Agent is disabled for this organization.\nBlocked\nCommand brief\nblocked\nFinance cash truth digest\n\nSuspense, reconciliation, provider evidence, and cash collection review for the finance desk.\n\n1 visible action(s) need review for this digest.\n\nevidence:\nBlocked\nBlocked\nblocked\n10 sources\nSource hash\nBrief\nCommand\nInvestigate\n\nPeriod: Sep 15 - Sep 16\n\nGenerated: Sep 15, 03:44 PM\n\nSources: dashboard, sales, payments, inventory, purchasing, hris, payroll, accounting, close, compliance\n\nReview: blocked\n\nReview suspense lines and resolve missing payment evidence.\nSource limitations\n\nBlockers: 8 · Redactions: 1\n\nSuspense currencies cannot be combined\nPayment suspense queue is not empty\nNo active provider account\nNo accounting period covers this snapshot\nNo active location is configured\nSuspense currencies cannot be combined\nPayment suspense queue is not empty\nNo active provider account\nInspect sources\nSummary and changes\n\nReview the key figures and changes, then switch to Command for next steps.\n\nUnresolved suspense\n\nOpen payment suspense value from the payment truth snapshot.\n\nBlocked\n\nSu",
+  "sourceAfter": {
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e",
+    "services/daily-habit/daily-habit-digest.service.ts": "c46e4f280483f72a3f41582dcca3c3d0f50213eaedac27443b11aff550cfe280",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "ef5669d321fd479ed72f9068826fdb69c80fa6de07a007fbe356966434993557",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "b1b20bd1602bb9ecb5599917ef3350feb16cc7e4193f25c424a7a46f0b2a44b8",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "3df54266f40342ab5ba64341cb68a3a1c0502728e31de1534c777f585420223b"
+  },
+  "sourceStable": true
+}

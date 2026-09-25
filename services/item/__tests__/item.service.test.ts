@@ -9,6 +9,8 @@ import { db } from "@/prisma/db"
 
 jest.mock("@/prisma/db", () => ({
   db: {
+    $transaction: jest.fn(),
+    pictureAsset: { updateMany: jest.fn().mockResolvedValue({count:1}) },
     item: {
       count: jest.fn(),
       findMany: jest.fn(),
@@ -30,10 +32,11 @@ const mockedDb = db as unknown as {
 describe("item service stock policy", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(db.$transaction as jest.Mock).mockImplementation((fn: (tx: unknown) => unknown) => fn(db))
   })
 
   it("updates min and max stock policy through the service boundary", async () => {
-    mockedDb.item.findFirst.mockResolvedValue({ id: "item-1" })
+    mockedDb.item.findFirst.mockResolvedValue({ id: "item-1", imageUrls: [], thumbnail: null })
     mockedDb.item.update.mockResolvedValue({
       id: "item-1",
       organizationId: "org-1",
@@ -106,7 +109,7 @@ describe("item service stock policy", () => {
   })
 
   it("updates item basic info only after tenant-scoped lookup", async () => {
-    mockedDb.item.findFirst.mockResolvedValue({ id: "item-1" })
+    mockedDb.item.findFirst.mockResolvedValue({ id: "item-1", imageUrls: [], thumbnail: null })
     mockedDb.item.update.mockResolvedValue({
       id: "item-1",
       organizationId: "org-1",
@@ -117,7 +120,7 @@ describe("item service stock policy", () => {
       id: "item-1",
       organizationId: "client-org",
       nameEn: "Updated flour",
-      imageUrls: "https://example.com/item.png",
+      imageUrls: "/api/media/11111111-1111-4111-8111-111111111111",
     })
 
     expect(mockedDb.item.findFirst).toHaveBeenCalledWith({
@@ -129,7 +132,7 @@ describe("item service stock policy", () => {
         where: { id: "item-1" },
         data: expect.objectContaining({
           nameEn: "Updated flour",
-          imageUrls: ["https://example.com/item.png"],
+          imageUrls: ["/api/media/11111111-1111-4111-8111-111111111111"],
         }),
       }),
     )

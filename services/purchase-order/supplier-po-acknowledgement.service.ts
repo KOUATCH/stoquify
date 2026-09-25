@@ -13,6 +13,7 @@ import { db } from "@/prisma/db"
 import {
   BusinessRuleError,
   ConflictError,
+  IdempotencyConflictError,
   NotFoundError,
 } from "@/services/_shared/action-errors"
 import {
@@ -34,6 +35,10 @@ import {
   verifySupplierPoAccessToken,
   type SupplierPoTokenPermission,
 } from "./supplier-po-access-token"
+import { supplierPoWorkbenchInputSchema, revokeSupplierPoInviteInputSchema, supplierPoTokenLifetime, type SupplierPoWorkbenchInput, type RevokeSupplierPoInviteInput } from "./supplier-po-buyer-contracts"
+import { supplierPoBuyerAuthority, supplierPoBuyerScopeSchema } from "./supplier-po-buyer-authority"
+import { assertSupplierProposalEvidence, loadSupplierProposalEvents, type SupplierProposalEnvelope, type SupplierProposalEvents } from "./supplier-po-proposal-evidence"
+import { purchaseAmendmentEventKey, readPurchaseAmendmentEvent } from "./purchase-order-amendment-record"
 
 const SERIALIZABLE = Prisma.TransactionIsolationLevel.Serializable
 
@@ -92,23 +97,39 @@ type ResolvedSupplierPoAccess = {
   }
   proposal: null | {
     id: string
+    organizationId: string
+    tokenId: string
+    noteHash: string | null
+    envelopeId: string
+    idempotencyKey: string
+    correlationId: string
     proposalType: SupplierPoProposalType
     requestedDeliveryDate: Date | null
     supplierNote: string | null
     payloadHash: string
+    businessEventId: string
     createdAt: Date
     lines: Array<{
+      organizationId: string
+      proposalId: string
       purchaseOrderLineId: string
       originalOrderedQuantity: Prisma.Decimal
       requestedQuantity: Prisma.Decimal
     }>
     states: Array<{
+      id: string
+      organizationId: string
+      proposalId: string
       version: number
       status: SupplierPoProposalStatus
       effectiveAt: Date
       actorType: SupplierPoProposalActorType
       reason: string | null
       stateHash: string
+      actorId: string | null
+      previousStateHash: string | null
+      evidenceHash: string
+      businessEventId: string
     }>
   }
 }
@@ -180,20 +201,35 @@ function assertEnvelopeIntegrity(envelope: {
   return payload
 }
 
-function proposalResult(
+export function proposalResult(
   proposal: ResolvedSupplierPoAccess["proposal"] extends infer T
     ? Exclude<T, null>
     : never,
   replayed: boolean,
+  envelope: SupplierProposalEnvelope,
+  events: SupplierProposalEvents,
 ) {
-  const currentState = [...proposal.states].sort(
-    (left, right) => right.version - left.version,
-  )[0]
-  if (!currentState) {
-    throw new ConflictError("Supplier proposal state evidence is missing")
+  const envelopeContentHash = envelope.contentHash
+  const states = [...proposal.states].sort((left, right) => left.version - right.version)
+  if (!states.length || states.length > 2 || (proposal.supplierNote ? hashBusinessPayload(proposal.supplierNote) : null) !== proposal.noteHash) throw new ConflictError("Supplier proposal evidence is incomplete")
+  for (const [index, state] of states.entries()) {
+    const previous = states[index - 1]
+    const evidenceHash = index === 0
+      ? hashBusinessPayload({ envelopeContentHash, tokenId: proposal.tokenId, payloadHash: proposal.payloadHash })
+      : hashBusinessPayload({ envelopeContentHash, proposalPayloadHash: proposal.payloadHash, previousStateHash: previous.stateHash, decision: state.status === "BUYER_ACCEPTED" ? "ACCEPT" : "REJECT", reason: state.reason })
+    const digest = index === 0
+      ? hashBusinessPayload({ organizationId: proposal.organizationId, envelopeId: proposal.envelopeId, payloadHash: proposal.payloadHash, version: 1, status: state.status, actorType: state.actorType, effectiveAt: state.effectiveAt.toISOString(), previousStateHash: null, evidenceHash })
+      : hashBusinessPayload({ organizationId: proposal.organizationId, proposalId: proposal.id, version: 2, status: state.status, actorType: state.actorType, actorId: state.actorId, effectiveAt: state.effectiveAt.toISOString(), reason: state.reason, previousStateHash: previous.stateHash, evidenceHash })
+    if (state.organizationId !== proposal.organizationId || state.proposalId !== proposal.id || state.version !== index + 1 || state.evidenceHash !== evidenceHash || state.stateHash !== digest || !state.businessEventId ||
+      (index === 0 ? state.status !== "SUBMITTED" || state.actorType !== "SUPPLIER" || state.actorId !== null || state.reason !== null || state.previousStateHash !== null : !["BUYER_ACCEPTED", "BUYER_REJECTED"].includes(state.status) || state.actorType !== "BUYER" || !state.actorId || !state.reason || state.previousStateHash !== previous.stateHash)) throw new ConflictError("Supplier proposal history integrity failed")
   }
+  assertSupplierProposalEvidence(proposal, envelope, events)
+  const currentState = states[states.length - 1]
   return {
     proposalId: proposal.id,
+    envelopeId: proposal.envelopeId,
+    requestReference: proposal.idempotencyKey,
+    correlationReference: proposal.correlationId,
     proposalType: proposal.proposalType,
     status: currentState.status,
     requestedDeliveryDate:
@@ -222,7 +258,7 @@ function proposalResult(
   }
 }
 
-function buildEnvelopePayload(purchaseOrder: {
+export function buildEnvelopePayload(purchaseOrder: {
   orderNumber: string
   status: string
   orderDate: Date
@@ -296,30 +332,8 @@ function buildEnvelopePayload(purchaseOrder: {
   }
 }
 
-async function activeActor(
-  tx: Prisma.TransactionClient,
-  organizationId: string,
-  userId: string,
-) {
-  const actor = await tx.user.findFirst({
-    where: { id: userId, organizationId, isActive: true },
-    select: { id: true },
-  })
-  if (!actor) throw new NotFoundError("Active buyer not found")
-  return actor
-}
-
-async function createOrReuseEnvelopeInTx(
-  tx: Prisma.TransactionClient,
-  input: {
-    organizationId: string
-    purchaseOrderId: string
-    createdById: string
-    idempotencyKey: string
-    correlationId: string
-    now: Date
-  },
-) {
+async function loadBuyerOrderInTx(tx: Prisma.TransactionClient, input: { organizationId: string; purchaseOrderId: string }) {
+  await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${input.purchaseOrderId} AND "organizationId" = ${input.organizationId} FOR SHARE`
   const purchaseOrder = await tx.purchaseOrder.findFirst({
     where: {
       id: input.purchaseOrderId,
@@ -343,7 +357,7 @@ async function createOrReuseEnvelopeInTx(
         select: { name: true, tradeName: true, currency: true },
       },
       supplier: {
-        select: { id: true, name: true, preferredLocale: true, isActive: true },
+        select: { id: true, name: true, preferredLocale: true, isActive: true, email: true },
       },
       location: { select: { id: true, name: true } },
       lines: {
@@ -362,6 +376,31 @@ async function createOrReuseEnvelopeInTx(
     },
   })
   if (!purchaseOrder) throw new NotFoundError("Purchase order not found")
+  const payload = buildEnvelopePayload(purchaseOrder)
+  const contentHash = hashBusinessPayload(payload)
+  const sourceStateHash = hashBusinessPayload({
+    purchaseOrderId: purchaseOrder.id,
+    supplierId: purchaseOrder.supplier.id,
+    locationId: purchaseOrder.location.id,
+    status: purchaseOrder.status,
+    updatedAt: purchaseOrder.updatedAt.toISOString(),
+    payload,
+  })
+  return { purchaseOrder, payload, contentHash, sourceStateHash }
+}
+
+async function createOrReuseEnvelopeInTx(
+  tx: Prisma.TransactionClient,
+  input: {
+    organizationId: string
+    purchaseOrderId: string
+    createdById: string
+    idempotencyKey: string
+    correlationId: string
+    now: Date
+  },
+) {
+  const { purchaseOrder, payload, contentHash, sourceStateHash } = await loadBuyerOrderInTx(tx, input)
   if (purchaseOrder.status !== "APPROVED") {
     throw new BusinessRuleError(
       "Only an approved purchase order can be shared with a supplier",
@@ -374,14 +413,6 @@ async function createOrReuseEnvelopeInTx(
     throw new BusinessRuleError("The purchase order has no lines to share")
   }
 
-  const payload = buildEnvelopePayload(purchaseOrder)
-  const contentHash = hashBusinessPayload(payload)
-  const sourceStateHash = hashBusinessPayload({
-    purchaseOrderId: purchaseOrder.id,
-    status: purchaseOrder.status,
-    updatedAt: purchaseOrder.updatedAt.toISOString(),
-    payload,
-  })
   const existing = await tx.supplierPoEnvelope.findFirst({
     where: {
       organizationId: input.organizationId,
@@ -472,25 +503,18 @@ export async function issueSupplierPoInvite(
   input: IssueSupplierPoInviteInput & {
     organizationId: string
     issuedById: string
-    now?: Date
+    sessionId: string
   },
   client: typeof db = db,
 ) {
-  const parsed = issueSupplierPoInviteInputSchema.parse(input)
-  const organizationId = requiredText(input.organizationId, "Organization")
-  const issuedById = requiredText(input.issuedById, "Invite issuer")
-  const now = input.now ? new Date(input.now.getTime()) : new Date()
+  const { organizationId, issuedById, sessionId, ...command } = input
+  const parsed = issueSupplierPoInviteInputSchema.parse(command)
+  const scope = supplierPoBuyerScopeSchema.parse({ organizationId, actorId: issuedById, sessionId })
+  const requestHash = hashBusinessPayload({ organizationId, actorId: issuedById, ...parsed, recipientReference: parsed.recipientReference || null, ttlSeconds: parsed.ttlSeconds ?? supplierPoTokenLifetime.defaultSeconds })
 
   return client.$transaction(async (tx) => {
-    const actor = await activeActor(tx, organizationId, issuedById)
-    const envelopeData = await createOrReuseEnvelopeInTx(tx, {
-      organizationId,
-      purchaseOrderId: parsed.purchaseOrderId,
-      createdById: actor.id,
-      idempotencyKey: parsed.idempotencyKey,
-      correlationId: parsed.correlationId,
-      now,
-    })
+    const actor = await supplierPoBuyerAuthority(tx, scope, true)
+    const now = new Date()
     const existing = await tx.supplierPoAccessToken.findFirst({
       where: { organizationId, idempotencyKey: parsed.idempotencyKey },
       include: { envelope: true },
@@ -498,10 +522,12 @@ export async function issueSupplierPoInvite(
     if (existing) {
       if (
         existing.envelope.purchaseOrderId !== parsed.purchaseOrderId ||
-        existing.envelopeContentHash !== envelopeData.envelope.contentHash ||
-        existing.correlationId !== parsed.correlationId
+        existing.correlationId !== parsed.correlationId ||
+        existing.issuedById !== actor.id ||
+        existing.recipientHash !== optionalHash(parsed.recipientReference) ||
+        (existing.metadata as Record<string, unknown> | null)?.requestHash !== requestHash
       ) {
-        throw new ConflictError("Supplier PO invite idempotency key was reused")
+        throw new IdempotencyConflictError("Supplier PO invite idempotency key was reused")
       }
       if (
         existing.status !== SupplierPoAccessTokenStatus.ACTIVE ||
@@ -512,6 +538,9 @@ export async function issueSupplierPoInvite(
           "The replayed supplier PO invitation is no longer active",
         )
       }
+      assertEnvelopeIntegrity(existing.envelope)
+      const issuedEvent = await tx.businessEvent.findFirst({ where: { id: existing.businessEventId ?? "", organizationId, eventType: "supplier.po.invite.issued", eventSource: "INTERNAL", sourceId: existing.envelopeId, status: "APPLIED", idempotencyKey: "supplier-po-invite:" + parsed.idempotencyKey }, select: { id: true } })
+      if (!issuedEvent) throw new ConflictError("Supplier PO invitation issuance evidence is unavailable")
       const token = reconstructToken({
         organizationId,
         purchaseOrderId: parsed.purchaseOrderId,
@@ -532,12 +561,17 @@ export async function issueSupplierPoInvite(
         tokenId: existing.id,
         envelopeId: existing.envelopeId,
         purchaseOrderId: parsed.purchaseOrderId,
-        preferredLocale: envelopeData.envelope.preferredLocale,
+        preferredLocale: existing.envelope.preferredLocale,
         expiresAt: existing.expiresAt.toISOString(),
+        requestReference: parsed.idempotencyKey,
+        correlationReference: parsed.correlationId,
         replayed: true,
       }
     }
 
+    const currentOrder = await loadBuyerOrderInTx(tx, { purchaseOrderId: parsed.purchaseOrderId, organizationId })
+    if (currentOrder.sourceStateHash !== parsed.expectedOrderHash) throw new ConflictError("The purchase order changed. Refresh and review it before issuing an invitation.")
+    const envelopeData = await createOrReuseEnvelopeInTx(tx, { organizationId, purchaseOrderId: parsed.purchaseOrderId, createdById: actor.id, idempotencyKey: parsed.idempotencyKey, correlationId: parsed.correlationId, now })
     const ttlSeconds = parsed.ttlSeconds
     const jti = hashBusinessPayload({
       scope: "supplier-po-invite",
@@ -606,7 +640,7 @@ export async function issueSupplierPoInvite(
         issuedById: actor.id,
         issuedAt: now,
         expiresAt,
-        metadata: asJson({ rawTokenStored: false, inviteOnly: true }),
+        metadata: asJson({ rawTokenStored: false, inviteOnly: true, requestHash, expectedOrderHash: parsed.expectedOrderHash }),
       },
     })
     await markBusinessEventAppliedInTx(tx, organizationId, event.event.id)
@@ -638,6 +672,8 @@ export async function issueSupplierPoInvite(
       purchaseOrderId: parsed.purchaseOrderId,
       preferredLocale: envelopeData.envelope.preferredLocale,
       expiresAt: expiresAt.toISOString(),
+      requestReference: parsed.idempotencyKey,
+      correlationReference: parsed.correlationId,
       replayed: false,
     }
   }, { isolationLevel: SERIALIZABLE })
@@ -701,6 +737,7 @@ async function resolveSupplierPoAccessInTx(
     row.envelope.purchaseOrderId !== verification.payload.purchaseOrderId ||
     row.envelope.contentHash !== verification.payload.envelopeContentHash ||
     !verification.payload.permissions.includes(permission) ||
+    (permission === "view" && !row.allowView) ||
     (permission === "respond" && !row.allowRespond)
   ) {
     throw new NotFoundError("Supplier purchase order not found")
@@ -713,7 +750,7 @@ async function resolveSupplierPoAccessInTx(
     tokenHashPrefix: tokenHash.slice(0, 12),
     envelopeContentHash: row.envelopeContentHash,
     expiresAt: row.expiresAt,
-    permissions: verification.payload.permissions,
+    permissions: verification.payload.permissions.filter(value => value === "view" ? row.allowView : row.allowRespond),
     envelope: row.envelope,
     proposal: row.proposal,
   }
@@ -774,7 +811,7 @@ export async function getPublicSupplierPoEnvelope(
     })
     const payload = assertEnvelopeIntegrity(access.envelope)
     const proposal = access.proposal
-      ? proposalResult(access.proposal, false)
+      ? proposalResult(access.proposal, false, access.envelope, await loadSupplierProposalEvents(tx, access.organizationId, [access.proposal]))
       : null
     const result = {
       envelopeId: access.envelope.id,
@@ -810,18 +847,11 @@ export async function getPublicSupplierPoEnvelope(
 
 function normalizedRequestedDate(
   value: string | null | undefined,
-  now: Date,
 ) {
   if (!value) return null
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) {
     throw new BusinessRuleError("Requested delivery date is invalid")
-  }
-  const max = new Date(now.getTime() + 730 * 24 * 60 * 60 * 1000)
-  if (date.getTime() <= now.getTime() || date.getTime() > max.getTime()) {
-    throw new BusinessRuleError(
-      "Requested delivery date must be within the next two years",
-    )
   }
   return date
 }
@@ -830,7 +860,8 @@ export async function submitSupplierPoProposal(
   input: SubmitSupplierPoProposalInput & { now?: Date },
   client: typeof db = db,
 ) {
-  const parsed = submitSupplierPoProposalInputSchema.parse(input)
+  const { now: _verificationTime, ...command } = input
+  const parsed = submitSupplierPoProposalInputSchema.parse(command)
   const now = input.now ? new Date(input.now.getTime()) : new Date()
   return client.$transaction(async (tx) => {
     const access = await resolveSupplierPoAccessInTx(tx, {
@@ -868,7 +899,6 @@ export async function submitSupplierPoProposal(
       }
       requestedDeliveryDate = normalizedRequestedDate(
         parsed.requestedDeliveryDate,
-        now,
       )
       const uniqueLineIds = new Set<string>()
       changes = parsed.quantityChanges.map((change) => {
@@ -955,7 +985,7 @@ export async function submitSupplierPoProposal(
           "This supplier invitation already has a different response",
         )
       }
-      const result = proposalResult(existing, true)
+      const result = proposalResult(existing, true, access.envelope, await loadSupplierProposalEvents(tx, access.organizationId, [existing]))
       const responseHash = hashBusinessPayload(result)
       await recordSupplierPoAccessInTx(tx, {
         ...access,
@@ -966,6 +996,17 @@ export async function submitSupplierPoProposal(
         occurredAt: now,
       })
       return result
+    }
+
+    // Preserve an exact response's retry identity as its requested date passes.
+    // Token validity, envelope integrity and payload identity remain mandatory.
+    if (requestedDeliveryDate) {
+      const max = new Date(now.getTime() + 730 * 24 * 60 * 60 * 1000)
+      if (requestedDeliveryDate.getTime() <= now.getTime() || requestedDeliveryDate.getTime() > max.getTime()) {
+        throw new BusinessRuleError(
+          "Requested delivery date must be within the next two years",
+        )
+      }
     }
 
     const evidenceHash = hashBusinessPayload({
@@ -1065,7 +1106,7 @@ export async function submitSupplierPoProposal(
       event.event.id,
     )
     const hydrated = { ...proposal, states: [state] }
-    const result = proposalResult(hydrated, false)
+    const result = proposalResult(hydrated, false, access.envelope, await loadSupplierProposalEvents(tx, access.organizationId, [hydrated]))
     const responseHash = hashBusinessPayload(result)
     await recordSupplierPoAccessInTx(tx, {
       ...access,
@@ -1108,25 +1149,30 @@ export async function reviewSupplierPoProposal(
   input: ReviewSupplierPoProposalInput & {
     organizationId: string
     reviewedById: string
-    now?: Date
+    sessionId: string
   },
   client: typeof db = db,
 ) {
-  const parsed = reviewSupplierPoProposalInputSchema.parse(input)
-  const organizationId = requiredText(input.organizationId, "Organization")
-  const reviewedById = requiredText(input.reviewedById, "Buyer reviewer")
-  const now = input.now ? new Date(input.now.getTime()) : new Date()
+  const { organizationId, reviewedById, sessionId, ...command } = input
+  const parsed = reviewSupplierPoProposalInputSchema.parse(command)
+  const scope = supplierPoBuyerScopeSchema.parse({ organizationId, actorId: reviewedById, sessionId })
+  const requestHash = hashBusinessPayload({ organizationId, actorId: reviewedById, ...parsed })
   return client.$transaction(async (tx) => {
-    const actor = await activeActor(tx, organizationId, reviewedById)
+    const actor = await supplierPoBuyerAuthority(tx, scope, true)
+    const order = await loadBuyerOrderInTx(tx, { organizationId, purchaseOrderId: parsed.purchaseOrderId })
+    await tx.$queryRaw`SELECT id FROM supplier_po_proposals WHERE id = ${parsed.proposalId} AND "organizationId" = ${organizationId} FOR UPDATE`
     const proposal = await tx.supplierPoProposal.findFirst({
-      where: { id: parsed.proposalId, organizationId },
+      where: { id: parsed.proposalId, organizationId, envelope: { organizationId, purchaseOrderId: parsed.purchaseOrderId } },
       include: {
-        envelope: { select: { purchaseOrderId: true, contentHash: true } },
+        envelope: { select: { id: true, purchaseOrderId: true, contentHash: true, payload: true } },
         lines: true,
         states: { orderBy: { version: "asc" } },
       },
     })
     if (!proposal) throw new NotFoundError("Supplier proposal not found")
+    assertEnvelopeIntegrity(proposal.envelope)
+    const events = await loadSupplierProposalEvents(tx, organizationId, [proposal])
+    proposalResult(proposal, false, proposal.envelope, events)
     const current = proposal.states[proposal.states.length - 1]
     if (!current) {
       throw new ConflictError("Supplier proposal state evidence is missing")
@@ -1135,12 +1181,16 @@ export async function reviewSupplierPoProposal(
       parsed.decision === "ACCEPT"
         ? SupplierPoProposalStatus.BUYER_ACCEPTED
         : SupplierPoProposalStatus.BUYER_REJECTED
-    if (current.status !== SupplierPoProposalStatus.SUBMITTED) {
-      if (current.status !== status || current.reason !== parsed.reason) {
-        throw new ConflictError("Supplier proposal has already been reviewed")
-      }
-      return proposalResult(proposal, true)
+    const eventKey = "supplier-po-review:" + parsed.idempotencyKey
+    const previousEvent = await tx.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: { organizationId, eventSource: "INTERNAL", idempotencyKey: eventKey } } })
+    if (previousEvent) {
+      if ((previousEvent.metadata as Record<string, unknown> | null)?.requestHash !== requestHash || previousEvent.status !== "APPLIED" || previousEvent.sourceId !== proposal.id || current.businessEventId !== previousEvent.id || current.actorId !== actor.id || current.status !== status) throw new IdempotencyConflictError()
+      return { ...proposalResult(proposal, true, proposal.envelope, events), reviewRequestReference: parsed.idempotencyKey, reviewCorrelationReference: parsed.correlationId, reviewedStateId: current.id }
     }
+    if (current.status !== SupplierPoProposalStatus.SUBMITTED) throw new ConflictError("Supplier proposal has already been reviewed by another request")
+    if (current.stateHash !== parsed.expectedStateHash || order.sourceStateHash !== parsed.expectedOrderHash) throw new ConflictError("The order or proposal changed. Refresh and review the current records.")
+    if (parsed.decision === "ACCEPT" && (order.purchaseOrder.status !== "APPROVED" || !order.purchaseOrder.supplier.isActive || order.contentHash !== proposal.envelope.contentHash)) throw new BusinessRuleError("This proposal no longer matches the approved order. Review the changed order before accepting supplier terms.")
+    const now = new Date()
 
     const evidenceHash = hashBusinessPayload({
       envelopeContentHash: proposal.envelope.contentHash,
@@ -1169,7 +1219,7 @@ export async function reviewSupplierPoProposal(
           : "supplier.po.proposal.buyer_rejected",
       eventSource: "INTERNAL",
       schemaVersion: 1,
-      idempotencyKey: "supplier-po-review:" + parsed.idempotencyKey,
+      idempotencyKey: eventKey,
       payload: {
         proposalId: proposal.id,
         envelopeId: proposal.envelopeId,
@@ -1186,7 +1236,7 @@ export async function reviewSupplierPoProposal(
       sourceType: "SUPPLIER_PO_ACKNOWLEDGEMENT",
       sourceId: proposal.id,
       documentHash: proposal.envelope.contentHash,
-      metadata: { boundary: "supplier-po-acknowledgement-pilot" },
+      metadata: { boundary: "supplier-po-acknowledgement-pilot", requestHash, expectedOrderHash: parsed.expectedOrderHash, correlationId: parsed.correlationId },
       outboxMessages: [],
     })
     const nextState = await tx.supplierPoProposalState.create({
@@ -1230,169 +1280,91 @@ export async function reviewSupplierPoProposal(
         }),
       },
     })
-    return proposalResult(
-      { ...proposal, states: [...proposal.states, nextState] },
+    const reviewed = { ...proposal, states: [...proposal.states, nextState] }
+    return { ...proposalResult(
+      reviewed,
       false,
-    )
+      proposal.envelope,
+      await loadSupplierProposalEvents(tx, organizationId, [reviewed]),
+    ), reviewRequestReference: parsed.idempotencyKey, reviewCorrelationReference: parsed.correlationId, reviewedStateId: nextState.id }
   }, { isolationLevel: SERIALIZABLE })
 }
 
 export async function revokeSupplierPoInvite(
-  input: {
-    organizationId: string
-    tokenId: string
-    revokedById: string
-    reason: string
-    now?: Date
-  },
-  client: typeof db = db,
+  input: RevokeSupplierPoInviteInput & { organizationId: string; revokedById: string; sessionId: string }, client: typeof db = db,
 ) {
-  const organizationId = requiredText(input.organizationId, "Organization")
-  const tokenId = requiredText(input.tokenId, "Supplier PO token")
-  const reason = optionalNote(input.reason)
-  if (!reason) throw new BusinessRuleError("Revocation reason is required")
-  const now = input.now ? new Date(input.now.getTime()) : new Date()
-  return client.$transaction(async (tx) => {
-    const actor = await activeActor(tx, organizationId, input.revokedById)
-    const existing = await tx.supplierPoAccessToken.findFirst({
-      where: { id: tokenId, organizationId },
-      include: { envelope: { select: { purchaseOrderId: true } } },
-    })
-    if (!existing) throw new NotFoundError("Supplier PO token not found")
-    if (
-      existing.status === SupplierPoAccessTokenStatus.REVOKED &&
-      existing.revokedAt
-    ) {
-      return { tokenId, status: existing.status, replayed: true }
+  const { organizationId, revokedById, sessionId, ...command } = input
+  const parsed = revokeSupplierPoInviteInputSchema.parse(command)
+  const scope = supplierPoBuyerScopeSchema.parse({ organizationId, actorId: revokedById, sessionId })
+  const requestHash = hashBusinessPayload({ organizationId, actorId: revokedById, ...parsed })
+  const revocationKey = "supplier-po-revoke:" + parsed.idempotencyKey
+  return client.$transaction(async tx => {
+    const actor = await supplierPoBuyerAuthority(tx, scope, true)
+    const existing = await tx.supplierPoAccessToken.findFirst({ where: { id: parsed.tokenId, organizationId, envelope: { organizationId, purchaseOrderId: parsed.purchaseOrderId } } })
+    if (!existing) throw new NotFoundError("Supplier PO invitation not found")
+    const previous = await tx.businessEvent.findUnique({ where: { organizationId_eventSource_idempotencyKey: { organizationId, eventSource: "INTERNAL", idempotencyKey: revocationKey } } })
+    if (previous) {
+      if (previous.payloadHash !== requestHash || previous.status !== "APPLIED" || previous.eventType !== "supplier.po.invite.revoked" || previous.sourceId !== existing.id || existing.status !== "REVOKED" || existing.revokedById !== actor.id || existing.revocationReason !== parsed.reason) throw new IdempotencyConflictError()
+      return { tokenId: existing.id, purchaseOrderId: parsed.purchaseOrderId, status: existing.status, requestReference: parsed.idempotencyKey, correlationReference: parsed.correlationId, replayed: true }
     }
-    if (existing.status !== SupplierPoAccessTokenStatus.ACTIVE) {
-      throw new ConflictError("Supplier PO token is not active")
-    }
-    const claimed = await tx.supplierPoAccessToken.updateMany({
-      where: {
-        id: tokenId,
-        organizationId,
-        status: SupplierPoAccessTokenStatus.ACTIVE,
-        revokedAt: null,
-      },
-      data: {
-        status: SupplierPoAccessTokenStatus.REVOKED,
-        revokedById: actor.id,
-        revokedAt: now,
-        revocationReason: reason,
-      },
-    })
-    if (claimed.count !== 1) {
-      throw new ConflictError("Supplier PO token revocation lost a race")
-    }
-    await tx.auditLog.create({
-      data: {
-        organizationId,
-        entityType: "SupplierPoAccessToken",
-        entityId: tokenId,
-        action: "SUPPLIER_PO_INVITE_REVOKED",
-        userId: actor.id,
-        changes: asJson({
-          after: {
-            purchaseOrderId: existing.envelope.purchaseOrderId,
-            envelopeId: existing.envelopeId,
-            status: SupplierPoAccessTokenStatus.REVOKED,
-            revokedAt: now.toISOString(),
-            reason,
-            tokenHashPrefix: existing.tokenHash.slice(0, 12),
-          },
-        }),
-      },
-    })
-    return {
-      tokenId,
-      status: SupplierPoAccessTokenStatus.REVOKED,
-      replayed: false,
-    }
+    if (existing.status !== "ACTIVE") throw new ConflictError("This invitation was already disabled by another request")
+    const now = new Date()
+    const claimed = await tx.supplierPoAccessToken.updateMany({ where: { id: existing.id, organizationId, status: "ACTIVE", revokedAt: null }, data: { status: "REVOKED", revokedById: actor.id, revokedAt: now, revocationReason: parsed.reason } })
+    if (claimed.count !== 1) throw new ConflictError("The invitation changed. Refresh its current record.")
+    const event = await recordBusinessEventInTx(tx, { organizationId, eventType: "supplier.po.invite.revoked", eventSource: "INTERNAL", schemaVersion: 1, idempotencyKey: revocationKey,
+      payload: { organizationId, actorId: revokedById, ...parsed }, occurredAt: now, actorId: actor.id, sourceType: "SUPPLIER_PO_ACKNOWLEDGEMENT", sourceId: existing.id, documentHash: existing.envelopeContentHash, outboxMessages: [] })
+    await markBusinessEventAppliedInTx(tx, organizationId, event.event.id)
+    await tx.auditLog.create({ data: { organizationId, entityType: "SupplierPoAccessToken", entityId: existing.id, action: "SUPPLIER_PO_INVITE_REVOKED", userId: actor.id,
+      changes: asJson({ after: { purchaseOrderId: parsed.purchaseOrderId, envelopeId: existing.envelopeId, status: "REVOKED", revokedAt: now.toISOString(), reasonHash: hashBusinessPayload(parsed.reason), requestReference: parsed.idempotencyKey, eventId: event.event.id, tokenHashPrefix: existing.tokenHash.slice(0, 12) } }) } })
+    return { tokenId: existing.id, purchaseOrderId: parsed.purchaseOrderId, status: "REVOKED" as const, requestReference: parsed.idempotencyKey, correlationReference: parsed.correlationId, replayed: false }
   }, { isolationLevel: SERIALIZABLE })
 }
 
-export async function getSupplierPoAcknowledgementWorkbench(input: {
-  organizationId: string
-  purchaseOrderId: string
-  now?: Date
-}, client: typeof db = db) {
-  const now = input.now ? new Date(input.now.getTime()) : new Date()
-  const purchaseOrder = await client.purchaseOrder.findFirst({
-    where: {
-      id: input.purchaseOrderId,
-      organizationId: input.organizationId,
-      deletedAt: null,
-    },
-    select: {
-      id: true,
-      orderNumber: true,
-      status: true,
-      expectedDeliveryDate: true,
-      updatedAt: true,
-      supplier: { select: { name: true, email: true, preferredLocale: true } },
-      acknowledgementEnvelopes: {
-        orderBy: { createdAt: "desc" },
-        include: {
-          accessTokens: { orderBy: { issuedAt: "desc" } },
-          proposals: {
-            orderBy: { createdAt: "desc" },
-            include: {
-              lines: true,
-              states: { orderBy: { version: "asc" } },
-            },
-          },
-        },
+export async function getSupplierPoAcknowledgementWorkbench(
+  input: SupplierPoWorkbenchInput & { organizationId: string; actorId: string }, client: typeof db = db,
+) {
+  const { organizationId, actorId, ...raw } = input
+  const command = supplierPoWorkbenchInputSchema.parse(raw), scope = supplierPoBuyerScopeSchema.parse({ organizationId, actorId })
+  return client.$transaction(async tx => {
+    const authority = await supplierPoBuyerAuthority(tx, scope, false)
+    const order = await loadBuyerOrderInTx(tx, { organizationId, purchaseOrderId: command.purchaseOrderId })
+    const purchaseOrder = order.purchaseOrder, now = new Date()
+    const where = { organizationId, purchaseOrderId: purchaseOrder.id }
+    const anchor = command.beforeEnvelopeId ? await tx.supplierPoEnvelope.findFirst({ where: { ...where, id: command.beforeEnvelopeId }, select: { id: true, createdAt: true } }) : null
+    if (command.beforeEnvelopeId && !anchor) throw new NotFoundError("Envelope history cursor not found")
+    if (command.envelopeId && !await tx.supplierPoEnvelope.findFirst({ where: { ...where, id: command.envelopeId }, select: { id: true } })) throw new NotFoundError("Supplier envelope not found")
+    const tokenAnchor = command.beforeTokenId ? await tx.supplierPoAccessToken.findFirst({ where: { organizationId, envelopeId: command.envelopeId, id: command.beforeTokenId }, select: { id: true, issuedAt: true } }) : null
+    const proposalAnchor = command.beforeProposalId ? await tx.supplierPoProposal.findFirst({ where: { organizationId, envelopeId: command.envelopeId, id: command.beforeProposalId }, select: { id: true, createdAt: true } }) : null
+    if (command.beforeTokenId && !tokenAnchor || command.beforeProposalId && !proposalAnchor) throw new NotFoundError("Supplier history cursor not found")
+    const envelopes = await tx.supplierPoEnvelope.findMany({ where: { ...where, ...(command.envelopeId ? { id: command.envelopeId } : {}), ...(anchor ? { OR: [{ createdAt: { lt: anchor.createdAt } }, { createdAt: anchor.createdAt, id: { lt: anchor.id } }] } : {}) },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 6,
+      include: {
+        accessTokens: { where: { organizationId, ...(tokenAnchor ? { OR: [{ issuedAt: { lt: tokenAnchor.issuedAt } }, { issuedAt: tokenAnchor.issuedAt, id: { lt: tokenAnchor.id } }] } : {}) }, orderBy: [{ issuedAt: "desc" }, { id: "desc" }], take: 11 },
+        proposals: { where: { organizationId, ...(proposalAnchor ? { OR: [{ createdAt: { lt: proposalAnchor.createdAt } }, { createdAt: proposalAnchor.createdAt, id: { lt: proposalAnchor.id } }] } : {}) }, orderBy: [{ createdAt: "desc" }, { id: "desc" }], take: 11, include: { lines: true, states: { orderBy: { version: "asc" } } } },
       },
-    },
-  })
-  if (!purchaseOrder) throw new NotFoundError("Purchase order not found")
-
-  return {
-    purchaseOrder: {
-      id: purchaseOrder.id,
-      orderNumber: purchaseOrder.orderNumber,
-      status: purchaseOrder.status,
-      expectedDeliveryDate:
-        purchaseOrder.expectedDeliveryDate?.toISOString() ?? null,
-      updatedAt: purchaseOrder.updatedAt.toISOString(),
-      supplier: {
-        name: purchaseOrder.supplier.name,
-        email: purchaseOrder.supplier.email,
-        preferredLocale: purchaseOrder.supplier.preferredLocale,
-      },
-    },
-    envelopes: purchaseOrder.acknowledgementEnvelopes.map((envelope) => ({
-      id: envelope.id,
-      contentHash: envelope.contentHash,
-      sourceStateHash: envelope.sourceStateHash,
-      preferredLocale: envelope.preferredLocale,
-      createdAt: envelope.createdAt.toISOString(),
-      tokens: envelope.accessTokens.map((token) => ({
-        id: token.id,
-        status:
-          token.status === SupplierPoAccessTokenStatus.ACTIVE &&
-          token.expiresAt.getTime() <= now.getTime()
-            ? SupplierPoAccessTokenStatus.EXPIRED
-            : token.status,
-        tokenHashPrefix: token.tokenHash.slice(0, 12),
-        recipientHashPrefix: token.recipientHash?.slice(0, 12) ?? null,
-        issuedAt: token.issuedAt.toISOString(),
-        expiresAt: token.expiresAt.toISOString(),
-        revokedAt: token.revokedAt?.toISOString() ?? null,
-        revocationReason: token.revocationReason,
-        accessCount: token.accessCount,
-      })),
-      proposals: envelope.proposals.map((proposal) =>
-        proposalResult(proposal, false),
-      ),
-    })),
-    controls: {
-      externalActionsAreProposals: true as const,
-      purchaseOrderAuthoritative: true as const,
-      stockAuthoritative: true as const,
-      accountsPayableAuthoritative: true as const,
-      accountingAuthoritative: true as const,
-    },
-  }
+    })
+    const events = await loadSupplierProposalEvents(tx, organizationId, envelopes.slice(0, 5).flatMap(envelope => envelope.proposals.slice(0, 10)))
+    const amendmentEvents = await tx.businessEvent.findMany({ where: { organizationId, eventSource: "INTERNAL", idempotencyKey: { in: envelopes.slice(0,5).flatMap(envelope=>envelope.proposals.slice(0,10).map(proposal=>purchaseAmendmentEventKey(proposal.id))) } } })
+    return {
+      scope: { organizationId, actorId }, checkedAt: now.toISOString(), canManage: authority.canManage,
+      canIssue: authority.canManage && purchaseOrder.status === "APPROVED" && purchaseOrder.supplier.isActive && purchaseOrder.lines.length > 0,
+      purchaseOrder: { id: purchaseOrder.id, orderNumber: purchaseOrder.orderNumber, status: purchaseOrder.status, expectedDeliveryDate: purchaseOrder.expectedDeliveryDate?.toISOString() ?? null, updatedAt: purchaseOrder.updatedAt.toISOString(), currentOrderHash: order.sourceStateHash, contentHash: order.contentHash, supplier: { name: purchaseOrder.supplier.name, email: purchaseOrder.supplier.email, preferredLocale: purchaseOrder.supplier.preferredLocale } },
+      nextEnvelopeId: envelopes.length > 5 ? envelopes[4].id : null,
+      envelopes: envelopes.slice(0, 5).map(envelope => {
+        assertEnvelopeIntegrity(envelope)
+        return { id: envelope.id, contentHash: envelope.contentHash, sourceStateHash: envelope.sourceStateHash, preferredLocale: envelope.preferredLocale, createdAt: envelope.createdAt.toISOString(), matchesCurrentOrder: envelope.contentHash === order.contentHash,
+          nextTokenId: envelope.accessTokens.length > 10 ? envelope.accessTokens[9].id : null,
+          nextProposalId: envelope.proposals.length > 10 ? envelope.proposals[9].id : null,
+          tokens: envelope.accessTokens.slice(0, 10).map(token => ({ id: token.id, status: token.status === "ACTIVE" && token.expiresAt <= now ? "EXPIRED" : token.status, requestReference: token.idempotencyKey, tokenHashPrefix: token.tokenHash.slice(0, 12), recipientHashPrefix: token.recipientHash?.slice(0, 12) ?? null, issuedAt: token.issuedAt.toISOString(), expiresAt: token.expiresAt.toISOString(), revokedAt: token.revokedAt?.toISOString() ?? null, revocationReason: token.revocationReason, accessCount: token.accessCount })),
+          proposals: envelope.proposals.slice(0, 10).map(proposal => {
+            const result = proposalResult(proposal, false, envelope, events)
+            const payload = envelope.payload as unknown as SupplierPoEnvelopePayload
+            const amendmentEvent = amendmentEvents.find(event => event.idempotencyKey === purchaseAmendmentEventKey(proposal.id))
+            return { ...result, amendment: amendmentEvent ? readPurchaseAmendmentEvent(amendmentEvent, organizationId, purchaseOrder.id, proposal.id).result : null, quantityChanges: result.quantityChanges.map(line => ({ ...line, itemName: payload.lines.find(item => item.purchaseOrderLineId === line.purchaseOrderLineId)?.itemName ?? null })), canAccept: authority.canManage && purchaseOrder.status === "APPROVED" && purchaseOrder.supplier.isActive && envelope.contentHash === order.contentHash }
+          }),
+        }
+      }),
+      controls: { externalActionsAreProposals: true as const, purchaseOrderAuthoritative: true as const, stockAuthoritative: true as const, accountsPayableAuthoritative: true as const, accountingAuthoritative: true as const },
+    }
+  }, { isolationLevel: SERIALIZABLE })
 }

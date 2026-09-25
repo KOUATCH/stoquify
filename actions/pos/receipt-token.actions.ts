@@ -1,8 +1,9 @@
 "use server"
 
-import { revalidateTag } from "next/cache"
+import { revalidatePOSAfterCommit } from "./cache-revalidation"
 
 import { protect } from "@/services/_shared/protect"
+import { posReadResult, type POSReadSuccess } from "@/services/pos/pos-read-result"
 import {
   listPublicReceiptAccessTokens,
   revokePublicReceiptAccessToken,
@@ -17,11 +18,7 @@ import {
 } from "@/services/pos/pos.schemas"
 
 function revalidateReceiptTokenSurfaces(salesOrderId?: string | null) {
-  revalidateTag("pos-receipts")
-
-  if (salesOrderId) {
-    revalidateTag(`pos-receipt-${salesOrderId}`)
-  }
+  revalidatePOSAfterCommit({ tags: ["pos-receipts", ...(salesOrderId ? [`pos-receipt-${salesOrderId}`] : [])] })
 }
 
 export type PublicReceiptTokenManagementCapability = {
@@ -30,7 +27,7 @@ export type PublicReceiptTokenManagementCapability = {
   permission: "pos.receipts.revoke"
 }
 
-const readReceiptTokenManagementCapability = protect<unknown, PublicReceiptTokenManagementCapability>(
+const readReceiptTokenManagementCapability = protect<unknown, POSReadSuccess<PublicReceiptTokenManagementCapability>>(
   {
     permission: "pos.receipts.revoke",
     auditResource: "PublicReceiptAccessToken",
@@ -44,14 +41,14 @@ const readReceiptTokenManagementCapability = protect<unknown, PublicReceiptToken
       audit: true,
     },
   },
-  async () => ({
+  async (_input, ctx) => posReadResult({
     canManageReceiptTokens: true,
     moduleSlug: "pos",
     permission: "pos.receipts.revoke",
-  }),
+  }, ctx),
 )
 
-const listReceiptTokens = protect<unknown, PublicReceiptAccessTokenManagementItem[]>(
+const listReceiptTokens = protect<unknown, POSReadSuccess<PublicReceiptAccessTokenManagementItem[]>>(
   {
     permission: "pos.receipts.revoke",
     auditResource: "PublicReceiptAccessToken",
@@ -68,13 +65,13 @@ const listReceiptTokens = protect<unknown, PublicReceiptAccessTokenManagementIte
   async (input, ctx) => {
     const parsed = listPublicReceiptAccessTokensActionSchema.parse(input)
 
-    return listPublicReceiptAccessTokens({
+    return posReadResult(await listPublicReceiptAccessTokens({
       organizationId: ctx.orgId,
       salesOrderId: parsed.salesOrderId,
-    })
+    }), ctx)
   },
 )
-const searchReceiptSales = protect<unknown, PublicReceiptSaleSearchItem[]>(
+const searchReceiptSales = protect<unknown, POSReadSuccess<PublicReceiptSaleSearchItem[]>>(
   {
     permission: "pos.receipts.revoke",
     auditResource: "PublicReceiptAccessToken",
@@ -91,12 +88,12 @@ const searchReceiptSales = protect<unknown, PublicReceiptSaleSearchItem[]>(
   async (input, ctx) => {
     const parsed = searchPublicReceiptSalesActionSchema.parse(input)
 
-    return searchPublicReceiptSales({
+    return posReadResult(await searchPublicReceiptSales({
       organizationId: ctx.orgId,
       query: parsed.query,
       limit: parsed.limit,
       recentDays: parsed.recentDays,
-    })
+    }), ctx)
   },
 )
 
@@ -144,15 +141,18 @@ const revokeReceiptToken = protect<
 )
 
 export async function getPublicReceiptAccessTokensAction(input: unknown) {
-  return listReceiptTokens(input)
+  const result = await listReceiptTokens(input)
+  return result.success ? { ...result, data: result.data.data, scope: result.data.scope } : result
 }
 
 export async function searchPublicReceiptSalesAction(input: unknown) {
-  return searchReceiptSales(input)
+  const result = await searchReceiptSales(input)
+  return result.success ? { ...result, data: result.data.data, scope: result.data.scope } : result
 }
 
 export async function getPublicReceiptTokenManagementCapabilityAction(input: unknown) {
-  return readReceiptTokenManagementCapability(input)
+  const result = await readReceiptTokenManagementCapability(input)
+  return result.success ? { ...result, data: result.data.data, scope: result.data.scope } : result
 }
 
 export async function revokePublicReceiptAccessTokenAction(input: unknown) {

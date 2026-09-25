@@ -1,0 +1,11 @@
+[
+  {
+    "label": "corrections",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --roots services/pos/__tests__ --runTestsByPath services/pos/__tests__/pos-corrections.postgres.test.ts --silent",
+    "database": "stoquify_pos_audit_20260923_d1532fb1",
+    "schema": "public",
+    "startedAt": "2026-09-24T02:58:08.928Z",
+    "completedAt": "2026-09-24T02:58:38.210Z",
+    "exit": 0
+  }
+]

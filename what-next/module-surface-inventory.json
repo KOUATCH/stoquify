@@ -1,7 +1,7 @@
 {
   "summary": {
-    "generatedAt": "2026-08-10T15:54:22.066Z",
-    "mode": "warn",
+    "generatedAt": "2026-08-30T13:36:34.696Z",
+    "mode": "report",
     "sourceFiles": {
       "sidebar": true,
       "moduleCatalog": true,
@@ -12,28 +12,28 @@
       "apiGuardInventory": true
     },
     "catalogCount": 19,
-    "recordCount": 400,
+    "recordCount": 414,
     "bySurfaceType": {
-      "action": 141,
+      "action": 146,
       "api_evidence": 2,
-      "api": 14,
-      "export_evidence": 11,
-      "export": 5,
+      "api": 16,
+      "export_evidence": 13,
+      "export": 6,
       "layout": 10,
       "module_service": 3,
-      "navigation": 82,
-      "page": 126,
+      "navigation": 83,
+      "page": 129,
       "report_evidence": 3,
       "report": 3
     },
     "byClassification": {
       "not applicable: internal action response helper": 1,
-      "mapped": 361,
-      "enforcement candidate": 256,
+      "mapped": 371,
+      "enforcement candidate": 293,
       "unmapped": 5,
       "delegated re-export": 7,
       "not applicable: public identity boundary": 1,
-      "missing permission": 10,
+      "missing permission": 79,
       "not applicable: internal display helper": 1,
       "not applicable: cross-module session assurance": 1,
       "not applicable: token-bound invitation acceptance": 1,
@@ -42,12 +42,12 @@
       "not applicable: public email verification": 1,
       "not_applicable_public_service": 1,
       "not_applicable_public": 4,
-      "review_required": 4,
+      "review_required": 6,
       "not_applicable_session_claims": 1,
       "delegated_uploadthing_core": 1,
-      "source_inherited_service": 14,
+      "source_inherited_service": 16,
       "not applicable: internal module governance contract": 1,
-      "dashboard-only risk": 5
+      "dashboard-only risk": 77
     }
   },
   "records": [
@@ -134,6 +134,20 @@
       "delegatedTo": [],
       "metadata": {},
       "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "actions/accounting/finance-statement-export.actions.ts",
+      "surface": "accounting/finance-statement-export.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.exports.create",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
     },
     {
       "file": "actions/accounting/journals.actions.ts",
@@ -1182,6 +1196,34 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "actions/onboarding/master-data-onboarding.actions.ts",
+      "surface": "onboarding/master-data-onboarding.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "settings",
+      "permission": "MASTER_DATA_ONBOARDING_READ_PERMISSIONS",
+      "guard": "requireAnyPermission",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
+      "file": "actions/order-to-cash/delivery-order.actions.ts",
+      "surface": "order-to-cash/delivery-order.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "sales",
+      "permission": "sales.orders.create",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
       "file": "actions/organization/organization-settings-actions.ts",
       "surface": "organization/organization-settings-actions.ts",
       "surfaceType": "action",
@@ -1576,6 +1618,20 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts",
+      "surface": "purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchases.orders.update",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped"
+    },
+    {
       "file": "actions/purchasing/ap-control.actions.ts",
       "surface": "purchasing/ap-control.actions.ts",
       "surfaceType": "action",
@@ -1602,6 +1658,20 @@
       "delegatedTo": [],
       "metadata": {},
       "classification": "mapped"
+    },
+    {
+      "file": "actions/purchasing/purchase-return-credit.actions.ts",
+      "surface": "purchasing/purchase-return-credit.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.returns.post",
+      "guard": "protect",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
     },
     {
       "file": "actions/referrals/referral-funnel.actions.ts",
@@ -2343,6 +2413,62 @@
       "classification": "not_applicable_public"
     },
     {
+      "file": "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts",
+      "surface": "/api/supplier-po-envelopes/[envelopeId]/proposals",
+      "surfaceType": "api",
+      "moduleApplicability": "review_required",
+      "moduleSlug": null,
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "apiClassification": "unclassified",
+        "apiDataClass": "json response",
+        "apiEvidenceFor": null,
+        "apiIssues": [],
+        "apiMethods": [
+          "POST"
+        ],
+        "apiModuleAccess": "none",
+        "apiModuleAccessIntent": null,
+        "apiModuleAccessMode": null,
+        "apiOrgSource": "none",
+        "apiResponseEnvelope": "success envelope with safe error envelope",
+        "apiSurfaceKind": "api_route"
+      },
+      "classification": "review_required"
+    },
+    {
+      "file": "app/api/supplier-po-envelopes/[envelopeId]/route.ts",
+      "surface": "/api/supplier-po-envelopes/[envelopeId]",
+      "surfaceType": "api",
+      "moduleApplicability": "review_required",
+      "moduleSlug": null,
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "apiClassification": "unclassified",
+        "apiDataClass": "json response",
+        "apiEvidenceFor": null,
+        "apiIssues": [],
+        "apiMethods": [
+          "GET"
+        ],
+        "apiModuleAccess": "none",
+        "apiModuleAccessIntent": null,
+        "apiModuleAccessMode": null,
+        "apiOrgSource": "none",
+        "apiResponseEnvelope": "success envelope with safe error envelope",
+        "apiSurfaceKind": "api_route"
+      },
+      "classification": "review_required"
+    },
+    {
       "file": "app/api/uploads/[...path]/route.ts",
       "surface": "/api/uploads/[...path]",
       "surfaceType": "api",
@@ -2534,6 +2660,48 @@
       "moduleApplicability": "source_inherited_service",
       "moduleSlug": "accounting",
       "permission": "accounting.exports.create",
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "sourceModules": [
+          "accounting"
+        ],
+        "sourceEvidence": "service-owned read model",
+        "reportExportKind": "export",
+        "freshAuthEvidence": false
+      },
+      "classification": "source_inherited_service"
+    },
+    {
+      "file": "services/accounting/finance-statement-export-operations.service.ts",
+      "surface": "accounting/finance-statement-export-operations.service.ts",
+      "surfaceType": "export_evidence",
+      "moduleApplicability": "source_inherited_service",
+      "moduleSlug": "accounting",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "sourceModules": [
+          "accounting"
+        ],
+        "sourceEvidence": "service-owned read model",
+        "reportExportKind": "export",
+        "freshAuthEvidence": false
+      },
+      "classification": "source_inherited_service"
+    },
+    {
+      "file": "services/accounting/finance-statement-export.service.ts",
+      "surface": "accounting/finance-statement-export.service.ts",
+      "surfaceType": "export_evidence",
+      "moduleApplicability": "source_inherited_service",
+      "moduleSlug": "accounting",
+      "permission": null,
       "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
@@ -2751,6 +2919,27 @@
       "classification": "mapped, enforcement candidate"
     },
     {
+      "file": "actions/accounting/finance-statement-export.actions.ts",
+      "surface": "accounting/finance-statement-export.actions.ts",
+      "surfaceType": "export",
+      "moduleApplicability": "required",
+      "moduleSlug": "accounting",
+      "permission": "accounting.exports.create",
+      "guard": "protect",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "sourceModules": [
+          "accounting"
+        ],
+        "sourceEvidence": "protected action boundary",
+        "reportExportKind": "export",
+        "freshAuthEvidence": true
+      },
+      "classification": "mapped"
+    },
+    {
       "file": "actions/accounting/reports.actions.ts",
       "surface": "accounting/reports.actions.ts",
       "surfaceType": "export",
@@ -2819,13 +3008,13 @@
       "surfaceType": "layout",
       "moduleApplicability": "required",
       "moduleSlug": "sales",
-      "permission": "customers.read",
-      "guard": "checkPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/inventory/brands/layout.tsx",
@@ -3907,6 +4096,20 @@
     },
     {
       "file": "config/sidebar.ts",
+      "surface": "/dashboard/purchase-orders/analytics",
+      "surfaceType": "navigation",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "READ_PURCHASE_ORDERS",
+      "guard": "sidebar-permission-filter",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "config/sidebar.ts",
       "surface": "/dashboard/purchase-orders/new",
       "surfaceType": "navigation",
       "moduleApplicability": "required",
@@ -4331,13 +4534,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "analytics",
-      "permission": "reports.read | dashboard.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
@@ -4359,13 +4562,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "analytics",
-      "permission": "reports.read",
-      "guard": "requirePermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx",
@@ -4373,13 +4576,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "controls.audit.read",
-      "guard": "requirePermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx",
@@ -4387,13 +4590,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "controls.audit.read",
-      "guard": "requirePermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/cashDrawer/page.tsx",
@@ -4401,13 +4604,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "cash_drawer",
-      "permission": "finance.cash-drawer.read | finance.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/change-password/page.tsx",
@@ -4415,13 +4618,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "settings",
-      "permission": "PASSWORD_READ",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/compliance/page.tsx",
@@ -4429,13 +4632,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "compliance",
-      "permission": "compliance.documents.read",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx",
@@ -4486,12 +4689,12 @@
       "moduleApplicability": "required",
       "moduleSlug": "sales",
       "permission": null,
-      "guard": "module-observe",
-      "observeOrEnforce": "enforce",
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, missing permission"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
@@ -4513,13 +4716,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "sales",
-      "permission": "customers.read",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx",
@@ -4527,13 +4730,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "dashboard.read | finance.read | accounting.close.read | inventory.read | analytics.read",
-      "guard": "requireAnyPermission",
+      "permission": "ctx.permissions",
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx",
@@ -4541,13 +4744,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(analytics)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx",
@@ -4555,13 +4758,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "finance.read | dashboard.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx",
@@ -4569,13 +4772,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "cash_drawer",
-      "permission": "finance.cash-drawer.read | finance.read",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx",
@@ -4583,13 +4786,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(cash-flow)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx",
@@ -4598,12 +4801,12 @@
       "moduleApplicability": "required",
       "moduleSlug": "finance",
       "permission": "cashPaymentHistoryPermissions",
-      "guard": "FinanceRouteAccess",
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/costs/page.tsx",
@@ -4611,13 +4814,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(costs)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/page.tsx",
@@ -4625,13 +4828,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(overview)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx",
@@ -4639,13 +4842,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(payables)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx",
@@ -4653,13 +4856,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(payments)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/profit-loss/page.tsx",
@@ -4667,13 +4870,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(profitability)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/profitability/page.tsx",
@@ -4681,13 +4884,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(profitability)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx",
@@ -4695,13 +4898,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(receivables)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx",
@@ -4709,13 +4912,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(receivables)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx",
@@ -4723,13 +4926,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payment_reconciliation",
-      "permission": "payments.reconciliation.read",
-      "guard": "FinanceRouteAccess",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx",
@@ -4737,13 +4940,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(retail)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/sales/page.tsx",
@@ -4751,13 +4954,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "financeViewPermissions(sales)",
-      "guard": "FinanceRouteAccess",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx",
@@ -4765,13 +4968,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "finance.read | dashboard.read | inventory.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx",
@@ -4779,13 +4982,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "finance",
-      "permission": "taxes.create",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx",
@@ -5073,13 +5276,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "inventory",
-      "permission": "inventory.items.create",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/items/page.tsx",
@@ -5087,13 +5290,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "inventory",
-      "permission": "inventory.items.read",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx",
@@ -5101,13 +5304,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "dashboard.read",
-      "guard": "requirePermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx",
@@ -5115,13 +5318,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "dashboard.read",
-      "guard": "requirePermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx",
@@ -5129,13 +5332,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "settings",
-      "permission": "communication.notifications.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx",
@@ -5143,13 +5346,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "dashboard.read",
-      "guard": "requirePermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/page.tsx",
@@ -5171,13 +5374,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.payment_destination.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/compensation/page.tsx",
@@ -5185,13 +5388,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.compensation.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/contracts/page.tsx",
@@ -5199,13 +5402,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.contracts.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx",
@@ -5213,13 +5416,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.command.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/employees/page.tsx",
@@ -5227,13 +5430,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.employees.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/page.tsx",
@@ -5241,13 +5444,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.command.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx",
@@ -5255,13 +5458,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payments.reconciliation.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/payslips/page.tsx",
@@ -5269,13 +5472,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.payslips.self.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx",
@@ -5283,13 +5486,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.reports.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx",
@@ -5297,13 +5500,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.command.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/payroll/setup/page.tsx",
@@ -5311,13 +5514,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "payroll",
-      "permission": "payroll.runs.calculate",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx",
@@ -5325,13 +5528,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "hris.people.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/people/approvals/page.tsx",
@@ -5339,13 +5542,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "hris.people.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/people/history/page.tsx",
@@ -5353,13 +5556,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "hris.people.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/people/me/page.tsx",
@@ -5367,13 +5570,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "hris.self_service.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/people/page.tsx",
@@ -5381,13 +5584,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "hris.people.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/people/team/page.tsx",
@@ -5395,13 +5598,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "dashboard",
-      "permission": "hris.people.read",
-      "guard": "requireAnyPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/pos/page.tsx",
@@ -5409,13 +5612,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "pos",
-      "permission": "OPERATE_POS",
-      "guard": "checkPermission",
+      "permission": null,
+      "guard": "none",
       "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped, enforcement candidate"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx",
@@ -5423,13 +5626,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.orders.update",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx",
@@ -5437,13 +5640,41 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.orders.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx",
+      "surface": "/dashboard/purchase-orders/[id]/supplier-acknowledgement",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/page.tsx",
+      "surface": "/dashboard/purchase-orders/analytics",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
@@ -5451,13 +5682,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.orders.create",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx",
@@ -5465,13 +5696,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.orders.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx",
@@ -5479,13 +5710,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.orders.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/page.tsx",
@@ -5493,13 +5724,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.orders.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx",
@@ -5507,13 +5738,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchasing.ap.invoice.view | finance.payables.read | purchases.suppliers.read",
-      "guard": "requireAnyPermission",
-      "observeOrEnforce": "enforce",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx",
@@ -5521,13 +5752,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchasing.ap.invoice.view",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx",
@@ -5535,13 +5766,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.update",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx",
@@ -5549,13 +5780,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/create/page.tsx",
@@ -5563,13 +5794,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.create",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx",
@@ -5577,13 +5808,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/sales/page.tsx",
@@ -5591,13 +5822,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "sales",
-      "permission": "sales.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/settings/appearance/page.tsx",
@@ -5626,6 +5857,20 @@
       "delegatedTo": [],
       "metadata": {},
       "classification": "mapped, enforcement candidate"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx",
+      "surface": "/dashboard/settings/data-onboarding",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "settings",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx",
@@ -5857,13 +6102,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.update",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/page.tsx",
@@ -5871,13 +6116,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/new/page.tsx",
@@ -5885,13 +6130,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.create",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "app/[locale]/(dashboard)/dashboard/suppliersSystem/page.tsx",
@@ -5899,13 +6144,13 @@
       "surfaceType": "page",
       "moduleApplicability": "required",
       "moduleSlug": "purchasing",
-      "permission": "purchases.suppliers.read",
-      "guard": "requirePermission",
-      "observeOrEnforce": "observe",
+      "permission": null,
+      "guard": "none",
+      "observeOrEnforce": "report-only",
       "dependencyGaps": [],
       "delegatedTo": [],
       "metadata": {},
-      "classification": "mapped"
+      "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate"
     },
     {
       "file": "services/accounting/close-assurance.service.ts",
@@ -6029,765 +6274,5 @@
       },
       "classification": "mapped, enforcement candidate"
     }
-  ],
-  "ratchet": {
-    "failed": true,
-    "baselineActiveGapCount": 55,
-    "currentActiveGapCount": 20,
-    "activeGapDelta": -35,
-    "baselineCounts": {
-      "MODULE_SURFACE_UNMAPPED": 34,
-      "MODULE_SURFACE_MISSING_PERMISSION": 16,
-      "MODULE_SURFACE_PROTECTED_GUARD_NONE": 5
-    },
-    "currentCounts": {
-      "MODULE_SURFACE_UNMAPPED": 5,
-      "MODULE_SURFACE_MISSING_PERMISSION": 10,
-      "MODULE_SURFACE_PAGE_GUARD_NONE": 5
-    },
-    "newFindings": [
-      {
-        "surfaceType": "action",
-        "surface": "agents/agent-release-control.actions.ts",
-        "file": "actions/agents/agent-release-control.actions.ts",
-        "moduleSlug": null,
-        "permission": "agent.release.prepare",
-        "guard": "protect",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "referrals/referral-funnel.actions.ts",
-        "file": "actions/referrals/referral-funnel.actions.ts",
-        "moduleSlug": null,
-        "permission": "analytics.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/analytics/referrals",
-        "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/analytics/referrals",
-        "file": "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
-        "reason": "Dashboard page has no detected server-side guard."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/[id]/edit",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/[id]/edit",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
-        "reason": "Dashboard page has no detected server-side guard."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/[id]/orders",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/[id]/orders",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
-        "reason": "Dashboard page has no detected server-side guard."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/[id]",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/[id]",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
-        "reason": "Dashboard page has no detected server-side guard."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/[id]/statement",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "module-observe",
-        "classification": "mapped, missing permission",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/new",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "page",
-        "surface": "/dashboard/customers/new",
-        "file": "app/[locale]/(dashboard)/dashboard/customers/new/page.tsx",
-        "moduleSlug": "sales",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, dashboard-only risk, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
-        "reason": "Dashboard page has no detected server-side guard."
-      }
-    ],
-    "resolvedFindings": [
-      {
-        "surfaceType": "action",
-        "surface": "_shared/safe-action-responses.ts",
-        "file": "actions/_shared/safe-action-responses.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "_shared/safe-action-responses.ts",
-        "file": "actions/_shared/safe-action-responses.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/analytics/financial-reports.ts",
-        "file": "actions/analytics/analytics/financial-reports.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/analytics/financial-reports.ts",
-        "file": "actions/analytics/analytics/financial-reports.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/get-sales-analytics.ts",
-        "file": "actions/analytics/get-sales-analytics.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "analytics/get-sales-analytics.ts",
-        "file": "actions/analytics/get-sales-analytics.ts",
-        "moduleSlug": "analytics",
-        "permission": null,
-        "guard": "none",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "auth.ts",
-        "file": "actions/auth.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "auth.ts",
-        "file": "actions/auth.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "brands/getOrgBrands.ts",
-        "file": "actions/brands/getOrgBrands.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "brands/getOrgBrands.ts",
-        "file": "actions/brands/getOrgBrands.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createBulkCategories.ts",
-        "file": "actions/categories/createBulkCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createBulkCategories.ts",
-        "file": "actions/categories/createBulkCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createCategory.ts",
-        "file": "actions/categories/createCategory.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/createCategory.ts",
-        "file": "actions/categories/createCategory.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/getOrgCategories.ts",
-        "file": "actions/categories/getOrgCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "categories/getOrgCategories.ts",
-        "file": "actions/categories/getOrgCategories.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "customers/customer-management-actions.ts",
-        "file": "actions/customers/customer-management-actions.ts",
-        "moduleSlug": null,
-        "permission": ")) {\n      return error.message\n    }\n\n    if (error.message.startsWith(",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "customers/customer-management-actions.ts",
-        "file": "actions/customers/customer-management-actions.ts",
-        "moduleSlug": null,
-        "permission": ")) {\n      return error.message\n    }\n\n    if (error.message.startsWith(",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "customers/customerAction2.ts",
-        "file": "actions/customers/customerAction2.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "requirePermission",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/addItemSuppliers.ts",
-        "file": "actions/item-suppliers/addItemSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/addItemSuppliers.ts",
-        "file": "actions/item-suppliers/addItemSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/getItemWithSuppliers.ts",
-        "file": "actions/item-suppliers/getItemWithSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item-suppliers/getItemWithSuppliers.ts",
-        "file": "actions/item-suppliers/getItemWithSuppliers.ts",
-        "moduleSlug": null,
-        "permission": null,
-        "guard": "none",
-        "classification": "unmapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item/items.ts",
-        "file": "actions/item/items.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "item/listItemsAction.ts",
-        "file": "actions/item/listItemsAction.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/createActionItem.ts",
-        "file": "actions/itemsShow/createActionItem.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.create",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/deleteItem.ts",
-        "file": "actions/itemsShow/deleteItem.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.delete",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getBriefItemById.ts",
-        "file": "actions/itemsShow/getBriefItemById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getBriefOrgItems.ts",
-        "file": "actions/itemsShow/getBriefOrgItems.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getOrgItems.ts",
-        "file": "actions/itemsShow/getOrgItems.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getOrgItemsWithInventoryLevels.ts",
-        "file": "actions/itemsShow/getOrgItemsWithInventoryLevels.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
-        "file": "actions/itemsShow/getOrgItemsWithInventoryLevelsLocation.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemBasicInfoById.ts",
-        "file": "actions/itemsShow/updateItemBasicInfoById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemById.ts",
-        "file": "actions/itemsShow/updateItemById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemItemDetailsById.ts",
-        "file": "actions/itemsShow/updateItemItemDetailsById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemPricingById.ts",
-        "file": "actions/itemsShow/updateItemPricingById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemRelationsById.ts",
-        "file": "actions/itemsShow/updateItemRelationsById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "itemsShow/updateItemStockById.ts",
-        "file": "actions/itemsShow/updateItemStockById.ts",
-        "moduleSlug": null,
-        "permission": "inventory.items.update",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "payroll/payroll-country-pack-review-intake.actions.ts",
-        "file": "actions/payroll/payroll-country-pack-review-intake.actions.ts",
-        "moduleSlug": "payroll",
-        "permission": null,
-        "guard": "protect",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "payroll/payroll-setup.actions.ts",
-        "file": "actions/payroll/payroll-setup.actions.ts",
-        "moduleSlug": "payroll",
-        "permission": null,
-        "guard": "protect",
-        "classification": "mapped, missing permission, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_MISSING_PERMISSION",
-        "reason": "Protected user-facing surface has no RBAC permission evidence."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
-        "file": "actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts",
-        "moduleSlug": null,
-        "permission": "purchases.orders.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "signals/business-signals.actions.ts",
-        "file": "actions/signals/business-signals.actions.ts",
-        "moduleSlug": null,
-        "permission": "dashboard.read",
-        "guard": "protect",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "snapshots/snapshot.actions.ts",
-        "file": "actions/snapshots/snapshot.actions.ts",
-        "moduleSlug": null,
-        "permission": "dashboard.read",
-        "guard": "protect",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/itemSupplierActions.ts",
-        "file": "actions/suppliers/itemSupplierActions.ts",
-        "moduleSlug": null,
-        "permission": "readonly string[]",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/itemSupplierActions.ts",
-        "file": "actions/suppliers/itemSupplierActions.ts",
-        "moduleSlug": null,
-        "permission": "readonly string[]",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/supplier-management-actions.ts",
-        "file": "actions/suppliers/supplier-management-actions.ts",
-        "moduleSlug": null,
-        "permission": ")) {\n      return error.message\n    }\n\n    if (\n      error.message.startsWith(",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "suppliers/supplier-management-actions.ts",
-        "file": "actions/suppliers/supplier-management-actions.ts",
-        "moduleSlug": null,
-        "permission": ")) {\n      return error.message\n    }\n\n    if (\n      error.message.startsWith(",
-        "guard": "none",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_PROTECTED_GUARD_NONE",
-        "reason": "Module-owned action or API surface has no detected server-side guard."
-      },
-      {
-        "surfaceType": "action",
-        "surface": "units/unit-management-actions.ts",
-        "file": "actions/units/unit-management-actions.ts",
-        "moduleSlug": null,
-        "permission": "inventory.units.read",
-        "guard": "requirePermission",
-        "classification": "unmapped, enforcement candidate",
-        "metadata": {},
-        "category": "MODULE_SURFACE_UNMAPPED",
-        "reason": "Module-required surface has no canonical module owner."
-      }
-    ],
-    "worsenedCategories": [
-      {
-        "category": "MODULE_SURFACE_PAGE_GUARD_NONE",
-        "baselineCount": 0,
-        "currentCount": 5,
-        "delta": 5
-      }
-    ]
-  }
+  ]
 }

@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-13T12:01:53.515Z",
+  "phase": "after",
+  "organizationId": "workflow_rbac_identity_3bb67a2c-7d0e-46e0-83b7-37d2de406e26",
+  "source": "lib/security/rbac.ts",
+  "sourceBefore": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+  "checks": [
+    { "name": "inactive original subject cannot inherit reassigned email authority", "passed": true },
+    { "name": "active immutable identity survives changed email and receives only current own permissions", "passed": true },
+    { "name": "missing ID, missing subject and stale tenant are denied", "passed": true }
+  ],
+  "scope": "Owned real PostgreSQL users/roles; synthetic session return and Next headers isolate a stale identity snapshot between authentication and RBAC loading. No live authentication or professional security certification claim.",
+  "passed": true,
+  "sourceAfter": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+  "sourceStable": true,
+  "retention": { "sourceReceipt": "213767", "processExitCode": 1, "failure": "EPERM saving original JSON after all assertions passed", "recovery": "Copied emitted report from tool receipt; checks were not rerun and the original command is not recorded as exit-zero." }
+}

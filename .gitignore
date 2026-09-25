@@ -12,10 +12,13 @@
 
 # testing
 /coverage
+jest-cache*/
+probe-cache/
 
 # next.js
 /.next/
 /.next-dev/
+/.next-*/
 /out/
 
 # production
@@ -24,6 +27,7 @@
 # misc
 .DS_Store
 *.pem
+~$*
 
 # debug
 *.log
@@ -54,9 +58,16 @@ example.env
 ideas/**/outputs/
 outputs/
 
+# Separately versioned published site (has its own repository and remote).
+/artifacts/stoquify-analytics-network-strategy-site/
+
 # local runtime uploads
 /public/uploads/
 /public/seed-images/
+/.next-item-media-test/
+/.next-item-media-build/
+/.next-item-media-test/
+/.next-item-media-build/
 
 # Synthetic development seed credentials (plaintext, local-only)
 .seed-artifacts/
@@ -67,6 +78,20 @@ outputs/
 /test-results/
 /playwright-report/
 /playwright/.auth/
+/.next-modern-modules-integration/
+/.next-modern-modules-integration/
+/.next-modern-modules-build-*/
+/.next-workflow-registration/
+
+# Local approval signatures, personal verification records and controller enrollment.
+/docs/X1/approval-register/records/
+/docs/X1/approval-register/controllers/
+/docs/X1/approval-register/events/
+/docs/X1/approval-register/exports/
+/docs/X1/approval-register/audit-head.json
+/docs/X1/approval-register/register.json
+/docs/X1/approval-register/FORMS.md
+/docs/X1/approval-register/FORMS.pdf
 
 # Prevent isolated evidence snapshots from recursively copying transaction history.
 what-next/transaction-history/runs/*/isolated-workspace/**/what-next/transaction-history/

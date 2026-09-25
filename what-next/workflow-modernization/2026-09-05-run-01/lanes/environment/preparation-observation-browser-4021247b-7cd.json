@@ -1,0 +1,84 @@
+{
+  "at": "2026-09-08T13:11:06.628Z",
+  "run": "4021247b-7cd",
+  "sourcesBefore": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "messages/en.json": "604111ca773bc32db1f34597ee6c5dc632b53a8541245cc381e7850c972a15a1",
+    "messages/fr.json": "c899c288f4af247ca9c9376eabca663b8199e737d980c8d9eb30212938d8aacb"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [
+        "Exact original preparation recovery shows a current source observation and restores keyboard focus to the available next action",
+        "Lost recovery response after correction/posting and supplier deactivation retains the same request; old amount is historical, current amount/status separate, no duplicate liability; EN/FR mobile/tablet/zoom and focus checked",
+        "Missing current proof and archived invoice remain explicit without changing original evidence or reopening obligations"
+      ],
+      "screenshots": [
+        "preparation-observation-en-original-current-4021247b-7cd.png",
+        "preparation-observation-en-superseded-posted-desktop-4021247b-7cd.png",
+        "preparation-observation-en-superseded-posted-320-4021247b-7cd.png",
+        "preparation-observation-en-superseded-posted-390-4021247b-7cd.png",
+        "preparation-observation-en-superseded-posted-768-4021247b-7cd.png",
+        "preparation-observation-en-superseded-zoom-4021247b-7cd.png",
+        "preparation-observation-en-unverified-archived-4021247b-7cd.png",
+        "preparation-observation-en-failure-4021247b-7cd.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Original preparation exact-recovery development baseline",
+          "ms": 3424
+        }
+      ],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Your current session or role cannot prepare this invoice. Sign in with an authorized account.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [
+        "Exact original preparation recovery shows a current source observation and restores keyboard focus to the available next action",
+        "Lost recovery response after correction/posting and supplier deactivation retains the same request; old amount is historical, current amount/status separate, no duplicate liability; EN/FR mobile/tablet/zoom and focus checked",
+        "Missing current proof and archived invoice remain explicit without changing original evidence or reopening obligations"
+      ],
+      "screenshots": [
+        "preparation-observation-fr-original-current-4021247b-7cd.png",
+        "preparation-observation-fr-superseded-posted-desktop-4021247b-7cd.png",
+        "preparation-observation-fr-superseded-posted-320-4021247b-7cd.png",
+        "preparation-observation-fr-superseded-posted-390-4021247b-7cd.png",
+        "preparation-observation-fr-superseded-posted-768-4021247b-7cd.png",
+        "preparation-observation-fr-superseded-zoom-4021247b-7cd.png",
+        "preparation-observation-fr-unverified-archived-4021247b-7cd.png",
+        "preparation-observation-fr-failure-4021247b-7cd.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Original preparation exact-recovery development baseline",
+          "ms": 2012
+        }
+      ],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Votre session ou votre rôle actuel ne permet pas cette préparation. Connectez-vous avec un compte autorisé.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    }
+  ],
+  "scope": "Owned fixtures prepare an invoice through the real service. Browser session storage restores the exact original command to simulate a previously interrupted request. Real server actions recover it before and after correction/posting; the second recovery response is deliberately lost.",
+  "originalBefore": "291663d664b2924e4aa951155e8b6163c1e9eb3ac8243394d50a031253ae8bf6",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "messages/en.json": "604111ca773bc32db1f34597ee6c5dc632b53a8541245cc381e7850c972a15a1",
+    "messages/fr.json": "c899c288f4af247ca9c9376eabca663b8199e737d980c8d9eb30212938d8aacb"
+  },
+  "sourceStable": true
+}

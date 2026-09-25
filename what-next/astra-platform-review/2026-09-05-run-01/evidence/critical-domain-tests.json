@@ -1,0 +1,27 @@
+{
+  "id": "critical-domain-tests",
+  "startedAt": "2026-09-05T09:11:32.272Z",
+  "finishedAt": "2026-09-05T09:12:03.018Z",
+  "command": [
+    "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--json",
+    "--testPathPatterns",
+    "posting.service.test|offline-sync.service.test|ap-control.service.test|payroll-run-approval-transition|payroll-privacy|self-service.service.test|payment-reconciliation-run|business-event-outbox.service.test|country-pack.service.test|agent-policy.service.test|agent-runner.service.test|agent-execution-control|module-entitlement.service.test|customer-statement-access|supplier-statement-access|public-receipt|api-route-guard-inventory.test"
+  ],
+  "target": "local workspace; database connection disabled with loopback port 1",
+  "exitCode": 0,
+  "signal": null,
+  "status": "passed",
+  "summary": {
+    "suites": 19,
+    "passedSuites": 19,
+    "failedSuites": 0,
+    "tests": 188,
+    "passedTests": 188,
+    "failedTests": 0,
+    "pendingTests": 0
+  },
+  "log": "critical-domain-tests.log"
+}

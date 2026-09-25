@@ -1,0 +1,105 @@
+{
+  "run": "94ccf539-624",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T14:43:15.979Z",
+  "sourcesBefore": {
+    "services/organization/organization-settings.service.ts": "5fb34c5ed712ec1d29a1cce3935c414f48233f4f06360d7f4cdd803c62d534ac",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "actions/organization/organization-settings-actions.ts": "13d47e0b96af65328378bbaa2790fcfed9dbec939f2c52cdfee237459c8dba15",
+    "components/settings/OrganizationManagementTable.tsx": "adf388834ca43c475463eb43d91ffd3eccb2ec0a039a17dcc5f2e0e4531aea9f",
+    "components/settings/OrganizationSetupHandoff.tsx": "3e8a9ecf524802a321c1a87e658c56ac0a1b6e763b10bb7d335eba302130b098",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "components/auth/v2/LoginV2Form.tsx": "ebcd4ad9a2cc6b40a592bde41bf92116b4b96cb18da3d0312a3b036540ec47a4",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-organization-handoff-mobile-94ccf539-624.png",
+        "en-organization-handoff-desktop-94ccf539-624.png",
+        "en-organization-handoff-failure-94ccf539-624.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 15306,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "keyboardFocusReturn": true,
+      "error": "browserContext.waitForEvent: Timeout 30000ms exceeded while waiting for event \"page\""
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-organization-handoff-mobile-94ccf539-624.png",
+        "fr-organization-handoff-desktop-94ccf539-624.png",
+        "fr-organization-handoff-owner-review-94ccf539-624.png",
+        "fr-organization-handoff-verification-required-94ccf539-624.png",
+        "fr-organization-handoff-failure-94ccf539-624.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 13670,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "keyboardFocusReturn": true,
+      "registrationHandoffPreservesCurrentSession": true,
+      "ownerRegistration": {
+        "organizationId": "c37564ea-c805-4429-8326-36eb0bde837e",
+        "ownerCount": 1,
+        "credentialCount": 1,
+        "registrationAuditCount": 1,
+        "emailVerificationRequired": true,
+        "currentSessionUnchanged": true
+      },
+      "error": "page.waitForURL: Timeout 180000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"http://127.0.0.1:3108/fr/dashboard\" until \"load\"\n  navigated to \"http://127.0.0.1:3108/fr/login-v2?email=[redacted]&password=[redacted]\n============================================================"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Only synthetic owners/organizations are registered in the owned local application. No email delivery is claimed.",
+    "Existing owned administrator credentials are used only to sign in; grants and credentials are not changed.",
+    "Separate-account sign-in is exercised; native multi-organization membership/switching remains unimplemented.",
+    "Keyboard/reflow checks do not certify actual screen-reader operation or native browser zoom."
+  ],
+  "originalAuthorityBefore": "100dc42363af70a0c9ef53ad19d7f0168dfa6d62dba4bffd24aff272fd8543c6",
+  "legacyCreationRejectedWithoutEffects": true,
+  "originalAuthorityAfter": "100dc42363af70a0c9ef53ad19d7f0168dfa6d62dba4bffd24aff272fd8543c6",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T14:48:32.23Z",
+  "sourcesAfter": {
+    "services/organization/organization-settings.service.ts": "5fb34c5ed712ec1d29a1cce3935c414f48233f4f06360d7f4cdd803c62d534ac",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "actions/organization/organization-settings-actions.ts": "13d47e0b96af65328378bbaa2790fcfed9dbec939f2c52cdfee237459c8dba15",
+    "components/settings/OrganizationManagementTable.tsx": "adf388834ca43c475463eb43d91ffd3eccb2ec0a039a17dcc5f2e0e4531aea9f",
+    "components/settings/OrganizationSetupHandoff.tsx": "3e8a9ecf524802a321c1a87e658c56ac0a1b6e763b10bb7d335eba302130b098",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "components/auth/v2/LoginV2Form.tsx": "ebcd4ad9a2cc6b40a592bde41bf92116b4b96cb18da3d0312a3b036540ec47a4",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+  },
+  "sourceStable": true,
+  "driverSha256": "fa52662681bc7dc78e12a8a60265111b39e55e12db3b7685aa6953752b56d4d6",
+  "passed": 0,
+  "failed": 2,
+  "evidenceRedaction": {
+    "redactedAt": "2026-09-06T14:50:24.8554332Z",
+    "reason": "Removed synthetic credential-bearing query parameters from the failed navigation log; failure status and assertions retained",
+    "originalSha256": "860c8d13a08ec7cf477c17c566818903025f45d860bf63f9029a3839faf94ac2"
+  }
+}

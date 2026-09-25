@@ -1,22 +1,19 @@
 "use client"
 
 import { BarChart3, FileSearch, ListChecks } from "lucide-react"
+import { useEffect, useState } from "react"
 
+import { biLocale, biModeCopy } from "@/lib/dashboard/bi-presentation"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { BICommandMode } from "@/services/bi/bi-contracts"
 
 type BICommandModeTabsProps = {
+  locale?: string
   value: BICommandMode
   onValueChange?: (value: BICommandMode) => void
   modes?: BICommandMode[]
   className?: string
-}
-
-const modeLabels: Record<BICommandMode, string> = {
-  brief: "Brief",
-  command: "Command",
-  investigate: "Investigate",
 }
 
 const modeIcons: Record<BICommandMode, typeof ListChecks> = {
@@ -30,9 +27,12 @@ export function BICommandModeTabs({
   onValueChange,
   modes = ["brief", "command", "investigate"],
   className,
+  locale = "en",
 }: BICommandModeTabsProps) {
+  const [ready, setReady] = useState(false)
+  useEffect(() => setReady(true), [])
   return (
-    <div className={cn("flex flex-wrap items-center gap-1 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-1", className)}>
+    <div aria-busy={!ready} className={cn("flex flex-wrap items-center gap-1 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] p-1", className)}>
       {modes.map((mode) => {
         const Icon = modeIcons[mode]
         const active = mode === value
@@ -44,6 +44,7 @@ export function BICommandModeTabs({
             size="sm"
             variant="ghost"
             aria-pressed={active}
+            disabled={!ready}
             onClick={() => onValueChange?.(mode)}
             className={cn(
               "h-8 rounded-md px-3 text-xs text-[var(--dash-text-soft)]",
@@ -51,7 +52,7 @@ export function BICommandModeTabs({
             )}
           >
             <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-            {modeLabels[mode]}
+            {biModeCopy[biLocale(locale)][mode]}
           </Button>
         )
       })}

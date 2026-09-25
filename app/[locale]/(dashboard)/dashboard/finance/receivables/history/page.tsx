@@ -17,6 +17,12 @@ export default async function FinanceReceivablesHistoryPage({ params }: { params
   return withFinanceSurfaceAccess({
     params,
     surface,
-    onAllowed: () => <AROpenItemsHistoryWorkbench />,
+    onAllowed: () => (
+      <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+        <div className="dashboard-landing-content min-w-0">
+          <AROpenItemsHistoryWorkbench />
+        </div>
+      </div>
+    ),
   })
 }

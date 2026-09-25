@@ -7,7 +7,7 @@ import type {
   BIKpiCard,
   BIKpiState,
   BIRedaction,
-  BIRiskRank,
+  BIUnassessedObservation,
   BISeverity,
   BITrustState,
 } from "@/services/bi/bi-contracts"
@@ -39,6 +39,7 @@ export type BusinessPulseSummary = {
   monthSales: number
   activeSessions: number
   lowStockItems: number
+  stockCoverage: { activeItems: number; itemsWithRecords: number; itemsWithoutRecords: number } | null
 }
 
 export type BusinessPulseCommandData = {
@@ -48,10 +49,11 @@ export type BusinessPulseCommandData = {
   periodStart: string
   periodEnd: string
   currency: string
+  timezone: string
   commandBrief: BICommandBrief
   cards: BIKpiCard[]
   changes: BIChangeEvent[]
   actionsToday: BusinessPulseActionItem[]
-  risks: BIRiskRank[]
+  risks: BIUnassessedObservation[]
   summary: BusinessPulseSummary
 }

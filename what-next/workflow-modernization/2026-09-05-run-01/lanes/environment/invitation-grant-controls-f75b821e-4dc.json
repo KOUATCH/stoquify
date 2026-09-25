@@ -1,0 +1,137 @@
+{
+  "run": "f75b821e-4dc",
+  "startedAt": "2026-09-06T11:56:50.877Z",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "sourcesBefore": {
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/security/role-grant-policy.service.ts": "3a05d510979a36c13f57564c660b326ed21400a5323f039dfa5d52ed203f22a3",
+    "services/users/user-invitation-authority.service.ts": "cea31d719e4f1caeaefce5db3f9b2db365777f24a63541be4a41929183c22f73",
+    "services/users/user-invitation-options.service.ts": "1ed6895231f82c3c3b4bad23e4c5c96de3f7f429b6ce5624b42f4a8d3aee91c4",
+    "services/users/user-invitation-delivery-contract.ts": "65bd2e5e6bb7095f32eaf6d20052c47890c0512ed325cefd59d5f8375944f888",
+    "services/users/user-invitation-issuance.service.ts": "81c4bfb10795c7c31f18cca3645cd88029518ad658de5c8dc7fe33e368529f1a",
+    "services/users/user-invitation-redemption-authority.service.ts": "b6db935303eb5845fb2ef3266b4c51f24e011dc8a9637cca33493d395571402c",
+    "services/users/user-invitation-history.service.ts": "86d0943c05e233607a6f42b9bb4115e8505d1411ce435a08ccc1c7390b1d8500",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/communication/user-invitation-delivery-worker.service.ts": "17e28cb568e07b9b1c66e1accd6ba64cc27f4ebd6402dc798e03a0fbaba353f3",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "en catalogue excludes all inferred role controls despite expanded request claims",
+      "passed": true,
+      "excludedControls": 4,
+      "ordinaryRoleAvailable": true,
+      "durationMs": 28
+    },
+    {
+      "name": "en issuance denies four aliased grants without saving effects",
+      "passed": true,
+      "denied": 4,
+      "effects": 0,
+      "durationMs": 80
+    },
+    {
+      "name": "en duplicate ordinary invitation stores one raw-grant decision",
+      "passed": true,
+      "invites": 1,
+      "events": 1,
+      "outbox": 1,
+      "audits": 1,
+      "durationMs": 235
+    },
+    {
+      "name": "en explicit grant redeems exactly once with credential and audit",
+      "passed": true,
+      "recipientAccounts": 1,
+      "credentialAccounts": 1,
+      "redemptionAudits": 1,
+      "duplicateRejected": true,
+      "durationMs": 179
+    },
+    {
+      "name": "en stored authority revocation blocks locked redemption and worker dispatch",
+      "passed": true,
+      "dispatches": 0,
+      "recipientAccounts": 0,
+      "redemptionDenied": true,
+      "durationMs": 70
+    },
+    {
+      "name": "fr catalogue excludes all inferred role controls despite expanded request claims",
+      "passed": true,
+      "excludedControls": 4,
+      "ordinaryRoleAvailable": true,
+      "durationMs": 12
+    },
+    {
+      "name": "fr issuance denies four aliased grants without saving effects",
+      "passed": true,
+      "denied": 4,
+      "effects": 0,
+      "durationMs": 49
+    },
+    {
+      "name": "fr duplicate ordinary invitation stores one raw-grant decision",
+      "passed": true,
+      "invites": 1,
+      "events": 1,
+      "outbox": 1,
+      "audits": 1,
+      "durationMs": 119
+    },
+    {
+      "name": "fr explicit grant redeems exactly once with credential and audit",
+      "passed": true,
+      "recipientAccounts": 1,
+      "credentialAccounts": 1,
+      "redemptionAudits": 1,
+      "duplicateRejected": true,
+      "durationMs": 143
+    },
+    {
+      "name": "fr stored authority revocation blocks locked redemption and worker dispatch",
+      "passed": true,
+      "dispatches": 0,
+      "recipientAccounts": 0,
+      "redemptionDenied": true,
+      "durationMs": 59
+    },
+    {
+      "name": "older expanded control evidence is held even with current explicit authority",
+      "passed": true,
+      "syntheticCorruptionRejected": true,
+      "dispatches": 0,
+      "reviewRequired": true,
+      "durationMs": 103
+    }
+  ],
+  "limitations": [
+    "All records and revocations belong to new isolated synthetic organizations; no migration, existing account/grant reset or live email.",
+    "Legacy evidence is an explicitly corrupted synthetic fixture. It is tested only for rejection, never used as real approval.",
+    "Two recipient accounts are created by direct service calls with private synthetic tokens. This verifies database effects, not email delivery or browser redemption.",
+    "Other shared permission-alias families and member deactivation remain outside this bounded correction."
+  ],
+  "originalAuthorityBefore": "7fc0b0139afe55fe735704c2f774ad254d36ddefadbaa5d95edde80e04f98ac3",
+  "originalAuthorityAfter": "7fc0b0139afe55fe735704c2f774ad254d36ddefadbaa5d95edde80e04f98ac3",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T11:56:52.711Z",
+  "sourcesAfter": {
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/security/role-grant-policy.service.ts": "3a05d510979a36c13f57564c660b326ed21400a5323f039dfa5d52ed203f22a3",
+    "services/users/user-invitation-authority.service.ts": "cea31d719e4f1caeaefce5db3f9b2db365777f24a63541be4a41929183c22f73",
+    "services/users/user-invitation-options.service.ts": "1ed6895231f82c3c3b4bad23e4c5c96de3f7f429b6ce5624b42f4a8d3aee91c4",
+    "services/users/user-invitation-delivery-contract.ts": "65bd2e5e6bb7095f32eaf6d20052c47890c0512ed325cefd59d5f8375944f888",
+    "services/users/user-invitation-issuance.service.ts": "81c4bfb10795c7c31f18cca3645cd88029518ad658de5c8dc7fe33e368529f1a",
+    "services/users/user-invitation-redemption-authority.service.ts": "b6db935303eb5845fb2ef3266b4c51f24e011dc8a9637cca33493d395571402c",
+    "services/users/user-invitation-history.service.ts": "86d0943c05e233607a6f42b9bb4115e8505d1411ce435a08ccc1c7390b1d8500",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/communication/user-invitation-delivery-worker.service.ts": "17e28cb568e07b9b1c66e1accd6ba64cc27f4ebd6402dc798e03a0fbaba353f3",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "b73024fbef9c711ab88db01b9b7f4450952ae1d6235f5c622315abab54a1298d",
+  "passed": 11,
+  "failed": 0
+}

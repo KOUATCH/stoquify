@@ -1,11 +1,21 @@
 import "server-only"
+import { purchaseLifecycleAuthority, purchaseLifecycleEventKey, purchaseLifecycleScopeSchema, replayPurchaseLifecycle, type PurchaseLifecycleScope } from "./purchase-order-lifecycle"
+import { purchaseLifecycleEventType, purchaseLifecycleKindSchema, purchaseLifecycleRequestSchema, type PurchaseLifecycleKind, type PurchaseLifecyclePreview, type PurchaseLifecycleRequest } from "./purchase-order-lifecycle-contracts"
+import { assertPurchaseApprovalOrder, purchaseApprovalAuthority, purchaseApprovalCommandSchema, purchaseApprovalEventKey, purchaseApprovalRevision, purchaseApprovalScopeSchema, purchaseApprovalSnapshot, replayPurchaseApproval, type PurchaseApprovalScope } from "./purchase-order-approval"
+import type { PurchaseApprovalRequest, PurchaseApprovalPreview } from "./purchase-order-approval-contracts"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 
 import { logger } from "@/lib/logger"
+import { ReceiveItemsSchema, ResolveGoodsReceiptInspectionSchema, UpdatePurchaseOrderSchema } from "./purchase-order.schemas"
+import { purchaseReceivingAuthority, purchaseReceivingScopeSchema, type PurchaseReceivingScope } from "./purchase-receiving-authority"
+import { purchaseQuantitySchema } from "./purchase-quantity"
+import { assertPurchaseOrderEditAuthority, purchaseOrderEditEventKey, purchaseOrderEditRevision, purchaseOrderEditSnapshot, replayPurchaseOrderEdit, type PurchaseOrderEditScope } from "./purchase-order-edit-record"
 import { db } from "@/prisma/db"
 import {
   ApplicationError,
   BusinessRuleError,
   ConflictError,
+  ForbiddenError,
   getPrismaKnownRequest,
   NotFoundError,
 } from "@/services/_shared/action-errors"
@@ -93,13 +103,11 @@ export function canTransition(from: PurchaseOrderStatus, to: PurchaseOrderStatus
   return VALID_TRANSITIONS[from]?.includes(to) ?? false
 }
 
-const NON_EDITABLE_STATUSES: PurchaseOrderStatus[] = ["APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "CANCELLED", "COMPLETED"]
-const NON_DELETABLE_STATUSES: PurchaseOrderStatus[] = ["RECEIVED", "PARTIALLY_RECEIVED", "COMPLETED"]
 const RECEIVABLE_STATUSES: PurchaseOrderStatus[] = ["APPROVED", "PARTIALLY_RECEIVED"]
 const LINE_RECONCILIATION_STATUSES = new Set<PurchaseOrderStatus>(["DRAFT", "SUBMITTED"])
 
 export function canArchivePurchaseOrderStatus(status: PurchaseOrderStatus) {
-  return !NON_DELETABLE_STATUSES.includes(status)
+  return ["DRAFT", "CANCELLED"].includes(status)
 }
 
 export function canReceivePurchaseOrderStatus(status: PurchaseOrderStatus) {
@@ -350,6 +358,7 @@ function generateReceiptSerials(params: {
   provided?: string[]
 }) {
   const provided = params.provided?.filter(Boolean) ?? []
+  if (!Number.isInteger(params.receivedQuantity) || params.receivedQuantity > 5000) throw new BusinessRuleError("Receive serial-tracked items in whole units, at most 5000 per receipt.")
   if (provided.length > params.receivedQuantity) {
     throw new BusinessRuleError(`Serial number count cannot exceed received quantity for "${params.sku}"`)
   }
@@ -428,6 +437,7 @@ async function applyInventoryReceipt(
 export function transformPO(po: POWithRelations) {
   return {
     id:                   po.id,
+    editRevision:         purchaseOrderEditRevision(po),
     orderNumber:          po.orderNumber,
     status:               po.status,
     orderDate:            po.orderDate,
@@ -445,6 +455,8 @@ export function transformPO(po: POWithRelations) {
     supplier:             po.supplier,
     location:             po.location,
     organization:         po.organization,
+    createdById:          po.createdById,
+    approvedById:         po.approvedById,
     createdBy:            mapUser(po.createdBy),
     approvedBy:           mapUser(po.approvedBy),
     approvedAt:           po.approvedAt,
@@ -505,6 +517,7 @@ export async function getPurchaseOrderById(id: string, organizationId: string) {
 // ── Create ────────────────────────────────────────────────────────────────────
 
 export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
+  input.orderLines.forEach(line => purchaseQuantitySchema.parse(line.quantity))
   logger.info("purchase-order.create", { orgId: input.organizationId, supplierId: input.supplierId })
 
   assertDateRange(input.date, input.expectedDeliveryDate)
@@ -522,6 +535,7 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
   const totals      = calcOrderTotals(input.orderLines, input.shippingCost)
 
   const po = await db.$transaction(async (tx) => {
+    await assertModuleNewWorkInTx(tx, { organizationId: input.organizationId, moduleSlug: "purchasing", operation: "purchasing.order.create" })
     const orderNumber = await allocatePurchaseDocumentNumber(tx, {
       organizationId: input.organizationId,
       documentType: PURCHASE_DOCUMENT_TYPE.PURCHASE_ORDER,
@@ -569,54 +583,64 @@ export async function createPurchaseOrder(input: CreatePurchaseOrderInput) {
 
 // ── Update ────────────────────────────────────────────────────────────────────
 
+async function lockedPurchaseOrder(tx: Prisma.TransactionClient, id: string, organizationId: string) {
+  await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${id} AND "organizationId" = ${organizationId} AND "deletedAt" IS NULL FOR UPDATE`
+  const order = await tx.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, include: standardInclude })
+  if (!order) throw new NotFoundError("Purchase order not found")
+  return order
+}
+
+export async function getPurchaseOrderDraftForActor(id: string, scope: PurchaseOrderEditScope) {
+  return db.$transaction(async tx => {
+    await assertPurchaseOrderEditAuthority(tx, scope)
+    const order = await tx.purchaseOrder.findFirst({ where: { id, organizationId: scope.organizationId, deletedAt: null }, include: standardInclude })
+    if (!order) throw new NotFoundError("Purchase order not found")
+    return transformPO(order)
+  }, { isolationLevel: "ReadCommitted", timeout: 15000 })
+}
+
 export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
+  input = UpdatePurchaseOrderSchema.parse(input)
   logger.info("purchase-order.update", { id: input.id })
+  const { sessionId: _sessionId, sessionToken: _sessionToken, ...command } = input
+  const commandHash = hashBusinessPayload(command)
+  return db.$transaction(async (tx) => {
+    await assertPurchaseOrderEditAuthority(tx, input)
+    const existing = await lockedPurchaseOrder(tx, input.id, input.organizationId)
+    const replay = await replayPurchaseOrderEdit(tx, input, commandHash)
+    if (replay) return { ...transformPO(existing), editReceipt: replay }
+    if (purchaseOrderEditRevision(existing) !== input.expectedRevision) throw new ConflictError("This order changed after you opened it. Compare the current record with your draft before saving.")
+    if (existing.status !== "DRAFT") throw new BusinessRuleError(`Cannot edit a purchase order with status: ${existing.status}. Only draft orders can be edited.`)
 
-  const existing = await db.purchaseOrder.findFirst({
-    where: { id: input.id, organizationId: input.organizationId },
-    include: standardInclude,
-  })
-  if (!existing) throw new NotFoundError("Purchase order not found")
-  if (NON_EDITABLE_STATUSES.includes(existing.status)) {
-    throw new BusinessRuleError(`Cannot edit a purchase order with status: ${existing.status}`)
-  }
-
-  const orderDate  = existing.orderDate.toISOString().slice(0, 10)
-  const delivDate  = existing.expectedDeliveryDate?.toISOString().slice(0, 10) ?? orderDate
-  assertDateRange(input.date ?? orderDate, input.expectedDeliveryDate ?? delivDate)
-
-  if (input.supplierId) {
-    const s = await db.supplier.findFirst({ where: { id: input.supplierId, organizationId: input.organizationId } })
-    if (!s) throw new NotFoundError("Supplier not found or does not belong to this organisation")
-  }
-  if (input.locationId) {
-    const l = await db.location.findFirst({ where: { id: input.locationId, organizationId: input.organizationId } })
-    if (!l) throw new NotFoundError("Location not found or does not belong to this organisation")
-  }
-
-  let totals = {
-    subtotal:  toN(existing.subtotal),
-    taxAmount: toN(existing.taxAmount),
-    discount:  toN(existing.discount),
-    total:     toN(existing.total),
-  }
-  if (input.orderLines) {
-    if (input.orderLines.length > 0) {
-      assertUniqueItems(input.orderLines)
-      const items = await db.item.findMany({
-        where: { id: { in: input.orderLines.map(l => l.itemId) }, organizationId: input.organizationId },
-        select: { id: true },
-      })
-      if (items.length !== input.orderLines.length) throw new NotFoundError("One or more items not found in this organisation")
-      totals = calcOrderTotals(input.orderLines, toN(input.shippingCost ?? existing.shippingCost))
-    } else {
-      totals = { subtotal: 0, taxAmount: 0, discount: 0, total: input.shippingCost ?? 0 }
+    const orderDate = existing.orderDate.toISOString().slice(0, 10)
+    const delivDate = existing.expectedDeliveryDate?.toISOString().slice(0, 10) ?? orderDate
+    assertDateRange(input.date ?? orderDate, input.expectedDeliveryDate ?? delivDate)
+    if (input.supplierId) {
+      const supplier = await tx.supplier.findFirst({ where: { id: input.supplierId, organizationId: input.organizationId } })
+      if (!supplier) throw new NotFoundError("Supplier not found or does not belong to this organisation")
     }
-  }
-
-  const updated = await db.$transaction(async (tx) => {
+    if (input.locationId) {
+      const location = await tx.location.findFirst({ where: { id: input.locationId, organizationId: input.organizationId } })
+      if (!location) throw new NotFoundError("Location not found or does not belong to this organisation")
+    }
+    const shippingCost = input.shippingCost ?? existing.shippingCost
+    let totals: { subtotal: Prisma.Decimal | number; taxAmount: Prisma.Decimal | number; discount: Prisma.Decimal | number; total: Prisma.Decimal | number } = {
+      subtotal: existing.subtotal, taxAmount: existing.taxAmount, discount: existing.discount, total: existing.total,
+    }
+    if (input.orderLines) {
+      if (input.orderLines.length > 0) {
+        assertUniqueItems(input.orderLines)
+        const items = await tx.item.findMany({ where: { id: { in: input.orderLines.map(line => line.itemId) }, organizationId: input.organizationId }, select: { id: true } })
+        if (items.length !== input.orderLines.length) throw new NotFoundError("One or more items not found in this organisation")
+        totals = calcOrderTotals(input.orderLines, toN(shippingCost))
+      } else {
+        totals = { subtotal: 0, taxAmount: 0, discount: 0, total: shippingCost }
+      }
+    } else if (input.shippingCost !== undefined) {
+      totals.total = new Prisma.Decimal(existing.subtotal).plus(existing.taxAmount).minus(existing.discount).plus(shippingCost)
+    }
     await tx.purchaseOrder.update({
-      where: { id: input.id },
+      where: { id: input.id, organizationId: input.organizationId, deletedAt: null, status: "DRAFT" },
       data: {
         orderDate:            input.date ? new Date(input.date) : undefined,
         supplierId:           input.supplierId,
@@ -624,11 +648,12 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
         expectedDeliveryDate: input.expectedDeliveryDate ? new Date(input.expectedDeliveryDate) : undefined,
         paymentTerms:         input.paymentTerms,
         notes:                input.notes,
-        shippingCost:         input.shippingCost ?? existing.shippingCost,
+        shippingCost,
         subtotal:             totals.subtotal,
         taxAmount:            totals.taxAmount,
         discount:             totals.discount,
         total:                totals.total,
+        updatedAt:            new Date(Math.max(Date.now(), existing.updatedAt.getTime() + 1)),
       },
     })
 
@@ -642,141 +667,176 @@ export async function updatePurchaseOrder(input: UpdatePurchaseOrderInput) {
       })
     }
 
-    return tx.purchaseOrder.findUnique({ where: { id: input.id }, include: standardInclude })
-  })
-
-  return transformPO(updated!)
+    const updated = await tx.purchaseOrder.findUniqueOrThrow({ where: { id: input.id, organizationId: input.organizationId }, include: standardInclude })
+    await assertPurchaseOrderEditAuthority(tx, input)
+    const result = { requestReference: input.idempotencyKey, orderId: updated.id, revision: purchaseOrderEditRevision(updated), savedAt: updated.updatedAt.toISOString() }
+    const event = await recordBusinessEventInTx(tx, { organizationId: input.organizationId, eventType: "purchase_order.draft_updated", eventSource: "INTERNAL", schemaVersion: 1,
+      idempotencyKey: purchaseOrderEditEventKey(input.idempotencyKey), sourceId: input.id, actorId: input.updatedById, occurredAt: updated.updatedAt,
+      payload: { entityType: "PurchaseOrder", commandHash, expectedRevision: input.expectedRevision, result }, outboxMessages: [],
+    })
+    await tx.auditLog.create({ data: { organizationId: input.organizationId, userId: input.updatedById, entityType: "PurchaseOrder", entityId: input.id, action: "UPDATE_PURCHASE_ORDER_DRAFT",
+      changes: JSON.parse(JSON.stringify({ before: purchaseOrderEditSnapshot(existing), after: purchaseOrderEditSnapshot(updated), requestReference: input.idempotencyKey, eventId: event.event.id })) as Prisma.InputJsonValue,
+    } })
+    await markBusinessEventAppliedInTx(tx, input.organizationId, event.event.id)
+    return { ...transformPO(updated), editReceipt: { ...result, replayed: false } }
+  }, { isolationLevel: "ReadCommitted", timeout: 15000 })
 }
 
 // ── Delete ────────────────────────────────────────────────────────────────────
 
-export async function deletePurchaseOrder(id: string, organizationId: string, deletedById: string) {
-  logger.info("purchase-order.delete", { id })
-  const po = await db.purchaseOrder.findFirst({
-    where: { id, organizationId, deletedAt: null },
-    select: { id: true, status: true, orderNumber: true, createdById: true, approvedById: true },
-  })
-  if (!po) throw new NotFoundError("Purchase order not found")
-  if (!canArchivePurchaseOrderStatus(po.status)) {
-    throw new BusinessRuleError(`Cannot delete a purchase order with status: ${po.status}`)
-  }
-  if (!deletedById || deletedById === "system-user") {
-    throw new BusinessRuleError("A real actor identity is required to archive a purchase order.")
-  }
-
-  const archivedAt = new Date()
-  await db.$transaction(async (tx) => {
-    await tx.purchaseOrder.update({
-      where: { id },
-      data: {
-        status: "CANCELLED",
-        deletedAt: archivedAt,
-        updatedAt: archivedAt,
-      },
-    })
-    await tx.auditLog.create({
-      data: {
-        organizationId,
-        userId: deletedById,
-        entityType: "PurchaseOrder",
-        entityId: id,
-        action: "ARCHIVE_PURCHASE_ORDER",
-        changes: {
-          before: {
-            orderNumber: po.orderNumber,
-            status: po.status,
-            createdById: po.createdById,
-            approvedById: po.approvedById,
-          },
-          after: {
-            status: "CANCELLED",
-            deletedAt: archivedAt.toISOString(),
-          },
-        },
-      },
-    })
-    const eventResult = await recordBusinessEventInTx(tx, {
-      organizationId,
-      eventType: "purchase_order.archived",
-      eventSource: "INTERNAL",
-      schemaVersion: 1,
-      idempotencyKey: `purchase-order:archive:${organizationId}:${id}`,
-      payload: {
-        purchaseOrderId: id,
-        orderNumber: po.orderNumber,
-        fromStatus: po.status,
-        toStatus: "CANCELLED",
-        archivedAt: archivedAt.toISOString(),
-        archivedById: deletedById,
-      },
-      occurredAt: archivedAt,
-      actorId: deletedById,
-      sourceType: "PURCHASE_ORDER",
-      sourceId: id,
-      metadata: {
-        gate: "priority-006-hard-delete-immutability",
-        classification: "SOFT_DELETE_ARCHIVE",
-      },
-    })
-    await markBusinessEventAppliedInTx(tx, organizationId, eventResult.event.id)
-  })
-  return po.orderNumber
+export async function deletePurchaseOrder(id: string, organizationId: string, deletedById: string, request?: PurchaseLifecycleRequest & PurchaseLifecycleScope) {
+  if (!request || request.actorId !== deletedById || request.organizationId !== organizationId || request.kind !== "archive") throw new BusinessRuleError("Review this archive request before confirming.", "REVIEW_REQUIRED")
+  return executeLifecycleContext(id, request)
 }
 
-// ── Workflow transitions ──────────────────────────────────────────────────────
+function executeLifecycleContext(id: string, context: PurchaseLifecycleRequest & PurchaseLifecycleScope) {
+  const { organizationId, actorId, sessionId, sessionToken, ...request } = context
+  return executePurchaseOrderLifecycle(id, { organizationId, actorId, sessionId, sessionToken }, request)
+}
 
-async function transition(
-  id: string,
-  organizationId: string,
-  toStatus: PurchaseOrderStatus,
-  extra?: Partial<Parameters<typeof db.purchaseOrder.update>[0]["data"]>,
-) {
-  const po = await db.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, include: standardInclude })
-  if (!po) throw new NotFoundError("Purchase order not found")
-  if (!canTransition(po.status, toStatus)) {
-    throw new BusinessRuleError(`Cannot transition purchase order from ${po.status} to ${toStatus}`)
+const lifecycleTarget: Record<PurchaseLifecycleKind, PurchaseOrderStatus> = { submit: "SUBMITTED", cancel: "CANCELLED", complete: "COMPLETED", archive: "CANCELLED" }
+
+async function lifecycleEvidence(tx: Prisma.TransactionClient, po: POWithRelations) {
+  const record = await tx.purchaseOrder.findUniqueOrThrow({ where: { id: po.id, organizationId: po.organizationId }, select: {
+    organization: { select: { currency: true } },
+    _count: { select: { goodsReceipts: true, payments: true, supplierInvoices: true, threeWayMatches: true, acknowledgementEnvelopes: true, purchaseReturns: true, supplierCreditNotes: true } },
+    goodsReceipts: { orderBy: { id: "asc" }, select: { id: true, status: true, deletedAt: true, finalizedAt: true, inventoryPostedAt: true, updatedAt: true, lines: { orderBy: { id: "asc" }, select: { purchaseOrderLineId: true, receivedQuantity: true } } } },
+  } })
+  return { currency: record.organization.currency, labels: { supplier: po.supplier.name, location: po.location.name, lines: po.lines.map(line => ({ id: line.id, nameEn: line.item.nameEn, nameFr: line.item.nameFr ?? line.item.nameEn })).sort((a, b) => a.id.localeCompare(b.id)) }, counts: record._count, receipts: record.goodsReceipts.map(receipt => ({ ...receipt, lines: receipt.lines.map(line => ({ ...line, receivedQuantity: line.receivedQuantity.toString() })), deletedAt: receipt.deletedAt?.toISOString() ?? null, finalizedAt: receipt.finalizedAt?.toISOString() ?? null, inventoryPostedAt: receipt.inventoryPostedAt?.toISOString() ?? null, updatedAt: receipt.updatedAt.toISOString() })) }
+}
+type LifecycleEvidence = Awaited<ReturnType<typeof lifecycleEvidence>>
+const lifecycleRevision = (po: POWithRelations, evidence: LifecycleEvidence) => hashBusinessPayload({ version: 1, order: purchaseApprovalSnapshot(po), evidence })
+async function assertLifecycleReady(tx: Prisma.TransactionClient, po: POWithRelations, kind: PurchaseLifecycleKind, evidence: LifecycleEvidence) {
+  if (kind === "archive") {
+    if (!canArchivePurchaseOrderStatus(po.status)) throw new BusinessRuleError("Cancel a submitted or approved order explicitly before reviewing archive.", "ARCHIVE_STATUS")
+    if (Object.values(evidence.counts).some(count => count > 0) || po.lines.some(line => new Prisma.Decimal(line.receivedQuantity).gt(0))) throw new BusinessRuleError("Keep this order available: linked receiving, supplier or financial records require retained access.", "RETAINED_OBLIGATIONS")
+  } else {
+    await assertPurchaseOrderTransition(tx, po, po.organizationId, lifecycleTarget[kind])
+    if ((kind === "cancel" || kind === "complete") && evidence.receipts.some(receipt => !receipt.deletedAt && ["DRAFT", "HELD"].includes(receipt.status))) throw new BusinessRuleError("Resolve draft or held goods receipts before changing the order lifecycle.", "OPEN_RECEIPT")
+    if (kind === "complete") {
+      const finalized = evidence.receipts.filter(receipt => !receipt.deletedAt && receipt.finalizedAt && receipt.inventoryPostedAt && ["RECEIVED", "COMPLETED"].includes(receipt.status))
+      if (po.lines.some(line => finalized.flatMap(receipt => receipt.lines).filter(receiptLine => receiptLine.purchaseOrderLineId === line.id).reduce((sum, receiptLine) => sum.plus(receiptLine.receivedQuantity), new Prisma.Decimal(0)).lt(line.orderedQuantity))) throw new BusinessRuleError("Completion requires finalized receiving evidence for every ordered quantity.", "RECEIPT_EVIDENCE_REQUIRED")
+    }
+    if (kind === "submit") {
+      await assertModuleNewWorkInTx(tx, { organizationId: po.organizationId, moduleSlug: "purchasing", operation: "purchasing.order.submit" })
+      const [supplier, location, items] = await Promise.all([
+        tx.supplier.findFirst({ where: { id: po.supplierId, organizationId: po.organizationId, isActive: true, deletedAt: null }, select: { id: true } }),
+        tx.location.findFirst({ where: { id: po.locationId, organizationId: po.organizationId, isActive: true, deletedAt: null }, select: { id: true } }),
+        tx.item.findMany({ where: { id: { in: po.lines.map(line => line.itemId) }, organizationId: po.organizationId, isActive: true, deletedAt: null }, select: { id: true } }),
+      ])
+      if (!supplier || !location || new Set(items.map(item => item.id)).size !== new Set(po.lines.map(line => line.itemId)).size) throw new BusinessRuleError("Review the supplier, location and items: one or more are no longer available.", "REFERENCE_UNAVAILABLE")
+    }
   }
-  const updated = await db.purchaseOrder.update({
-    where: { id },
-    data: { status: toStatus, updatedAt: new Date(), ...extra },
-    include: standardInclude,
-  })
-  return transformPO(updated)
 }
 
-export async function submitPurchaseOrder(id: string, organizationId: string) {
-  logger.info("purchase-order.submit", { id })
-  const po = await db.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, select: { lines: true, status: true } })
-  if (!po) throw new NotFoundError("Purchase order not found")
-  if (!po.lines || po.lines.length === 0) throw new BusinessRuleError("Cannot submit a purchase order without line items")
-  return transition(id, organizationId, "SUBMITTED")
+export async function getPurchaseOrderLifecyclePreview(id: string, scopeInput: PurchaseLifecycleScope, kindInput: PurchaseLifecycleKind): Promise<PurchaseLifecyclePreview> {
+  const scope = purchaseLifecycleScopeSchema.parse(scopeInput), kind = purchaseLifecycleKindSchema.parse(kindInput)
+  return db.$transaction(async tx => {
+    const authority = await purchaseLifecycleAuthority(tx, scope, kind)
+    const po = await lockedPurchaseOrder(tx, id, scope.organizationId), evidence = await lifecycleEvidence(tx, po)
+    await assertLifecycleReady(tx, po, kind, evidence)
+    return { organizationId: scope.organizationId, actorId: scope.actorId, orderId: id, orderNumber: po.orderNumber, kind, revision: lifecycleRevision(po, evidence), status: po.status,
+      supplier: po.supplier.name, location: po.location.name, currency: evidence.currency, total: po.total.toString(), notes: po.notes, requiresFreshAuth: authority.requiresFreshAuth,
+      linkedRecords: Object.values(evidence.counts).reduce((sum, count) => sum + count, 0), heldReceipts: evidence.receipts.filter(receipt => !receipt.deletedAt && receipt.status === "HELD").length,
+      lines: po.lines.map(line => ({ id: line.id, nameEn: line.item.nameEn, nameFr: line.item.nameFr ?? line.item.nameEn, ordered: line.orderedQuantity.toString(), received: line.receivedQuantity.toString(), total: line.lineTotal.toString() })) }
+  }, { isolationLevel: "ReadCommitted", timeout: 15000 })
 }
 
-export async function approvePurchaseOrder(id: string, organizationId: string, approvedById: string) {
+export async function executePurchaseOrderLifecycle(id: string, scopeInput: PurchaseLifecycleScope, requestInput: PurchaseLifecycleRequest) {
+  const scope = purchaseLifecycleScopeSchema.parse(scopeInput), request = purchaseLifecycleRequestSchema.parse(requestInput)
+  const commandHash = hashBusinessPayload({ id, organizationId: scope.organizationId, actorId: scope.actorId, kind: request.kind, expectedRevision: request.expectedRevision, reason: request.reason ?? null })
+  return db.$transaction(async tx => {
+    await purchaseLifecycleAuthority(tx, scope, request.kind)
+    const replay = await replayPurchaseLifecycle(tx, id, scope, request.kind, request.idempotencyKey, commandHash)
+    if (replay) return { id, lifecycleReceipt: replay }
+    // Lock retained rows as well so a concurrent archive can still recover its exact receipt.
+    await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${id} AND "organizationId" = ${scope.organizationId} FOR UPDATE`
+    const concurrentReplay = await replayPurchaseLifecycle(tx, id, scope, request.kind, request.idempotencyKey, commandHash)
+    if (concurrentReplay) return { id, lifecycleReceipt: concurrentReplay }
+    const po = await tx.purchaseOrder.findFirst({ where: { id, organizationId: scope.organizationId, deletedAt: null }, include: standardInclude })
+    if (!po) throw new NotFoundError("Purchase order not found")
+    const evidence = await lifecycleEvidence(tx, po)
+    if (lifecycleRevision(po, evidence) !== request.expectedRevision) throw new ConflictError("The order or its linked records changed after review. Review the current record.")
+    await assertLifecycleReady(tx, po, request.kind, evidence)
+    if ((await purchaseLifecycleAuthority(tx, scope, request.kind)).requiresFreshAuth) throw new BusinessRuleError("Verify your current password before cancelling or archiving.", "FRESH_AUTH_REQUIRED")
+    const recordedAt = new Date(Math.max(Date.now(), po.updatedAt.getTime() + 1)), toStatus = lifecycleTarget[request.kind]
+    await tx.purchaseOrder.update({ where: { id, organizationId: scope.organizationId, deletedAt: null, status: po.status }, data: {
+      status: toStatus, updatedAt: recordedAt, deletedAt: request.kind === "archive" ? recordedAt : undefined,
+      // The reason belongs to the immutable decision evidence; original order notes remain intact.
+    } })
+    const result = { requestReference: request.idempotencyKey, orderId: id, kind: request.kind, reviewedRevision: request.expectedRevision, actorId: scope.actorId, recordedAt: recordedAt.toISOString(), fromStatus: po.status, toStatus, archived: request.kind === "archive" }
+    const event = await recordBusinessEventInTx(tx, { organizationId: scope.organizationId, eventType: purchaseLifecycleEventType(request.kind), eventSource: "INTERNAL", schemaVersion: 1,
+      idempotencyKey: purchaseLifecycleEventKey(request.idempotencyKey), sourceId: id, actorId: scope.actorId, occurredAt: recordedAt,
+      payload: { entityType: "PurchaseOrder", commandHash, reason: request.reason ?? null, result }, outboxMessages: [] })
+    await tx.auditLog.create({ data: { organizationId: scope.organizationId, userId: scope.actorId, entityType: "PurchaseOrder", entityId: id,
+      action: ({ submit: "SUBMIT_PURCHASE_ORDER", cancel: "CANCEL_PURCHASE_ORDER", complete: "COMPLETE_PURCHASE_ORDER", archive: "ARCHIVE_PURCHASE_ORDER" })[request.kind],
+      changes: { before: purchaseApprovalSnapshot(po), evidence, reason: request.reason ?? null, after: result, eventId: event.event.id } as Prisma.InputJsonValue,
+    } })
+    await markBusinessEventAppliedInTx(tx, scope.organizationId, event.event.id)
+    return { id, lifecycleReceipt: { ...result, replayed: false } }
+  }, { isolationLevel: "ReadCommitted", timeout: 15000 })
+}
+
+async function assertPurchaseOrderTransition(tx: Prisma.TransactionClient, po: POWithRelations, organizationId: string, toStatus: PurchaseOrderStatus) {
+  if (!canTransition(po.status, toStatus)) throw new BusinessRuleError(`Cannot transition purchase order from ${po.status} to ${toStatus}`)
+  if (toStatus === "SUBMITTED" && po.lines.length === 0) throw new BusinessRuleError("Cannot submit a purchase order without line items")
+  if (toStatus === "COMPLETED") {
+    const held = await tx.goodsReceipt.findFirst({ where: { purchaseOrderId: po.id, organizationId, status: "HELD", deletedAt: null }, select: { receiptNumber: true } })
+    if (held) throw new BusinessRuleError(`Purchase order cannot be completed while goods receipt ${held.receiptNumber} is held for inspection.`)
+    if (!po.lines.length || po.lines.some(line => new Prisma.Decimal(line.receivedQuantity).lt(line.orderedQuantity))) throw new BusinessRuleError("Purchase order completion requires all ordered quantities to be received.")
+  }
+}
+
+export async function submitPurchaseOrder(id: string, organizationId: string, request?: PurchaseLifecycleRequest & PurchaseLifecycleScope) {
+  if (!request || request.organizationId !== organizationId || request.kind !== "submit") throw new BusinessRuleError("Review this submission before confirming.", "REVIEW_REQUIRED")
+  return executeLifecycleContext(id, request)
+}
+
+export async function getPurchaseOrderApprovalPreview(id: string, scopeInput: PurchaseApprovalScope): Promise<PurchaseApprovalPreview> {
+  const scope = purchaseApprovalScopeSchema.parse(scopeInput)
+  return db.$transaction(async tx => {
+    const authority = await purchaseApprovalAuthority(tx, scope)
+    const po = await lockedPurchaseOrder(tx, id, scope.organizationId)
+    assertPurchaseApprovalOrder(po, scope.actorId)
+    const organization = await tx.organization.findUniqueOrThrow({ where: { id: scope.organizationId }, select: { currency: true } })
+    return { organizationId: scope.organizationId, actorId: scope.actorId, orderId: po.id, orderNumber: po.orderNumber, revision: purchaseApprovalRevision(po),
+      requester: [po.createdBy?.firstName, po.createdBy?.lastName].filter(Boolean).join(" ") || po.createdById!, supplier: po.supplier.name, location: po.location.name, currency: organization.currency,
+      total: po.total.toString(), orderDate: po.orderDate.toISOString(), expectedDeliveryDate: po.expectedDeliveryDate?.toISOString() ?? null,
+      paymentTerms: po.paymentTerms, notes: po.notes, shippingCost: (po.shippingCost ?? 0).toString(), taxAmount: (po.taxAmount ?? 0).toString(), discount: (po.discount ?? 0).toString(),
+      requiresFreshAuth: !authority.fresh, lines: po.lines.map(line => ({ id: line.id, nameEn: line.item.nameEn, nameFr: line.item.nameFr ?? line.item.nameEn, quantity: line.orderedQuantity.toString(), unitCost: line.unitCost.toString(), total: line.lineTotal.toString(), taxRate: (line.taxRate ?? 0).toString(), discount: (line.discount ?? 0).toString(), notes: line.notes })) }
+  }, { timeout: 15000 })
+}
+
+export async function approvePurchaseOrder(id: string, organizationId: string, approvedById: string, context: PurchaseApprovalRequest & PurchaseApprovalScope) {
   logger.info("purchase-order.approve", { id, approvedById })
   if (!approvedById || approvedById === "system-user") {
     throw new BusinessRuleError("A real approver identity is required.")
   }
-
-  const po = await db.purchaseOrder.findFirst({
-    where: { id, organizationId, deletedAt: null },
-    include: standardInclude,
-  })
-  if (!po) throw new NotFoundError("Purchase order not found")
-  if (!canTransition(po.status, "APPROVED")) {
-    throw new BusinessRuleError(`Cannot transition purchase order from ${po.status} to APPROVED`)
-  }
-  if (po.createdById && po.createdById === approvedById) {
-    throw new BusinessRuleError("A purchase order must be approved by a different user than the requester.")
-  }
-
-  const approvedAt = new Date()
-  const updated = await db.$transaction(async (tx) => {
-    const approved = await tx.purchaseOrder.update({
-      where: { id },
+  const input = purchaseApprovalCommandSchema.parse(context)
+  if (input.organizationId !== organizationId || input.actorId !== approvedById) throw new BusinessRuleError("Approval identity does not match the command.", "TENANT_SCOPE_VIOLATION")
+  const commandHash = hashBusinessPayload({ id, organizationId, approvedById, expectedRevision: input.expectedRevision })
+  return db.$transaction(async (tx) => {
+    await purchaseApprovalAuthority(tx, input)
+    // Recovery can read the retained approval after a later cancellation/archive.
+    const replay = await replayPurchaseApproval(tx, id, input, input.idempotencyKey, commandHash)
+    if (replay) return { id, approvalReceipt: replay }
+    const po = await lockedPurchaseOrder(tx, id, organizationId)
+    // A concurrent identical request may have committed while this waited for the order lock.
+    const concurrentReplay = await replayPurchaseApproval(tx, id, input, input.idempotencyKey, commandHash)
+    if (concurrentReplay) return { id, approvalReceipt: concurrentReplay }
+    if (purchaseApprovalRevision(po) !== input.expectedRevision) throw new ConflictError("This order changed after review. Review the current order before approving.")
+    assertPurchaseApprovalOrder(po, approvedById)
+    if (!(await purchaseApprovalAuthority(tx, input)).fresh) throw new BusinessRuleError("Verify your current password before approving.", "FRESH_AUTH_REQUIRED")
+    const approvedAt = new Date()
+    await tx.purchaseOrder.update({
+      where: { id, organizationId, deletedAt: null, status: "SUBMITTED" },
       data: { status: "APPROVED", approvedById, approvedAt, updatedAt: approvedAt },
       include: standardInclude,
     })
+    const result = { requestReference: input.idempotencyKey, orderId: id, reviewedRevision: input.expectedRevision, approvedById, approvedAt: approvedAt.toISOString() }
+    const event = await recordBusinessEventInTx(tx, { organizationId, eventType: "purchase_order.approved", eventSource: "INTERNAL", schemaVersion: 1,
+      idempotencyKey: purchaseApprovalEventKey(input.idempotencyKey), sourceId: id, actorId: approvedById, occurredAt: approvedAt,
+      payload: { entityType: "PurchaseOrder", commandHash, result }, outboxMessages: [] })
     await tx.auditLog.create({
       data: {
         organizationId,
@@ -785,55 +845,30 @@ export async function approvePurchaseOrder(id: string, organizationId: string, a
         entityId: id,
         action: "APPROVE_PURCHASE_ORDER",
         changes: {
-          before: {
-            status: po.status,
-            createdById: po.createdById,
-          },
+          before: purchaseApprovalSnapshot(po),
           after: {
             status: "APPROVED",
             approvedById,
             approvedAt: approvedAt.toISOString(),
           },
+          requestReference: input.idempotencyKey,
+          eventId: event.event.id,
         },
       },
     })
-    return approved
-  })
-
-  return transformPO(updated)
+    await markBusinessEventAppliedInTx(tx, organizationId, event.event.id)
+    return { id, approvalReceipt: { ...result, replayed: false } }
+  }, { timeout: 15000 })
 }
 
-export async function cancelPurchaseOrder(id: string, organizationId: string, reason?: string) {
-  logger.info("purchase-order.cancel", { id })
-  const po = await db.purchaseOrder.findFirst({ where: { id, organizationId, deletedAt: null }, select: { notes: true, status: true, orderNumber: true } })
-  if (!po) throw new NotFoundError("Purchase order not found")
-  if (!canTransition(po.status, "CANCELLED")) {
-    throw new BusinessRuleError(`Cannot cancel a purchase order with status: ${po.status}`)
-  }
-  const updated = await db.purchaseOrder.update({
-    where: { id },
-    data: {
-      status: "CANCELLED",
-      notes:  reason ? `${po.notes ?? ""}\n\nCancellation reason: ${reason}`.trim() : po.notes,
-      updatedAt: new Date(),
-    },
-    include: standardInclude,
-  })
-  return transformPO(updated)
+export async function cancelPurchaseOrder(id: string, organizationId: string, reason?: string, request?: PurchaseLifecycleRequest & PurchaseLifecycleScope) {
+  if (!request || request.organizationId !== organizationId || request.kind !== "cancel" || request.reason !== reason) throw new BusinessRuleError("Review this cancellation before confirming.", "REVIEW_REQUIRED")
+  return executeLifecycleContext(id, request)
 }
 
-export async function closePurchaseOrder(id: string, organizationId: string) {
-  logger.info("purchase-order.close", { id })
-  const heldReceipt = await db.goodsReceipt.findFirst({
-    where: { purchaseOrderId: id, organizationId, status: "HELD", deletedAt: null },
-    select: { receiptNumber: true },
-  })
-  if (heldReceipt) {
-    throw new BusinessRuleError(
-      `Purchase order cannot be completed while goods receipt ${heldReceipt.receiptNumber} is held for inspection.`,
-    )
-  }
-  return transition(id, organizationId, "COMPLETED")
+export async function closePurchaseOrder(id: string, organizationId: string, request?: PurchaseLifecycleRequest & PurchaseLifecycleScope) {
+  if (!request || request.organizationId !== organizationId || request.kind !== "complete") throw new BusinessRuleError("Review this completion before confirming.", "REVIEW_REQUIRED")
+  return executeLifecycleContext(id, request)
 }
 
 // ── Receive items (goods receipt + inventory update) ──────────────────────────
@@ -873,12 +908,17 @@ function assertReceiptReplay(
   }
 }
 
-export async function receiveItems(input: ReceiveItemsInput) {
+export async function receiveItems(input: ReceiveItemsInput, scopeInput?: PurchaseReceivingScope, client?: Prisma.TransactionClient) {
+  input = ReceiveItemsSchema.parse(input)
+  const scope = purchaseReceivingScopeSchema.parse(scopeInput)
+  if (scope.organizationId !== input.organizationId || scope.actorId !== input.receivedById) throw new ForbiddenError("The receiving actor must match the current session.")
+  const transaction = <T>(work: (tx: Prisma.TransactionClient) => Promise<T>) => client ? work(client) : db.$transaction(work, { timeout: 15000 })
   logger.info("purchase-order.receive", { id: input.purchaseOrderId, orgId: input.organizationId })
   const payloadHash = receiveItemsPayloadHash(input)
 
   try {
-    const result = await db.$transaction(async (tx) => {
+    const result = await transaction(async (tx) => {
+      await purchaseReceivingAuthority(tx, scope, "receive")
       const locked = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
         SELECT "id"
         FROM "purchase_orders"
@@ -926,14 +966,23 @@ export async function receiveItems(input: ReceiveItemsInput) {
         throw new BusinessRuleError(`Cannot receive items for a purchase order with status: ${po.status}`)
       }
 
+      const effectiveLocationId = input.locationId ?? po.locationId
+      const location = await tx.location.findFirst({ where: { id: effectiveLocationId, organizationId: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } })
+      if (!location) throw new NotFoundError("The receiving location is unavailable in this organization.")
+
       const receiptNumber = await allocatePurchaseDocumentNumber(tx, {
         organizationId: input.organizationId,
         documentType: PURCHASE_DOCUMENT_TYPE.GOODS_RECEIPT,
       })
       const lineMap = new Map(po.lines.map((line) => [line.id, line]))
+      const serialUnits = input.items.reduce((sum, item) => sum + (lineMap.get(item.lineId)?.item.trackSerialNumbers ? item.receivedQuantity : 0), 0)
+      if (serialUnits > 5000) throw new BusinessRuleError("Receive at most 5000 serial-tracked units in one request.")
       const items = input.items.map((item) => {
         const line = lineMap.get(item.lineId)
         if (!line) throw new NotFoundError(`Line ${item.lineId} not found on this purchase order`)
+
+        if (line.item.organizationId !== input.organizationId || !line.item.isActive || line.item.deletedAt) throw new BusinessRuleError("An item is no longer available for receiving.")
+        if (item.unitPrice !== undefined && !line.unitCost.eq(item.unitPrice)) throw new BusinessRuleError("Receiving must use the approved order cost. Review a commercial amendment before changing costs.", "CONFLICT")
 
         const sku = line.item.sku || line.item.nameEn || line.itemId
         const normalizedItem = {
@@ -978,7 +1027,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
         _sum: { receivedQuantity: true },
       })
       const heldQuantityByLine = new Map(
-        heldReceiptQuantities.map((line) => [line.purchaseOrderLineId, toN(line._sum.receivedQuantity)]),
+        heldReceiptQuantities.map((line) => [line.purchaseOrderLineId, line._sum.receivedQuantity ?? new Prisma.Decimal(0)]),
       )
 
       for (const [index, item] of items.entries()) {
@@ -987,8 +1036,8 @@ export async function receiveItems(input: ReceiveItemsInput) {
 
         const itemName = line.item.nameEn || line.item.sku
         const heldQuantity = heldQuantityByLine.get(line.id) ?? 0
-        const remaining = toN(line.orderedQuantity) - toN(line.receivedQuantity) - heldQuantity
-        if (item.receivedQuantity > remaining) {
+        const remaining = line.orderedQuantity.minus(line.receivedQuantity).minus(heldQuantity)
+        if (remaining.lt(item.receivedQuantity)) {
           throw new BusinessRuleError(`Cannot receive ${item.receivedQuantity} of "${itemName}". Only ${remaining} remaining.`)
         }
         if (item.serialNumbers && new Set(item.serialNumbers).size !== item.serialNumbers.length) {
@@ -1022,7 +1071,6 @@ export async function receiveItems(input: ReceiveItemsInput) {
         }
       }
 
-      const effectiveLocationId = input.locationId ?? po.locationId
       const finalizedAt = new Date()
       const inspectionPassed = input.inspectionOutcome === "PASSED"
       const receiptStatus: GoodsReceiptStatus = inspectionPassed ? "RECEIVED" : "HELD"
@@ -1057,7 +1105,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
 
       for (const item of items) {
         const line = lineMap.get(item.lineId)!
-        const unitCost = item.unitPrice ?? toN(line.unitCost)
+        const unitCost = toN(line.unitCost)
         const receiptLine = await tx.goodsReceiptLine.create({
           data: {
             goodsReceiptId: receipt.id,
@@ -1065,7 +1113,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
             itemId: line.itemId,
             receivedQuantity: item.receivedQuantity,
             unitCost,
-            lineTotal: unitCost * item.receivedQuantity,
+            lineTotal: line.unitCost.mul(item.receivedQuantity).toDecimalPlaces(2, Prisma.Decimal.ROUND_HALF_UP),
             notes: item.notes ?? "",
             batchNumber: item.batchNumber ?? null,
             expiryDate: item.expiryDate ? new Date(item.expiryDate) : null,
@@ -1109,9 +1157,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
         const allLines = await tx.purchaseOrderLine.findMany({
           where: { purchaseOrderId: input.purchaseOrderId },
         })
-        const totalOrdered = allLines.reduce((sum, line) => sum + toN(line.orderedQuantity), 0)
-        const totalReceived = allLines.reduce((sum, line) => sum + toN(line.receivedQuantity), 0)
-        const newStatus: PurchaseOrderStatus = totalReceived >= totalOrdered ? "RECEIVED" : "PARTIALLY_RECEIVED"
+        const newStatus: PurchaseOrderStatus = allLines.every(line => line.receivedQuantity.gte(line.orderedQuantity)) ? "RECEIVED" : "PARTIALLY_RECEIVED"
         if (newStatus !== po.status) {
           await tx.purchaseOrder.update({
             where: { id: input.purchaseOrderId },
@@ -1125,6 +1171,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
         include: standardInclude,
       })
       if (!purchaseOrder) throw new NotFoundError("Purchase order not found")
+      await tx.auditLog.create({ data: { organizationId: input.organizationId, userId: input.receivedById, entityType: "GoodsReceipt", entityId: receipt.id, action: "RECORD_GOODS_RECEIPT", changes: { purchaseOrderId: po.id, receiptNumber, status: receiptStatus, inspectionOutcome: input.inspectionOutcome, payloadHash, requestReference: input.idempotencyKey } } })
       return {
         purchaseOrder,
         receiptNumber,
@@ -1143,6 +1190,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
     }
   } catch (error) {
     if (error instanceof ApplicationError) throw error
+    if (client) throw error
     if (getPrismaKnownRequest(error)?.code !== "P2002") {
       throw new ApplicationError(
         "INTERNAL_ERROR",
@@ -1152,7 +1200,9 @@ export async function receiveItems(input: ReceiveItemsInput) {
       )
     }
 
-    const existingReceipt = await db.goodsReceipt.findFirst({
+    return transaction(async tx => {
+    await purchaseReceivingAuthority(tx, scope, "receive")
+    const existingReceipt = await tx.goodsReceipt.findFirst({
       where: {
         organizationId: input.organizationId,
         idempotencyKey: input.idempotencyKey,
@@ -1169,7 +1219,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
     }
     assertReceiptReplay(existingReceipt, input, payloadHash)
 
-    const purchaseOrder = await db.purchaseOrder.findFirst({
+    const purchaseOrder = await tx.purchaseOrder.findFirst({
       where: { id: input.purchaseOrderId, organizationId: input.organizationId, deletedAt: null },
       include: standardInclude,
     })
@@ -1181,6 +1231,7 @@ export async function receiveItems(input: ReceiveItemsInput) {
       inspectionOutcome: input.inspectionOutcome,
       replayed: true,
     }
+    })
   }
 }
 
@@ -1205,7 +1256,11 @@ function assertInspectionResolutionReplay(
   }
 }
 
-export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptInspectionInput) {
+export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptInspectionInput, scopeInput?: PurchaseReceivingScope, client?: Prisma.TransactionClient) {
+  input = ResolveGoodsReceiptInspectionSchema.parse(input)
+  const scope = purchaseReceivingScopeSchema.parse(scopeInput)
+  if (scope.organizationId !== input.organizationId || scope.actorId !== input.resolvedById) throw new ForbiddenError("The inspection resolver must match the current session.")
+  const transaction = <T>(work: (tx: Prisma.TransactionClient) => Promise<T>) => client ? work(client) : db.$transaction(work, { timeout: 15000 })
   logger.info("purchase-order.resolve-receipt-inspection", {
     receiptId: input.goodsReceiptId,
     orgId: input.organizationId,
@@ -1214,7 +1269,11 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
   const payloadHash = inspectionResolutionPayloadHash(input)
 
   try {
-    return await db.$transaction(async (tx) => {
+    return await transaction(async (tx) => {
+      const authority = await purchaseReceivingAuthority(tx, scope, "resolve")
+      const parent = await tx.goodsReceipt.findFirst({ where: { id: input.goodsReceiptId, organizationId: input.organizationId, deletedAt: null }, select: { purchaseOrderId: true } })
+      if (!parent) throw new NotFoundError("Goods receipt not found")
+      await tx.$queryRaw`SELECT id FROM purchase_orders WHERE id = ${parent.purchaseOrderId} AND "organizationId" = ${input.organizationId} FOR UPDATE`
       const lockedReceipt = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
         SELECT "id"
         FROM "goods_receipts"
@@ -1263,7 +1322,7 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
           purchaseOrderId: true,
           locationId: true,
           status: true,
-          inspection: { select: { id: true, outcome: true } },
+          inspection: { select: { id: true, outcome: true, inspectedById: true } },
           inspectionResolution: { select: { id: true } },
           lines: {
             select: {
@@ -1289,6 +1348,12 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
       if (receipt.status !== "HELD") {
         throw new BusinessRuleError(`Cannot resolve a goods receipt with status: ${receipt.status}`)
       }
+      if (!authority.fresh) throw new BusinessRuleError("Verify your current password before resolving this inspection.", "FRESH_AUTH_REQUIRED")
+      if (input.decision === "ACCEPT" && receipt.inspection.inspectedById === input.resolvedById) throw new BusinessRuleError("A different authorized receiver must review and accept a failed or incomplete inspection.", "SOD_VIOLATION")
+      const order = await tx.purchaseOrder.findFirst({ where: { id: receipt.purchaseOrderId, organizationId: input.organizationId, deletedAt: null }, select: { status: true } })
+      if (!order || !["APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "CANCELLED"].includes(order.status)) throw new BusinessRuleError("This order is not available for inspection resolution.")
+      const location = await tx.location.findFirst({ where: { id: receipt.locationId, organizationId: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } })
+      if (input.decision === "ACCEPT" && !location) throw new BusinessRuleError("The retained receiving location must be active before inventory can be released.")
 
       const lockedOrder = await tx.$queryRaw<Array<{ id: string }>>(Prisma.sql`
         SELECT "id"
@@ -1345,14 +1410,15 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
               id: true,
               orderedQuantity: true,
               receivedQuantity: true,
-              item: { select: { nameEn: true, sku: true } },
+              item: { select: { nameEn: true, sku: true, organizationId: true, isActive: true, deletedAt: true } },
             },
           })
           if (!orderLine) throw new NotFoundError("Purchase order receipt line not found")
+          if (orderLine.item.organizationId !== input.organizationId || !orderLine.item.isActive || orderLine.item.deletedAt) throw new BusinessRuleError("The retained item must be active before inventory can be released.")
 
           const acceptedQuantity = toN(line.receivedQuantity)
-          const remaining = toN(orderLine.orderedQuantity) - toN(orderLine.receivedQuantity)
-          if (acceptedQuantity > remaining) {
+          const remaining = orderLine.orderedQuantity.minus(orderLine.receivedQuantity)
+          if (remaining.lt(line.receivedQuantity)) {
             throw new BusinessRuleError(
               `Cannot accept held quantity for "${orderLine.item.nameEn || orderLine.item.sku}". Only ${remaining} remaining.`,
             )
@@ -1390,9 +1456,7 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
           where: { purchaseOrderId: receipt.purchaseOrderId },
           select: { orderedQuantity: true, receivedQuantity: true },
         })
-        const totalOrdered = orderLines.reduce((sum, line) => sum + toN(line.orderedQuantity), 0)
-        const totalReceived = orderLines.reduce((sum, line) => sum + toN(line.receivedQuantity), 0)
-        const purchaseOrderStatus: PurchaseOrderStatus = totalReceived >= totalOrdered
+        const purchaseOrderStatus: PurchaseOrderStatus = order.status === "CANCELLED" ? "CANCELLED" : orderLines.every(line => line.receivedQuantity.gte(line.orderedQuantity))
           ? "RECEIVED"
           : "PARTIALLY_RECEIVED"
         await tx.purchaseOrder.update({
@@ -1437,6 +1501,7 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
     })
   } catch (error) {
     if (error instanceof ApplicationError) throw error
+    if (client) throw error
     if (getPrismaKnownRequest(error)?.code !== "P2002") {
       throw new ApplicationError(
         "INTERNAL_ERROR",
@@ -1446,7 +1511,9 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
       )
     }
 
-    const existingCommand = await db.goodsReceiptInspectionResolution.findFirst({
+    return transaction(async tx => {
+    await purchaseReceivingAuthority(tx, scope, "resolve")
+    const existingCommand = await tx.goodsReceiptInspectionResolution.findFirst({
       where: {
         organizationId: input.organizationId,
         idempotencyKey: input.idempotencyKey,
@@ -1472,49 +1539,26 @@ export async function resolveGoodsReceiptInspection(input: ResolveGoodsReceiptIn
       decision: existingCommand.decision,
       replayed: true,
     }
+    })
   }
 }
 
 // ── Bulk status update ────────────────────────────────────────────────────────
 
-export async function bulkUpdateStatus(input: BulkStatusUpdateInput) {
-  logger.info("purchase-order.bulk-update", { orgId: input.organizationId, count: input.purchaseOrderIds.length })
-
-  if (input.toStatus === "APPROVED") {
-    throw new BusinessRuleError(
-      "Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.",
-    )
+export async function bulkUpdateStatus(input: BulkStatusUpdateInput, scope?: PurchaseLifecycleScope) {
+  if (!input.purchaseOrderIds.length) throw new BusinessRuleError("Select at least one purchase order.")
+  if (input.toStatus === "APPROVED") throw new BusinessRuleError("Purchase orders cannot be approved in bulk. Use the canonical approval workflow for each order.")
+  const kind = ({ SUBMITTED: "submit", CANCELLED: "cancel", COMPLETED: "complete" } as const)[input.toStatus as "SUBMITTED" | "CANCELLED" | "COMPLETED"]
+  if (!kind) throw new BusinessRuleError("Use the receiving workflow to record received quantities and receipt status.")
+  if (!scope || scope.organizationId !== input.organizationId || !input.reviewedRequests) throw new BusinessRuleError("Review each selected order before confirming the batch.", "REVIEW_REQUIRED")
+  const ids = [...new Set(input.purchaseOrderIds)].sort(), requests = new Map(input.reviewedRequests.map(value => [value.id, value.request]))
+  if (requests.size !== input.reviewedRequests.length || requests.size !== ids.length || ids.some(id => !requests.has(id)) || input.reviewedRequests.some(value => value.request.kind !== kind || (value.request.reason ?? "") !== (input.reason?.trim() ?? ""))) throw new BusinessRuleError("The reviewed batch does not match the selected orders and decision.", "REVIEW_REQUIRED")
+  const updated: string[] = [], failed: Array<{ id: string; error: string }> = []
+  // Each order owns one atomic receipt. Partial batches retry the same per-order commands.
+  for (const id of ids) {
+    try { await executePurchaseOrderLifecycle(id, scope, requests.get(id)!); updated.push(id) }
+    catch (error) { if (!(error instanceof ApplicationError) || !error.expose) throw error; failed.push({ id, error: error.message }) }
   }
-
-  const updated: string[] = []
-  const failed: { id: string; error: string }[] = []
-
-  await db.$transaction(async (tx) => {
-    const pos = await tx.purchaseOrder.findMany({
-      where: { id: { in: input.purchaseOrderIds }, organizationId: input.organizationId, deletedAt: null },
-      select: { id: true, status: true },
-    })
-    const found = new Set(pos.map(p => p.id))
-    for (const id of input.purchaseOrderIds) {
-      if (!found.has(id)) failed.push({ id, error: "Not found in this organisation" })
-    }
-    for (const po of pos) {
-      if (!canTransition(po.status, input.toStatus)) {
-        failed.push({ id: po.id, error: `Invalid transition: ${po.status} → ${input.toStatus}` })
-        continue
-      }
-      await tx.purchaseOrder.update({
-        where: { id: po.id },
-        data: {
-          status:     input.toStatus,
-          updatedAt:  new Date(),
-          notes:      input.reason ? { set: input.reason } : undefined,
-        },
-      })
-      updated.push(po.id)
-    }
-  })
-
   return { updated, failed }
 }
 
@@ -1532,6 +1576,22 @@ export async function clonePurchaseOrder(input: ClonePurchaseOrderInput, created
   const overrides = input.overrides ?? {}
 
   const cloned = await db.$transaction(async (tx) => {
+    await assertModuleNewWorkInTx(tx, { organizationId: input.organizationId, moduleSlug: "purchasing", operation: "purchasing.order.clone" })
+
+    // A clone is new work: inherited and overridden references must belong to
+    // the current tenant and remain selectable, just like the active form catalogue.
+    const supplierId = overrides.supplierId ?? source.supplierId
+    const locationId = overrides.locationId ?? source.locationId
+    const itemIds = [...new Set(source.lines.map((line) => line.itemId))]
+    const [supplier, location, items] = await Promise.all([
+      tx.supplier.findFirst({ where: { id: supplierId, organizationId: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } }),
+      tx.location.findFirst({ where: { id: locationId, organizationId: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } }),
+      tx.item.findMany({ where: { id: { in: itemIds }, organizationId: input.organizationId, isActive: true, deletedAt: null }, select: { id: true } }),
+    ])
+    if (!supplier) throw new NotFoundError("Supplier is unavailable for a new purchase order in this organisation.")
+    if (!location) throw new NotFoundError("Delivery location is unavailable for a new purchase order in this organisation.")
+    if (items.length !== itemIds.length) throw new NotFoundError("One or more items are unavailable for a new purchase order in this organisation.")
+
     const orderNumber = await allocatePurchaseDocumentNumber(tx, {
       organizationId: input.organizationId,
       documentType: PURCHASE_DOCUMENT_TYPE.PURCHASE_ORDER,
@@ -1545,7 +1605,7 @@ export async function clonePurchaseOrder(input: ClonePurchaseOrderInput, created
         orderDate:           overrides.date ? new Date(overrides.date) : new Date(),
         expectedDeliveryDate: overrides.expectedDeliveryDate ? new Date(overrides.expectedDeliveryDate) : source.expectedDeliveryDate,
         paymentTerms:        overrides.paymentTerms ?? source.paymentTerms ?? "Net 30 days",
-        notes:               overrides.notes ?? `Cloned from ${source.orderNumber}`,
+        notes:               overrides.notes ?? source.notes ?? `Cloned from ${source.orderNumber}`,
         shippingCost:        overrides.shippingCost ?? source.shippingCost ?? 0,
         status:              "DRAFT",
         createdById,

@@ -1,0 +1,311 @@
+{
+  "suites": 8,
+  "passedSuites": 8,
+  "failedSuites": 0,
+  "tests": 61,
+  "passedTests": 61,
+  "failedTests": 0,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "TransactionHistoryWorkbenchShell renders server-scope rows and opens details from an explicit action",
+          "status": "passed"
+        },
+        {
+          "title": "TransactionHistoryWorkbenchShell does not offer client-visible-row export when the safe states block export",
+          "status": "passed"
+        },
+        {
+          "title": "TransactionHistoryWorkbenchShell supports the compact three-dot row action used by normalized tables",
+          "status": "passed"
+        },
+        {
+          "title": "TransactionHistoryWorkbenchShell matches the normalized items toolbar, selection, column controls, and cursor pagination",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/DataTableComponents/__tests__/SystemTablePresentation.contract.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "system table presentation contract keeps every active application table inside the shared presentation shell",
+          "status": "passed"
+        },
+        {
+          "title": "system table presentation contract gives every interactive grid the shared toolbar semantic",
+          "status": "passed"
+        },
+        {
+          "title": "system table presentation contract gives every paginated grid the shared pagination semantic",
+          "status": "passed"
+        },
+        {
+          "title": "system table presentation contract keeps the shared data table on the one-row desktop toolbar baseline",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/hr-payroll/HrPayrollTableControls.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/purchase-orders/PurchaseOrderAnalyticsDashboard.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/finance/FinanceCommandCenterDashboard.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/finance/PaymentReconciliationWorkbench.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/finance/FinanceSpecializedLedgerSurfaces.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/pos/CashDrawerManagementDashboard.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/dashboard/history/TransactionHistoryWorkbenchShell.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/inventory/loss/InventoryLossWorkbench.tsx",
+          "status": "passed"
+        },
+        {
+          "title": "table date-range adoption contract uses the shared picker rather than native date inputs in components/inventory/movements/StockMovementDashboard.tsx",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/finance/__tests__/FinancePaymentsTable.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "PaymentsTable paginates the complete payment ledger instead of slicing the rows",
+          "status": "passed"
+        },
+        {
+          "title": "PaymentsTable filters by searchable payment fields and an explicit date range",
+          "status": "passed"
+        },
+        {
+          "title": "PaymentsTable sorts ledger rows from the column headers",
+          "status": "passed"
+        },
+        {
+          "title": "FinancePaymentsSurface layout places payment mix before assurance and gives workflows a full-width action row",
+          "status": "passed"
+        },
+        {
+          "title": "FinanceReceivablesSurface layout renders every bottom workflow action in the responsive row grid",
+          "status": "passed"
+        },
+        {
+          "title": "FinanceReceivablesSurface layout keeps the same closing-section structure when the receipts ledger is empty",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/analytics through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/cash-flow through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/costs through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/profit-loss through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/profitability through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/retail through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/sales through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance Retail and Sales recent-payment ledgers gives /dashboard/finance/retail the Receivables-grade sorting, filtering, and pagination controls",
+          "status": "passed"
+        },
+        {
+          "title": "Finance Retail and Sales recent-payment ledgers gives /dashboard/finance/sales the Receivables-grade sorting, filtering, and pagination controls",
+          "status": "passed"
+        },
+        {
+          "title": "Finance costs layout stacks full-width status, movement, payments, and mix around a paired action and evidence row",
+          "status": "passed"
+        },
+        {
+          "title": "FinancePayablesSurface navigation stacks full-width disbursements before workflows and preserves the canonical AP history",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/finance/__tests__/CashFlowStatementTable.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "CashFlowStatementTable renders bounded cash-flow rows with entity, period, currency, and evidence context",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/finance/__tests__/finance-final-two-section-route-matrix.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "finance final-two-section route matrix classifies every Finance route exactly once",
+          "status": "passed"
+        },
+        {
+          "title": "finance final-two-section route matrix defines a measurable closing-section contract for every applicable route",
+          "status": "passed"
+        },
+        {
+          "title": "finance final-two-section route matrix keeps every exclusion evidence-backed and free of invented workflow links",
+          "status": "passed"
+        },
+        {
+          "title": "finance final-two-section route matrix extracts workflows for every Finance command-center consumer",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "scripts/__tests__/x1-approval-automation-orchestrator.test.js",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "X1 approval decision validity at synchronization accepts complete currently valid decisions",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"2026-09-02T11:59:59Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"2026-09-02T12:00:00Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"not-a-date\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"decidedAt\":\"not-a-date\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"decidedAt\":\"2026-09-02T12:00:01Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"2026-09-01T12:00:00Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization still requires real decision fields and all three records",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "does not equate a loading skeleton or absent data surface with an empty result",
+          "status": "passed"
+        },
+        {
+          "title": "waits through refreshes even with old rows present",
+          "status": "passed"
+        },
+        {
+          "title": "rejects error instead of recording a successful zero",
+          "status": "passed"
+        },
+        {
+          "title": "rejects forbidden instead of recording a successful zero",
+          "status": "passed"
+        },
+        {
+          "title": "rejects not-entitled instead of recording a successful zero",
+          "status": "passed"
+        },
+        {
+          "title": "counts data rows while excluding headers, hidden copies, and empty placeholders",
+          "status": "passed"
+        },
+        {
+          "title": "counts visible canonical mobile cards when responsive desktop rows are hidden",
+          "status": "passed"
+        },
+        {
+          "title": "accepts an explicitly empty table with no fabricated data row",
+          "status": "passed"
+        },
+        {
+          "title": "does not accept ready state before its data rows are rendered",
+          "status": "passed"
+        },
+        {
+          "title": "recognizes a populated summary without requiring a table",
+          "status": "passed"
+        },
+        {
+          "title": "requires both journal tables and successful source responses",
+          "status": "passed"
+        },
+        {
+          "title": "stops the useful-result timer at readiness before audits or screenshots",
+          "status": "passed"
+        },
+        {
+          "title": "a background dashboard refresh prevents capturing its stale table",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    }
+  ]
+}

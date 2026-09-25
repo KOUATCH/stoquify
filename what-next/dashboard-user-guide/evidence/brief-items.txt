@@ -1,0 +1,54 @@
+
+ROUTE /en/dashboard/items/new
+FILE app/[locale]/(dashboard)/dashboard/items/new/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/items/new/page.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/items/items-route-access.tsx
+REDIRECTS [{"name":"redirect","line":23,"args":"localizePath(\"/dashboard/inventory/items/create\", locale)"}]
+HEADINGS 
+PROPS 
+CONTROLS 
+
+ROUTE /en/dashboard/items
+FILE app/[locale]/(dashboard)/dashboard/items/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/items/page.tsx; components/ui/groups/inventory/ItemManagement.tsx; components/DataTableComponents/index.ts; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/ui/groups/inventory/ItemForm2.tsx; components/FormInputs/EnhancedImageUploadButton.tsx; components/DataTableComponents/DataTablePagination.tsx; components/DataTableComponents/DateFilters.tsx; components/DataTableComponents/DateRangeFilter.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/items/items-route-access.tsx; actions/brands/getOrgBrands.ts; actions/categories/getOrgCategories.ts; actions/itemsShow/getBriefOrgItems.ts; actions/taxRate/getOrgTaxRates.ts; actions/units/getOrgUnits.ts; config/useAuth.ts; lib/notifications/notify.ts; hooks/useAllItemQueries.ts; hooks/itemsHooks/useItemHooks.ts; lib/formatCurrency.ts; lib/formateDate.ts; lib/generateSKU.ts; lib/uploadthing.ts; actions/storage/photo-upload-actions.ts; actions/storage/storage-config-actions.ts; lib/utils.ts; lib/dateFilters.ts
+REDIRECTS []
+HEADINGS No matching items / No inventory items yet | Error Loading Items | Item Name * | Product SKU * | Cost Price * | Selling Price * | Item Image
+PROPS Search items, SKUs, categories, or brands | Stock status | Add New Item | Delete Item | Are you sure you want to delete this item? | name | Enter item name | sku | Generated SKU will appear here... | Copy to clipboard | costPrice | 0.00 | sellingPrice | 0.00 | Upload Item Image
+CONTROLS Select all (Checkbox, {"onCheckedChange":"(value) => table.toggleAllPageRowsSelected(!!value)"}, components/ui/groups/inventory/ItemManagement.tsx:193)
+Select row (Checkbox, {"onCheckedChange":"(value) => row.toggleSelected(!!value)"}, components/ui/groups/inventory/ItemManagement.tsx:200)
+Open menu (Button, {}, components/ui/groups/inventory/ItemManagement.tsx:291)
+Copy ID (DropdownMenuItem, {"onClick":"() => navigator.clipboard.writeText(item.id || \"\")"}, components/ui/groups/inventory/ItemManagement.tsx:298)
+Edit Item (DropdownMenuItem, {"onClick":"() => handleEditClick(item)"}, components/ui/groups/inventory/ItemManagement.tsx:304)
+Deleting... / Delete Item (DropdownMenuItem, {"onClick":"() => handleDeleteClick(item)","disabled":"isBeingDeleted"}, components/ui/groups/inventory/ItemManagement.tsx:307)
+Refreshing / Refresh (Button, {"onClick":"onRefresh","disabled":"isLoading"}, components/ui/groups/inventory/ItemManagement.tsx:494)
+Export (Button, {"onClick":"() => onExport(data)"}, components/ui/groups/inventory/ItemManagement.tsx:504)
+Clear (Button, {"onClick":"handleClearFilters"}, components/ui/groups/inventory/ItemManagement.tsx:532)
+Search items, SKUs, categories, or brands (Input, {"onChange":"(event) => setGlobalFilter(event.target.value)"}, components/ui/groups/inventory/ItemManagement.tsx:549)
+x (button, {"type":"\"button\"","onClick":"() => setGlobalFilter(\"\")"}, components/ui/groups/inventory/ItemManagement.tsx:556)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleStockFilterChange"}, components/ui/groups/inventory/ItemManagement.tsx:582)
+Export Selected (Button, {"onClick":"() => onExport(selectedItems)"}, components/ui/groups/inventory/ItemManagement.tsx:600)
+View (Button, {}, components/ui/groups/inventory/ItemManagement.tsx:614)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(!!value)"}, components/ui/groups/inventory/ItemManagement.tsx:626)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"header.column.getToggleSortingHandler()"}, components/ui/groups/inventory/ItemManagement.tsx:675)
+Clear Search (Button, {"onClick":"() => setGlobalFilter(\"\")"}, components/ui/groups/inventory/ItemManagement.tsx:745)
+Try Again (Button, {"onClick":"handleRefresh"}, components/ui/groups/inventory/ItemManagement.tsx:978)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+Enter item name (Input, {}, components/ui/groups/inventory/ItemForm2.tsx:57)
+Generate SKU (Input, {"type":"\"text\""}, components/ui/groups/inventory/ItemForm2.tsx:74)
+Generate SKU (Button, {"type":"\"button\"","onClick":"generateSKU"}, components/ui/groups/inventory/ItemForm2.tsx:82)
+📋 (Button, {"type":"\"button\"","onClick":"copyToClipboard"}, components/ui/groups/inventory/ItemForm2.tsx:87)
+0.00 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(Number(e.target.value) || 0)"}, components/ui/groups/inventory/ItemForm2.tsx:133)
+0.00 (Input, {"type":"\"number\"","onChange":"(e) => field.onChange(Number(e.target.value) || 0)"}, components/ui/groups/inventory/ItemForm2.tsx:162)
+Remove (Button, {"type":"\"button\"","onClick":"handleRemoveImage"}, components/FormInputs/EnhancedImageUploadButton.tsx:192)
+file-upload (input, {"type":"\"file\"","onChange":"handleFileSelect","disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:212)
+[dynamic or icon-only label] (Button, {"disabled":"isUploading"}, components/FormInputs/EnhancedImageUploadButton.tsx:220)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)
+[dynamic or icon-only label] (Select, {"onValueChange":"handleChange"}, components/DataTableComponents/DateFilters.tsx:108)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)

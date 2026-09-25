@@ -1,0 +1,20 @@
+# Purchase-order lifecycle attempts
+
+- Baseline database receipt: `../lanes/environment/purchase-order-lifecycle-before-94ac5e19-ff3.json`. Observed wrong shipping-only/empty-line totals, submitted edits, approval/edit and cancellation/approval races. Two baseline cases used `status` for the observed order state, overwriting the harness case-status field; retain them as observations, not passing checks.
+- First post-change five-case database receipt: `../lanes/environment/purchase-order-lifecycle-after-7b671a45-ba9.json`; all five passed before the expanded bulk/completion work.
+- Initial unit regression (`purchase-lifecycle-tests-01.json`): 9 failed, 16 passed. Mocks lacked the transaction-scoped read/query interface and asserted the old pre-transaction access behavior. Updated fixtures retain all original business assertions.
+- Second unit invocation: 37 tests in three suites passed; process exit 1 because Windows sandbox denied writing `purchase-lifecycle-tests-02.json` (EPERM). No report was saved by that invocation. This was a filesystem restriction, not an automatic approval-review rejection.
+- Final expanded unit invocation: `purchase-lifecycle-tests-03.json`, 58 tests/four suites passed, exit 0.
+- Expanded database receipt: `../lanes/environment/purchase-order-lifecycle-after-1c47ddde-dd3.json`, 15 groups passed, original payment/journal/nonfixture-role hashes unchanged and source stable.
+- First browser receipt: `../lanes/environment/purchase-order-lifecycle-browser-9df12449-97c.json`. Both languages timed out waiting for the second-step heading after an Enter key. Screenshots show the initial step. The harness did not wait for the hydrated button to become enabled or verify focus before Enter. The follow-up explicitly checks both before continuing; no application code was changed to address this harness gap. Exact original timing is not independently reconstructed.
+- Typecheck: direct installed TypeScript CLI with `--noEmit --pretty false`, exit 0, receipt `e5bca0`. Four changed source/test files linted with installed ESLint, exit 0, receipt `0343e7`.
+
+- Second browser receipt: `../lanes/environment/purchase-order-lifecycle-browser-aa8cf9ea-685.json`. Both EN/FR actual saves and competing-approval rejections passed, preserving the unsaved draft. Both then failed the 320-pixel/200% text reflow assertion; later denial assertions were not reached.
+- Diagnostic browser receipt: `../lanes/environment/purchase-order-lifecycle-browser-135870ec-524.json`. Reproduced the same overflow and retained element dimensions: English form 275/256 pixels, French 303/256 pixels. Nested summary/card padding, headings, monetary values and buttons exceeded available width. The production editor was then corrected with scoped wrapping, smaller mobile spacing, bounded buttons and a single-column very-narrow step list. No shared component or shell change.
+- Source baseline v49 remains the immutable service checkpoint before the responsive correction; final source capture uses v50.
+
+Final browser results are recorded in `purchase-order-lifecycle-receipt.json` only after validating their source bindings and outcomes. No failed attempt has been replaced or counted as passing evidence.
+
+- Final browser receipt: `../lanes/environment/purchase-order-lifecycle-browser-f37b657e-8f3.json`, two EN/FR journeys passed with 12 screenshots, real saved totals, rejected-draft retention, keyboard focus, four widths, 200% text sizing and denied-route checks. No overflowing form descendants at the final text-size check. Original payment/journal/nonfixture-role hashes unchanged. The final English desktop review and French mobile retained-draft screenshots were visually inspected.
+- Final expanded tests after the responsive change: `purchase-lifecycle-tests-04.json`, 76 tests/six suites, exit 0 (`50ed6d`). Final typecheck exit 0 (`af2fb3`); final five-file lint exit 0 (`40d7b2`).
+- Final source baseline: `source-baseline-v50.json` (`55a621`). The published lifecycle receipt validates 45 current source bindings, runtime receipts and all 12 screenshot hashes (`fa90e1`).

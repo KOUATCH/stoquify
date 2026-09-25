@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-08T20:06:24.531Z",
+  "run": "f9a3a446-a20",
+  "sourcesBefore": {
+    "services/accounting/periods.service.ts": "c9fabd9a1ed2ead2ca6f17e88f53494b35190540519df1c2f027c2907e203990",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060"
+  },
+  "checks": [
+    "Closed-period credit reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Locked-period credit reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Missing-period credit reversal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "An active credit still prevents return reversal; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Cross-tenant credit identifier rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Posted batch without original journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Batch for another source rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Concurrent duplicate credit reversal in a later open period commits once, reopens the payable and records unposted-reversal evidence without inventing cash or a journal",
+    "Closed-period return reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Locked-period return reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Missing-period return reversal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Return reversal in a later open period exactly restores stock quantity/cost, records unposted-reversal evidence and leaves invoice cash unchanged",
+    "Exact credit and return retries after their reversal period closes returns the retained result without new effects",
+    "Posted credit evidence remains immutable; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Inconsistent service input cannot hide a real posted credit journal; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Posted-journal reversal still rejects a closed reversal period; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Posted credit reverses original journal line-for-line in a later open period while the original period remains closed"
+  ],
+  "scope": "Owned localhost database only; actual invoice/payment/return/credit domain services and persisted effects. Trusted fixture actors, not public-action RBAC or complete browser proof. Synthetic posting rules and bank evidence. No migrations, live payments or messages.",
+  "originalBefore": "c5d8183459824ab821594ec59d93ec7cf60e51ed9c8c8e70248b16d677e365a2",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/periods.service.ts": "c9fabd9a1ed2ead2ca6f17e88f53494b35190540519df1c2f027c2907e203990",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060"
+  },
+  "sourceStable": true
+}

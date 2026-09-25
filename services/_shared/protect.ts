@@ -16,6 +16,7 @@ import type {
 import { toSafeActionError, type ApplicationErrorCode, type SafeActionStatus } from "./action-errors"
 import { createCorrelationId } from "@/lib/error-handling/canonical"
 import { type ErrorCategory, type ErrorSeverity } from "@/lib/error-handling/types"
+import { getModuleOperationErrorReason, type ModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 
 export type ProtectedActionContext = RbacContext & {
   freshAuth?: {
@@ -36,6 +37,7 @@ export type ProtectedActionResponse<T> =
       category: ErrorCategory
       severity: ErrorSeverity
       retryable: boolean
+      reason?: ModuleOperationErrorReason
     }
 
 export type TenantGuardMode = boolean | "handler-derived"
@@ -172,6 +174,7 @@ export function protect<I, O>(
         category: safeError.category,
         severity: safeError.severity,
         retryable: safeError.retryable,
+        ...(getModuleOperationErrorReason(error) ? { reason: getModuleOperationErrorReason(error) } : {}),
       }
     }
   }

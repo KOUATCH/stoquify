@@ -1,5 +1,5 @@
-import type { SVGProps } from "react"
-import { fireEvent, render, screen } from "@testing-library/react"
+import { useRef, useState, type SVGProps } from "react"
+import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import axe from "axe-core"
 
 jest.mock("lucide-react", () => {
@@ -22,6 +22,7 @@ jest.mock("lucide-react", () => {
 import {
   ActionQueue,
   CommandBriefHeader,
+  DetailDrawer,
   EvidenceTimeline,
   FilterBar,
   KpiTile,
@@ -30,6 +31,21 @@ import {
 } from "@/components/dashboard/primitives"
 
 describe("command center dashboard primitives", () => {
+  it("supports a localized close control and focus return for a controlled drawer", async () => {
+    function ControlledDrawer() {
+      const [open, setOpen] = useState(false), opener = useRef<HTMLButtonElement>(null)
+      return <><button ref={opener} onClick={() => setOpen(true)}>Invoice details</button><DetailDrawer title="Invoice" description="Retained invoice" open={open} onOpenChange={setOpen} closeLabel="Fermer" onCloseAutoFocus={event => { event.preventDefault(); opener.current?.focus() }}><p>Covered by payments and credits</p></DetailDrawer></>
+    }
+    render(<ControlledDrawer />)
+    const opener = screen.getByRole("button", { name: "Invoice details" })
+    opener.focus()
+    fireEvent.click(opener)
+    expect(await screen.findByRole("dialog")).toBeVisible()
+    fireEvent.click(screen.getByRole("button", { name: "Fermer" }))
+    await waitFor(() => expect(opener).toHaveFocus())
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument()
+  })
+
   it("renders a command brief with metadata, proof, and a primary route action", () => {
     render(
       <CommandBriefHeader

@@ -1,0 +1,40 @@
+{
+  "run": "33e8fdf1-0dc",
+  "startedAt": "2026-09-06T13:32:55.321Z",
+  "sourcesBefore": {
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "components/settings/MemberAccessEditor.tsx": "acbdc649fa3d44a66f962ff9b8f3c0bfe5953e9f13f51dfa36d5486530bb43f1",
+    "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40"
+  },
+  "database": "stoquify_local_registration_20260906_01",
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: /not available for this role|n’est pas disponible pour ce rôle/ })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: /not available for this role|n’est pas disponible pour ce rôle/ })\n    - waiting for \"http://127.0.0.1:3108/en/unauthorized\" navigation to finish...\n    - navigated to \"http://127.0.0.1:3108/en/unauthorized\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: /not available for this role|n’est pas disponible pour ce rôle/ })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: /not available for this role|n’est pas disponible pour ce rôle/ })\n"
+    }
+  ],
+  "before": "cefcd4b31e054a3ee5185d9474ed93aad1a6003b46efef4d3fa65fee78957140",
+  "after": "9c624e349a87204349cdc4d36ff9bd8c189ac50065b1236b8928559fc4e39f30",
+  "authorityUnchanged": false,
+  "error": "Expected values to be strictly equal:\n\nfalse !== true\n",
+  "sourcesAfter": {
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "components/settings/MemberAccessEditor.tsx": "acbdc649fa3d44a66f962ff9b8f3c0bfe5953e9f13f51dfa36d5486530bb43f1",
+    "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40"
+  },
+  "sourceStable": true,
+  "completedAt": "2026-09-06T13:35:04.510Z",
+  "driverSha256": "831b2f16440840d46c3e6da2f787163824f689979135c43e85db726fed6a93a9",
+  "passed": 0,
+  "failed": 3
+}

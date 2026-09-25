@@ -1562,7 +1562,7 @@ export async function recordPayrollDeclarationEvidence(
         },
         occurredAt: now,
         actorId: parsed.actorId,
-        sourceType: "PAYROLL_DECLARATION",
+        sourceEntityType: "PAYROLL_DECLARATION",
         sourceId: declaration.id,
         documentHash: evidenceHash,
         metadata: {

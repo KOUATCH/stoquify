@@ -1,0 +1,254 @@
+{
+  "recordedAt": "2026-09-06T19:23:04.777Z",
+  "baseline": "evidence/source-baseline-v39.json",
+  "workflows": [
+    "NTF-FEEDBACK",
+    "NTF-INBOX",
+    "NTF-SOUND",
+    "NTF-DIAGNOSTICS"
+  ],
+  "sources": {
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/page.tsx": "4f213b600911cfbcaf9c9f51221140e570a82c3a264bb095fb68586b65ebac54",
+    "app/[locale]/(dashboard)/dashboard/settings/notifications/NotificationsSettingsClient.tsx": "2acf5214f3ba1ebd5308701a8f0a380fb58ab706df7c3b73796b9dfae122a28f",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-access.tsx": "67f27a2ca78fa1bedeb64b65e594de3706aad72ae3c955d21cde317cc2fe947b",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "components/notifications/NotificationProvider.tsx": "b047600c7eb7462b13ee21f05f2adbccd2bc9f265ed96ac3a3db4a51cb3f77ce",
+    "components/notifications/NotificationSystem.tsx": "fe0a2203474ab94f5378e5c14627cebc8de38c2bb62a8282de8b629eb9cae14c",
+    "components/Providers.tsx": "a568563f7f8d6e85cb1c8e713b5863c31bacf858fdd5aa7eb9b7e44694cce6f4",
+    "components/dashboard/Navbar.tsx": "fcc1cfa10276a1a5f71510750d4e0b27023c33d8daf45af94dcce8387529b627",
+    "lib/notifications/presentation.ts": "bf8f351daf1f9e9d77e1f41c091a7c69afda37ffd7a91b25cb31a6a30b713bc8",
+    "lib/notifications/notify.ts": "a36427372ac068fa07ede5d3817c79765e0615691548adcf149b62857cad8888",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "components/notifications/__tests__/local-notification-workflow.test.tsx": "8423268fd6da84126fb00273a100cd7af4600f13bd14c2583e0d98aeb0e12fe6",
+    "components/notifications/__tests__/notification-provider-state.test.tsx": "b765060639db07dcef56392af8bdbc21fa8ac30a50d83f615f19beaa09643a27",
+    "app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx": "cd179f08aa9e327b38efa4e25b8888237e4b2c4fd0bde0f3c0e257273d5e954f",
+    "app/[locale]/(dashboard)/dashboard/notifications-demo/__tests__/page.test.tsx": "e716bde31bb284aac5960e61eb9de33e569818774d1bf652e2a32c775b15796d",
+    "app/[locale]/(dashboard)/dashboard/notifications-demo/__tests__/route-audit.test.ts": "42aa50a93f6629741f2237a9361fcbe2fabc543dcaf1294266d9c60a931a3174",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+  },
+  "browser": "lanes/environment/local-notifications-browser-4ea6b2c8-2cb.json",
+  "verification": {
+    "tests": {
+      "file": "evidence/local-notification-tests-07.json",
+      "passed": 29,
+      "suites": 4,
+      "chunk": "602aab"
+    },
+    "browser": {
+      "journeys": 2,
+      "reviewWidthTextCases": 16,
+      "sharedNarrowTextCases": 4,
+      "screenshots": 32,
+      "chunk": "131dca"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "chunk": "2fad47",
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false"
+    },
+    "lint": {
+      "allChangedFiles": {
+        "exitCode": 0,
+        "chunk": "87b02a"
+      },
+      "finalPresentation": {
+        "exitCode": 0,
+        "chunk": "340b5f"
+      }
+    }
+  },
+  "presentationDeltaAfterTests": [
+    "NotificationsSettingsClient: hide decorative action icons on narrow screens for readable French labels.",
+    "NotificationSystem: stack narrow content and wrap long text; final real EN/FR browser checks include these exact files."
+  ],
+  "before": "lanes/environment/notification-settings-before-afce0a5e-533.json",
+  "expiryDiagnostic": "lanes/environment/notification-expiry-diagnostic-cde1287d-8f8.json",
+  "failedAttempts": "evidence/local-notification-initial-attempts.md",
+  "screenshots": [
+    {
+      "source": "lanes/environment/en-local-notifications-denied-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-denied-4ea6b2c8-2cb.png",
+      "sha256": "a20359b35107b817e8d36db5caf918ca45e80098b60abeee99877dcf4f798945"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-empty-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-empty-4ea6b2c8-2cb.png",
+      "sha256": "88b0bb0e86c2f7c3cad4b79aa2d634fd5b73ba5436cd4b5adc3d121d49efa566"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-explicit-example-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-explicit-example-4ea6b2c8-2cb.png",
+      "sha256": "bf6722dfad2a416d7d69d7d4173577aed45b95b106cebcf9cbf565ea31518a30"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-storage-unavailable-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-storage-unavailable-4ea6b2c8-2cb.png",
+      "sha256": "5707f9a1bc23a5e2f870cb837d6896b928f367a1ac2a5d607478f56e0e1aff73"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-320-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-320-100-4ea6b2c8-2cb.png",
+      "sha256": "c9d7b4143322e0f9495ba9297f6981ed50d4ec261b9c72d420c6ebe0e2bea420"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-320-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-320-200-4ea6b2c8-2cb.png",
+      "sha256": "1a992fe7d6eb864b0dff56eced3897de87e5ea012a2996ba465d3713c1cc60d7"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-390-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-390-100-4ea6b2c8-2cb.png",
+      "sha256": "54ddc4514a6df496390e97e013e94350edab57e9236d5e122f6de82ff0ceaf9a"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-390-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-390-200-4ea6b2c8-2cb.png",
+      "sha256": "4ea9a0a4b54c299a0553560df908fdebb0d3bed64a11f10e243c926880ad8639"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-768-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-768-100-4ea6b2c8-2cb.png",
+      "sha256": "80fd92522f3352f8974e61b8a7a2956ef1287ff4da168c18654df0d4a6effa89"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-768-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-768-200-4ea6b2c8-2cb.png",
+      "sha256": "0bd0e1ba933e0900110abda9112a0b9981a56c4ae5b1b606150a92d805aa21a9"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-1440-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-1440-100-4ea6b2c8-2cb.png",
+      "sha256": "f8e67ab597a4206e05cdf2a3177967026d8d084cac779e2fed68c5d49123d85a"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-review-1440-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-review-1440-200-4ea6b2c8-2cb.png",
+      "sha256": "56dd40017f9c7ec6662ec6a733631b9ff3a188c0d34dded5e54ee40f98e7425e"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-focused-toast-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-focused-toast-4ea6b2c8-2cb.png",
+      "sha256": "efc47f9596820e0542825aaa3dc63fd32edc960d7acd3502d4e99473cab0b5a8"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-failure-toast-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-failure-toast-4ea6b2c8-2cb.png",
+      "sha256": "9d08aa677b99730626f9c6f59c834a277263a6e21eea9b08e27e7c49f15d971e"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-shared-390-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-shared-390-100-4ea6b2c8-2cb.png",
+      "sha256": "1cdda7125a074dedb50621a65abd53f77ce191c874f6bb755968c6430b5ceaf7"
+    },
+    {
+      "source": "lanes/environment/en-local-notifications-shared-320-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/en-local-notifications-shared-320-200-4ea6b2c8-2cb.png",
+      "sha256": "253952e9919ea9e3a8a16f8bf12c6d24001bb11c08be587389101e04f65c3621"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-denied-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-denied-4ea6b2c8-2cb.png",
+      "sha256": "527a0d7c71307e3546e3ba61f3c769a2653980913253d29dcb297e308d98fa30"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-empty-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-empty-4ea6b2c8-2cb.png",
+      "sha256": "e8dda05ccd3589b780d91fa22d5e666c70b0d0261bc4491fdbc953bd8c299643"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-explicit-example-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-explicit-example-4ea6b2c8-2cb.png",
+      "sha256": "839e763eb0c102c204529f23b174855c14db84acaaaae0abcc20ff50367cb380"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-storage-unavailable-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-storage-unavailable-4ea6b2c8-2cb.png",
+      "sha256": "a91d92b4d2054cea5358f09b19376adf7c86f9f018d32965568d1868ab9885ed"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-320-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-320-100-4ea6b2c8-2cb.png",
+      "sha256": "3f630980768fe23d0d31cb346a8666ebc0c06c679c8b394c4ebd1ba0aff621a0"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-320-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-320-200-4ea6b2c8-2cb.png",
+      "sha256": "c1238fe529d2e413fe24d5728a42efcd8d23895b45e4169a45fb9a94505d190d"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-390-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-390-100-4ea6b2c8-2cb.png",
+      "sha256": "3810f07d0ceab0d0759f5ef22ef6880a459d5b97a31866f057b33c7e0aa14b28"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-390-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-390-200-4ea6b2c8-2cb.png",
+      "sha256": "76d3f954f38fb0cea1163106b45e2f4259716dd3aac2abe2138302ac40fc8fd3"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-768-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-768-100-4ea6b2c8-2cb.png",
+      "sha256": "c81aec2c71b4ae5c24fc44a04eeebcd431cc74d65639c58dd772a11b9401a684"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-768-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-768-200-4ea6b2c8-2cb.png",
+      "sha256": "4abb62477b045af879f46c64fb415d1f6b0ac85defa3897edd9d9bd6c425c205"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-1440-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-1440-100-4ea6b2c8-2cb.png",
+      "sha256": "3b39d60c78eee30c9aa1ba9d5acee338875a39091a5d89b62e56db9e9a4fac7c"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-review-1440-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-review-1440-200-4ea6b2c8-2cb.png",
+      "sha256": "bf33c95afff6e0a66f5a6aa7200963169fb873eefb71e3b0d2ae7843d060f69a"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-focused-toast-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-focused-toast-4ea6b2c8-2cb.png",
+      "sha256": "6504657bd303af8d44ea6b1bc470b73deba1c9601db04477801d68d22ab109ce"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-failure-toast-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-failure-toast-4ea6b2c8-2cb.png",
+      "sha256": "803c3d6a0fe697d66c22ee8b25caaa285ce5f312d19a58d63e50746d28376959"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-shared-390-100-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-shared-390-100-4ea6b2c8-2cb.png",
+      "sha256": "06994464fba4a6849753f2e00db5a5c53d4a740062c8bb56c3392a83907c1b65"
+    },
+    {
+      "source": "lanes/environment/fr-local-notifications-shared-320-200-4ea6b2c8-2cb.png",
+      "file": "evidence/local-notifications/fr-local-notifications-shared-320-200-4ea6b2c8-2cb.png",
+      "sha256": "d09601d4c775e08d76da69a3510731e427c4a557ef6ea7bb84ba9c989b2e19d1"
+    }
+  ],
+  "developmentTimings": [
+    {
+      "locale": "en",
+      "routeReadyMs": 4063
+    },
+    {
+      "locale": "fr",
+      "routeReadyMs": 2962
+    }
+  ],
+  "latencyMeaning": "Allowed-route reload in an already running local development application; no approved budget or production performance claim.",
+  "limitations": [
+    "Native screen-reader testing, native browser zoom and complete contrast audit remain open; CSS text enlargement is not native zoom.",
+    "The queue remains temporary and global; actor/tenant transition isolation and all originating message producers still need review.",
+    "Actual audio playback and production provider/network delivery are not established by the sound switch or local notices.",
+    "Legacy bell, durable alerts, worker unknown outcomes and controlled recovery remain separate incomplete workflows.",
+    "No full build, production performance acceptance, professional approval, X1 clearance or deployment."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

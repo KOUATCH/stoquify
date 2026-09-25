@@ -1,0 +1,27 @@
+{
+  "at": "2026-09-09T08:31:39.421Z",
+  "mode": "before",
+  "run": "a5a4aa0c-68f",
+  "checks": [
+    "Actual approved suspense posting starts with consistent operational and ledger evidence",
+    "Generic reversal posts a counter-journal and reverses the source journal while suspense remains POSTED_TO_SUSPENSE; ledger truth rejects the inconsistency"
+  ],
+  "sourcesBefore": {
+    "services/accounting/posting.service.ts": "6978d887319fc82384075de1fa1946eef538ad40762a5577a1ae1da61cfa1df1",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+  },
+  "scope": "Owned PostgreSQL; synthetic posted suspense and controlled generic reversal reproduction. No live customer data or professional approval.",
+  "originalBefore": "d93df401d282b284b680dbb1a8a2d9f2ab61c87ff0e4affc851f585c1f9fbc2e",
+  "defectReproduced": true,
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/posting.service.ts": "6978d887319fc82384075de1fa1946eef538ad40762a5577a1ae1da61cfa1df1",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735"
+  },
+  "sourceStable": true
+}

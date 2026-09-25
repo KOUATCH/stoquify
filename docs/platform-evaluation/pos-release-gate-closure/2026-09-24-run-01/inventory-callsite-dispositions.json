@@ -1,0 +1,939 @@
+{
+  "at": "2026-09-24T08:58:19.192Z",
+  "historicalActiveCallsites": 20,
+  "freshBeforeActiveCallsites": 24,
+  "sourceHashAlgorithm": "SHA-256 over UTF-8 text with CRLF normalized to LF",
+  "dispositions": [
+    {
+      "file": "scripts/boost-pos-demo-stock.ts",
+      "line": 229,
+      "delegate": "inventoryLevel",
+      "operation": "update",
+      "historicalFinding": false,
+      "purpose": "Local disposable demo stress stock generation; now refuses application DATABASE_URL fallback.",
+      "sourceSha256": "2e118e217a32d9d300c434582fc00e6cbfd5660f215d9969e5cbb2a53c32d83b",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "scripts/boost-pos-demo-stock.ts",
+      "line": 242,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": false,
+      "purpose": "Local disposable demo stress stock generation; now refuses application DATABASE_URL fallback.",
+      "sourceSha256": "2e118e217a32d9d300c434582fc00e6cbfd5660f215d9969e5cbb2a53c32d83b",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "scripts/boost-pos-demo-stock.ts",
+      "line": 257,
+      "delegate": "inventoryTransaction",
+      "operation": "create",
+      "historicalFinding": false,
+      "purpose": "Local disposable demo stress stock generation; now refuses application DATABASE_URL fallback.",
+      "sourceSha256": "2e118e217a32d9d300c434582fc00e6cbfd5660f215d9969e5cbb2a53c32d83b",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "scripts/modern-modules-lifecycle-fixture.ts",
+      "line": 79,
+      "delegate": "inventoryLevel",
+      "operation": "upsert",
+      "historicalFinding": true,
+      "purpose": "Synthetic module-denial stock setup in exact owned database and organization.",
+      "sourceSha256": "30c614afaa6f6994ea0a58b5a5b14958dfafd6537dc067a295cb9812c333d887",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "scripts/supplier-po-ack-e2e-fixture.js",
+      "line": 187,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": false,
+      "purpose": "Synthetic supplier PO acknowledgement stock fixture; now refuses application fallback and nonlocal override.",
+      "sourceSha256": "620b6ff5937d754dcad0cf20a6329ce91615f69d86af980a55c71c29417c1e80",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-cart-access-browser-v130.cjs",
+      "line": 20,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Creates stock for EN/FR cart write permission denial and explicit recovery browser scenarios.",
+      "sourceSha256": "e615404b73e61cbdcabb0e8e84814b9d6b34da7056886dc4d1dc3e05fc98f5b0",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-cart-access-v130.cjs",
+      "line": 17,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Creates stock for synthetic entitlement state matrix; no checkout in this fixture.",
+      "sourceSha256": "d4d8762c7a5ce8fb2214a820c741c2e89da8165db725dd89b69b5a40357b2bdf",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-inventory.cjs",
+      "line": 20,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Creates fully reserved stock and value for read-only digest snapshot tests.",
+      "sourceSha256": "51063997bf7491552c9eac1fc05d1ed7615f89c8411013becd74af7ea01ee4fa",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-stock-access.cjs",
+      "line": 23,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Creates intentionally inconsistent reserved stock for module read access evidence.",
+      "sourceSha256": "641d43bece8762265ecb3c8c4d62c04b7c607449e859977e4445826259c49ef7",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pos-cart-concurrency-v130.cjs",
+      "line": 16,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Creates cart test stock or simulates reservation exhaustion for stock-denial/concurrency assertions.",
+      "sourceSha256": "e37665a5db95ee28da7ecd60a025b03a74ca662e6868de31abbe827eafbca04e",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pos-cart-concurrency-v130.cjs",
+      "line": 30,
+      "delegate": "inventoryLevel",
+      "operation": "update",
+      "historicalFinding": true,
+      "purpose": "Creates cart test stock or simulates reservation exhaustion for stock-denial/concurrency assertions.",
+      "sourceSha256": "e37665a5db95ee28da7ecd60a025b03a74ca662e6868de31abbe827eafbca04e",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pos-cart-v122.cjs",
+      "line": 16,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Historical cart regression fixture; initializes or deliberately exhausts available stock.",
+      "sourceSha256": "0ab1069f60d8151429603a8d6dee1027e1683f0ca385411d9f14edae0fc43be3",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pos-cart-v122.cjs",
+      "line": 30,
+      "delegate": "inventoryLevel",
+      "operation": "update",
+      "historicalFinding": true,
+      "purpose": "Historical cart regression fixture; initializes or deliberately exhausts available stock.",
+      "sourceSha256": "0ab1069f60d8151429603a8d6dee1027e1683f0ca385411d9f14edae0fc43be3",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pulse-actions-v145.cjs",
+      "line": 6,
+      "delegate": "inventoryLevel",
+      "operation": "updateMany",
+      "historicalFinding": true,
+      "purpose": "Intentionally varies availability/reorder thresholds and injects a foreign-location row to prove reporting scope exclusions.",
+      "sourceSha256": "345f6dbdba3392131128615bfceedbee20f7a3f178c3f42e2f02c1ddeee7297f",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pulse-actions-v145.cjs",
+      "line": 8,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Intentionally varies availability/reorder thresholds and injects a foreign-location row to prove reporting scope exclusions.",
+      "sourceSha256": "345f6dbdba3392131128615bfceedbee20f7a3f178c3f42e2f02c1ddeee7297f",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pulse-actions-v145.cjs",
+      "line": 9,
+      "delegate": "inventoryLevel",
+      "operation": "updateMany",
+      "historicalFinding": true,
+      "purpose": "Intentionally varies availability/reorder thresholds and injects a foreign-location row to prove reporting scope exclusions.",
+      "sourceSha256": "345f6dbdba3392131128615bfceedbee20f7a3f178c3f42e2f02c1ddeee7297f",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pulse-actions-v145.cjs",
+      "line": 10,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Intentionally varies availability/reorder thresholds and injects a foreign-location row to prove reporting scope exclusions.",
+      "sourceSha256": "345f6dbdba3392131128615bfceedbee20f7a3f178c3f42e2f02c1ddeee7297f",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pulse-actions-v145.cjs",
+      "line": 12,
+      "delegate": "inventoryLevel",
+      "operation": "updateMany",
+      "historicalFinding": true,
+      "purpose": "Intentionally varies availability/reorder thresholds and injects a foreign-location row to prove reporting scope exclusions.",
+      "sourceSha256": "345f6dbdba3392131128615bfceedbee20f7a3f178c3f42e2f02c1ddeee7297f",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-pulse-observations-v146.cjs",
+      "line": 10,
+      "delegate": "inventoryLevel",
+      "operation": "updateMany",
+      "historicalFinding": true,
+      "purpose": "Adjusts reorder threshold in synthetic completed-sale reporting fixture.",
+      "sourceSha256": "cf29eb2364663220b58476e9a694d697c0122f4d508000e6bedfb4528b32fe98",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-report-browser-v141.cjs",
+      "line": 12,
+      "delegate": "inventoryTransaction",
+      "operation": "updateMany",
+      "historicalFinding": true,
+      "purpose": "Deliberately unmatches movement evidence to assert browser reports unavailable cost rather than zero.",
+      "sourceSha256": "04324761acff54b480a15ea33afa24b133e39bc0ac10ec1332bacdd1a3434961",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-report-cost-v141.cjs",
+      "line": 8,
+      "delegate": "inventoryTransaction",
+      "operation": "updateMany",
+      "historicalFinding": true,
+      "purpose": "Corrupts/restores synthetic movement references or creates explicit delivery cost evidence to test reporting truth.",
+      "sourceSha256": "77c11f85cb418066ce226d299aeebb41bd5b8e41e42a55a964624d9e1ac6d159",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-report-cost-v141.cjs",
+      "line": 10,
+      "delegate": "inventoryTransaction",
+      "operation": "updateMany",
+      "historicalFinding": true,
+      "purpose": "Corrupts/restores synthetic movement references or creates explicit delivery cost evidence to test reporting truth.",
+      "sourceSha256": "77c11f85cb418066ce226d299aeebb41bd5b8e41e42a55a964624d9e1ac6d159",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-report-cost-v141.cjs",
+      "line": 14,
+      "delegate": "inventoryTransaction",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Corrupts/restores synthetic movement references or creates explicit delivery cost evidence to test reporting truth.",
+      "sourceSha256": "77c11f85cb418066ce226d299aeebb41bd5b8e41e42a55a964624d9e1ac6d159",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+          "sha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    },
+    {
+      "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-tender-access-v131.cjs",
+      "line": 12,
+      "delegate": "inventoryLevel",
+      "operation": "create",
+      "historicalFinding": true,
+      "purpose": "Sets initial stock and cost for real-service synthetic tender entitlement/correction tests.",
+      "sourceSha256": "2814ff20e194ec6082b54b47355b54f0b75c7295a042c71cd6848fe7794f4bbb",
+      "guardEvidence": [
+        {
+          "file": "scripts/disposable-fixture-guard.js",
+          "sha256": "301254a3cd7950a7e395d26e998e473d1293ee0bb5781592c520a9ac6c495377"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/statement-recipient-fixtures.cjs",
+          "sha256": "a0f105ba977dbf723569297ae0e284ac3dd914c25f08cc14658a76eed2cbc461"
+        },
+        {
+          "file": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/registration-local.cjs",
+          "sha256": "ed88a814134a91196b02f146941c55ca24bf4617c4f9cdacfd06b99ac4b6d467"
+        },
+        {
+          "file": "scripts/run-modern-modules-postgres-smoke.js",
+          "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+        },
+        {
+          "file": "scripts/modern-modules-local-verification.js",
+          "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+        },
+        {
+          "file": "scripts/prisma-local-fresh-bootstrap.js",
+          "sha256": "9a5a9f54e270b559334263bc398f9659e0ed408da409080b5983e1d90ed9d797"
+        }
+      ],
+      "status": "reviewed and verified by final fail-mode gate",
+      "ownerRole": "Inventory/backend engineering and QA",
+      "actualOwner": "not assigned",
+      "databaseExecution": false,
+      "verification": "scripts/__tests__/inventory-fixture-invocation.test.js plus scripts/__tests__/disposable-fixture-guard.test.js",
+      "classification": "REVIEWED_DISPOSABLE_FIXTURE"
+    }
+  ],
+  "finalVerification": {
+    "totalFindings": 55,
+    "activeViolationCount": 0,
+    "allowedFindingCount": 55,
+    "byClassification": {}
+  },
+  "verifiedAt": "2026-09-24T09:02:38.421Z"
+}

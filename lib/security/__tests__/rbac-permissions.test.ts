@@ -1,5 +1,6 @@
 import { PERMISSION_GROUPS, ROLE_TEMPLATES } from "@/lib/permissions"
 import {
+  PERMISSION_ALIASES,
   expandPermissions,
   hasAllRbacPermissions,
   hasAnyRbacPermission,
@@ -10,6 +11,53 @@ import {
 } from "@/lib/security/rbac-permissions"
 
 describe("rbac permission compatibility", () => {
+  it("permits only directly declared compatibility between canonical operations, never shared-alias escalation", () => {
+    const table: Record<string, readonly string[]> = PERMISSION_ALIASES
+    const canonical = Object.keys(table)
+    for (const [granted, aliases] of Object.entries(table)) {
+      const direct = canonical.filter(required => required === granted || aliases.includes(required) || table[required]!.includes(granted))
+      expect(canonical.filter(required => hasRbacPermission([granted], required))).toEqual(direct)
+      for (const legacy of aliases) {
+        expect(hasRbacPermission([legacy], granted)).toBe(true)
+        expect(hasRbacPermission([granted], legacy)).toBe(true)
+      }
+    }
+  })
+  it.each([
+    ["payments.reconciliation.read", "accounting.close.read"],
+    ["accounting.close.read", "fraud.cases.manage"],
+    ["roles.permissions.assign", "roles.permissions.remove"],
+    ["payroll.runs.calculate", "payroll.payments.request"],
+    ["accounting.close.run", "payroll.payments.release"],
+  ])("does not manufacture %s sibling authority for %s through a shared legacy alias", (granted, required) => {
+    expect(hasRbacPermission([granted], required)).toBe(false)
+    const effective = expandPermissions([granted])
+    expect(effective).toEqual([granted])
+    expect(expandPermissions(effective)).toEqual(effective)
+    expect(hasRbacPermission(effective, required)).toBe(false)
+    expect(hasRbacPermission([...effective, required], required)).toBe(true)
+  })
+
+  it("preserves directly stored legacy grants without inventing other legacy grants on repeated expansion", () => {
+    const effective = expandPermissions(["VIEW_FINANCIAL_AUDIT_TRAIL"])
+    expect(hasRbacPermission(effective, "accounting.close.read")).toBe(true)
+    expect(hasRbacPermission(effective, "payments.reconciliation.read")).toBe(true)
+    expect(effective).not.toContain("MANAGE_FINANCIAL_CONTROLS")
+    expect(expandPermissions(effective)).toEqual(effective)
+  })
+  it("recognizes explicit transfer-read grants without granting transfer operations", () => {
+    expect(isKnownPermission("TRANSFERS_READ")).toBe(true)
+    expect(isKnownPermission("inventory.transfers.read")).toBe(true)
+    expect(hasRbacPermission(["TRANSFERS_READ"], "inventory.transfers.read")).toBe(true)
+    expect(hasRbacPermission(["inventory.transfers.read"], "TRANSFERS_READ")).toBe(true)
+    expect(hasRbacPermission([], "TRANSFERS_READ")).toBe(false)
+    expect(hasRbacPermission(["inventory.items.read"], "TRANSFERS_READ")).toBe(false)
+    expect(hasRbacPermission(["*"], "TRANSFERS_READ")).toBe(false)
+    expect(hasRbacPermission(["TRANSFERS_READ"], "inventory.stock.transfer")).toBe(false)
+    expect(hasRbacPermission(["TRANSFERS_READ"], "inventory.transfer.approve")).toBe(false)
+    expect(hasRbacPermission(["TRANSFERS_CREATE"], "TRANSFERS_READ")).toBe(false)
+  })
+
   it("allows old uppercase role permissions to satisfy canonical dot-style checks", () => {
     expect(hasRbacPermission(["READ_ROLES"], "roles.read")).toBe(true)
     expect(hasRbacPermission(["CREATE_USERS"], "users.create")).toBe(true)

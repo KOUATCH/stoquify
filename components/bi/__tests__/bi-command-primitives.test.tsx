@@ -1,5 +1,6 @@
 import type { SVGProps } from "react"
 import { fireEvent, render, screen } from "@testing-library/react"
+import { renderToStaticMarkup } from "react-dom/server"
 
 jest.mock("lucide-react", () => {
   const createIcon = (name: string) => {
@@ -299,6 +300,80 @@ const proofTrail: ProofTrailResult = {
 }
 
 describe("BI command primitives", () => {
+  it("retains source details alongside distinct impact text without duplicating identical copy", () => {
+    const change = buildChange()
+    const { rerender } = render(<BIWhatChangedStrip changes={[change]} />)
+    expect(screen.getByText(change.detail)).toBeVisible()
+    expect(screen.getByText(change.businessImpact!)).toBeVisible()
+    rerender(<BIWhatChangedStrip changes={[{ ...change, businessImpact: change.detail }]} />)
+    expect(screen.getAllByText(change.detail)).toHaveLength(1)
+    rerender(<BIWhatChangedStrip changes={[{ ...change, detail: "" }]} />)
+    expect(screen.getByText(change.businessImpact!)).toBeVisible()
+  })
+  it.each(["en", "fr"])("distinguishes observed scores from historical changes in %s", locale => {
+    const observation = { ...buildChange(), direction: "observed" as const, previousValue: null, currentValue: 75, unit: "risk" }
+    const { container, rerender } = render(<BIWhatChangedStrip changes={[observation]} locale={locale} />)
+    expect(screen.getByText(locale === "fr" ? "Observé" : "Observed")).toBeVisible()
+    expect(screen.getByText(locale === "fr" ? "Score de risque: 75" : "Risk score: 75")).toBeVisible()
+    expect(screen.getByText(locale === "fr" ? "Comparaison historique indisponible" : "Historical comparison unavailable")).toBeVisible()
+    expect(container.textContent).not.toContain("->")
+    rerender(<BIWhatChangedStrip changes={[{ ...buildChange(), previousValue: 10, currentValue: 15, unit: "items" }]} locale={locale} />)
+    expect(screen.getByText("10 -> 15 items")).toBeVisible()
+    expect(screen.queryByText(locale === "fr" ? "Comparaison historique indisponible" : "Historical comparison unavailable")).not.toBeInTheDocument()
+  })
+  it("localizes French brief metadata, evidence and mode controls without changing the target", () => {
+    const onModeChange = jest.fn()
+    render(<BICommandBriefHeader brief={buildBrief()} locale="fr" timezone="UTC" onModeChange={onModeChange} />)
+    expect(screen.getByText("Synthèse de pilotage")).toBeVisible()
+    expect(screen.getByText("Période:")).toBeVisible()
+    expect(screen.getByText("en cours")).toBeVisible()
+    const evidenceBadge = screen.getByText("preuve:").parentElement!
+    expect(evidenceBadge).toHaveTextContent("preuve: Rapproché")
+    expect(evidenceBadge).toBeVisible()
+    expect(evidenceBadge).not.toHaveAttribute("aria-label")
+    expect(screen.getAllByText("à jour").length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole("button", { name: "Examiner" }))
+    expect(onModeChange).toHaveBeenCalledWith("investigate")
+    expect(screen.getByRole("link", { name: actionLink.label })).toHaveAttribute("href", actionLink.href)
+  })
+  it("keeps French denied KPI values hidden and unavailable evidence controls disabled", () => {
+    const { BIKpiCard: CurrencyCard } = require("../BIKpiCard")
+    render(<CurrencyCard locale="fr" card={{ ...kpi, state: "permission_denied", actionLink: null, drillThrough: { available: false, type: "proof", label: "Preuve indisponible", requiredPermission: "finance.read", unavailableReason: "Autorisation manquante" } }} />)
+    expect(screen.getByText("Accès refusé")).toBeVisible()
+    expect(screen.getByText("Vous n’avez pas accès à cet indicateur")).toBeVisible()
+    expect(screen.getByRole("button", { name: "Preuve indisponible" })).toBeDisabled()
+    expect(screen.queryByText(/125/)).not.toBeInTheDocument()
+  })
+  it("localizes French empty and stale state guidance", () => {
+    render(<><BIWhatChangedStrip changes={[]} locale="fr" /><BIStateSurface state="stale" locale="fr" /><BIRiskOpportunityRadar risks={[]} locale="fr" /></>)
+    expect(screen.getByText("Aucune évolution importante pour le moment")).toBeVisible()
+    expect(screen.getByText("Données de pilotage périmées")).toBeVisible()
+    expect(screen.getByText("Aucun signal affiché")).toBeVisible()
+  })
+  it("renders unassessed observations without inventing urgency or rank-based danger", () => {
+    const risk = buildRisk()
+    const { container } = render(<BIRiskOpportunityRadar locale="fr" risks={[{ ...risk, severity: "info", severityScore: null, urgency: null, moneyImpact: null }]} />)
+    expect(screen.getByText("Urgence non évaluée")).toBeVisible()
+    expect(screen.getByText(risk.detail)).toBeVisible()
+    expect(screen.getByText("#1").className).not.toContain("danger")
+    expect(container).not.toHaveTextContent("today")
+  })
+  it("explains a disabled primary action without rendering an actionable link", () => {
+    const brief = buildBrief()
+    render(<BICommandBriefHeader brief={{ ...brief, primaryAction: { ...actionLink, disabled: true, disabledReason: "Contact your administrator." } }} />)
+    expect(screen.getByRole("button", { name: actionLink.label })).toBeDisabled()
+    expect(screen.queryByRole("link", { name: actionLink.label })).not.toBeInTheDocument()
+    expect(screen.getByText("Contact your administrator.")).toBeVisible()
+  })
+  it("preserves the minor units of a currency KPI", () => {
+    const { BIKpiCard: CurrencyCard } = require("../BIKpiCard")
+    render(<CurrencyCard card={{ ...kpi, value: 100.25, format: "currency" }} currencyCode="EUR" locale="en" />)
+    expect(screen.getByText("€100.25")).toBeInTheDocument()
+  })
+  it("formats a supplied organization timezone in the brief period", () => {
+    render(<BICommandBriefHeader brief={{ ...buildBrief(), periodStart: "2026-02-28T11:00:00Z", periodEnd: "2026-03-01T10:59:59Z" }} timezone="Pacific/Auckland" locale="en" />)
+    expect(screen.getByText("Mar 1 - Mar 1")).toBeInTheDocument()
+  })
   it("renders the command brief and switches modes through the shared tabs", () => {
     const onModeChange = jest.fn()
 
@@ -316,6 +391,14 @@ describe("BI command primitives", () => {
     expect(screen.getByRole("button", { name: /Brief/ })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: /Command/ })).toBeInTheDocument()
     expect(screen.getByRole("button", { name: /Investigate/ })).toHaveAttribute("aria-pressed", "true")
+  })
+
+  it("keeps server-rendered mode controls disabled until client handlers are ready", () => {
+    const markup = renderToStaticMarkup(<BICommandModeTabs value="brief" />)
+    const container = document.createElement("div")
+    container.innerHTML = markup
+    expect(container.querySelectorAll("button[disabled]")).toHaveLength(3)
+    expect(container.querySelector('[aria-busy="true"]')).not.toBeNull()
   })
 
   it("renders changes, empty states, action blockers, business truth, and risk ranking", () => {
@@ -348,6 +431,20 @@ describe("BI command primitives", () => {
     expect(screen.getByText("Resolve cash blocker")).toBeInTheDocument()
     expect(screen.getByText("Supplier payment needs proof")).toBeInTheDocument()
     expect(screen.getByText("Stock-to-cash leakage")).toBeInTheDocument()
+  })
+
+  it.each(["en", "fr"])("does not claim no changes or no risk for an empty observation scope in %s", (locale) => {
+    render(<BIWhatChangedStrip changes={[]} contentKind="observations" locale={locale} />)
+    expect(screen.getByText(locale === "en" ? "No visible observations" : "Aucune observation visible")).toBeInTheDocument()
+    expect(screen.getByText("0 observations")).toBeInTheDocument()
+    expect(screen.queryByText("No important changes yet")).not.toBeInTheDocument()
+  })
+
+  it.each(["en", "fr"])("preserves assessed severity while showing missing urgency in %s", (locale) => {
+    render(<BIRiskOpportunityRadar risks={[{ ...buildRisk(), severity: "critical", urgency: null }]} locale={locale} />)
+    expect(screen.getByText(locale === "en" ? "Urgency not assessed" : "Urgence non évaluée")).toBeInTheDocument()
+    expect(screen.getByText("1 signal")).toBeInTheDocument()
+    expect(screen.queryByText(locale === "en" ? "Now" : "Maintenant")).not.toBeInTheDocument()
   })
 
   it("handles proof drawer available and unavailable states without computing access", () => {

@@ -1,0 +1,139 @@
+{
+  "at": "2026-09-08T08:14:05.811Z",
+  "sourceBaseline": "evidence/source-baseline-v57.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "services/purchasing/ap-control.service.ts": "54ba7d6afb127d1647623b1bc1727a740acfcadffa645aa13e624de9d5eef32f",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "5eefacc3de1f9a72679151a3862317a45b0595c7d24abcc300fbdf8248b608d9",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "eccbc3e874ddba1b3cda57eadc4289e8ecb7f8d71cbb82428fbff0de65feeb38",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "28706a09649516fdc039cdcde97cdd49b632ad2c3d6957bad0a95960d3f25c3d",
+    "messages/en.json": "98e79aea25d6264a7143e0dada19ee41f53b7b68466efbf6dcc671794324b6f1",
+    "messages/fr.json": "a180c0160eb968bfd7a1d1988e881816a99a81ddb710dab20621a6da3a67b4db",
+    "services/_shared/action-errors.ts": "b69a295070b6fe6a922574db15c9dccad62da26810bbd48a41c9275a15cdd7eb",
+    "services/purchasing/__tests__/invoice-preparation-contracts.test.ts": "30f46200d1036e8076beeaa9678d25386029ddacb592484d63b7cedb9dc843f8",
+    "actions/purchasing/__tests__/invoice-preparation.actions.test.ts": "f35191435e85b4cbbc923bf64096b0083ea085ebcf541d6380cad19700a28844",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "fea76b7b96eaa5788d0da1335fdaf6804d70ff93a23ab50ac4b0952293896ece"
+  },
+  "verifiers": {
+    "lanes/environment/verify-invoice-preparation.cjs": "bf777d65c9b4a7fe05e625c12b929ab7d1de7cddb792795a8fc549f8b7079688",
+    "lanes/environment/verify-invoice-preparation-browser.cjs": "944a2210d1bfbbb794fdf07582702d5b8a838dd2ab7572b3c1fb3d96e4592072",
+    "verify-invoice-preparation-checks.cjs": "5782983f412a08ffac21e94fee74796eea5e25d958ed18bc1a71b0baa61c5b17"
+  },
+  "tests": "evidence/invoice-preparation-tests-final.json",
+  "checks": "evidence/invoice-preparation-checks-72fb30a3-20c.json",
+  "postgres": "lanes/environment/invoice-preparation-dc05416f-e1c.json",
+  "browser": "lanes/environment/invoice-preparation-browser-872b70e4-fe2.json",
+  "screenshotEvidence": [
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-draft-desktop-872b70e4-fe2.png",
+      "sha256": "b031ea33ba6e510fcc11bdf0947469e33eb6b5e41dff1f31661d764e8908ec5a"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-draft-320-872b70e4-fe2.png",
+      "sha256": "b186207ec9c1ee0add2f310183b7f0a4119389d547f17e16b5630183bd8ac322"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-draft-390-872b70e4-fe2.png",
+      "sha256": "dfd730b42fcabe6f0d1720c65ae4f618325999bf350ab23a8bbee9a43aad8ce4"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-draft-768-872b70e4-fe2.png",
+      "sha256": "8c1e1e885e92000247ccd4345c6a5d59d961e21454526e403244f35b2e0595d6"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-review-desktop-872b70e4-fe2.png",
+      "sha256": "33bafd5e9a81a695095069fdb25f403327c8ac205aebb65bea60956c55e51aef"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-stale-draft-preserved-872b70e4-fe2.png",
+      "sha256": "8e6af0b4b8b864373cf4c13f160cab895967fc1f4d3e95902f3987e94cc939d7"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-recovered-desktop-872b70e4-fe2.png",
+      "sha256": "6c5272897762c7a84a27fb513b93d975d80680ba1032cae9e9b6df4de804bc00"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-recovered-mobile-872b70e4-fe2.png",
+      "sha256": "f778d181962541d543f31f817022d722102b7583b340a375dbe477f51cdc5c78"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-recovered-text200-872b70e4-fe2.png",
+      "sha256": "758ab226747c2bb5d504b95e018994dd026cb2f700abd3ef569d8a06d3b5dd44"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-en-denied-872b70e4-fe2.png",
+      "sha256": "d5daea658da2c89fccd8c559e4e9e4591405df72fa93836eda14238b35eac03b"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-draft-desktop-872b70e4-fe2.png",
+      "sha256": "aceaf86aa7a6748e1fd07190efdbe1f4383b444334135f28ce18a5b5e87f9cbf"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-draft-320-872b70e4-fe2.png",
+      "sha256": "9456e34d88538ae906623d13c6ea0ba3feeab68e6480426cb2ec036daacd5110"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-draft-390-872b70e4-fe2.png",
+      "sha256": "3c1e36cf34cad87c56d407d97245d3751cad5b4c8d2c8bfc1b15615f8a85701a"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-draft-768-872b70e4-fe2.png",
+      "sha256": "0fd594d77e93777a1526c8b9f8fe6f238565339f2d230227a39c21e6ec11c095"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-review-desktop-872b70e4-fe2.png",
+      "sha256": "2554b6c85dfced85b2970a411f8d4f7bf1ec919e3d3b1b0ae85448ab4694ba7f"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-stale-draft-preserved-872b70e4-fe2.png",
+      "sha256": "2e3e8341d7d806c1a6de7fbc08b5f03fe852626e3365d5bd781f83fdbade8553"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-recovered-desktop-872b70e4-fe2.png",
+      "sha256": "16c2ec5376addd87029b08e1b53f1fac1be31c27dcffcbf89ecb9917739c7237"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-recovered-mobile-872b70e4-fe2.png",
+      "sha256": "20350d7888fbed994bcb177eeb72e3d83596e4047cb567572c70e3f4486dae93"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-recovered-text200-872b70e4-fe2.png",
+      "sha256": "aeddeb00bb5984453945270927f8136658b1922799133a014038151def36aa51"
+    },
+    {
+      "path": "evidence/invoice-preparation-screenshots/invoice-preparation-fr-denied-872b70e4-fe2.png",
+      "sha256": "f60888199ea0741361c97de664543f40bfe3f2b771d24bd7ec5b40f6d5fb5205"
+    }
+  ],
+  "staticInventory": "evidence/invoice-module-surfaces.json",
+  "staticInventoryMeaning": "Report-only scanner does not trace shared route/service guards; flags retained. Runtime scope is supported by the separate database/browser checks.",
+  "migration": "none",
+  "productionBuild": "not run; actual development route compiled and exercised",
+  "professionalCertification": false,
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2663,
+      "tests": 933,
+      "pages": 150,
+      "routeHandlers": 18,
+      "actionSources": 162,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2195,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

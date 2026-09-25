@@ -1,0 +1,25 @@
+{
+  "id": "pos.commit.recovery.read",
+  "version": "2026-09-13.1",
+  "owner": "POS domain services",
+  "action": "actions/pos/commit-recovery.actions.ts:getPOSSaleCommitStatusAction",
+  "service": "services/pos/pos.service.ts:getPOSSaleCommitStatus",
+  "permission": "pos.read",
+  "commercialMode": "Retained own-result read; no entitlement to create a sale is granted.",
+  "scope": "Server tenant/cashier plus original store/terminal/session/sale/client identifier and request hash; verified stored result and current sale status.",
+  "effects": "Ordinary permission audit only. No commit, receipt completion, payment, posting or delivery.",
+  "states": [
+    "NOT_FOUND",
+    "PENDING",
+    "RECORDED",
+    "failed"
+  ],
+  "client": "Original validated request in per-tenant/cashier session storage before submission; explicit original retry or reviewed-result acknowledgement.",
+  "limits": "No cross-device or closed-tab discovery, no full receipt recovery, no retained-obligation refund/void permission change.",
+  "rollout": "Local implementation, no deployment/schema/live activation.",
+  "evidence": [
+    "lanes/environment/commit-recovery-v132-21499472-8888-4a54-8800-c0adb78a8c21.json",
+    "lanes/environment/commit-recovery-browser-v132-3075f75d-dc9a-4459-9d52-edf7bee91b74.json",
+    "COMMIT_RECOVERY_V132.md"
+  ]
+}

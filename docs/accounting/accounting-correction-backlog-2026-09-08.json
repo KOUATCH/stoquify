@@ -1,0 +1,1152 @@
+{
+  "version": 1,
+  "date": "2026-09-08",
+  "status": "ROADMAP_READY_IMPLEMENTATION_NOT_STARTED",
+  "baseline": "docs/accounting/audit-report.md",
+  "schedule": {
+    "unit": "relative business weeks from confirmed kickoff",
+    "referenceWeeks": [
+      12,
+      16
+    ],
+    "staffing": "Three engineers across core/database, integrations and reporting/frontend; one QA engineer; part-time controller/domain reviewers and SRE. Roles are proposed, not assigned people.",
+    "engineeringCapacityAllocation": 0.8,
+    "exclusions": [
+      "Full multi-currency functionality beyond the selected supported scope",
+      "Unknown-volume historical repair",
+      "External statutory approval or provider certification lead times"
+    ]
+  },
+  "phases": [
+    {
+      "id": "M0",
+      "name": "Establish the execution baseline",
+      "window": "Week 1",
+      "gate": "G0",
+      "outcome": "Current findings reproduced or explicitly superseded; supported policy, owners, isolated environment and exposure scan agreed."
+    },
+    {
+      "id": "M1",
+      "name": "Contain the demonstrated risks",
+      "window": "Weeks 1–3",
+      "gate": "G1",
+      "outcome": "Currency, locked settings, source reversal and finance-label protections verified through direct service/action paths."
+    },
+    {
+      "id": "M2",
+      "name": "Protect ledger history and period boundaries",
+      "window": "Weeks 3–6",
+      "gate": "G2",
+      "outcome": "Tenant references, posted immutability, concurrent lifecycle and fiscal calendars validated on PostgreSQL."
+    },
+    {
+      "id": "M3",
+      "name": "Reconcile every material producer and close",
+      "window": "Weeks 6–10",
+      "gate": "G3",
+      "outcome": "POS, AP, inventory, payroll, payments and event recovery satisfy the shared source/ledger/close contracts."
+    },
+    {
+      "id": "M4",
+      "name": "Correct reporting and finance totals",
+      "window": "Contract in Week 2; implementation Weeks 6–10",
+      "gate": "G4",
+      "outcome": "Reports have correct currency, opening/closing, full populations and consistent bounded reads."
+    },
+    {
+      "id": "M5",
+      "name": "Finish accountant workflows and cache controls",
+      "window": "Weeks 8–11",
+      "gate": "G5",
+      "outcome": "Amounts, scope, stale states, pagination, sensitive-action review and access changes are reliable in both locales."
+    },
+    {
+      "id": "M6",
+      "name": "Rehearse data correction and prove the release",
+      "window": "Weeks 10–13",
+      "gate": "G6",
+      "outcome": "Repair evidence or verified no-repair disposition, green candidate tests, deployment rehearsal and release packet."
+    },
+    {
+      "id": "M7",
+      "name": "Pilot, observe and close the findings",
+      "window": "Weeks 12–16",
+      "gate": "G7",
+      "outcome": "A bounded pilot completes observed operations and a close cycle; all released-scope findings have accepted evidence."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "ACR-00",
+      "phase": "M0",
+      "title": "Rebaseline the audit on a stable candidate",
+      "owner": "Core lead + QA",
+      "estimateEngineeringDays": {
+        "min": 1,
+        "max": 2
+      },
+      "dependsOn": [],
+      "findings": [
+        "ACC-015"
+      ],
+      "status": "READY",
+      "deliverable": "Candidate commit/source hashes; refreshed finding register; actual owners and PR boundaries.",
+      "acceptance": [
+        "Reproduce or supersede each ACC finding against the chosen working revision; retain the old evidence.",
+        "Identify concurrent AP changes and distinguish existing fixes from remaining work.",
+        "Record named owners and exact test commands; do not copy audit defects blindly into implementation."
+      ]
+    },
+    {
+      "id": "ACR-01",
+      "phase": "M0",
+      "title": "Freeze accounting and workflow contracts",
+      "owner": "Controller + core lead",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 3
+      },
+      "dependsOn": [
+        "ACR-00"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-002",
+        "ACC-003",
+        "ACC-005",
+        "ACC-008",
+        "ACC-009",
+        "ACC-011",
+        "ACC-014"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Versioned money, calendar, policy-change, source-ownership and close-state contracts.",
+      "acceptance": [
+        "Declare supported base currencies, precision, rounding stage, business dates/timezone and fiscal boundaries.",
+        "Specify posting lock versus reviewed close versus certified export; classify allowed manual adjustments.",
+        "Define shared report/cache DTOs early enough to remove circular implementation dependencies."
+      ]
+    },
+    {
+      "id": "ACR-02",
+      "phase": "M0",
+      "title": "Provision isolated verification and fixtures",
+      "owner": "QA + database lead",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 3
+      },
+      "dependsOn": [
+        "ACR-00"
+      ],
+      "findings": [
+        "ACC-004",
+        "ACC-007",
+        "ACC-010",
+        "ACC-012",
+        "ACC-015"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Disposable PostgreSQL database, real application role, two tenants, actor roles and reproducible financial fixtures.",
+      "acceptance": [
+        "No production writes or seeded customer records.",
+        "Fixtures include cash/credit sales, AP, inventory, payroll, suspense, reversal, closed period and mixed-currency rejection.",
+        "Authenticated browser roles and concurrency barriers work; environment scripts are reviewed before execution."
+      ]
+    },
+    {
+      "id": "ACR-03",
+      "phase": "M0",
+      "title": "Measure existing data exposure",
+      "owner": "Database lead + controller",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 4
+      },
+      "dependsOn": [
+        "ACR-00"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-002",
+        "ACC-003",
+        "ACC-004",
+        "ACC-005",
+        "ACC-006",
+        "ACC-007",
+        "ACC-008"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Read-only exposure report grouped by tenant, source, period and currency, with a repair classification.",
+      "acceptance": [
+        "Scan currency/base inconsistencies, historical settings, generic source reversals, orphan/foreign references and overlapping periods.",
+        "Compare closed periods with source failures and assurance blockers.",
+        "Classify none found, confirmed affected, or access unavailable; unavailable is never treated as clean."
+      ]
+    },
+    {
+      "id": "ACR-04",
+      "phase": "M1",
+      "title": "Enforce the supported currency scope",
+      "owner": "Core engineer + producer owners",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-01",
+        "ACR-02"
+      ],
+      "findings": [
+        "ACC-001"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Server-enforced currency admission and explicit unsupported/mixed-data report states.",
+      "acceptance": [
+        "Every producer derives the correct supported organization/source currency instead of falling back silently to XAF.",
+        "Unsupported conversion fails explicitly; contaminated historical aggregates cannot appear trustworthy.",
+        "Existing settlement/correction obligations receive an explicit supported recovery path rather than a blanket dead end."
+      ]
+    },
+    {
+      "id": "ACR-05",
+      "phase": "M1",
+      "title": "Protect material accounting settings",
+      "owner": "Core engineer",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 3
+      },
+      "dependsOn": [
+        "ACR-01",
+        "ACR-02"
+      ],
+      "findings": [
+        "ACC-002"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Validated policy enums and a used/locked-setting mutation boundary.",
+      "acceptance": [
+        "Direct actions and service calls reject prohibited base-currency, valuation and calendar mutations.",
+        "Before/after policy evidence is retained for permitted changes.",
+        "Any future effective-dated transition is separate from an unrestricted generic update."
+      ]
+    },
+    {
+      "id": "ACR-06",
+      "phase": "M1",
+      "title": "Restrict generic reversal to valid sources",
+      "owner": "Integration engineer + controller",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 4
+      },
+      "dependsOn": [
+        "ACR-01",
+        "ACR-02"
+      ],
+      "findings": [
+        "ACC-003"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Source-to-correction routing and guarded generic reversal.",
+      "acceptance": [
+        "POS/AP/inventory/payroll/payment source types cannot bypass their owning correction command.",
+        "Legitimate manual adjustment and reversal semantics remain supported and traceable.",
+        "Current authorization, reason/date and source identity are validated; a UI-only restriction does not pass."
+      ]
+    },
+    {
+      "id": "ACR-07",
+      "phase": "M1",
+      "title": "Correct misleading finance proof labels",
+      "owner": "Reporting/frontend engineer",
+      "estimateEngineeringDays": {
+        "min": 1,
+        "max": 2
+      },
+      "dependsOn": [
+        "ACR-00"
+      ],
+      "findings": [
+        "ACC-014"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Truthful operational-versus-ledger labels and partial-source disclosure.",
+      "acceptance": [
+        "Operational sales orders never receive a posted-ledger badge by assumption.",
+        "Heuristic confidence cannot produce certification.",
+        "Existing capped metrics are visibly partial until full-population aggregation is delivered in ACR-21."
+      ]
+    },
+    {
+      "id": "ACR-08",
+      "phase": "M2",
+      "title": "Enforce tenant-safe ledger relationships and dimensions",
+      "owner": "Database/core engineer",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-01",
+        "ACR-02",
+        "ACR-03"
+      ],
+      "findings": [
+        "ACC-006",
+        "ACC-007"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Constraint design, scoped dimension validation, migration preflight and invalid-reference report.",
+      "acceptance": [
+        "Foreign or missing account/parent/customer/supplier/item/location references fail at the appropriate boundary.",
+        "Existing invalid references are investigated before constraints are validated.",
+        "Retention, cascade behavior and permitted historical dimension changes are documented."
+      ]
+    },
+    {
+      "id": "ACR-09",
+      "phase": "M2",
+      "title": "Make posted financial content immutable",
+      "owner": "Database/core engineer",
+      "estimateEngineeringDays": {
+        "min": 4,
+        "max": 7
+      },
+      "dependsOn": [
+        "ACR-08"
+      ],
+      "findings": [
+        "ACC-007"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Migration and privilege boundary for posted monetary content, with safe allowed transitions.",
+      "acceptance": [
+        "Application-role SQL cannot mutate/delete protected posted financial content.",
+        "Valid multi-line posting and controlled reversal/status changes remain possible within one transaction.",
+        "Migration rehearsals include existing data, backup/restore, validation failure and rollback behavior."
+      ]
+    },
+    {
+      "id": "ACR-10",
+      "phase": "M2",
+      "title": "Serialize posting, reversal and closing",
+      "owner": "Core/database engineer",
+      "estimateEngineeringDays": {
+        "min": 5,
+        "max": 8
+      },
+      "dependsOn": [
+        "ACR-08",
+        "ACR-09"
+      ],
+      "findings": [
+        "ACC-004"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Shared period-lock order, atomic lifecycle claims, stable command identity and bounded retries.",
+      "acceptance": [
+        "Real PostgreSQL tests cover post-versus-close, simultaneous reversal and ambiguous-commit retry.",
+        "Close acquires its boundary before preflight; writers use the compatible protocol.",
+        "Retries neither create an extra effect nor leave the caller with an unexplained result; deadlocks terminate predictably."
+      ]
+    },
+    {
+      "id": "ACR-11",
+      "phase": "M2",
+      "title": "Correct fiscal boundaries and overlapping periods",
+      "owner": "Core engineer",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 3
+      },
+      "dependsOn": [
+        "ACR-01",
+        "ACR-02",
+        "ACR-10"
+      ],
+      "findings": [
+        "ACC-008"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Calendar boundary fix and concurrent overlap protection.",
+      "acceptance": [
+        "Short years, mid-month starts, leap dates and timezone cutoffs resolve correctly.",
+        "Each allowed date has the intended unambiguous period.",
+        "Existing posted calendar exceptions follow reviewed correction rather than silent reassignment."
+      ]
+    },
+    {
+      "id": "ACR-12",
+      "phase": "M3",
+      "title": "Verify POS, refunds and offline replay against the kernel",
+      "owner": "Integration engineer: POS",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-04",
+        "ACR-06",
+        "ACR-10"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-003",
+        "ACC-004",
+        "ACC-015"
+      ],
+      "status": "PLANNED",
+      "deliverable": "POS source-to-stock/tender/ledger reconciliation suite and owned recovery contract.",
+      "acceptance": [
+        "Cash, credit, split tender, discounts/tax, refund/void and source cost effects reconcile.",
+        "Duplicate/offline replay and lost responses create one intended effect; changed payloads fail.",
+        "Shift-close evidence assertions match the intended event audit contract."
+      ]
+    },
+    {
+      "id": "ACR-13",
+      "phase": "M3",
+      "title": "Verify purchasing/AP recognition and correction",
+      "owner": "Integration engineer: AP",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-04",
+        "ACR-06",
+        "ACR-10"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-003",
+        "ACC-004",
+        "ACC-015"
+      ],
+      "status": "PLANNED",
+      "deliverable": "PO/receipt/invoice/payment/credit reconciliation matrix and validated posting recovery.",
+      "acceptance": [
+        "Partial receipts and receipt/invoice timing differences have explicit clearing/exception ownership.",
+        "Posting replay verifies source hashes and existing effects; preparation correction cannot alter posted obligations.",
+        "Supplier payment, return and credit corrections reconcile to source, subledger and GL."
+      ]
+    },
+    {
+      "id": "ACR-14",
+      "phase": "M3",
+      "title": "Verify inventory valuation and corrections",
+      "owner": "Integration engineer: inventory",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-04",
+        "ACR-06",
+        "ACR-08",
+        "ACR-10"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-003",
+        "ACC-004",
+        "ACC-005",
+        "ACC-006"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Valuation/COGS/source-movement reconciliation with adjustment and reversal proof.",
+      "acceptance": [
+        "Receipt/issue/transfer/reservation semantics preserve owned-stock meaning.",
+        "Backdating and negative-stock behavior are either policy-valid and tested or explicitly blocked.",
+        "Write-off/adjustment/reversal and source currency reconcile to class-3 accounts and close evidence."
+      ]
+    },
+    {
+      "id": "ACR-15",
+      "phase": "M3",
+      "title": "Verify payroll, settlement and suspense integrations",
+      "owner": "Integration engineer with payroll/reconciliation reviewers",
+      "estimateEngineeringDays": {
+        "min": 5,
+        "max": 8
+      },
+      "dependsOn": [
+        "ACR-04",
+        "ACR-06",
+        "ACR-10"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-003",
+        "ACC-004",
+        "ACC-005"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Payroll/AR/payment/suspense reconciliation cases and current evidence boundaries.",
+      "acceptance": [
+        "Approved payroll liabilities and later payments/corrections reconcile without exposing person-level data to unauthorized readers.",
+        "Customer allocation, provider evidence, fees/suspense and partial matching cannot double-consume a source amount.",
+        "Country/provider applicability is explicit; unavailable external evidence blocks only the capability that depends on it."
+      ]
+    },
+    {
+      "id": "ACR-16",
+      "phase": "M3",
+      "title": "Unify close blockers and evidence freshness",
+      "owner": "Core engineer + controller",
+      "estimateEngineeringDays": {
+        "min": 4,
+        "max": 6
+      },
+      "dependsOn": [
+        "ACR-10",
+        "ACR-11",
+        "ACR-12",
+        "ACR-13",
+        "ACR-14",
+        "ACR-15",
+        "ACR-17"
+      ],
+      "findings": [
+        "ACC-005"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Shared close readiness contract including unassigned failures and applicable module evidence.",
+      "acceptance": [
+        "Inventory/payroll/AP/payment blockers govern the policy-defined reviewed-close transition.",
+        "Late source changes invalidate affected evidence and exports; current evidence is rechecked at action time.",
+        "Locked, closed, reviewed and certified states remain distinct and existing stronger pack controls are preserved."
+      ]
+    },
+    {
+      "id": "ACR-17",
+      "phase": "M3",
+      "title": "Harden event conflict recovery and operational ownership",
+      "owner": "Integration engineer + SRE",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 3
+      },
+      "dependsOn": [
+        "ACR-01",
+        "ACR-02"
+      ],
+      "findings": [
+        "ACC-015"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Resolved event-test contract drift, replay runbook and failure/age signals.",
+      "acceptance": [
+        "Inventory conflict testing proves durable conflict evidence and no stock mutation, including evidence-write failure.",
+        "Outbox duplicate, stale lease, retry exhaustion and changed-payload cases retain a recoverable state.",
+        "Each pending/failed source has an owner and a documented recovery action."
+      ]
+    },
+    {
+      "id": "ACR-18",
+      "phase": "M4",
+      "title": "Define one financial report and cache contract",
+      "owner": "Reporting engineer + controller",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 3
+      },
+      "dependsOn": [
+        "ACR-01",
+        "ACR-02"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-009",
+        "ACC-010",
+        "ACC-011",
+        "ACC-012",
+        "ACC-013",
+        "ACC-014"
+      ],
+      "status": "PLANNED",
+      "deliverable": "DTO contract for currency, scope, opening/activity/closing, as-of version, completeness and access identity.",
+      "acceptance": [
+        "P&L activity and cumulative balance sheet use explicit different windows.",
+        "Paging, aggregate totals, stable ordering and source proof meanings are defined before implementation.",
+        "Cache identity includes every result-changing filter and access scope; no dependency on finished UI is required."
+      ]
+    },
+    {
+      "id": "ACR-19",
+      "phase": "M4",
+      "title": "Correct report monetary and balance semantics",
+      "owner": "Reporting/backend engineer",
+      "estimateEngineeringDays": {
+        "min": 4,
+        "max": 6
+      },
+      "dependsOn": [
+        "ACR-04",
+        "ACR-11",
+        "ACR-18"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-009",
+        "ACC-011"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Correct GL opening/activity/closing, currency aggregation and exact decimal serialization.",
+      "acceptance": [
+        "Opening plus activity equals closing for debit/credit accounts, including cross-period reversal.",
+        "Mixed unsupported currency is rejected or safely partitioned under the approved policy.",
+        "TB, GL, statements and exact exports agree; archived posted accounts and contra-account signs remain correct."
+      ]
+    },
+    {
+      "id": "ACR-20",
+      "phase": "M4",
+      "title": "Bound reporting work and preserve snapshot consistency",
+      "owner": "Reporting/backend engineer + database reviewer",
+      "estimateEngineeringDays": {
+        "min": 4,
+        "max": 6
+      },
+      "dependsOn": [
+        "ACR-19"
+      ],
+      "findings": [
+        "ACC-013"
+      ],
+      "status": "PLANNED",
+      "deliverable": "SQL totals, cursor details, consistent report version and benchmark evidence.",
+      "acceptance": [
+        "100k-line fixtures and the measured pilot tenant envelope meet agreed latency/payload budgets.",
+        "Concurrent posting cannot produce an internally inconsistent report snapshot.",
+        "Pagination/streaming maintains ordering and totals; any summary rebuild reconciles to the ledger."
+      ]
+    },
+    {
+      "id": "ACR-21",
+      "phase": "M4",
+      "title": "Correct full-population finance metrics",
+      "owner": "Reporting/backend engineer + finance product owner",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-07",
+        "ACR-18",
+        "ACR-19",
+        "ACR-20"
+      ],
+      "findings": [
+        "ACC-014"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Ledger/operational metric separation, uncapped totals and source-backed labels.",
+      "acceptance": [
+        "More than 250 source rows produce complete totals or an explicit unavailable/partial state.",
+        "Recognized revenue, COGS, expenses and cash movements retain distinct definitions.",
+        "Proof labels derive from evidence state, not a heuristic score or the absence of an overdue item."
+      ]
+    },
+    {
+      "id": "ACR-22",
+      "phase": "M5",
+      "title": "Implement scoped cache and mutation invalidation",
+      "owner": "Frontend engineer + IAM reviewer",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 4
+      },
+      "dependsOn": [
+        "ACR-02",
+        "ACR-18"
+      ],
+      "findings": [
+        "ACC-010"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Scoped key factories, cache eviction and a cross-module invalidation matrix.",
+      "acceptance": [
+        "Two tenants, different limits and changed permission/consent versions never reuse protected results.",
+        "Logout without reload, revocation and session changes remove stale protected cache.",
+        "Posting, reversal, payment, reconciliation and close refresh all affected mounted views."
+      ]
+    },
+    {
+      "id": "ACR-23",
+      "phase": "M5",
+      "title": "Complete safe accountant UI and localized formatting",
+      "owner": "Frontend engineer + QA/accountant reviewer",
+      "estimateEngineeringDays": {
+        "min": 4,
+        "max": 6
+      },
+      "dependsOn": [
+        "ACR-06",
+        "ACR-18",
+        "ACR-19",
+        "ACR-22"
+      ],
+      "findings": [
+        "ACC-011",
+        "ACC-012"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Correct currency/decimal display, server totals/paging, visible stale/error states and reviewed financial actions.",
+      "acceptance": [
+        "More than 100 journals remain discoverable; count scope is accurate.",
+        "Invalid/missing/stale values cannot look like current certified zeroes.",
+        "English/French desktop/mobile and keyboard/screen-reader flows show source, date, amount and action consequences."
+      ]
+    },
+    {
+      "id": "ACR-24",
+      "phase": "M6",
+      "title": "Rehearse and reconcile any required data repair",
+      "owner": "Database lead + controller",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-03",
+        "ACR-04",
+        "ACR-05",
+        "ACR-09",
+        "ACR-10",
+        "ACR-11",
+        "ACR-12",
+        "ACR-13",
+        "ACR-14",
+        "ACR-15",
+        "ACR-16",
+        "ACR-19",
+        "ACR-21"
+      ],
+      "findings": [
+        "ACC-001",
+        "ACC-002",
+        "ACC-003",
+        "ACC-005",
+        "ACC-006",
+        "ACC-007",
+        "ACC-008"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Tenant-scoped repair packet or verified no-repair disposition; rehearsal reconciliation and rollback proof.",
+      "acceptance": [
+        "Every affected record has source evidence, proposed correction, reviewer and before/after reconciliation.",
+        "Preserve original posted history; use owned corrections/adjustments or a reviewed migration design.",
+        "Estimate is for packet/rehearsal only; unknown-volume live repair is separately estimated and blocks affected tenants from pilot."
+      ]
+    },
+    {
+      "id": "ACR-25",
+      "phase": "M6",
+      "title": "Prove the release candidate end to end",
+      "owner": "QA lead with core/frontend/SRE reviewers",
+      "estimateEngineeringDays": {
+        "min": 4,
+        "max": 6
+      },
+      "dependsOn": [
+        "ACR-16",
+        "ACR-17",
+        "ACR-20",
+        "ACR-21",
+        "ACR-23",
+        "ACR-24"
+      ],
+      "findings": [
+        "ACC-015"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Candidate-specific verification packet and a deployment/rollback rehearsal.",
+      "acceptance": [
+        "Affected regression suites are green; direct endpoint, real DB concurrency and authenticated UI tests cover the repaired findings.",
+        "Installed constraints/privileges match the candidate; backup/restore and deploy failure are rehearsed.",
+        "No unresolved high-risk finding remains in the proposed release scope; unsupported statutory/provider/FX capabilities stay explicitly gated."
+      ]
+    },
+    {
+      "id": "ACR-26",
+      "phase": "M7",
+      "title": "Pilot the correction set with close observation",
+      "owner": "Release lead + controller + support",
+      "estimateEngineeringDays": {
+        "min": 3,
+        "max": 5
+      },
+      "dependsOn": [
+        "ACR-25"
+      ],
+      "findings": [
+        "ACC-015"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Bounded tenant pilot, daily reconciliation dashboard and observed close cycle.",
+      "acceptance": [
+        "Start with one eligible tenant/scope, then expand to 3–5 only after the first gate remains clean.",
+        "Observe at least ten business days and one complete close/reconciliation cycle; use a longer window if the real close calendar requires it.",
+        "Unexplained mismatch, duplicate effect, closed-period write or tenant leak stops expansion and invokes the incident plan."
+      ]
+    },
+    {
+      "id": "ACR-27",
+      "phase": "M7",
+      "title": "Close findings and expand within proven scope",
+      "owner": "Program owner + controller + release lead",
+      "estimateEngineeringDays": {
+        "min": 2,
+        "max": 3
+      },
+      "dependsOn": [
+        "ACR-26"
+      ],
+      "findings": [
+        "ACC-015"
+      ],
+      "status": "PLANNED",
+      "deliverable": "Accepted finding evidence, residual-scope register, release decision and support handover.",
+      "acceptance": [
+        "Each ACC finding is verified fixed, no longer reproducible with proof, or outside the explicitly restricted release scope.",
+        "Data repair, runbooks, owners and pilot results are attached to the exact released revision.",
+        "Completion is evidence-based; neither code merged nor a percentage-complete dashboard alone closes a financial control."
+      ]
+    }
+  ],
+  "engineeringEffortDays": {
+    "min": 81,
+    "max": 130
+  },
+  "topologicalTaskOrder": [
+    "ACR-00",
+    "ACR-01",
+    "ACR-02",
+    "ACR-03",
+    "ACR-04",
+    "ACR-05",
+    "ACR-06",
+    "ACR-07",
+    "ACR-08",
+    "ACR-09",
+    "ACR-10",
+    "ACR-11",
+    "ACR-12",
+    "ACR-13",
+    "ACR-14",
+    "ACR-15",
+    "ACR-17",
+    "ACR-16",
+    "ACR-18",
+    "ACR-19",
+    "ACR-20",
+    "ACR-21",
+    "ACR-22",
+    "ACR-23",
+    "ACR-24",
+    "ACR-25",
+    "ACR-26",
+    "ACR-27"
+  ],
+  "coverage": [
+    {
+      "finding": "ACC-001",
+      "title": "Currency conversion and reporting do not preserve base-currency meaning",
+      "priority": "P1",
+      "tasks": [
+        "ACR-01",
+        "ACR-03",
+        "ACR-04",
+        "ACR-12",
+        "ACR-13",
+        "ACR-14",
+        "ACR-15",
+        "ACR-18",
+        "ACR-19",
+        "ACR-24"
+      ]
+    },
+    {
+      "finding": "ACC-002",
+      "title": "Locked accounting configuration remains mutable",
+      "priority": "P1",
+      "tasks": [
+        "ACR-01",
+        "ACR-03",
+        "ACR-05",
+        "ACR-24"
+      ]
+    },
+    {
+      "finding": "ACC-003",
+      "title": "Generic journal reversal bypasses source-owned correction workflows",
+      "priority": "P1",
+      "tasks": [
+        "ACR-01",
+        "ACR-03",
+        "ACR-06",
+        "ACR-12",
+        "ACR-13",
+        "ACR-14",
+        "ACR-15",
+        "ACR-24"
+      ]
+    },
+    {
+      "finding": "ACC-004",
+      "title": "Posting, reversal and period close lack a uniform concurrency protocol",
+      "priority": "P1",
+      "tasks": [
+        "ACR-02",
+        "ACR-03",
+        "ACR-10",
+        "ACR-12",
+        "ACR-13",
+        "ACR-14",
+        "ACR-15"
+      ]
+    },
+    {
+      "finding": "ACC-005",
+      "title": "Period closure and close-assurance readiness use different blockers",
+      "priority": "P1",
+      "tasks": [
+        "ACR-01",
+        "ACR-03",
+        "ACR-14",
+        "ACR-15",
+        "ACR-16",
+        "ACR-24"
+      ]
+    },
+    {
+      "finding": "ACC-006",
+      "title": "Manual journal dimensions are not validated against tenant ownership",
+      "priority": "P2",
+      "tasks": [
+        "ACR-03",
+        "ACR-08",
+        "ACR-14",
+        "ACR-24"
+      ]
+    },
+    {
+      "finding": "ACC-007",
+      "title": "Ledger immutability and tenant consistency depend primarily on application paths",
+      "priority": "P1",
+      "tasks": [
+        "ACR-02",
+        "ACR-03",
+        "ACR-08",
+        "ACR-09",
+        "ACR-24"
+      ]
+    },
+    {
+      "finding": "ACC-008",
+      "title": "Fiscal period creation can extend before the requested fiscal year and allows overlap",
+      "priority": "P2",
+      "tasks": [
+        "ACR-01",
+        "ACR-03",
+        "ACR-11",
+        "ACR-24"
+      ]
+    },
+    {
+      "finding": "ACC-009",
+      "title": "Date-filtered general ledger omits the opening balance",
+      "priority": "P2",
+      "tasks": [
+        "ACR-01",
+        "ACR-18",
+        "ACR-19"
+      ]
+    },
+    {
+      "finding": "ACC-010",
+      "title": "Accountant portal cache identity and refresh coverage are incomplete",
+      "priority": "P2",
+      "tasks": [
+        "ACR-02",
+        "ACR-18",
+        "ACR-22"
+      ]
+    },
+    {
+      "finding": "ACC-011",
+      "title": "Shared accounting display can mislabel currency, round away precision and turn invalid values into zero",
+      "priority": "P2",
+      "tasks": [
+        "ACR-01",
+        "ACR-18",
+        "ACR-19",
+        "ACR-23"
+      ]
+    },
+    {
+      "finding": "ACC-012",
+      "title": "Journal and portal screens overstate completeness or freshness in edge states",
+      "priority": "P2",
+      "tasks": [
+        "ACR-02",
+        "ACR-18",
+        "ACR-23"
+      ]
+    },
+    {
+      "finding": "ACC-013",
+      "title": "Large ledger reads are unbounded and statements lack a shared read snapshot",
+      "priority": "P2",
+      "tasks": [
+        "ACR-18",
+        "ACR-20"
+      ]
+    },
+    {
+      "finding": "ACC-014",
+      "title": "Finance operational metrics are presented with accounting proof labels",
+      "priority": "P1",
+      "tasks": [
+        "ACR-01",
+        "ACR-07",
+        "ACR-18",
+        "ACR-21"
+      ]
+    },
+    {
+      "finding": "ACC-015",
+      "title": "Integration verification is not green and production assurance evidence remains incomplete",
+      "priority": "P2",
+      "tasks": [
+        "ACR-00",
+        "ACR-02",
+        "ACR-12",
+        "ACR-13",
+        "ACR-17",
+        "ACR-25",
+        "ACR-26",
+        "ACR-27"
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "id": "G0",
+      "milestone": "M0",
+      "criteria": "Current candidate and finding dispositions recorded; owners, supported policy and test fixtures defined. Exposure access gaps have owners and block affected production/pilot claims, not independent implementation.",
+      "requiredTasks": [
+        "ACR-00",
+        "ACR-01",
+        "ACR-02",
+        "ACR-03"
+      ],
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "G1",
+      "milestone": "M1",
+      "criteria": "All four containment changes pass direct service/action tests. Reporting clearly identifies unsupported or contaminated populations. Existing financial obligations retain a controlled resolution path.",
+      "requiredTasks": [
+        "ACR-04",
+        "ACR-05",
+        "ACR-06",
+        "ACR-07"
+      ],
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "G2",
+      "milestone": "M2",
+      "criteria": "Real application-role SQL and PostgreSQL concurrency tests prove tenant references, posted immutability, period finality and allowed correction semantics. Constraint rollout has a tested preflight.",
+      "requiredTasks": [
+        "ACR-08",
+        "ACR-09",
+        "ACR-10",
+        "ACR-11"
+      ],
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "G3",
+      "milestone": "M3",
+      "criteria": "POS, AP, inventory, payroll and settlement/suspense each reconcile source, subledger, GL and close evidence. Durable failures are visible, owned and recoverable. The two audit integration failures are resolved without weakening controls.",
+      "requiredTasks": [
+        "ACR-12",
+        "ACR-13",
+        "ACR-14",
+        "ACR-15",
+        "ACR-16",
+        "ACR-17"
+      ],
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "G4",
+      "milestone": "M4",
+      "criteria": "Report currency, opening/activity/closing, full-population totals and a common as-of contract pass independent expected-value fixtures. Agreed resource budgets are met without sacrificing consistency.",
+      "requiredTasks": [
+        "ACR-18",
+        "ACR-19",
+        "ACR-20",
+        "ACR-21"
+      ],
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "G5",
+      "milestone": "M5",
+      "criteria": "Authenticated English/French workflows show correct amounts and states; large histories remain discoverable; consent/session changes evict protected cache; keyboard and assistive-technology review is complete.",
+      "requiredTasks": [
+        "ACR-22",
+        "ACR-23"
+      ],
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "G6",
+      "milestone": "M6",
+      "criteria": "Exact release candidate has green affected suites, database/access/UI evidence and a rehearsed deploy/rollback. Affected historical data has been corrected and reconciled before admission to the pilot, or the tenant remains excluded.",
+      "requiredTasks": [
+        "ACR-24",
+        "ACR-25"
+      ],
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "id": "G7",
+      "milestone": "M7",
+      "criteria": "Pilot observation and a complete close cycle meet the acceptance criteria. Every released-scope finding has accepted evidence, support ownership and a controlled expansion decision.",
+      "requiredTasks": [
+        "ACR-26",
+        "ACR-27"
+      ],
+      "status": "NOT_EVALUATED"
+    }
+  ],
+  "executionFields": {
+    "statusValues": [
+      "PLANNED",
+      "READY",
+      "IN_PROGRESS",
+      "IN_REVIEW",
+      "VERIFIED",
+      "BLOCKED"
+    ],
+    "perTask": [
+      "namedOwner",
+      "candidateCommit",
+      "pullRequest",
+      "startedAt",
+      "finishedAt",
+      "testEvidence",
+      "dataDisposition",
+      "reviewer",
+      "blocker",
+      "nextAction"
+    ]
+  }
+}

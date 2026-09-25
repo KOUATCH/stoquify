@@ -1,0 +1,49 @@
+{
+  "sourceBaseline": "evidence/source-baseline-v71.json",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "c74a179426116fbeb25a8953ebaaab93337740aa943f6a502d8ed0c377a04874",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "components/purchasing/InvoiceCorrectionWorkbench.tsx": "4249067786b09afbf013cc5337eba0fe4f524759c62159d2cedb6f5adb751770",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx": "bf1047477ffeeef0b797eedb69e9f222ea88bb9995eabff4da04234547b00ec9",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "016d0cfc8075e7c57d8723c228b37dc4e88eb706dfe9d46a592684a7ba3514a0",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "263b8af8df34f009c5053366f8c6f80d14d706ccc3fc2c471813ab5919f57da5",
+    "messages/fr.json": "1c378e7893bdeace0bf1e873867c47d6801067cb41bdbfb8667c957e485a5a7c",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "8ec96335fbe8dd97fcfaf40f603694b2bcb275bb15cd126cb4623673b4735a52",
+    "components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx": "890dc8828a8f1e1be0248379b86a023ad68348b5bd9723512a6507f9df0b9adf",
+    "actions/purchasing/__tests__/invoice-correction.actions.test.ts": "96bee851ce25d1b04221ec4bcd06bddb605e3dd34cd575709af28b23cd5717f7",
+    "services/purchasing/__tests__/invoice-correction-contracts.test.ts": "dea366fed4a3838ea913bf41a79c5b3a1a1fe41119eb2f61c7e982ca2bb35229",
+    "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de",
+    "actions/purchasing/__tests__/invoice-approval.actions.test.ts": "b0b1d4ef62372b6c152ff8299963166ed54678c1eb470d78db7010407480e631"
+  },
+  "commands": [
+    {
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx actions/purchasing/__tests__/invoice-correction.actions.test.ts services/purchasing/__tests__/invoice-correction-contracts.test.ts components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx actions/purchasing/__tests__/invoice-approval.actions.test.ts",
+      "status": "passed",
+      "exitCode": 0,
+      "testsPassed": 41,
+      "suitesPassed": 5,
+      "testsFailed": 0,
+      "toolSession": 45847,
+      "observedOutput": "Test Suites: 5 passed, 5 total; Tests: 41 passed, 41 total; Time: 17.585 s"
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false",
+      "status": "passed",
+      "exitCode": 0,
+      "toolSession": 97082
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/invoice-correction.service.ts services/purchasing/invoice-correction-contracts.ts actions/purchasing/invoice-correction.actions.ts services/purchasing/invoice-approval.service.ts services/purchasing/invoice-approval-contracts.ts components/purchasing/InvoiceCorrectionWorkbench.tsx components/purchasing/InvoiceApprovalWorkbench.tsx components/purchasing/__tests__/InvoiceCorrectionWorkbench.test.tsx app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "status": "passed",
+      "exitCode": 0,
+      "toolChunk": "dc9af8"
+    }
+  ]
+}

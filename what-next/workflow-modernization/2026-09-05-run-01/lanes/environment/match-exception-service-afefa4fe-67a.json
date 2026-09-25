@@ -1,0 +1,117 @@
+{
+  "run": "afefa4fe-67a",
+  "at": "2026-09-08T11:23:15.365Z",
+  "checks": [
+    {
+      "name": "maker request exact replay, reviewer decision and connected payable approval",
+      "status": "passed"
+    },
+    {
+      "name": "rejection records reason and creates no payable",
+      "status": "passed"
+    },
+    {
+      "name": "review also requires fresh password assurance",
+      "status": "passed"
+    },
+    {
+      "name": "maker with reviewer permission still cannot decide own exception",
+      "status": "passed"
+    },
+    {
+      "name": "review binds source and requested decision before approval",
+      "status": "passed"
+    },
+    {
+      "name": "requester cannot read other maker sources or submit them",
+      "status": "passed"
+    },
+    {
+      "name": "posting permission alone cannot review exceptions",
+      "status": "passed"
+    },
+    {
+      "name": "foreign invoice and foreign history are denied",
+      "status": "passed"
+    },
+    {
+      "name": "role denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "expired-session denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "old-assurance denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "wrong-assurance-org denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "future-assurance denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module missing denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module expired denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module suspended denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module read_only denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "stale request revision preserves source without exception",
+      "status": "passed"
+    },
+    {
+      "name": "exact concurrent requests converge and different requests cannot duplicate",
+      "status": "passed"
+    },
+    {
+      "name": "same request key cannot be repurposed",
+      "status": "passed"
+    },
+    {
+      "name": "revoked authority denies committed replay",
+      "status": "passed"
+    },
+    {
+      "name": "tampered decision is neither valid history nor successful replay",
+      "status": "passed"
+    },
+    {
+      "name": "decision persistence failure rolls back exception before exact retry",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "a3d892b98feb7c8c74f8a8da0f166e1fcf65a9a5a6b0db2f6c3442fe413c7d8f",
+    "services/purchasing/invoice-match-exception.service.ts": "c70d255f250b7893656f4fae837093ace6953ed0f9d1520992967ddea46b3aa2",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "services/purchasing/invoice-match-exception-contracts.ts": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741"
+  },
+  "originalBefore": "6d5096c51f5e718ec66f863dc78615f49c2fde063c70e6cd02735ba9bc8143eb",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "a3d892b98feb7c8c74f8a8da0f166e1fcf65a9a5a6b0db2f6c3442fe413c7d8f",
+    "services/purchasing/invoice-match-exception.service.ts": "c70d255f250b7893656f4fae837093ace6953ed0f9d1520992967ddea46b3aa2",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "services/purchasing/invoice-match-exception-contracts.ts": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741"
+  },
+  "sourceStable": true
+}

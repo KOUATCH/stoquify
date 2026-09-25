@@ -60,3 +60,17 @@ Skill installation does not make the runtime module system enterprise-ready. No 
 - The unimplemented production/BOM capability was removed from the active 19-module catalog, public offer, permissions, runtime schema, and seeds.
 - Existing BOM rows are preserved through a non-destructive legacy-table archival migration; historical inventory and accounting evidence codes remain readable.
 - Evidence: `what-next/PRODUCTION_BOM_CAPABILITY_RETIREMENT_2026-07-26.md`.
+
+## Native module workspace integration, 2026-09-05
+
+This dated entry records the current bounded implementation. The July stage table above is historical; this entry does not certify the broader control-plane program or change its release decision.
+
+- Source: branch `codex/migration-control-plane-release-2026-08-29`, starting commit `a05a41ef66cd5d98fd69ae3df18225795f912232`, pre-existing dirty tree preserved.
+- Delivered: guarded native EN/FR settings builder, retailer/service recipes, authoritative impact review, fresh-authenticated configuration apply, permission-filtered workspace/navigation, durable drafts and immutable history/recovery.
+- Durable truth: separate configuration, grants and command/review records. Legacy rights and unknown intent are preserved; managed authority cannot fall back to registration defaults after a store failure or orphaned state.
+- Access corrections: explicit empty grants, validity windows, duplicate grants, suspended/read-only dependencies, transport intent, enforcement metadata and the legacy 19-to-6 narrowing scenario are covered by focused tests.
+- Verification: actual EN/FR desktop/mobile application journeys, PostgreSQL concurrency/idempotency/retention checks and focused component/action/access tests. Exact attempts, source bindings and limitations are in the implementation verification record.
+- Migration status: both additive migrations were applied only to two explicitly isolated local verification databases. No live customer, deployment, provider authorization, broad enforcement promotion or X1 closure is claimed.
+- Remaining implementation: universal operational stop-new-work/continuation enforcement, commercial entitlement issuance and asynchronous provider preparation. Workspace deselection intentionally retains grants and obligations; these missing controls are not described as a missing user signature.
+- Required rollout action: authorized target migration, matching generated client and controlled application restart before using the new authority reader on that target. Retain tables/history and the managed-grant reader on rollback.
+- Evidence: `what-next/modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md`, `FEATURE_STATUS.md`, `VERIFICATION.md`, `ROLLOUT_AND_RECOVERY.md` and `evidence/`.

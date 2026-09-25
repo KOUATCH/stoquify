@@ -1,0 +1,126 @@
+{
+  "run": "a04dbb88-081",
+  "at": "2026-09-07T15:44:45.657Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "8a115377bd38e66e2ba5cd38a23f5abf381e26e00fc0970e0ad4bec54d70dce0",
+    "services/purchase-order/purchase-order-lifecycle.ts": "9d10ba366387bea11c270d6ca47df2384452cac0ca0f2f4741f06198609a1736",
+    "services/purchase-order/purchase-order-lifecycle-contracts.ts": "dff60651de3094b7ce40bbb06e1407128f2ad80b5a71e675df781174f8048795",
+    "services/purchasing/ap-control.service.ts": "a4f1ba3797542bdeaf4d60f38cbf8345c8b96c662de1881076c80d20ddb2af53",
+    "services/_shared/action-errors.ts": "94e9e8c33ebd19d362f027743c6eec366963651cb855302bba8a078cab247b38"
+  },
+  "checks": [
+    {
+      "name": "submit rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "submit rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "submit rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "submit commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "cancel rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "cancel rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "cancel rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "cancel commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "complete rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "complete rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "complete rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "complete commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "archive rejects role",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "archive rejects session",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "archive rejects stale",
+      "status": "passed",
+      "unchanged": true
+    },
+    {
+      "name": "archive commits once and concurrent retry recovers receipt",
+      "status": "passed",
+      "oneEffect": true,
+      "credentialsRetained": false
+    },
+    {
+      "name": "Cancellation keeps original notes and linked evidence; archive does not hide them",
+      "status": "passed",
+      "notesPreserved": true,
+      "receiptAccessPreserved": true
+    },
+    {
+      "name": "Completion rejects status-only quantities and unresolved receiving",
+      "status": "passed",
+      "deniedCases": 2
+    },
+    {
+      "name": "Cross-tenant, stale assurance and unchecked legacy entry points are denied",
+      "status": "passed",
+      "deniedCases": 7
+    },
+    {
+      "name": "Evidence write failure rolls back and exact retry succeeds",
+      "status": "passed",
+      "rolledBackCases": 2
+    }
+  ],
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchase-order/purchase-order.service.ts": "8a115377bd38e66e2ba5cd38a23f5abf381e26e00fc0970e0ad4bec54d70dce0",
+    "services/purchase-order/purchase-order-lifecycle.ts": "9d10ba366387bea11c270d6ca47df2384452cac0ca0f2f4741f06198609a1736",
+    "services/purchase-order/purchase-order-lifecycle-contracts.ts": "dff60651de3094b7ce40bbb06e1407128f2ad80b5a71e675df781174f8048795",
+    "services/purchasing/ap-control.service.ts": "a4f1ba3797542bdeaf4d60f38cbf8345c8b96c662de1881076c80d20ddb2af53",
+    "services/_shared/action-errors.ts": "94e9e8c33ebd19d362f027743c6eec366963651cb855302bba8a078cab247b38"
+  }
+}

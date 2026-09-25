@@ -1,0 +1,78 @@
+{
+  "at": "2026-09-13T18:40:03.312Z",
+  "sourceBefore": {
+    "services/analytics/sales-analytics.service.ts": "8c1b9cd624bfd9eb8034b388ee53f1cb262c5340b87dfd8c87fb5c66795928c1",
+    "services/analytics/business-pulse-snapshot.ts": "211173b8c8b8db76837b7b7e03d58d8c8b8fd7c36d538e269298e9af1f2f093b",
+    "services/analytics/business-pulse-links.ts": "36e7f4ec89112539d8af3497ca3d49d7e3431d80ce76cfd495f92d3d9dd8b726",
+    "app/[locale]/(dashboard)/dashboard/analytics/page.tsx": "829e1719d1f1fae8f365bf0609c0ad57ac8814007be8f9781e262125b3f8cdd9",
+    "components/bi/BICommandBriefHeader.tsx": "3d1351fcd43aae93796dffa7394bf3f94006feaec045c711517e745d8ad92789"
+  },
+  "checks": [
+    {
+      "onHand": 8,
+      "available": 8,
+      "reorder": 2,
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "onHand": 20,
+      "available": 12,
+      "reorder": 15,
+      "expected": 1,
+      "observed": 1
+    },
+    {
+      "onHand": 0,
+      "available": 0,
+      "reorder": 0,
+      "expected": 1,
+      "observed": 1
+    },
+    {
+      "onHand": 1,
+      "available": 0.301,
+      "reorder": 0.3,
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "distinctAcrossSites": true
+    },
+    {
+      "inactiveAndForeignLocationsExcluded": true
+    }
+  ],
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "pulse-actions-v145-en-1440-082bb0e5-8a66-4ee7-90a0-c1a26fb630e9.png",
+        "pulse-actions-v145-en-768-082bb0e5-8a66-4ee7-90a0-c1a26fb630e9.png",
+        "pulse-actions-v145-en-320-082bb0e5-8a66-4ee7-90a0-c1a26fb630e9.png"
+      ],
+      "pageErrors": [],
+      "deniedActionsExplained": true,
+      "readyMs": 2082,
+      "mainFits1440": true,
+      "mainFits768": true,
+      "mainFits320": true,
+      "keyboardReportNavigation": true,
+      "reportAlerts": [
+        "",
+        "Analytics Reports | Stoquify"
+      ],
+      "scopedEmptyReportVerified": true,
+      "error": "expect(page).toHaveURL(expected) failed\n\nExpected: \"http://127.0.0.1:3110/en/dashboard/inventory/items\"\nReceived: \"http://127.0.0.1:3110/en/dashboard/analytics\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.url\" with timeout 60000ms\n    115 × locator resolved to <html lang=\"en\" class=\"light\">…</html>\n        - unexpected value \"http://127.0.0.1:3110/en/dashboard/analytics\"\n"
+    }
+  ],
+  "error": "expect(page).toHaveURL(expected) failed\n\nExpected: \"http://127.0.0.1:3110/en/dashboard/inventory/items\"\nReceived: \"http://127.0.0.1:3110/en/dashboard/analytics\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.url\" with timeout 60000ms\n    115 × locator resolved to <html lang=\"en\" class=\"light\">…</html>\n        - unexpected value \"http://127.0.0.1:3110/en/dashboard/analytics\"\n",
+  "sourceAfter": {
+    "services/analytics/sales-analytics.service.ts": "8c1b9cd624bfd9eb8034b388ee53f1cb262c5340b87dfd8c87fb5c66795928c1",
+    "services/analytics/business-pulse-snapshot.ts": "211173b8c8b8db76837b7b7e03d58d8c8b8fd7c36d538e269298e9af1f2f093b",
+    "services/analytics/business-pulse-links.ts": "36e7f4ec89112539d8af3497ca3d49d7e3431d80ce76cfd495f92d3d9dd8b726",
+    "app/[locale]/(dashboard)/dashboard/analytics/page.tsx": "829e1719d1f1fae8f365bf0609c0ad57ac8814007be8f9781e262125b3f8cdd9",
+    "components/bi/BICommandBriefHeader.tsx": "3d1351fcd43aae93796dffa7394bf3f94006feaec045c711517e745d8ad92789"
+  },
+  "sourceStable": true
+}

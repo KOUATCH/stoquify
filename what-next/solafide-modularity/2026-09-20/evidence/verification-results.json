@@ -1,0 +1,118 @@
+{
+  "recordedAt": "2026-09-20T16:00:26.172Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "Required artifacts exist and are nonempty",
+      "pass": true,
+      "details": [
+        "REPORT.md",
+        "DECISION-MATRIX.md",
+        "EVIDENCE.json",
+        "ROADMAP.md",
+        "VERIFICATION.md",
+        "EXECUTION-PROMPT.md"
+      ]
+    },
+    {
+      "name": "Inspected source hashes unchanged",
+      "pass": true,
+      "details": {
+        "compared": 43,
+        "changed": []
+      }
+    },
+    {
+      "name": "JSON parses: EVIDENCE.json",
+      "pass": true
+    },
+    {
+      "name": "JSON parses: behavior-probes.json",
+      "pass": true
+    },
+    {
+      "name": "JSON parses: graph-extracts.json",
+      "pass": true
+    },
+    {
+      "name": "JSON parses: jest-results.json",
+      "pass": true
+    },
+    {
+      "name": "JSON parses: source-hashes.json",
+      "pass": true
+    },
+    {
+      "name": "Recorded Jest result matches report",
+      "pass": true,
+      "details": {
+        "passed": 199,
+        "failed": 0,
+        "pending": 0,
+        "suites": 14
+      }
+    },
+    {
+      "name": "Recorded probe result matches report",
+      "pass": true
+    },
+    {
+      "name": "Evidence local references resolve",
+      "pass": true,
+      "details": {
+        "references": 26,
+        "invalid": []
+      }
+    },
+    {
+      "name": "Audit Markdown local links resolve",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "Matrix arithmetic",
+      "pass": true,
+      "details": {
+        "order": [
+          "A",
+          "B",
+          "C",
+          "D1",
+          "D2"
+        ],
+        "base": [
+          3.55,
+          3.25,
+          4.3,
+          4.15,
+          2.9
+        ],
+        "sensitivity": [
+          3.25,
+          3.25,
+          4.2,
+          4.5,
+          3.45
+        ]
+      }
+    }
+  ],
+  "failures": [],
+  "additionalSourceHashes": [
+    {
+      "file": "actions/item/items.ts",
+      "sha256": "91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb",
+      "bytes": 10567
+    },
+    {
+      "file": "services/item/item.service.ts",
+      "sha256": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+      "bytes": 43308
+    },
+    {
+      "file": "services/pos/cart-write-access.ts",
+      "sha256": "2f6b1811df12075a8dbb298987af100b3d8335db2d66ed7fa7cef65edd7899e8",
+      "bytes": 1601
+    }
+  ]
+}

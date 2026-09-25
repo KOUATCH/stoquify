@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "routeFamily": "RF-05-finance-accounting",
+  "implementationFiles": [
+    "components/DataTableComponents/table-system-contract.ts",
+    "components/DataTableComponents/finance-accounting-contracts.ts",
+    "components/DataTableComponents/next-phase-contracts.ts",
+    "services/accounting/finance-statement-export.service.ts",
+    "actions/accounting/finance-statement-export.actions.ts",
+    "components/accounting/CloseAssuranceCenter.tsx"
+  ],
+  "pilotFiles": [
+    "components/finance/AROpenItemsHistoryWorkbench.tsx",
+    "components/purchasing/APHistoryWorkbench.tsx",
+    "components/finance/CashPaymentHistoryWorkbench.tsx",
+    "components/finance/FinanceCommandCenterDashboard.tsx"
+  ],
+  "focusedTestFiles": [
+    "components/DataTableComponents/__tests__/NextPhaseContracts.test.ts",
+    "components/accounting/__tests__/CloseAssuranceCenter.test.tsx",
+    "services/accounting/__tests__/finance-statement-export-operations.service.test.ts",
+    "actions/accounting/__tests__/finance-statement-export.actions.test.ts"
+  ],
+  "requiredLocales": ["en", "fr"],
+  "requiredViewports": ["desktop", "tablet", "mobile"],
+  "requiredPersonaRoles": ["external_accountant"],
+  "requiredRoutes": [
+    "/dashboard/finance/receivables/history",
+    "/dashboard/finance/payables",
+    "/dashboard/finance/cash-flow",
+    "/dashboard/accounting/journals",
+    "/dashboard/accounting/reports/trial-balance",
+    "/dashboard/accounting/reports/financial-statements",
+    "/dashboard/accounting/accountant-portal"
+  ],
+  "authentication": {
+    "authenticatedRequired": true,
+    "credentialsApprovalRequired": true,
+    "seededDataApprovalRequired": true
+  },
+  "budgetApproval": {
+    "status": "pending",
+    "budgetContractVersion": 1
+  },
+  "evidenceAuthorization": {
+    "status": "pending"
+  },
+  "evidenceStatus": "blocked-awaiting-approval",
+  "claims": {
+    "screenshotsAvailable": false,
+    "measurementsAvailable": false,
+    "productionBudgetsApproved": false
+  },
+  "evidenceArtifactPaths": [],
+  "evidenceArtifacts": []
+}

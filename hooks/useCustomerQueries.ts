@@ -9,6 +9,8 @@ import {
   updateCustomerAction
 } from "@/actions/customers/customerActions"
 import type { ServerActionResult } from "@/lib/error-handling/types"
+import { useNotifications } from "@/components/notifications/NotificationProvider"
+import type { Locale } from "@/types/bilingual"
 import type { Customer, CustomerOrdersResult, CustomerWithStats } from "@/types/customerTypes"
 import type { CustomerEditFormData, CustomerFormData } from "@/validations/customer"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -75,14 +77,46 @@ export function useUpdateCustomer() {
 }
 
 // Delete customer mutation
-export function useDeleteCustomer() {
+export function useDeleteCustomer(locale: Locale = "en") {
   const queryClient = useQueryClient()
+  const notifications = useNotifications()
+  const copy = {
+    en: {
+      archived: "Customer archived",
+      archiveBody: "The unused customer was removed from active customer lists.",
+      deactivated: "Customer deactivated",
+      deactivateBody: "The customer is inactive; its history remains available.",
+      refresh: "The change was saved, but some views could not refresh. Refresh the customer list before trying another change.",
+      failed: "Customer operation failed",
+    },
+    fr: {
+      archived: "Client archivé",
+      archiveBody: "Le client inutilisé a été retiré des listes actives.",
+      deactivated: "Client désactivé",
+      deactivateBody: "Le client est inactif ; son historique reste disponible.",
+      refresh: "La modification a été enregistrée, mais certaines vues n’ont pas pu être actualisées. Actualisez la liste avant une autre modification.",
+      failed: "Opération client échouée",
+    },
+  }[locale]
 
   return useMutation({
-    meta: { operation: 'delete', entity: 'Customer' },
-    mutationFn: (id: string) => deleteCustomerAction(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["customers"] })
+    meta: { operation: 'delete', entity: 'Customer', suppressSuccessNotification: true, suppressErrorNotification: true },
+    mutationFn: async (id: string) => unwrapResult(await deleteCustomerAction(id)),
+    onSuccess: async receipt => {
+      const refreshes = await Promise.allSettled([["customers"], ["customer-management"]].map(async queryKey =>
+        queryClient.invalidateQueries({ queryKey }, { throwOnError: true }),
+      ))
+      const title = receipt.mode === "deactivated" ? copy.deactivated : copy.archived
+      if (receipt.cacheStatus === "deferred" || refreshes.some(result => result.status === "rejected")) {
+        notifications.warning(title, copy.refresh)
+      } else if (receipt.mode === "deactivated") {
+        notifications.warning(title, copy.deactivateBody)
+      } else {
+        notifications.success(title, copy.archiveBody)
+      }
+    },
+    onError: (error: Error) => {
+      notifications.error(copy.failed, error.message || copy.failed)
     },
   })
 }

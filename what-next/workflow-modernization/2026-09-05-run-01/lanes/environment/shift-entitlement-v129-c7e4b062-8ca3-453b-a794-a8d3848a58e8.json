@@ -1,0 +1,60 @@
+{
+  "at": "2026-09-13T13:51:42.954Z",
+  "sourcesBefore": {
+    "services/pos/pos.service.ts": "b36c75482d2820a661b93e998c70db96698b61cef15f44b31003f64925949d34",
+    "services/pos/shift-opening-access.ts": "4c89c7f9015632b0bfb96477a44ffeab5b7149ba77705b875c3f17bf3a8751b4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+  },
+  "cases": [
+    {
+      "scenario": "legacy",
+      "newShift": "admitted",
+      "retainedClosure": true
+    },
+    {
+      "scenario": "active",
+      "newShift": "admitted",
+      "retainedClosure": true
+    },
+    {
+      "scenario": "empty",
+      "newShift": "denied_without_session_or_drawer",
+      "retainedClosure": true
+    },
+    {
+      "scenario": "read-only",
+      "newShift": "denied_without_session_or_drawer",
+      "retainedClosure": true
+    },
+    {
+      "scenario": "expired",
+      "newShift": "denied_without_session_or_drawer",
+      "retainedClosure": true
+    },
+    {
+      "scenario": "not-started",
+      "newShift": "denied_without_session_or_drawer",
+      "retainedClosure": true
+    },
+    {
+      "scenario": "suspended-dependency",
+      "newShift": "denied_without_session_or_drawer",
+      "retainedClosure": true
+    },
+    {
+      "scenario": "revoked-before-admission",
+      "newShift": "denied_without_session_or_drawer",
+      "retainedClosure": true
+    }
+  ],
+  "scope": "Owned PostgreSQL actual shift services, fixture grants and controlled pre-admission interleaving. No tender/payment/provider operation; local close outbox retained, not delivered.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/pos/pos.service.ts": "b36c75482d2820a661b93e998c70db96698b61cef15f44b31003f64925949d34",
+    "services/pos/shift-opening-access.ts": "4c89c7f9015632b0bfb96477a44ffeab5b7149ba77705b875c3f17bf3a8751b4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+  },
+  "sourceStable": true
+}

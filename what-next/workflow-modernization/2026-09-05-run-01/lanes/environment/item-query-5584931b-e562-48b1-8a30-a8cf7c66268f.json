@@ -1,0 +1,49 @@
+{
+  "at": "2026-09-19T13:32:16.134Z",
+  "sourceBefore": {
+    "actions/itemsShow/getOrgItemsWithInventoryLevels.ts": "fdd735f2421e2a076f7d3b828494bb95fb11aa2029bddf9a63b5aa03dab49713",
+    "services/item/item.service.ts": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+    "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx": "c228c7ebb4e2a5b524c998c05eca7513192f87d3a895f56bbf13024ec599c23e",
+    "app/[locale]/(dashboard)/dashboard/inventory/error.tsx": "99cbfa5afef8a3a7c8587e7a7141cbc53569cdaace96c27a338ebae345bd5795",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/item-query-fault-preload.cjs": "dd1949fa9a58486b567745fbc53d394809dc66208bab6596bb5d9b97a3de21b9"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [
+        "item-query-5584931b-e562-48b1-8a30-a8cf7c66268f-en-error.png",
+        "item-query-5584931b-e562-48b1-8a30-a8cf7c66268f-en-recovered.png"
+      ],
+      "failedQueryEvents": 3,
+      "failedRetryRemainsError": true,
+      "recoveredItemAndFilter": true
+    },
+    {
+      "locale": "fr",
+      "errors": [],
+      "screenshots": [
+        "item-query-5584931b-e562-48b1-8a30-a8cf7c66268f-fr-error.png",
+        "item-query-5584931b-e562-48b1-8a30-a8cf7c66268f-fr-recovered.png"
+      ],
+      "failedQueryEvents": 2,
+      "failedRetryRemainsError": true,
+      "recoveredItemAndFilter": true
+    }
+  ],
+  "serverPid": 8416,
+  "serverDiagnostics": " ⨯ Error: Inventory items could not be loaded\n    at ItemsPageImpl (webpack-internal:///(rsc)/./app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx:200:15) {\n  digest: '3771637785'\n}\n",
+  "noBusinessMutations": true,
+  "passed": true,
+  "testServerStopped": true,
+  "sourceAfter": {
+    "actions/itemsShow/getOrgItemsWithInventoryLevels.ts": "fdd735f2421e2a076f7d3b828494bb95fb11aa2029bddf9a63b5aa03dab49713",
+    "services/item/item.service.ts": "91bdad9797d9d8add330a2310b87e21ee7bc11c352b8d012498b60a96b261b62",
+    "app/[locale]/(dashboard)/dashboard/inventory/items/page.tsx": "c228c7ebb4e2a5b524c998c05eca7513192f87d3a895f56bbf13024ec599c23e",
+    "app/[locale]/(dashboard)/dashboard/inventory/error.tsx": "99cbfa5afef8a3a7c8587e7a7141cbc53569cdaace96c27a338ebae345bd5795",
+    "components/dashboard/DashboardErrorState.tsx": "bc8bb71cc817f2ed34721825014ee0a18d91c16b2ae9b4c5e6136a129ff4aab7",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/item-query-fault-preload.cjs": "dd1949fa9a58486b567745fbc53d394809dc66208bab6596bb5d9b97a3de21b9"
+  },
+  "sourceStable": true
+}

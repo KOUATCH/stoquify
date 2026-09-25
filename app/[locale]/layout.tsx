@@ -25,5 +25,8 @@ export default async function LocaleLayout({
   setRequestLocale(locale)
   const messages = (await import(`@/messages/${locale}.json`)).default
 
-  return <NextIntlClientProvider locale={locale} messages={messages}>{children}</NextIntlClientProvider>
+  const paymentRequest = (await import(`@/messages/payment-request/${locale}.json`)).default
+  const paymentExecution = (await import(`@/messages/payment-execution/${locale}.json`)).default
+  const paymentPostingRecovery = (await import(`@/messages/payment-posting-recovery/${locale}.json`)).default
+  return <NextIntlClientProvider locale={locale} messages={{ ...messages, paymentRequest, paymentExecution, paymentPostingRecovery }}>{children}</NextIntlClientProvider>
 }

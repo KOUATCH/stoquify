@@ -77,6 +77,7 @@ const mockedMarkBusinessEventAppliedInTx = markBusinessEventAppliedInTx as jest.
 
 function buildTx() {
   return {
+    $queryRaw: jest.fn().mockResolvedValue([]),
     organization: {
       findFirst: jest.fn(),
     },
@@ -100,20 +101,23 @@ function buildTx() {
       update: jest.fn(),
       updateMany: jest.fn(),
     },
+    supplierCreditNote: { findMany: jest.fn().mockResolvedValue([]) },
     threeWayMatch: {
       create: jest.fn(),
       updateMany: jest.fn(),
     },
     supplierInvoiceMatchException: {
       findFirst: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
       create: jest.fn(),
       updateMany: jest.fn(),
     },
     supplierLedgerEntry: {
+      findFirst: jest.fn().mockResolvedValue(null),
       create: jest.fn(),
     },
     ledgerPostingBatch: {
-      findMany: jest.fn(),
+      findMany: jest.fn().mockResolvedValue([]),
       update: jest.fn(),
     },
     ledgerAuditEvent: {
@@ -126,6 +130,7 @@ function buildTx() {
       findFirst: jest.fn(),
     },
     journalEntry: {
+      findMany: jest.fn().mockResolvedValue([]),
       count: jest.fn().mockResolvedValue(0),
       create: jest.fn(),
     },
@@ -192,6 +197,21 @@ function mockReceiptLine() {
       unitCost: "100.00",
     },
   }
+}
+
+function approvalEvidence(invoiceId: string, matchId: string, unitCost = "100.00") {
+  const cost = new Prisma.Decimal(unitCost), total = cost.times(2), variance = cost.minus(100).times(2)
+  const status = variance.eq(0) ? "MATCHED" : "EXCEPTION"
+  return {
+    amountPaid: new Prisma.Decimal(0), discount: new Prisma.Decimal(0), postedAt: null,
+    lines: [{ id: "invoice-line-1", organizationId: "org-1", supplierInvoiceId: invoiceId, goodsReceiptLineId: "gr-line-1", purchaseOrderLineId: "po-line-1", itemId: "item-1", description: "Received stock", quantity: new Prisma.Decimal(2), unitCost: cost, taxRate: new Prisma.Decimal(0), taxAmount: new Prisma.Decimal(0), lineTotal: total, matchStatus: status }],
+    threeWayMatches: [{ id: matchId, organizationId: "org-1", supplierInvoiceId: invoiceId, purchaseOrderId: "po-1", status, varianceAmount: variance.abs(), priceVariance: variance, quantityVariance: new Prisma.Decimal(0), toleranceAmount: new Prisma.Decimal(0) }],
+  }
+}
+
+function approvalReceipts(tx: ReturnType<typeof buildTx>) {
+  tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
+  tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "0.000" } })
 }
 
 const supplier = {
@@ -308,6 +328,34 @@ beforeEach(() => {
 })
 
 describe("ap-control.service", () => {
+  it.each(["total", "tax", "scope", "ambiguous", "variance", "liability", "batch", "receipt"])("rejects changed approval source %s before financial effects", async (kind) => {
+    const tx = buildTx()
+    approvalReceipts(tx)
+    mockDb.$transaction.mockImplementation(async handler => handler(tx))
+    const invoice = {
+      id: "invoice-source", organizationId: "org-1", supplierId: supplier.id, supplier,
+      purchaseOrderId: "po-1", invoiceNumber: "SOURCE", invoiceDate: new Date("2026-06-15"),
+      status: "MATCHED", createdById: "maker-1", approvedById: null, ledgerPostingBatchId: null,
+      postedBusinessEventId: null, subtotal: new Prisma.Decimal(200), taxAmount: new Prisma.Decimal(0),
+      total: new Prisma.Decimal(200), currency: "XAF", documentHash: "sha256:source",
+      ...approvalEvidence("invoice-source", "match-source"),
+    }
+    if (kind === "total") invoice.total = new Prisma.Decimal(999)
+    if (kind === "tax") invoice.lines[0].taxAmount = new Prisma.Decimal(25)
+    if (kind === "scope") invoice.lines[0].organizationId = "other-org"
+    if (kind === "ambiguous") invoice.threeWayMatches.push({ ...invoice.threeWayMatches[0], id: "match-other" })
+    if (kind === "variance") invoice.threeWayMatches[0].varianceAmount = new Prisma.Decimal(5)
+    if (kind === "liability") tx.supplierLedgerEntry.findFirst.mockResolvedValue({ id: "existing-liability" })
+    if (kind === "batch") tx.ledgerPostingBatch.findMany.mockResolvedValue([{ id: "existing-batch" }])
+    if (kind === "receipt") tx.goodsReceiptLine.findFirst.mockResolvedValue(null)
+    tx.supplierInvoice.findFirst.mockResolvedValue(invoice)
+    await expect(approveSupplierInvoice({ organizationId: "org-1", supplierInvoiceId: invoice.id, approvedById: "checker-1" })).rejects.toBeInstanceOf(BusinessRuleError)
+    expect(tx.supplierInvoice.updateMany).not.toHaveBeenCalled()
+    expect(tx.supplier.update).not.toHaveBeenCalled()
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+  })
+
   it("rejects duplicate supplier invoices before creating AP evidence", async () => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
@@ -350,13 +398,13 @@ describe("ap-control.service", () => {
     expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
   })
 
-  it("blocks supplier invoices that exceed received and uninvoiced quantity", async () => {
+  it.each(["RECEIVED", "CANCELLED"])("blocks supplier invoices that exceed received and uninvoiced quantity for %s orders", async status => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     tx.supplier.findFirst.mockResolvedValue(supplier)
     tx.purchaseOrder.findFirst.mockResolvedValue({
       id: "po-1",
-      status: "RECEIVED",
+      status,
     })
     tx.goodsReceiptLine.findFirst.mockResolvedValue({
       ...mockReceiptLine(),
@@ -388,6 +436,26 @@ describe("ap-control.service", () => {
     ).rejects.toBeInstanceOf(BusinessRuleError)
 
     expect(tx.supplierInvoice.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects cumulative quantities from repeated receipt lines before creating an invoice", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplier.findFirst.mockResolvedValue(supplier)
+    tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
+    tx.supplierInvoiceLine.aggregate.mockResolvedValue({ _sum: { quantity: "0.000" } })
+
+    await expect(prepareSupplierInvoice({
+      organizationId: "org-1", supplierId: "supplier-1", createdById: "maker-1",
+      invoiceNumber: "INV-SPLIT-OVER", invoiceDate: "2026-06-15",
+      lines: [1, 2].map(index => ({
+        goodsReceiptLineId: "gr-line-1", description: `Split line ${index}`,
+        quantity: "6.000", unitCost: "100.00",
+      })),
+    })).rejects.toThrow("Supplier invoice quantity exceeds received and uninvoiced goods.")
+    expect(tx.supplierInvoice.create).not.toHaveBeenCalled()
+    expect(tx.supplier.update).not.toHaveBeenCalled()
+    expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()
   })
 
   it("excludes held inspection receipts from supplier-invoice and accounting evidence", async () => {
@@ -433,13 +501,13 @@ describe("ap-control.service", () => {
     expect(mockedCreateLedgerPostingBatch).not.toHaveBeenCalled()
   })
 
-  it("prepares matched invoice evidence without supplier or accounting ledger effects", async () => {
+  it.each(["RECEIVED", "CANCELLED"])("prepares matched invoice evidence without supplier or accounting ledger effects for %s orders", async status => {
     const tx = buildTx()
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     tx.supplier.findFirst.mockResolvedValue(supplier)
     tx.purchaseOrder.findFirst.mockResolvedValue({
       id: "po-1",
-      status: "RECEIVED",
+      status,
     })
     tx.goodsReceiptLine.findFirst.mockResolvedValue(mockReceiptLine())
     tx.supplierInvoiceLine.aggregate.mockResolvedValue({
@@ -476,6 +544,8 @@ describe("ap-control.service", () => {
       ],
     })
 
+    expect(tx.goodsReceiptLine.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ purchaseOrderLine: { purchaseOrder: expect.objectContaining({ deletedAt: null, status: { in: expect.arrayContaining(["CANCELLED"]) } }) } }) }));
+    expect(tx.$queryRaw).toHaveBeenCalled();
     expect(result.ledgerStatus).toBe("PENDING_APPROVAL")
     expect(tx.supplierInvoice.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -620,6 +690,20 @@ describe("ap-control.service", () => {
     expect(tx.supplierInvoiceMatchException.create).not.toHaveBeenCalled()
   })
 
+  it("does not let an unknown invoice maker request an exception", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
+    tx.supplierInvoice.findFirst.mockResolvedValue({ id: "invoice-unknown", createdById: null })
+    await expect(requestSupplierInvoiceMatchException({ organizationId: "org-1", supplierInvoiceId: "invoice-unknown", requestedById: "maker-1", reason: "Documented variance", evidenceReference: "artifact://variance", expiresAt: "2099-06-30T00:00:00Z" })).rejects.toThrow("Only the supplier invoice maker")
+    expect(tx.supplierInvoiceMatchException.create).not.toHaveBeenCalled()
+  })
+
+  it("preserves a serialization abort for the reviewed service to retry the transaction", async () => {
+    const error = new Prisma.PrismaClientKnownRequestError("Transaction conflict", { code: "P2034", clientVersion: "test" })
+    mockDb.$transaction.mockRejectedValueOnce(error)
+    await expect(requestSupplierInvoiceMatchException({ organizationId: "org-1", supplierInvoiceId: "invoice", requestedById: "maker", reason: "Documented variance", evidenceReference: "artifact://variance", expiresAt: "2099-06-30T00:00:00Z" })).rejects.toBe(error)
+  })
+
   it("maps a concurrent P2002 match-exception race to the canonical conflict", async () => {
     const error = new Prisma.PrismaClientKnownRequestError(
       "Unique constraint failed",
@@ -748,11 +832,13 @@ describe("ap-control.service", () => {
         data: { status: "EXPIRED" },
       }),
     )
-    expect(mockedRecordBusinessEventInTx).not.toHaveBeenCalled()
+    expect(mockedRecordBusinessEventInTx).toHaveBeenCalledWith(tx, expect.objectContaining({ eventType: "purchase.supplier_invoice.match_exception.expired", payload: expect.objectContaining({ previousStatus: "OPEN", status: "EXPIRED", effectiveAt: "2020-01-01T00:00:00.000Z" }) }))
+    expect(tx.auditLog.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ action: "SUPPLIER_INVOICE_MATCH_EXCEPTION_EXPIRED" }) }))
   })
 
   it("blocks disputed invoice posting without an approved active exception", async () => {
     const tx = buildTx()
+    approvalReceipts(tx)
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     tx.supplierInvoice.findFirst.mockResolvedValue({
       id: "invoice-disputed",
@@ -772,8 +858,7 @@ describe("ap-control.service", () => {
       ledgerPostingBatchId: null,
       postedBusinessEventId: null,
       metadata: { gate: "011-purchasing-ap-controls" },
-      lines: [{ id: "invoice-line-variance" }],
-      threeWayMatches: [{ id: "match-exception", status: "EXCEPTION" }],
+      ...approvalEvidence("invoice-disputed", "match-exception", "110.00"),
       supplier,
     })
     tx.supplierInvoiceMatchException.findFirst.mockResolvedValue(null)
@@ -794,6 +879,7 @@ describe("ap-control.service", () => {
 
   it("posts through an approved active exception and resolves only its match lifecycle", async () => {
     const tx = buildTx()
+    approvalReceipts(tx)
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     const disputedInvoice = {
       id: "invoice-disputed",
@@ -813,14 +899,14 @@ describe("ap-control.service", () => {
       ledgerPostingBatchId: null,
       postedBusinessEventId: null,
       metadata: { gate: "011-purchasing-ap-controls" },
-      lines: [{ id: "invoice-line-variance" }],
-      threeWayMatches: [{ id: "match-exception", status: "EXCEPTION" }],
+      ...approvalEvidence("invoice-disputed", "match-exception", "110.00"),
       supplier,
     }
     tx.supplierInvoice.findFirst.mockResolvedValue(disputedInvoice)
     tx.supplierInvoiceMatchException.findFirst.mockResolvedValue({
       id: "exception-approved",
       expiresAt: new Date("2099-06-30T00:00:00.000Z"),
+      policyVersion: "EXACT_THREE_WAY_MATCH_EXCEPTION_V1", requestedById: "maker-1", approvedById: "checker-1", decidedAt: new Date("2026-06-15T00:00:00.000Z"), varianceAmount: new Prisma.Decimal(20), priceVariance: new Prisma.Decimal(20),
     })
     tx.supplierInvoice.updateMany.mockResolvedValue({ count: 1 })
     tx.supplierInvoiceMatchException.updateMany.mockResolvedValue({ count: 1 })
@@ -880,8 +966,22 @@ describe("ap-control.service", () => {
     )
   })
 
+  it("does not infer a posted journal from a replay missing ledger evidence", async () => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async handler => handler(tx))
+    tx.supplierInvoice.findFirst.mockResolvedValue({
+      id: "invoice-posted", status: "POSTED", createdById: "maker-1", approvedById: "checker-1",
+      metadata: {}, threeWayMatches: [], ledgerPostingBatchId: null, postedBusinessEventId: null,
+    })
+    const result = await approveSupplierInvoice({ organizationId: "org-1", supplierInvoiceId: "invoice-posted", approvedById: "checker-1" })
+    expect(result.ledgerStatus).toBe("UNVERIFIED")
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
+    expect(tx.supplier.update).not.toHaveBeenCalled()
+  })
+
   it("atomically approves a prepared invoice and creates ledger and audit evidence as a separate checker", async () => {
     const tx = buildTx()
+    approvalReceipts(tx)
     mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
     const preparedInvoice = {
       id: "invoice-prepared",
@@ -901,8 +1001,7 @@ describe("ap-control.service", () => {
       ledgerPostingBatchId: null,
       postedBusinessEventId: null,
       metadata: { gate: "011-purchasing-ap-controls" },
-      lines: [{ id: "invoice-line-1" }],
-      threeWayMatches: [{ id: "match-prepared", status: "MATCHED" }],
+      ...approvalEvidence("invoice-prepared", "match-prepared"),
       supplier,
     }
     tx.supplierInvoice.findFirst.mockResolvedValue(preparedInvoice)
@@ -919,11 +1018,16 @@ describe("ap-control.service", () => {
       postedBusinessEventId: "event-1",
     })
 
+    const startedAt = new Date()
     const result = await approveSupplierInvoice({
       organizationId: "org-1",
       supplierInvoiceId: "invoice-prepared",
       approvedById: "checker-1",
     })
+    const postedAt = tx.supplierInvoice.updateMany.mock.calls[0][0].data.postedAt as Date
+    expect(postedAt.getTime()).toBeGreaterThanOrEqual(startedAt.getTime())
+    expect(postedAt.getTime()).toBeLessThanOrEqual(Date.now())
+    expect(mockedRecordBusinessEventInTx.mock.calls[0][1].occurredAt).toEqual(postedAt)
 
     expect(result.ledgerStatus).toBe("BLOCKED_PENDING_RULES")
     expect(tx.supplierInvoice.updateMany).toHaveBeenCalledWith(
@@ -1065,6 +1169,25 @@ describe("ap-control.service", () => {
     )
     expect(tx.supplier.findFirst).not.toHaveBeenCalled()
     expect(tx.supplierPayment.create).not.toHaveBeenCalled()
+  })
+
+  it.each(["approval", "release"])("blocks %s above the credit-adjusted invoice balance before writes", async operation => {
+    const tx = buildTx()
+    mockDb.$transaction.mockImplementation(async handler => handler(tx))
+    tx.supplier.findFirst.mockResolvedValue(supplier)
+    tx.supplierBankAccount.findFirst.mockResolvedValue({id:"bank-1",status:SupplierBankAccountStatus.APPROVED})
+    tx.supplierBankChangeRequest.count.mockResolvedValue(0)
+    tx.supplierInvoice.findMany.mockResolvedValue([{id:"invoice-1",organizationId:"org-1",supplierId:"supplier-1",currency:"XAF",total:"100.00",amountPaid:"0.00"}])
+    tx.supplierCreditNote.findMany.mockResolvedValue([{id:"credit-1",organizationId:"org-1",supplierId:"supplier-1",supplierInvoiceId:"invoice-1",currency:"XAF",total:new Prisma.Decimal("20"),direction:"CORRECTION",postedBusinessEventId:"credit-event"}])
+    tx.supplierPayment.findFirst.mockResolvedValue(operation === "release" ? approvedSupplierPayment() : null)
+    tx.supplierPayment.count.mockResolvedValue(0)
+    tx.supplierPayment.create.mockRejectedValue(new Error("Reached payment write before credit validation"))
+    tx.supplierPayment.update.mockRejectedValue(new Error("Reached payment write before credit validation"))
+    const call = operation === "release" ? releaseSupplierPayment({organizationId:"org-1",supplierPaymentId:"payment-1",releasedById:"releaser-1",paymentDate:"2026-06-15"}) : approveSupplierPayment({organizationId:"org-1",supplierId:"supplier-1",bankAccountId:"bank-1",method:"BANK_TRANSFER",requestedById:"requester-1",approvedById:"approver-1",paymentDate:"2026-06-15",allocations:[{supplierInvoiceId:"invoice-1",amount:"100.00"}]})
+    await expect(call).rejects.toThrow("exceeds outstanding supplier invoice balance")
+    expect(tx.supplierPayment.create).not.toHaveBeenCalled()
+    expect(tx.supplierPayment.update).not.toHaveBeenCalled()
+    expect(tx.supplierLedgerEntry.create).not.toHaveBeenCalled()
   })
 
   it("creates approved supplier payment evidence without release side effects", async () => {
@@ -1374,7 +1497,10 @@ describe("ap-control.service", () => {
       id: "batch-1",
       status: LedgerPostingBatchStatus.POSTED,
     })
-    tx.journalEntry.create.mockResolvedValue({ id: "journal-entry-1" })
+    tx.journalEntry.create.mockImplementation(async ({ data }) => ({
+      ...data, id: "journal-entry-1",
+      lines: data.lines.create.map((line: Record<string, unknown>, index: number) => ({ ...line, id: `journal-line-${index}` })),
+    }))
     tx.supplierInvoice.update.mockResolvedValue({
       id: "invoice-1",
       ledgerPostingBatchId: "batch-1",

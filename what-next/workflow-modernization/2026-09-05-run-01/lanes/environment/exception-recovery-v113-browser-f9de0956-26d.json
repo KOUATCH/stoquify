@@ -1,0 +1,102 @@
+{
+  "at": "2026-09-13T09:39:38.045Z",
+  "sourcesBefore": {
+    "services/reconciliation/payment-exception-closure.service.ts": "26a990c8297cc3294538a07a2e1c96b8bfa5d3cbde45c0a2623f43acc43d3095",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "f3c03e326be6a1ffa7946ed0b565a0246d26e4706437def9e3b18a2b9bf048ec",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "9493426135107c54b5c725ea5db93c2f19423d375395adb95ab1162da8ae96de",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "actions/payments/exception-closure.actions.ts": "fa36f788fbffbd2c035563c421441ec37259dcd265d1830e4ced82f8322f33a4",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "5b702ff472526803259a567ea5cf9ff7a21b904bd9fff20da134bece058d98b5",
+    "components/finance/PaymentSuspenseQueue.tsx": "3f91373be0dbf4b17306a2613349c7ba79f653594debd8e57ce76b4efbfe134c",
+    "messages/en.json": "85787c0a85feec02999954e224b471ecbb12a5f55c9570d7b3ed7ff80d4f2357",
+    "messages/fr.json": "f54abc341848d22839c510f6bbb81c6dae5e62a517851261a0691e785396bf25"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "routeLoadMs": [
+        7479,
+        6172
+      ],
+      "screenshots": [
+        "exception-recovery-v113-en-history-320-f9de0956-26d.png",
+        "exception-recovery-v113-en-reopened-320-f9de0956-26d.png",
+        "exception-recovery-v113-en-reopened-768-f9de0956-26d.png",
+        "exception-recovery-v113-en-reopened-1440-f9de0956-26d.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292382805 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "Failed to load resource: net::ERR_FAILED",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292417620 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292443092 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292432064 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292436129 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292446105 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292456951 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292451659 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "malformedDraftAndFailedReset": true,
+      "committedLossReloadAndExactRetry": true,
+      "staleProposalPreservedAndRefused": true,
+      "closureAfterFreshReview": true,
+      "mobileWidth": {
+        "current": 212,
+        "oldPaddingReplay": 160
+      },
+      "actualSourceReopeningAndHistoricalRead": true,
+      "expectedNetworkFailures": 2,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "routeLoadMs": [
+        11736,
+        7583
+      ],
+      "screenshots": [
+        "exception-recovery-v113-fr-history-320-f9de0956-26d.png",
+        "exception-recovery-v113-fr-reopened-320-f9de0956-26d.png",
+        "exception-recovery-v113-fr-reopened-768-f9de0956-26d.png",
+        "exception-recovery-v113-fr-reopened-1440-f9de0956-26d.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "Failed to load resource: net::ERR_FAILED",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292512942 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292526351 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292528866 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292532442 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292521254 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292534198 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292530662 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292536780 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292537863 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "malformedDraftAndFailedReset": true,
+      "committedLossReloadAndExactRetry": true,
+      "staleProposalPreservedAndRefused": true,
+      "closureAfterFreshReview": true,
+      "mobileWidth": {
+        "current": 212,
+        "oldPaddingReplay": 160
+      },
+      "actualSourceReopeningAndHistoricalRead": true,
+      "expectedNetworkFailures": 2,
+      "passed": true
+    }
+  ],
+  "scope": "Actual EN/FR recovery on owned fixtures: malformed local draft, failed reset read, committed proposal with deliberately lost HTTP response, exact retry, stale closure during real financial recovery, independent closure, and real financial reversal/reopening. Mobile padding comparison replays old CSS only; it changes no business state.",
+  "sourcesAfter": {
+    "services/reconciliation/payment-exception-closure.service.ts": "26a990c8297cc3294538a07a2e1c96b8bfa5d3cbde45c0a2623f43acc43d3095",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "f3c03e326be6a1ffa7946ed0b565a0246d26e4706437def9e3b18a2b9bf048ec",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "9493426135107c54b5c725ea5db93c2f19423d375395adb95ab1162da8ae96de",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "actions/payments/exception-closure.actions.ts": "fa36f788fbffbd2c035563c421441ec37259dcd265d1830e4ced82f8322f33a4",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "5b702ff472526803259a567ea5cf9ff7a21b904bd9fff20da134bece058d98b5",
+    "components/finance/PaymentSuspenseQueue.tsx": "3f91373be0dbf4b17306a2613349c7ba79f653594debd8e57ce76b4efbfe134c",
+    "messages/en.json": "85787c0a85feec02999954e224b471ecbb12a5f55c9570d7b3ed7ff80d4f2357",
+    "messages/fr.json": "f54abc341848d22839c510f6bbb81c6dae5e62a517851261a0691e785396bf25"
+  },
+  "sourceStable": true
+}

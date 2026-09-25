@@ -1,0 +1,13 @@
+{
+  "at": "2026-09-13T16:07:24.430Z",
+  "checks": [
+    "Overlapping successful acknowledgements yield one winner, one typed conflict, one event/audit/outbox and unchanged financial records; retry is read-only",
+    "Overlapping failures retain one conflict/audit/business event; losing transaction leaves no orphan conflict or financial effects"
+  ],
+  "scope": "Owned synthetic offline events and real POS cash postings; not device signature/ingestion certification.",
+  "error": "\nInvalid `db.pOSOfflineDevice.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-replay-transition-v138.cjs:4:135\n\n  1 const f=require('./statement-recipient-fixtures.cjs'),{db,fs,path,crypto,assert}=f,{fixture,snapshot}=require('./verify-tender-access-v131.cjs');\n  2 const pos=require(path.join(f.root,'services/pos/pos.service.ts')),offline=require(path.join(f.root,'services/pos/offline-sync.service.ts')),{hashBusinessPayload}=require(path.join(f.root,'services/events/business-event.service.ts'));\n  3 const stamp=crypto.randomUUID(),report={at:new Date().toISOString(),checks:[],scope:'Owned synthetic offline events and real POS cash postings; not device signature/ingestion certification.'};\n→ 4 async function eventFor(x,request){const{organizationId,locationId,terminalId,sessionId}=x.ctx;const device=await db.pOSOfflineDevice.create(\nUnique constraint failed on the fields: (`organizationId`,`terminalId`,`deviceLabel`)",
+  "sources": {
+    "services/pos/offline-sync.service.ts": "3886bf9a98f65c824f10796b61d578c165d85497698f0bc626ee747ca65fe2d4",
+    "services/pos/pos.service.ts": "eb7d15d8a778794327661430f54c33d67510e5e4b3ec81df795462b536dcf1b8"
+  }
+}

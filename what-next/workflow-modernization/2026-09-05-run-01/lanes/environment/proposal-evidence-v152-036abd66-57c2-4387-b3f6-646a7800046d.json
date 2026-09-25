@@ -1,0 +1,43 @@
+{
+  "at": "2026-09-15T11:23:47.749Z",
+  "sourceBefore": {
+    "services/ai/copilot-proposal.service.ts": "7c1c873d976c11a6455979eddb8bb28e7800abee35a14035d46b2018c1962f38",
+    "services/ai/copilot-proposal.schemas.ts": "ea12abbb09e7a605f811876b82e9a31ad34aa51ab92137db9ae4212b620b2a9e",
+    "components/copilot/CopilotProposalControls.tsx": "173098359ae1c965fc8e85be328bbaac3dca00dc0981049a3d0538167ec8d22f",
+    "actions/ai/copilot-proposal.actions.ts": "66baa4a61a599a917992485bc371af1f2540749ec430b17fc28f769ba8b21c9d",
+    "services/ai/copilot-proposal-release.service.ts": "8ed472e3b680cf7e5a2e66fd06aa5965b7eef34c905f582f9382ce8166fcfc35"
+  },
+  "checks": {
+    "creationRejectsMisrepresentation": [
+      "blocked",
+      "failed",
+      "stale",
+      "raw",
+      "unavailable",
+      "certification-inflation"
+    ],
+    "downgradedEvidenceBlocksAcceptanceButAllowsRejection": true,
+    "honestStalePreserved": true,
+    "validAcceptanceDifferentReviewerAndTenantPermissionDenials": true,
+    "changedRunBlocksAcceptanceAllowsRejection": true,
+    "concurrentCreateAndRetry": {
+      "outcomes": [
+        "created_or_replayed",
+        "created_or_replayed"
+      ],
+      "singleProposalEventAuditOutbox": true
+    },
+    "concurrentDecisionSingleWinner": true,
+    "noFinancialExecution": true
+  },
+  "scope": "Owned local database; direct domain services with synthetic agent evidence. No approval package created, release bypass, external dispatch or provider execution.",
+  "passed": true,
+  "sourceAfter": {
+    "services/ai/copilot-proposal.service.ts": "7c1c873d976c11a6455979eddb8bb28e7800abee35a14035d46b2018c1962f38",
+    "services/ai/copilot-proposal.schemas.ts": "ea12abbb09e7a605f811876b82e9a31ad34aa51ab92137db9ae4212b620b2a9e",
+    "components/copilot/CopilotProposalControls.tsx": "173098359ae1c965fc8e85be328bbaac3dca00dc0981049a3d0538167ec8d22f",
+    "actions/ai/copilot-proposal.actions.ts": "66baa4a61a599a917992485bc371af1f2540749ec430b17fc28f769ba8b21c9d",
+    "services/ai/copilot-proposal-release.service.ts": "8ed472e3b680cf7e5a2e66fd06aa5965b7eef34c905f582f9382ce8166fcfc35"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,107 @@
+{
+  "at": "2026-09-13T13:32:19.390Z",
+  "baseline": "evidence/source-baseline-v127.json",
+  "sources": {
+    "services/pos/terminal-configuration-revision.ts": "d2c38ba8ec1e80e0ce58c8639bcf383244a5b089c11b8c1dc74488a1a94b532e",
+    "services/pos/terminal-management.service.ts": "5d07e0dd637efb6a5e64322a5624ae82cf591d9f324126a6ee1181f1dd64cdc6",
+    "actions/pos/terminal-management.actions.ts": "ee4b05f1c1ad13b412a5a39eda7bf107ba5d2cfd59bd4649ed7734f55edb1588",
+    "hooks/posHooks/useTerminalManagement.ts": "539a4b7a9a34fc7f32d12bbc9bc357e1d299dd1d73afd2e16b7f6763ba4b7a76",
+    "components/pos/TerminalManagementDashboard.tsx": "a6f8abdcec6e54653cac14803415b611ac2ddb68e08a9d3e34d0ca85e3ef2f07"
+  },
+  "tests": {
+    "passed": 21,
+    "suites": 3,
+    "receipt": "d763e6"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "e55cb4"
+  },
+  "lint": {
+    "passed": true,
+    "files": 6,
+    "receipt": "fec183"
+  },
+  "database": {
+    "before": "lanes/environment/terminal-archive-revision-v127-before-e2c51ab0-8c29-421c-8730-c8813a29155d.json",
+    "after": "lanes/environment/terminal-archive-revision-v127-after-a0d036cb-211b-46ba-99e7-3bc504d35481.json",
+    "receipts": [
+      "e66af6",
+      "f920ed"
+    ]
+  },
+  "browser": {
+    "file": "lanes/environment/terminal-archive-browser-v127-e72ac2eb-9885-474b-8a96-4e838142f260.json",
+    "receipt": "8eda5d",
+    "at": "2026-09-13T13:28:39.865Z",
+    "sourcesBefore": {
+      "services/pos/terminal-configuration-revision.ts": "d2c38ba8ec1e80e0ce58c8639bcf383244a5b089c11b8c1dc74488a1a94b532e",
+      "services/pos/terminal-management.service.ts": "5d07e0dd637efb6a5e64322a5624ae82cf591d9f324126a6ee1181f1dd64cdc6",
+      "actions/pos/terminal-management.actions.ts": "ee4b05f1c1ad13b412a5a39eda7bf107ba5d2cfd59bd4649ed7734f55edb1588",
+      "hooks/posHooks/useTerminalManagement.ts": "539a4b7a9a34fc7f32d12bbc9bc357e1d299dd1d73afd2e16b7f6763ba4b7a76",
+      "components/pos/TerminalManagementDashboard.tsx": "a6f8abdcec6e54653cac14803415b611ac2ddb68e08a9d3e34d0ca85e3ef2f07"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "pageErrors": [],
+        "screenshots": [
+          "terminal-archive-v127-en-1440-e72ac2eb-9885-474b-8a96-4e838142f260.png",
+          "terminal-archive-v127-en-768-e72ac2eb-9885-474b-8a96-4e838142f260.png",
+          "terminal-archive-v127-en-320-e72ac2eb-9885-474b-8a96-4e838142f260.png"
+        ],
+        "readyMs": 14498,
+        "staleConfirmationDenied": true,
+        "reviewDoesNotDeactivate": true,
+        "tabContained": true,
+        "reviewedKeyboardConfirmationPersisted": true,
+        "alreadyInactiveReviewDisablesConfirmation": true
+      },
+      {
+        "locale": "fr",
+        "pageErrors": [],
+        "screenshots": [
+          "terminal-archive-v127-fr-1440-e72ac2eb-9885-474b-8a96-4e838142f260.png",
+          "terminal-archive-v127-fr-768-e72ac2eb-9885-474b-8a96-4e838142f260.png",
+          "terminal-archive-v127-fr-320-e72ac2eb-9885-474b-8a96-4e838142f260.png"
+        ],
+        "readyMs": 6011,
+        "staleConfirmationDenied": true,
+        "reviewDoesNotDeactivate": true,
+        "tabContained": true,
+        "reviewedKeyboardConfirmationPersisted": true,
+        "alreadyInactiveReviewDisablesConfirmation": true
+      }
+    ],
+    "scope": "Owned real credential login and application terminal actions. Competing operator uses actual terminal service, not a second browser. No external or financial operation.",
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/terminal-configuration-revision.ts": "d2c38ba8ec1e80e0ce58c8639bcf383244a5b089c11b8c1dc74488a1a94b532e",
+      "services/pos/terminal-management.service.ts": "5d07e0dd637efb6a5e64322a5624ae82cf591d9f324126a6ee1181f1dd64cdc6",
+      "actions/pos/terminal-management.actions.ts": "ee4b05f1c1ad13b412a5a39eda7bf107ba5d2cfd59bd4649ed7734f55edb1588",
+      "hooks/posHooks/useTerminalManagement.ts": "539a4b7a9a34fc7f32d12bbc9bc357e1d299dd1d73afd2e16b7f6763ba4b7a76",
+      "components/pos/TerminalManagementDashboard.tsx": "a6f8abdcec6e54653cac14803415b611ac2ddb68e08a9d3e34d0ca85e3ef2f07"
+    },
+    "sourceStable": true
+  },
+  "verificationDetails": "TERMINAL_ARCHIVE_REVIEW_V127.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2882,
+      "tests": 1021,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 174,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2514,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

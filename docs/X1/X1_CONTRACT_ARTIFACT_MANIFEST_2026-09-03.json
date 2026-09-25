@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "artifactId": "stoquify-x1-table-finance-contract-bundle-v2",
+  "artifactUri": "repository://stoquify/docs/X1/X1_CONTRACT_ARTIFACT_MANIFEST_2026-09-03.json",
+  "scope": "X1 finance/accounting performance budgets, table contracts, route evidence harness, and September 2 investigation",
+  "hashAlgorithm": "SHA-256",
+  "source": "X1_PRODUCT_APPROVAL_REVIEW_BUNDLE_2026-09-03.zip",
+  "reviewBundleUri": "repository://stoquify/docs/X1/X1_PRODUCT_APPROVAL_REVIEW_BUNDLE_2026-09-03.zip",
+  "reviewBundleSha256": "c4c8f0f862135067d81dd0b2df4c9f1196d9aa6f80ddd0a7f43c418a149077db",
+  "approvalStatus": "pending-authenticated-human-approval",
+  "approvalSystemRecordId": null,
+  "files": [
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/table-system-contract.ts",
+      "path": "components/DataTableComponents/table-system-contract.ts",
+      "purpose": "Canonical shared table contract, URL/query, selection, preferences, saved-view, and export semantics.",
+      "sha256": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2"
+    },
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/finance-accounting-contracts.ts",
+      "path": "components/DataTableComponents/finance-accounting-contracts.ts",
+      "purpose": "Finance X1 archetype contracts, statement behavior, context, and export-job contract.",
+      "sha256": "15f33ee14c2039e2c924707d1fbf053e5d0400a88f742e5d08d9741f8cc44f9b"
+    },
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/next-phase-contracts.ts",
+      "path": "components/DataTableComponents/next-phase-contracts.ts",
+      "purpose": "Module-normalization and scale/performance contract definitions containing the proposed X1 budgets.",
+      "sha256": "825bee313616523f0b96992d1fd8c85d9619e149a4eaeb9e686fd3d9a7d2f633"
+    },
+    {
+      "uri": "repository://stoquify/components/DataTableComponents/finance-x1-evidence-binding.ts",
+      "path": "components/DataTableComponents/finance-x1-evidence-binding.ts",
+      "purpose": "X1 approval, persona, route, locale, viewport, chronology, and authenticated-evidence binding schema version 1.",
+      "sha256": "a04bd1461b7f7f1489855e438326e68971759fb706628d3daa9260186e33e166"
+    },
+    {
+      "uri": "repository://stoquify/tests/e2e/finance-x1-route-observation.ts",
+      "path": "tests/e2e/finance-x1-route-observation.ts",
+      "purpose": "Route-aware data-readiness and rendered-result observation used by authenticated evidence capture.",
+      "sha256": "a05b183dfc81706db487dd5ef107c0686227f4feb3df4e81bb52819282d15069"
+    },
+    {
+      "uri": "repository://stoquify/tests/e2e/finance-x1-authenticated-evidence.spec.ts",
+      "path": "tests/e2e/finance-x1-authenticated-evidence.spec.ts",
+      "purpose": "Approved authenticated EN/FR desktop, tablet, and mobile evidence matrix.",
+      "sha256": "0b289064456aff3c4fea48de3624a88cdd52155b7843fc3fbe219a8835cb4e4e"
+    },
+    {
+      "uri": "repository://stoquify/tests/e2e/finance-x1-local-authenticated-evidence.spec.ts",
+      "path": "tests/e2e/finance-x1-local-authenticated-evidence.spec.ts",
+      "purpose": "Local-only development evidence harness kept distinct from release evidence.",
+      "sha256": "dcaec7f5b091c92bf56a2d9a45b8e0861b9c48699071d602d8d71c88110a38b5"
+    },
+    {
+      "uri": "repository://stoquify/what-next/development-progression-agent/finance-investigation-2026-09-02/INVESTIGATION.md",
+      "path": "what-next/development-progression-agent/finance-investigation-2026-09-02/INVESTIGATION.md",
+      "purpose": "September 2 investigation separating route data readiness from screenshot and audit overhead.",
+      "sha256": "6aa7ca845b7e92f9669210a77a65c5690cd343c75f834750f8a5f70d8ff059b8"
+    },
+    {
+      "uri": "repository://stoquify/what-next/evidence/finance-x1/FINANCE_X1_APPROVAL_AND_EVIDENCE_HANDOFF_2026-08-31.md",
+      "path": "what-next/evidence/finance-x1/FINANCE_X1_APPROVAL_AND_EVIDENCE_HANDOFF_2026-08-31.md",
+      "purpose": "Approval, authorization, evidence capture, and independent-review handoff.",
+      "sha256": "d2493826cb13ad3910c0e82adb571f0db7bd0952d51370fd38352bb822cf07f1"
+    }
+  ],
+  "notes": [
+    "This versioned manifest matches the exact files frozen in the September 3 product review bundle.",
+    "The August 31 manifest remains unchanged as historical provenance and must not be used for this approval request because its evidence-binding hash is stale.",
+    "This manifest is a technical content inventory, not an approval or signature.",
+    "The approval record must bind this manifest URI, its computed SHA-256, and the review bundle SHA-256 before evidence capture can become release evidence."
+  ]
+}

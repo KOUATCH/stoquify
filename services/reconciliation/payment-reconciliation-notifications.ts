@@ -3,10 +3,15 @@ import { createHash } from "node:crypto"
 
 import { logger } from "@/lib/logger"
 import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
 
 export type PaymentReconciliationNotificationType =
   | "payment-reconciliation.exception.created"
   | "payment-reconciliation.exception.assigned"
+  | "payment-reconciliation.exception.link-repaired"
+  | "payment-reconciliation.exception.closure-proposed"
+  | "payment-reconciliation.exception.closure-approved"
+  | "payment-reconciliation.exception.closure-rejected"
   | "payment-reconciliation.exception.escalated"
   | "payment-reconciliation.suspense.created"
   | "payment-reconciliation.suspense.sla-warning"
@@ -19,6 +24,15 @@ export type PaymentReconciliationNotificationType =
   | "payment-reconciliation.period-close.blocked"
   | "payment-reconciliation.suspense.reclassification-proposed"
   | "payment-reconciliation.suspense.reclassification-approved"
+  | "payment-reconciliation.suspense.correction-proposed"
+  | "payment-reconciliation.suspense.correction-rejected"
+  | "payment-reconciliation.suspense.correction-approved"
+  | "payment-reconciliation.suspense.resolution-proposed"
+  | "payment-reconciliation.suspense.resolution-rejected"
+  | "payment-reconciliation.suspense.resolution-approved"
+  | "payment-reconciliation.suspense.recovery-proposed"
+  | "payment-reconciliation.suspense.recovery-rejected"
+  | "payment-reconciliation.suspense.recovered"
 
 export type PaymentReconciliationNotificationEvent = {
   type: PaymentReconciliationNotificationType
@@ -53,6 +67,14 @@ function notificationSource(type: PaymentReconciliationNotificationType) {
 }
 
 function primaryEvidenceKey(event: PaymentReconciliationNotificationEvent) {
+  // A run can produce many exceptions. Identify the event's own record before
+  // considering its parent run, or siblings overwrite one another.
+  if (event.type.startsWith("payment-reconciliation.exception.")) {
+    return event.evidenceRef?.exceptionId ?? event.evidenceRef?.suspenseItemId ?? event.correlationId
+  }
+  if (event.type.startsWith("payment-reconciliation.suspense.")) {
+    return event.evidenceRef?.suspenseItemId ?? event.evidenceRef?.exceptionId ?? event.correlationId
+  }
   return [
     event.evidenceRef?.reconciliationRunId,
     event.evidenceRef?.suspenseItemId,
@@ -83,6 +105,7 @@ export async function publishPaymentReconciliationNotification(
   event: PaymentReconciliationNotificationEvent,
   client: NotificationClient = db,
 ) {
+  if (!event.organizationId.trim()) throw new BusinessRuleError("Organization is required.", "TENANT_SCOPE_VIOLATION")
   const source = notificationSource(event.type)
   const idempotencyKey = notificationIdempotencyKey(event)
   const payloadSummary = asJsonObject({
@@ -101,15 +124,11 @@ export async function publishPaymentReconciliationNotification(
   })
   const payloadHash = sha256(JSON.stringify(payloadSummary))
 
-  await client.paymentReconciliationInboxItem.upsert({
-    where: {
-      organizationId_source_idempotencyKey: {
-        organizationId: event.organizationId,
-        source,
-        idempotencyKey,
-      },
-    },
-    create: {
+  // PostgreSQL ON CONFLICT DO NOTHING also handles concurrent deliveries inside
+  // a caller's transaction. Retrying never edits the original observation.
+  const result = await client.paymentReconciliationInboxItem.createMany({
+    skipDuplicates: true,
+    data: {
       organizationId: event.organizationId,
       providerAccountId: event.providerAccountId ?? null,
       source,
@@ -121,20 +140,14 @@ export async function publishPaymentReconciliationNotification(
       processedAt: new Date(),
       correlationId: event.correlationId,
     },
-    update: {
-      attempts: { increment: 1 },
-      status: PaymentReconciliationInboxStatus.PROCESSED,
-      payloadHash,
-      payloadSummary,
-      processedAt: new Date(),
-      correlationId: event.correlationId,
-    },
   })
 
-  logger.info("payment-reconciliation.notification", {
-    ...event,
-    dueAt: event.dueAt?.toISOString() ?? null,
+  if (result.count > 0) logger.info("payment-reconciliation.notification.recorded", {
+    organizationId: event.organizationId,
+    type: event.type,
+    correlationId: event.correlationId,
     source,
     idempotencyKey,
   })
+  return { created: result.count > 0 }
 }

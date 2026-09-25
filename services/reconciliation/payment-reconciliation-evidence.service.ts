@@ -7,6 +7,8 @@ import {
 import { createHash } from "node:crypto"
 
 import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { suspenseResolutionManifestEvidenceInTx } from "./payment-suspense-resolution-evidence.service"
+import { exceptionClosureManifestEvidenceInTx } from "./payment-exception-closure-evidence.service"
 
 export type ProviderAccountReconciliationContext = {
   id: string
@@ -211,10 +213,15 @@ export async function buildReconciliationEvidenceManifestInTx(
         currencyCode: true,
         ledgerPostingBatchId: true,
         resolvedAt: true,
+        metadata: true,
       },
     }),
   ])
 
+  const resolutionEvidence = new Map(await Promise.all(suspenseItems.map(async row =>
+    [row.id, await suspenseResolutionManifestEvidenceInTx(tx, input.organizationId, row)] as const)))
+  const exceptionDecisions = new Map(await Promise.all(exceptions.map(async row =>
+    [row.id, await exceptionClosureManifestEvidenceInTx(tx, input.organizationId, row)] as const)))
   const manifest = {
     version: 1,
     providerAccountId: input.providerAccountId,
@@ -280,6 +287,7 @@ export async function buildReconciliationEvidenceManifestInTx(
       statementLineId: row.statementLineId,
       suspenseItemId: row.suspenseItemId,
       resolvedAt: iso(row.resolvedAt),
+      ...(exceptionDecisions.get(row.id) ? { closureEvidence: exceptionDecisions.get(row.id) } : {}),
     })),
     suspenseItems: sortedById(suspenseItems).map((row) => ({
       id: row.id,
@@ -290,6 +298,7 @@ export async function buildReconciliationEvidenceManifestInTx(
       currencyCode: row.currencyCode,
       ledgerPostingBatchId: row.ledgerPostingBatchId,
       resolvedAt: iso(row.resolvedAt),
+      ...(resolutionEvidence.get(row.id) ? { resolutionEvidence: resolutionEvidence.get(row.id) } : {}),
     })),
   }
 

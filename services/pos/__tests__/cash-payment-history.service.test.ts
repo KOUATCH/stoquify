@@ -37,11 +37,11 @@ function createClient(overrides: Record<string, unknown> = {}) {
             session: { id: "session-1", sessionNumber: "S-001", organizationId: "org-1" },
             user: { id: "cashier-1", firstName: "Ada", lastName: "Cash", email: "ada@example.test" },
           },
-        ])
-        .mockResolvedValueOnce([
-          { type: CashDrawerTransactionType.OPENING_BALANCE, amount: decimal(1000) },
-          { type: CashDrawerTransactionType.SALE, amount: decimal(5000) },
-          { type: CashDrawerTransactionType.CLOSING_BALANCE, amount: decimal(6000) },
+        ]),
+      groupBy: jest.fn().mockResolvedValue([
+          { type: CashDrawerTransactionType.OPENING_BALANCE, _sum: { amount: decimal(1000) }, _count: { _all: 1 } },
+          { type: CashDrawerTransactionType.SALE, _sum: { amount: decimal(5000) }, _count: { _all: 1 } },
+          { type: CashDrawerTransactionType.CLOSING_BALANCE, _sum: { amount: decimal(6000) }, _count: { _all: 1 } },
         ]),
     },
     payment: {
@@ -74,9 +74,9 @@ function createClient(overrides: Record<string, unknown> = {}) {
               confirmedAt: new Date("2026-07-17T08:06:00.000Z"),
             },
           },
-        ])
-        .mockResolvedValueOnce([
-          { method: PaymentMethod.MOBILE_MONEY, status: PaymentStatus.PAID, amount: decimal(7500) },
+        ]),
+      groupBy: jest.fn().mockResolvedValue([
+          { method: PaymentMethod.MOBILE_MONEY, status: PaymentStatus.PAID, _sum: { amount: decimal(7500) }, _count: { _all: 1 } },
         ]),
     },
     ...overrides,
@@ -86,6 +86,59 @@ function createClient(overrides: Record<string, unknown> = {}) {
 }
 
 describe("cash payment history service", () => {
+  it.each([
+    ["loc-1", ["sale-one", "purchase-one", "dual-linked"], "100.00"],
+    ["loc-2", ["sale-two", "purchase-two"], "60.00"],
+    ["missing-location", [], "0.00"],
+    [undefined, ["sale-one", "sale-two", "purchase-one", "purchase-two", "unlinked", "dual-linked"], "210.00"],
+  ] as const)("scopes payment rows and summary totals consistently to %s", async (locationId, expectedIds, expectedTotal) => {
+    const makePayment = (id: string, amount: number, saleLocation: string | null, purchaseLocation: string | null) => ({
+      id, paymentNumber: id, amount: decimal(amount), method: PaymentMethod.CARD, status: PaymentStatus.PAID,
+      organizationId: "org-1", deletedAt: null, processedById: "cashier-1",
+      authorizationCode: null, mobileMoneyReference: null, bankReference: null, transactionId: null,
+      processedAt: new Date("2026-07-17T08:05:00.000Z"), createdAt: new Date("2026-07-17T08:04:00.000Z"),
+      salesOrderId: saleLocation ? `sale-${id}` : null, purchaseOrderId: purchaseLocation ? `purchase-${id}` : null,
+      salesOrder: saleLocation ? { id: `sale-${id}`, locationId: saleLocation } : null,
+      purchaseOrder: purchaseLocation ? { id: `purchase-${id}`, locationId: purchaseLocation } : null,
+      notes: null, processedBy: null, reconciliationTransaction: null,
+    })
+    const payments = [
+      makePayment("sale-one", 10, "loc-1", null), makePayment("sale-two", 20, "loc-2", null),
+      makePayment("purchase-one", 30, null, "loc-1"), makePayment("purchase-two", 40, null, "loc-2"),
+      makePayment("unlinked", 50, null, null), makePayment("dual-linked", 60, "loc-1", "loc-2"),
+    ]
+    // This is a query-contract fixture, not a PostgreSQL simulation. Assert the
+    // nullable relation predicate before serving rows by their displayed scope.
+    const rowsForQuery = (where: Prisma.PaymentWhereInput) => {
+      expect(where).toMatchObject({ organizationId: "org-1", deletedAt: null, processedById: "cashier-1" })
+      if (!where.OR) return payments
+      expect(where.OR).toEqual([
+        { salesOrder: { is: { locationId } } },
+        { salesOrderId: null, purchaseOrder: { is: { locationId } } },
+      ])
+      return payments.filter(payment => (payment.salesOrder?.locationId ?? payment.purchaseOrder?.locationId) === locationId)
+    }
+    const client = createClient({ payment: {
+      findMany: jest.fn(async ({ where }: { where: Prisma.PaymentWhereInput }) => rowsForQuery(where)),
+      groupBy: jest.fn(async ({ where }: { where: Prisma.PaymentWhereInput }) => {
+        const rows = rowsForQuery(where)
+        return rows.length ? [{ method: PaymentMethod.CARD, status: PaymentStatus.PAID,
+          _sum: { amount: rows.reduce((sum, row) => sum.plus(row.amount), decimal(0)) }, _count: { _all: rows.length } }] : []
+      }),
+    } })
+    const result = await readCashPaymentHistory({
+      organizationId: "org-1", actorUserId: "cashier-1", accessMode: "own", actorPermissions: ["pos.read"],
+      filters: { lane: "payment", pageSize: 25, ...(locationId ? { locationId } : {}) },
+    }, { client, cursorCodec, now: () => now })
+    expect(result.rows.map(row => row.sourceId).sort()).toEqual([...expectedIds].sort())
+    expect(result.summary.paymentCapturedTotal).toBe(expectedTotal)
+    expect(result.summary.electronicTenderTotal).toBe(expectedTotal)
+    expect(result.summary.paymentEventCount).toBe(expectedIds.length)
+    expect(client.payment.groupBy.mock.calls[0][0].where).toEqual(client.payment.findMany.mock.calls[0][0].where)
+    if (locationId) expect(result.rows.every(row => row.location.id === locationId)).toBe(true)
+    else expect(result.rows.find(row => row.sourceId === "unlinked")?.location.id).toBeNull()
+  })
+
   it("limits own-mode history to the authenticated cashier and excludes electronic tenders from physical cash", async () => {
     const client = createClient()
 
@@ -117,6 +170,17 @@ describe("cash payment history service", () => {
     expect(result.summary.cashVariance).toBe("0.00")
     expect(result.summary.electronicTenderTotal).toBe("7500.00")
     expect(result.rows.find((row) => row.lane === "payment")?.accounting.electronicTenderExcluded).toBe(true)
+    expect(result.scope).toEqual({ organizationId: "org-1", actorUserId: "cashier-1" })
+    expect(client.cashDrawerTransaction.findMany).toHaveBeenCalledTimes(1)
+    expect(client.payment.findMany).toHaveBeenCalledTimes(1)
+    expect(client.cashDrawerTransaction.groupBy).toHaveBeenCalledWith({
+      by: ["type"], where: client.cashDrawerTransaction.findMany.mock.calls[0][0].where,
+      _sum: { amount: true }, _count: { _all: true },
+    })
+    expect(client.payment.groupBy).toHaveBeenCalledWith({
+      by: ["method", "status"], where: client.payment.findMany.mock.calls[0][0].where,
+      _sum: { amount: true }, _count: { _all: true },
+    })
   })
 
   it("redacts provider references without payment reconciliation authority", async () => {
@@ -144,7 +208,8 @@ describe("cash payment history service", () => {
   it("keeps provider references visible for reconciliation readers", async () => {
     const client = createClient({
       cashDrawerTransaction: {
-        findMany: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([]),
+        findMany: jest.fn().mockResolvedValue([]),
+        groupBy: jest.fn().mockResolvedValue([]),
       },
       payment: {
         findMany: jest.fn()
@@ -189,10 +254,10 @@ describe("cash payment history service", () => {
               purchaseOrder: null,
               reconciliationTransaction: null,
             },
-          ])
-          .mockResolvedValueOnce([
-            { method: PaymentMethod.CARD, status: PaymentStatus.PAID, amount: decimal(1000) },
-            { method: PaymentMethod.MOBILE_MONEY, status: PaymentStatus.PAID, amount: decimal(7500) },
+          ]),
+        groupBy: jest.fn().mockResolvedValue([
+            { method: PaymentMethod.CARD, status: PaymentStatus.PAID, _sum: { amount: decimal(1000) }, _count: { _all: 1 } },
+            { method: PaymentMethod.MOBILE_MONEY, status: PaymentStatus.PAID, _sum: { amount: decimal(7500) }, _count: { _all: 1 } },
           ]),
       },
     })
@@ -211,6 +276,63 @@ describe("cash payment history service", () => {
     expect(result.rows).toHaveLength(2)
     expect(result.rows[0].payment.providerReference).toBe("AUTH-2")
     expect(result.pageInfo.hasMore).toBe(false)
+    expect(client.cashDrawerTransaction.groupBy).not.toHaveBeenCalled()
+  })
+
+  it("counts transactions rather than groups and preserves decimal totals and outflows", async () => {
+    const client = createClient()
+    client.cashDrawerTransaction.groupBy.mockResolvedValue([
+      { type: CashDrawerTransactionType.OPENING_BALANCE, _sum: { amount: decimal("10.10") }, _count: { _all: 2 } },
+      { type: CashDrawerTransactionType.SALE, _sum: { amount: decimal("999.99") }, _count: { _all: 100_000 } },
+      { type: CashDrawerTransactionType.RETURN, _sum: { amount: decimal("0.01") }, _count: { _all: 1 } },
+      { type: CashDrawerTransactionType.CLOSING_BALANCE, _sum: { amount: decimal("1010.00") }, _count: { _all: 1 } },
+    ])
+    client.payment.groupBy.mockResolvedValue([
+      { method: PaymentMethod.CARD, status: PaymentStatus.PENDING, _sum: { amount: decimal("200.01") }, _count: { _all: 9 } },
+      { method: PaymentMethod.CASH, status: PaymentStatus.PAID, _sum: { amount: decimal("1.99") }, _count: { _all: 3 } },
+    ])
+    const result = await readCashPaymentHistory({
+      organizationId: "org-1", actorUserId: "manager-1", accessMode: "manager",
+      filters: { pageSize: 25 }, actorPermissions: ["finance.read"],
+    }, { client, cursorCodec, now: () => now })
+    expect(result.summary).toEqual({
+      transactionCount: 100_016, cashEventCount: 100_004, paymentEventCount: 12,
+      openingFloat: "10.10", cashInflows: "1010.09", cashOutflows: "0.01", countedCash: "1010.00",
+      expectedPhysicalCash: "1010.08", cashVariance: "-0.08", electronicTenderTotal: "200.01",
+      paymentCapturedTotal: "202.00", unresolvedPaymentCount: 9, currency: "XAF",
+    })
+  })
+
+  it("rejects a foreign tenant cursor before reading either lane", async () => {
+    const client = createClient()
+    const cursor = cursorCodec.encode({ v: 1, scope: "transaction-history", tenantId: "other-org",
+      adapterId: "cash-payment-history.v1", filterHash: "0".repeat(64), recordedThrough: now.toISOString(),
+      effectiveAt: now.toISOString(), recordedAt: now.toISOString(), id: "row-1" })
+    await expect(readCashPaymentHistory({
+      organizationId: "org-1", actorUserId: "cashier-1", accessMode: "own", actorPermissions: ["pos.read"],
+      filters: { pageSize: 25, cursor },
+    }, { client, cursorCodec, now: () => now })).rejects.toThrow("trusted tenant")
+    expect(client.cashDrawerTransaction.findMany).not.toHaveBeenCalled()
+    expect(client.cashDrawerTransaction.groupBy).not.toHaveBeenCalled()
+    expect(client.payment.findMany).not.toHaveBeenCalled()
+    expect(client.payment.groupBy).not.toHaveBeenCalled()
+  })
+
+  it("returns zero totals when the trusted filters match no transactions", async () => {
+    const client = createClient()
+    for (const lane of [client.cashDrawerTransaction, client.payment]) {
+      lane.findMany.mockReset().mockResolvedValue([])
+      lane.groupBy.mockResolvedValue([])
+    }
+    const result = await readCashPaymentHistory({
+      organizationId: "org-1", actorUserId: "cashier-1", accessMode: "own", actorPermissions: ["pos.read"],
+      filters: { pageSize: 25 },
+    }, { client, cursorCodec, now: () => now })
+    expect(result.summary.transactionCount).toBe(0)
+    expect(result.summary.expectedPhysicalCash).toBe("0.00")
+    expect(result.summary.cashVariance).toBe("0.00")
+    expect(result.summary.unresolvedPaymentCount).toBe(0)
+    expect(result.rows).toEqual([])
   })
 })
 

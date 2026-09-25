@@ -1,0 +1,84 @@
+{
+  "run": "4d39e97e-eea",
+  "at": "2026-09-08T08:02:29.323Z",
+  "sourcesBefore": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "5eefacc3de1f9a72679151a3862317a45b0595c7d24abcc300fbdf8248b608d9",
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "eccbc3e874ddba1b3cda57eadc4289e8ecb7f8d71cbb82428fbff0de65feeb38",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "28706a09649516fdc039cdcde97cdd49b632ad2c3d6957bad0a95960d3f25c3d",
+    "messages/en.json": "98e79aea25d6264a7143e0dada19ee41f53b7b68466efbf6dcc671794324b6f1",
+    "messages/fr.json": "a180c0160eb968bfd7a1d1988e881816a99a81ddb710dab20621a6da3a67b4db"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [
+        "Draft and file checksum retained after refresh",
+        "Keyboard review dismissal returns focus; 320/390/768 layouts do not overflow"
+      ],
+      "screenshots": [
+        "invoice-preparation-en-draft-desktop-4d39e97e-eea.png",
+        "invoice-preparation-en-draft-320-4d39e97e-eea.png",
+        "invoice-preparation-en-draft-390-4d39e97e-eea.png",
+        "invoice-preparation-en-draft-768-4d39e97e-eea.png",
+        "invoice-preparation-en-review-desktop-4d39e97e-eea.png",
+        "invoice-preparation-en-failure-4d39e97e-eea.png"
+      ],
+      "timings": [
+        {
+          "name": "Payables to preparation development baseline",
+          "ms": 8092
+        }
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"The reviewed information changed. Your draft is retained; refresh sources and review it again.\"\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [
+        "Draft and file checksum retained after refresh",
+        "Keyboard review dismissal returns focus; 320/390/768 layouts do not overflow"
+      ],
+      "screenshots": [
+        "invoice-preparation-fr-draft-desktop-4d39e97e-eea.png",
+        "invoice-preparation-fr-draft-320-4d39e97e-eea.png",
+        "invoice-preparation-fr-draft-390-4d39e97e-eea.png",
+        "invoice-preparation-fr-draft-768-4d39e97e-eea.png",
+        "invoice-preparation-fr-review-desktop-4d39e97e-eea.png",
+        "invoice-preparation-fr-failure-4d39e97e-eea.png"
+      ],
+      "timings": [
+        {
+          "name": "Payables to preparation development baseline",
+          "ms": 8340
+        }
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Les informations vérifiées ont changé. Votre brouillon est conservé ; actualisez les sources et vérifiez-le à nouveau.\"\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n"
+    }
+  ],
+  "scope": "Actual owned local application, synthetic approved PO setup, real receiving, invoice preparation, stale state and response-loss recovery. No approval or posting proof.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "5eefacc3de1f9a72679151a3862317a45b0595c7d24abcc300fbdf8248b608d9",
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "eccbc3e874ddba1b3cda57eadc4289e8ecb7f8d71cbb82428fbff0de65feeb38",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "28706a09649516fdc039cdcde97cdd49b632ad2c3d6957bad0a95960d3f25c3d",
+    "messages/en.json": "98e79aea25d6264a7143e0dada19ee41f53b7b68466efbf6dcc671794324b6f1",
+    "messages/fr.json": "a180c0160eb968bfd7a1d1988e881816a99a81ddb710dab20621a6da3a67b4db"
+  },
+  "sourceStable": true
+}

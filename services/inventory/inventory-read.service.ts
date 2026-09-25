@@ -38,6 +38,7 @@ import type {
 } from "@/types/inventoryTypes"
 
 type TransferFilters = {
+  awaitingReceipt?: boolean
   search?: string
   status?: MovementTransferStatus
   fromLocationId?: string
@@ -236,7 +237,10 @@ export function toLocationTransferDTO(transfer: any): LocationTransferDTO {
         totalCost: toNumber(line.requestedQuantity) * toNumber(line.unitCost),
         notes: line.notes ?? undefined,
         serialNumbers: [],
-        status: transfer.status === "COMPLETED" ? "RECEIVED" : "PENDING",
+        status: transfer.status === "CANCELLED" ? "CANCELLED"
+          : toNumber(line.shippedQuantity) > 0 && toNumber(line.receivedQuantity) >= toNumber(line.shippedQuantity) ? "RECEIVED"
+          : toNumber(line.shippedQuantity) > 0 ? "SHIPPED"
+          : transfer.status === "APPROVED" ? "APPROVED" : "PENDING",
         createdAt: line.createdAt,
         updatedAt: line.updatedAt,
       })) ?? [],
@@ -357,6 +361,7 @@ export async function listStockTransfers(input: {
     ]
   }
   if (input.filters?.status) where.status = input.filters.status as any
+  if (input.filters?.awaitingReceipt) where.status = { in: ["IN_TRANSIT", "PARTIALLY_RECEIVED"] }
   if (input.filters?.fromLocationId) where.fromLocationId = input.filters.fromLocationId
   if (input.filters?.toLocationId) where.toLocationId = input.filters.toLocationId
 
@@ -574,9 +579,11 @@ export async function listInventoryLevels(input: {
   const levels = await db.inventoryLevel.findMany({
     where: {
       ...(filters?.locationId ? { locationId: filters.locationId } : {}),
+      ...(filters?.transferEligible ? { quantityAvailable: { gt: 0 } } : {}),
       item: {
         organizationId,
         deletedAt: null,
+        ...(filters?.transferEligible ? { isActive: true, isDiscontinued: false } : {}),
         ...(filters?.categoryId ? { categoryId: filters.categoryId } : {}),
         ...(filters?.brandId ? { brandId: filters.brandId } : {}),
         ...(filters?.search
@@ -754,6 +761,7 @@ const pageSizeSchema = z.union(
 
 export const inventoryMovementHistoryFiltersSchema = z
   .object({
+    search: z.string().trim().max(200).optional(),
     itemId: z.string().min(1).optional(),
     locationId: z.string().min(1).optional(),
     type: z.nativeEnum(PrismaTransactionType).optional(),
@@ -762,6 +770,7 @@ export const inventoryMovementHistoryFiltersSchema = z
     effectiveAsOf: z.union([z.date(), z.string().datetime({ offset: true })]).optional(),
     pageSize: pageSizeSchema.optional(),
     cursor: z.string().max(4096).optional(),
+    direction: z.enum(["next", "previous"]).optional(),
   })
   .strict()
 
@@ -779,6 +788,7 @@ const inventoryMovementHistorySchema = z
 export type InventoryMovementHistoryInput = z.input<typeof inventoryMovementHistorySchema>
 
 export type InventoryMovementHistoryAppliedFilters = {
+  search?: string | null
   itemId: string | null
   locationId: string | null
   type: PrismaTransactionType | null
@@ -845,7 +855,7 @@ export type InventoryMovementHistoryResult = TransactionHistoryResult<
   InventoryMovementHistoryRow,
   InventoryMovementHistorySummary,
   InventoryMovementHistoryAppliedFilters
->
+> & { pageInfo: { previousCursor?: string | null } }
 
 type InventoryHistoryClient = Pick<
   Prisma.TransactionClient,
@@ -1009,20 +1019,21 @@ function historyCursorPredicate(payload: {
   effectiveAt: string
   recordedAt: string
   id: string
-}): Prisma.InventoryTransactionWhereInput {
+}, direction: "next" | "previous" = "next"): Prisma.InventoryTransactionWhereInput {
+  const operator = direction === "previous" ? "gt" : "lt"
   const effectiveAt = new Date(payload.effectiveAt)
   const recordedAt = new Date(payload.recordedAt)
   return {
     OR: [
-      { effectiveAt: { lt: effectiveAt } },
+      { effectiveAt: { [operator]: effectiveAt } },
       {
         effectiveAt,
-        recordedAt: { lt: recordedAt },
+        recordedAt: { [operator]: recordedAt },
       },
       {
         effectiveAt,
         recordedAt,
-        id: { lt: payload.id },
+        id: { [operator]: payload.id },
       },
     ],
   }
@@ -1089,6 +1100,8 @@ export async function readInventoryMovementHistory(
   }
 
   const filters = parsed.data.filters
+  const backwards = filters.direction === "previous"
+  if (backwards && !filters.cursor) return invalidHistoryInput("Previous-page traversal requires a cursor.")
   const effectiveAsOf = filters.effectiveAsOf
     ? filters.effectiveAsOf instanceof Date
       ? new Date(filters.effectiveAsOf)
@@ -1128,6 +1141,8 @@ export async function readInventoryMovementHistory(
   }
 
   const filterIdentity = {
+    // Keep existing unsearched cursor fingerprints compatible.
+    ...(filters.search ? { search: filters.search } : {}),
     itemId: filters.itemId ?? null,
     locationId: filters.locationId ?? null,
     type: filters.type ?? null,
@@ -1185,11 +1200,18 @@ export async function readInventoryMovementHistory(
     ...(filters.locationId ? { locationId: filters.locationId } : {}),
     ...(filters.type ? { type: filters.type } : {}),
     ...(Object.keys(effectiveAt).length > 0 ? { effectiveAt } : {}),
+    ...(filters.search ? { OR: [
+      { item: { nameEn: { contains: filters.search, mode: "insensitive" as const } } },
+      { item: { nameFr: { contains: filters.search, mode: "insensitive" as const } } },
+      { item: { sku: { contains: filters.search, mode: "insensitive" as const } } },
+      { referenceNumber: { contains: filters.search, mode: "insensitive" as const } },
+      { referenceId: { contains: filters.search, mode: "insensitive" as const } },
+    ] } : {}),
   }
 
   const rowWhere: Prisma.InventoryTransactionWhereInput = cursorPayload
     ? {
-        AND: [baseWhere, historyCursorPredicate(cursorPayload)],
+        AND: [baseWhere, historyCursorPredicate(cursorPayload, filters.direction)],
       }
     : baseWhere
 
@@ -1232,7 +1254,7 @@ export async function readInventoryMovementHistory(
           },
         },
       },
-      orderBy: [{ effectiveAt: "desc" }, { recordedAt: "desc" }, { id: "desc" }],
+      orderBy: [{ effectiveAt: backwards ? "asc" : "desc" }, { recordedAt: backwards ? "asc" : "desc" }, { id: backwards ? "asc" : "desc" }],
       take: filters.pageSize + 1,
     }),
     client.inventoryTransaction.groupBy({
@@ -1258,12 +1280,28 @@ export async function readInventoryMovementHistory(
   ])
 
   const groups = summaryGroups as InventoryHistorySummaryGroup[]
-  const hasMore = transactions.length > filters.pageSize
+  const hasMoreInDirection = transactions.length > filters.pageSize
+  const hasMore = backwards ? transactions.length > 0 : hasMoreInDirection
   const pageRows = transactions.slice(0, filters.pageSize)
+  if (backwards) pageRows.reverse()
   const inboundQuantity = sumQuantity(groups, INBOUND_TRANSACTION_TYPES)
   const outboundQuantity = sumQuantity(groups, OUTBOUND_TRANSACTION_TYPES)
   const quantitiesAreSummable = quantityUnit !== null
   const lastRow = pageRows.at(-1)
+  const firstRow = pageRows[0]
+  const previousCursor = firstRow && (backwards ? hasMoreInDirection : Boolean(cursorPayload))
+    ? cursorCodec.encode({
+        v: 1,
+        scope: "transaction-history",
+        tenantId: organization.id,
+        adapterId: INVENTORY_HISTORY_ADAPTER_ID,
+        filterHash,
+        recordedThrough: recordedThrough.toISOString(),
+        effectiveAt: firstRow.effectiveAt.toISOString(),
+        recordedAt: firstRow.recordedAt.toISOString(),
+        id: firstRow.id,
+      })
+    : null
   const nextCursor =
     hasMore && lastRow
       ? cursorCodec.encode({
@@ -1335,6 +1373,7 @@ export async function readInventoryMovementHistory(
     pageInfo: {
       nextCursor,
       hasMore,
+      previousCursor,
     },
     appliedFilters,
     summary: {

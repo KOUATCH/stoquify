@@ -1,219 +1,47 @@
 "use client"
 
-import type { FinancialSummaryReport } from "@/actions/analytics/analytics/financial-reports"
-import { Badge } from "@/components/ui/badge"
+import { useLocale, useTranslations } from "next-intl"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import type { FinancialSummaryReport } from "@/actions/analytics/financial-reports"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ReportTrustBanner } from "@/components/reports/report-trust-banner"
-import {
-  analyticsMutedTextClass,
-  analyticsPanelClass,
-  analyticsRowClass,
-  analyticsToneClass,
-  analyticsToneText,
-  analyticsTrendText,
-} from "@/components/analytics/dashboard/analytics-dashboard-theme"
-import { CreditCard, DollarSign, Package, ShoppingCart, TrendingDown, TrendingUp } from "lucide-react"
+import { ReportTrustBanner } from "./report-trust-banner"
+import { ReportCostBasis } from "./report-cost-basis"
+import { analyticsMutedTextClass, analyticsPanelClass, analyticsRowClass } from "@/components/analytics/dashboard/analytics-dashboard-theme"
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 
-interface FinancialSummaryReportProps {
-  report: FinancialSummaryReport
-}
-
-export function FinancialSummaryReportComponent({ report }: FinancialSummaryReportProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: report.provenance.currency,
-    }).format(amount)
-  }
-
-  const formatPercentage = (value: number) => {
-    return `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-[var(--dash-text)]">Financial Summary Report</h2>
-          <p className={analyticsMutedTextClass}>{report.period}</p>
-        </div>
-      </div>
-
-      <ReportTrustBanner provenance={report.provenance} />
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className={analyticsPanelClass}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className={`h-4 w-4 ${analyticsToneText("brand")}`} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(report.totalRevenue)}</div>
-            <div className={`flex items-center text-xs ${analyticsMutedTextClass}`}>
-              {report.revenueChange >= 0 ? (
-                <TrendingUp className={`h-3 w-3 mr-1 ${analyticsTrendText(true)}`} />
-              ) : (
-                <TrendingDown className={`h-3 w-3 mr-1 ${analyticsTrendText(false)}`} />
-              )}
-              <span className={analyticsTrendText(report.revenueChange >= 0)}>
-                {formatPercentage(report.revenueChange)}
-              </span>
-              <span className="ml-1">from last period</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className={analyticsPanelClass}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Gross Profit</CardTitle>
-            <TrendingUp className={`h-4 w-4 ${analyticsToneText("success")}`} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(report.grossProfit)}</div>
-            <div className={`flex items-center text-xs ${analyticsMutedTextClass}`}>
-              <Badge variant="outline" className={`text-xs ${analyticsToneClass("success")}`}>
-                {report.grossMargin.toFixed(1)}% margin
-              </Badge>
-              <span className="ml-2">
-                {report.profitChange >= 0 ? (
-                  <span className={analyticsTrendText(true)}>{formatPercentage(report.profitChange)}</span>
-                ) : (
-                  <span className={analyticsTrendText(false)}>{formatPercentage(report.profitChange)}</span>
-                )}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className={analyticsPanelClass}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Transactions</CardTitle>
-            <ShoppingCart className={`h-4 w-4 ${analyticsToneText("info")}`} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{report.totalTransactions.toLocaleString()}</div>
-            <div className={`flex items-center text-xs ${analyticsMutedTextClass}`}>
-              <span>Avg: {formatCurrency(report.averageTransactionValue)}</span>
-              <span className="ml-2">
-                {report.transactionChange >= 0 ? (
-                  <span className={analyticsTrendText(true)}>{formatPercentage(report.transactionChange)}</span>
-                ) : (
-                  <span className={analyticsTrendText(false)}>{formatPercentage(report.transactionChange)}</span>
-                )}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className={analyticsPanelClass}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Items Sold</CardTitle>
-            <Package className={`h-4 w-4 ${analyticsToneText("gold")}`} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{report.totalItemsSold.toLocaleString()}</div>
-            <div className={`text-xs ${analyticsMutedTextClass}`}>
-              Avg per transaction: {(report.totalItemsSold / Math.max(report.totalTransactions, 1)).toFixed(1)}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Payment Methods */}
-      <Card className={analyticsPanelClass}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
-            Payment Method Breakdown
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--dash-success)]">{formatCurrency(report.cashSales)}</div>
-              <div className={`text-sm ${analyticsMutedTextClass}`}>Cash Sales</div>
-              <div className={`text-xs ${analyticsMutedTextClass}`}>
-                {((report.cashSales / report.totalRevenue) * 100).toFixed(1)}%
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--dash-brand-strong)]">{formatCurrency(report.cardSales)}</div>
-              <div className={`text-sm ${analyticsMutedTextClass}`}>Card Sales</div>
-              <div className={`text-xs ${analyticsMutedTextClass}`}>
-                {((report.cardSales / report.totalRevenue) * 100).toFixed(1)}%
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-[var(--dash-info)]">{formatCurrency(report.digitalSales)}</div>
-              <div className={`text-sm ${analyticsMutedTextClass}`}>Digital Sales</div>
-              <div className={`text-xs ${analyticsMutedTextClass}`}>
-                {((report.digitalSales / report.totalRevenue) * 100).toFixed(1)}%
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Hourly Sales */}
-        <Card className={analyticsPanelClass}>
-          <CardHeader>
-            <CardTitle>Hourly Sales Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={report.hourlyBreakdown}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--dash-border-subtle)" opacity={0.35} />
-                <XAxis dataKey="hour" tick={{ fill: "var(--dash-text-soft)" }} />
-                <YAxis tick={{ fill: "var(--dash-text-soft)" }} />
-                <Tooltip
-                  formatter={(value: number) => [formatCurrency(value), "Revenue"]}
-                  labelFormatter={(hour: number) => `${hour}:00`}
-                  contentStyle={{
-                    backgroundColor: "var(--dash-surface-raised)",
-                    border: "1px solid var(--dash-border)",
-                    borderRadius: "8px",
-                    color: "var(--dash-text)",
-                  }}
-                />
-                <Bar dataKey="revenue" fill="var(--dash-brand)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Top Selling Items */}
-        <Card className={analyticsPanelClass}>
-          <CardHeader>
-            <CardTitle>Top Selling Items</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {report.topSellingItems.slice(0, 5).map((item, index) => (
-                <div key={item.itemId} className={`${analyticsRowClass} flex items-center justify-between p-3`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-sm font-medium ${analyticsToneClass(index === 0 ? "gold" : "muted")}`}>
-                      {index + 1}
-                    </div>
-                    <div>
-                      <div className="font-medium">{item.itemName}</div>
-                      <div className={`text-sm ${analyticsMutedTextClass}`}>SKU: {item.itemSku}</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium">{formatCurrency(item.revenue)}</div>
-                    <div className={`text-sm ${analyticsMutedTextClass}`}>{item.quantitySold} sold</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+export function FinancialSummaryReportComponent({ report }: { report: FinancialSummaryReport }) {
+  const t = useTranslations("operationalReports"), locale = useLocale()
+  const [showHourlyValues, setShowHourlyValues] = useState(false)
+  const money = (value: number | null) => value === null ? t("unavailable") : new Intl.NumberFormat(locale, { style: "currency", currency: report.provenance.currency }).format(value)
+  const number = (value: number) => new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(value)
+  const comparison = (value: number | null) => value === null ? t("noComparison") : number(value) + "% · " + t("previous")
+  const metrics = [
+    { label: t("orderValue"), value: money(report.totalRevenue), detail: comparison(report.revenueChange) },
+    { label: t("profit"), value: money(report.grossProfit), detail: report.grossMargin === null ? t("unavailable") : t("margin") + ": " + number(report.grossMargin) + "%" },
+    { label: t("transactions"), value: number(report.totalTransactions), detail: t("average", { amount: money(report.averageTransactionValue) }) },
+    { label: t("itemsSold"), value: number(report.totalItemsSold), detail: t("perTransaction", { count: number(report.totalItemsSold / Math.max(report.totalTransactions, 1)) }) },
+  ]
+  return <div className="space-y-6 min-w-0" data-testid="financial-summary-report">
+    <h2 className="text-2xl font-bold text-[var(--dash-text)]">{t("summaryTitle")}</h2>
+    <ReportTrustBanner provenance={report.provenance} />
+    <ReportCostBasis evidence={report.costEvidence} />
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">{metrics.map(metric => <Card key={metric.label} className={analyticsPanelClass}>
+      <CardHeader><CardTitle className="text-sm font-medium">{metric.label}</CardTitle></CardHeader>
+      <CardContent><p className="text-2xl font-bold break-words">{metric.value}</p><p className={analyticsMutedTextClass}>{metric.detail}</p></CardContent>
+    </Card>)}</div>
+    <p className={analyticsMutedTextClass}>{t("netValue")}: {money(report.netRevenue)} · {comparison(report.profitChange)}</p>
+    <Card className={analyticsPanelClass}><CardHeader><CardTitle>{t("payments")}</CardTitle></CardHeader><CardContent>
+      <p className={analyticsMutedTextClass}>{t("paymentBasis")}</p>
+      <dl className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">{[["cash", report.cashSales], ["card", report.cardSales], ["digital", report.digitalSales]].map(([key, value]) => <div key={key}><dt>{t(key as "cash" | "card" | "digital")}</dt><dd className="text-2xl font-bold break-words">{money(value as number)}</dd></div>)}</dl>
+    </CardContent></Card>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Card className={analyticsPanelClass}><CardHeader><CardTitle>{t("hourly", { timezone: report.timezone })}</CardTitle></CardHeader><CardContent className="min-w-0">
+        <div aria-hidden="true"><ResponsiveContainer width="100%" height={250}><BarChart data={report.hourlyBreakdown}><CartesianGrid strokeDasharray="3 3" stroke="var(--dash-border-subtle)" /><XAxis dataKey="hour" tick={{ fill: "var(--dash-text-soft)" }} /><YAxis tick={{ fill: "var(--dash-text-soft)" }} /><Tooltip formatter={(value: number) => [money(value), t("orderValue")]} contentStyle={{ backgroundColor: "var(--dash-surface-raised)", color: "var(--dash-text)" }} /><Bar dataKey="revenue" fill="var(--dash-brand)" isAnimationActive={false} /></BarChart></ResponsiveContainer></div>
+        <Button variant="outline" className="dashboard-filter-chip h-auto whitespace-normal" aria-expanded={showHourlyValues} aria-controls="report-hourly-values" onClick={() => setShowHourlyValues(value => !value)}>{t("hourlyTable")}</Button>
+        {showHourlyValues && <table id="report-hourly-values" className="w-full text-sm"><caption className="sr-only">{t("hourly", { timezone: report.timezone })}</caption><thead><tr><th scope="col">{t("hour")}</th><th scope="col">{t("orderValue")}</th><th scope="col">{t("transactions")}</th></tr></thead><tbody>{report.hourlyBreakdown.map(hour => <tr key={hour.hour}><th scope="row">{hour.hour}:00</th><td>{money(hour.revenue)}</td><td>{number(hour.transactions)}</td></tr>)}</tbody></table>}
+      </CardContent></Card>
+      <Card className={analyticsPanelClass}><CardHeader><CardTitle>{t("topItems")}</CardTitle></CardHeader><CardContent><ol className="space-y-3">{report.topSellingItems.slice(0, 5).map(item => <li key={item.itemId} className={analyticsRowClass + " p-3 flex flex-wrap justify-between gap-2"}><div className="min-w-0 break-words"><p className="font-medium">{locale === "fr" ? item.itemNameFr || item.itemName : item.itemName}</p><p className={analyticsMutedTextClass}>{item.itemSku}</p></div><div><p>{money(item.revenue)}</p><p>{t("sold", { count: number(item.quantitySold) })}</p></div></li>)}</ol></CardContent></Card>
     </div>
-  )
+  </div>
 }

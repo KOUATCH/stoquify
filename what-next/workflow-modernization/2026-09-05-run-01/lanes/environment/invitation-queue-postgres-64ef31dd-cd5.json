@@ -1,0 +1,87 @@
+{
+  "run": "64ef31dd-cd5",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T06:05:29.666Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-issuance.service.ts": "40cf6caaab023f4937b1e0a44a0f872feeb1d58ac64448a955413b2ce069c42e",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "b7c53352750340e25398dd4e06d7f5caad48a2609645800d91a19f435bc14c10",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "14a4dea6fe59487b323893cbaac51c458033b6da0eee908c05b2938a8d6304a2",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "concurrent identical requests commit one invitation, event, queue and mandatory audit",
+      "passed": true,
+      "durationMs": 252,
+      "detail": {
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1,
+        "sameIssue": true,
+        "noBearerInQueue": true,
+        "defaultWorkerDisabled": true
+      }
+    },
+    {
+      "name": "competing distinct requests for one recipient create only one pending invitation",
+      "passed": true,
+      "durationMs": 86,
+      "detail": {
+        "statuses": [
+          409,
+          200
+        ],
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "issuance audit failure rolls back invitation, event and queue; retry completes once",
+      "passed": true,
+      "durationMs": 57,
+      "detail": {
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "current issuer revocation and foreign roles cannot create invitations",
+      "passed": true,
+      "durationMs": 32,
+      "detail": {
+        "foreignDenied": true,
+        "disabledIssuerDenied": true
+      }
+    }
+  ],
+  "limitations": [
+    "Real PostgreSQL and production service logic; adapters are isolated in-memory receipts only, never actual provider acceptance.",
+    "No production transport is installed; default worker is disabled.",
+    "Legacy invitation provenance and redemption-time permission revision enforcement remain separate work."
+  ],
+  "authorityBefore": "41fa370596758ea0a752501a1c7d8630b8d7a0c8f5bd2616e428c0163d3645da",
+  "error": "Cannot read properties of undefined (reading 'status')",
+  "completedAt": "2026-09-06T06:05:30.414Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-issuance.service.ts": "40cf6caaab023f4937b1e0a44a0f872feeb1d58ac64448a955413b2ce069c42e",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "b7c53352750340e25398dd4e06d7f5caad48a2609645800d91a19f435bc14c10",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "14a4dea6fe59487b323893cbaac51c458033b6da0eee908c05b2938a8d6304a2",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "passed": 4,
+  "failed": 1,
+  "blockedFetches": 0,
+  "driverSha256": "87350458fc79331c296f29d2fe8ecc6970d695970f50a920d550b22e40e4d575"
+}

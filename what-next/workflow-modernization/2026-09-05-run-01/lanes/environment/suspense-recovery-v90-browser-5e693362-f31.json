@@ -1,0 +1,56 @@
+{
+  "at": "2026-09-09T06:46:01.171Z",
+  "run": "5e693362-f31",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseQueue.tsx": "da0a917d9cc6020b9dab5b1ca4d226bb296dd37b5d67a214dd5f97512f10ee31",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "b2268ade6193460bc7e4475006fb8d8712f17f640bf3db58bc5758969806df67",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "077984a665a2bde93666b9b4063e4a6f4d649e3ab608c5f161d06b730e0d2562",
+    "actions/payments/reconciliation.actions.ts": "34a2c2a97231fe072eab03f0e61d70b68ede6858d315b2fc53729afdfd330e05",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "d837420a7c9f2047aa4d2b7820defc7692557a5001ff0d5831586973e149e157",
+    "messages/fr.json": "de809db6852ab773d7a3018fe2b349206fc5412ebaaf09e8bb45e3c129bb0e63",
+    "lib/auth-client.ts": "280797df056eddb8b18569b172f659aec962ae5df135e128f1147d82914ab3cb",
+    "hooks/payments/suspense-recovery.ts": "80f5feb1ce76f4f293b0daca1865c690893d58e6e11da723d6e8ad9bbbd484da"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [],
+      "screenshots": [
+        "suspense-recovery-v90-en-failure-5e693362-f31.png"
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Suspense approval lane', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Suspense approval lane', exact: true })\n"
+    },
+    {
+      "locale": "fr",
+      "stages": [],
+      "screenshots": [
+        "suspense-recovery-v90-fr-failure-5e693362-f31.png"
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'File approbation suspense', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'File approbation suspense', exact: true })\n"
+    }
+  ],
+  "scope": "Actual isolated app, synthetic setup and normal password sign-in/step-up. No provider or statutory approval claim.",
+  "originalBefore": "d793708497815aba83581c9d030ebfd98bf78acd9eb050220fd92b5aaaae3813",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseQueue.tsx": "da0a917d9cc6020b9dab5b1ca4d226bb296dd37b5d67a214dd5f97512f10ee31",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "b2268ade6193460bc7e4475006fb8d8712f17f640bf3db58bc5758969806df67",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "077984a665a2bde93666b9b4063e4a6f4d649e3ab608c5f161d06b730e0d2562",
+    "actions/payments/reconciliation.actions.ts": "34a2c2a97231fe072eab03f0e61d70b68ede6858d315b2fc53729afdfd330e05",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "d837420a7c9f2047aa4d2b7820defc7692557a5001ff0d5831586973e149e157",
+    "messages/fr.json": "de809db6852ab773d7a3018fe2b349206fc5412ebaaf09e8bb45e3c129bb0e63",
+    "lib/auth-client.ts": "280797df056eddb8b18569b172f659aec962ae5df135e128f1147d82914ab3cb",
+    "hooks/payments/suspense-recovery.ts": "80f5feb1ce76f4f293b0daca1865c690893d58e6e11da723d6e8ad9bbbd484da"
+  },
+  "sourceStable": true
+}

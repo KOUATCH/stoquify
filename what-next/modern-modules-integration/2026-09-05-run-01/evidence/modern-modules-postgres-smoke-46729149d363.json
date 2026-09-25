@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "runId": "46729149d363",
+  "generatedAt": "2026-09-05T11:53:56.518Z",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "source": "local-modern-modules-postgres-controls",
+  "synthetic": true,
+  "authenticatedBrowserEvidence": false,
+  "productionEvidence": false,
+  "retainedFixtureOrganizations": [
+    "org_modules_service_smoke_46729149d363_legacy",
+    "org_modules_service_smoke_46729149d363_race",
+    "org_modules_service_smoke_46729149d363_restricted",
+    "org_modules_service_smoke_46729149d363_foreign"
+  ],
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourcesBefore": [
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "324d6ad5fa0ec28329c68dcdd3c029ea4a03f76a46b932308c39c4ec0ece60d9"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "99ba27d7fd62b78cc1e646e42c0d4d1d3dff7e53a7522947a3701f59db97f544"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    }
+  ],
+  "sourcesAfter": [
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "324d6ad5fa0ec28329c68dcdd3c029ea4a03f76a46b932308c39c4ec0ece60d9"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "99ba27d7fd62b78cc1e646e42c0d4d1d3dff7e53a7522947a3701f59db97f544"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    }
+  ],
+  "checks": [
+    {
+      "name": "concurrent identical submissions commit once and preserve all 19 legacy grants",
+      "passed": true,
+      "durationMs": 1204
+    },
+    {
+      "name": "concurrent different commands have exactly one CAS winner without lost rights",
+      "passed": true,
+      "durationMs": 327
+    },
+    {
+      "name": "failed eligibility keeps the prior active configuration and cannot create grants",
+      "passed": true,
+      "durationMs": 140
+    },
+    {
+      "name": "recovery uses a new reviewed command and preserves failed evidence",
+      "passed": true,
+      "durationMs": 66
+    },
+    {
+      "name": "cross-tenant history reference is rejected and same-tenant history opens a new draft",
+      "passed": true,
+      "durationMs": 42
+    },
+    {
+      "name": "draft storage leaves observed configuration unchanged",
+      "passed": true,
+      "durationMs": 26
+    },
+    {
+      "name": "PostgreSQL rejects duplicate grants within a tenant",
+      "passed": true,
+      "durationMs": 22
+    },
+    {
+      "name": "PostgreSQL rejects command evidence update and deletion",
+      "passed": true,
+      "durationMs": 16
+    },
+    {
+      "name": "PostgreSQL forbids configuration deletion while authority and history remain",
+      "passed": true,
+      "durationMs": 10
+    },
+    {
+      "name": "PostgreSQL prevents a grant or command from being orphaned",
+      "passed": true,
+      "durationMs": 16
+    },
+    {
+      "name": "PostgreSQL rejects invalid grant intervals and statuses",
+      "passed": true,
+      "durationMs": 4
+    },
+    {
+      "name": "history records preserve exact preview and grant evidence",
+      "passed": true,
+      "durationMs": 4
+    },
+    {
+      "name": "tested source bindings remained unchanged throughout execution",
+      "passed": true,
+      "durationMs": 0
+    }
+  ],
+  "passed": 13,
+  "failed": 0
+}

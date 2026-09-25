@@ -1,0 +1,29 @@
+{
+  "at": "2026-09-13T13:34:45.377Z",
+  "sourcesBefore": {
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "actions/pos/session.actions.ts": "dde45e28d8c78b96acd3ae44fb8f36349f0d35080a0931f8d74d8bc76b9cd7b5",
+    "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1"
+  },
+  "cases": [
+    {
+      "scenario": "active",
+      "commercialWriteAllowed": true,
+      "commercialReadAllowed": true,
+      "commercialReason": "Tenant module entitlement is available.",
+      "shiftOpen": "admitted"
+    }
+  ],
+  "scope": "Owned PostgreSQL real services. Commercial guard evaluated directly, not a live tender action. No sale commit, provider or payment executed. Permitted shift close creates local event/outbox/audit only; no delivery worker invoked.",
+  "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'CLOSED'\n",
+  "sourcesAfter": {
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "actions/pos/session.actions.ts": "dde45e28d8c78b96acd3ae44fb8f36349f0d35080a0931f8d74d8bc76b9cd7b5",
+    "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,111 @@
+{
+  "at": "2026-09-07T15:09:26.123Z",
+  "sourceBefore": {
+    "services/purchase-order/purchase-order.service.ts": "2f7fb3282347c1a80d4c17fcd91c02e7bb147071db23ce9a8c2322e8ed9387f2",
+    "services/purchase-order/purchase-order-approval.ts": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0",
+    "services/purchase-order/purchase-order-approval-contracts.ts": "790e9fc8dc332a9c7ff79a0f10034b55036dfd61d829174a94b1cf325e85bb30",
+    "services/purchase-order/purchase-order-capabilities.ts": "4815c79b46ffe297f4377fa1b8a26901871f1ef4bd1cc536d69b0d2983785b8d",
+    "services/purchase-order/__tests__/purchase-order.service.test.ts": "052e18b5f061da68a25787200fda80a69ee9668e1769eb9caf595a737ecdfe02",
+    "services/purchase-order/__tests__/purchase-order-capabilities.test.ts": "4e76a9f3a493e949de5721050de1acfde9b2f9eff0696f204bf9c0d94a1503ec",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "8ce3af5943121a7db0d50e4cb084904902ac292356c055c059088353c7b9a85f",
+    "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts": "5188d55fd0af26e635c97231939aaef76f1bbf907a715fd916d0f6db7f7be167",
+    "hooks/useRecentPurchaseOrderQueries.ts": "cd183fe90ffbb0bf42be50147dd61c69ee7a1bbdedb8004f7fab6ea0cbc790af",
+    "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx": "24cad7c9666dff900ee91cb8dfc6aa512936d44601858dc70f08d8c2a5adb8cf",
+    "components/purchase-orders/PurchaseOrderApprovalDialog.tsx": "2236054355266b9001f473621470bdc433fdf92d1a0d24d7d9c2737af68b2f7e",
+    "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx": "f6e2f79dcfc97e7c623ceb64194b995e3bc0669be6dbf4c38c963dbea14935ec",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "ee3d959eb5bce238d82e4327432220752a4f0f4cb521a058c8ca86de330a4c3a",
+    "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx": "d6ff2a0d603c67907aa87192679244a7217df89c2737f078970289d7b57abe62",
+    "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx": "2bfc92f2d6946572ef294caf5af4a1e1b945a192cdcaddd0210749e4eaff78db"
+  },
+  "commands": [
+    {
+      "name": "tests",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx",
+        "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+        "services/purchase-order/__tests__/purchase-order-capabilities.test.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts",
+        "--json",
+        "--outputFile=what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\purchase-approval-tests-06.json"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 32086,
+      "stdout": "",
+      "stderr": "\nTest Suites: 10 passed, 10 total\nTests:       115 passed, 115 total\nSnapshots:   0 total\nTime:        21.477 s, estimated 29 s\nRan all test suites within paths \"components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx\", \"components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx\", \"components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx\", \"services/purchase-order/__tests__/purchase-order.service.test.ts\", \"actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts\", \"hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx\", \"services/purchase-order/__tests__/purchase-order-capabilities.test.ts\", \"services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts\", \"components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts\", \"components/purchase-orders/__tests__/purchase-order-edit-model.test.ts\".\nTest results written to: what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\purchase-approval-tests-06.json\n"
+    },
+    {
+      "name": "typecheck",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 53039,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "lint",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/purchase-order/purchase-order-approval.ts",
+        "services/purchase-order/purchase-order-approval-contracts.ts",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "services/purchase-order/__tests__/purchase-order-capabilities.test.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "hooks/useRecentPurchaseOrderQueries.ts",
+        "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+        "components/purchase-orders/PurchaseOrderApprovalDialog.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx",
+        "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+        "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx",
+        "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx"
+      ],
+      "workingDirectory": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 7176,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "sourceAfter": {
+    "services/purchase-order/purchase-order.service.ts": "2f7fb3282347c1a80d4c17fcd91c02e7bb147071db23ce9a8c2322e8ed9387f2",
+    "services/purchase-order/purchase-order-approval.ts": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0",
+    "services/purchase-order/purchase-order-approval-contracts.ts": "790e9fc8dc332a9c7ff79a0f10034b55036dfd61d829174a94b1cf325e85bb30",
+    "services/purchase-order/purchase-order-capabilities.ts": "4815c79b46ffe297f4377fa1b8a26901871f1ef4bd1cc536d69b0d2983785b8d",
+    "services/purchase-order/__tests__/purchase-order.service.test.ts": "052e18b5f061da68a25787200fda80a69ee9668e1769eb9caf595a737ecdfe02",
+    "services/purchase-order/__tests__/purchase-order-capabilities.test.ts": "4e76a9f3a493e949de5721050de1acfde9b2f9eff0696f204bf9c0d94a1503ec",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "8ce3af5943121a7db0d50e4cb084904902ac292356c055c059088353c7b9a85f",
+    "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts": "5188d55fd0af26e635c97231939aaef76f1bbf907a715fd916d0f6db7f7be167",
+    "hooks/useRecentPurchaseOrderQueries.ts": "cd183fe90ffbb0bf42be50147dd61c69ee7a1bbdedb8004f7fab6ea0cbc790af",
+    "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx": "24cad7c9666dff900ee91cb8dfc6aa512936d44601858dc70f08d8c2a5adb8cf",
+    "components/purchase-orders/PurchaseOrderApprovalDialog.tsx": "2236054355266b9001f473621470bdc433fdf92d1a0d24d7d9c2737af68b2f7e",
+    "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx": "f6e2f79dcfc97e7c623ceb64194b995e3bc0669be6dbf4c38c963dbea14935ec",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "ee3d959eb5bce238d82e4327432220752a4f0f4cb521a058c8ca86de330a4c3a",
+    "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx": "d6ff2a0d603c67907aa87192679244a7217df89c2737f078970289d7b57abe62",
+    "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx": "2bfc92f2d6946572ef294caf5af4a1e1b945a192cdcaddd0210749e4eaff78db"
+  },
+  "sourceStable": true
+}

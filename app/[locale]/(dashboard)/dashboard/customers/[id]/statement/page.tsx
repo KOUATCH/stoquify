@@ -7,6 +7,7 @@ import {
   OrganizationCurrencyUnavailableError,
 } from "@/lib/i18n/organization-money";
 import { getOrganizationSettingsForOrg } from "@/services/organization/organization-settings.service";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 
 import {
   routeByKey,
@@ -83,9 +84,10 @@ export default async function CustomerStatementWorkflowPage({
       resourceId: id,
     },
     onAllowed: async (context, locale) => {
-      const [result, organization] = await Promise.all([
+      const [result, organization, creationAccess] = await Promise.all([
         getCustomerAction(id),
         getOrganizationSettingsForOrg(context.orgId),
+        observeModuleAccess({ organizationId: context.orgId, userId: context.userId, actorPermissions: context.permissions, moduleSlug: "accounting", surfaceType: "page", surface: "/dashboard/customers/[id]/statement:create", accessIntent: "export", mode: "enforce", audit: true }),
       ]);
       if (!result.success || !result.data) notFound();
 
@@ -103,6 +105,10 @@ export default async function CustomerStatementWorkflowPage({
         <div className="dashboard-landing-theme min-h-screen overflow-x-hidden">
           <div className="dashboard-landing-content mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
             <CustomerStatementWorkflow
+              key={`${context.orgId}:${context.userId}:${id}`}
+              organizationId={context.orgId}
+              actorId={context.userId}
+              canCreateNew={creationAccess.allowed}
               currency={currency}
               customer={{
                 id: result.data.id,

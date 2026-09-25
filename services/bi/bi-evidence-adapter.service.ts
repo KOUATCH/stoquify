@@ -214,6 +214,7 @@ export function createSignalInsight(input: SignalInsightInput): BIInsight {
     requiredPermission: signal.requiredPermission,
     unavailableReason: signal.status === "active" ? null : `Signal is ${signal.status}.`,
   })
+  if (signal.additionalRequiredPermissions) drillThrough.additionalRequiredPermissions = signal.additionalRequiredPermissions
 
   return {
     id: signal.id,
@@ -249,7 +250,7 @@ export function createRiskRankFromInsight(input: RiskRankFromInsightInput): BIRi
     severity: insight.severity,
     severityScore: input.severityScore ?? severityToScore(insight.severity),
     moneyImpact: input.moneyImpact ?? null,
-    urgency: input.urgency ?? severityToUrgency(insight.severity),
+    urgency: input.urgency === undefined ? severityToUrgency(insight.severity) : input.urgency,
     state: insight.state,
     evidenceGrade: insight.evidenceGrade,
     trustState: insight.trustState,
@@ -272,6 +273,7 @@ export function createActionLinkFromSignal(
     href: signal.actionPath,
     requiredPermission: signal.requiredPermission,
     moduleSlug: signal.moduleSlug,
+    ...(signal.additionalRequiredPermissions ? { additionalRequiredPermissions: signal.additionalRequiredPermissions } : {}),
     disabled: Boolean(disabledReason),
     disabledReason,
   }
@@ -321,6 +323,7 @@ export function createActionLinkFromActionItem(input: ActionItemLinkInput): BIAc
     label: input.item.nextStep,
     href: input.item.actionPath,
     requiredPermission: input.item.requiredPermission,
+    ...(input.item.additionalRequiredPermissions ? { additionalRequiredPermissions: input.item.additionalRequiredPermissions } : {}),
     moduleSlug: input.moduleSlug,
     disabled: Boolean(input.disabledReason),
     disabledReason: input.disabledReason ?? null,

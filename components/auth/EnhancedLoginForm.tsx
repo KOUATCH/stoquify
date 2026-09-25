@@ -13,7 +13,6 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-  KeyRound,
   Loader2,
   Lock,
   Mail,
@@ -21,10 +20,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthFormCard } from "./AuthLayout";
 import { authCopy, getAuthLocale } from "./auth-copy";
+import { publicAuthCopy } from "./public-auth-copy";
 import { useNotifications } from "../notifications/NotificationProvider";
 
 const inputClass =
@@ -35,6 +35,8 @@ export default function EnhancedLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [isEmailValid, setIsEmailValid] = useState(false);
+  const [ready, setReady] = useState(false);
+  useEffect(() => { setReady(true); }, []);
 
   const {
     register,
@@ -47,15 +49,14 @@ export default function EnhancedLoginForm() {
   const params = useSearchParams();
   const pathname = usePathname();
   const locale = getAuthLocale(pathname);
-  const common = authCopy[locale].common;
-  const copy = authCopy[locale].login;
+  const copy = useMemo(() => ({ ...authCopy[locale].login, ...publicAuthCopy[locale].login }), [locale]);
   const localizedHref = (href: string) => localizePath(href, locale);
   const requestedReturnUrl = params.get("returnUrl") || params.get("callbackUrl");
   const returnUrl =
     requestedReturnUrl?.startsWith("/") && !requestedReturnUrl.startsWith("//")
       ? localizedHref(requestedReturnUrl)
       : localizedHref("/dashboard");
-  const { formError, formSuccess } = useNotifications();
+  const { formError, success } = useNotifications();
 
   const emailValue = watch("email");
 
@@ -71,15 +72,16 @@ export default function EnhancedLoginForm() {
 
   useEffect(() => {
     if (params.get("registered") === "true") {
-      formSuccess(copy.registeredTitle, copy.registeredBody);
+      success(copy.registeredTitle, copy.registeredBody, { category: "system" });
     }
 
     if (params.get("error") === "email-not-verified") {
       formError(copy.errors.verifyTitle, copy.errors.verifyBody, copy.errors.verifyHint);
     }
-  }, [copy, formError, formSuccess, params]);
+  }, [copy, formError, success, params]);
 
   const onSubmit = async (data: LoginProps) => {
+    if (!ready || loading) return;
     try {
       setLoading(true);
       setLoginAttempts((prev) => prev + 1);
@@ -104,7 +106,7 @@ export default function EnhancedLoginForm() {
         return;
       }
 
-      formSuccess(copy.successTitle, copy.successBody);
+      success(copy.successTitle, copy.successBody, { category: "system" });
       reset();
       setLoading(false);
       window.location.href = returnUrl;
@@ -122,44 +124,13 @@ export default function EnhancedLoginForm() {
 
   return (
     <AuthFormCard className="flex flex-col">
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#10181d] text-white shadow-[0_16px_36px_rgba(16,24,29,0.16)] ring-1 ring-white/25 dark:bg-white/[0.08] dark:text-[#8fb7ff] dark:ring-white/10">
-            <KeyRound className="h-5 w-5" />
-          </div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#58707a] dark:text-[#8fa4ab]">
-            {copy.badge}
-          </p>
-          <h2 className="mt-2 text-2xl font-black text-[#111a20] dark:text-white">{copy.title}</h2>
-          <p className="mt-2 text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">
-            {copy.subtitle}
-          </p>
-        </div>
-        <div className="hidden shrink-0 space-y-2 sm:block">
-          <span className="flex items-center gap-2 rounded-full border border-[#2f7df6]/25 bg-[rgba(47,125,246,0.10)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-[#2f7df6] dark:text-[#8fb7ff]">
-            <KeyRound className="h-3.5 w-3.5" />
-            {copy.accessLevel}
-          </span>
-          <span className="flex items-center gap-2 rounded-full border border-[#2dd4bf]/25 bg-[rgba(45,212,191,0.10)] px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-[#178e83] dark:text-[#7de8dc]">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            {common.encrypted}
-          </span>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-[#111a20] dark:text-white">{copy.title}</h1>
+        <p className="mt-2 text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">{copy.subtitle}</p>
       </div>
 
-      <div className="mb-6 rounded-xl border border-[#9fb4bb]/25 bg-[#e2ecef]/78 p-4 dark:border-white/10 dark:bg-white/[0.04]">
-        <div className="flex items-start gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#2f7df6]/10 text-[#2f7df6] dark:bg-[#8fb7ff]/10 dark:text-[#8fb7ff]">
-            <Lock className="h-4 w-4" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-black text-[#132028] dark:text-white">{copy.methodTitle}</p>
-            <p className="mt-1 text-xs font-semibold leading-5 text-[#58707a] dark:text-[#8fa4ab]">{copy.methodSubtitle}</p>
-          </div>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form method="post" onSubmit={handleSubmit(onSubmit)}>
+        <fieldset disabled={!ready || loading} className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="email" className="flex items-center gap-2 text-sm font-bold text-[#253943] dark:text-[#d3ddd8]">
             {copy.email}
@@ -169,6 +140,10 @@ export default function EnhancedLoginForm() {
             <Mail className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7f969f]" />
             <Input
               id="email"
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? "login-email-error" : undefined}
+              autoComplete="username"
+              maxLength={254}
               type="email"
               placeholder={copy.emailPlaceholder}
               className={cn(
@@ -186,7 +161,7 @@ export default function EnhancedLoginForm() {
             />
           </div>
           {errors.email ? (
-            <p className="flex items-center gap-1.5 text-sm font-medium text-[#ef6a6a]">
+            <p id="login-email-error" role="alert" className="flex items-center gap-1.5 text-sm font-medium text-red-700 dark:text-red-300">
               <AlertCircle className="h-4 w-4" />
               {errors.email.message}
             </p>
@@ -201,6 +176,10 @@ export default function EnhancedLoginForm() {
             <Lock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7f969f]" />
             <Input
               id="password"
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? "login-password-error" : undefined}
+              autoComplete="current-password"
+              maxLength={128}
               type={showPassword ? "text" : "password"}
               placeholder={copy.passwordPlaceholder}
               className={cn(
@@ -222,7 +201,7 @@ export default function EnhancedLoginForm() {
             </button>
           </div>
           {errors.password ? (
-            <p className="flex items-center gap-1.5 text-sm font-medium text-[#ef6a6a]">
+            <p id="login-password-error" role="alert" className="flex items-center gap-1.5 text-sm font-medium text-red-700 dark:text-red-300">
               <AlertCircle className="h-4 w-4" />
               {errors.password.message}
             </p>
@@ -237,7 +216,7 @@ export default function EnhancedLoginForm() {
             />
             {copy.remember}
           </label>
-          <Link href={localizedHref("/forgot-password")} className="text-sm font-bold text-[#2f7df6] transition hover:text-[#1f6feb] dark:text-[#8fb7ff]">
+          <Link href={localizedHref("/forgot-password")} className="text-sm font-bold text-[var(--product-brand-action-hover)] transition hover:underline dark:text-[#8fb7ff]">
             {copy.forgot}
           </Link>
         </div>
@@ -259,10 +238,11 @@ export default function EnhancedLoginForm() {
             </span>
           )}
         </Button>
+        </fieldset>
       </form>
 
       <div className="mt-auto pt-6">
-        <div className="rounded-xl border border-[#2dd4bf]/25 bg-[rgba(45,212,191,0.10)] p-4 dark:border-[#2dd4bf]/20 dark:bg-[rgba(45,212,191,0.07)]">
+        <div className="border-t border-[#9fb4bb]/25 pt-4">
           <div className="flex items-start gap-3">
             <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[#2ec98a]" />
             <p className="text-sm leading-6 text-[#58707a] dark:text-[#9fb4bb]">
@@ -273,7 +253,7 @@ export default function EnhancedLoginForm() {
 
         <p className="mt-5 text-center text-sm text-[#58707a] dark:text-[#9fb4bb]">
           {copy.newHere}{" "}
-          <Link href={localizedHref("/register")} className="font-black text-[#2f7df6] transition hover:text-[#1f6feb] dark:text-[#8fb7ff]">
+          <Link href={localizedHref("/register")} className="font-black text-[var(--product-brand-action-hover)] transition hover:underline dark:text-[#8fb7ff]">
             {copy.createAccount}
           </Link>
         </p>
@@ -281,5 +261,3 @@ export default function EnhancedLoginForm() {
     </AuthFormCard>
   );
 }
-
-

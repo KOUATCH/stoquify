@@ -1,0 +1,87 @@
+{
+  "run": "7944ba04-69e",
+  "startedAt": "2026-09-06T19:35:32.526Z",
+  "sourcesBefore": {
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement-delivery-envelope.ts": "24da4d029b17e309a2b8531fa4bb68789bfd75a412f5b0b9d88244ff493fb3ad",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "real empty-source snapshot and exact replay preserve one immutable snapshot",
+      "passed": true,
+      "detail": {
+        "statementId": "cmtq7ot890005mafcezw6bcuz",
+        "emptySource": true,
+        "closingBalance": "0.00"
+      }
+    },
+    {
+      "name": "lost acknowledgement retry keeps one delivery token attribution outbox and initial state",
+      "passed": true,
+      "detail": {
+        "counts": {
+          "deliveries": 1,
+          "tokens": 1,
+          "attributions": 1,
+          "events": 1
+        },
+        "status": "QUEUED"
+      }
+    },
+    {
+      "name": "changed evidence and foreign scope cannot reuse the original delivery",
+      "passed": true,
+      "detail": {
+        "negativeCases": 4,
+        "countsUnchanged": true
+      }
+    },
+    {
+      "name": "concurrent identical queue requests converge on one durable delivery after safe replay",
+      "passed": true,
+      "detail": {
+        "immediateSuccesses": 2,
+        "transactionConflicts": 0,
+        "finalReplay": true
+      }
+    },
+    {
+      "name": "mandatory audit failure rolls back queue token attribution and event then retries once",
+      "passed": true,
+      "detail": {
+        "rolledBack": true,
+        "recovered": true
+      }
+    },
+    {
+      "name": "missing encryption rejects before any durable delivery effect",
+      "passed": true,
+      "detail": {
+        "countsUnchanged": true
+      }
+    }
+  ],
+  "scope": "Real owned PostgreSQL snapshot generation and delivery queue. Empty synthetic customer; not a populated ledger/financial correctness certification. No delivery worker or external send.",
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "customerId": "workflow_statement_recovery_7944ba04-69e",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T19:35:33.965Z",
+  "sourcesAfter": {
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement-delivery-envelope.ts": "24da4d029b17e309a2b8531fa4bb68789bfd75a412f5b0b9d88244ff493fb3ad",
+    "services/accounting/ar-open-item.service.ts": "449e1a372527eac5935284edf03ca1e2f45cf9a444a037e1b10c057bf8c73082",
+    "services/events/business-event.service.ts": "a38323f20b71e16010ba65d4f39df1ed8e38395c164d7fb1339638647e8486ba",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

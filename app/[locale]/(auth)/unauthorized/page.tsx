@@ -1,10 +1,11 @@
 import NotAuthorized from "@/components/NotAuthorized";
 import React from "react";
 
-export default function page() {
+export default async function page({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   return (
     <div>
-      <NotAuthorized />
+      <NotAuthorized locale={locale === "fr" ? "fr" : "en"} />
     </div>
   );
 }

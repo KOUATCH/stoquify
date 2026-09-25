@@ -1,0 +1,25 @@
+{
+  "at": "2026-09-13T12:43:36.261Z",
+  "phase": "after",
+  "sourcesBefore": {
+    "services/pos/terminal-management.service.ts": "f57ae943d546dc86ec9b7db140af4d5348481d01f2ad19a196de66dc9cb594bc",
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56"
+  },
+  "checks": [
+    {
+      "name": "Archive denied after actual concurrent shift opening; active terminal/session retained",
+      "passed": true
+    },
+    {
+      "name": "Cross-tenant denial, repeated idle archive and denied opening preserve history without orphan sessions",
+      "passed": true
+    }
+  ],
+  "scope": "Owned PostgreSQL; actual openPOSShift interleaved after archive availability read. No checkout, payment or external operation.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/pos/terminal-management.service.ts": "f57ae943d546dc86ec9b7db140af4d5348481d01f2ad19a196de66dc9cb594bc",
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56"
+  },
+  "sourceStable": true
+}

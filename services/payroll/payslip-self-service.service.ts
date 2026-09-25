@@ -912,7 +912,7 @@ async function prepareExportInTx(
     eventSource: "SYSTEM",
     idempotencyKey: `payroll-payslip:${payslip.id}:self-service-export:${contentHash}`,
     actorId: parsed.actorId,
-    sourceType: "PAYROLL_PAYSLIP",
+    sourceEntityType: "PAYROLL_PAYSLIP",
     sourceId: payslip.id,
     documentHash: contentHash,
     payload: {

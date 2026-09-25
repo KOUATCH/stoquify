@@ -1,0 +1,169 @@
+{
+  "at": "2026-09-08T13:19:32.613Z",
+  "selectedSkill": "011-aqstoqflow-purchasing-ap-controls",
+  "sourceBaseline": "evidence/source-baseline-v72.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/invoice-preparation.service.ts": "ad9c1b7cdbc9213367722ad776d0359588f753bd0c6d0657836c2c0f034803c2",
+    "services/purchasing/invoice-preparation-contracts.ts": "80a56e3f6b512e2608f25095b9abee4d807a2a02d237d5e3e388a941286efe21",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "fe69bb7fa4e3d9ae886a762e76d97507c7317e0aa7c4a0e7f656d87b8ccb04f7",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "10ef854512bef867ec317e38b9611b8c3327e9f2490fd9dc01b05111c6cb7869",
+    "messages/en.json": "604111ca773bc32db1f34597ee6c5dc632b53a8541245cc381e7850c972a15a1",
+    "messages/fr.json": "c899c288f4af247ca9c9376eabca663b8199e737d980c8d9eb30212938d8aacb",
+    "scripts/__tests__/module-surface-inventory-enforcement.test.js": "ad90a53c104dfff4a3bc0fb027c91f060fc46e908ead7b376b383a3eadeb659a",
+    "scripts/__tests__/module-surface-inventory-reference-data-ownership.test.js": "3616cbb76c511879f22f56646b82241ee2f992566edea42048c93e9fbe8ad25a",
+    "scripts/__tests__/module-surface-inventory-supplier-ownership-permissions.test.js": "04db7f6f052260d1592ccbe39e3b638ce48d02ed4948d2829991fa528c35ff0b",
+    "scripts/__tests__/module-surface-inventory-item-ownership.test.js": "757d5edfa26d76c4f6198b604018487f9554095d8d7b7f96fe46725aadee5d00",
+    "scripts/__tests__/module-surface-inventory-cross-cutting-boundaries.test.js": "a5dedde2efe00dd6589f31f202aea96202ebe8534ab64bf095c27c49272ed7b6",
+    "scripts/__tests__/module-surface-inventory-purchase-order-read-model-ownership.test.js": "00347d46fa43b21a0cc98a410fdf89fca08006ce5b90f7b19ec28b9f69846225",
+    "scripts/__tests__/module-surface-inventory-dashboard-read-model-ownership.test.js": "2109688719043d079d43dd559697c1b7f958fb78726f77e9ad928c805354f59d",
+    "scripts/__tests__/module-purchases-route-evidence.test.js": "3072e50bcbae74c7d0e7065bd93272d669b58bcecc886fcb31b20ba6caf87759",
+    "components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx": "f1a6cd3fb353b46978a57e4bc0a2220b46c9239c4ca1a4c9214d7c8a7e6d4e1c",
+    "scripts/__tests__/module-surface-inventory.test.js": "55e96fdaaa6bf423a8209130b034ca9084cf40433472c1a08cf6fde26472031b",
+    "actions/purchasing/__tests__/invoice-preparation.actions.test.ts": "f35191435e85b4cbbc923bf64096b0083ea085ebcf541d6380cad19700a28844",
+    "services/purchasing/__tests__/invoice-preparation-contracts.test.ts": "30f46200d1036e8076beeaa9678d25386029ddacb592484d63b7cedb9dc843f8",
+    "scripts/module-surface-inventory.js": "4d39e52e5dcf9d8b136ec13e42873584fe3ed3b6a7ac04abe253ba15de36ca99",
+    "scripts/module-purchases-route-evidence.js": "fd1927151c28f451d0bcfac18a0ed17de5210fa9cebc14166da119a62396eff5"
+  },
+  "service": "lanes/environment/preparation-observation-0505de1b-ee3.json",
+  "browser": "lanes/environment/preparation-observation-browser-7f45f15d-444.json",
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-original-current-7f45f15d-444.png",
+      "sha256": "6b6005dbb34a7bac9872b9ca5e10d054889fbd0e0ebadc1465e26f34a16617a8"
+    },
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-superseded-posted-desktop-7f45f15d-444.png",
+      "sha256": "5adfa1e79c9c04fdae636f34753d6d24b95715ad813990458680ad18b1b46168"
+    },
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-superseded-posted-320-7f45f15d-444.png",
+      "sha256": "e4d978bc715ffb464ee554ef126b716c5f0eafa015a9d1e5fe09afb6442cb289"
+    },
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-superseded-posted-390-7f45f15d-444.png",
+      "sha256": "abb0e221278dc1518d61ea1f3cce2c5de2adfbda160423d1a50cb9926b65b077"
+    },
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-superseded-posted-768-7f45f15d-444.png",
+      "sha256": "51d7802f4abc1ee04f28c187f83bae2527cd89165b703df63812f0a3288312fa"
+    },
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-superseded-zoom-7f45f15d-444.png",
+      "sha256": "8109bb127cffc4c1a1a395cf5bc0d118c598cba8db4fd5f8b4cb291a79793892"
+    },
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-unverified-archived-7f45f15d-444.png",
+      "sha256": "d5344a5aa559b64ff3d986e3bfdaa8bc62679933842dadc1abd8e0e7a0b43bc8"
+    },
+    {
+      "locale": "en",
+      "path": "lanes/environment/preparation-observation-en-denied-7f45f15d-444.png",
+      "sha256": "d17b87ce45d7f583e51a1fe696c0412a3b6b7a6fbdaf9cb899899f55f3f7604f"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-original-current-7f45f15d-444.png",
+      "sha256": "e654804a90c6c35644d755b3772107065314f043fe32aa8a3e7f1503a7df6063"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-superseded-posted-desktop-7f45f15d-444.png",
+      "sha256": "8db4b61a650943c692c7b665c69f761fee3d65d4aabb2cead4a4e74f55edaadd"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-superseded-posted-320-7f45f15d-444.png",
+      "sha256": "554649d7ebf7560d6eca19c704b5a1422397cfe5235748584468189551af657f"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-superseded-posted-390-7f45f15d-444.png",
+      "sha256": "1fc59dbba617a92c3dfda25408b729bae0cd10c603cecc380f724e7231ce0c81"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-superseded-posted-768-7f45f15d-444.png",
+      "sha256": "66db7073ccb1e0cf2c44ccefb096f88230980e8a99cf95bf30924aea7e122554"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-superseded-zoom-7f45f15d-444.png",
+      "sha256": "8a819d7bc2afa928f3e0936dc1951dd2802ca6f10611f9695338d378d293dd07"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-unverified-archived-7f45f15d-444.png",
+      "sha256": "46bb553f23df8c1d0273ee60978d831ab94f3cfc91632285e7c9c615d071d2d7"
+    },
+    {
+      "locale": "fr",
+      "path": "lanes/environment/preparation-observation-fr-denied-7f45f15d-444.png",
+      "sha256": "df8fd0406e37ee1476c1472ace5379111bf4feeb13790518c5d05b2411785680"
+    }
+  ],
+  "testReceipts": [
+    "evidence/preparation-observation-tests-v72.json",
+    "evidence/preparation-observation-ui-tests-v72-final.json",
+    "evidence/preparation-observation-scanner-tests-v72-final.json"
+  ],
+  "distinctPassedTests": 87,
+  "testSuites": 12,
+  "scanner": "evidence/purchases-route-evidence-v72.json",
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false",
+      "status": "passed",
+      "exitCode": 0,
+      "toolSession": 42559
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/invoice-preparation.service.ts services/purchasing/invoice-preparation-contracts.ts components/purchasing/InvoicePreparationWorkbench.tsx components/purchasing/__tests__/InvoicePreparationWorkbench.test.tsx scripts/module-purchases-route-evidence.js scripts/module-surface-inventory.js scripts/__tests__/module-purchases-route-evidence.test.js",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "historicalAttempts": [
+    "lanes/environment/preparation-observation-browser-92ab9831-50b.json",
+    "lanes/environment/preparation-observation-browser-4021247b-7cd.json"
+  ],
+  "limitations": [
+    "Shared shell and denied-state default labels still include English on French routes",
+    "Action-level delegated module authority is still report-only in the static scanner",
+    "Broader document retention, ownership/revocation/reversal, operator and AP/ledger/close workflows remain incomplete"
+  ],
+  "migration": "none",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2705,
+      "tests": 948,
+      "pages": 155,
+      "routeHandlers": 18,
+      "actionSources": 166,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2278,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 207,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

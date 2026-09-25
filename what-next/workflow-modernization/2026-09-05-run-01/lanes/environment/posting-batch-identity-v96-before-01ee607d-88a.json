@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-09T08:54:44.145Z",
+  "mode": "before",
+  "run": "01ee607d-88a",
+  "checks": [
+    "Reproduced four incompatible requests silently returning the same batch"
+  ],
+  "sourcesBefore": {
+    "services/accounting/posting.service.ts": "f426c9c00125f4db4d256e782129e511aa51ec6e3e0e226efe9defa118b1abcf",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": "Owned PostgreSQL synthetic ledger batch identity. No journals or live postings.",
+  "originalBefore": "5ce155aab3c791a4a12613ed8e207e4c079c564947fa16464e501b550aaab746",
+  "passed": true,
+  "defectReproduced": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/posting.service.ts": "f426c9c00125f4db4d256e782129e511aa51ec6e3e0e226efe9defa118b1abcf",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

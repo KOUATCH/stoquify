@@ -1,0 +1,142 @@
+{
+  "run": "1370a173-fb5",
+  "startedAt": "2026-09-06T10:25:43.263Z",
+  "baseUrl": "http://127.0.0.1:3108",
+  "mode": "full",
+  "database": "stoquify_local_registration_20260906_01",
+  "sourcesBefore": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "checks": [
+    {
+      "key": "register-v2-en",
+      "passed": true,
+      "screenshots": [
+        "register-v2-en-entry-1370a173-fb5.png",
+        "register-v2-en-ready-1370a173-fb5.png",
+        "register-v2-en-recovery-1370a173-fb5.png",
+        "register-v2-en-verification-1370a173-fb5.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 1828,
+      "reviewDoesNotCreate": true,
+      "abortedRequests": 1,
+      "saveMs": 1154,
+      "createdOrganizationId": "b900e0c1-49ca-4f3f-84bc-f106270bba0a",
+      "creationAudited": true,
+      "unverifiedHandoff": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "key": "register-v2-fr",
+      "passed": true,
+      "screenshots": [
+        "register-v2-fr-entry-1370a173-fb5.png",
+        "register-v2-fr-ready-1370a173-fb5.png",
+        "register-v2-fr-recovery-1370a173-fb5.png",
+        "register-v2-fr-verification-1370a173-fb5.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 1958,
+      "reviewDoesNotCreate": true,
+      "abortedRequests": 1,
+      "saveMs": 897,
+      "createdOrganizationId": "c29a5f78-0750-4820-9ca6-18cb92471bb9",
+      "creationAudited": true,
+      "unverifiedHandoff": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "key": "register-en",
+      "passed": true,
+      "screenshots": [
+        "register-en-entry-1370a173-fb5.png",
+        "register-en-required-1370a173-fb5.png",
+        "register-en-company-1370a173-fb5.png",
+        "register-en-ready-1370a173-fb5.png",
+        "register-en-recovery-1370a173-fb5.png",
+        "register-en-verification-1370a173-fb5.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2968,
+      "abortedRequests": 1,
+      "saveMs": 1391,
+      "createdOrganizationId": "5f5bf121-516d-49fe-acf2-4afe9d87a44f",
+      "creationAudited": true,
+      "unverifiedHandoff": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "key": "register-fr",
+      "passed": true,
+      "screenshots": [
+        "register-fr-entry-1370a173-fb5.png",
+        "register-fr-required-1370a173-fb5.png",
+        "register-fr-company-1370a173-fb5.png",
+        "register-fr-ready-1370a173-fb5.png",
+        "register-fr-recovery-1370a173-fb5.png",
+        "register-fr-rate-limited-1370a173-fb5.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 3008,
+      "abortedRequests": 1,
+      "ordinaryIpLimitDenied": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Owned local application and actual registration service with external email disabled. Verification handoff is tested; no delivered code is claimed.",
+    "Full mode plans three browser creations and a fourth denial. Recovery modes abort submission before dispatch; recovery-all also verifies the existing real French cooldown. No counter reset, spoofing or bypass.",
+    "Browser accessibility checks cover labels, keyboard, focus and reflow; no actual screen-reader or comprehensive contrast certification.",
+    "The browser uses a separate database cloned only from owned synthetic controls; baseline tenant authority is checked unchanged."
+  ],
+  "originalAuthorityBefore": "1cb5915389d0cf07b3911698d8bc8aed30ed4e44d44a0dd66036f79e3664e6a1",
+  "originalAuthorityAfter": "1cb5915389d0cf07b3911698d8bc8aed30ed4e44d44a0dd66036f79e3664e6a1",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T10:26:18.596Z",
+  "sourcesAfter": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "sourceStable": true,
+  "driverSha256": "a1910ab26e33a46285427cb2de1662f871537577008839bbc8636c7e8fd2cd3c",
+  "passed": 4,
+  "failed": 0
+}

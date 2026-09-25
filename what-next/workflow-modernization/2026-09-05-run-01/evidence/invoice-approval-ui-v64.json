@@ -1,0 +1,247 @@
+{
+  "at": "2026-09-08T10:10:21.189Z",
+  "sourceBaseline": "evidence/source-baseline-v64.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c",
+    "services/purchasing/invoice-approval-contracts.ts": "915ff07659779dfbd62d8b718ff77348edfa687d3a5287d677d60e489b4b2998",
+    "actions/purchasing/invoice-approval.actions.ts": "fd2d31f8260450fa7a815ac61006ab92f1359c2519f397cf0c1fbd2f8e30d95e",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx": "495dc8ef8acc110694b033dee2bdfd3bc628fb0c1251eafc34e03049a3085950",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "dc0c0b588bb53cdfdd1f2aa3122e1d5d4e77b7851a1ae9055059ae3903db415d",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "8491cca32f1548d5fec47a56b1ef6916fb1ab156bcbeef7506589c69340af33d",
+    "messages/en.json": "ba258474c279b53b5a823ac0976cb77d1a8cdff3f36f228426dc5f628e182fc9",
+    "messages/fr.json": "18f55977868265e428f4a88eb96dc4c94849ed78d5c84aea43c75e36e613b63e",
+    "services/purchasing/ap-control.service.ts": "26c14bc3b1f102809d56d26b6f6c7f97f4d9956f1194cc640e33d9b597e7a3a7",
+    "services/purchasing/invoice-preparation.service.ts": "8af82bddd3ef11f02f9e3222660c2ce6b1cc6d92e7c33cc0f61da0f99e3c9a2a",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx": "6d0772630bdf749b894af6bbe72b5142ca0fb96069d30ee39f62fb6b66608ac1",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "actions/purchasing/invoice-ledger-recovery.actions.ts": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b",
+    "components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx": "d87dbc40cde21b644f60ae625b605459fe6e457102b52a766e5b12199d9e9247",
+    "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de",
+    "services/purchasing/__tests__/invoice-approval-contracts.test.ts": "701a7c12d7fbacfa6b7cc5747b473f900ef56beec4944ddbf19db3e8fa11b27a",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/__tests__/page.test.tsx": "386f522971e99220e65622a6d744c134279ca0cd0ca73c71e4f3da71a280b8a6",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "552ef1b5391f0ab196399a44dd988d2fa25cbe8f11d68b64ba1c5ad45e349e7a",
+    "app/[locale]/(dashboard)/dashboard/purchases/__tests__/route-audit.test.ts": "f1226ffbe6c553b594f16c9d776f86b8986ff912496b1da2ff171892b5b293bf",
+    "actions/purchasing/__tests__/invoice-approval.actions.test.ts": "b0b1d4ef62372b6c152ff8299963166ed54678c1eb470d78db7010407480e631"
+  },
+  "browser": "lanes/environment/invoice-approval-browser-6c52594e-bec.json",
+  "tests": "evidence/invoice-approval-ui-tests-final.json",
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-selected-desktop-6c52594e-bec.png",
+      "sha256": "922f9493db5ae717c6b2b794f064f7c5c8ecbe9367b9c503ccab2036cac4cd83"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-selected-320-6c52594e-bec.png",
+      "sha256": "a458b653e49d3d019e2486d79068b0fb488782bb72c35b372e6abb8ff1379007"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-selected-390-6c52594e-bec.png",
+      "sha256": "7a6d3c05a736bbe19cb4254b27f0b3b6f8285d033dc8fe4cf8bf762b1dba4db5"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-selected-768-6c52594e-bec.png",
+      "sha256": "6261f75d81e90e3a2298f72da6e0b05d4cfb967183d5be77c0105909a344192e"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-review-desktop-6c52594e-bec.png",
+      "sha256": "4c2908d436c840ca5befcdb0b76a01d0e5d45183c0e6e35c0d968cb24f4cb9cc"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-stale-6c52594e-bec.png",
+      "sha256": "12cce70fbc5056fcf72f7b7af363fd596c1c4588d8f1dc515ef9cd050d5812fa"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-recovered-desktop-6c52594e-bec.png",
+      "sha256": "799131fe9c1e6ba5a7d21051a7257744fd85295357bb2b85637535ac43a6eb63"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-recovered-mobile-6c52594e-bec.png",
+      "sha256": "a104737648808a71a4e1f9a714de17bdf20ff789e6ea525e16c255b20bcd2267"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-recovered-text200-6c52594e-bec.png",
+      "sha256": "7e6356b697c49d6a6bc2e94cf7fd2d2aca3bb6075224ea7e4c026bf4f3b05cb3"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-history-current-reversal-6c52594e-bec.png",
+      "sha256": "b50cd11777401279411970ab524595eb5db2bb68d5ac821b05649e6d2cb606e0"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-approval-warning-6c52594e-bec.png",
+      "sha256": "c02d050d554d190fe8ae3cf215ad05513287c3f686a096e81ba834a39f4ab5f9"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-approved-payable-blocked-journal-6c52594e-bec.png",
+      "sha256": "14ee0a261707aaaccb15ecced86cb82586c287a59e4ae0033aff1f6541391eba"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-approval-to-recovery-6c52594e-bec.png",
+      "sha256": "38b51cd98b3b4d73d9a5fefb9008c86bd772793742d29bb0add373ff2acc723c"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-en-denied-6c52594e-bec.png",
+      "sha256": "cacdd3a88fbcd438d66be7824f0739f13c1b454a504445381bc831d52767eedc"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-selected-desktop-6c52594e-bec.png",
+      "sha256": "a5081575915deafb7310a2855b6ebf1bc6fc9232fdd7d23cc8618d018f38e59e"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-selected-320-6c52594e-bec.png",
+      "sha256": "dc1235b4fbdfc941023609333b4111361ab152e8c11f1d15892fa4fdf21071c2"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-selected-390-6c52594e-bec.png",
+      "sha256": "f813a94453ff6549711430b944c98a589a18ca9009a5254b7d5c2ae2ca67d3bb"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-selected-768-6c52594e-bec.png",
+      "sha256": "6d7649ffc13c35912f29f8bc0ce159f3fde8a2c4bdef11c3f2ba40f574ad4495"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-review-desktop-6c52594e-bec.png",
+      "sha256": "0f834edb7cb965c4736eedc5b871a04f126f5373d59826aaba923ecee84892ed"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-stale-6c52594e-bec.png",
+      "sha256": "ada1792369db1fad0748bc8bba22632844393fce5e7b4e8b9197b3b932328e58"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-recovered-desktop-6c52594e-bec.png",
+      "sha256": "20d178acde595d0b681e5d05b4650e53e13b4dd0e2d41feaceff65649c9dbd08"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-recovered-mobile-6c52594e-bec.png",
+      "sha256": "5c087b20a04db4af1d62ddadf65a05bf7da7f199e0372cca76777dbff88f0e8a"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-recovered-text200-6c52594e-bec.png",
+      "sha256": "8c5657c73327e94112c7776013bceb5d9c0f2d26cd830f906dce41f0b67a99df"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-history-current-reversal-6c52594e-bec.png",
+      "sha256": "4320e0636de8e38fe6793f069c2bb9c912ebc74b3e8ff2c5d8a5c2017d316a54"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-approval-warning-6c52594e-bec.png",
+      "sha256": "bf6a1cd2e2e724d03660630abfd37643c0ccb37c42a82ed38d897bb6fa4cc695"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-approved-payable-blocked-journal-6c52594e-bec.png",
+      "sha256": "d35a3f1ccfe1426fcdab688b524c943b5d6d596441123542b804dcfcdf80efa4"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-approval-to-recovery-6c52594e-bec.png",
+      "sha256": "4e65ce3bfc98fc44c1607c4b0717749e315a15bf6e44c6723cb4e8f763f5a7f6"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-approval-screenshots/invoice-approval-fr-denied-6c52594e-bec.png",
+      "sha256": "5da19dcfc623719a89940b5e30f0b82d7fc2ccf4777d63b3f3a1e9e61e222f6e"
+    }
+  ],
+  "verifiers": [
+    {
+      "path": "lanes/environment/verify-invoice-approval-browser.cjs",
+      "sha256": "c018c5848f8c9e42eb8b58ebc7af9c6f82f2eaaa7ddea2dcd3366e4c8ceacd66"
+    },
+    {
+      "path": "lanes/environment/invoice-approval-fixtures.cjs",
+      "sha256": "ef5acff9b262f00a457c9d63b1814d379bb21fca29c2236c2884b6f756f66d63"
+    }
+  ],
+  "priorAttempts": [
+    "evidence/invoice-approval-ui-tests-initial.json",
+    "lanes/environment/invoice-approval-browser-0f4be9a7-ba6.json",
+    "lanes/environment/invoice-approval-browser-55330c15-ba7.json"
+  ],
+  "interruptedAttempt": "Session 93493 stopped after verifier selector write was denied; no completed receipt claimed.",
+  "historicalBackend": "v63 service receipt remains historical; contracts gained a type-only alias in v64, not claimed byte-identical.",
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js components/purchasing/InvoiceApprovalWorkbench.tsx components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts services/purchasing/invoice-approval-contracts.ts",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "timings": [
+    {
+      "locale": "en",
+      "observations": [
+        {
+          "name": "AP to approval development baseline",
+          "ms": 5724
+        }
+      ],
+      "meaning": "Development baseline only; no approved budget claim"
+    },
+    {
+      "locale": "fr",
+      "observations": [
+        {
+          "name": "AP to approval development baseline",
+          "ms": 11090
+        }
+      ],
+      "meaning": "Development baseline only; no approved budget claim"
+    }
+  ],
+  "migration": "none",
+  "build": "not run; migration-bearing default avoided",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2682,
+      "tests": 940,
+      "pages": 152,
+      "routeHandlers": 18,
+      "actionSources": 164,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2229,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 204,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

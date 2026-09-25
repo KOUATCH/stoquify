@@ -1,0 +1,94 @@
+{
+  "at": "2026-09-09T07:04:25.531Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v90.json",
+  "sources": {
+    "components/finance/PaymentSuspenseQueue.tsx": "4e59a6dc63a266fdd14ab7f8df76e0a691eecee58b40793728ac9422e91a515e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "b2268ade6193460bc7e4475006fb8d8712f17f640bf3db58bc5758969806df67",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "077984a665a2bde93666b9b4063e4a6f4d649e3ab608c5f161d06b730e0d2562",
+    "actions/payments/reconciliation.actions.ts": "34a2c2a97231fe072eab03f0e61d70b68ede6858d315b2fc53729afdfd330e05",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "d837420a7c9f2047aa4d2b7820defc7692557a5001ff0d5831586973e149e157",
+    "messages/fr.json": "de809db6852ab773d7a3018fe2b349206fc5412ebaaf09e8bb45e3c129bb0e63",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "hooks/payments/suspense-recovery.ts": "80f5feb1ce76f4f293b0daca1865c690893d58e6e11da723d6e8ad9bbbd484da",
+    "hooks/payments/__tests__/permission-scope.test.tsx": "51207a8e95736e2268556f65a84e8fb1048cbfa3e8374b2790dc934b17c8d50f",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "67a78f1b0392855b07e83f18b89024f670460bdf25409b1aed3dd71fe4206a21",
+    "components/finance/__tests__/PaymentSuspenseQueue.test.tsx": "55ae6faae8a8475fa73d4925f343c0101ccb36bd0a977868d674f4319243b3ff",
+    "hooks/payments/__tests__/suspense-dashboard-scope.test.tsx": "1da5b54baf4b8fb353b6a131a6d947937f31b33682f8e9efd7ce0b4dbcdaf868",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "adce827d541891bd30b2bd3f5ba8da2bd0d7810d1752a46403c6bba687897c2d",
+    "hooks/payments/__tests__/suspense-recovery.test.ts": "3c8a082a3791efc57ec64ddbfc5490f669edb90bd7e7c00d909e81c03dba4ebb",
+    "hooks/__tests__/permission-invalidation.workflow.test.tsx": "c95642ec1063c711649b001fa59bdeee18aa5d2dff16a05300b8a10c0b693555"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"hooks/payments/__tests__/permission-scope.test.tsx\" \"components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx\" \"components/finance/__tests__/PaymentSuspenseQueue.test.tsx\" \"hooks/payments/__tests__/suspense-dashboard-scope.test.tsx\" \"actions/payments/__tests__/reconciliation.actions.test.ts\" \"hooks/payments/__tests__/suspense-recovery.test.ts\" \"hooks/__tests__/permission-invalidation.workflow.test.tsx\" --json --outputFile=\"what-next/workflow-modernization/2026-09-05-run-01/evidence/suspense-recovery-final-v90-attempt2.json\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+    "browser": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-suspense-recovery-browser-v90.cjs",
+    "baseline": "node what-next/workflow-modernization/2026-09-05-run-01/capture-source-baseline.cjs",
+    "lint": "node node_modules/eslint/bin/eslint.js \"lib/auth-client.ts\" \"actions/payments/reconciliation.actions.ts\" \"actions/payments/__tests__/reconciliation.actions.test.ts\" \"hooks/payments/usePaymentReconciliationDashboard.ts\" \"hooks/payments/suspense-recovery.ts\" \"hooks/payments/__tests__/suspense-recovery.test.ts\" \"hooks/payments/__tests__/suspense-dashboard-scope.test.tsx\" \"hooks/payments/__tests__/permission-scope.test.tsx\" \"components/finance/PaymentSuspenseQueue.tsx\" \"components/finance/PaymentReconciliationWorkbench.tsx\" \"components/finance/__tests__/PaymentSuspenseQueue.test.tsx\" \"components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx\""
+  },
+  "tests": {
+    "file": "evidence/suspense-recovery-final-v90-attempt2.json",
+    "session": 68900,
+    "passed": 82,
+    "suites": 7,
+    "exitCode": 0
+  },
+  "browser": {
+    "file": "lanes/environment/suspense-recovery-v90-browser-e2daf89c-8aa.json",
+    "session": 74382,
+    "exitCode": 0,
+    "sourceStable": true,
+    "originalUnchanged": true,
+    "screenshots": "evidence/suspense-recovery-v90-screenshots"
+  },
+  "typecheck": {
+    "session": 56038,
+    "exitCode": 0
+  },
+  "lint": {
+    "session": 42296,
+    "exitCode": 0,
+    "files": [
+      "lib/auth-client.ts",
+      "actions/payments/reconciliation.actions.ts",
+      "actions/payments/__tests__/reconciliation.actions.test.ts",
+      "hooks/payments/usePaymentReconciliationDashboard.ts",
+      "hooks/payments/suspense-recovery.ts",
+      "hooks/payments/__tests__/suspense-recovery.test.ts",
+      "hooks/payments/__tests__/suspense-dashboard-scope.test.tsx",
+      "hooks/payments/__tests__/permission-scope.test.tsx",
+      "components/finance/PaymentSuspenseQueue.tsx",
+      "components/finance/PaymentReconciliationWorkbench.tsx",
+      "components/finance/__tests__/PaymentSuspenseQueue.test.tsx",
+      "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx"
+    ]
+  },
+  "baselineCapture": {
+    "session": 13466,
+    "exitCode": 0
+  },
+  "previousGoalTurn": "progress: v89 published implementation and runtime evidence",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 226,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2769,
+      "tests": 975,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2366,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-09-19T12:05:23.947Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshots": [],
+      "sourceHash": "sha256:82786797a55ddc6015521204036cac103c83b141df81400dc5e261222fafe60e",
+      "consoleErrors": []
+    }
+  ],
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('1 recorded inventory loss line(s) totaling 45000 XAF require evidence review. Approval attribution records authorization and does not identify who caused the loss.', { exact: true }).first()\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('1 recorded inventory loss line(s) totaling 45000 XAF require evidence review. Approval attribution records authorization and does not identify who caused the loss.', { exact: true }).first()\n",
+  "failureView": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Loss Digest b83b9f3a-4bd8-40fe-a3b6-bdea5c7527b4\n\nOWNED LOSS READER\nSession\nMODULES\n4\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nDaily Digest\nManager Action Center\nOwner War Room\nOPERATIONS\n1\nInventory\nItems, loss control, stock movements, transfers, and units\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n1\nB\n\nb83b9f3a-4bd8-40fe-a3b6-bdea5c7527b4@example.invalid\n\nb83b9f3a-4bd8-40fe-a3b6-bdea5c7527b4@example.invalid\n\nDaily Digest\n\nCommand / Command Center / Daily Digest\n\nFR\nB\nRead-only\nSignal-backed\nNo automation\nDaily Habit Digest\n\nYour permission-aware daily and weekly workspaces, built from existing operating signals.\n\nWorkflow registration Loss Digest b83b9f3a-4bd8-40fe-a3b6-bdea5c7527b4\nGenerated (Africa/Douala)\nSep 19, 01:05 PM\nPeriod\nSep 19 - Sep 20\nCurrency\nXAF\nVisible workspaces\n2\nOwner\nEnd of day\nCommand Agent\n\nEvidence-backed daily priorities\n\nRead-only. No posting, approval, payment, filing, payroll, stock, cash, or permission authority.\n\nGenerate brief\nCommand Agent is disabled for this organization.\nPartial\nCommand brief\npartial\nOwner morning digest\n\nCash truth, stock exposure, close pressure, and the highest visible action risks for today.\n\n1 visible action(s) need review for this digest.\n\nevidence:\nRaw\nOperational\npartial\n10 sources\nSource hash\nBrief\nCommand\nInvestigate\n\nPeriod: Sep 19 - Sep 20\n\nGenerated: Sep 19, 01:05 PM\n\nSources: dashboard, sales, payments, inventory, purchasing, hris, payroll, accounting, close, co",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d"
+  },
+  "sourceStable": true
+}

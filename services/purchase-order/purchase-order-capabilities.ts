@@ -102,9 +102,13 @@ export function derivePurchaseOrderCapabilities(
     ? permissionDenied("purchases.orders.approve")
     : !canTransition(order.status, "APPROVED")
       ? denied("Only submitted purchase orders can be approved.")
-      : order.createdById === actor.userId
+      : !order.createdById
+        ? denied("A known requester is required before approval.")
+        : order.createdById === actor.userId
         ? denied("The requester cannot approve their own purchase order.")
-        : allowed()
+        : lines.length === 0
+          ? denied("Add at least one line item before approving this purchase order.")
+          : allowed()
 
   const receive = !hasPermission(actor, "purchases.orders.receive")
     ? permissionDenied("purchases.orders.receive")
@@ -123,7 +127,7 @@ export function derivePurchaseOrderCapabilities(
   const archive = !hasPermission(actor, "purchases.delete")
     ? permissionDenied("purchases.delete")
     : !canArchivePurchaseOrderStatus(order.status)
-      ? denied("Received, partially received, and completed purchase orders cannot be archived.")
+      ? denied("Only drafts or explicitly cancelled orders without linked obligations can be archived.")
       : allowed()
 
   const complete = !hasPermission(actor, "purchases.orders.update")
@@ -134,7 +138,9 @@ export function derivePurchaseOrderCapabilities(
         )
       : !canTransition(order.status, "COMPLETED")
         ? denied("Only fully received purchase orders can be completed.")
-        : allowed()
+        : lines.length === 0 || remainingQuantity > 0
+          ? denied("Purchase order completion requires all ordered quantities to be received.")
+          : allowed()
 
   return {
     edit,

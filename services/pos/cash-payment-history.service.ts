@@ -129,7 +129,7 @@ export type CashPaymentHistoryResult = TransactionHistoryResult<
   CashPaymentHistoryRow,
   CashPaymentHistorySummary,
   CashPaymentHistoryAppliedFilters
->
+> & { scope: { organizationId: string; actorUserId: string } }
 
 type CashRow = Prisma.CashDrawerTransactionGetPayload<{
   include: {
@@ -382,6 +382,14 @@ export async function readCashPaymentHistory(
     organizationId: organization.id,
     deletedAt: null,
     createdAt: paymentCreatedAt,
+    // Match the displayed location: sale first, then purchase order. Unlinked
+    // payments have no location and belong only in unfiltered history.
+    ...(filters.locationId ? {
+      OR: [
+        { salesOrder: { is: { locationId: filters.locationId } } },
+        { salesOrderId: null, purchaseOrder: { is: { locationId: filters.locationId } } },
+      ],
+    } : {}),
     ...(filters.paymentMethod ? { method: filters.paymentMethod } : {}),
     ...(filters.paymentStatus ? { status: filters.paymentStatus } : {}),
     ...(accessCashierId ? { processedById: accessCashierId } : {}),
@@ -434,15 +442,19 @@ export async function readCashPaymentHistory(
         })
       : Promise.resolve([]),
     readCash
-      ? client.cashDrawerTransaction.findMany({
+      ? client.cashDrawerTransaction.groupBy({
+          by: ["type"],
           where: cashBaseWhere,
-          select: { type: true, amount: true },
+          _sum: { amount: true },
+          _count: { _all: true },
         })
       : Promise.resolve([]),
     readPayments
-      ? client.payment.findMany({
+      ? client.payment.groupBy({
+          by: ["method", "status"],
           where: paymentBaseWhere,
-          select: { method: true, status: true, amount: true },
+          _sum: { amount: true },
+          _count: { _all: true },
         })
       : Promise.resolve([]),
   ])
@@ -586,30 +598,31 @@ export async function readCashPaymentHistory(
 
   const openingFloat = cashSummaryRows
     .filter((row) => row.type === CashDrawerTransactionType.OPENING_BALANCE)
-    .reduce((total, row) => total.plus(decimal(row.amount)), new Prisma.Decimal(0))
+    .reduce((total, row) => total.plus(decimal(row._sum.amount)), new Prisma.Decimal(0))
   const countedCash = cashSummaryRows
     .filter((row) => row.type === CashDrawerTransactionType.CLOSING_BALANCE)
-    .reduce((total, row) => total.plus(decimal(row.amount)), new Prisma.Decimal(0))
+    .reduce((total, row) => total.plus(decimal(row._sum.amount)), new Prisma.Decimal(0))
   const cashImpact = cashSummaryRows.reduce(
-    (total, row) => total.plus(physicalCashImpact(row.type, decimal(row.amount))),
+    (total, row) => total.plus(physicalCashImpact(row.type, decimal(row._sum.amount))),
     new Prisma.Decimal(0),
   )
   const cashInflows = cashSummaryRows
     .filter((row) => CASH_IN_TYPES.has(row.type) && row.type !== CashDrawerTransactionType.CLOSING_BALANCE)
-    .reduce((total, row) => total.plus(decimal(row.amount)), new Prisma.Decimal(0))
+    .reduce((total, row) => total.plus(decimal(row._sum.amount)), new Prisma.Decimal(0))
   const cashOutflows = cashSummaryRows
     .filter((row) => CASH_OUT_TYPES.has(row.type))
-    .reduce((total, row) => total.plus(decimal(row.amount)), new Prisma.Decimal(0))
+    .reduce((total, row) => total.plus(decimal(row._sum.amount)), new Prisma.Decimal(0))
   const electronicTenderTotal = paymentSummaryRows
     .filter((row) => ELECTRONIC_METHODS.has(row.method))
-    .reduce((total, row) => total.plus(decimal(row.amount)), new Prisma.Decimal(0))
+    .reduce((total, row) => total.plus(decimal(row._sum.amount)), new Prisma.Decimal(0))
   const paymentCapturedTotal = paymentSummaryRows.reduce(
-    (total, row) => total.plus(decimal(row.amount)),
+    (total, row) => total.plus(decimal(row._sum.amount)),
     new Prisma.Decimal(0),
   )
-  const unresolvedPaymentCount = paymentSummaryRows.filter((row) =>
-    UNRESOLVED_PAYMENT_STATUSES.has(row.status),
-  ).length
+  const unresolvedPaymentCount = paymentSummaryRows.reduce((total, row) =>
+    total + (UNRESOLVED_PAYMENT_STATUSES.has(row.status) ? row._count._all : 0), 0)
+  const cashEventCount = cashSummaryRows.reduce((total, row) => total + row._count._all, 0)
+  const paymentEventCount = paymentSummaryRows.reduce((total, row) => total + row._count._all, 0)
 
   const appliedFilters: CashPaymentHistoryAppliedFilters = {
     ...filterIdentity,
@@ -617,13 +630,14 @@ export async function readCashPaymentHistory(
   }
 
   return {
+    scope: { organizationId: organization.id, actorUserId: parsed.actorUserId },
     rows,
     pageInfo: { nextCursor, hasMore },
     appliedFilters,
     summary: {
-      transactionCount: cashSummaryRows.length + paymentSummaryRows.length,
-      cashEventCount: cashSummaryRows.length,
-      paymentEventCount: paymentSummaryRows.length,
+      transactionCount: cashEventCount + paymentEventCount,
+      cashEventCount,
+      paymentEventCount,
       openingFloat: decimalText(openingFloat),
       cashInflows: decimalText(cashInflows),
       cashOutflows: decimalText(cashOutflows),

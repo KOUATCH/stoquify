@@ -1,0 +1,72 @@
+{
+  "at": "2026-09-08T10:38:27.162Z",
+  "sourceBaseline": "evidence/source-baseline-v66.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "62ed2381740cc4a8560863eec569ef447af1d71ea0aab4bb4de8932e833d7c29",
+    "actions/purchasing/__tests__/invoice-match-exception.actions.test.ts": "90a4629b01f49f79210b00038bdd0511b644d120246694dbd3e03abf4460b308",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "22ce8f913469fb9734831d4a0f12c603fc4b9ee66363f58a2a8b0a9a7077d127",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts": "8eebbccd8a6a62a0abcd5c068d345ca262b18d605c536b57bfab52690f86eef0",
+    "actions/purchasing/__tests__/invoice-approval.actions.test.ts": "b0b1d4ef62372b6c152ff8299963166ed54678c1eb470d78db7010407480e631",
+    "services/purchasing/__tests__/invoice-match-exception-contracts.test.ts": "cac0113f4913374a5c399dd88a8d57865d348beab4e9f14ed20310ccbe89d414"
+  },
+  "runtime": "lanes/environment/match-exception-service-7d68e71a-6fe.json",
+  "tests": "evidence/match-exception-service-tests-final.json",
+  "prior": [
+    "lanes/environment/match-exception-service-eb2fc2d1-06f.json",
+    "lanes/environment/match-exception-service-7220b98b-20f.json",
+    "evidence/match-exception-service-tests.json"
+  ],
+  "approvalReview": {
+    "rejected": "Shared posting-authority expansion with request fresh-auth exemption; patch not applied.",
+    "alternative": "Dedicated exception authority with both submissions requiring fresh password assurance; accepted.",
+    "unchangedAuthority": {
+      "path": "services/purchasing/invoice-ledger-recovery-authority.ts",
+      "sha256": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c"
+    }
+  },
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/ap-control.service.ts services/purchasing/invoice-match-exception.service.ts services/purchasing/invoice-match-exception-authority.ts services/purchasing/invoice-match-exception-contracts.ts services/purchasing/__tests__/ap-control.service.test.ts actions/purchasing/invoice-match-exception.actions.ts actions/purchasing/ap-control.actions.ts actions/purchasing/__tests__/ap-control.actions.test.ts actions/purchasing/__tests__/invoice-match-exception.actions.test.ts services/purchasing/__tests__/invoice-match-exception-contracts.test.ts",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "verifier": {
+    "path": "lanes/environment/verify-match-exception-service.cjs",
+    "sha256": "18cb8625861a42b744b6868afb60a56b68393eea24881e38246fa264ace4db46"
+  },
+  "migration": "none",
+  "browser": "No new interface; actual application verification pending",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2688,
+      "tests": 942,
+      "pages": 152,
+      "routeHandlers": 18,
+      "actionSources": 165,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2229,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 204,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

@@ -3,9 +3,8 @@ import StoquifyLogo from "@/components/global/kit-logo"
 import { useTranslations } from "next-intl"
 
 const footerLinks = [
-  { key: "product", href: "/#modules" },
+  { key: "product", href: "/#product" },
   { key: "workflow", href: "/#workflow" },
-  { key: "trust", href: "/#trust" },
   { key: "pricing", href: "/#pricing" },
 ]
 

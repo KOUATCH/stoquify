@@ -1,0 +1,110 @@
+{
+  "run": "eb2fc2d1-06f",
+  "at": "2026-09-08T10:31:26.235Z",
+  "checks": [
+    {
+      "name": "maker request exact replay, reviewer decision and connected payable approval",
+      "status": "passed"
+    },
+    {
+      "name": "rejection records reason and creates no payable",
+      "status": "passed"
+    },
+    {
+      "name": "requester cannot read other maker sources or submit them",
+      "status": "passed"
+    },
+    {
+      "name": "posting permission alone cannot review exceptions",
+      "status": "passed"
+    },
+    {
+      "name": "foreign invoice and foreign history are denied",
+      "status": "passed"
+    },
+    {
+      "name": "role denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "expired-session denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "old-assurance denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "wrong-assurance-org denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "future-assurance denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module missing denies submission",
+      "status": "failed",
+      "message": "\nInvalid `db.organization.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-match-exception-service.cjs:17:200\n\n  14 await check('posting permission alone cannot review exceptions',async()=>{const x=await fixture('permission'),r=await requested(x);await db.role.update({where:{id:x.checkerRoleId},data:{permissions:['purchasing.ap.invoice.post']}});await assert.rejects(s.previewInvoiceMatchException(review(x,r),x.scope),e=>e.code==='FORBIDDEN')});\n  15 await check('foreign invoice and foreign history are denied',async()=>{const x=await fixture('foreign'),y=await fixture('foreign-owner');await assert.rejects(s.previewInvoiceMatchException(y.draftRequest,x.makerScope));await assert.rejects(s.loadInvoiceMatchExceptionHistory({kind:'review',invoiceId:y.invoiceId},x.scope));await noEffects(x);await noEffects(y)});\n  16 for(const mode of ['role','expired-session','old-assurance','wrong-assurance-org','future-assurance'])await check(mode+' denies request submission',async()=>{const x=await fixture(mode),c=await command(x);if(mode==='role')await db.role.update({where:{id:x.roleId},data:{permissions:[]}});else await db.session.update({where:{id:x.makerScope.sessionId},data:mode==='expired-session'?{expiresAt:new Date(0)}:mode==='old-assurance'?{assuranceVerifiedAt:new Date(0)}:mode==='wrong-assurance-org'?{assuranceOrganizationId:'other'}:{assuranceVerifiedAt:new Date(Date.now()+60000)}});await assert.rejects(s.confirmInvoiceMatchException(c,x.makerScope));await noEffects(x)});\n→ 17 for(const mod"
+    },
+    {
+      "name": "managed module expired denies submission",
+      "status": "failed",
+      "message": "\nInvalid `db.organization.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-match-exception-service.cjs:17:200\n\n  14 await check('posting permission alone cannot review exceptions',async()=>{const x=await fixture('permission'),r=await requested(x);await db.role.update({where:{id:x.checkerRoleId},data:{permissions:['purchasing.ap.invoice.post']}});await assert.rejects(s.previewInvoiceMatchException(review(x,r),x.scope),e=>e.code==='FORBIDDEN')});\n  15 await check('foreign invoice and foreign history are denied',async()=>{const x=await fixture('foreign'),y=await fixture('foreign-owner');await assert.rejects(s.previewInvoiceMatchException(y.draftRequest,x.makerScope));await assert.rejects(s.loadInvoiceMatchExceptionHistory({kind:'review',invoiceId:y.invoiceId},x.scope));await noEffects(x);await noEffects(y)});\n  16 for(const mode of ['role','expired-session','old-assurance','wrong-assurance-org','future-assurance'])await check(mode+' denies request submission',async()=>{const x=await fixture(mode),c=await command(x);if(mode==='role')await db.role.update({where:{id:x.roleId},data:{permissions:[]}});else await db.session.update({where:{id:x.makerScope.sessionId},data:mode==='expired-session'?{expiresAt:new Date(0)}:mode==='old-assurance'?{assuranceVerifiedAt:new Date(0)}:mode==='wrong-assurance-org'?{assuranceOrganizationId:'other'}:{assuranceVerifiedAt:new Date(Date.now()+60000)}});await assert.rejects(s.confirmInvoiceMatchException(c,x.makerScope));await noEffects(x)});\n→ 17 for(const mod"
+    },
+    {
+      "name": "managed module suspended denies submission",
+      "status": "failed",
+      "message": "\nInvalid `db.organization.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-match-exception-service.cjs:17:200\n\n  14 await check('posting permission alone cannot review exceptions',async()=>{const x=await fixture('permission'),r=await requested(x);await db.role.update({where:{id:x.checkerRoleId},data:{permissions:['purchasing.ap.invoice.post']}});await assert.rejects(s.previewInvoiceMatchException(review(x,r),x.scope),e=>e.code==='FORBIDDEN')});\n  15 await check('foreign invoice and foreign history are denied',async()=>{const x=await fixture('foreign'),y=await fixture('foreign-owner');await assert.rejects(s.previewInvoiceMatchException(y.draftRequest,x.makerScope));await assert.rejects(s.loadInvoiceMatchExceptionHistory({kind:'review',invoiceId:y.invoiceId},x.scope));await noEffects(x);await noEffects(y)});\n  16 for(const mode of ['role','expired-session','old-assurance','wrong-assurance-org','future-assurance'])await check(mode+' denies request submission',async()=>{const x=await fixture(mode),c=await command(x);if(mode==='role')await db.role.update({where:{id:x.roleId},data:{permissions:[]}});else await db.session.update({where:{id:x.makerScope.sessionId},data:mode==='expired-session'?{expiresAt:new Date(0)}:mode==='old-assurance'?{assuranceVerifiedAt:new Date(0)}:mode==='wrong-assurance-org'?{assuranceOrganizationId:'other'}:{assuranceVerifiedAt:new Date(Date.now()+60000)}});await assert.rejects(s.confirmInvoiceMatchException(c,x.makerScope));await noEffects(x)});\n→ 17 for(const mod"
+    },
+    {
+      "name": "managed module read_only denies submission",
+      "status": "failed",
+      "message": "\nInvalid `db.organization.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-match-exception-service.cjs:17:200\n\n  14 await check('posting permission alone cannot review exceptions',async()=>{const x=await fixture('permission'),r=await requested(x);await db.role.update({where:{id:x.checkerRoleId},data:{permissions:['purchasing.ap.invoice.post']}});await assert.rejects(s.previewInvoiceMatchException(review(x,r),x.scope),e=>e.code==='FORBIDDEN')});\n  15 await check('foreign invoice and foreign history are denied',async()=>{const x=await fixture('foreign'),y=await fixture('foreign-owner');await assert.rejects(s.previewInvoiceMatchException(y.draftRequest,x.makerScope));await assert.rejects(s.loadInvoiceMatchExceptionHistory({kind:'review',invoiceId:y.invoiceId},x.scope));await noEffects(x);await noEffects(y)});\n  16 for(const mode of ['role','expired-session','old-assurance','wrong-assurance-org','future-assurance'])await check(mode+' denies request submission',async()=>{const x=await fixture(mode),c=await command(x);if(mode==='role')await db.role.update({where:{id:x.roleId},data:{permissions:[]}});else await db.session.update({where:{id:x.makerScope.sessionId},data:mode==='expired-session'?{expiresAt:new Date(0)}:mode==='old-assurance'?{assuranceVerifiedAt:new Date(0)}:mode==='wrong-assurance-org'?{assuranceOrganizationId:'other'}:{assuranceVerifiedAt:new Date(Date.now()+60000)}});await assert.rejects(s.confirmInvoiceMatchException(c,x.makerScope));await noEffects(x)});\n→ 17 for(const mod"
+    },
+    {
+      "name": "stale request revision preserves source without exception",
+      "status": "passed"
+    },
+    {
+      "name": "exact concurrent requests converge and different requests cannot duplicate",
+      "status": "failed",
+      "message": "Supplier invoice match exception request could not be completed safely."
+    },
+    {
+      "name": "same request key cannot be repurposed",
+      "status": "passed"
+    },
+    {
+      "name": "revoked authority denies committed replay",
+      "status": "passed"
+    },
+    {
+      "name": "tampered decision is neither valid history nor successful replay",
+      "status": "passed"
+    },
+    {
+      "name": "decision persistence failure rolls back exception before exact retry",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "5b512bf44946e7f9677f2792e33f006b50b2130aa49ce2d31858c89266d78595",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741"
+  },
+  "originalBefore": "e5b656fc1ff72ae9f79c19972cdee0ea9f33e999a0cf88c8eb4ab84647b84a89",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "5b512bf44946e7f9677f2792e33f006b50b2130aa49ce2d31858c89266d78595",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741"
+  },
+  "sourceStable": true
+}

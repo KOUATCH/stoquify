@@ -1,0 +1,80 @@
+{
+  "runDate": "2026-08-30",
+  "repository": "E:\\ohada saas\\Focused projects\\stoquify",
+  "mode": "rerun-readiness-and-verification",
+  "reseedExecuted": false,
+  "writeCapableVerifierExecuted": true,
+  "sideEffects": [
+    "POS session created and closed by realistic seed verifier",
+    "POS sale and payment created",
+    "Inventory decrement created and verified",
+    "Audit records created"
+  ],
+  "target": {
+    "database": "stoquify_dev_migrated_20260814",
+    "classification": "populated-development-target",
+    "resetAllowed": false,
+    "isolatedDisposableTargetApproved": false
+  },
+  "verification": [
+    { "check": "prisma:validate", "status": "PASS", "detail": "Schema is valid" },
+    { "check": "prisma:migrate:status", "status": "PASS", "detail": "80 migrations found; database schema is up to date" },
+    { "check": "prisma:generate", "status": "BLOCKED", "detail": "EPERM replacing node_modules/.prisma/client/index.js" },
+    { "check": "prisma:migration:history:health", "status": "BLOCKED", "detail": "EPERM writing configured what-next report output" },
+    { "check": "seed:verify:realistic", "status": "PASS_WITH_SIDE_EFFECT", "detail": "Verifier completed its POS flow but wrote session, sale, payment, inventory, and audit records; reported 12 catalog and 12 stocked items" },
+    { "check": "focused-finance-table-contract-tests", "status": "PASS", "detail": "5 suites and 19 tests passed" }
+  ],
+  "tenants": [
+    {
+      "id": "rds_org_001",
+      "name": "Wilkinson - Feeney 001",
+      "slug": "cmp-rds-org001-convergence",
+      "countryCode": "CM",
+      "currency": "XAF",
+      "active": true,
+      "roleObservations": {
+        "accounting_owner": "Yongwa Eli",
+        "accountant": "Nadia Essomba",
+        "support_owner": "Etoo Naomie",
+        "auditor": "Helene Mbarga",
+        "qualified_accounting_reviewer": "Tchana Nikita",
+        "external_accountant": null
+      },
+      "fixtureGaps": ["accounting setup IN_PROGRESS", "posted-only journals", "XAF-only entries", "all periods OPEN"]
+    },
+    {
+      "id": "rds_org_002",
+      "name": "McDermott, Greenholt and Johnson 002",
+      "slug": "cmp-rds-org002-e-commerce",
+      "countryCode": "CM",
+      "currency": "XAF",
+      "active": true,
+      "roleObservations": {
+        "accounting_owner": "Francis Mbe",
+        "accountant": "Nadia Essomba",
+        "support_owner": "Pascal Ekotto",
+        "auditor": "Helene Mbarga",
+        "qualified_accounting_reviewer": "Blandine Menye",
+        "external_accountant": null
+      }
+    }
+  ],
+  "blockers": [
+    { "id": "TRB-001", "classification": "missing approval", "status": "BLOCKED" },
+    { "id": "TRB-002", "classification": "missing implementation/fixture", "status": "BLOCKED" },
+    { "id": "TRB-003", "classification": "external evidence requirement", "status": "BLOCKED" },
+    { "id": "TRB-004", "classification": "credential requirement", "status": "BLOCKED" },
+    { "id": "TRB-005", "classification": "evidence requirement", "status": "BLOCKED" },
+    { "id": "TRB-006", "classification": "fixture gap", "status": "OPEN_FOR_ISOLATED_RESEED" },
+    { "id": "TRB-007", "classification": "verification safety issue", "status": "OPEN" },
+    { "id": "TRB-008", "classification": "environment blocker", "status": "BLOCKED" },
+    { "id": "TRB-009", "classification": "environment blocker", "status": "BLOCKED" },
+    { "id": "TRB-010", "classification": "fixture gap", "status": "OPEN_FOR_ISOLATED_RESEED", "detail": "Verifier reported 12 catalog and 12 stocked items; requirement is at least 20 per location" }
+  ],
+  "externalEvidence": {
+    "approvalReferences": [],
+    "authenticatedCredentials": [],
+    "authenticatedEvidenceArtifacts": []
+  },
+  "decision": "Readiness can continue. Comprehensive reseed and authenticated evidence cannot safely proceed until the isolated target, approval, and credential blockers are resolved. The current target must not be treated as a clean evidence baseline until the write-capable verifier side effect is reviewed."
+}

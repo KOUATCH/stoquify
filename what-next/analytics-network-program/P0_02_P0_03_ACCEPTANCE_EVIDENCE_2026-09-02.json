@@ -1,0 +1,527 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-ANALYTICS-CONTROLLED-NETWORK",
+  "capturedAt": "2026-09-02T12:38:43.576Z",
+  "status": "ACCEPTANCE_RECONCILED_PRECISE_BLOCKERS_REMAIN",
+  "packet": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+  "design": "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md",
+  "activeWorkPackages": [
+    "P0-02",
+    "P0-03"
+  ],
+  "wipLimit": 2,
+  "baseline": {
+    "capturedAt": "2026-09-02T12:27:42.090Z",
+    "branch": "codex/migration-control-plane-release-2026-08-29",
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "dirty": true,
+    "statusEntryCount": 176,
+    "preChangeHashes": [
+      {
+        "path": "services/analytics/analytical-context-contracts.ts",
+        "sha256": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab"
+      },
+      {
+        "path": "services/analytics/__tests__/analytical-context-contracts.test.ts",
+        "sha256": "036ca2680e12729b1bd5c24dbe968075d001f9f48209b3313b5eab47ef075aed"
+      },
+      {
+        "path": "services/analytics/sales-analytics.service.ts",
+        "sha256": "16042faff16c1e2fcacc86a9f3d14dabb129d879a0fa0f6bbdbc7d0b4856a772"
+      },
+      {
+        "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+        "sha256": "f77b96b6bfb617736a22389ee39e4f03aeded9cec7a0c0775b79812cda13658e"
+      },
+      {
+        "path": "services/accounting/finance-statement-export.service.ts",
+        "sha256": "4afeee67e163d12e4441d28730629ff80eccb60bcd5b33d758a91d987685a37b"
+      },
+      {
+        "path": "package.json",
+        "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde"
+      },
+      {
+        "path": "prisma/schema.prisma",
+        "sha256": "e7fb0b6195946077eca67e18829826021f3637fbb1967af5e52dc132f3e9e143"
+      },
+      {
+        "path": "what-next/analytics-network-program/PROGRAM_STATUS_REGISTER.json",
+        "sha256": "8663241ff1c65398c2b9045bc910b72e50b13052bf19c474e98cc9d68112c49a"
+      },
+      {
+        "path": "what-next/analytics-network-program/DECISION_REGISTER.json",
+        "sha256": "7d2df365dd1d6eb4009dcd7203376bab143c8e22168bd05aa2df48712836dba0"
+      },
+      {
+        "path": "what-next/analytics-network-program/SURFACE_OWNERSHIP_REGISTRY.json",
+        "sha256": "1d8de8d23bbb09d53c1949e9bfdf50c2e80b43e476badec1190b421036b04225"
+      }
+    ]
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 1,
+    "previousErrorCount": 4,
+    "stillPresentCount": 4,
+    "resolvedCount": 0,
+    "newDiagnosticCount": 0,
+    "output": "components/finance/PaymentReconciliationWorkbench.tsx(513,9): error TS2322: Type '{ endDate?: Date[] | undefined; startDate?: Date[] | undefined; period: (\"custom\" | \"today\" | \"7d\" | \"30d\" | \"mtd\" | \"yesterday\" | \"qtd\" | \"ytd\")[]; locationId?: string[] | undefined; }' is not assignable to type 'Record<string, string[]>'.\r\n  Property 'endDate' is incompatible with index signature.\r\n    Type 'Date[]' is not assignable to type 'string[]'.\r\n      Type 'Date' is not assignable to type 'string'.\r\ncomponents/finance/PaymentReconciliationWorkbench.tsx(563,5): error TS2322: Type '{ endDate?: Date[] | undefined; startDate?: Date[] | undefined; period: (\"custom\" | \"today\" | \"7d\" | \"30d\" | \"mtd\" | \"yesterday\" | \"qtd\" | \"ytd\")[]; locationId?: string[] | undefined; }' is not assignable to type 'Record<string, string[]>'.\r\n  Property 'endDate' is incompatible with index signature.\r\n    Type 'Date[]' is not assignable to type 'string[]'.\r\n      Type 'Date' is not assignable to type 'string'.\r\nservices/accounting/finance-statement-export.service.ts(188,7): error TS2741: Property 'watermarkId' is missing in type '{ scope: string; filtersHash: string; rowCount: number; fileType: \"json\" | \"csv\" | \"xlsx\" | \"pdf\"; sensitivity: \"statutory\"; }' but required in type '{ scope: string; filtersHash: string; rowCount: number; fileType: string; sensitivity: \"financial\" | \"operational\" | \"personal\" | \"statutory\"; watermarkId: string; }'.\r\nservices/accounting/finance-statement-export.service.ts(322,40): error TS7053: Element implicitly has an 'any' type because expression of type '\"json\" | \"csv\" | \"xlsx\" | \"pdf\"' can't be used to index type '{ readonly csv: \"text/csv\"; readonly xlsx: \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"; readonly pdf: \"application/pdf\"; }'.\r\n  Property 'json' does not exist on type '{ readonly csv: \"text/csv\"; readonly xlsx: \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"; readonly pdf: \"application/pdf\"; }'.\r\n",
+    "errors": [
+      {
+        "id": "P0-TC-01",
+        "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+        "line": 513,
+        "code": "TS2322",
+        "status": "STILL_PRESENT",
+        "owner": "Payments UI / canonical table integration",
+        "problem": "Date[] filters do not satisfy Record<string, string[]>.",
+        "nextAction": "Serialize the validated dates at the canonical query boundary, preserving the selected period; cover both certificate export and table-query paths."
+      },
+      {
+        "id": "P0-TC-02",
+        "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+        "line": 563,
+        "code": "TS2322",
+        "status": "STILL_PRESENT",
+        "owner": "Payments UI / canonical table integration",
+        "problem": "Same Date[] filter mismatch in the main table query.",
+        "nextAction": "Use the same serialization contract as P0-TC-01; verify identical filters and query fingerprints."
+      },
+      {
+        "id": "P0-TC-03",
+        "path": "services/accounting/finance-statement-export.service.ts",
+        "line": 188,
+        "code": "TS2741",
+        "status": "STILL_PRESENT",
+        "owner": "Accounting export / Security controls engineering",
+        "problem": "Sensitive export context lacks required watermarkId.",
+        "nextAction": "Bind the export request to a real watermark generated by the existing export-safety mechanism and retained in audit/artifact evidence. Do not weaken the required type or use a dummy value."
+      },
+      {
+        "id": "P0-TC-04",
+        "path": "services/accounting/finance-statement-export.service.ts",
+        "line": 322,
+        "code": "TS7053",
+        "status": "STILL_PRESENT",
+        "owner": "Accounting export engineering",
+        "problem": "Manifest format allows json but MIME map only covers csv, xlsx and pdf.",
+        "nextAction": "Align the accepted format union, enabled contract formats, worker renderer and MIME map. Either support JSON end to end or reject/narrow it before this lookup; verify accepted and unsupported formats."
+      }
+    ],
+    "scopeNote": "Configured tsconfig scope, including its existing exclusions. Tests are verified with Jest. No error in the analytical context source.",
+    "rerunAfterConcurrentCaptureChanges": {
+      "command": "npm run typecheck",
+      "recordedAt": "2026-09-02T12:46:03.921Z",
+      "exitCode": 1,
+      "stillPresentCount": 4,
+      "newDiagnosticCount": 0,
+      "reason": "Both X1 capture tests and their new shared observation helper changed during final evidence verification.",
+      "output": "components/finance/PaymentReconciliationWorkbench.tsx(513,9): error TS2322: Type '{ endDate?: Date[] | undefined; startDate?: Date[] | undefined; period: (\"custom\" | \"mtd\" | \"today\" | \"yesterday\" | \"7d\" | \"30d\" | \"qtd\" | \"ytd\")[]; locationId?: string[] | undefined; }' is not assignable to type 'Record<string, string[]>'.\r\n  Property 'endDate' is incompatible with index signature.\r\n    Type 'Date[]' is not assignable to type 'string[]'.\r\n      Type 'Date' is not assignable to type 'string'.\r\ncomponents/finance/PaymentReconciliationWorkbench.tsx(563,5): error TS2322: Type '{ endDate?: Date[] | undefined; startDate?: Date[] | undefined; period: (\"custom\" | \"mtd\" | \"today\" | \"yesterday\" | \"7d\" | \"30d\" | \"qtd\" | \"ytd\")[]; locationId?: string[] | undefined; }' is not assignable to type 'Record<string, string[]>'.\r\n  Property 'endDate' is incompatible with index signature.\r\n    Type 'Date[]' is not assignable to type 'string[]'.\r\n      Type 'Date' is not assignable to type 'string'.\r\nservices/accounting/finance-statement-export.service.ts(188,7): error TS2741: Property 'watermarkId' is missing in type '{ scope: string; filtersHash: string; rowCount: number; fileType: \"json\" | \"csv\" | \"xlsx\" | \"pdf\"; sensitivity: \"statutory\"; }' but required in type '{ scope: string; filtersHash: string; rowCount: number; fileType: string; sensitivity: \"financial\" | \"operational\" | \"personal\" | \"statutory\"; watermarkId: string; }'.\r\nservices/accounting/finance-statement-export.service.ts(322,40): error TS7053: Element implicitly has an 'any' type because expression of type '\"json\" | \"csv\" | \"xlsx\" | \"pdf\"' can't be used to index type '{ readonly csv: \"text/csv\"; readonly xlsx: \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"; readonly pdf: \"application/pdf\"; }'.\r\n  Property 'json' does not exist on type '{ readonly csv: \"text/csv\"; readonly xlsx: \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"; readonly pdf: \"application/pdf\"; }'.\r\n"
+    }
+  },
+  "tests": {
+    "initialRun": {
+      "exitCode": 1,
+      "suites": 9,
+      "tests": 49,
+      "passed": 48,
+      "failed": 1,
+      "output": "FAIL config/__tests__/sidebar.test.ts (36.821 s)\n  ● sidebar information architecture › keeps submenu labels alphabetical after an optional Overview entry\n\n    expect(received).toEqual(expected) // deep equality\n\n    - Expected  - 1\n    + Received  + 1\n\n      Array [\n        \"AP History\",\n        \"AP Workbench\",\n        \"New Purchase Order\",\n        \"New Supplier\",\n    -   \"Purchase Analytics\",\n        \"Purchase Orders\",\n    +   \"Purchase Analytics\",\n        \"Suppliers\",\n      ]\n\n      72 |   const rest = titles.slice(overview.length)\n      73 |\n    > 74 |   expect(rest).toEqual([...rest].sort((a, b) => a.localeCompare(b)))\n         |                ^\n      75 | }\n      76 |\n      77 | describe(\"sidebar information architecture\", () => {\n\n      at expectOverviewThenAlphabetical (config/__tests__/sidebar.test.ts:74:16)\n      at Object.<anonymous> (config/__tests__/sidebar.test.ts:88:9)\n\n\nTest Suites: 1 failed, 8 passed, 9 total\nTests:       1 failed, 48 passed, 49 total\nSnapshots:   0 total\nTime:        169.525 s\nRan all test suites within paths \"services/analytics/__tests__/analytical-context-contracts.test.ts\", \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/route-audit.test.ts\", \"app/[locale]/(dashboard)/dashboard/finance/__tests__/route-audit.test.ts\", \"app/[locale]/(dashboard)/dashboard/accounting/__tests__/route-audit.test.ts\", \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/route-audit.test.ts\", \"app/[locale]/(dashboard)/dashboard/manager-action-center/__tests__/route-audit.test.ts\", \"app/[locale]/(dashboard)/dashboard/owner-war-room/__tests__/route-audit.test.ts\", \"app/[locale]/(dashboard)/dashboard/purchase-orders/__tests__/route-audit.test.ts\", \"config/__tests__/sidebar.test.ts\".\n"
+    },
+    "targetedRerun": {
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath config/__tests__/sidebar.test.ts --no-coverage",
+      "exitCode": 0,
+      "passed": 23,
+      "output": "Test Suites: 1 passed, 1 total\nTests:       23 passed, 23 total\nSnapshots:   0 total\nTime:        12.696 s, estimated 37 s\nRan all test suites within paths \"config/__tests__/sidebar.test.ts\".\n"
+    },
+    "finalUniqueChecks": {
+      "contextTests": 18,
+      "routeAuditTests": 8,
+      "sidebarTests": 23,
+      "passing": 49,
+      "suites": 9
+    },
+    "scopeNote": "Final result combines the initial passing context/route suites with the targeted sidebar rerun. No DB, browser, authorization-denial or runtime period-aggregation proof was run."
+  },
+  "surfaceValidation": {
+    "surfaces": 12,
+    "uniqueRoutes": 12,
+    "allPagesCatalogsSidebarAndImplementationPathsPresent": true,
+    "declaredTargetMetrics": 53,
+    "explicitOwnersBefore": 7,
+    "explicitOwnersAfter": 53,
+    "duplicateOwners": 0,
+    "unownedDeclaredMetrics": 0,
+    "canonicalDrillThroughRoutes": 53,
+    "ownershipStatus": "PROPOSED_PENDING_OWNER_ACCEPTANCE",
+    "formulaImplementationVerified": false
+  },
+  "contextValidation": {
+    "contractState": "EXPLICIT_INPUT_NORMALIZATION_VERIFIED",
+    "runtimeConsumersFound": 0,
+    "unsupportedCurrencyProbe": {
+      "code": "XYZ",
+      "intlMinorUnit": 2,
+      "conclusion": "Current three-letter plus Intl validation does not establish currency eligibility."
+    },
+    "businessPulseGaps": [
+      "XAF fallback remains",
+      "Server-local day and inclusive-end behavior remains",
+      "Monetary reductions convert Decimal source amounts to number",
+      "Context resolver is not called by runtime consumers"
+    ],
+    "runtimeRemediationStatus": "DESIGN_PREPARED_IMPLEMENTATION_PENDING_POLICY_AND_SCOPE_DECISIONS"
+  },
+  "newerEvidence": [
+    {
+      "source": "what-next/migrations/isolated-next-level-fresh-replay-20260830.json",
+      "classification": "LOCAL_DEDICATED_REPLAY",
+      "result": "80/80 migrations; 0 unexpected structural drift; 226 intentional residual statements",
+      "effect": "Supersedes missing local replay evidence only; no analytical/runtime/production acceptance."
+    },
+    {
+      "source": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/manifest.local-simulation.json",
+      "classification": "LOCAL_SIMULATION_AUTHENTICATED_EVIDENCE_NOT_FOR_RELEASE",
+      "artifacts": 42,
+      "hashesMatched": 42,
+      "authoritative": false,
+      "effect": "Supersedes blanket absence of local authenticated captures; does not prove AR business readiness or supply P0 owner approval."
+    },
+    {
+      "source": "what-next/evidence/finance-x1/X1_APPROVAL_INTAKE_PREFILLED_2026-09-01.md",
+      "effect": "X1 preflight reports traceable approvals missing. Seeded role candidates are not approvals. This is separate from internal P0 owner acceptance."
+    },
+    {
+      "source": "what-next/evidence/finance-x1/x1-approval-automation-readiness-2026-08-31.json",
+      "effect": "2026-09-01 refresh remains blocked for external configuration/signature; it has a different scope from the X1 preflight and does not clear P0 decisions."
+    }
+  ],
+  "ownerDecisions": [
+    {
+      "id": "AN-D03",
+      "package": "P0-02",
+      "status": "PENDING_OWNER_ACCEPTANCE",
+      "accountableRole": "Product Program Lead",
+      "reviewRoles": [
+        "UX Architecture",
+        "Finance",
+        "Payments",
+        "Accounting",
+        "Purchasing",
+        "Data/BI"
+      ],
+      "accountablePerson": null,
+      "approvedAt": null,
+      "decisionRequired": "Accept or revise the 12 canonical jobs, all 53 KPI ownership assignments and canonical drill-through destinations in ownership registry v1.1.0. Existing navigation remains; subsequent consolidation needs its own reviewed change.",
+      "recommendedOption": "ACCEPT_OWNERSHIP_DESIGN_V1_1",
+      "scope": [
+        "what-next/analytics-network-program/SURFACE_OWNERSHIP_REGISTRY.json",
+        "what-next/analytics-network-program/SURFACE_OWNERSHIP_AND_DUPLICATION_MAP.md"
+      ],
+      "evidenceHashes": [
+        "2868970ffceece00ab1c039b2618cb42585e0a809a6e0ec61f7f1a1492129193",
+        "7fd05cea51158b60601ad7b7cd4ce95f3fdaf44a8c5e08030b9800c6a31c84f3"
+      ],
+      "dueBefore": "P0-02 acceptance and activation of P0-04/P0-06",
+      "unlocks": "P0-02 owner acceptance only; does not waive TypeScript or certify runtime access."
+    },
+    {
+      "id": "AN-D04",
+      "package": "P0-03",
+      "status": "PENDING_OWNER_ACCEPTANCE",
+      "accountableRole": "Finance Owner",
+      "reviewRoles": [
+        "Finance Platform",
+        "Data/BI",
+        "Accounting"
+      ],
+      "accountablePerson": null,
+      "approvedAt": null,
+      "decisionRequired": "Accept or revise remediation design v1: organization currency and IANA timezone, explicit half-open periods, authorized scope, Decimal source aggregation, per-client currency separation, unavailable states and target-model context matrix.",
+      "recommendedOption": "ACCEPT_CONTEXT_DESIGN_WITH_EXPLICIT_POLICIES",
+      "scope": [
+        "services/analytics/analytical-context-contracts.ts",
+        "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md"
+      ],
+      "evidenceHashes": [
+        "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+        "7d3c5320e30da395813564852d7c9cdcd07fd3f1998188145078424cb29094c3"
+      ],
+      "dueBefore": "P0-03 runtime implementation acceptance",
+      "unlocks": "Approved implementation design; no runtime completion claim."
+    },
+    {
+      "id": "AN-D11",
+      "package": "P0-03",
+      "status": "PENDING_SCOPE_DECISION",
+      "accountableRole": "Product Program Lead and Finance Owner",
+      "reviewRoles": [
+        "Data/BI"
+      ],
+      "accountablePerson": null,
+      "approvedAt": null,
+      "decisionRequired": "Resolve roadmap design-only wording versus the registry runtime acceptance criteria. Recommended: retain strict runtime completion within P0-03. Alternative: explicitly amend scope and reassign all three runtime criteria and release dependencies to P1-01.",
+      "recommendedOption": "RETAIN_STRICT_P0_03_RUNTIME_ACCEPTANCE",
+      "options": [
+        "RETAIN_STRICT_P0_03_RUNTIME_ACCEPTANCE",
+        "EXPLICIT_DESIGN_ONLY_SCOPE_AMENDMENT_WITH_RUNTIME_CRITERIA_IN_P1_01"
+      ],
+      "scope": [
+        "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md",
+        "what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md",
+        "what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_WORK_PACKAGE_REGISTRY_2026-08-30.json"
+      ],
+      "dueBefore": "Declaring P0-03 complete",
+      "unlocks": "Unambiguous package completion boundary. No automatic amendment has been made."
+    },
+    {
+      "id": "AN-D12",
+      "package": "P0-03",
+      "status": "PENDING_POLICY_INPUT",
+      "accountableRole": "Finance Owner",
+      "reviewRoles": [
+        "Accounting",
+        "Data/BI"
+      ],
+      "accountablePerson": null,
+      "approvedAt": null,
+      "decisionRequired": "Provide the approved currency catalog/list and version; approve display rounding and currency precision, organization-calendar day/comparison periods, forecast-start convention and separate elapsed-age versus business-day SLA semantics.",
+      "recommendedOption": "VERSIONED_SUPPORTED_CURRENCY_POLICY_AND_EXPLICIT_CALENDAR_RULES",
+      "requiredInput": [
+        "supportedCurrencyCatalogOrList",
+        "catalogVersion",
+        "displayRoundingRule",
+        "periodAndForecastStartDecision",
+        "accountableOwner"
+      ],
+      "scope": [
+        "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md"
+      ],
+      "dueBefore": "Finalizing runtime currency eligibility and calendar/rounding behavior",
+      "unlocks": "Implementation can enforce a product-approved currency policy. Intl precision and currency test fixtures alone are not approval."
+    }
+  ],
+  "packageAcceptance": [
+    {
+      "id": "P0-02",
+      "technicalStatus": "VERIFIED_FOR_OWNERSHIP_DESIGN_SCOPE",
+      "accepted": false,
+      "blockers": [
+        "AN-D03",
+        "AN-HOLD-TYPECHECK"
+      ]
+    },
+    {
+      "id": "P0-03",
+      "technicalStatus": "NORMALIZATION_CONTRACT_VERIFIED_RUNTIME_CRITERIA_UNMET",
+      "accepted": false,
+      "blockers": [
+        "AN-D04",
+        "AN-D11",
+        "AN-D12",
+        "AN-HOLD-TYPECHECK",
+        "P0-03_RUNTIME_INTEGRATION"
+      ]
+    }
+  ],
+  "nextPackageHandoff": [
+    {
+      "id": "P0-04",
+      "status": "PREPARED_NOT_ACTIVATED",
+      "entryRequirements": [
+        "P0-02 accepted",
+        "P0-03 accepted against explicitly agreed scope",
+        "TypeScript and relevant gates green",
+        "WIP slot available"
+      ],
+      "owner": "Data/BI / Engineering Lead",
+      "input": "what-next/analytics-network-program/SURFACE_OWNERSHIP_REGISTRY.json",
+      "firstDeliverable": "Versioned metric contracts for the declared target metrics, including formula, denominator, grain, source, currency, freshness, evidence, exclusions and display vocabulary; freeze exposure/loss distinction.",
+      "acceptance": "Unique/schema-valid metrics; Finance, Accounting, Payments, Product and Data acceptance; unsupported metrics blocked."
+    },
+    {
+      "id": "P0-06",
+      "status": "PREPARED_NOT_ACTIVATED",
+      "entryRequirements": [
+        "P0-02 accepted",
+        "Relevant verification gate green",
+        "WIP slot available"
+      ],
+      "owner": "Security / Module Platform",
+      "input": "Existing route catalogs, module-surface inventory and source action/export/API paths",
+      "firstDeliverable": "Pilot route/action/export/token inventory with explicit tenant, permission, module, grant, fresh-auth and maker-checker decisions; classify each scanner finding.",
+      "acceptance": "Zero unexplained pilot-scope findings; cross-tenant, revoked/expired grant, module-disabled and token-expired denial proof. Record AR capture fix as first available verification improvement."
+    }
+  ],
+  "verificationQueue": {
+    "id": "P0-VERIFY-AR-01",
+    "priority": 1,
+    "status": "IMPLEMENTATION_OBSERVED_VERIFICATION_QUEUED",
+    "ownerRole": "D02 Independent Workflow Verification Engineer / Finance UI verification",
+    "activateWhen": "First verification capacity after current package acceptance, attached to the active package that consumes X1 evidence; no third major package.",
+    "scope": [
+      "tests/e2e/finance-x1-local-authenticated-evidence.spec.ts",
+      "tests/e2e/finance-x1-authenticated-evidence.spec.ts",
+      "components/finance/AROpenItemsHistoryWorkbench.tsx",
+      "tests/e2e/finance-x1-route-observation.ts"
+    ],
+    "finding": "The historical September 1 AR image remains a loading screenshot. Concurrent edits now wait for route-specific ready/empty states and measure useful-result time before accessibility/screenshots; behavior and new artifacts still need verification by the responsible workstream.",
+    "deliverable": "Wait for a route-specific terminal business state before screenshot. Require populated rows for a seeded-populated scenario, separately verify legitimate empty and denied states, and fail on persistent loading/error.",
+    "verification": [
+      "Delayed response cannot produce a ready screenshot",
+      "Expected seeded rows are visible",
+      "Valid empty and denied states are distinct",
+      "Persistent loading/error fails",
+      "usefulResultMs is recorded when useful content becomes ready, excluding later axe/screenshot work",
+      "Re-capture affected AR locale/viewport matrix with new run IDs and hashes; preserve local-only classification"
+    ],
+    "notExecuted": true,
+    "implementationObservedAt": "2026-09-02T12:44:44.232Z",
+    "implementationSource": "tests/e2e/finance-x1-route-observation.ts",
+    "implementationOwnership": "Concurrent workspace work, not authored in this refresh",
+    "nextAction": "Verify the existing shared readiness/timing helper and both updated capture tests; require seeded-row expectations and replacement AR captures before closing this item."
+  },
+  "advancement": {
+    "performed": false,
+    "reason": "Both current packages still occupy WIP slots; owner acceptance, P0-03 runtime/scope resolution and TypeScript gate remain open.",
+    "fullG0RequiredToStartP0_04OrP0_06": false,
+    "fullG0RequiredBeforePhase1": true
+  },
+  "evidenceFiles": [
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "f4b0b0d62933a0e4f29d86d96743eda7c6941a0a4dc8224c842cd83be8635f20"
+    },
+    {
+      "path": "config/__tests__/sidebar.test.ts",
+      "sha256": "a2a74d537bd93705cd4da69902878c314a73d925b27421d10947ec0e86e753f1"
+    },
+    {
+      "path": "services/analytics/analytical-context-contracts.ts",
+      "sha256": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab"
+    },
+    {
+      "path": "services/analytics/__tests__/analytical-context-contracts.test.ts",
+      "sha256": "853c0ca4381e1e8b940a1871811857141eed5d6247b8907c2cdc203067d9afe6"
+    },
+    {
+      "path": "services/analytics/sales-analytics.service.ts",
+      "sha256": "16042faff16c1e2fcacc86a9f3d14dabb129d879a0fa0f6bbdbc7d0b4856a772"
+    },
+    {
+      "path": "services/analytics/business-pulse-contracts.ts",
+      "sha256": "427905cee356fcf4da72129b240ffba4e8e846648e42566b438c8248712d3e3d"
+    },
+    {
+      "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+      "sha256": "f77b96b6bfb617736a22389ee39e4f03aeded9cec7a0c0775b79812cda13658e"
+    },
+    {
+      "path": "services/accounting/finance-statement-export.service.ts",
+      "sha256": "4afeee67e163d12e4441d28730629ff80eccb60bcd5b33d758a91d987685a37b"
+    },
+    {
+      "path": "what-next/analytics-network-program/SURFACE_OWNERSHIP_REGISTRY.json",
+      "sha256": "2868970ffceece00ab1c039b2618cb42585e0a809a6e0ec61f7f1a1492129193"
+    },
+    {
+      "path": "what-next/analytics-network-program/SURFACE_OWNERSHIP_AND_DUPLICATION_MAP.md",
+      "sha256": "7fd05cea51158b60601ad7b7cd4ce95f3fdaf44a8c5e08030b9800c6a31c84f3"
+    },
+    {
+      "path": "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md",
+      "sha256": "7d3c5320e30da395813564852d7c9cdcd07fd3f1998188145078424cb29094c3"
+    },
+    {
+      "path": "what-next/evidence/finance-x1/X1_APPROVAL_INTAKE_PREFILLED_2026-09-01.md",
+      "sha256": "3072b6ff43e336ef1e6bb0384a36300f320a3351b8dd3aaa1968800275eb9460"
+    },
+    {
+      "path": "what-next/evidence/finance-x1/x1-approval-automation-readiness-2026-08-31.json",
+      "sha256": "312e483e946e22c5078b100649f19a903b5be60ba41ce894db393f4f5cf3f38a"
+    },
+    {
+      "path": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260901144339/manifest.local-simulation.json",
+      "sha256": "4d540d077479567c22ed6a485f029b6ab1cffb5e31250c7870c7dc047e69c256"
+    },
+    {
+      "path": "what-next/migrations/isolated-next-level-fresh-replay-20260830.json",
+      "sha256": "558a1698c66c9ac7759a286d40e99c933175976be60eea460dabeb99d515425e"
+    },
+    {
+      "path": "tests/e2e/finance-x1-local-authenticated-evidence.spec.ts",
+      "sha256": "dcaec7f5b091c92bf56a2d9a45b8e0861b9c48699071d602d8d71c88110a38b5"
+    },
+    {
+      "path": "tests/e2e/finance-x1-authenticated-evidence.spec.ts",
+      "sha256": "0b289064456aff3c4fea48de3624a88cdd52155b7843fc3fbe219a8835cb4e4e"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts",
+      "sha256": "1cb4f0988020dab4b9499d228310f0ad014196ad22bd573dece37fab54148bb1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts",
+      "sha256": "f52481739ed70865eab277d1fcb823c6a3aaebce4a6cb77091d06d8ac6da46a3"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-data-access.ts",
+      "sha256": "6492037d9c6f0df0bc75477d7d550cfcab16be049c1ddce79a5762fa95995676"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-data-access.ts",
+      "sha256": "ec52205a769f8c7af20f94037add5f6e19532896666888b73bb3449d8a3ed3fb"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/finance-route-data-access.ts",
+      "sha256": "b0d5c23b30fc31d030f35b465eed81594d476e8b3597f07fb591d73178593d75"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts",
+      "sha256": "93eb83cf3224eac58decb2442640cf8a8b7544216a477d2c10d9d9e99c8d9af1"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-data-access.ts",
+      "sha256": "0b55a8bcb64809423feaf835bafeaf5177b1936db1ca88156281294818a28070"
+    },
+    {
+      "path": "tests/e2e/finance-x1-route-observation.ts",
+      "sha256": "a05b183dfc81706db487dd5ef107c0686227f4feb3df4e81bb52819282d15069"
+    }
+  ],
+  "changedFiles": [
+    "config/sidebar.ts",
+    "services/analytics/__tests__/analytical-context-contracts.test.ts",
+    "what-next/analytics-network-program/SURFACE_OWNERSHIP_REGISTRY.json",
+    "what-next/analytics-network-program/SURFACE_OWNERSHIP_AND_DUPLICATION_MAP.md",
+    "what-next/analytics-network-program/PROGRAM_STATUS_REGISTER.json",
+    "what-next/analytics-network-program/DECISION_REGISTER.json",
+    "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md",
+    "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+    "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_EVIDENCE_2026-09-02.json"
+  ],
+  "lateEvidenceReconciliation": {
+    "observedAt": "2026-09-02T12:44:44.232Z",
+    "beforeAfter": [
+      {
+        "path": "tests/e2e/finance-x1-local-authenticated-evidence.spec.ts",
+        "previousSha256": "74c2e77c5c4973d995a082c14235901f6f8ddecd24688a8a7f67d755e75e2ef2",
+        "currentSha256": "dcaec7f5b091c92bf56a2d9a45b8e0861b9c48699071d602d8d71c88110a38b5"
+      },
+      {
+        "path": "tests/e2e/finance-x1-authenticated-evidence.spec.ts",
+        "previousSha256": "3bb05d8c771a9c86e2d4e2a339f1883f4732c33ef25767fb56f4b9114f9e59b6",
+        "currentSha256": "0b289064456aff3c4fea48de3624a88cdd52155b7843fc3fbe219a8835cb4e4e"
+      },
+      {
+        "path": "tests/e2e/finance-x1-route-observation.ts",
+        "previousSha256": null,
+        "currentSha256": "a05b183dfc81706db487dd5ef107c0686227f4feb3df4e81bb52819282d15069"
+      }
+    ],
+    "sourceReview": "Shared helper checks visible terminal table/summary state, rejects loading/errors for success capture, and separates useful-result time from axe/screenshot duration.",
+    "runtimeVerification": "NOT_RUN_BY_THIS_REFRESH",
+    "remainingWork": "Verify seeded-populated expectations, legitimate empty/denied cases and persistent-loading failure; replace affected AR artifacts with new hashes. Do not duplicate the concurrently added implementation."
+  }
+}

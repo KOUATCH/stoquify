@@ -1,0 +1,84 @@
+{
+  "at": "2026-09-08T15:29:39.454Z",
+  "run": "5083580f-f9e",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-revision.ts": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3",
+    "actions/purchasing/ap-history.actions.ts": "a16ac340274d02056c1f833b8b8fde84da6bb951f058ad2597b897eeb285eb3c",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "hooks/useAPHistoryWorkbench.ts": "abf844dad886187b2424e503ec53efc89d658317c26b195628fbfc8fd0081a06",
+    "messages/en.json": "d5aae1c903186be13f343e9da2ed409b302e3dd4b457f68bf09bf8a21981b2e3",
+    "messages/fr.json": "599a361450a537b7ce630cecd5a97c5d068d93472a0a93eb727d7363995c9170"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Later-page details open and close without dropping the cursor or changing the six-row page",
+        "A source moving outside the date filter invalidates continuation without reloading; recovery discards the cached first page, excludes the changed invoice, reads 30 current rows and retains supplier/date/page-size filters",
+        "Ordinary query failure stays distinct from stale scope and retries without zero-row success"
+      ],
+      "screenshots": [
+        "ap-history-cursor-en-second-page-5083580f-f9e.png",
+        "ap-history-cursor-en-second-page-detail-5083580f-f9e.png",
+        "ap-history-cursor-en-stale-desktop-5083580f-f9e.png",
+        "ap-history-cursor-en-stale-mobile-5083580f-f9e.png",
+        "ap-history-cursor-en-recovered-5083580f-f9e.png",
+        "ap-history-cursor-en-query-failure-5083580f-f9e.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development first-page observation",
+          "ms": 13346
+        },
+        {
+          "name": "Development continuation observation",
+          "ms": 3307
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Later-page details open and close without dropping the cursor or changing the six-row page",
+        "A source moving outside the date filter invalidates continuation without reloading; recovery discards the cached first page, excludes the changed invoice, reads 30 current rows and retains supplier/date/page-size filters",
+        "Ordinary query failure stays distinct from stale scope and retries without zero-row success"
+      ],
+      "screenshots": [
+        "ap-history-cursor-fr-second-page-5083580f-f9e.png",
+        "ap-history-cursor-fr-second-page-detail-5083580f-f9e.png",
+        "ap-history-cursor-fr-stale-desktop-5083580f-f9e.png",
+        "ap-history-cursor-fr-stale-mobile-5083580f-f9e.png",
+        "ap-history-cursor-fr-recovered-5083580f-f9e.png",
+        "ap-history-cursor-fr-query-failure-5083580f-f9e.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development first-page observation",
+          "ms": 7114
+        },
+        {
+          "name": "Development continuation observation",
+          "ms": 3522
+        }
+      ]
+    }
+  ],
+  "scope": "Owned local synthetic AP sources only. Read pagination and recovery; no payment release, external message or production mutation.",
+  "originalBefore": "fae960aa5a4cda18b2088e24e7c70fa7541c1fbee69a7d76eec999d5eae6de37",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-revision.ts": "aff3bf394401a6ed8ce072f0783028528353ceb3eb7c35299f77ef64746ea2f3",
+    "actions/purchasing/ap-history.actions.ts": "a16ac340274d02056c1f833b8b8fde84da6bb951f058ad2597b897eeb285eb3c",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "hooks/useAPHistoryWorkbench.ts": "abf844dad886187b2424e503ec53efc89d658317c26b195628fbfc8fd0081a06",
+    "messages/en.json": "d5aae1c903186be13f343e9da2ed409b302e3dd4b457f68bf09bf8a21981b2e3",
+    "messages/fr.json": "599a361450a537b7ce630cecd5a97c5d068d93472a0a93eb727d7363995c9170"
+  },
+  "sourceStable": true
+}

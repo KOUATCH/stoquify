@@ -1,0 +1,151 @@
+{
+  "at": "2026-09-13T19:03:19.510Z",
+  "baseline": "evidence/source-baseline-v147.json",
+  "baselineReceipt": "c4595e",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/analytics/business-pulse-snapshot.ts": "3087935d81289f3cff8fc2ce51615a423ffc1e3bc49dfb8a95e53346420be14e",
+    "services/analytics/sales-analytics.service.ts": "b34a58a3dd271186346b105409ba213a4c4750e0718ac9c8f1195e144731aba0",
+    "services/analytics/business-pulse-contracts.ts": "36276c62ab9777270dcdeab50b4485f25fe6e5322fe29738e4b4613dd60c118b",
+    "services/analytics/business-pulse-links.ts": "fd936beac5e9edea0029040ce372715f3246257f6203de94d36ac564d7a8df80",
+    "components/analytics/BusinessPulseDashboard.tsx": "7991ed2b22375691755b7b5ab19eb4f8a86090d6abc86755d5d892307b17ea77"
+  },
+  "tests": {
+    "passed": 52,
+    "suites": 6,
+    "receipt": "36a6db",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/analytics/__tests__/business-pulse-snapshot.test.ts services/analytics/__tests__/business-pulse.service.test.ts services/analytics/__tests__/business-pulse-links.test.ts services/analytics/__tests__/legacy-sales-analytics.test.ts actions/analytics/__tests__/sales-analytics.authorization.test.ts components/bi/__tests__/bi-command-primitives.test.tsx"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "314b52",
+    "command": "node node_modules/eslint/bin/eslint.js services/analytics/business-pulse-snapshot.ts services/analytics/sales-analytics.service.ts services/analytics/business-pulse-contracts.ts services/analytics/business-pulse-links.ts components/analytics/BusinessPulseDashboard.tsx services/analytics/__tests__/business-pulse-snapshot.test.ts services/analytics/__tests__/business-pulse.service.test.ts services/analytics/__tests__/business-pulse-links.test.ts services/analytics/__tests__/legacy-sales-analytics.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "13cd98",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/pulse-coverage-v147-dfd0f8ad-7195-43e0-9fc5-d18d1ebb0560.json",
+    "receipt": "e909e3",
+    "at": "2026-09-13T19:00:19.837Z",
+    "sourceBefore": {
+      "services/analytics/business-pulse-snapshot.ts": "3087935d81289f3cff8fc2ce51615a423ffc1e3bc49dfb8a95e53346420be14e",
+      "services/analytics/sales-analytics.service.ts": "b34a58a3dd271186346b105409ba213a4c4750e0718ac9c8f1195e144731aba0",
+      "services/analytics/business-pulse-contracts.ts": "36276c62ab9777270dcdeab50b4485f25fe6e5322fe29738e4b4613dd60c118b",
+      "services/analytics/business-pulse-links.ts": "fd936beac5e9edea0029040ce372715f3246257f6203de94d36ac564d7a8df80",
+      "components/analytics/BusinessPulseDashboard.tsx": "7991ed2b22375691755b7b5ab19eb4f8a86090d6abc86755d5d892307b17ea77"
+    },
+    "checks": [
+      {
+        "locale": "en",
+        "covered": true,
+        "partial": true,
+        "unavailable": true,
+        "notApplicable": true,
+        "inactive": true,
+        "historicalSales": 100,
+        "recovered": true
+      },
+      {
+        "locale": "fr",
+        "covered": true,
+        "partial": true,
+        "unavailable": true,
+        "notApplicable": true,
+        "inactive": true,
+        "historicalSales": 100,
+        "recovered": true
+      }
+    ],
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "pulse-coverage-v147-en-1440-dfd0f8ad-7195-43e0-9fc5-d18d1ebb0560.png",
+          "pulse-coverage-v147-en-768-dfd0f8ad-7195-43e0-9fc5-d18d1ebb0560.png",
+          "pulse-coverage-v147-en-320-dfd0f8ad-7195-43e0-9fc5-d18d1ebb0560.png"
+        ],
+        "pageErrors": [],
+        "partialCoverageVisible": true,
+        "readyMs": 8573,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "noCoveredRecordsNotZero": true,
+        "nonStockItemsExcluded": true,
+        "inactiveOperatingSiteUnavailable": true,
+        "historicalSalesRetained": true,
+        "reactivationRecovers": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "pulse-coverage-v147-fr-1440-dfd0f8ad-7195-43e0-9fc5-d18d1ebb0560.png",
+          "pulse-coverage-v147-fr-768-dfd0f8ad-7195-43e0-9fc5-d18d1ebb0560.png",
+          "pulse-coverage-v147-fr-320-dfd0f8ad-7195-43e0-9fc5-d18d1ebb0560.png"
+        ],
+        "pageErrors": [],
+        "partialCoverageVisible": true,
+        "readyMs": 3270,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "noCoveredRecordsNotZero": true,
+        "nonStockItemsExcluded": true,
+        "inactiveOperatingSiteUnavailable": true,
+        "historicalSalesRetained": true,
+        "reactivationRecovers": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "services/analytics/business-pulse-snapshot.ts": "3087935d81289f3cff8fc2ce51615a423ffc1e3bc49dfb8a95e53346420be14e",
+      "services/analytics/sales-analytics.service.ts": "b34a58a3dd271186346b105409ba213a4c4750e0718ac9c8f1195e144731aba0",
+      "services/analytics/business-pulse-contracts.ts": "36276c62ab9777270dcdeab50b4485f25fe6e5322fe29738e4b4613dd60c118b",
+      "services/analytics/business-pulse-links.ts": "fd936beac5e9edea0029040ce372715f3246257f6203de94d36ac564d7a8df80",
+      "components/analytics/BusinessPulseDashboard.tsx": "7991ed2b22375691755b7b5ab19eb4f8a86090d6abc86755d5d892307b17ea77"
+    },
+    "sourceStable": true
+  },
+  "visualReview": {
+    "inspected": "Final French mobile coverage screenshot",
+    "screenshots": 6,
+    "limits": [
+      "Other generated BI strings and shared badges remain partly English.",
+      "No complete screen-reader, zoom or pointer certification."
+    ]
+  },
+  "performance": {
+    "enMs": 8573,
+    "frMs": 3270,
+    "context": "Local development route-ready observations, not production benchmarks."
+  },
+  "guide": "BUSINESS_PULSE_COVERAGE_V147.md",
+  "coverage": {
+    "discoveredWorkflows": 256,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2921,
+      "tests": 1042,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 196,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "migrations": false,
+  "build": {
+    "run": false,
+    "reason": "Actual isolated application exercised; migration-bearing default build not invoked."
+  }
+}

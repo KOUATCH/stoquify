@@ -5,6 +5,10 @@ import { observeModuleAccess } from "@/services/modules/module-entitlement.servi
 import { getPurchaseOrderFormOptions } from "@/services/purchase-order/purchase-order.service"
 
 import CreatePurchaseOrderPage from "../page"
+import { getAuthenticatedUser } from "@/config/useAuth"
+import { createPurchaseOrder } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction"
+import { localizedRedirect } from "@/i18n/server-routing"
+let mockFormAction: (formData: FormData) => Promise<unknown>
 
 jest.mock("next-intl/server", () => ({
   getLocale: jest.fn(),
@@ -66,7 +70,7 @@ jest.mock("@/components/purchase-orders/ModernCreatePurchaseOrderForm", () => ({
     locations: Array<{ id: string }>
     items: Array<{ id: string }>
     action: (formData: FormData) => Promise<void>
-  }) => (
+  }) => { mockFormAction = action; return (
     <section>
       <h1>Purchase order create form rendered</h1>
       <p>{organizationId}</p>
@@ -75,7 +79,7 @@ jest.mock("@/components/purchase-orders/ModernCreatePurchaseOrderForm", () => ({
       <p>{items.length} items</p>
       <p>{typeof action}</p>
     </section>
-  ),
+  ) },
 }))
 
 jest.mock("@/components/dashboard/DashboardRouteState", () => ({
@@ -107,6 +111,15 @@ const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockGetPurchaseOrderFormOptions = getPurchaseOrderFormOptions as jest.Mock
 
 describe("CreatePurchaseOrderPage", () => {
+  it("returns a stopped-work failure to the form instead of throwing or redirecting", async () => {
+    ;(getAuthenticatedUser as jest.Mock).mockResolvedValue({ organizationId: "org-1" })
+    ;(createPurchaseOrder as jest.Mock).mockResolvedValue({ success: false, data: null, code: "FORBIDDEN", reason: "MODULE_NEW_WORK_STOPPED", error: "New work is stopped" })
+    render(await CreatePurchaseOrderPage())
+    const result = await mockFormAction(new FormData())
+    expect(result).toEqual({ success: false, code: "FORBIDDEN", reason: "MODULE_NEW_WORK_STOPPED", error: "New work is stopped" })
+    expect(localizedRedirect).not.toHaveBeenCalled()
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
     getLocale.mockResolvedValue("en")

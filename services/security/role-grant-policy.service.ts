@@ -1,8 +1,8 @@
 import {
-  hasRbacPermission,
   permissionRisk,
   type PermissionRisk,
 } from "@/lib/security/rbac-permissions"
+import { canGrantRolePermission } from "@/services/roles/role-permission-policy"
 
 export const INVITATION_ROLE_GRANT_PERMISSIONS = [
   "users.invite",
@@ -52,7 +52,7 @@ export function evaluateRoleGrantAuthority(
   actorPermissions: readonly string[],
 ): RoleGrantPolicyDecision {
   const missingPermissions = INVITATION_ROLE_GRANT_PERMISSIONS.filter(
-    (permission) => !hasRbacPermission(actorPermissions, permission),
+    (permission) => !canGrantRolePermission(actorPermissions, permission),
   )
 
   if (missingPermissions.length > 0) {
@@ -102,7 +102,7 @@ export function evaluateRoleGrantPolicy(input: RoleGrantPolicyInput): RoleGrantP
     (permission) => permission !== "*",
   )
   const ungrantablePermissions = input.targetRole.permissions.filter(
-    (permission) => !hasRbacPermission(explicitActorPermissions, permission),
+    (permission) => !canGrantRolePermission(explicitActorPermissions, permission),
   )
 
   if (ungrantablePermissions.length > 0) {

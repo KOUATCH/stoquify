@@ -109,6 +109,13 @@ const mockFindReconciliationRun = db.reconciliationRun.findFirst as jest.Mock
 const mockFindCloseRun = db.closeRun.findFirst as jest.Mock
 
 describe("cash command service", () => {
+  it("keeps suspense risk visible when the combined currency total is unavailable", () => {
+    const data = composeCashCommandData({ organizationId: "org-1", organizationName: "Owned", generatedAt, currency: "XAF", snapshots: { tenantOperating: tenantSnapshot(), paymentTruth: paymentSnapshot({ openSuspenseAmount: null, openSuspenseCount: 2 }), inventoryCash: inventorySnapshot(), closeReadiness: closeSnapshot() }, drawerDashboard: drawerDashboard(), actionQueue: actionQueue(), moduleControl: moduleControl() })
+    expect(data.summary.unreconciledCash).toBeNull()
+    expect(data.cards.find(card => card.id === "unreconciled_cash")?.value).toBeNull()
+    expect(data.risks).toContainEqual(expect.objectContaining({ title: "Unreconciled cash", moneyImpact: null, severity: "high" }))
+    expect(data.commandBrief.summary).toContain("total unavailable")
+  })
   it("composes read-only cash command metrics with evidence, redaction, freshness, actions, and proof links", () => {
     const data = composeCashCommandData({
       organizationId: "org-1",

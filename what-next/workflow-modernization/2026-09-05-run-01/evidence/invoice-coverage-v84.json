@@ -1,0 +1,233 @@
+{
+  "at": "2026-09-08T19:51:17.119Z",
+  "sourceBaseline": "evidence/source-baseline-v84-final.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "hooks/useAPHistoryWorkbench.ts": "d600f4fba4fac195ee585725e6c7db918fe86d206ad8b8952e93aca636bf240b",
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/dashboard/history/TransactionHistoryWorkbenchShell.tsx": "888cac21fb94a53b2d2019b971efa289d23f012297e75b7a9bbf50cc5083a30d",
+    "components/dashboard/primitives/command-center-primitives.tsx": "ab5cb123d0032fea3b2ced2670634c4df8dd3d4007913fc191d17bf58f47dbe5",
+    "components/purchasing/APHistoryWorkbench.tsx": "2b441b13f756273719d93b1a449aec435e397a7271fd300540ea65520b50a528",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7",
+    "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de",
+    "components/finance/__tests__/CashPaymentHistoryWorkbench.test.tsx": "458620bb8af8979a6b160d6883c78b69672d3b7ed23416a7b2b659d5b8d8ac37",
+    "hooks/__tests__/useAPHistoryWorkbench.scope.test.tsx": "d725ab8cea17b74a85d61b281dfa9ed20fa6ba764fc76069a3610d5d2592040d",
+    "components/dashboard/primitives/__tests__/command-center-primitives.test.tsx": "a313700a0910d0db5b18dcb90718e4d30932f2669c24891ff52eb830d66ea879",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+    "services/purchasing/__tests__/ap-history-financial.test.ts": "5ae903bb998f5168067d7d3f166e10d36649d211364745031e82bb3e1ae50bea",
+    "services/purchasing/__tests__/payment-request-read.service.test.ts": "bacb9b6b532301b1c3197f97796ef9441d2a1040cb4fce1db6ba38000ea2a0db",
+    "components/purchasing/__tests__/APHistoryWorkbench.test.tsx": "3d4175c91a4f1b35ab4edb693de73b251988a94031d05b71e06730bfbf29d370",
+    "services/purchasing/__tests__/supplier-payment-balance.test.ts": "fb430356d716cf42b91a52cce9cdecb15d81ff1af1f8c2850850bc2035a303c3",
+    "services/purchasing/__tests__/purchase-return-credit.service.test.ts": "04fab314d631875dd2ebc93f161f8b719cff32219968aa59560ae6c8c290a803",
+    "hooks/__tests__/useAPHistoryWorkbench.test.ts": "7c2cd79ad3ba2bf6c067e10ee2737d2a1fe5c772e7f916f8a22ac2381c2c2c8d"
+  },
+  "tests": {
+    "file": "evidence/invoice-coverage-final-v84-3.json",
+    "passed": 131,
+    "suites": 11,
+    "session": 60697,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 64418,
+      "exitCode": 0,
+      "status": "passed"
+    },
+    {
+      "command": "changed-file eslint; file lists in INVOICE_COVERAGE_VERIFICATION_V84.md",
+      "sessions": [
+        42428,
+        27892,
+        26188,
+        4862
+      ],
+      "exitCode": 0,
+      "status": "passed"
+    }
+  ],
+  "database": {
+    "file": "lanes/environment/invoice-coverage-12538a14-3c8.json",
+    "session": 24297,
+    "checks": 8,
+    "exitCode": 0,
+    "originalUnchanged": true,
+    "sourceStable": true,
+    "publicCreditReturnAuthorityVerified": false
+  },
+  "browser": {
+    "file": "lanes/environment/invoice-coverage-browser-56370d48-4d3.json",
+    "session": 13593,
+    "exitCode": 0,
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "stagesPerLocale": 4,
+    "screenshots": 14,
+    "originalUnchanged": true,
+    "sourceStable": true,
+    "pageErrors": [],
+    "developmentTimings": [
+      {
+        "locale": "en",
+        "timings": [
+          {
+            "name": "Development covered-invoice history load",
+            "milliseconds": 8312
+          }
+        ]
+      },
+      {
+        "locale": "fr",
+        "timings": [
+          {
+            "name": "Development covered-invoice history load",
+            "milliseconds": 7654
+          }
+        ]
+      }
+    ]
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-en-covered-desktop-56370d48-4d3.png",
+      "sha256": "eea5a111dd757879d784e4cd1ef3a9b297b5af52d936411e9ca01607b2f78b4e"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-en-covered-details-56370d48-4d3.png",
+      "sha256": "c6b17e79f154f8a8793cf718043d58c1cf7fe0b34d76a8e601feba1ed25f0571"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-en-covered-390-56370d48-4d3.png",
+      "sha256": "7cdd19029e69fca0c6a35d212a251a9440e6283d1b53e96059daea5970f2b5e3"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-en-covered-768-56370d48-4d3.png",
+      "sha256": "33144c5e2494c9781d717c795b5f7981e24c31eab5fede4dab9268c7ca55bed7"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-en-text200-56370d48-4d3.png",
+      "sha256": "786a5a0425050e490c3baae4cbe1c996b435fec60d4761e998f1fa1c28be2897"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-en-reopened-desktop-56370d48-4d3.png",
+      "sha256": "bf9824219a140b9493262020ae079cbe7901f9b68c6ba6c59e24cf7f6cef5162"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-en-denied-56370d48-4d3.png",
+      "sha256": "630ae96329420eb043a77c94a9108a7a125211f1a515f832a1458b157a5994a5"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-fr-covered-desktop-56370d48-4d3.png",
+      "sha256": "5ddf68c1da3dddcace30a421ead9f57983d05f4cc596f4c23a66f4fd8fada330"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-fr-covered-details-56370d48-4d3.png",
+      "sha256": "1f2fa445b1f55b10e62f83459e256ef3d29bc263027c1a5705508b90ad588a0d"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-fr-covered-390-56370d48-4d3.png",
+      "sha256": "5a61d0089e5d00f0dafc6ea454a03e8cf76539fceb82feeeae5049faef187302"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-fr-covered-768-56370d48-4d3.png",
+      "sha256": "1754c615f9dfd33ec60454ba8bd610e20f9da30b78d7b64f4a1d9da09624e6ee"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-fr-text200-56370d48-4d3.png",
+      "sha256": "024b60fe565f51424813aab7649ddd28f11dc9d845ed244ffe6b949d323b8ebd"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-fr-reopened-desktop-56370d48-4d3.png",
+      "sha256": "9a29e25db745908a098d6cff2a4995711b132306bee8c7db07936c19d0aacd1e"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-coverage-v84/invoice-coverage-fr-denied-56370d48-4d3.png",
+      "sha256": "44c7c0011caa7f6d0908d5b1701fdf0d176e7a95262d75ee1a054abff9205744"
+    }
+  ],
+  "baselineCapture": {
+    "session": 83858,
+    "exitCode": 0
+  },
+  "failedAttempts": [
+    {
+      "file": "lanes/environment/invoice-coverage-59b5722f-b60.json",
+      "reason": "Nested organization field rejected by Prisma; corrected parent-inherited child create inputs"
+    },
+    {
+      "file": "lanes/environment/invoice-coverage-379364fa-e68.json",
+      "reason": "Receipt-based null-header invoice rejected by credit query; corrected with line provenance retained"
+    },
+    {
+      "file": "lanes/environment/invoice-coverage-browser-0ea3505f-a57.json",
+      "reason": "Raw PAID in invoice detail; localized"
+    },
+    {
+      "file": "lanes/environment/invoice-coverage-browser-ac8f19e0-acb.json",
+      "reason": "Drawer focus return failed"
+    },
+    {
+      "file": "lanes/environment/invoice-coverage-browser-2ad152bd-92f.json",
+      "reason": "Focus callback alone insufficient because selection loading removed table opener; corrected hook"
+    },
+    {
+      "session": 15409,
+      "receiptRetained": false,
+      "exitCode": 1,
+      "reason": "Filesystem EPERM; no successful result claimed"
+    }
+  ],
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2760,
+      "tests": 969,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2357,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "fullBuild": "not run; actual application route compiled/executed; no migration-bearing build",
+  "remaining": [
+    "No-journal reversal period handling defect",
+    "Historical invoice status drift repair",
+    "Complete credit/return public authority and lifecycle",
+    "Downstream reconciliation/close and other platform workflows",
+    "Native assistive technology and inherited shell localization"
+  ],
+  "nextRecommendedSkill": "012-aqstoqflow-payroll-presence-engine after remaining AP priorities"
+}

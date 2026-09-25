@@ -1,0 +1,107 @@
+{
+  "evidenceDate": "2026-09-05T18:38:40.159Z",
+  "finding": "FA-F01",
+  "status": "historical_reporting_corrected_focused_unit_verified; archive_register_UI_remains",
+  "productionFiles": [
+    "services/accounting/reports.service.ts",
+    "services/accounting/financial-statements.service.ts"
+  ],
+  "testFiles": [
+    "services/accounting/__tests__/reports-retained-accounts.service.test.ts",
+    "services/accounting/__tests__/financial-statements.service.test.ts"
+  ],
+  "before": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/accounting/__tests__/reports-retained-accounts.service.test.ts services/accounting/__tests__/financial-statements.service.test.ts",
+    "suites": 2,
+    "failed": 9,
+    "passed": 5,
+    "seconds": 2.927,
+    "exitCode": 1,
+    "output": "functions exec output chunk 3bcbc0",
+    "sourceHashes": {
+      "services/accounting/reports.service.ts": "f3aebc36fc465f4df0bb8b56ff4481a951cb3dd4aa1636cffe942bbded5b6e4d",
+      "services/accounting/financial-statements.service.ts": "17ca8483cffe160f292ed8f90e3eeee4d5f32dcf24b9cc20e19b75cb28c4510a"
+    },
+    "testHashes": {
+      "services/accounting/__tests__/reports-retained-accounts.service.test.ts": "40d39dc18f59f1088565a8b72f8a7095b32d8b71297e23215b775a5e59b46f5c",
+      "services/accounting/__tests__/financial-statements.service.test.ts": "82d7dd4d1fb523cdfa7ba075f0f790f99dd52aa8ca882dcb8d965a7bcb464668"
+    }
+  },
+  "after": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/accounting/__tests__/reports-retained-accounts.service.test.ts services/accounting/__tests__/financial-statements.service.test.ts services/accounting/__tests__/reports-export.service.test.ts services/accounting/__tests__/accounts.service.test.ts services/accounting/__tests__/manual-journal.test.ts services/accounting/__tests__/posting.service.test.ts",
+    "suites": 6,
+    "passed": 30,
+    "failed": 0,
+    "seconds": 7.543,
+    "exitCode": 0,
+    "output": "functions exec session 68855 / output chunk 7515a1",
+    "files": [
+      {
+        "file": "services/accounting/reports.service.ts",
+        "sha256": "dfe72749da17a5c3af4de5bd2ac4e680138fdd0c1603a1cd19f85b41bb3ce268"
+      },
+      {
+        "file": "services/accounting/financial-statements.service.ts",
+        "sha256": "a0ed910c921207695372c7fcaaf7c857ba605e58b0d094f6383e2d7525644430"
+      },
+      {
+        "file": "services/accounting/__tests__/reports-retained-accounts.service.test.ts",
+        "sha256": "40d39dc18f59f1088565a8b72f8a7095b32d8b71297e23215b775a5e59b46f5c"
+      },
+      {
+        "file": "services/accounting/__tests__/financial-statements.service.test.ts",
+        "sha256": "d76b9761bc7d75e7ee650fb4971d5bf7f88414ef276973e03b4d094c0a003632"
+      },
+      {
+        "file": "services/accounting/__tests__/reports-export.service.test.ts",
+        "sha256": "7d15ac9f1d5e40d144a1bb6aa64ed010662e80d7a73c65c69ae99645f7b913ff"
+      },
+      {
+        "file": "services/accounting/__tests__/accounts.service.test.ts",
+        "sha256": "79daa585cf8a5cb66fec872b075ec1fa6e408b9ab95e497119d9a09e4cde21dd"
+      },
+      {
+        "file": "services/accounting/__tests__/manual-journal.test.ts",
+        "sha256": "2077478a0ceb2ba413f4d378f7f7f3c57eb3479fc1c0112823f94e40a2357d5a"
+      },
+      {
+        "file": "services/accounting/__tests__/posting.service.test.ts",
+        "sha256": "2e6e3691b836b805911065b1a552822cf909cf037ac58d297be978cbf5221463"
+      }
+    ]
+  },
+  "checks": [
+    "Both archived posting sides retain balanced nonzero totals",
+    "One archived side with current active account retains exact totals",
+    "Retained descriptors sort deterministically by code and ID",
+    "Active unused account include-zero behavior unchanged",
+    "Reversed originals and compensating posted entries retain activity and net balances",
+    "Tenant/period/date/status scopes exclude draft, foreign, other-period and out-of-range activity",
+    "Missing, foreign and mismatched trial balance descriptors reject rather than disappear",
+    "Financial statements preserve prior-period opening capital/cash and current-period revenue/expense",
+    "Archived accounts without relevant posted activity are not selected as retained descriptors",
+    "Missing period/cumulative and foreign statement evidence reject",
+    "Known MEMO account evidence remains outside financial statement classification while preserving ledger check semantics",
+    "Failed data reads propagate",
+    "Existing accounting export, account structural immutability, manual journal and posting tests pass"
+  ],
+  "notExecuted": [
+    "Real PostgreSQL retained-account fixture",
+    "Browser historical report visit",
+    "Report latency benchmark",
+    "Archive/posting concurrency",
+    "Production data changes",
+    "Migrations",
+    "Professional statutory approval"
+  ],
+  "limitations": [
+    "A concurrent posting between independent read queries can now produce an honest unavailable result if a descriptor is missing; snapshot isolation/retry was not broadened in this slice.",
+    "Chart-account archive mutation and its list visibility remain unchanged. Previously archived data is included by corrected readers; no backfill needed.",
+    "Financial statements load tenant-scoped descriptors for all types so genuinely missing evidence can be distinguished from valid MEMO exclusions. The existing read-model type classification still controls displayed financial statement lines.",
+    "No claims about whole finance workflow or statutory certification."
+  ],
+  "pending": [
+    "Parent coordinated typecheck/build/lint",
+    "Real isolated source-to-report proof if required for next release evidence"
+  ]
+}

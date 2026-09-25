@@ -1,0 +1,36 @@
+{
+  "id": "current-finance-verified",
+  "startedAt": "2026-09-05T09:40:52.268Z",
+  "finishedAt": "2026-09-05T09:41:23.009Z",
+  "command": [
+    "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--json",
+    "--runTestsByPath",
+    "components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts",
+    "components/finance/__tests__/FinancePaymentsTable.test.tsx",
+    "components/finance/__tests__/CashFlowStatementTable.test.tsx",
+    "components/finance/__tests__/finance-final-two-section-route-matrix.test.ts",
+    "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+    "components/DataTableComponents/__tests__/SystemTablePresentation.contract.test.ts",
+    "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts",
+    "scripts/__tests__/x1-approval-automation-orchestrator.test.js"
+  ],
+  "target": "local workspace; database connection disabled with loopback port 1",
+  "sourceBinding": "current-finance-verified-source-binding.json",
+  "changedDuringCheck": [],
+  "exitCode": 0,
+  "signal": null,
+  "status": "passed",
+  "summary": {
+    "suites": 8,
+    "passedSuites": 8,
+    "failedSuites": 0,
+    "tests": 61,
+    "passedTests": 61,
+    "failedTests": 0,
+    "pendingTests": 0
+  },
+  "log": "current-finance-verified.log"
+}

@@ -1,0 +1,95 @@
+{
+  "configurationVersion": "1.0",
+  "mode": "LOCAL_DEVELOPMENT_SIMULATION",
+  "environment": "local",
+  "authoritative": false,
+  "gateReleaseAllowed": false,
+  "approvalPlatform": "LOCAL_FILE_APPROVAL_SIMULATOR",
+  "approvalWorkspaceId": "local://stoquify/x1/workspace",
+  "approvalTemplateId": "repository://stoquify/docs/blockers-docs/STOQ-X1-POL-004_BOUNDED_AUTOMATION_AUTHORITY_DELEGATION_DRAFT_2026-08-31.md",
+  "providerAdapterModule": "services/governance/approval-providers/local-file-simulator.js",
+  "identityProvider": "LOCAL_FIXTURE_IDENTITY_PROVIDER",
+  "governanceRegisterUri": "embedded://localSimulationIdentities",
+  "secretManagerReference": "not-required://local-simulation/no-external-credentials",
+  "callbackUrl": "file-event://what-next/evidence/finance-x1/local-simulation/callback-events",
+  "evidenceStoreUri": "repository://stoquify/what-next/evidence/finance-x1/local-simulation",
+  "retentionPolicyReference": "LOCAL-EPHEMERAL-EVIDENCE-DELETE-ON-RESET",
+  "proposedValidityDays": 30,
+  "servicePrincipals": {
+    "approvalOrchestration": "local-sp://x1-approval-orchestration",
+    "evidenceCapture": "local-sp://x1-evidence-capture",
+    "independentVerifier": "local-sp://x1-independent-verifier",
+    "implementationCi": "local-sp://x1-implementation-ci"
+  },
+  "localSimulationIdentities": {
+    "approvalOrchestration": {
+      "id": "local-sp://x1-approval-orchestration",
+      "displayName": "Stoquify X1 Local Approval Orchestrator",
+      "permissions": [
+        "local.approval.create",
+        "local.approval.read",
+        "local.approval.synchronize"
+      ]
+    },
+    "evidenceCapture": {
+      "id": "local-sp://x1-evidence-capture",
+      "displayName": "Stoquify X1 Local Evidence Capture",
+      "permissions": [
+        "local.evidence.create",
+        "local.evidence.read"
+      ]
+    },
+    "independentVerifier": {
+      "id": "local-sp://x1-independent-verifier",
+      "displayName": "Stoquify X1 Local Independent Verifier",
+      "permissions": [
+        "local.approval.read",
+        "local.evidence.read",
+        "local.hash.verify"
+      ]
+    },
+    "implementationCi": {
+      "id": "local-sp://x1-implementation-ci",
+      "displayName": "Stoquify X1 Local Implementation CI",
+      "permissions": [
+        "local.contract.read",
+        "local.implementation.execute"
+      ]
+    }
+  },
+  "simulationControls": {
+    "requiredEnvironmentVariable": "X1_ALLOW_LOCAL_SIMULATION=true",
+    "allowedApplicationOrigins": [
+      "http://127.0.0.1:3000",
+      "http://localhost:3000"
+    ],
+    "allowedDatabase": "stoquify_replay_next_20260830",
+    "allowedTenantId": "rds_org_001",
+    "foreignIsolationProbeTenantId": "rds_org_002",
+    "allowProductionDatabase": false,
+    "allowSharedDatabaseReset": false,
+    "allowExternalNetworkCalls": false,
+    "allowRealSignatures": false,
+    "allowAuthoritativeApprovalRecords": false,
+    "allowGateRelease": false,
+    "syntheticDecisionsOnly": true,
+    "authenticatedEvidence": false,
+    "evidenceWatermark": "LOCAL SIMULATION - NOT RELEASE EVIDENCE",
+    "preserveAuthoritativeConfiguration": true
+  },
+  "simulatedApprovalDefaults": {
+    "decision": "PENDING",
+    "requiresExplicitLocalDecision": true,
+    "approverAuthorityVerified": false,
+    "signatureVerified": false,
+    "externalApprovalRecordId": null
+  },
+  "limitations": [
+    "This profile supports local functional testing only.",
+    "It does not create a legal or authoritative approval.",
+    "It does not prove approver identity or appointment authority.",
+    "It does not produce authenticated release evidence.",
+    "It must never satisfy or release an X1 production or external-evidence gate.",
+    "The authoritative configuration and its external blockers remain unchanged."
+  ]
+}

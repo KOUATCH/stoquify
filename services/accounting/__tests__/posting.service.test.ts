@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 
 import { postJournalEntry, reverseJournalEntry } from "../posting.service"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 
 jest.mock("@/prisma/db", () => ({
   db: {
@@ -11,6 +12,8 @@ jest.mock("@/prisma/db", () => ({
 import { db } from "@/prisma/db"
 
 const mockTx = {
+  paymentReconciliationInboxItem: { findFirst: jest.fn().mockResolvedValue(null) },
+  $queryRaw: jest.fn(),
   chartOfAccount: {
     findMany: jest.fn(),
   },
@@ -98,6 +101,11 @@ const postableAccounts = [
 describe("posting service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockTx.paymentReconciliationInboxItem.findFirst.mockResolvedValue(null)
+    mockTx.$queryRaw.mockImplementation(async (query: { sql: string } | TemplateStringsArray) => {
+      const sql = "sql" in query ? query.sql : query.join("")
+      return sql.includes("accounting_periods") ? [openPeriod] : sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["accounting"], newWorkStoppedAt: { accounting: "2026-09-05T12:00:00.000Z" } }]
+    })
     mockDb.$transaction.mockImplementation(async (handler: (tx: typeof mockTx) => Promise<unknown>) => handler(mockTx))
     mockTx.chartOfAccount.findMany.mockResolvedValue(postableAccounts)
     mockTx.accountingSourceLink.findFirst.mockResolvedValue(null)
@@ -121,6 +129,27 @@ describe("posting service", () => {
     mockTx.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
   })
 
+  it("refuses generic reversal of a journal reserved as final suspense clearing evidence", async () => {
+    mockTx.journalEntry.findFirst.mockResolvedValue({ id: "clearing-1", sourceType: "MANUAL", sourceId: "clearing-1", entryNumber: "JE-1", periodId: "period-1", currency: "XAF",
+      createdById: "maker-1", postedById: "poster-1", lines: [{ debit: new Prisma.Decimal(100), credit: new Prisma.Decimal(0), currency: "XAF" }] })
+    mockTx.paymentReconciliationInboxItem.findFirst.mockResolvedValue({ id: "allocation-1" })
+    await expect(reverseJournalEntry("org-1", "clearing-1", "reviewer-1", "Reviewed recovery request", new Date(), { actorPermissions: ["accounting.journal.reverse"], lastAuthAt: new Date() }))
+      .rejects.toThrow(/source-owned recovery/i)
+    expect(mockTx.paymentReconciliationInboxItem.findFirst).toHaveBeenCalledWith({ where: { organizationId: "org-1", source: "SUSPENSE_POST", idempotencyKey: "suspense-resolution-clearing:clearing-1" }, select: { id: true } })
+    expect(mockTx.journalEntry.create).not.toHaveBeenCalled()
+    expect(mockTx.ledgerPostingBatch.create).not.toHaveBeenCalled()
+  })
+
+  it("loads batch provenance and refuses generic reversal of a source recovery journal", async () => {
+    mockTx.journalEntry.findFirst.mockImplementation(async (args: { include: { postingBatch?: boolean } }) => ({ id: "recovery-1", sourceType: "MANUAL", sourceId: "clearing-1", entryNumber: "SR-1", periodId: "period-1", currency: "XAF",
+      createdById: "maker-1", postedById: "poster-1", status: "POSTED", lines: [{ debit: new Prisma.Decimal(100), credit: new Prisma.Decimal(0), currency: "XAF" }],
+      ...(args.include.postingBatch ? { postingBatch: { metadata: { resolutionRecoveryReceiptId: "receipt-1" } } } : {}) }))
+    await expect(reverseJournalEntry("org-1", "recovery-1", "reviewer-1", "Reviewed correction request", new Date(), { actorPermissions: ["accounting.journal.reverse"], lastAuthAt: new Date() }))
+      .rejects.toThrow(/preserves a suspense recovery/i)
+    expect(mockTx.journalEntry.create).not.toHaveBeenCalled()
+    expect(mockTx.ledgerPostingBatch.create).not.toHaveBeenCalled()
+  })
+
   it("rejects posting anything other than a draft journal entry", async () => {
     mockTx.journalEntry.findFirst.mockResolvedValue({
       id: "je-1",
@@ -133,7 +162,25 @@ describe("posting service", () => {
     await expect(postJournalEntry("org-1", "je-1", "user-1")).rejects.toThrow(/only draft/i)
   })
 
-  it("posts a balanced draft journal entry through an idempotent batch", async () => {
+  it("uses the locked period state rather than a stale journal relation", async () => {
+    mockTx.journalEntry.findFirst.mockResolvedValue({ id: "je-1", organizationId: "org-1", status: "DRAFT", periodId: openPeriod.id, period: openPeriod, entryDate: new Date("2026-06-15T12:00:00Z") })
+    mockTx.$queryRaw.mockResolvedValueOnce([{ ...openPeriod, status: "CLOSED" }])
+    await expect(postJournalEntry("org-1", "je-1", "reviewer")).rejects.toThrow(/not open/)
+    expect(mockTx.ledgerPostingBatch.create).not.toHaveBeenCalled()
+    expect(mockTx.journalEntry.update).not.toHaveBeenCalled()
+  })
+
+  it("rejects a journal assigned to a different accounting period before posting", async () => {
+    mockTx.journalEntry.findFirst.mockResolvedValue({ id: "je-1", organizationId: "org-1", status: "DRAFT", periodId: "other-period", period: openPeriod, entryDate: new Date("2026-06-15T12:00:00Z") })
+    await expect(postJournalEntry("org-1", "je-1", "reviewer")).rejects.toThrow(/period changed/)
+    expect(mockTx.ledgerPostingBatch.create).not.toHaveBeenCalled()
+    expect(mockTx.journalEntry.update).not.toHaveBeenCalled()
+  })
+
+  it("posts an existing balanced draft through an idempotent batch while new manual journals are stopped", async () => {
+    await expect(assertModuleNewWorkInTx(mockTx as unknown as Prisma.TransactionClient, {
+      organizationId: "org-1", moduleSlug: "accounting", operation: "accounting.manual-journal.create",
+    })).rejects.toMatchObject({ metadata: { reason: "MODULE_NEW_WORK_STOPPED" } })
     arrangeCertifiedCloseTarget()
     mockTx.journalEntry.findFirst.mockResolvedValue({
       id: "je-1",
@@ -216,7 +263,10 @@ describe("posting service", () => {
     )
   })
 
-  it("invalidates certified close evidence when a posted journal is reversed", async () => {
+  it("preserves controlled reversal and close invalidation while new manual journals are stopped", async () => {
+    await expect(assertModuleNewWorkInTx(mockTx as unknown as Prisma.TransactionClient, {
+      organizationId: "org-1", moduleSlug: "accounting", operation: "accounting.manual-journal.create",
+    })).rejects.toMatchObject({ metadata: { reason: "MODULE_NEW_WORK_STOPPED" } })
     arrangeCertifiedCloseTarget()
     mockTx.journalEntry.findFirst.mockResolvedValue({
       id: "je-1",
@@ -292,7 +342,10 @@ describe("posting service", () => {
     )
   })
 
-  it("durably audits and blocks generic reversal of a customer settlement journal", async () => {
+  it.each([
+    ["CUSTOMER_SETTLEMENT", "customer settlement source command"],
+    ["PAYMENT_SUSPENSE", "Payment suspense correction requires a linked source workflow"],
+  ])("durably audits and blocks generic reversal of a %s journal", async (sourceType, error) => {
     mockTx.journalEntry.findFirst.mockResolvedValue({
       id: "settlement-journal-1",
       organizationId: "org-1",
@@ -306,7 +359,7 @@ describe("posting service", () => {
       createdById: "collector-1",
       currency: "XAF",
       reference: "CSET-1",
-      sourceType: "CUSTOMER_SETTLEMENT",
+      sourceType,
       sourceId: "settlement-1",
       lines: [
         {
@@ -330,7 +383,7 @@ describe("posting service", () => {
         actorPermissions: ["accounting.journal.reverse"],
         lastAuthAt: Date.now(),
       }),
-    ).rejects.toThrow("customer settlement source command")
+    ).rejects.toThrow(error)
 
     expect(mockTx.auditLog.create).toHaveBeenCalledWith({
       data: expect.objectContaining({

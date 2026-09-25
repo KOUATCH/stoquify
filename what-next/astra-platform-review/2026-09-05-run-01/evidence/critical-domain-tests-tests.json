@@ -1,0 +1,896 @@
+{
+  "suites": 19,
+  "passedSuites": 19,
+  "failedSuites": 0,
+  "tests": 188,
+  "passedTests": 188,
+  "failedTests": 0,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "scripts/__tests__/api-route-guard-inventory.test.js",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "api route guard inventory does not declare unknown endpoints ready, including endpoints under the auth prefix",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory recognizes the authenticated session claims route without exempting the entire auth prefix",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory classifies tenant, public, upload, and receipt evidence in report mode",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory describes report, warn, and fail inventory modes accurately",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory returns a failing gate result in fail mode when active issues exist",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory fails the CLI in fail mode when inventory issues exist",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory passes the CLI in fail mode when inventory is clean",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory does not flag inventory item APIs once module entitlement is enforced",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory does not flag receipt routes once signed token access is wired",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory represents the public receipt service as guard evidence for the receipt route",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory classifies the public receipt service when token gate and contact redaction are present",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory flags a public receipt service missing token gate and public contact redaction",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory requires settings module entitlement for the organization self-service API",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory classifies tenant asset reads and inventory item media writes separately",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory does not flag fresh security.txt or contact-safe public receipt shaping",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory includes canonical well-known security.txt as an intentional public route",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory flags security.txt contact fields that are not disclosure URIs",
+          "status": "passed"
+        },
+        {
+          "title": "api route guard inventory parses report arguments",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/regulatory/__tests__/country-pack.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "regulatory country pack foundation validates Cameroon pack provenance, hash, required paths, and golden fixtures",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects Cameroon payroll packs missing required payroll golden fixture coverage",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects stale Cameroon payroll fixtures not pinned to the active pack version",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects executable payroll calculation fixtures without review evidence",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects Cameroon payroll component production support without payslip/register fixture outputs",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation accepts Cameroon payroll component production support only with reviewed effective-dated tie-out fixtures",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects Cameroon IRPP production support without reviewed calculation scenario fixtures",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects Cameroon IRPP production support without required YTD correction output pins",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects Cameroon IRPP production fixtures without calculation mode output pins",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation accepts Cameroon IRPP production support only with reviewed calculation scenario fixtures",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation resolves values by country, entity, date, and pack version with provenance",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation resolves Cameroon CNPS payroll parameters as source-checked draft fixtures",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation resolves Cameroon IRPP income-tax rules as an expert-review production blocker",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation resolves Cameroon e-invoicing readiness metadata as expert-review gated",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation blocks missing parameters with typed client-safe errors",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects expert-review placeholders if the matching capability claims support",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects defective packs with missing legal citations",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation rejects defective packs with overlapping effective windows",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation detects production regulatory hardcodes and points to pack data",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation does not report country-pack data as hardcoded production logic",
+          "status": "passed"
+        },
+        {
+          "title": "regulatory country pack foundation does not report seed and fixture data as production statutory logic",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "durable payment reconciliation run service creates explainable auto matches and itemized suspense for orphan statement lines",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service blocks a duplicate same-day reconciliation run before creating new rows",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service blocks reconciliation before row creation when the provider account is not ready",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service blocks concurrent same-day reconciliation when a run is already in progress",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service converts unique-key races into a controlled duplicate-run conflict",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service creates an amount-mismatch exception instead of auto-matching conflicting evidence",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service creates an exception when a statement-only match has a conflicting amount",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service creates an exception when external evidence uses a different currency",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service requires maker-checker separation for manual match approval",
+          "status": "passed"
+        },
+        {
+          "title": "durable payment reconciliation run service rejects manual match evidence outside the tenant-scoped provider account",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-payslip-self-service.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "payroll payslip self-service service returns only the authenticated employee's immutable payslips and audits salary access",
+          "status": "passed"
+        },
+        {
+          "title": "payroll payslip self-service service surfaces missing line country-pack provenance without hiding the emitted payslip",
+          "status": "passed"
+        },
+        {
+          "title": "payroll payslip self-service service does not return a payslip outside the authenticated employee scope",
+          "status": "passed"
+        },
+        {
+          "title": "payroll payslip self-service service audits and blocks payslip export when fresh auth evidence is stale",
+          "status": "passed"
+        },
+        {
+          "title": "payroll payslip self-service service exports a watermarked immutable archive manifest and records a business event",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/accounting/__tests__/posting.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "posting service rejects posting anything other than a draft journal entry",
+          "status": "passed"
+        },
+        {
+          "title": "posting service posts a balanced draft journal entry through an idempotent batch",
+          "status": "passed"
+        },
+        {
+          "title": "posting service invalidates certified close evidence when a posted journal is reversed",
+          "status": "passed"
+        },
+        {
+          "title": "posting service durably audits and blocks generic reversal of a customer settlement journal",
+          "status": "passed"
+        },
+        {
+          "title": "posting service audits and blocks self-posting of a manual journal",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/accounting/__tests__/customer-statement-access.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "customer statement access service issues only a hash-registered content-bound token with explicit scopes",
+          "status": "passed"
+        },
+        {
+          "title": "customer statement access service returns a redacted view and appends only hashed request/access evidence",
+          "status": "passed"
+        },
+        {
+          "title": "customer statement access service rejects revoked access before counters or view logs are written",
+          "status": "passed"
+        },
+        {
+          "title": "customer statement access service revokes an active token by compare-and-set and records a redacted audit",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "module entitlement service normalizes registration module labels into canonical module slugs",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service derives legacy full-suite observe entitlements when no requested modules exist",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service keeps the core dashboard entitled under enforcement without requested modules",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service keeps observe mode allowed while marking non-entitled modules as would-block even for wildcard RBAC",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service flags required dependency gaps without hard denial in observe mode",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service denies write access for read-only entitlements only when enforcement is requested",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service writes observe-mode would-block audit logs without denying the request",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service activates payment reconciliation with only its missing required dependencies",
+          "status": "passed"
+        },
+        {
+          "title": "module entitlement service does not duplicate already active modules but still records the admin decision",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/hris/__tests__/manager-self-service.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "HRIS manager self-service read model composes the proven location scope and emits a minimized operational model",
+          "status": "passed"
+        },
+        {
+          "title": "HRIS manager self-service read model removes out-of-scope people and sensitive HR, payroll, and approval fields",
+          "status": "passed"
+        },
+        {
+          "title": "HRIS manager self-service read model fails before dependent services run when scoped people permission is absent",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "scripts/__tests__/public-receipt-token-config-gate.test.js",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "public receipt token config gate keeps local development reportable when no token secret is configured",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token config gate blocks forced release when the public receipt token secret is missing",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token config gate passes forced release with a strong secret without printing the value",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token config gate blocks production-like auto release when the configured secret is weak",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token config gate detects production and explicit release environment signals",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token config gate parses gate arguments including release aliases",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token config gate treats release on/off aliases as explicit enforcement controls",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token config gate wires the release-only package command without hard-blocking local policy gates",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/agents/__tests__/agent-runner.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "deterministic agent runner records context, authorized tool steps, evidence, and a completed run without a model",
+          "status": "passed"
+        },
+        {
+          "title": "deterministic agent runner blocks an unknown tool and records a policy incident without executing it",
+          "status": "passed"
+        },
+        {
+          "title": "deterministic agent runner persists an explicit timeout failure code without leaking the tool error",
+          "status": "passed"
+        },
+        {
+          "title": "deterministic agent runner hashes equivalent object payloads deterministically",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/hris/__tests__/self-service.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "HRIS employee self-service read model composes only authenticated own-record readers and emits a minimized model",
+          "status": "passed"
+        },
+        {
+          "title": "HRIS employee self-service read model fails before any own-record service runs when self-service permission is absent",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/pos/__tests__/public-receipt-token.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "public receipt access tokens verifies legacy signed unexpired receipt tokens for the bound sale",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt access tokens creates and verifies v2 receipt tokens with organization and jti binding",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt access tokens rejects tampered, mismatched, expired, and unconfigured tokens",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/agents/__tests__/agent-execution-control.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "agent execution controls uses a bounded timeout configuration",
+          "status": "passed"
+        },
+        {
+          "title": "agent execution controls rejects a slow operation with a typed timeout",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-privacy.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "payroll privacy read model audits salary-bearing payroll workbench reads with actor context",
+          "status": "passed"
+        },
+        {
+          "title": "payroll privacy read model redacts payroll workbench amounts when the payroll module is not entitled",
+          "status": "passed"
+        },
+        {
+          "title": "payroll privacy read model redacts payroll workbench amounts when salary permissions are absent",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/payroll/__tests__/payroll-run-approval-transition.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "reviewPayrollRun CALCULATED -> REVIEWED records the canonical review event and tenant-scoped compare-and-set transition",
+          "status": "passed"
+        },
+        {
+          "title": "reviewPayrollRun CALCULATED -> REVIEWED rejects the persisted preparer as reviewer before creating evidence",
+          "status": "passed"
+        },
+        {
+          "title": "reviewPayrollRun CALCULATED -> REVIEWED rolls the review transition back when compare-and-set loses",
+          "status": "passed"
+        },
+        {
+          "title": "reviewPayrollRun CALCULATED -> REVIEWED replays the prior review after the run has advanced to POSTED",
+          "status": "passed"
+        },
+        {
+          "title": "emitPayrollPayslips APPROVED -> EMITTED creates the canonical event, emitted payslips, and CAS transition atomically",
+          "status": "passed"
+        },
+        {
+          "title": "emitPayrollPayslips APPROVED -> EMITTED does not apply the emission event when compare-and-set loses",
+          "status": "passed"
+        },
+        {
+          "title": "emitPayrollPayslips APPROVED -> EMITTED replays emission without duplicating payslips after the run reaches POSTED",
+          "status": "passed"
+        },
+        {
+          "title": "postPayrollRun EMITTED -> POSTED posts the ledger and commits CAS, invalidation, audit, and event application in order",
+          "status": "passed"
+        },
+        {
+          "title": "postPayrollRun EMITTED -> POSTED rejects the persisted approver as poster before ledger creation",
+          "status": "passed"
+        },
+        {
+          "title": "postPayrollRun EMITTED -> POSTED rejects a payslip batch not bound to the run emission event",
+          "status": "passed"
+        },
+        {
+          "title": "postPayrollRun EMITTED -> POSTED does not update the period, invalidate close, or apply the event when CAS loses",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED atomically records the distinct approval event and compare-and-set transition",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED rejects an approver who is the persisted preparer",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED rejects an approver who is the persisted reviewer",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED fails closed when fresh authorization is missing",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED fails closed when fresh authorization is stale",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED returns a concurrency conflict when the expected version is stale even after another approval wins",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED rolls back with a concurrency conflict when compare-and-set loses",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED retries a P2002 serializable transaction conflict and applies the transition once",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED retries a P2034 serializable transaction conflict and applies the transition once",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED normalizes an unexpected transaction failure without leaking the raw error",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED returns the prior result for a same-payload idempotent replay",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED rejects an idempotency key reused with a different approval document",
+          "status": "passed"
+        },
+        {
+          "title": "approvePayrollRun REVIEWED -> APPROVED fails the deprecated combined command closed after Trust Spine cutover",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/pos/__tests__/offline-sync.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "offline POS sync service records an accepted offline event as pending replay without touching POS sale truth",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service rejects an idempotency key reused with a different payload hash",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service treats duplicate replay with the same payload as idempotent",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service quarantines a device sequence gap",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service quarantines a hash-chain fork",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service quarantines sync from a revoked device",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service replays an accepted pending offline sale through POS finalization",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service hydrates receipt evidence after a committed sale before acknowledging offline replay",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service blocks pending replay after the enrolled device is revoked",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service does not finalize a duplicate replay that already has replay evidence",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service blocks replay when POS finalization rolls back",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service blocks replay when accepted payload hash evidence no longer matches",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service blocks replay when sale envelope scope does not match the accepted device event",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service redacts low-level system details when replay finalization fails",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service marks an already completed sale as duplicate replay instead of finalizing again",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service preserves fiscal-document ineligibility from the normal receipt payload",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service preserves fiscal-document legal delivery blockers from the receipt payload",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service keeps persisted open conflicts visible as close blockers",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service rejects economic offline events without an active cashier session",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service quarantines an event with an invalid enrolled-device signature",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service accepts a correctly signed event from the enrolled device key",
+          "status": "passed"
+        },
+        {
+          "title": "offline POS sync service quarantines expired policies and stale reference snapshots",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/purchasing/__tests__/ap-control.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "ap-control.service rejects duplicate supplier invoices before creating AP evidence",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service blocks supplier invoices that exceed received and uninvoiced quantity",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service excludes held inspection receipts from supplier-invoice and accounting evidence",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service prepares matched invoice evidence without supplier or accounting ledger effects",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service keeps exact matching as default and prepares price variance as disputed exception evidence",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service rejects a supplier invoice when maker and approver are the same actor",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service rejects duplicate active match exceptions for the same tenant-scoped match",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service maps a concurrent P2002 match-exception race to the canonical conflict",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service normalizes unexpected match-exception persistence failures without leaking details",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service keeps match-exception reads tenant scoped",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service enforces maker-checker separation on match-exception review",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service materializes expiry and blocks review of an expired match exception",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service blocks disputed invoice posting without an approved active exception",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service posts through an approved active exception and resolves only its match lifecycle",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service atomically approves a prepared invoice and creates ledger and audit evidence as a separate checker",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service rejects self-approval for supplier bank changes",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service audits and blocks supplier bank self-approval in AP service controls",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service audits and blocks supplier payment self-approval in AP service controls",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service creates approved supplier payment evidence without release side effects",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service audits and blocks supplier payment self-release in AP service controls",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service blocks supplier payment release by the stored approver",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service blocks supplier payment release when a bank change is pending",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service blocks supplier payment allocations above invoice outstanding balance",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service posts matched supplier invoices with event evidence and explicit ledger blocker",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service posts matched supplier invoices to a balanced AP journal when rules resolve",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service rejects mutated supplier invoice idempotency replays before posting side effects",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service does not emit final AP invoice events when ledger journal creation fails inside the transaction",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service releases approved supplier payments with bank evidence, allocations, event evidence, and ledger blocker",
+          "status": "passed"
+        },
+        {
+          "title": "ap-control.service rejects mutated supplier payment idempotency replays before release side effects",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/pos/__tests__/public-receipt-token-registry.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "public receipt token registry issues v2 receipt tokens with hash-only registry and redacted audit evidence",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry requires an active registry row before public receipt access is allowed",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry rejects legacy tokens before registry lookup",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry rejects unknown registry rows before access update",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry rejects revoked registry rows before access update",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry rejects expired registry rows before access update",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry lists receipt token management rows without exposing token secrets",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry searches completed receipt sales with tenant scope and token-count metadata",
+          "status": "passed"
+        },
+        {
+          "title": "public receipt token registry revokes receipt tokens with actor and reason audit evidence",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "services/events/__tests__/business-event-outbox.service.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "business event outbox gateway claims only tenant-scoped messages with a bounded lease attempt",
+          "status": "passed"
+        },
+        {
+          "title": "business event outbox gateway dead-letters an exhausted candidate instead of leasing it again",
+          "status": "passed"
+        },
+        {
+          "title": "business event outbox gateway completes delivery and audit evidence in the same transaction",
+          "status": "passed"
+        },
+        {
+          "title": "business event outbox gateway retries a safe typed failure without persisting raw unknown error details",
+          "status": "passed"
+        },
+        {
+          "title": "business event outbox gateway dead-letters the final failed attempt and records the terminal audit",
+          "status": "passed"
+        },
+        {
+          "title": "business event outbox gateway rejects cross-tenant completion when the scoped lease is absent",
+          "status": "passed"
+        },
+        {
+          "title": "business event outbox gateway exposes tenant-scoped retry backlog readiness",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    }
+  ]
+}

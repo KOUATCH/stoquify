@@ -1,0 +1,105 @@
+{
+  "run": "7220b98b-20f",
+  "at": "2026-09-08T10:34:32.719Z",
+  "checks": [
+    {
+      "name": "maker request exact replay, reviewer decision and connected payable approval",
+      "status": "passed"
+    },
+    {
+      "name": "rejection records reason and creates no payable",
+      "status": "passed"
+    },
+    {
+      "name": "requester cannot read other maker sources or submit them",
+      "status": "passed"
+    },
+    {
+      "name": "posting permission alone cannot review exceptions",
+      "status": "passed"
+    },
+    {
+      "name": "foreign invoice and foreign history are denied",
+      "status": "passed"
+    },
+    {
+      "name": "role denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "expired-session denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "old-assurance denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "wrong-assurance-org denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "future-assurance denies request submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module missing denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module expired denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module suspended denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "managed module read_only denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "stale request revision preserves source without exception",
+      "status": "passed"
+    },
+    {
+      "name": "exact concurrent requests converge and different requests cannot duplicate",
+      "status": "passed"
+    },
+    {
+      "name": "same request key cannot be repurposed",
+      "status": "passed"
+    },
+    {
+      "name": "revoked authority denies committed replay",
+      "status": "passed"
+    },
+    {
+      "name": "tampered decision is neither valid history nor successful replay",
+      "status": "passed"
+    },
+    {
+      "name": "decision persistence failure rolls back exception before exact retry",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741"
+  },
+  "originalBefore": "58f81da3e13c4e5a5436e5e6464667bde1afe1fa93b226b38a520bd581b856c8",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741"
+  },
+  "sourceStable": true
+}

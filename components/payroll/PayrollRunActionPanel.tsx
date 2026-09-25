@@ -3,6 +3,8 @@
 import type { FormEvent, ReactNode } from "react"
 import { useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { getModuleOperationErrorReason, type ModuleOperationErrorReason } from "@/lib/modules/module-operation-error"
 import { AlertTriangle, CheckCircle2, Loader2, LockKeyhole, PanelRightOpen } from "lucide-react"
 
 import {
@@ -36,6 +38,7 @@ type ActionResponse = {
   error?: string | null
   code?: string
   correlationId?: string
+  reason?: ModuleOperationErrorReason
 }
 
 type Props = {
@@ -246,6 +249,7 @@ function ActionDrawer({
 
 export default function PayrollRunActionPanel({ run, action, disabled = false }: Props) {
   const router = useRouter()
+  const t = useTranslations("moduleComposition.stop")
   const [open, setOpen] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [notice, setNotice] = useState<Notice | null>(null)
@@ -279,7 +283,7 @@ export default function PayrollRunActionPanel({ run, action, disabled = false }:
   const paymentDisabled = disabled || isPending || paymentProofBlocked
 
   function finish(response: ActionResponse, successMessage: string) {
-    const nextNotice = noticeFromResponse(response, successMessage)
+    const nextNotice = noticeFromResponse(getModuleOperationErrorReason(response) ? { ...response, error: t("deniedMessage") } : response, successMessage)
     setNotice(nextNotice)
     if (nextNotice.kind === "success") {
       setIdempotencyKey(nextKey(action.id, run.id))

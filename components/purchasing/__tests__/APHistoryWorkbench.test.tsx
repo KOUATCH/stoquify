@@ -5,6 +5,7 @@ import { useAPHistoryWorkbench } from "@/hooks/useAPHistoryWorkbench"
 import { APHistoryWorkbench } from "../APHistoryWorkbench"
 
 const mockShell = jest.fn(() => <div data-testid="history-shell" />)
+jest.mock("../APHistoryExportDialog", () => ({ APHistoryExportDialog: () => null }))
 
 jest.mock("lucide-react", () => {
   const Icon = () => <svg aria-hidden="true" />
@@ -138,7 +139,7 @@ describe("APHistoryWorkbench presentation semantics", () => {
   })
 
   it("shows supplier context, back navigation, and suppresses an empty action queue", () => {
-    render(<APHistoryWorkbench />)
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
 
     const props = mockShell.mock.calls[0][0]
     expect(props.labels.scopeLabel).toBe("AP history for Atlas Supplies")
@@ -157,8 +158,24 @@ describe("APHistoryWorkbench presentation semantics", () => {
     )
   })
 
+  it("offers fresh-read and filter-reset recovery while hiding stale selected details", () => {
+    const state = mockUseAPHistoryWorkbench.getMockImplementation()!()
+    const restartHistory = jest.fn()
+    mockUseAPHistoryWorkbench.mockReturnValue({ ...state, isError: true, isStale: true, selectedRowId: row.id, restartHistory })
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
+    const props = mockShell.mock.calls[0][0]
+    expect(props.selectedRow).toBeNull()
+    expect(props.labels.errorTitle).toBe("states.staleTitle")
+    expect(props.errorMessage).toBe("states.staleMessage")
+    props.onRetry()
+    expect(restartHistory).toHaveBeenCalledTimes(1)
+    expect(state.refetch).not.toHaveBeenCalled()
+    props.headerActions.find((action: { label: string }) => action.label === "filters.reset").onClick()
+    expect(state.resetFilters).toHaveBeenCalledTimes(1)
+  })
+
   it("maps payment-pending control state to the gold semantic tone with localized text", () => {
-    render(<APHistoryWorkbench />)
+    render(<APHistoryWorkbench organizationId="org-1" actorId="actor-1" />)
 
     const props = mockShell.mock.calls[0][0]
     render(<>{props.rowIdentity.status(row)}</>)

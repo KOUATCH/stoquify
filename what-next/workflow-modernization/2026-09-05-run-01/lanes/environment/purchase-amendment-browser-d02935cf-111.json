@@ -1,0 +1,350 @@
+{
+  "run": "d02935cf-111",
+  "at": "2026-09-07T17:15:02.306Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "0d3753d360f1512f16e049bfc5f4f99d66c0e9aa13ebdbe7926d9fac51835abf",
+    "messages/fr.json": "a364285690c51f7f7335ee1c59148b63dc5f5158526c94e0639fee8c5c2bd8b1",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "9f592eb6c2cc8960a3ba4ac0e347bf31504aa7d936980405ec15b38f7b0d792b",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+    "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+    "services/purchase-order/purchase-order-amendment.service.ts": "5ac5d729bc8ffaa227298085c0e2ad9c985aa7bfa7698ebcb84418e89d36831d",
+    "services/purchase-order/purchase-order-amendment-contracts.ts": "9665020e97a652586b2c38310a6970fece7c2b0e4545061a4d68dd825a4ef839",
+    "services/purchase-order/purchase-order-amendment-record.ts": "e13044cd5078141b924dc14a7252cb19b8ed61def4b5667db205900ac3f80551",
+    "services/purchase-order/purchase-order-approval.ts": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0",
+    "services/purchase-order/purchase-quantity.ts": "905dfcedb0d9b1d914a6d4a4a4f32e6d980336c929fc3e4caa6cc846b5f2c7d0",
+    "services/purchase-order/purchase-order.schemas.ts": "b1eba35bcc9373562f738dca22a31d2b8a954ee81ca003e29181c404875dd9fe",
+    "actions/purchaseOrderWorkflow/purchase-order-amendment.actions.ts": "3832ddb87d662c2d178c33f465da781e8d2c1a85faea438c3c8ae8a3b6fce511",
+    "components/purchase-orders/PurchaseOrderAmendmentDialog.tsx": "cd66bb10e3507cbe9db87a2e43ca18e2efed84996bf2fcebd1d64550f2c01d86",
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "f57df19f9cb3f024574967a9bbf49ad29b2e6afe5c854bf4caeb646ca7d84fc6",
+    "components/purchase-orders/ModernCreatePurchaseOrderForm.tsx": "e59a63fbdfbc8cb2381842390de87b8475df7e7cc0de76cab54d6a5e9a76c50c",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "4495934b9c7af7bf9a6eed8e0b523666a0b85b780665299262e4a5374ad4e1e4"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "completed": [
+        "Buyer acceptance leaves the original order unchanged; self-approval is denied in the application",
+        "Independent approver sees date, total and fractional quantity consequences; keyboard focus, mobile/tablet and text reflow checked",
+        "Stale review and current-role revocation deny amendment without losing the recoverable request",
+        "Committed response loss recovers exactly after reload with one amendment audit and visible durable workbench evidence"
+      ],
+      "screenshots": [
+        "purchase-amendment-en-buyer-self-approval-denied-d02935cf-111.png",
+        "purchase-amendment-en-review-desktop-d02935cf-111.png",
+        "purchase-amendment-en-review-768-d02935cf-111.png",
+        "purchase-amendment-en-review-390-d02935cf-111.png",
+        "purchase-amendment-en-review-320-d02935cf-111.png",
+        "purchase-amendment-en-text-reflow-d02935cf-111.png",
+        "purchase-amendment-en-stale-denied-d02935cf-111.png",
+        "purchase-amendment-en-current-authority-denied-d02935cf-111.png",
+        "purchase-amendment-en-committed-response-lost-d02935cf-111.png",
+        "purchase-amendment-en-reload-recovery-d02935cf-111.png",
+        "purchase-amendment-en-recovered-receipt-d02935cf-111.png",
+        "purchase-amendment-en-applied-workbench-d02935cf-111.png",
+        "purchase-amendment-en-failure-d02935cf-111.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 255,
+          "clientWidth": 255
+        }
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "/supplier-acknowledgement",
+          "ms": 2558
+        },
+        {
+          "name": "/supplier-acknowledgement",
+          "ms": 5523
+        },
+        {
+          "name": "detail",
+          "ms": 7782
+        }
+      ],
+      "actionRequests": [
+        {
+          "at": "2026-09-07T17:15:07.621Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:15.383Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:17.512Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:22.088Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:23.294Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:25.359Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:27.910Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:31.234Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:38.657Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:40.068Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:15:46.751Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue"
+        },
+        {
+          "at": "2026-09-07T17:15:46.751Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue"
+        },
+        {
+          "at": "2026-09-07T17:15:47.948Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue"
+        },
+        {
+          "at": "2026-09-07T17:15:47.948Z",
+          "path": "/en/dashboard/purchase-orders/cmtri3yxe0009ma786scr9pue"
+        }
+      ],
+      "error": "expect(locator).toHaveValue(expected) failed\n\nLocator:  getByRole('dialog', { name: 'Receive Items - PO-OWNED-en-amendment-browser-d02935cf-111-61d66' }).getByRole('spinbutton').first()\nExpected: \"0.125\"\nReceived: \"00.125\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.value\" with timeout 60000ms\n  - waiting for getByRole('dialog', { name: 'Receive Items - PO-OWNED-en-amendment-browser-d02935cf-111-61d66' }).getByRole('spinbutton').first()\n    120 × locator resolved to <input min=\"0\" max=\"8.125\" step=\"0.001\" type=\"number\" value=\"00.125\" class=\"dashboard-control h-9 w-20 rounded-lg px-2 py-1 text-center \"/>\n        - unexpected value \"00.125\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "completed": [
+        "Buyer acceptance leaves the original order unchanged; self-approval is denied in the application",
+        "Independent approver sees date, total and fractional quantity consequences; keyboard focus, mobile/tablet and text reflow checked",
+        "Stale review and current-role revocation deny amendment without losing the recoverable request",
+        "Committed response loss recovers exactly after reload with one amendment audit and visible durable workbench evidence"
+      ],
+      "screenshots": [
+        "purchase-amendment-fr-buyer-self-approval-denied-d02935cf-111.png",
+        "purchase-amendment-fr-review-desktop-d02935cf-111.png",
+        "purchase-amendment-fr-review-768-d02935cf-111.png",
+        "purchase-amendment-fr-review-390-d02935cf-111.png",
+        "purchase-amendment-fr-review-320-d02935cf-111.png",
+        "purchase-amendment-fr-text-reflow-d02935cf-111.png",
+        "purchase-amendment-fr-stale-denied-d02935cf-111.png",
+        "purchase-amendment-fr-current-authority-denied-d02935cf-111.png",
+        "purchase-amendment-fr-committed-response-lost-d02935cf-111.png",
+        "purchase-amendment-fr-reload-recovery-d02935cf-111.png",
+        "purchase-amendment-fr-recovered-receipt-d02935cf-111.png",
+        "purchase-amendment-fr-applied-workbench-d02935cf-111.png",
+        "purchase-amendment-fr-failure-d02935cf-111.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 273,
+          "clientWidth": 273
+        }
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "/supplier-acknowledgement",
+          "ms": 2933
+        },
+        {
+          "name": "/supplier-acknowledgement",
+          "ms": 3801
+        },
+        {
+          "name": "detail",
+          "ms": 3898
+        }
+      ],
+      "actionRequests": [
+        {
+          "at": "2026-09-07T17:16:57.176Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:04.942Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:07.359Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:11.258Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:12.103Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:13.933Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:15.468Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:17.561Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:23.910Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:25.312Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh/supplier-acknowledgement"
+        },
+        {
+          "at": "2026-09-07T17:17:31.897Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh"
+        },
+        {
+          "at": "2026-09-07T17:17:31.897Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh"
+        },
+        {
+          "at": "2026-09-07T17:17:34.427Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh"
+        },
+        {
+          "at": "2026-09-07T17:17:34.427Z",
+          "path": "/fr/dashboard/purchase-orders/cmtri6b7u0027ma78y4jg7jzh"
+        }
+      ],
+      "error": "expect(locator).toHaveValue(expected) failed\n\nLocator:  getByRole('dialog', { name: 'Receive Items - PO-OWNED-fr-amendment-browser-d02935cf-111-b61d4' }).getByRole('spinbutton').first()\nExpected: \"0.125\"\nReceived: \"00.125\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.value\" with timeout 60000ms\n  - waiting for getByRole('dialog', { name: 'Receive Items - PO-OWNED-fr-amendment-browser-d02935cf-111-b61d4' }).getByRole('spinbutton').first()\n    4 × locator resolved to <input min=\"0\" max=\"8.125\" step=\"0.001\" type=\"number\" value=\"00.125\" class=\"dashboard-control h-9 w-20 rounded-lg px-2 py-1 text-center \"/>\n      - unexpected value \"00.125\"\n    116 × locator resolved to <input min=\"0\" max=\"8.125\" step=\"0.001\" type=\"number\" value=\"0.125\" class=\"dashboard-control h-9 w-20 rounded-lg px-2 py-1 text-center \"/>\n        - unexpected value \"00.125\"\n"
+    }
+  ],
+  "scope": "Actual local application 3110 and authenticated buyer/approver. Supplier proposal and acceptance use real services on synthetic records. Receiving input is exercised without posting stock or financial effects.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "65d6320b649263e053f2a2cf06b0a49e8d0bd44d68862f9bab5eea70f6da3be6",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "0d3753d360f1512f16e049bfc5f4f99d66c0e9aa13ebdbe7926d9fac51835abf",
+    "messages/fr.json": "a364285690c51f7f7335ee1c59148b63dc5f5158526c94e0639fee8c5c2bd8b1",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "9f592eb6c2cc8960a3ba4ac0e347bf31504aa7d936980405ec15b38f7b0d792b",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+    "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+    "services/purchase-order/purchase-order-amendment.service.ts": "5ac5d729bc8ffaa227298085c0e2ad9c985aa7bfa7698ebcb84418e89d36831d",
+    "services/purchase-order/purchase-order-amendment-contracts.ts": "9665020e97a652586b2c38310a6970fece7c2b0e4545061a4d68dd825a4ef839",
+    "services/purchase-order/purchase-order-amendment-record.ts": "e13044cd5078141b924dc14a7252cb19b8ed61def4b5667db205900ac3f80551",
+    "services/purchase-order/purchase-order-approval.ts": "90655b9c1b0079f3daa750422cd49f8a8b65607d63f73df946a979066d2fabb0",
+    "services/purchase-order/purchase-quantity.ts": "905dfcedb0d9b1d914a6d4a4a4f32e6d980336c929fc3e4caa6cc846b5f2c7d0",
+    "services/purchase-order/purchase-order.schemas.ts": "b1eba35bcc9373562f738dca22a31d2b8a954ee81ca003e29181c404875dd9fe",
+    "actions/purchaseOrderWorkflow/purchase-order-amendment.actions.ts": "3832ddb87d662c2d178c33f465da781e8d2c1a85faea438c3c8ae8a3b6fce511",
+    "components/purchase-orders/PurchaseOrderAmendmentDialog.tsx": "cd66bb10e3507cbe9db87a2e43ca18e2efed84996bf2fcebd1d64550f2c01d86",
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "f57df19f9cb3f024574967a9bbf49ad29b2e6afe5c854bf4caeb646ca7d84fc6",
+    "components/purchase-orders/ModernCreatePurchaseOrderForm.tsx": "e59a63fbdfbc8cb2381842390de87b8475df7e7cc0de76cab54d6a5e9a76c50c",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "4495934b9c7af7bf9a6eed8e0b523666a0b85b780665299262e4a5374ad4e1e4"
+  },
+  "sourceStable": true
+}

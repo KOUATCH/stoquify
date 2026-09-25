@@ -3,6 +3,9 @@ import type { TenantModuleEntitlement } from "../module-control-contracts"
 jest.mock("@/prisma/db", () => ({
   db: {
     organization: { findFirst: jest.fn(), update: jest.fn() },
+    tenantModuleConfiguration: { findUnique: jest.fn() },
+    tenantModuleGrant: { findMany: jest.fn().mockResolvedValue([]) },
+    tenantModuleConfigurationCommand: { count: jest.fn().mockResolvedValue(0) },
     auditLog: { create: jest.fn() },
     $transaction: jest.fn(),
   },

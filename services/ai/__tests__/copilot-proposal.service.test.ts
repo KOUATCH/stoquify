@@ -1,6 +1,7 @@
 jest.mock("server-only", () => ({}))
 
 const tx = {
+  agentRun: { findFirst: jest.fn() },
   aiActionProposal: {
     findUnique: jest.fn(),
     findFirst: jest.fn(),
@@ -98,6 +99,9 @@ function proposal(overrides: Record<string, unknown> = {}) {
 describe("copilot proposal service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    tx.agentRun.findFirst = mockDb.agentRun.findFirst as jest.Mock
+    tx.agentRun.findFirst.mockReset()
+    tx.aiActionProposal.findFirst.mockReset()
     ;(mockDb.agentRun.findFirst as jest.Mock).mockResolvedValue({
       id: input.runId,
       periodStart: input.periodStart,
@@ -233,6 +237,22 @@ describe("copilot proposal service", () => {
     ).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
   })
 
+  it.each([
+    ["blocked source", { freshness: "BLOCKED" }],
+    ["failed source", { freshness: "FAILED" }],
+    ["stale source presented as fresh", { freshness: "STALE" }],
+    ["raw source presented as operational", { evidenceGrade: "raw" }],
+  ])("rejects misrepresented stored evidence: %s", async (_label, change) => {
+    ;(mockDb.agentRun.findFirst as jest.Mock).mockResolvedValueOnce({
+      id: input.runId, periodStart: input.periodStart, periodEnd: input.periodEnd, completedAt: now,
+      evidenceLinks: [{ ...input.evidence[0], freshness: "FRESH", ...change }],
+    })
+    await expect(createCopilotProposal("org-1", "user-1", ["dashboard.read"], input, now))
+      .rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(tx.aiActionProposal.create).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEvent).not.toHaveBeenCalled()
+  })
+
   it("records human acceptance without invoking any target workflow", async () => {
     tx.aiActionProposal.findFirst
       .mockResolvedValueOnce(proposal())
@@ -259,12 +279,116 @@ describe("copilot proposal service", () => {
 
     expect(result.status).toBe("ACCEPTED")
     expect(result.executionAuthority).toBe("NONE")
+    expect(tx.agentRun.findFirst).toHaveBeenCalledWith(expect.objectContaining({
+      where: { id: input.runId, organizationId: "org-1", actorId: "user-1", status: "COMPLETED" },
+    }))
+    expect(mockDb.$transaction).toHaveBeenCalledWith(expect.any(Function), { isolationLevel: "Serializable" })
     expect(mockRecordBusinessEvent).toHaveBeenCalledWith(
       tx,
       expect.objectContaining({
         eventType: "AI_ACTION_PROPOSAL_ACCEPTED",
       }),
     )
+  })
+
+  it.each([
+    ["withdrawn", { available: false }],
+    ["blocked", { freshness: "BLOCKED" }],
+    ["downgraded", { evidenceGrade: "raw" }],
+    ["hash changed", { sourceHash: "changed" }],
+  ])("does not accept a draft after its evidence is %s", async (_label, change) => {
+    tx.aiActionProposal.findFirst.mockResolvedValueOnce(proposal())
+    tx.agentRun.findFirst.mockResolvedValueOnce({ periodStart: input.periodStart, periodEnd: input.periodEnd,
+      completedAt: now, evidenceLinks: [{ ...input.evidence[0], freshness: "FRESH", ...change }] })
+    await expect(decideCopilotProposal("org-1", "reviewer-1", ["dashboard.read"], {
+      proposalId: proposal().id, decision: "ACCEPTED", reason: "Reviewed current evidence",
+    }, now)).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(tx.aiActionProposal.updateMany).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEvent).not.toHaveBeenCalled()
+  })
+
+  it("allows rejection without relying on withdrawn evidence", async () => {
+    tx.aiActionProposal.findFirst.mockResolvedValueOnce(proposal())
+      .mockResolvedValueOnce(proposal({ status: "REJECTED" }))
+    await expect(decideCopilotProposal("org-1", "reviewer-1", ["dashboard.read"], {
+      proposalId: proposal().id, decision: "REJECTED", reason: "The evidence was withdrawn",
+    }, now)).resolves.toMatchObject({ status: "REJECTED", executionAuthority: "NONE" })
+    expect(tx.agentRun.findFirst).not.toHaveBeenCalled()
+  })
+
+  it.each(["ACCEPTED", "REJECTED"] as const)("returns the existing identical %s decision after a lost response", async (decision) => {
+    tx.aiActionProposal.findFirst.mockResolvedValueOnce(proposal({ status: decision, decidedById: "reviewer-1",
+      decisionReason: "Reviewed evidence", decidedAt: now, expiresAt: new Date(now.getTime() - 1) }))
+    await expect(decideCopilotProposal("org-1", "reviewer-1", ["dashboard.read"], {
+      proposalId: proposal().id, decision, reason: "Reviewed evidence",
+    }, now)).resolves.toMatchObject({ status: decision, executionAuthority: "NONE" })
+    expect(tx.aiActionProposal.updateMany).not.toHaveBeenCalled()
+    expect(mockRecordBusinessEvent).not.toHaveBeenCalled()
+    expect(tx.agentRun.findFirst).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ["another reviewer", "reviewer-2", "Reviewed evidence", ["dashboard.read"]],
+    ["another reason", "reviewer-1", "Changed reason", ["dashboard.read"]],
+    ["lost permission", "reviewer-1", "Reviewed evidence", []],
+  ])("does not adopt a saved decision for %s", async (_label, actor, reason, permissions) => {
+    tx.aiActionProposal.findFirst.mockResolvedValueOnce(proposal({ status: "ACCEPTED", decidedById: "reviewer-1", decisionReason: "Reviewed evidence" }))
+    await expect(decideCopilotProposal("org-1", actor as string, permissions as string[], {
+      proposalId: proposal().id, decision: "ACCEPTED", reason: reason as string,
+    }, now)).rejects.toMatchObject({ code: _label === "lost permission" ? "FORBIDDEN" : "CONFLICT" })
+    expect(mockRecordBusinessEvent).not.toHaveBeenCalled()
+  })
+
+  it("preserves truthfully labelled stale evidence for a non-executing draft", async () => {
+    tx.agentRun.findFirst.mockResolvedValueOnce({ periodStart: input.periodStart, periodEnd: input.periodEnd,
+      completedAt: now, evidenceLinks: [{ ...input.evidence[0], freshness: "STALE" }] })
+    await createCopilotProposal("org-1", "user-1", ["dashboard.read"], {
+      ...input, evidence: [{ ...input.evidence[0], freshness: "stale" }],
+    }, now)
+    expect(tx.aiActionProposal.create).toHaveBeenCalledWith(expect.objectContaining({
+      data: expect.objectContaining({ evidenceRefs: [expect.objectContaining({ freshness: "stale" })] }),
+    }))
+  })
+
+  it("rejects promotion of operational evidence to certified", async () => {
+    await expect(createCopilotProposal("org-1", "user-1", ["dashboard.read"], {
+      ...input, evidence: [{ ...input.evidence[0], evidenceGrade: "certified" }],
+    }, now)).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(tx.aiActionProposal.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects conflicting duplicate citations in the stored run", async () => {
+    tx.agentRun.findFirst.mockResolvedValueOnce({ periodStart: input.periodStart, periodEnd: input.periodEnd,
+      completedAt: now, evidenceLinks: [
+        { ...input.evidence[0], freshness: "FRESH" },
+        { ...input.evidence[0], freshness: "BLOCKED" },
+      ] })
+    await expect(createCopilotProposal("org-1", "user-1", ["dashboard.read"], input, now))
+      .rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(tx.aiActionProposal.create).not.toHaveBeenCalled()
+  })
+
+  it.each(["P2034", "P2002"])("returns an actionable conflict for concurrent writes (%s)", async (code) => {
+    ;(mockDb.$transaction as jest.Mock).mockRejectedValueOnce({ name: "PrismaClientKnownRequestError", code, clientVersion: "6.19.3" })
+    await expect(createCopilotProposal("org-1", "user-1", ["dashboard.read"], input, now))
+      .rejects.toMatchObject({ code: "CONFLICT", status: 409 })
+  })
+
+  it("rejects acceptance with malformed persisted citations", async () => {
+    tx.aiActionProposal.findFirst.mockResolvedValueOnce(proposal({ evidenceRefs: [] }))
+    await expect(decideCopilotProposal("org-1", "reviewer-1", ["dashboard.read"], {
+      proposalId: proposal().id, decision: "ACCEPTED", reason: "Reviewed current evidence",
+    }, now)).rejects.toMatchObject({ code: "BUSINESS_RULE_VIOLATION" })
+    expect(tx.aiActionProposal.updateMany).not.toHaveBeenCalled()
+  })
+
+  it("rejects acceptance when the creator's completed run is unavailable", async () => {
+    tx.aiActionProposal.findFirst.mockResolvedValueOnce(proposal())
+    tx.agentRun.findFirst.mockResolvedValueOnce(null)
+    await expect(decideCopilotProposal("org-1", "reviewer-1", ["dashboard.read"], {
+      proposalId: proposal().id, decision: "ACCEPTED", reason: "Reviewed current evidence",
+    }, now)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(tx.aiActionProposal.updateMany).not.toHaveBeenCalled()
   })
 
   it("fails closed when a proposal is expired", async () => {

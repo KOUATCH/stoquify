@@ -1,0 +1,656 @@
+{
+  "at": "2026-09-15T12:31:06.714Z",
+  "baseline": "evidence/source-baseline-v158.json",
+  "baselineReceipt": "e0c8ba",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+    "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+    "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a",
+    "services/daily-habit/daily-habit-digest.service.ts": "32a111a30b36b94a2d98ab7b71b4eee74ddaec30fd42a6f32270c497a8cfb528",
+    "services/daily-habit/daily-habit-digest-contracts.ts": "1ba159dbb05b4e6ddf5300d5195f96bd020223c86703273f5f4339b552bfd285",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "d2d1423d6e8661b0bf4cd748fd5fbb22b59055090aa2bb77f7235bb316e40c44",
+    "lib/dashboard/bi-presentation.ts": "3733bf7f0d0a6b9b7a1811387c7d0c2c68c9cbd20896fe84172a944e07a4b691",
+    "components/bi/BIStateBadge.tsx": "bdb122d6f046402fdc5baa1636c8a11770d7f5f02ce58382fdd602f060ae81af",
+    "components/evidence/EvidenceGradeBadge.tsx": "5df9a27e1fa13b047cb905afed31c4db45fc1e6a0fc23f42d36570ac7193b49f",
+    "components/bi/BIEvidenceBadgeRow.tsx": "ff8ded50ef60a582e7193d8a41df98d03e2ca9e2f0214354c643e1ecfbf734eb",
+    "components/bi/BICommandModeTabs.tsx": "ebf15a81a232b82f38429f986820aff213d46e94751bd450f3e1a42abcbc8585",
+    "components/bi/BICommandBriefHeader.tsx": "afeb367462ae8b5f1fa23f80e9baaf76d634e3e2916afc9195026801a963487d",
+    "components/bi/BIKpiCard.tsx": "75e9e5672c11a4f20458ed3d88028bd87b0c21375c87894c078571438b868367",
+    "components/bi/BIBusinessTruthZone.tsx": "e92753bf2744f8df99ff9f508e7883387231025929f3eede3ae5140f6b61caf8",
+    "components/bi/BIWhatChangedStrip.tsx": "da51399b7354d3e3b25efdf0c3e49ab3b059f3f58cfad5c86341a6f89bcac855",
+    "components/bi/BIRiskOpportunityRadar.tsx": "dfe624699cf7a7267325d4810b628f7f8b660aff7a501526559d329ff567b2b9",
+    "components/bi/BIStateSurface.tsx": "002eda421e36f7caadeeff7da2eb9c23453f6543a5a60f7e0de1ca2789da27d9",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "033f0f8f6a3eeb0340df615b504ed275e4ffe085e9218c240ba5579960f628cf",
+    "lib/dashboard/snapshot-blocker-presentation.ts": "bc01d19aa9c8dbc4f958feea211d32386a9d051654376cda6da7a74ebb47d750"
+  },
+  "tests": {
+    "passed": 20,
+    "suites": 4,
+    "receipt": "15bcfe",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts services/daily-habit/__tests__/daily-habit-digest.service.test.ts components/daily-habit/__tests__/modes.test.tsx components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx",
+    "earlierFailedFixtureReceipt": "90d33e"
+  },
+  "lint": {
+    "passed": true,
+    "files": 6,
+    "receipt": "df221c",
+    "command": "node node_modules/eslint/bin/eslint.js lib/dashboard/snapshot-blocker-presentation.ts lib/dashboard/__tests__/snapshot-blocker-presentation.test.ts services/daily-habit/daily-habit-digest-presentation.ts services/daily-habit/__tests__/daily-habit-digest.service.test.ts components/daily-habit/DailyHabitDigestDashboard.tsx components/daily-habit/__tests__/modes.test.tsx"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "93b590",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098.json",
+    "receipt": "d4c781",
+    "at": "2026-09-15T12:28:11.472Z",
+    "sourceBefore": {
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+      "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+      "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a",
+      "services/daily-habit/daily-habit-digest.service.ts": "32a111a30b36b94a2d98ab7b71b4eee74ddaec30fd42a6f32270c497a8cfb528",
+      "services/daily-habit/daily-habit-digest-contracts.ts": "1ba159dbb05b4e6ddf5300d5195f96bd020223c86703273f5f4339b552bfd285",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "d2d1423d6e8661b0bf4cd748fd5fbb22b59055090aa2bb77f7235bb316e40c44",
+      "lib/dashboard/bi-presentation.ts": "3733bf7f0d0a6b9b7a1811387c7d0c2c68c9cbd20896fe84172a944e07a4b691",
+      "components/bi/BIStateBadge.tsx": "bdb122d6f046402fdc5baa1636c8a11770d7f5f02ce58382fdd602f060ae81af",
+      "components/evidence/EvidenceGradeBadge.tsx": "5df9a27e1fa13b047cb905afed31c4db45fc1e6a0fc23f42d36570ac7193b49f",
+      "components/bi/BIEvidenceBadgeRow.tsx": "ff8ded50ef60a582e7193d8a41df98d03e2ca9e2f0214354c643e1ecfbf734eb",
+      "components/bi/BICommandModeTabs.tsx": "ebf15a81a232b82f38429f986820aff213d46e94751bd450f3e1a42abcbc8585",
+      "components/bi/BICommandBriefHeader.tsx": "afeb367462ae8b5f1fa23f80e9baaf76d634e3e2916afc9195026801a963487d",
+      "components/bi/BIKpiCard.tsx": "75e9e5672c11a4f20458ed3d88028bd87b0c21375c87894c078571438b868367",
+      "components/bi/BIBusinessTruthZone.tsx": "e92753bf2744f8df99ff9f508e7883387231025929f3eede3ae5140f6b61caf8",
+      "components/bi/BIWhatChangedStrip.tsx": "da51399b7354d3e3b25efdf0c3e49ab3b059f3f58cfad5c86341a6f89bcac855",
+      "components/bi/BIRiskOpportunityRadar.tsx": "dfe624699cf7a7267325d4810b628f7f8b660aff7a501526559d329ff567b2b9",
+      "components/bi/BIStateSurface.tsx": "002eda421e36f7caadeeff7da2eb9c23453f6543a5a60f7e0de1ca2789da27d9",
+      "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "033f0f8f6a3eeb0340df615b504ed275e4ffe085e9218c240ba5579960f628cf",
+      "lib/dashboard/snapshot-blocker-presentation.ts": "bc01d19aa9c8dbc4f958feea211d32386a9d051654376cda6da7a74ebb47d750"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-1440-setup-details.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-1440-loaded.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-768-setup-details.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-768-loaded.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-setup-details.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-loaded.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-1440-mode-1.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-1440-mode-2.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-1440-mode-0.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-768-mode-1.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-768-mode-2.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-768-mode-0.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-mode-1.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-mode-2.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-mode-0.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-scrolled.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-error.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-en-320-denied.png"
+        ],
+        "layouts": [
+          {
+            "width": 1440,
+            "scrollWidth": 1440,
+            "scrollHeight": 1766,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 280,
+                  "y": -529,
+                  "width": 1160,
+                  "height": 1698,
+                  "top": -529,
+                  "right": 1440,
+                  "bottom": 1169,
+                  "left": 280
+                },
+                "scrollHeight": 1698,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 280,
+                      "y": -529,
+                      "width": 1160,
+                      "height": 1698,
+                      "top": -529,
+                      "right": 1440,
+                      "bottom": 1169,
+                      "left": 280
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 280,
+                  "y": -529,
+                  "width": 1160,
+                  "height": 1698,
+                  "top": -529,
+                  "right": 1440,
+                  "bottom": 1169,
+                  "left": 280
+                },
+                "scrollHeight": 1698,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 280,
+                      "y": -529,
+                      "width": 1160,
+                      "height": 1698,
+                      "top": -529,
+                      "right": 1440,
+                      "bottom": 1169,
+                      "left": 280
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 768,
+            "scrollWidth": 768,
+            "scrollHeight": 2327,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 220,
+                  "y": -1051,
+                  "width": 548,
+                  "height": 2260,
+                  "top": -1051,
+                  "right": 768,
+                  "bottom": 1209,
+                  "left": 220
+                },
+                "scrollHeight": 2260,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 220,
+                      "y": -1051,
+                      "width": 548,
+                      "height": 2260,
+                      "top": -1051,
+                      "right": 768,
+                      "bottom": 1209,
+                      "left": 220
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 220,
+                  "y": -1051,
+                  "width": 548,
+                  "height": 2260,
+                  "top": -1051,
+                  "right": 768,
+                  "bottom": 1209,
+                  "left": 220
+                },
+                "scrollHeight": 2260,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 220,
+                      "y": -1051,
+                      "width": 548,
+                      "height": 2260,
+                      "top": -1051,
+                      "right": 768,
+                      "bottom": 1209,
+                      "left": 220
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 320,
+            "scrollWidth": 320,
+            "scrollHeight": 2706,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 0,
+                  "y": -1224,
+                  "width": 320,
+                  "height": 2642,
+                  "top": -1224,
+                  "right": 320,
+                  "bottom": 1418,
+                  "left": 0
+                },
+                "scrollHeight": 2642,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 0,
+                      "y": -1224,
+                      "width": 320,
+                      "height": 2642,
+                      "top": -1224,
+                      "right": 320,
+                      "bottom": 1418,
+                      "left": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 0,
+                  "y": -1224,
+                  "width": 320,
+                  "height": 2642,
+                  "top": -1224,
+                  "right": 320,
+                  "bottom": 1418,
+                  "left": 0
+                },
+                "scrollHeight": 2642,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 0,
+                      "y": -1224,
+                      "width": 320,
+                      "height": 2642,
+                      "top": -1224,
+                      "right": 320,
+                      "bottom": 1418,
+                      "left": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "consoleErrors": [
+          "%o\n\n%s RangeError: Invalid currency code : INVALID\n    at new NumberFormat (<anonymous>)\n    at formatBIValue (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:287:16)\n    at BIKpiCard (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:96:27)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23584:20)\n    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:6793:22)\n    at updateFunctionComponent (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:9247:19)\n    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:10858:18)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15727:22)\n    at workLoopSync (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15547:41)\n    at renderRootSync (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15527:11)\n    at performWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15034:44)\n    at performSyncWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16831:7)\n    at flushSyncWorkAcrossRoots_impl (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16677:21)\n    at processRootScheduleInMicrotask (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16715:9)\n    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16850:13) The above error occurred in the <BIKpiCard> component. It was handled by the <ErrorBoundaryHandler> error boundary."
+        ],
+        "pageErrors": [],
+        "rscRequests": 1,
+        "initialLoadMs": 7700,
+        "keyboardSetupDetails": true,
+        "keyboardModesAcrossWidths": true,
+        "lowerContentVisibleAfterScroll": true,
+        "lowerGeometry": {
+          "rect": {
+            "x": 33,
+            "y": 617,
+            "width": 254,
+            "height": 24,
+            "top": 617,
+            "right": 287,
+            "bottom": 641,
+            "left": 33
+          },
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1"
+        },
+        "keyboardWorkspaceAndLocalizedLinks": true,
+        "timezoneStable": true,
+        "failedReadHasNoDigest": true,
+        "keyboardRetryFreshServer": true,
+        "currentPermissionDenied": true,
+        "hydrationErrors": []
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-1440-setup-details.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-1440-loaded.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-768-setup-details.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-768-loaded.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-setup-details.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-loaded.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-1440-mode-1.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-1440-mode-2.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-1440-mode-0.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-768-mode-1.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-768-mode-2.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-768-mode-0.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-mode-1.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-mode-2.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-mode-0.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-scrolled.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-error.png",
+          "digest-recovery-v158-e2818c5c-427d-42c8-9f92-e0b0cca7a098-fr-320-denied.png"
+        ],
+        "layouts": [
+          {
+            "width": 1440,
+            "scrollWidth": 1440,
+            "scrollHeight": 1766,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 280,
+                  "y": -529,
+                  "width": 1160,
+                  "height": 1698,
+                  "top": -529,
+                  "right": 1440,
+                  "bottom": 1169,
+                  "left": 280
+                },
+                "scrollHeight": 1698,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 280,
+                      "y": -529,
+                      "width": 1160,
+                      "height": 1698,
+                      "top": -529,
+                      "right": 1440,
+                      "bottom": 1169,
+                      "left": 280
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 280,
+                  "y": -529,
+                  "width": 1160,
+                  "height": 1698,
+                  "top": -529,
+                  "right": 1440,
+                  "bottom": 1169,
+                  "left": 280
+                },
+                "scrollHeight": 1698,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 280,
+                      "y": -529,
+                      "width": 1160,
+                      "height": 1698,
+                      "top": -529,
+                      "right": 1440,
+                      "bottom": 1169,
+                      "left": 280
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 768,
+            "scrollWidth": 768,
+            "scrollHeight": 2327,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 220,
+                  "y": -1051,
+                  "width": 548,
+                  "height": 2260,
+                  "top": -1051,
+                  "right": 768,
+                  "bottom": 1209,
+                  "left": 220
+                },
+                "scrollHeight": 2260,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 220,
+                      "y": -1051,
+                      "width": 548,
+                      "height": 2260,
+                      "top": -1051,
+                      "right": 768,
+                      "bottom": 1209,
+                      "left": 220
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 220,
+                  "y": -1051,
+                  "width": 548,
+                  "height": 2260,
+                  "top": -1051,
+                  "right": 768,
+                  "bottom": 1209,
+                  "left": 220
+                },
+                "scrollHeight": 2260,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 220,
+                      "y": -1051,
+                      "width": 548,
+                      "height": 2260,
+                      "top": -1051,
+                      "right": 768,
+                      "bottom": 1209,
+                      "left": 220
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 320,
+            "scrollWidth": 320,
+            "scrollHeight": 2810,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 0,
+                  "y": -1621,
+                  "width": 320,
+                  "height": 2746,
+                  "top": -1621,
+                  "right": 320,
+                  "bottom": 1125,
+                  "left": 0
+                },
+                "scrollHeight": 2746,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 0,
+                      "y": -1621,
+                      "width": 320,
+                      "height": 2746,
+                      "top": -1621,
+                      "right": 320,
+                      "bottom": 1125,
+                      "left": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 0,
+                  "y": -1621,
+                  "width": 320,
+                  "height": 2746,
+                  "top": -1621,
+                  "right": 320,
+                  "bottom": 1125,
+                  "left": 0
+                },
+                "scrollHeight": 2746,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 0,
+                      "y": -1621,
+                      "width": 320,
+                      "height": 2746,
+                      "top": -1621,
+                      "right": 320,
+                      "bottom": 1125,
+                      "left": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "consoleErrors": [
+          "%o\n\n%s RangeError: Invalid currency code : INVALID\n    at new NumberFormat (<anonymous>)\n    at formatBIValue (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:287:16)\n    at BIKpiCard (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:96:27)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23584:20)\n    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:6793:22)\n    at updateFunctionComponent (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:9247:19)\n    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:10858:18)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15727:22)\n    at workLoopSync (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15547:41)\n    at renderRootSync (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15527:11)\n    at performWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:15034:44)\n    at performSyncWorkOnRoot (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16831:7)\n    at flushSyncWorkAcrossRoots_impl (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16677:21)\n    at processRootScheduleInMicrotask (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16715:9)\n    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:16850:13) The above error occurred in the <BIKpiCard> component. It was handled by the <ErrorBoundaryHandler> error boundary."
+        ],
+        "pageErrors": [],
+        "rscRequests": 1,
+        "initialLoadMs": 4142,
+        "keyboardSetupDetails": true,
+        "keyboardModesAcrossWidths": true,
+        "lowerContentVisibleAfterScroll": true,
+        "lowerGeometry": {
+          "rect": {
+            "x": 33,
+            "y": 617,
+            "width": 254,
+            "height": 24,
+            "top": 617,
+            "right": 287,
+            "bottom": 641,
+            "left": 33
+          },
+          "display": "block",
+          "visibility": "visible",
+          "opacity": "1"
+        },
+        "keyboardWorkspaceAndLocalizedLinks": true,
+        "frenchTemplateAndSharedLabels": true,
+        "timezoneStable": true,
+        "failedReadHasNoDigest": true,
+        "keyboardRetryFreshServer": true,
+        "currentPermissionDenied": true,
+        "hydrationErrors": []
+      }
+    ],
+    "scope": "Owned localhost database and credential login only. Invalid currency deliberately triggers rendering failure; no live provider, approval, proposal or financial operation.",
+    "noProposalOrFinancialEffects": true,
+    "passed": true,
+    "sourceAfter": {
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+      "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+      "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a",
+      "services/daily-habit/daily-habit-digest.service.ts": "32a111a30b36b94a2d98ab7b71b4eee74ddaec30fd42a6f32270c497a8cfb528",
+      "services/daily-habit/daily-habit-digest-contracts.ts": "1ba159dbb05b4e6ddf5300d5195f96bd020223c86703273f5f4339b552bfd285",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "d2d1423d6e8661b0bf4cd748fd5fbb22b59055090aa2bb77f7235bb316e40c44",
+      "lib/dashboard/bi-presentation.ts": "3733bf7f0d0a6b9b7a1811387c7d0c2c68c9cbd20896fe84172a944e07a4b691",
+      "components/bi/BIStateBadge.tsx": "bdb122d6f046402fdc5baa1636c8a11770d7f5f02ce58382fdd602f060ae81af",
+      "components/evidence/EvidenceGradeBadge.tsx": "5df9a27e1fa13b047cb905afed31c4db45fc1e6a0fc23f42d36570ac7193b49f",
+      "components/bi/BIEvidenceBadgeRow.tsx": "ff8ded50ef60a582e7193d8a41df98d03e2ca9e2f0214354c643e1ecfbf734eb",
+      "components/bi/BICommandModeTabs.tsx": "ebf15a81a232b82f38429f986820aff213d46e94751bd450f3e1a42abcbc8585",
+      "components/bi/BICommandBriefHeader.tsx": "afeb367462ae8b5f1fa23f80e9baaf76d634e3e2916afc9195026801a963487d",
+      "components/bi/BIKpiCard.tsx": "75e9e5672c11a4f20458ed3d88028bd87b0c21375c87894c078571438b868367",
+      "components/bi/BIBusinessTruthZone.tsx": "e92753bf2744f8df99ff9f508e7883387231025929f3eede3ae5140f6b61caf8",
+      "components/bi/BIWhatChangedStrip.tsx": "da51399b7354d3e3b25efdf0c3e49ab3b059f3f58cfad5c86341a6f89bcac855",
+      "components/bi/BIRiskOpportunityRadar.tsx": "dfe624699cf7a7267325d4810b628f7f8b660aff7a501526559d329ff567b2b9",
+      "components/bi/BIStateSurface.tsx": "002eda421e36f7caadeeff7da2eb9c23453f6543a5a60f7e0de1ca2789da27d9",
+      "services/daily-habit/daily-habit-digest-presentation.ts": "610f33948e6ec61b30d2408f28902f96ce8c802a468e7ea88e0e0850596d65aa",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "033f0f8f6a3eeb0340df615b504ed275e4ffe085e9218c240ba5579960f628cf",
+      "lib/dashboard/snapshot-blocker-presentation.ts": "bc01d19aa9c8dbc4f958feea211d32386a9d051654376cda6da7a74ebb47d750"
+    },
+    "sourceStable": true
+  },
+  "visualReview": {
+    "screenshots": 36,
+    "inspected": [
+      "French 320px expanded setup guidance"
+    ]
+  },
+  "remaining": [
+    "Other dynamic source-signal/blocker messages and technical source identifiers still require localization; four static setup blockers now have guarded French presentation.",
+    "Full-page screenshot blanking remains a capture limitation; actual scrolling verified.",
+    "Populated source/action journeys, all role/tenant cases, failed database reads, full screen-reader/zoom and governed enabled agent/proposal workflows remain incomplete."
+  ],
+  "migrations": false,
+  "wholeWorkflowComplete": false,
+  "guide": "DAILY_DIGEST_SETUP_GUIDANCE_V158.md",
+  "coverage": {
+    "discoveredWorkflows": 270,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2934,
+      "tests": 1049,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2544,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 191,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

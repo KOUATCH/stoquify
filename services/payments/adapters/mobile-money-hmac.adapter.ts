@@ -79,7 +79,8 @@ function parseDirection(value: unknown): ParsedProviderEvent["direction"] {
   const raw = stringValue(value)?.toUpperCase()
   if (raw === "OUTBOUND" || raw === "DEBIT") return "OUTBOUND"
   if (raw === "INTERNAL") return "INTERNAL"
-  return "INBOUND"
+  if (raw === "INBOUND" || raw === "CREDIT") return "INBOUND"
+  return null
 }
 
 function parseLineDirection(value: unknown): ParsedStatementLine["direction"] {

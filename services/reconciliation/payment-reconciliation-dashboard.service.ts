@@ -1,6 +1,7 @@
+import { getPaymentReconciliationSummary, type PaymentReconciliationSummary } from "./payment-reconciliation-summary.service"
+import { getSuspenseWorkQueue } from "./payment-suspense-read.service"
+import { readLatestReconciliationAlertScan, type ReconciliationAlertScan } from "./payment-reconciliation-alert-scan.service"
 import {
-  ExceptionSeverity,
-  MatchStatus,
   PaymentReconciliationInboxSource,
   PaymentExceptionStatus,
   ReconciliationRunStatus,
@@ -9,8 +10,11 @@ import {
 
 import { db } from "@/prisma/db"
 import { publishPaymentReconciliationNotification } from "./payment-reconciliation-notifications"
+import { getPendingManualMatchProposals } from "./payment-reconciliation-manual-read.service"
+import { getManualMatchCandidates, type ManualMatchCandidate, type ManualCandidateReadModel } from "./payment-reconciliation-manual-candidates.service"
 
 export type PaymentReconciliationDashboardData = {
+  alertScan?: ReconciliationAlertScan | null
   source: {
     mode: "DURABLE_EVIDENCE_KERNEL"
     certificationStatus: "NO_EVIDENCE" | "READY_FOR_RUN" | "NEEDS_REVIEW" | "READY_FOR_SIGNOFF" | "SIGNED"
@@ -19,18 +23,7 @@ export type PaymentReconciliationDashboardData = {
     providerEvidenceAvailable: boolean
     statementEvidenceAvailable: boolean
   }
-  summary: {
-    providerAccountCount: number
-    activeProviderAccountCount: number
-    recentRunCount: number
-    readyForSignoffCount: number
-    signedRunCount: number
-    openExceptionCount: number
-    criticalExceptionCount: number
-    openSuspenseCount: number
-    openSuspenseAmount: number
-    closeBlockerCount: number
-  }
+  summary: PaymentReconciliationSummary["summary"] & { recentRunCount: number }
   providerAccounts: Array<{
     id: string
     displayName: string
@@ -52,30 +45,18 @@ export type PaymentReconciliationDashboardData = {
     importedAt: string
     lineCount: number
   }>
-  manualMatchCandidates: Array<{
-    exceptionId: string
-    providerAccountId: string
-    providerAccountName: string
-    paymentTransactionId: string
-    providerEventId: string | null
-    statementLineId: string | null
-    exceptionType: string
-    severity: string
-    internalReference: string | null
-    externalReference: string | null
-    internalAmount: number
-    externalAmount: number
-    currencyCode: string
-    occurredAt: string | null
-  }>
+  manualMatchCandidates: ManualMatchCandidate[]
+  manualMatchPreparation: Omit<ManualCandidateReadModel, "candidates">
   manualMatchProposals: Array<{
+    evidenceRevision: string | null
+    evidenceSummary: { internalAmount: string; externalAmount: string; direction: string; externalSource: string } | null
     id: string
     providerAccountId: string | null
     providerAccountName: string | null
     paymentTransactionId: string | null
     providerEventId: string | null
     statementLineId: string | null
-    amountMatched: number
+    amountMatched: string | null
     currencyCode: string
     matchedById: string | null
     createdAt: string
@@ -92,6 +73,8 @@ export type PaymentReconciliationDashboardData = {
     certificateHash: string | null
   }>
   suspenseQueue: Array<{
+    evidenceRevision: string
+    postingDate: string | null
     id: string
     providerAccountId: string | null
     status: string
@@ -104,9 +87,13 @@ export type PaymentReconciliationDashboardData = {
     ownerId: string | null
     exceptionId: string | null
     suspenseLedgerAccountId: string | null
+    suspenseAccount?: { id: string; code: string; nameEn: string; nameFr: string | null } | null
+    journal?: { id: string; number: string; status: string } | null
     ledgerPostingBatchId: string | null
     resolutionNotes: string | null
     proposedById: string | null
+    correctionProposalId?: string | null
+    postingCycle?: number
     postedAt: string | null
   }>
   notificationQueue: Array<{
@@ -149,13 +136,6 @@ function decimalNumber(value: { toNumber: () => number } | number | null | undef
   return typeof value === "number" ? value : value.toNumber()
 }
 
-function maskReference(value: string | null | undefined) {
-  const normalized = value?.trim()
-  if (!normalized) return null
-  if (normalized.length <= 4) return "****"
-  return `${normalized.slice(0, 2)}****${normalized.slice(-2)}`
-}
-
 function openExceptionStatuses(): PaymentExceptionStatus[] {
   return [
     PaymentExceptionStatus.OPEN,
@@ -192,13 +172,6 @@ function endOfUtcDay(date: Date) {
 
 function metadataObject(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? { ...(value as Record<string, unknown>) } : {}
-}
-
-function proposedById(value: unknown) {
-  const raw = metadataObject(value).reclassification
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null
-  const proposed = (raw as Record<string, unknown>).proposedById
-  return typeof proposed === "string" ? proposed : null
 }
 
 function notificationPayload(value: unknown) {
@@ -299,7 +272,7 @@ async function deliverOperationalNotifications(organizationId: string) {
         paymentRailId: run.paymentRailId,
         evidenceRef: { reconciliationRunId: run.id },
         correlationId: run.correlationId ?? `${run.id}:ready-for-signoff`,
-        dedupeKey: `${run.id}:ready-for-signoff`,
+        dedupeKey: run.id,
       }),
     ),
     openExceptionCount + openSuspenseCount + unsignedRunCount > 0
@@ -317,19 +290,19 @@ async function deliverOperationalNotifications(organizationId: string) {
 }
 
 export async function getPaymentReconciliationDashboardData(organizationId: string): Promise<PaymentReconciliationDashboardData> {
+  const reviewedAt = new Date()
   await deliverOperationalNotifications(organizationId)
 
   const [
     providerAccounts,
     statementFiles,
-    manualMatchCandidates,
+    manualMatchReadModel,
     manualMatchProposals,
     recentRuns,
     suspenseItems,
-    exceptions,
-    providerEventCount,
-    statementLineCount,
+    overview,
     inboxItems,
+    alertScan,
   ] = await Promise.all([
     db.providerAccount.findMany({
       where: { organizationId },
@@ -361,69 +334,8 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
         _count: { select: { lines: true } },
       },
     }),
-    db.paymentException.findMany({
-      where: {
-        organizationId,
-        status: { in: openExceptionStatuses() },
-        providerAccountId: { not: null },
-        paymentTransactionId: { not: null },
-        OR: [{ providerEventId: { not: null } }, { statementLineId: { not: null } }],
-      },
-      orderBy: [{ severity: "desc" }, { createdAt: "desc" }],
-      take: 12,
-      select: {
-        id: true,
-        type: true,
-        severity: true,
-        providerAccountId: true,
-        paymentTransactionId: true,
-        providerEventId: true,
-        statementLineId: true,
-        providerAccount: { select: { displayName: true } },
-        paymentTransaction: {
-          select: {
-            amount: true,
-            currencyCode: true,
-            providerTransactionId: true,
-            providerReference: true,
-            occurredAt: true,
-          },
-        },
-        providerEvent: {
-          select: {
-            amount: true,
-            providerTransactionId: true,
-            providerReference: true,
-            occurredAt: true,
-          },
-        },
-        statementLine: {
-          select: {
-            amount: true,
-            providerTransactionId: true,
-            providerReference: true,
-            occurredAt: true,
-          },
-        },
-      },
-    }),
-    db.matchRecord.findMany({
-      where: { organizationId, status: MatchStatus.PROPOSED },
-      orderBy: { createdAt: "desc" },
-      take: 12,
-      select: {
-        id: true,
-        providerAccountId: true,
-        paymentTransactionId: true,
-        providerEventId: true,
-        statementLineId: true,
-        amountMatched: true,
-        currencyCode: true,
-        matchedById: true,
-        createdAt: true,
-        providerAccount: { select: { displayName: true } },
-      },
-    }),
+    getManualMatchCandidates(organizationId),
+    getPendingManualMatchProposals(organizationId),
     db.reconciliationRun.findMany({
       where: { organizationId },
       orderBy: [{ businessDate: "desc" }, { createdAt: "desc" }],
@@ -440,53 +352,18 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
         certificateHash: true,
       },
     }),
-    db.suspenseItem.findMany({
-      where: {
-        organizationId,
-        status: { in: openSuspenseStatuses() },
-      },
-      orderBy: [{ severity: "desc" }, { slaDeadline: "asc" }, { createdAt: "desc" }],
-      take: 25,
-      select: {
-        id: true,
-        providerAccountId: true,
-        status: true,
-        severity: true,
-        type: true,
-        amount: true,
-        currencyCode: true,
-        slaDeadline: true,
-        correlationId: true,
-        ownerId: true,
-        suspenseLedgerAccountId: true,
-        ledgerPostingBatchId: true,
-        resolutionNotes: true,
-        postedAt: true,
-        metadata: true,
-        paymentExceptions: {
-          select: { id: true },
-          take: 1,
-        },
-      },
-    }),
-    db.paymentException.findMany({
-      where: {
-        organizationId,
-        status: { in: openExceptionStatuses() },
-      },
-      select: { type: true, severity: true },
-    }),
-    db.providerEvent.count({ where: { organizationId } }),
-    db.statementLine.count({ where: { organizationId } }),
+    getSuspenseWorkQueue(organizationId, reviewedAt),
+    getPaymentReconciliationSummary(organizationId),
     db.paymentReconciliationInboxItem.findMany({
       where: {
         organizationId,
+        payloadSummary: { path: ["notification", "category"], equals: "reconciliation" },
         source: {
           in: [PaymentReconciliationInboxSource.RECONCILIATION_RUN, PaymentReconciliationInboxSource.SUSPENSE_POST],
         },
       },
-      orderBy: { createdAt: "desc" },
-      take: 50,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: 25,
       select: {
         id: true,
         source: true,
@@ -495,61 +372,20 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
         createdAt: true,
       },
     }),
+    readLatestReconciliationAlertScan(organizationId),
   ])
 
-  const openSuspenseAmount = suspenseItems.reduce((sum, item) => sum + decimalNumber(item.amount), 0)
-  const criticalExceptionCount = exceptions.filter((exception) => exception.severity === ExceptionSeverity.CRITICAL).length
-  const readyForSignoffCount = recentRuns.filter((run) => run.status === ReconciliationRunStatus.READY_FOR_SIGNOFF).length
-  const signedRunCount = recentRuns.filter((run) => run.status === ReconciliationRunStatus.SIGNED).length
-  const needsReview = recentRuns.some((run) => run.status === ReconciliationRunStatus.NEEDS_REVIEW || run.status === ReconciliationRunStatus.BLOCKED)
-
-  const certificationStatus =
-    signedRunCount > 0
-      ? "SIGNED"
-      : readyForSignoffCount > 0
-        ? "READY_FOR_SIGNOFF"
-        : needsReview || criticalExceptionCount > 0 || suspenseItems.length > 0
-          ? "NEEDS_REVIEW"
-          : providerEventCount > 0 || statementLineCount > 0
-            ? "READY_FOR_RUN"
-            : "NO_EVIDENCE"
-
-  const exceptionGroups = Array.from(
-    exceptions.reduce((groups, exception) => {
-      const groupKey = `${exception.type}:${exception.severity}`
-      const current = groups.get(groupKey) ?? {
-        key: groupKey,
-        type: exception.type,
-        severity: exception.severity,
-        count: 0,
-      }
-      current.count += 1
-      groups.set(groupKey, current)
-      return groups
-    }, new Map<string, { key: string; type: string; severity: string; count: number }>()),
-  ).map(([, group]) => group)
-
   return {
+    alertScan,
     source: {
       mode: "DURABLE_EVIDENCE_KERNEL",
-      certificationStatus,
-      asOf: new Date().toISOString(),
+      certificationStatus: overview.certificationStatus,
+      asOf: overview.asOf,
       organizationScoped: true,
-      providerEvidenceAvailable: providerEventCount > 0,
-      statementEvidenceAvailable: statementLineCount > 0,
+      providerEvidenceAvailable: overview.providerEvents > 0,
+      statementEvidenceAvailable: overview.statementLines > 0,
     },
-    summary: {
-      providerAccountCount: providerAccounts.length,
-      activeProviderAccountCount: providerAccounts.filter((account) => account.status === "ACTIVE").length,
-      recentRunCount: recentRuns.length,
-      readyForSignoffCount,
-      signedRunCount,
-      openExceptionCount: exceptions.length,
-      criticalExceptionCount,
-      openSuspenseCount: suspenseItems.length,
-      openSuspenseAmount,
-      closeBlockerCount: criticalExceptionCount + suspenseItems.length,
-    },
+    summary: { ...overview.summary, recentRunCount: recentRuns.length },
     providerAccounts: providerAccounts.map((account) => ({
       id: account.id,
       displayName: account.displayName,
@@ -571,46 +407,9 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
       importedAt: file.importedAt.toISOString(),
       lineCount: file._count.lines,
     })),
-    manualMatchCandidates: manualMatchCandidates.flatMap((candidate) => {
-      if (!candidate.providerAccountId || !candidate.paymentTransactionId || !candidate.paymentTransaction) return []
-      const externalEvidence = candidate.providerEvent ?? candidate.statementLine
-      if (!externalEvidence) return []
-
-      return [{
-        exceptionId: candidate.id,
-        providerAccountId: candidate.providerAccountId,
-        providerAccountName: candidate.providerAccount?.displayName ?? "",
-        paymentTransactionId: candidate.paymentTransactionId,
-        providerEventId: candidate.providerEventId,
-        statementLineId: candidate.statementLineId,
-        exceptionType: candidate.type,
-        severity: candidate.severity,
-        internalReference: maskReference(
-          candidate.paymentTransaction.providerReference ?? candidate.paymentTransaction.providerTransactionId,
-        ),
-        externalReference: maskReference(
-          externalEvidence.providerReference ?? externalEvidence.providerTransactionId,
-        ),
-        internalAmount: decimalNumber(candidate.paymentTransaction.amount),
-        externalAmount: decimalNumber(externalEvidence.amount),
-        currencyCode: candidate.paymentTransaction.currencyCode,
-        occurredAt: (
-          externalEvidence.occurredAt ?? candidate.paymentTransaction.occurredAt
-        )?.toISOString() ?? null,
-      }]
-    }),
-    manualMatchProposals: manualMatchProposals.map((proposal) => ({
-      id: proposal.id,
-      providerAccountId: proposal.providerAccountId,
-      providerAccountName: proposal.providerAccount?.displayName ?? null,
-      paymentTransactionId: proposal.paymentTransactionId,
-      providerEventId: proposal.providerEventId,
-      statementLineId: proposal.statementLineId,
-      amountMatched: decimalNumber(proposal.amountMatched),
-      currencyCode: proposal.currencyCode,
-      matchedById: proposal.matchedById,
-      createdAt: proposal.createdAt.toISOString(),
-    })),
+    manualMatchCandidates: manualMatchReadModel.candidates,
+    manualMatchPreparation: { checkedAt: manualMatchReadModel.checkedAt, hasMore: manualMatchReadModel.hasMore, limit: manualMatchReadModel.limit, writeAllowed: manualMatchReadModel.writeAllowed },
+    manualMatchProposals,
     recentRuns: recentRuns.map((run) => ({
       id: run.id,
       providerAccountId: run.providerAccountId,
@@ -622,24 +421,7 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
       signedAt: run.signedAt?.toISOString() ?? null,
       certificateHash: run.certificateHash,
     })),
-    suspenseQueue: suspenseItems.map((item) => ({
-      id: item.id,
-      providerAccountId: item.providerAccountId,
-      status: item.status,
-      severity: item.severity,
-      type: item.type,
-      amount: decimalNumber(item.amount),
-      currencyCode: item.currencyCode,
-      slaDeadline: item.slaDeadline?.toISOString() ?? null,
-      correlationId: item.correlationId,
-      ownerId: item.ownerId,
-      exceptionId: item.paymentExceptions[0]?.id ?? null,
-      suspenseLedgerAccountId: item.suspenseLedgerAccountId,
-      ledgerPostingBatchId: item.ledgerPostingBatchId,
-      resolutionNotes: item.resolutionNotes,
-      proposedById: proposedById(item.metadata),
-      postedAt: item.postedAt?.toISOString() ?? null,
-    })),
+    suspenseQueue: suspenseItems,
     notificationQueue: inboxItems
       .flatMap((item) => {
         const payload = notificationPayload(item.payloadSummary)
@@ -661,7 +443,7 @@ export async function getPaymentReconciliationDashboardData(organizationId: stri
         ]
       })
       .slice(0, 25),
-    exceptionGroups,
+    exceptionGroups: overview.exceptionGroups,
     controls: {
       certifiedModeEnabled: true,
       providerIngestionKillSwitch: false,

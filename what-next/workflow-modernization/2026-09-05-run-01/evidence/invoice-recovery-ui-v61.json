@@ -1,0 +1,210 @@
+{
+  "at": "2026-09-08T09:16:23.309Z",
+  "sourceBaseline": "evidence/source-baseline-v61.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx": "6d0772630bdf749b894af6bbe72b5142ca0fb96069d30ee39f62fb6b66608ac1",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "49ee0611aa286f363112fcd5ec64fc5af41335ac7eb1a7e46837c7e301e69c29",
+    "actions/purchasing/invoice-ledger-recovery.actions.ts": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/page.tsx": "ba5460787fcf83e49a79b6fa3c2a0eecf7c401ec72b67f58ac2ab4240d85f59d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "901b8fe2978c774b2657246daf9ba25217a8fbf353c629791d24eaca58b710c4",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2eee65b441ba480ceb5b49f1d272e23d5addeb01a2822e84d790aedbcc64639b",
+    "messages/en.json": "15ba3a49ef6a0c0f007edb2db8002e5b0b5547b595e23108f7c7b0684480a7af",
+    "messages/fr.json": "1dc8206e7c96b814a533a0a8c8ec32f27c32bd65473ee4bf22930d407a541395",
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673",
+    "components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx": "d87dbc40cde21b644f60ae625b605459fe6e457102b52a766e5b12199d9e9247"
+  },
+  "browser": "lanes/environment/invoice-recovery-browser-fbb752c0-451.json",
+  "backendUnchangedEvidence": "lanes/environment/invoice-ledger-recovery-abea1e41-f31.json",
+  "tests": "evidence/invoice-recovery-ui-tests-final.json",
+  "verifiers": [
+    {
+      "path": "lanes/environment/verify-invoice-recovery-browser.cjs",
+      "sha256": "c76751ca8c017c00040accc90059529152e98410f6812d5a14c1d5835c66bfa8"
+    },
+    {
+      "path": "lanes/environment/invoice-recovery-browser-fixtures.cjs",
+      "sha256": "691d46ee7465244f47a089dc0d8726d31c41c73a3efc6da658aa978b8be4fddf"
+    }
+  ],
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-selected-desktop-fbb752c0-451.png",
+      "sha256": "24762b1867cf579514dca65bf50f5fab548db53edb922b916b6432d936c56ccf"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-selected-320-fbb752c0-451.png",
+      "sha256": "31bebc87cb6f543c7f34ad8cec6cedd38617e6ec99ff13997c139595a9c90b8d"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-selected-390-fbb752c0-451.png",
+      "sha256": "ba1c4b2434969f3841b2d11a7014a34d868c7634202a4a0c4e8af691fe8ffc1d"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-selected-768-fbb752c0-451.png",
+      "sha256": "a714e3ce895240cbe031652fa1bb988c17dbd9fa5e4301aae46caffcbd07c264"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-review-desktop-fbb752c0-451.png",
+      "sha256": "f368224f9e804772521a62e004105f550bd7909af6580772051d14a2dc0eb53f"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-stale-fbb752c0-451.png",
+      "sha256": "3bb47d07cbd2738cc53eab787306569a1c39aaf97c17bf0d447f77fef7569088"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-recovered-desktop-fbb752c0-451.png",
+      "sha256": "127e00a3e9deb9f0b2966c2cd0ca7522c9426b48cb91f249811566d5b34e83ff"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-recovered-mobile-fbb752c0-451.png",
+      "sha256": "a043e46814b6c30baea83f93ae7fad4f1015883fa685b5b475219eb13d219b0c"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-recovered-text200-fbb752c0-451.png",
+      "sha256": "984e1d1a62468ce3eea65ee1c1ec6ff1430ff28aaef76d8c5f40f364014a9862"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-history-current-reversal-fbb752c0-451.png",
+      "sha256": "7fd46de467273de15017b9c05ee046cef3a6e37facabdf9dc83d0d9058273338"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-en-denied-fbb752c0-451.png",
+      "sha256": "b897368044c062b3be98e3c630944874b842d3e8b5ed237624ea07281b033c80"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-selected-desktop-fbb752c0-451.png",
+      "sha256": "effac1c385ce3a3ea6d552dd8a175c97ae4dc08baff444c08056314a2d0c22fe"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-selected-320-fbb752c0-451.png",
+      "sha256": "81cf18506d4748fcea9b48093bc89d2bffd076eb692012a9f95292115be28e14"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-selected-390-fbb752c0-451.png",
+      "sha256": "f75f89d33b0906d0355e4b454afb7558dd45a4b3c3c6add35fa8329898b2db0e"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-selected-768-fbb752c0-451.png",
+      "sha256": "d4daffd28e80b9ad6688d23eca586e2892646510e80a7929b24fae53ac8c3b40"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-review-desktop-fbb752c0-451.png",
+      "sha256": "b5a12e5c8e86be1ee35ce0e2d656feec0d7fe9edd21674c4f288a89ec0c78595"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-stale-fbb752c0-451.png",
+      "sha256": "3813616f3dcefe3ed0a4b9814b3f9fa25eaa45cb3313ac96e58c053e0730ab6b"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-recovered-desktop-fbb752c0-451.png",
+      "sha256": "1531660e4b8c4e7667ec9ee9595ed5f9b84890975189a0a542a0d79bf51b4cce"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-recovered-mobile-fbb752c0-451.png",
+      "sha256": "e356fae5a1611f32792e94daca5585027c117229ff5d852450ebc9cb5dc5469b"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-recovered-text200-fbb752c0-451.png",
+      "sha256": "5103f6203c598a8dec872558e94289fe80f502c25884be79d3dea75827abc335"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-history-current-reversal-fbb752c0-451.png",
+      "sha256": "114ac46282f7d6f6a1e4b91b19601beb3f0b78f9761563558ff286b1215700e2"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/invoice-recovery-screenshots/invoice-recovery-fr-denied-fbb752c0-451.png",
+      "sha256": "db5564388885800ebc9712b5b8f36803fd9527d74e8b55e781bb0f9c66b1b3f2"
+    }
+  ],
+  "priorAttempts": [
+    "evidence/invoice-recovery-ui-tests-initial.json",
+    "evidence/invoice-recovery-ui-tests-second.json",
+    "lanes/environment/invoice-recovery-browser-ca7a236e-b10.json"
+  ],
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js \"components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx\" \"components/purchasing/__tests__/InvoiceLedgerRecoveryWorkbench.test.tsx\" \"app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/page.tsx\" \"app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx\" \"app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts\"",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node scripts/module-surface-inventory.js --mode report --out what-next/workflow-modernization/2026-09-05-run-01/evidence/invoice-recovery-module-surfaces.md --json-out what-next/workflow-modernization/2026-09-05-run-01/evidence/invoice-recovery-module-surfaces.json",
+      "status": "report_generated_findings_retained",
+      "evidence": "evidence/invoice-recovery-module-surfaces.json"
+    }
+  ],
+  "timings": [
+    {
+      "locale": "en",
+      "observations": [
+        {
+          "name": "AP to recovery development baseline",
+          "ms": 11861
+        }
+      ],
+      "meaning": "Development baseline only; no approved budget or production claim"
+    },
+    {
+      "locale": "fr",
+      "observations": [
+        {
+          "name": "AP to recovery development baseline",
+          "ms": 14940
+        }
+      ],
+      "meaning": "Development baseline only; no approved budget or production claim"
+    }
+  ],
+  "migration": "none",
+  "build": "not run; default is migration-bearing",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2673,
+      "tests": 937,
+      "pages": 151,
+      "routeHandlers": 18,
+      "actionSources": 163,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2211,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 203,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

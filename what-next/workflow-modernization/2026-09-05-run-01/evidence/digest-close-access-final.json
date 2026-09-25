@@ -1,0 +1,55 @@
+{
+  "at": "2026-09-19T13:16:26.296Z",
+  "receipts": {
+    "main": "digest-close-access-c624d6ee-ae7d-4b06-acf9-817df82a0cbf.json",
+    "destination": "digest-close-access-27c6163d-c901-4997-9942-47a4600596a9.json",
+    "financeRegression": "digest-finance-ef5dbe1f-57a5-4e06-9320-c24711ea3a7d.json"
+  },
+  "sourceHashes": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-data-access.ts": "eb470af69c856378f6f8946e4112250d5c8b5e4ae655b539f2a577a5d70d8d20",
+    "app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx": "192c596cf6963987d54b663536d2f87bd7b9da11674b2d0e02444418668f8069",
+    "actions/accounting/close-assurance.actions.ts": "e4312d06c920b2df752c5260323483245b6365dca6d1f5437007e17013ca4847"
+  },
+  "tests": [
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts",
+    "services/daily-habit/__tests__/daily-habit-source-visibility.test.ts",
+    "services/daily-habit/__tests__/close-route-access.test.tsx",
+    "actions/accounting/__tests__/close-assurance-read-access.test.ts",
+    "actions/accounting/__tests__/close-assurance.actions.test.ts",
+    "services/_shared/__tests__/protect.test.ts",
+    "services/modules/__tests__/module-entitlement.service.test.ts",
+    "services/agents/__tests__/command-tool-adapters.test.ts"
+  ],
+  "commands": {
+    "focused": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/daily-habit/__tests__/daily-habit-digest.service.test.ts services/daily-habit/__tests__/daily-habit-source-visibility.test.ts services/daily-habit/__tests__/close-route-access.test.tsx actions/accounting/__tests__/close-assurance-read-access.test.ts actions/accounting/__tests__/close-assurance.actions.test.ts services/_shared/__tests__/protect.test.ts services/modules/__tests__/module-entitlement.service.test.ts services/agents/__tests__/command-tool-adapters.test.ts",
+    "correctedHarnessRerun": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/daily-habit/__tests__/close-route-access.test.tsx actions/accounting/__tests__/close-assurance-read-access.test.ts",
+    "runtime": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-close-access.cjs",
+    "destination": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-close-access.cjs --destination-evidence",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "checks": {
+    "sourceRegressions": "b60d1d: 99 passed in four suites",
+    "combined": "3a4b1c: 144 passed, 2 failures and one parse failure in new harnesses",
+    "correctedHarnesses": "6a5d18: 14 passed; 154 distinct tests across eight suites now passing",
+    "lint": "b0a8e1 passed for nine changed TS/TSX files",
+    "typecheck": "141071 passed",
+    "diff": "71b62c passed",
+    "financeRegression": "4880fb passed"
+  },
+  "before": [
+    "fa938f: empty-grant tenant exposed Accountant Digest; e6b78075-94a5-48e1-9e6a-46179bf5bfc9",
+    "1e4339: direct Close Centre rendered for empty grants; 5dd40a2c-3f50-48b8-8c31-dad01fe2d843",
+    "cf2796: denied/query-failed read actions still called domain loaders; one positive evidence-graph test also used the wrong argument shape"
+  ],
+  "harnessCorrections": [
+    "Corrected graph-service argument from string to periodId object.",
+    "Completed mocked RbacError code/status fields so real protect returns the actual 403 classification.",
+    "Mocked only next-intl defineRouting ESM setup; real locale selection/path helpers remain under test."
+  ],
+  "completeWorkflowVerified": false
+}

@@ -1,0 +1,71 @@
+{
+  "at": "2026-09-08T11:14:46.075Z",
+  "run": "19903d2e-612",
+  "before": false,
+  "checks": [
+    {
+      "name": "changed source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "legacy source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "archived source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "status-changed source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "refusal binds changed source and preserves OPEN after stale preview",
+      "status": "passed"
+    },
+    {
+      "name": "maker does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "role does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "fresh does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "expired does not bypass refusal controls",
+      "status": "failed",
+      "message": "\nInvalid `db.role.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-exception-refusal.cjs:14:1005\n\n  11 });\n  12 if(!before){\n  13 await check('refusal binds changed source and preserves OPEN after stale preview',async()=>{const x=await fixture('stale'),draft={kind:'review',invoiceId:x.invoiceId,exceptionId:x.request.exceptionId,decision:'REJECT',decisionReason:'Request withdrawn'},p=await s.previewInvoiceMatchException(draft,x.scope);await db.supplierInvoice.update({where:{id:x.invoiceId},data:{notes:'Changed again'}});await assert.rejects(s.confirmInvoiceMatchException({draft,expectedRevision:p.revision,idempotencyKey:crypto.randomUUID()},x.scope),e=>e.code==='CONFLICT');assert.equal((await db.supplierInvoiceMatchException.findUniqueOrThrow({where:{id:x.request.exceptionId}})).status,'OPEN')});\n→ 14 for(const mode of ['maker','role','fresh','expired','foreign'])await check(mode+' does not bypass refusal controls',async()=>{const x=await fixture('guard-'+mode),draft={kind:'review',invoiceId:x.invoiceId,exceptionId:x.request.exceptionId,decision:'REJECT',decisionReason:'Request withdrawn'};if(mode==='maker'){await db.role.update(\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"23514\", message: \"Supplier invoice match exception request evidence is immutable\", severity: \"ERROR\", detail: None, column: None, hint: None }), transient: false })"
+    },
+    {
+      "name": "foreign does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "database proof lookup failure is not a permitted unverified refusal",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent exact refusal converges without duplicate effects",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "622e5d9fc1ccc2b54754a21aec9416c0f97e571d581c7d42e7ce655a94ba2fe9",
+    "services/purchasing/invoice-match-exception.service.ts": "768845621e29022c5aa9ab160c91dddcd9161f1be01b74f77cb67759c9780d82",
+    "services/purchasing/invoice-match-exception-authority.ts": "ef58645922eb4e3dc53fe2d27d3af69bda25b06d5613606ea626f0ba13fc0ed6",
+    "services/purchasing/invoice-match-exception-contracts.ts": "798ecbd4300321d27bca9d62c9b23bafa8475d4bc9126aeda18268942e9cc13a"
+  },
+  "originalBefore": "2ae134ac5bf41d8b376a28b74d8284cbb7fc5a58484350cdacc81e6582414d0e",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "622e5d9fc1ccc2b54754a21aec9416c0f97e571d581c7d42e7ce655a94ba2fe9",
+    "services/purchasing/invoice-match-exception.service.ts": "768845621e29022c5aa9ab160c91dddcd9161f1be01b74f77cb67759c9780d82",
+    "services/purchasing/invoice-match-exception-authority.ts": "ef58645922eb4e3dc53fe2d27d3af69bda25b06d5613606ea626f0ba13fc0ed6",
+    "services/purchasing/invoice-match-exception-contracts.ts": "798ecbd4300321d27bca9d62c9b23bafa8475d4bc9126aeda18268942e9cc13a"
+  },
+  "sourceStable": true
+}

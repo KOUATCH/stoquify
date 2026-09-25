@@ -1,0 +1,100 @@
+{
+  "startedAt": "2026-09-05T15:38:16.998Z",
+  "fixture": "service_en_desktop",
+  "productionApproval": false,
+  "beforeSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "564b7601d243c98c1830baae5f41a97aaa76e1139877abf692f9f710fa4b4377"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "e03f44cc1a38fb3df6bfe09f9484977ee09836a7ef53132e8668138557fc6fe7"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "2abe3737204b237cb76d4b55bc9328b5cb7993590eeec54c4fec46d308a7b2e0"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "93c2ec82bd315ba3199a8e7fee6dceedb9ee05582fe3749d6a7697869ae39464"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "5ef8ea869f022fd85b34fa6c4b6b3e03e23db013a62a811424e44972c2e28559"
+    }
+  ],
+  "checks": [
+    {
+      "name": "actual_five_page_history_without_gaps_or_duplicates",
+      "passed": true,
+      "loadedCounts": [
+        25,
+        50,
+        75,
+        100,
+        112
+      ],
+      "loadMoreClicks": 4
+    },
+    {
+      "name": "older_applied_record_visible_beyond100",
+      "passed": true
+    }
+  ],
+  "targetCommandId": "cmtof6un000fpmapczluhsi1z",
+  "targetOrdinalBefore": 107,
+  "errors": [],
+  "usefulHistoryMs": 9289,
+  "failure": "locator.ariaSnapshot: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#module-history-cmtof6un000fpmapczluhsi1z')\u001b[22m\n",
+  "failureState": {
+    "url": "http://127.0.0.1:3107/en/dashboard/settings/modules",
+    "rows": 25,
+    "targetRows": 0,
+    "dialogs": [],
+    "currentTabs": [
+      "Change history"
+    ],
+    "historyButtons": []
+  },
+  "afterSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "564b7601d243c98c1830baae5f41a97aaa76e1139877abf692f9f710fa4b4377"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "e03f44cc1a38fb3df6bfe09f9484977ee09836a7ef53132e8668138557fc6fe7"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "2abe3737204b237cb76d4b55bc9328b5cb7993590eeec54c4fec46d308a7b2e0"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "93c2ec82bd315ba3199a8e7fee6dceedb9ee05582fe3749d6a7697869ae39464"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "5ef8ea869f022fd85b34fa6c4b6b3e03e23db013a62a811424e44972c2e28559"
+    }
+  ],
+  "sourceStable": true,
+  "completedAt": "2026-09-05T15:39:11.871Z"
+}

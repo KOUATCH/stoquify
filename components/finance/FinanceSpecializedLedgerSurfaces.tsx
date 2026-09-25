@@ -1,5 +1,7 @@
 "use client"
 
+import { WorkspaceSectionNavigation } from "@/components/dashboard/WorkspaceSectionNavigation"
+
 import Link from "next/link"
 import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState, type ReactNode } from "react"
@@ -11,7 +13,6 @@ import {
   useReactTable,
   type ColumnDef,
   type SortingState,
-  type VisibilityState,
 } from "@tanstack/react-table"
 import type { LucideIcon } from "lucide-react"
 import {
@@ -23,10 +24,6 @@ import {
   CalendarDays,
   CheckCircle2,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
   CreditCard,
   ExternalLink,
   FileText,
@@ -40,17 +37,25 @@ import {
   Percent,
   ReceiptText,
   RefreshCw,
-  Search,
   ShieldCheck,
   SlidersHorizontal,
   TrendingUp,
   Wallet,
-  X,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { DataTableSearch } from "@/components/DataTableComponents/DataTableSearch"
+import { DataTablePagination } from "@/components/DataTableComponents/DataTablePagination"
+import { CanonicalTableBoundary } from "@/components/DataTableComponents/CanonicalTableBoundary"
+import { CanonicalTableDensityControl } from "@/components/DataTableComponents/CanonicalTableDensityControl"
 import { TableDateRangePicker } from "@/components/DataTableComponents/TableDateRangePicker"
+import { useCanonicalTablePreferences } from "@/components/DataTableComponents/useCanonicalTablePreferences"
+import {
+  financePaymentsLedgerTableContract,
+  type FinanceStatementContext,
+} from "@/components/DataTableComponents/finance-accounting-contracts"
+import { createCanonicalTableQuery } from "@/components/DataTableComponents/table-system-contract"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   DropdownMenu,
@@ -59,7 +64,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -257,10 +261,10 @@ function SurfaceFrame({
   }
 
   return (
-    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)]">
+    <main className="dashboard-landing-theme dark min-h-screen overflow-x-hidden" data-finance-result-state={errorMessage ? "error" : context.dashboardQuery.isFetching ? "refreshing" : "ready"}>
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 text-[var(--dash-text)] sm:px-6 sm:py-6">
       <section className={cn(dashboardPanelClass, "p-4")}>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex min-w-0 flex-col gap-5">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
@@ -299,7 +303,15 @@ function SurfaceFrame({
         </Card>
       ) : null}
 
-      {dashboard ? children : null}
+      {dashboard ? <>
+        <WorkspaceSectionNavigation label={t("presentation.navigation")} items={[
+          { id: "ledger-overview", label: t("cashFlow.navigationLabels.overview") },
+          { id: "ledger-analysis", label: context.view === "payments" ? t("sections.methods") : surfaceT(`${context.view}.sections.aging`) },
+          { id: "ledger-records", label: surfaceT(`${context.view}.sections.${context.view === "payments" ? "ledger" : context.view === "receivables" ? "receipts" : "disbursements"}`) },
+          { id: "ledger-workflows", label: t("presentation.workflows") },
+        ]} />
+        {children}
+      </> : null}
       </div>
     </main>
   )
@@ -309,7 +321,7 @@ function SurfaceFilters({ context }: { context: FinanceSurfaceContext }) {
   const { dashboard, t, period, setPeriod, locationId, setLocationId, customRange, setCustomRange, refreshDashboard, dashboardQuery } = context
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[190px_190px_auto] xl:min-w-[620px]">
+    <div className="grid min-w-0 gap-3 border-t border-[var(--dash-border-subtle)] pt-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,220px)_minmax(0,220px)_auto]">
       <div>
         <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-[var(--dash-text-soft)]">
           <MapPin className="h-3.5 w-3.5 text-[var(--dash-info)]" />
@@ -434,7 +446,7 @@ function AssurancePanel({ context }: { context: FinanceSurfaceContext }) {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <ShieldCheck className="h-4 w-4 text-[var(--dash-success)]" />
-          {surfaceT(`${context.view}.assuranceTitle`)}
+          <h2>{surfaceT(`${context.view}.assuranceTitle`)}</h2>
         </CardTitle>
         <CardDescription className={dashboardMutedTextClass}>{surfaceT(`${context.view}.assuranceDescription`)}</CardDescription>
       </CardHeader>
@@ -589,6 +601,7 @@ export function PaymentsTable({
   t,
   surfaceT,
   empty,
+  financeContext,
 }: {
   payments: FinanceRecentPayment[]
   money: (value: number | null | undefined) => string
@@ -596,10 +609,18 @@ export function PaymentsTable({
   t: ReturnType<typeof useTranslations>
   surfaceT: ReturnType<typeof useTranslations>
   empty: string
+  financeContext?: FinanceStatementContext
 }) {
   const locale: Locale = pickLocale(useLocale())
   const [sorting, setSorting] = useState<SortingState>([{ id: "createdAt", desc: true }])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const {
+    columnVisibility,
+    columnOrder,
+    density,
+    setColumnVisibility,
+    setColumnOrder,
+    setDensity,
+  } = useCanonicalTablePreferences(financePaymentsLedgerTableContract)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [methodFilter, setMethodFilter] = useState("all")
@@ -770,12 +791,15 @@ export function PaymentsTable({
   const table = useReactTable({
     data: filteredPayments,
     columns,
+    getRowId: (row) => String(row.id),
     state: {
       sorting,
       columnVisibility,
+      columnOrder,
     },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -794,6 +818,19 @@ export function PaymentsTable({
       startDate ||
       endDate,
   )
+  const canonicalQuery = createCanonicalTableQuery(financePaymentsLedgerTableContract, {
+    search: searchTerm,
+    filters: {
+      ...(statusFilter !== "all" ? { status: [statusFilter] } : {}),
+      ...(methodFilter !== "all" ? { method: [methodFilter] } : {}),
+      ...(startDate ? { startDate: [startDate] } : {}),
+      ...(endDate ? { endDate: [endDate] } : {}),
+    },
+    sort: sorting,
+    pageIndex: table.getState().pagination.pageIndex,
+    pageSize: table.getState().pagination.pageSize,
+  })
+  const canonicalState = filteredPayments.length > 0 ? "ready" : hasActiveFilters ? "no-results" : "empty"
   const columnLabels: Record<string, string> = {
     paymentNumber: t("table.payment"),
     counterparty: t("table.counterparty"),
@@ -813,37 +850,33 @@ export function PaymentsTable({
   }
 
   return (
-    <div className="w-full min-w-0 space-y-3">
-      <div className="dashboard-table-toolbar flex flex-col gap-3 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3 xl:flex-row xl:items-center xl:justify-between">
-        <div className="relative w-full min-w-0 flex-1 xl:min-w-[18rem]">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
-          <Input
-            type="search"
+    <CanonicalTableBoundary
+      contract={financePaymentsLedgerTableContract}
+      locale={locale}
+      query={canonicalQuery}
+      state={canonicalState}
+      density={density}
+    >
+    <div
+      className="w-full min-w-0 space-y-3"
+      data-finance-context={financeContext ? "bound" : "unbound"}
+      data-finance-entity-id={financeContext?.entityId}
+      data-finance-period-start={financeContext?.periodStart}
+      data-finance-period-end={financeContext?.periodEnd}
+      data-finance-currency={financeContext?.currency}
+    >
+      <div className="dashboard-table-toolbar flex flex-nowrap items-center gap-3 overflow-x-auto rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)]/70 p-3">
+        <div className="min-w-48 flex-1">
+          <DataTableSearch
             value={searchTerm}
-            aria-label={surfaceT("payments.ledger.searchLabel")}
+            onChange={(value) => { setSearchTerm(value); table.setPageIndex(0) }}
+            ariaLabel={surfaceT("payments.ledger.searchLabel")}
             placeholder={surfaceT("payments.ledger.searchPlaceholder")}
-            onChange={(event) => {
-              setSearchTerm(event.target.value)
-              table.setPageIndex(0)
-            }}
-            className="dashboard-control h-9 w-full rounded-lg pl-9 pr-9"
+            clearButtonLabel={surfaceT("payments.ledger.clearSearch")}
           />
-          {searchTerm ? (
-            <button
-              type="button"
-              aria-label={surfaceT("payments.ledger.clearSearch")}
-              onClick={() => {
-                setSearchTerm("")
-                table.setPageIndex(0)
-              }}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[var(--dash-text-faint)] transition hover:bg-[var(--dash-brand-soft)] hover:text-[var(--dash-text)]"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          ) : null}
         </div>
 
-        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 xl:w-auto xl:justify-end">
+        <div className="flex shrink-0 flex-nowrap items-center gap-2 [&>*]:shrink-0">
           <Select
             value={statusFilter}
             onValueChange={(value) => {
@@ -853,7 +886,7 @@ export function PaymentsTable({
           >
             <SelectTrigger
               aria-label={surfaceT("payments.ledger.statusFilter")}
-              className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]"
+              className="dashboard-control h-9 w-32 rounded-lg"
             >
               <SelectValue />
             </SelectTrigger>
@@ -876,7 +909,7 @@ export function PaymentsTable({
           >
             <SelectTrigger
               aria-label={surfaceT("payments.ledger.methodFilter")}
-              className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]"
+              className="dashboard-control h-9 w-36 rounded-lg"
             >
               <SelectValue />
             </SelectTrigger>
@@ -900,6 +933,8 @@ export function PaymentsTable({
             locale={locale}
             placeholder={surfaceT("payments.ledger.dateFrom") + " - " + surfaceT("payments.ledger.dateTo")}
             ariaLabel={surfaceT("payments.ledger.dateFrom") + " - " + surfaceT("payments.ledger.dateTo")}
+            className="w-40"
+            triggerClassName="min-w-0 sm:w-full [&>span]:truncate"
           />
 
           <DropdownMenu>
@@ -930,6 +965,8 @@ export function PaymentsTable({
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <CanonicalTableDensityControl density={density} locale={locale} onDensityChange={setDensity} />
+
           {hasActiveFilters ? (
             <Button
               type="button"
@@ -947,12 +984,23 @@ export function PaymentsTable({
 
       <div className="dashboard-table-shell dashboard-data-table min-w-0 overflow-hidden rounded-lg">
         <div className="w-full overflow-x-auto">
-          <Table className="min-w-[960px]">
+          <Table className="min-w-[1160px]">
             <TableHeader className="sticky top-0 z-10 bg-[rgba(16,27,32,0.94)] backdrop-blur">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="whitespace-nowrap px-3">
+                    <TableHead
+                      key={header.id}
+                      aria-sort={header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : "none"}
+                      data-column-id={header.column.id}
+                      data-frozen={header.column.id === "paymentNumber" || header.column.id === "counterparty" ? "start" : undefined}
+                      className={cn(
+                        "whitespace-nowrap px-3",
+                        header.column.id === "paymentNumber" && "sticky left-0 z-20 min-w-[13rem] bg-[var(--dash-surface-raised)]",
+                        header.column.id === "counterparty" && "sticky left-[13rem] z-20 min-w-[13rem] bg-[var(--dash-surface-raised)]",
+                        header.column.id === "amount" && "text-right",
+                      )}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -969,7 +1017,17 @@ export function PaymentsTable({
                     className="border-[var(--dash-border-subtle)] hover:bg-[var(--dash-brand-soft)]"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="px-3 py-3 align-middle">
+                      <TableCell
+                        key={cell.id}
+                        data-column-id={cell.column.id}
+                        data-frozen={cell.column.id === "paymentNumber" || cell.column.id === "counterparty" ? "start" : undefined}
+                        className={cn(
+                          "px-3 py-3 align-middle",
+                          cell.column.id === "paymentNumber" && "sticky left-0 z-[1] min-w-[13rem] bg-[var(--dash-surface)]",
+                          cell.column.id === "counterparty" && "sticky left-[13rem] z-[1] min-w-[13rem] bg-[var(--dash-surface)]",
+                          cell.column.id === "amount" && "text-right tabular-nums",
+                        )}
+                      >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
@@ -1006,92 +1064,27 @@ export function PaymentsTable({
         </div>
       </div>
 
-      {filteredPayments.length > 0 ? (
-        <div className="dashboard-table-pagination flex min-w-0 flex-col gap-3 px-2 text-[var(--dash-text-soft)] sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm">
-            {surfaceT("payments.ledger.resultCount", {
-              visible: filteredPayments.length,
-              total: payments.length,
-            })}
-          </p>
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">{surfaceT("payments.ledger.rowsPerPage")}</span>
-              <Select
-                value={String(table.getState().pagination.pageSize)}
-                onValueChange={(value) => table.setPageSize(Number(value))}
-              >
-                <SelectTrigger
-                  aria-label={surfaceT("payments.ledger.rowsPerPage")}
-                  className="dashboard-control h-8 w-[72px] rounded-lg border-[var(--dash-border-subtle)]"
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[5, 10, 20, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={String(pageSize)}>
-                      {pageSize}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <span className="min-w-[110px] text-center text-sm font-medium">
-              {surfaceT("payments.ledger.pageOf", {
-                page: table.getState().pagination.pageIndex + 1,
-                total: table.getPageCount(),
-              })}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label={surfaceT("payments.ledger.firstPage")}
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-                className="dashboard-button-secondary hidden h-8 w-8 rounded-lg lg:inline-flex"
-              >
-                <ChevronsLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label={surfaceT("payments.ledger.previousPage")}
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                className="dashboard-button-secondary h-8 w-8 rounded-lg"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label={surfaceT("payments.ledger.nextPage")}
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                className="dashboard-button-secondary h-8 w-8 rounded-lg"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label={surfaceT("payments.ledger.lastPage")}
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-                className="dashboard-button-secondary hidden h-8 w-8 rounded-lg lg:inline-flex"
-              >
-                <ChevronsRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-[var(--dash-text-soft)]">
+          {surfaceT("payments.ledger.resultCount", { visible: filteredPayments.length, total: payments.length })}
+        </p>
+        <DataTablePagination
+          table={table}
+          variant="landing"
+          locale={locale}
+          showSelectionCount={false}
+          pageSizeOptions={[5, 10, 20, 50]}
+          copy={{
+            rowsPerPage: surfaceT("payments.ledger.rowsPerPage"),
+            firstPage: surfaceT("payments.ledger.firstPage"),
+            previousPage: surfaceT("payments.ledger.previousPage"),
+            nextPage: surfaceT("payments.ledger.nextPage"),
+            lastPage: surfaceT("payments.ledger.lastPage"),
+          }}
+        />
+      </div>
     </div>
+    </CanonicalTableBoundary>
   )
 }
 
@@ -1237,7 +1230,7 @@ function AgingPanel({
   return (
     <Card className={dashboardPanelClass}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">{title}</CardTitle>
+        <CardTitle className="text-base"><h2>{title}</h2></CardTitle>
         <CardDescription className={dashboardMutedTextClass}>{description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -1248,7 +1241,7 @@ function AgingPanel({
             ))}
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-3 text-xs lg:grid-cols-4">
           {buckets.map(([key, label, color]) => (
             <div key={key} className={cn(dashboardRowClass, "p-2")}>
               <div className="flex items-center gap-1.5 text-[var(--dash-text-soft)]"><span className={cn("h-2 w-2 rounded-full", color)} />{label}</div>
@@ -1290,19 +1283,19 @@ export function FinancePaymentsSurface() {
     <SurfaceFrame context={context}>
       {dashboard ? (
         <>
-          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <section id="ledger-overview" className="grid min-w-0 scroll-mt-24 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
             <MetricCard title={surfaceT("payments.kpis.collected")} value={money(dashboard.summary.paymentsCollected)} detail={surfaceT("payments.details.collected")} icon={ArrowUpRight} accent="success" />
             <MetricCard title={surfaceT("payments.kpis.pending")} value={money(dashboard.summary.paymentsPending)} detail={surfaceT("payments.details.pending")} icon={AlertTriangle} accent={dashboard.summary.paymentsPending > 0 ? "gold" : "muted"} />
             <MetricCard title={surfaceT("payments.kpis.netCash")} value={money(dashboard.summary.netCashFlow)} detail={surfaceT("payments.details.netCash")} icon={Wallet} accent={dashboard.summary.netCashFlow >= 0 ? "brand" : "danger"} />
             <MetricCard title={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} accent={dashboard.summary.financeConfidence >= 85 ? "success" : "gold"} />
           </section>
 
-          <section>
+          <section id="ledger-analysis" className="min-w-0 scroll-mt-24">
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Percent className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-                  {t("sections.methods")}
+                  <h2>{t("sections.methods")}</h2>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("payments.sections.methodsDescription")}</CardDescription>
               </CardHeader>
@@ -1326,12 +1319,12 @@ export function FinancePaymentsSurface() {
             />
           </section>
 
-          <section data-finance-final-section="operational">
+          <section id="ledger-records" className="min-w-0 scroll-mt-24" data-finance-final-section="operational">
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <ReceiptText className="h-4 w-4 text-[var(--dash-brand-strong)]" />
-                  {surfaceT("payments.sections.ledger")}
+                  <h2>{surfaceT("payments.sections.ledger")}</h2>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("payments.sections.ledgerDescription")}</CardDescription>
               </CardHeader>
@@ -1343,12 +1336,21 @@ export function FinancePaymentsSurface() {
                   t={t}
                   surfaceT={surfaceT}
                   empty={t("empty.payments")}
+                  financeContext={{
+                    entityId: dashboard.organization.id,
+                    entityName: dashboard.organization.name,
+                    periodStart: dashboard.filters.startDate,
+                    periodEnd: dashboard.filters.endDate,
+                    currency: dashboard.organization.currency,
+                    sourceReadModel: "finance-dashboard.recent-payments",
+                    evidenceRoute: "/dashboard/finance/payments",
+                  }}
                 />
               </CardContent>
             </Card>
           </section>
 
-          <section data-finance-final-section="workflow">
+          <section id="ledger-workflows" className="min-w-0 scroll-mt-24" data-finance-final-section="workflow">
             <FinanceWorkflowActionPanel
               title={surfaceT("payments.sections.workflows")}
               description={surfaceT("payments.sections.workflowsDescription")}
@@ -1380,14 +1382,14 @@ export function FinanceReceivablesSurface() {
     <SurfaceFrame context={context}>
       {dashboard ? (
         <>
-          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <section id="ledger-overview" className="grid min-w-0 scroll-mt-24 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
             <MetricCard title={t("metrics.receivables")} value={money(dashboard.summary.receivables)} detail={t("details.receivables", { count: dashboard.summary.openReceivableCount })} icon={HandCoins} accent="gold" />
             <MetricCard title={surfaceT("receivables.kpis.overdue")} value={money(dashboard.summary.overdueReceivableAmount)} detail={surfaceT("receivables.details.overdue")} icon={AlertTriangle} accent={dashboard.summary.overdueReceivableAmount > 0 ? "danger" : "muted"} />
             <MetricCard title={surfaceT("receivables.kpis.collected")} value={money(dashboard.summary.paymentsCollected)} detail={surfaceT("receivables.details.collected")} icon={ArrowUpRight} accent="success" />
             <MetricCard title={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} accent={dashboard.summary.financeConfidence >= 85 ? "success" : "gold"} />
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <section id="ledger-analysis" className="grid min-w-0 scroll-mt-24 grid-cols-1 gap-4">
             <AgingPanel
               title={surfaceT("receivables.sections.aging")}
               description={surfaceT("receivables.sections.agingDescription")}
@@ -1399,7 +1401,7 @@ export function FinanceReceivablesSurface() {
               localizedHref={localizedHref}
               counterpartyHref={(party) => `/dashboard/customers/${party.id}`}
             />
-            <div className="space-y-3">
+            <div className="grid min-w-0 gap-4 xl:grid-cols-2">
               <AssurancePanel context={context} />
               <LedgerPanel
                 title={surfaceT("receivables.sections.posting")}
@@ -1414,21 +1416,37 @@ export function FinanceReceivablesSurface() {
             </div>
           </section>
 
-          <section data-finance-final-section="operational">
+          <section id="ledger-records" className="min-w-0 scroll-mt-24" data-finance-final-section="operational">
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <ReceiptText className="h-4 w-4 text-[var(--dash-success)]" />
-                  {surfaceT("receivables.sections.receipts")}
+                  <h2>{surfaceT("receivables.sections.receipts")}</h2>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("receivables.sections.receiptsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
-                <PaymentsTable payments={inboundPayments} money={money} formatDateTime={formatDateTime} t={t} surfaceT={surfaceT} empty={surfaceT("empty.receipts")} />
+                <PaymentsTable
+                  payments={inboundPayments}
+                  money={money}
+                  formatDateTime={formatDateTime}
+                  t={t}
+                  surfaceT={surfaceT}
+                  empty={surfaceT("empty.receipts")}
+                  financeContext={{
+                    entityId: dashboard.organization.id,
+                    entityName: dashboard.organization.name,
+                    periodStart: dashboard.filters.startDate,
+                    periodEnd: dashboard.filters.endDate,
+                    currency: dashboard.organization.currency,
+                    sourceReadModel: "finance-dashboard.recent-payments",
+                    evidenceRoute: "/dashboard/finance/receivables",
+                  }}
+                />
               </CardContent>
             </Card>
           </section>
-          <section data-finance-final-section="workflow">
+          <section id="ledger-workflows" className="min-w-0 scroll-mt-24" data-finance-final-section="workflow">
             <FinanceWorkflowActionPanel
               title={surfaceT("receivables.sections.workflows")}
               description={surfaceT("receivables.sections.workflowsDescription")}
@@ -1460,14 +1478,14 @@ export function FinancePayablesSurface() {
     <SurfaceFrame context={context}>
       {dashboard ? (
         <>
-          <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <section id="ledger-overview" className="grid min-w-0 scroll-mt-24 gap-3 sm:grid-cols-2 2xl:grid-cols-4">
             <MetricCard title={t("metrics.payables")} value={money(dashboard.summary.payables)} detail={t("details.payables", { count: dashboard.summary.openPayableCount })} icon={FileText} accent={dashboard.summary.overduePayableAmount > 0 ? "danger" : "muted"} />
             <MetricCard title={surfaceT("payables.kpis.overdue")} value={money(dashboard.summary.overduePayableAmount)} detail={surfaceT("payables.details.overdue")} icon={AlertTriangle} accent={dashboard.summary.overduePayableAmount > 0 ? "danger" : "muted"} />
             <MetricCard title={surfaceT("payables.kpis.purchases")} value={money(dashboard.summary.purchases)} detail={surfaceT("payables.details.purchases")} icon={ArrowDownRight} accent="gold" />
             <MetricCard title={t("metrics.confidence")} value={percent(dashboard.summary.financeConfidence)} detail={t("details.workingCapital", { amount: money(dashboard.summary.workingCapital) })} icon={ShieldCheck} accent={dashboard.summary.financeConfidence >= 85 ? "success" : "gold"} />
           </section>
 
-          <section className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <section id="ledger-analysis" className="grid min-w-0 scroll-mt-24 grid-cols-1 gap-4">
             <AgingPanel
               title={surfaceT("payables.sections.aging")}
               description={surfaceT("payables.sections.agingDescription")}
@@ -1479,7 +1497,7 @@ export function FinancePayablesSurface() {
               localizedHref={localizedHref}
               counterpartyHref={(party) => `/dashboard/purchases/suppliers/${party.id}`}
             />
-            <div className="space-y-3">
+            <div className="grid min-w-0 gap-4 xl:grid-cols-2">
               <AssurancePanel context={context} />
               <LedgerPanel
                 title={surfaceT("payables.sections.posting")}
@@ -1494,21 +1512,37 @@ export function FinancePayablesSurface() {
             </div>
           </section>
 
-          <section data-finance-final-section="operational">
+          <section id="ledger-records" className="min-w-0 scroll-mt-24" data-finance-final-section="operational">
             <Card className={dashboardPanelClass}>
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <ReceiptText className="h-4 w-4 text-[var(--dash-success)]" />
-                  {surfaceT("payables.sections.disbursements")}
+                  <h2>{surfaceT("payables.sections.disbursements")}</h2>
                 </CardTitle>
                 <CardDescription className={dashboardMutedTextClass}>{surfaceT("payables.sections.disbursementsDescription")}</CardDescription>
               </CardHeader>
               <CardContent>
-                <PaymentsTable payments={outboundPayments} money={money} formatDateTime={formatDateTime} t={t} surfaceT={surfaceT} empty={surfaceT("empty.disbursements")} />
+                <PaymentsTable
+                  payments={outboundPayments}
+                  money={money}
+                  formatDateTime={formatDateTime}
+                  t={t}
+                  surfaceT={surfaceT}
+                  empty={surfaceT("empty.disbursements")}
+                  financeContext={{
+                    entityId: dashboard.organization.id,
+                    entityName: dashboard.organization.name,
+                    periodStart: dashboard.filters.startDate,
+                    periodEnd: dashboard.filters.endDate,
+                    currency: dashboard.organization.currency,
+                    sourceReadModel: "finance-dashboard.recent-payments",
+                    evidenceRoute: "/dashboard/finance/payables",
+                  }}
+                />
               </CardContent>
             </Card>
           </section>
-          <section data-finance-final-section="workflow">
+          <section id="ledger-workflows" className="min-w-0 scroll-mt-24" data-finance-final-section="workflow">
             <FinanceWorkflowActionPanel
               title={surfaceT("payables.sections.workflows")}
               description={surfaceT("payables.sections.workflowsDescription")}

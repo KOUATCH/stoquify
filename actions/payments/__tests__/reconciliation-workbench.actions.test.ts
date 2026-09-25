@@ -98,7 +98,7 @@ describe("payment reconciliation workbench action module access", () => {
 
     expect(result).toEqual({
       success: true,
-      data: { kind: "workbench" },
+      data: { kind: "workbench", scope: { organizationId: "org-session", actorId: "user-session" } },
       error: null,
       status: 200,
     })

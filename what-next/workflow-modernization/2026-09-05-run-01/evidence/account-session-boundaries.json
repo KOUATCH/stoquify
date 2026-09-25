@@ -1,0 +1,168 @@
+{
+  "recordedAt": "2026-09-06T17:19:36.353Z",
+  "checks": [
+    {
+      "file": "services/security/account-session-input.ts",
+      "sha256": "9b2199b5d58a5bbdaeb7a32e26a70729e101fc25e595e7ce8d578b75fe6ec612",
+      "findings": []
+    },
+    {
+      "file": "services/security/account-session.service.ts",
+      "sha256": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+      "findings": [
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 3,
+          "category": "PRISMA_CLIENT_IMPORT",
+          "snippet": "import { Prisma } from \"@prisma/client\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 4,
+          "category": "DIRECT_DB_IMPORT",
+          "snippet": "import { db } from \"@/prisma/db\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 16,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const actor = await tx.user.findFirst({ where: { id: scope.actorId, organizationId: scope.organizationId, organization: { isActive: true, deletedAt: null } }, select: { isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: { where: { organizationId: scope.organizationId }, select: { permissions: true } } } })",
+          "client": "tx",
+          "delegate": "user",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 18,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const current = await tx.session.findFirst({ where: { id: scope.sessionId, token: scope.sessionToken, userId: scope.actorId, expiresAt: { gt: now } }, select: { id: true } })",
+          "client": "tx",
+          "delegate": "session",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 23,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const rows = await tx.session.findMany({ where: { userId: scope.actorId, id: { not: scope.sessionId }, expiresAt: { gt: now } }, orderBy: { id: \"asc\" }, select: { id: true, createdAt: true, expiresAt: true, userAgent: true } })",
+          "client": "tx",
+          "delegate": "session",
+          "operation": "findMany",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 33,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const records = await tx.auditLog.findMany({ where: auditWhere(scope), orderBy: [{ createdAt: \"desc\" }, { id: \"desc\" }], take: 10, select: { id: true, changes: true } })",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "findMany",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 58,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const prior = await tx.auditLog.findFirst({ where: { id, ...auditWhere(scope) }, select: { changes: true } })",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 69,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const deleted = await tx.session.deleteMany({ where: { userId: scope.actorId, AND: [{ id: { in: preview.others.map(row => row.id) } }, { id: { not: scope.sessionId } }] } })",
+          "client": "tx",
+          "delegate": "session",
+          "operation": "deleteMany",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/account-session.service.ts",
+          "line": 72,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "await tx.auditLog.create({ data: { id, ...auditWhere(scope), changes: { requestHash: hash(command), receipt, reviewedHash: preview.snapshotHash, preservedRequestingSession: true } } })",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "create",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        }
+      ]
+    },
+    {
+      "file": "actions/security/account-session.actions.ts",
+      "sha256": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+      "findings": []
+    },
+    {
+      "file": "hooks/account-session-recovery.ts",
+      "sha256": "51b76e45e3daf8d11eb3d27b52d28bcd1ccf0f112a7afaceca5da6addaefe5c2",
+      "findings": []
+    },
+    {
+      "file": "hooks/useAccountSessions.ts",
+      "sha256": "5bbf90b1bfa22381b83cf51c991997cb87bca5dec61cf7e5c11aa791042f8671",
+      "findings": []
+    },
+    {
+      "file": "components/settings/AccountSessions.tsx",
+      "sha256": "382858360910cc38be4a24d363346a186c5cf99f798db88d4b38a33ea334a207",
+      "findings": []
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx",
+      "sha256": "3cef34c77414195b097fae7af0c9eb1a29bde3afb10c63783b0ff928f55f3794",
+      "findings": []
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+      "sha256": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+      "findings": []
+    }
+  ],
+  "passed": 8,
+  "failed": 0
+}

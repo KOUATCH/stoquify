@@ -5,6 +5,7 @@ import {
   completePasswordResetWorkflow,
   createOrganizationOwner,
   requestPasswordResetLinkWorkflow,
+  requestEmailVerificationCodeWorkflow,
   verifyEmailOtpWorkflow,
 } from "@/services/users/user-identity.service"
 
@@ -13,6 +14,7 @@ import { createInvitedUser } from "../createInvitedUser"
 import { sendResetLink } from "../sendResetLink"
 import { resetUserPassword } from "../updateUserPassword"
 import verifyOTP from "../verifyOtp"
+import { resendVerificationCode } from "../resendVerificationCode"
 
 jest.mock("@/lib/security/public-request-context", () => ({
   getPublicIdentityRequestContext: jest.fn(),
@@ -24,6 +26,7 @@ jest.mock("@/services/users/user-identity.service", () => ({
   completePasswordResetWorkflow: jest.fn(),
   createOrganizationOwner: jest.fn(),
   requestPasswordResetLinkWorkflow: jest.fn(),
+  requestEmailVerificationCodeWorkflow: jest.fn(),
   verifyEmailOtpWorkflow: jest.fn(),
 }))
 
@@ -41,6 +44,8 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
   observeModuleAccess: jest.fn(),
 }))
 jest.mock("next/cache", () => ({ revalidatePath: jest.fn() }))
+jest.mock("next-intl/server", () => ({ getLocale: jest.fn(async () => "en") }))
+jest.mock("next-intl/routing", () => ({ defineRouting: (value: unknown) => value }))
 
 const requestContext = { ipAddress: "203.0.113.10" }
 const mockGetPublicIdentityRequestContext = getPublicIdentityRequestContext as jest.Mock
@@ -140,5 +145,14 @@ describe("public identity action request context", () => {
 
     expect(result).toEqual({ status: 200, error: null, data: null })
     expect(JSON.stringify(result)).not.toContain("sensitive database connection detail")
+  })
+
+  it("derives resend context on the server and keeps infrastructure failures private", async () => {
+    const request = requestEmailVerificationCodeWorkflow as jest.Mock
+    request.mockResolvedValueOnce({ status: 200, error: null, data: null })
+    expect(await resendVerificationCode("user-1", "owner@example.com")).toEqual({ status: 200, error: null, data: null })
+    expect(request).toHaveBeenCalledWith("user-1", "owner@example.com", requestContext)
+    request.mockRejectedValueOnce(new Error("private provider detail"))
+    expect(await resendVerificationCode("user-1", "owner@example.com")).toEqual({ status: 200, error: null, data: null })
   })
 })

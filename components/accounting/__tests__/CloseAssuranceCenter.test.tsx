@@ -1,7 +1,9 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 import { CloseAssuranceCenter } from "@/components/accounting/CloseAssuranceCenter"
+import { CloseReadinessJourneyPanel } from "@/components/accounting/CloseReadinessJourneyPanel"
 import type { CloseAssuranceDashboardData } from "@/actions/accounting/close-assurance.actions"
+import { usePermissions } from "@/hooks/usePermissions"
 import {
   useAssignCloseFinding,
   useCloseAssurance,
@@ -12,6 +14,8 @@ import {
   useRunCloseAssurance,
   useUpdateAccountantReview,
 } from "@/hooks/accounting/useCloseAssurance"
+
+jest.mock("@/hooks/usePermissions", () => ({ usePermissions: jest.fn() }))
 
 jest.mock("lucide-react", () => {
   const React = require("react")
@@ -146,6 +150,11 @@ function setDashboardData(data: CloseAssuranceDashboardData) {
 describe("CloseAssuranceCenter", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    ;(usePermissions as jest.Mock).mockReturnValue({
+      permissionState: "ready",
+      hasPermission: () => true,
+      refreshPermissions: jest.fn(),
+    })
     setDashboardData(dashboardData())
     mockUseCloseEvidenceGraph.mockReturnValue({ data: null, isFetching: false })
     mockUseRunCloseAssurance.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
@@ -159,7 +168,7 @@ describe("CloseAssuranceCenter", () => {
     mockUseUpdateAccountantReview.mockReturnValue({ isPending: false, mutateAsync: jest.fn() })
   })
 
-  it("keeps the checklist full width and pairs certification, review, and export", () => {
+  it("keeps the checklist full width and groups certification, review, and export on wide screens", () => {
     const data = dashboardData()
 
     render(<CloseAssuranceCenter initialData={data} locale="en" />)
@@ -169,11 +178,87 @@ describe("CloseAssuranceCenter", () => {
       "divide-y",
       "divide-[var(--dash-border-subtle)]",
     )
-    expect(screen.getByTestId("close-certification-row")).toHaveClass("xl:grid-cols-3")
-    expect(screen.getByText("Close readiness checklist")).toBeInTheDocument()
-    expect(screen.getByText("Certification controls")).toBeInTheDocument()
+    expect(screen.getByTestId("close-certification-row")).toHaveClass("2xl:grid-cols-3")
+    expect(screen.getByRole("heading", { name: "Close readiness checklist" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "Certification controls" })).toBeInTheDocument()
     expect(screen.getByText("Accountant review")).toBeInTheDocument()
     expect(screen.getByText("Close pack export")).toBeInTheDocument()
+    const sectionLinks = screen.getByRole("navigation", { name: "Page sections" }).querySelectorAll("a")
+    const sections = Array.from(sectionLinks).map((link) => document.querySelector(link.getAttribute("href")!))
+    expect(sections.every(Boolean)).toBe(true)
+    sections.slice(1).forEach((section, index) => {
+      expect(sections[index]!.compareDocumentPosition(section!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    })
+  })
+
+  it.each(["ready", "loading", "error"])("prevents all writes with unverified or read-only permissions (%s)", (permissionState) => {
+    const data = dashboardData()
+    data.controls.certificationAvailable = true
+    data.findings = [{
+      id: "finding-1", checklistItemId: "check-1", domain: "LEDGER", severity: "HIGH", status: "OPEN",
+      title: "Missing source evidence", detail: "Evidence must be reviewed.", sourceService: "close-assurance.service",
+      sourceType: null, sourceId: null, ownerId: null, assignedById: null, assignedAt: null, dueAt: null,
+      waiverRequestedById: null, waiverApprovedById: null, correlationId: null,
+    }]
+    setDashboardData(data)
+    ;(usePermissions as jest.Mock).mockReturnValue({
+      permissionState,
+      // Cached grants must not authorize an operation while current permissions are unverified.
+      hasPermission: () => permissionState !== "ready",
+      refreshPermissions: jest.fn(),
+    })
+    render(<CloseAssuranceCenter initialData={data} locale="en" />)
+    fireEvent.change(screen.getByPlaceholderText("Add source-linked review notes for this finding."), { target: { value: "Review notes" } })
+    fireEvent.change(screen.getByPlaceholderText("Document the compensating control or management-approved reason for this waiver request."), { target: { value: "A documented compensating control" } })
+    for (const name of ["Run assessment", "Assign to me", "Add comment", "Request waiver", "Export draft JSON", "Export certified JSON", "Save review"]) {
+      const button = screen.getByRole("button", { name, exact: true })
+      expect(button).toBeDisabled()
+      fireEvent.click(button)
+    }
+    for (const hook of [mockUseRunCloseAssurance, mockUseAssignCloseFinding, mockUseCommentOnCloseFinding, mockUseUpdateAccountantReview]) {
+      expect(hook.mock.results[0].value.mutateAsync).not.toHaveBeenCalled()
+    }
+    expect(mockUseCloseWaiver.mock.results[0].value.request.mutateAsync).not.toHaveBeenCalled()
+    expect(mockUseExportClosePack.mock.results[0].value.draft.mutateAsync).not.toHaveBeenCalled()
+    expect(mockUseExportClosePack.mock.results[0].value.certified.mutateAsync).not.toHaveBeenCalled()
+    const guidance = permissionState === "ready" ? "Some actions are unavailable with your current permissions. An administrator can review your access."
+      : permissionState === "loading" ? "Checking your permissions…" : "Your permissions could not be verified. Refresh the page to retry."
+    expect(screen.getByText(guidance)).toHaveAttribute("role", "status")
+  })
+
+  it("keeps assessment authority separate from exports and review", () => {
+    ;(usePermissions as jest.Mock).mockReturnValue({
+      permissionState: "ready", hasPermission: (permission: string) => permission === "accounting.close.run", refreshPermissions: jest.fn(),
+    })
+    render(<CloseAssuranceCenter initialData={dashboardData()} locale="en" />)
+    expect(screen.getByRole("button", { name: "Run assessment" })).toBeEnabled()
+    expect(screen.getByRole("button", { name: "Export draft JSON" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Save review" })).toBeDisabled()
+  })
+
+  it.each([
+    ["BLOCKED", 0, "danger"],
+    ["RUNNING", 0, "info"],
+    ["READY", 0, "success"],
+    ["READY", 1, "danger"],
+  ] as const)("presents close status %s with %i critical blockers honestly", (status, criticalBlockerCount, tone) => {
+    const data = dashboardData()
+    data.run.status = status
+    data.run.criticalBlockerCount = criticalBlockerCount
+    render(<CloseReadinessJourneyPanel data={data} locale="en" />)
+    expect(screen.getAllByText(status, { exact: true })[0]).toHaveClass(`text-[var(--dash-${tone})]`)
+  })
+
+  it("refreshes both evidence and permissions without discarding review notes", () => {
+    const refreshPermissions = jest.fn()
+    ;(usePermissions as jest.Mock).mockReturnValue({ permissionState: "error", hasPermission: () => false, refreshPermissions })
+    render(<CloseAssuranceCenter initialData={dashboardData()} locale="fr" />)
+    const notes = screen.getByRole("textbox", { name: "Notes de decision" })
+    fireEvent.change(notes, { target: { value: "Notes à conserver" } })
+    fireEvent.click(screen.getByRole("button", { name: "Actualiser", exact: true }))
+    expect(refreshPermissions).toHaveBeenCalledTimes(1)
+    expect(mockUseCloseAssurance.mock.results[0].value.refetch).toHaveBeenCalledTimes(1)
+    expect(notes).toHaveValue("Notes à conserver")
   })
 
   it("surfaces partial data when close evidence domains are unavailable", () => {
@@ -216,6 +301,9 @@ describe("CloseAssuranceCenter", () => {
     expect(screen.getByText("Partial data")).toBeInTheDocument()
     expect(screen.getByText("2 unavailable checklist gates")).toBeInTheDocument()
     expect(screen.getAllByText("Payment reconciliation").length).toBeGreaterThan(0)
+    expect(screen.getByRole("table", { name: "Evidence coverage" })).toBeInTheDocument()
+    expect(screen.getByText("Evidence ID")).toBeInTheDocument()
+    expect(screen.getByText("Unavailable")).toBeInTheDocument()
   })
 
   it("keeps the no-period state visible and disables review writes without a close run", () => {

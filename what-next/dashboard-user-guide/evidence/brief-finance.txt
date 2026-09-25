@@ -1,0 +1,702 @@
+
+ROUTE /en/dashboard/finance/analytics
+FILE app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance/cash-command
+FILE app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx; components/cash-command/CashCommandDashboard.tsx; components/bi/index.ts; components/bi/BIActionPriorityBoard.tsx; components/bi/BIEvidenceBadgeRow.tsx; components/evidence/EvidenceGradeBadge.tsx; components/bi/BIStateBadge.tsx; components/bi/BIStateSurface.tsx; components/bi/BIEmptyState.tsx; components/bi/BICommandBriefHeader.tsx; components/bi/BICommandModeTabs.tsx; components/bi/BIBusinessTruthZone.tsx; components/bi/BIKpiCard.tsx; components/bi/BIProofDrawerHost.tsx; components/evidence/ProofTrailDrawer.tsx; components/bi/BIRiskOpportunityRadar.tsx; components/bi/BITrustLegend.tsx; components/bi/BIWhatChangedStrip.tsx
+DEPENDENCIES services/cash-command/cash-command.service.ts; app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; actions/evidence/proof-trail.actions.ts; lib/utils.ts; services/bi/bi-contracts.ts; services/evidence/evidence-contracts.ts; services/cash-command/cash-command-contracts.ts
+REDIRECTS []
+HEADINGS Proof links | Drawer | Module observe | Proof Trail
+PROPS Cash Command Intelligence | Generated | Period | Cash trust banner | What changed since yesterday | What needs action today | Cash risk radar | Live variance | Session variance | Alerts | Entitled | Read-only | Dependency gaps | No visible action is due | Period | Generated | Sources | Review | Proof-only drill-through needs a proof drawer host. | No proof subject was supplied. | Evidence Nodes | Evidence Edges | Blockers | Redactions | No ranked risk is visible | No important changes yet
+CONTROLS [dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:139)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:154)
+[dynamic or icon-only label] (Button, {}, components/bi/BIActionPriorityBoard.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIActionPriorityBoard.tsx:168)
+[dynamic or icon-only label] (Button, {}, components/bi/BICommandBriefHeader.tsx:90)
+[dynamic or icon-only label] (Link, {"href":"brief.primaryAction.href"}, components/bi/BICommandBriefHeader.tsx:91)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onValueChange?.(mode)"}, components/bi/BICommandModeTabs.tsx:41)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIBusinessTruthZone.tsx:65)
+[dynamic or icon-only label] (Button, {}, components/bi/BIBusinessTruthZone.tsx:77)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIBusinessTruthZone.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"card.actionLink.disabled"}, components/bi/BIKpiCard.tsx:67)
+[dynamic or icon-only label] (Link, {"href":"card.actionLink.href"}, components/bi/BIKpiCard.tsx:81)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:96)
+Proof-only drill-through needs a proof drawer host. (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:111)
+[dynamic or icon-only label] (Button, {}, components/bi/BIKpiCard.tsx:125)
+[dynamic or icon-only label] (Link, {"href":"drillThrough.href"}, components/bi/BIKpiCard.tsx:131)
+No proof subject was supplied. (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:46)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:62)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isLoading","onClick":"() => {\n          onOpenSubject?.(subject)\n          setOpen(true)\n        }"}, components/bi/BIProofDrawerHost.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIRiskOpportunityRadar.tsx:123)
+[dynamic or icon-only label] (Button, {}, components/bi/BIRiskOpportunityRadar.tsx:137)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIRiskOpportunityRadar.tsx:138)
+
+ROUTE /en/dashboard/finance/cash-drawer
+FILE app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx; components/pos/CashDrawerManagementDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/dashboard/DashboardErrorState.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/posHooks/useDrawerDashboard.ts; lib/utils.ts; services/pos/drawer-dashboard.schemas.ts; services/pos/drawer-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash drawer control | Drawer command center | Operational confidence | Cash movement | Session reconciliation | Drawer journal | Related work
+PROPS Drawer balance | Live variance | Cash sales | Open drawers | Confidence | Search session, cashier, terminal | Location | Opening balance | Expected balance | Closing balance | Card | Mobile money | Bank transfer | Credit | Transactions | Location | Session | Balance before | Balance after | Reason
+CONTROLS All locations (Select, {"onValueChange":"setLocationId"}, components/pos/CashDrawerManagementDashboard.tsx:299)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as DrawerDashboardPeriod)"}, components/pos/CashDrawerManagementDashboard.tsx:319)
+Refresh (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/pos/CashDrawerManagementDashboard.tsx:347)
+POS (Button, {}, components/pos/CashDrawerManagementDashboard.tsx:356)
+POS (Link, {"href":"\"/dashboard/pos\""}, components/pos/CashDrawerManagementDashboard.tsx:357)
+Overview (a, {"href":"\"#overview\""}, components/pos/CashDrawerManagementDashboard.tsx:424)
+Drawers (a, {"href":"\"#drawers\""}, components/pos/CashDrawerManagementDashboard.tsx:425)
+Movement (a, {"href":"\"#movement\""}, components/pos/CashDrawerManagementDashboard.tsx:426)
+Sessions (a, {"href":"\"#sessions\""}, components/pos/CashDrawerManagementDashboard.tsx:427)
+Journal (a, {"href":"\"#journal\""}, components/pos/CashDrawerManagementDashboard.tsx:428)
+Open POS (Button, {}, components/pos/CashDrawerManagementDashboard.tsx:630)
+Open POS (Link, {"href":"\"/dashboard/pos\""}, components/pos/CashDrawerManagementDashboard.tsx:631)
+Reconciliation (Button, {}, components/pos/CashDrawerManagementDashboard.tsx:639)
+Reconciliation (Link, {"href":"\"/dashboard/finance/reconciliation\""}, components/pos/CashDrawerManagementDashboard.tsx:640)
+Manage terminals (Button, {}, components/pos/CashDrawerManagementDashboard.tsx:648)
+Manage terminals (Link, {"href":"\"/dashboard/settings/terminals\""}, components/pos/CashDrawerManagementDashboard.tsx:649)
+Cash flow (Button, {}, components/pos/CashDrawerManagementDashboard.tsx:657)
+Cash flow (Link, {"href":"\"/dashboard/finance/cash-flow\""}, components/pos/CashDrawerManagementDashboard.tsx:658)
+Cash and payment history (Button, {}, components/pos/CashDrawerManagementDashboard.tsx:666)
+Cash and payment history (Link, {"href":"\"/dashboard/finance/cash-payment-history\""}, components/pos/CashDrawerManagementDashboard.tsx:667)
+Search session, cashier, terminal (Input, {"type":"\"search\"","onChange":"(event) => setSessionSearch(event.target.value)"}, components/pos/CashDrawerManagementDashboard.tsx:1016)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value as \"all\" | CashDrawerDashboardSession[\"status\"])\n            }"}, components/pos/CashDrawerManagementDashboard.tsx:1027)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setTimeFilter(value as \"all\" | \"24h\" | \"7d\" | \"30d\")\n            }"}, components/pos/CashDrawerManagementDashboard.tsx:1047)
+Time (button, {"type":"\"button\"","onClick":"() => handleSort(\"time\")"}, components/pos/CashDrawerManagementDashboard.tsx:1076)
+Sales (button, {"type":"\"button\"","onClick":"() => handleSort(\"sales\")"}, components/pos/CashDrawerManagementDashboard.tsx:1082)
+Variance (button, {"type":"\"button\"","onClick":"() => handleSort(\"variance\")"}, components/pos/CashDrawerManagementDashboard.tsx:1089)
+Hide session details / Show session details (Button, {"type":"\"button\"","onClick":"() => setExpandedSessionId(isExpanded ? null : session.id)"}, components/pos/CashDrawerManagementDashboard.tsx:1112)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n                setSessionPageSize(Number(value))\n              }"}, components/pos/CashDrawerManagementDashboard.tsx:1182)
+Previous (Button, {"type":"\"button\"","onClick":"() => setSessionPage((current) => Math.max(1, current - 1))","disabled":"boundedPage <= 1"}, components/pos/CashDrawerManagementDashboard.tsx:1202)
+Next (Button, {"type":"\"button\"","onClick":"() => setSessionPage((current) => Math.min(totalPages, current + 1))","disabled":"boundedPage >= totalPages"}, components/pos/CashDrawerManagementDashboard.tsx:1216)
+Hide journal details / Show journal details (Button, {"type":"\"button\"","onClick":"() => setExpandedJournalId(isExpanded ? null : entry.id)"}, components/pos/CashDrawerManagementDashboard.tsx:1273)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+
+ROUTE /en/dashboard/finance/cash-flow
+FILE app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance/cash-payment-history
+FILE app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx; components/finance/CashPaymentHistoryWorkbench.tsx; components/dashboard/history/TransactionHistoryWorkbenchShell.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/useCashPaymentHistoryWorkbench.ts; services/pos/cash-payment-history.service.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS 
+PROPS Business identity | Lane | Source | Amount | Direction | Physical cash impact | Source attribution | Location | Cashier | Drawer | Session | Effective time | Recorded time | Control states | Business state | Control state | Payment method | Payment status | Reconciliation state | Ledger posting batch | Provider reference | Proof
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => onFilterChange({ type: value === \"all\" ? undefined : value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:68)
+25 50 100 (Select, {"onValueChange":"(value) => onFilterChange({ pageSize: Number(value) as 25 | 50 | 100 })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:77)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onNextPage","disabled":"!hasMore || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:81)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRetry","disabled":"isLoading || isFetching"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:163)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onExport","disabled":"isLoading || isExporting"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:164)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => onFilterChange({ search: event.target.value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:172)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onFilterChange({ search: undefined })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:173)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => onFilterChange({ type: value === \"all\" ? undefined : value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:175)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onResetFilters","disabled":"!hasActiveFilters"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:182)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:184)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"() => toggleColumn(column.id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:185)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"toggleAllRows"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:196)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"() => toggleRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:204)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:206)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:206)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"() => toggleRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:214)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:214)
+25 50 100 (Select, {"onValueChange":"(value) => onFilterChange({ pageSize: Number(value) as 25 | 50 | 100 })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:221)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onFirstPage","disabled":"!canPreviousPage || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:223)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onPreviousPage","disabled":"!canPreviousPage || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:224)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onNextPage","disabled":"!hasMore || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:225)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:263)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:267)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:280)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/finance/costs
+FILE app/[locale]/(dashboard)/dashboard/finance/costs/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/costs/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance
+FILE app/[locale]/(dashboard)/dashboard/finance/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance/payables
+FILE app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/dashboard/DashboardErrorState.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS 
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+
+ROUTE /en/dashboard/finance/payments
+FILE app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/dashboard/DashboardErrorState.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS 
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+
+ROUTE /en/dashboard/finance/profit-loss
+FILE app/[locale]/(dashboard)/dashboard/finance/profit-loss/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/profit-loss/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance/profitability
+FILE app/[locale]/(dashboard)/dashboard/finance/profitability/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/profitability/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance/receivables/history
+FILE app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx; components/finance/AROpenItemsHistoryWorkbench.tsx; components/dashboard/history/TransactionHistoryWorkbenchShell.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/useAROpenItemsHistoryWorkbench.ts; services/accounting/ar-open-item.service.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS 
+PROPS Open item | Customer | Reference | Currency | Opened | Allocated | Open | Status | Aging | Invoice date | Due date | Days past due | Aging bucket | Evidence grade | Allocations | Allocations
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => onFilterChange({ type: value === \"all\" ? undefined : value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:68)
+25 50 100 (Select, {"onValueChange":"(value) => onFilterChange({ pageSize: Number(value) as 25 | 50 | 100 })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:77)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onNextPage","disabled":"!hasMore || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:81)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onRetry","disabled":"isLoading || isFetching"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:163)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onExport","disabled":"isLoading || isExporting"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:164)
+[dynamic or icon-only label] (Input, {"onChange":"(event) => onFilterChange({ search: event.target.value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:172)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onFilterChange({ search: undefined })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:173)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => onFilterChange({ type: value === \"all\" ? undefined : value })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:175)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onResetFilters","disabled":"!hasActiveFilters"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:182)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:184)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"() => toggleColumn(column.id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:185)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"toggleAllRows"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:196)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"() => toggleRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:204)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:206)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:206)
+[dynamic or icon-only label] (Checkbox, {"onCheckedChange":"() => toggleRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:214)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:214)
+25 50 100 (Select, {"onValueChange":"(value) => onFilterChange({ pageSize: Number(value) as 25 | 50 | 100 })"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:221)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onFirstPage","disabled":"!canPreviousPage || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:223)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onPreviousPage","disabled":"!canPreviousPage || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:224)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"onNextPage","disabled":"!hasMore || isLoading"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:225)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:263)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:267)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onSelectRow(id)"}, components/dashboard/history/TransactionHistoryWorkbenchShell.tsx:280)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/finance/receivables
+FILE app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/dashboard/DashboardErrorState.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS 
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+
+ROUTE /en/dashboard/finance/reconciliation
+FILE app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx; components/finance/PaymentReconciliationWorkbench.tsx; components/DataTableComponents/index.ts; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/bi/index.ts; components/bi/BIActionPriorityBoard.tsx; components/bi/BIEvidenceBadgeRow.tsx; components/evidence/EvidenceGradeBadge.tsx; components/bi/BIStateBadge.tsx; components/bi/BIStateSurface.tsx; components/bi/BIEmptyState.tsx; components/bi/BICommandBriefHeader.tsx; components/bi/BICommandModeTabs.tsx; components/bi/BIBusinessTruthZone.tsx; components/bi/BIKpiCard.tsx; components/bi/BIProofDrawerHost.tsx; components/evidence/ProofTrailDrawer.tsx; components/bi/BIRiskOpportunityRadar.tsx; components/bi/BITrustLegend.tsx; components/bi/BIWhatChangedStrip.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/dashboard/DashboardErrorState.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; actions/evidence/proof-trail.actions.ts; hooks/usePermissions.ts; actions/security/step-up-auth.actions.ts; lib/utils.ts; hooks/payments/usePaymentReconciliationWorkbench.ts; hooks/payments/usePaymentReconciliationDashboard.ts; actions/payments/reconciliation.actions.ts; services/payments/payment-reconciliation-workbench.service.ts; services/bi/bi-contracts.ts; services/evidence/evidence-contracts.ts; services/payments/payment-reconciliation-workbench.schemas.ts
+REDIRECTS []
+HEADINGS Payment trust banner | Payment reconciliation workbench | Run summaries | Reconciliation assurance | Failure groups by rail | Duplicate provider-reference alerts | Suspense-ready reconciliation failures | Durable evidence kernel | Proof Trail
+PROPS Active rails | Clean runs | Critical failures | Duplicate refs | Suspense exposure | Electronic payments | Captured amount | Matched amount | Provider reference coverage | Active provider accounts | Recent runs | Ready for sign-off | Open exceptions | Open suspense | No active provider account is configured yet. | No durable reconciliation runs have been created yet. | Provider or statement evidence | Fresh auth for sign-off | Maker-checker manual match | Suspense gateway only | Configure an active provider account before importing statement evidence. | Select a provider account | Statement file name | Upload a CSV or JSON file, or paste its contents here. | No evidence pair currently requires a manual match proposal. | password | No durable suspense item is waiting for approval. | Reason and evidence note | No reconciliation inbox item has been delivered yet. | No reconciliation failure groups were found for this scope. | No duplicate provider references were found. | No suspense-ready failures were found for this scope. | No visible action is due | Period | Generated | Sources | Review | Proof-only drill-through needs a proof drawer host. | No proof subject was supplied. | Evidence Nodes | Evidence Edges | Blockers | Redactions | No ranked risk is visible | No important changes yet
+CONTROLS All locations (Select, {"onValueChange":"setLocationId"}, components/finance/PaymentReconciliationWorkbench.tsx:617)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as PaymentReconciliationWorkbenchPeriod)"}, components/finance/PaymentReconciliationWorkbench.tsx:637)
+Refresh (Button, {"type":"\"button\"","onClick":"refreshWorkbench","disabled":"workbenchQuery.isFetching"}, components/finance/PaymentReconciliationWorkbench.tsx:660)
+Run (Button, {"type":"\"button\"","disabled":"isRunning || account.status !== \"ACTIVE\"","onClick":"() => onRun(account.id)"}, components/finance/PaymentReconciliationWorkbench.tsx:956)
+Sign (Button, {"type":"\"button\"","disabled":"isSigning","onClick":"() => onSign(run.id)"}, components/finance/PaymentReconciliationWorkbench.tsx:998)
+Export (Button, {"type":"\"button\"","disabled":"isExporting","onClick":"() => onExport(run.id)"}, components/finance/PaymentReconciliationWorkbench.tsx:1011)
+[dynamic or icon-only label] (Select, {"onValueChange":"setProviderAccountId"}, components/finance/PaymentReconciliationWorkbench.tsx:1131)
+Required columns: amount and date; transaction, reference, direction, fee, and currency are supported. Import statement (Input, {"type":"\"file\"","onChange":"(event) => { void loadFile(event.target.files?.[0]) }"}, components/finance/PaymentReconciliationWorkbench.tsx:1141)
+Required columns: amount and date; transaction, reference, direction, fee, and currency are supported. Import statement (Input, {"onChange":"(event) => setFileName(event.target.value)"}, components/finance/PaymentReconciliationWorkbench.tsx:1148)
+Required columns: amount and date; transaction, reference, direction, fee, and currency are supported. Import statement (Textarea, {"onChange":"(event) => setRawContent(event.target.value)"}, components/finance/PaymentReconciliationWorkbench.tsx:1155)
+Import statement (Button, {"type":"\"button\"","disabled":"importStatement.isPending || !selectedAccount || !rawContent.trim()","onClick":"() => { void submitImport() }"}, components/finance/PaymentReconciliationWorkbench.tsx:1164)
+Retry access check (Button, {"type":"\"button\"","onClick":"() => { void refreshPermissions() }"}, components/finance/PaymentReconciliationWorkbench.tsx:1314)
+Sign in (opens in a new tab) (Button, {}, components/finance/PaymentReconciliationWorkbench.tsx:1314)
+Sign in (opens in a new tab) (a, {"href":"locale === \"fr\" ? \"/fr/login-v2\" : \"/en/login-v2\""}, components/finance/PaymentReconciliationWorkbench.tsx:1314)
+Propose match (Input, {"onChange":"(event) => onAmountChange(candidate.exceptionId, event.target.value)","disabled":"!canPropose || !ready"}, components/finance/PaymentReconciliationWorkbench.tsx:1350)
+Propose match (Button, {"type":"\"button\"","disabled":"!canPropose || !ready || workflow.propose.isPending || invalidAmount","onClick":"() => { void propose(candidate) }"}, components/finance/PaymentReconciliationWorkbench.tsx:1360)
+Open proof (Button, {"type":"\"button\"","onClick":"() => onOpenPaymentProof(proposal.paymentTransactionId!)"}, components/finance/PaymentReconciliationWorkbench.tsx:1404)
+Replace with current evidence (Button, {"type":"\"button\"","disabled":"workflow.propose.isPending || proposedAmount === null || proposedAmount <= BigInt(0)","onClick":"() => { void renew(proposal) }"}, components/finance/PaymentReconciliationWorkbench.tsx:1407)
+Confirm your current password (Input, {"name":"\"password\"","type":"\"password\"","required":"true"}, components/finance/PaymentReconciliationWorkbench.tsx:1413)
+Confirm identity and approve (Button, {"type":"\"submit\"","disabled":"verifying || workflow.approve.isPending"}, components/finance/PaymentReconciliationWorkbench.tsx:1415)
+Approve match (Button, {"type":"\"button\"","disabled":"Boolean(unavailable) || workflow.approve.isPending || verifying","onClick":"() => { void approve(proposal) }"}, components/finance/PaymentReconciliationWorkbench.tsx:1418)
+Assign (Button, {"type":"\"button\"","disabled":"isBusy","onClick":"() => assign(item.id)"}, components/finance/PaymentReconciliationWorkbench.tsx:1545)
+Approve (Button, {"type":"\"button\"","disabled":"isBusy || !canApprove","onClick":"() => approve(item.id)"}, components/finance/PaymentReconciliationWorkbench.tsx:1556)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setDraft(item.id, { targetType: value })"}, components/finance/PaymentReconciliationWorkbench.tsx:1571)
+Propose (Textarea, {"onChange":"(event) => setDraft(item.id, { reason: event.target.value })"}, components/finance/PaymentReconciliationWorkbench.tsx:1583)
+Propose (Button, {"type":"\"button\"","disabled":"isBusy || draft.reason.trim().length < 3","onClick":"() => propose(item)"}, components/finance/PaymentReconciliationWorkbench.tsx:1589)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:139)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:154)
+[dynamic or icon-only label] (Button, {}, components/bi/BIActionPriorityBoard.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIActionPriorityBoard.tsx:168)
+[dynamic or icon-only label] (Button, {}, components/bi/BICommandBriefHeader.tsx:90)
+[dynamic or icon-only label] (Link, {"href":"brief.primaryAction.href"}, components/bi/BICommandBriefHeader.tsx:91)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onValueChange?.(mode)"}, components/bi/BICommandModeTabs.tsx:41)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIBusinessTruthZone.tsx:65)
+[dynamic or icon-only label] (Button, {}, components/bi/BIBusinessTruthZone.tsx:77)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIBusinessTruthZone.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"card.actionLink.disabled"}, components/bi/BIKpiCard.tsx:67)
+[dynamic or icon-only label] (Link, {"href":"card.actionLink.href"}, components/bi/BIKpiCard.tsx:81)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:96)
+Proof-only drill-through needs a proof drawer host. (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:111)
+[dynamic or icon-only label] (Button, {}, components/bi/BIKpiCard.tsx:125)
+[dynamic or icon-only label] (Link, {"href":"drillThrough.href"}, components/bi/BIKpiCard.tsx:131)
+No proof subject was supplied. (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:46)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:62)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isLoading","onClick":"() => {\n          onOpenSubject?.(subject)\n          setOpen(true)\n        }"}, components/bi/BIProofDrawerHost.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIRiskOpportunityRadar.tsx:123)
+[dynamic or icon-only label] (Button, {}, components/bi/BIRiskOpportunityRadar.tsx:137)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIRiskOpportunityRadar.tsx:138)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+
+ROUTE /en/dashboard/finance/retail
+FILE app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance/sales
+FILE app/[locale]/(dashboard)/dashboard/finance/sales/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/sales/page.tsx; components/finance/FinanceCommandCenterDashboard.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; components/dashboard/DashboardErrorState.tsx; components/finance/FinanceSpecializedLedgerSurfaces.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; hooks/finance/useFinanceDashboard.ts; lib/utils.ts; services/finance/finance-dashboard.schemas.ts; services/finance/finance-dashboard.service.ts
+REDIRECTS []
+HEADINGS Cash-flow statement
+PROPS 
+CONTROLS [dynamic or icon-only label] (Select, {"onValueChange":"(value) => setView(value as FinanceDashboardView)"}, components/finance/FinanceCommandCenterDashboard.tsx:306)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceCommandCenterDashboard.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceCommandCenterDashboard.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceCommandCenterDashboard.tsx:368)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"column.getToggleSortingHandler()"}, components/finance/FinanceCommandCenterDashboard.tsx:684)
+Previous page (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:810)
+Next page (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceCommandCenterDashboard.tsx:814)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+[dynamic or icon-only label] (Select, {"onValueChange":"setLocationId"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:325)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => setPeriod(value as FinanceDashboardPeriod)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:345)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"refreshDashboard","disabled":"dashboardQuery.isFetching"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:370)
+[dynamic or icon-only label] (Button, {}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:536)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(action.href)"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:542)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:575)
+[dynamic or icon-only label] (Input, {"type":"\"search\"","onChange":"(event) => {\n              setSearchTerm(event.target.value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:866)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => {\n                setSearchTerm(\"\")\n                table.setPageIndex(0)\n              }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:878)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setStatusFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:893)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              setMethodFilter(value)\n              table.setPageIndex(0)\n            }"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:916)
+[dynamic or icon-only label] (Button, {"type":"\"button\""}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:953)
+[dynamic or icon-only label] (DropdownMenuCheckboxItem, {"onCheckedChange":"(value) => column.toggleVisibility(Boolean(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:968)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:982)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"resetFilters"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1065)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => table.setPageSize(Number(value))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1089)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1115)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1126)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1137)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1148)
+[dynamic or icon-only label] (Link, {"href":"localizedHref(counterpartyHref(party))"}, components/finance/FinanceSpecializedLedgerSurfaces.tsx:1333)
+
+ROUTE /en/dashboard/finance/stock-to-cash
+FILE app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx; components/stock-to-cash/StockToCashFlowDashboard.tsx; components/bi/index.ts; components/bi/BIActionPriorityBoard.tsx; components/bi/BIEvidenceBadgeRow.tsx; components/evidence/EvidenceGradeBadge.tsx; components/bi/BIStateBadge.tsx; components/bi/BIStateSurface.tsx; components/bi/BIEmptyState.tsx; components/bi/BICommandBriefHeader.tsx; components/bi/BICommandModeTabs.tsx; components/bi/BIBusinessTruthZone.tsx; components/bi/BIKpiCard.tsx; components/bi/BIProofDrawerHost.tsx; components/evidence/ProofTrailDrawer.tsx; components/bi/BIRiskOpportunityRadar.tsx; components/bi/BITrustLegend.tsx; components/bi/BIWhatChangedStrip.tsx
+DEPENDENCIES services/stock-to-cash/stock-to-cash-flow.service.ts; app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; actions/evidence/proof-trail.actions.ts; lib/utils.ts; services/bi/bi-contracts.ts; services/evidence/evidence-contracts.ts; services/stock-to-cash/stock-to-cash-contracts.ts
+REDIRECTS []
+HEADINGS Stock-to-cash chain | Flow steps | Proof links | Proof Trail
+PROPS Stock exposure | Cash collected | Suspense | Source links | Trapped cash signals | No visible action is due | Period | Generated | Sources | Review | Proof-only drill-through needs a proof drawer host. | No proof subject was supplied. | Evidence Nodes | Evidence Edges | Blockers | Redactions | No ranked risk is visible | No important changes yet
+CONTROLS [dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:139)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:154)
+[dynamic or icon-only label] (Button, {}, components/bi/BIActionPriorityBoard.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIActionPriorityBoard.tsx:168)
+[dynamic or icon-only label] (Button, {}, components/bi/BICommandBriefHeader.tsx:90)
+[dynamic or icon-only label] (Link, {"href":"brief.primaryAction.href"}, components/bi/BICommandBriefHeader.tsx:91)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onValueChange?.(mode)"}, components/bi/BICommandModeTabs.tsx:41)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIBusinessTruthZone.tsx:65)
+[dynamic or icon-only label] (Button, {}, components/bi/BIBusinessTruthZone.tsx:77)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIBusinessTruthZone.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"card.actionLink.disabled"}, components/bi/BIKpiCard.tsx:67)
+[dynamic or icon-only label] (Link, {"href":"card.actionLink.href"}, components/bi/BIKpiCard.tsx:81)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:96)
+Proof-only drill-through needs a proof drawer host. (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:111)
+[dynamic or icon-only label] (Button, {}, components/bi/BIKpiCard.tsx:125)
+[dynamic or icon-only label] (Link, {"href":"drillThrough.href"}, components/bi/BIKpiCard.tsx:131)
+No proof subject was supplied. (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:46)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:62)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isLoading","onClick":"() => {\n          onOpenSubject?.(subject)\n          setOpen(true)\n        }"}, components/bi/BIProofDrawerHost.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIRiskOpportunityRadar.tsx:123)
+[dynamic or icon-only label] (Button, {}, components/bi/BIRiskOpportunityRadar.tsx:137)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIRiskOpportunityRadar.tsx:138)
+
+ROUTE /en/dashboard/finance/tax-rates/create
+FILE app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx; components/tax-rates/TaxRatesManagementDashboard.tsx; components/DataTableComponents/DataTablePagination.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/finance/finance-route-access.tsx; lib/utils.ts; actions/taxRate/tax-rate-management-actions.ts; hooks/useTaxRateManagement.ts
+REDIRECTS []
+HEADINGS Tax rates dashboard | Edit tax rate / Create tax rate | Active | Remove tax rate
+PROPS Items | Active | Total rates | Active | Used by items | Average rate | Search name, French name, type, rate... | Type | Rate band | Status | English name | Statutory output tax | French name | Taxe collectee statutaire | Rate | 0.00 | Type
+CONTROLS Actions (Button, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:687)
+View details (DropdownMenuItem, {}, components/tax-rates/TaxRatesManagementDashboard.tsx:695)
+View details (Link, {"href":"dashboardPath(\"settings\", \"tax-rates\", taxRate.id)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:696)
+Edit tax rate (DropdownMenuItem, {"onClick":"() => openEdit(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:701)
+Copy ID (DropdownMenuItem, {"onClick":"() => copyTaxRateId(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:705)
+Remove (DropdownMenuItem, {"onClick":"() => setRemoveTarget(taxRate)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:710)
+Try again (Button, {"type":"\"button\"","onClick":"() => refetch()"}, components/tax-rates/TaxRatesManagementDashboard.tsx:759)
+Refreshing / Refresh (Button, {"type":"\"button\"","onClick":"() => refetch()","disabled":"isFetching"}, components/tax-rates/TaxRatesManagementDashboard.tsx:786)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:796)
+Search name, French name, type, rate... (Input, {"onChange":"(event) => setSearch(event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:815)
+All (Select, {"onValueChange":"(value) => setTypeFilter(value as TaxType | \"all\")"}, components/tax-rates/TaxRatesManagementDashboard.tsx:822)
+All Zero Reduced Standard High (Select, {"onValueChange":"(value) => setRateFilter(value as RateFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:833)
+All Active Inactive (Select, {"onValueChange":"(value) => setStatusFilter(value as StatusFilter)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:845)
+Export (Button, {"type":"\"button\"","onClick":"exportTaxRates"}, components/tax-rates/TaxRatesManagementDashboard.tsx:855)
+Create tax rate (Button, {"type":"\"button\"","onClick":"openCreate"}, components/tax-rates/TaxRatesManagementDashboard.tsx:912)
+Statutory output tax (Input, {"onChange":"(event) => updateFormField(\"nameEn\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:960)
+Taxe collectee statutaire (Input, {"onChange":"(event) => updateFormField(\"nameFr\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:968)
+0.00 (Input, {"type":"\"number\"","onChange":"(event) => updateFormField(\"rate\", event.target.value)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:976)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => updateFormField(\"type\", value as TaxType)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:988)
+Active (Switch, {"onCheckedChange":"(checked) => updateFormField(\"isActive\", checked)"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1003)
+Cancel (Button, {"type":"\"button\"","onClick":"() => setFormOpen(false)","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1013)
+[dynamic or icon-only label] (Button, {"type":"\"submit\"","disabled":"isSaving"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1022)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"onClick"}, components/tax-rates/TaxRatesManagementDashboard.tsx:1082)
+[dynamic or icon-only label] (Select, {"onValueChange":"(value) => {\n              table.setPageSize(Number(value));\n            }"}, components/DataTableComponents/DataTablePagination.tsx:81)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(0)","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:104)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, components/DataTableComponents/DataTablePagination.tsx:113)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:122)
+[dynamic or icon-only label] (Button, {"onClick":"() => table.setPageIndex(table.getPageCount() - 1)","disabled":"!table.getCanNextPage()"}, components/DataTableComponents/DataTablePagination.tsx:131)

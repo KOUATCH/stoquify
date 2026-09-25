@@ -1,0 +1,80 @@
+{
+  "at": "2026-09-13T10:47:17.960Z",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "aa890a14119fbb495ef6a694caae72181bdcaf495f1a0aaac8ba8e07be803fc2",
+    "services/reconciliation/reconciliation-sign-review.contracts.ts": "df2299715cd83c1e0f35968953160b04fb1754aca297c0812fce7b24f14eabac",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "actions/payments/reconciliation.actions.ts": "354e844660a299de8b1b4c188d770f3397586d3ecac963455a9985b17e32c793",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "93879e25f6644ef8ed8696ccc63fc14c5ac45cb6eb2b2423e3cddcc8a2f8836e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "a1a1dd640a81e7e33b7689898c45938dcc112272e5a639e764fa9a1713525af7",
+    "messages/en.json": "f37881d78fc49a1340e0739bbe62ebb04feefb67eef1980e4eb2bab3564cad98",
+    "messages/fr.json": "2b1bba2b88be42bf6a9ac6aefafad65b7fe8825bbc15069911bc3991276b83fa"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "sign-review-v116-en-review-320-f7708913-46f.png",
+        "sign-review-v116-en-review-768-f7708913-46f.png",
+        "sign-review-v116-en-review-1440-f7708913-46f.png",
+        "sign-review-v116-en-signed-320-f7708913-46f.png",
+        "sign-review-v116-en-export-320-f7708913-46f.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789296445339 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789296454332 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": 7818,
+      "browserReadOnlyDenied": true,
+      "serviceMakerAndTenantDenied": true,
+      "passwordReloadAndBoundSignature": true,
+      "actualDownload": {
+        "fileName": "recon-cert-cmtzowglg002umaosbzlejxuq-06a6bb085fc5-bc40ee37-3227-4a09-9bd3-884f998cad6d.json",
+        "sha256": "b1bdbca9921f4dc3a0302767750aa50c9fb037313ea04832555a1c5df4b7d1d1",
+        "receiptId": "bc40ee37-3227-4a09-9bd3-884f998cad6d"
+      },
+      "financialUnchanged": true,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "sign-review-v116-fr-review-320-f7708913-46f.png",
+        "sign-review-v116-fr-review-768-f7708913-46f.png",
+        "sign-review-v116-fr-review-1440-f7708913-46f.png",
+        "sign-review-v116-fr-signed-320-f7708913-46f.png",
+        "sign-review-v116-fr-export-320-f7708913-46f.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789296501446 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": 6411,
+      "browserReadOnlyDenied": true,
+      "serviceMakerAndTenantDenied": true,
+      "passwordReloadAndBoundSignature": true,
+      "actualDownload": {
+        "fileName": "recon-cert-cmtzoxmi2008amaostt5ao4km-cf6a6942c639-f14d767c-1d30-4f4e-9b02-91d9abfa3396.json",
+        "sha256": "ed0ba215bc92faaa3704ba5f57555c544d386f623829e97449dd2a807e84f0f3",
+        "receiptId": "f14d767c-1d30-4f4e-9b02-91d9abfa3396"
+      },
+      "financialUnchanged": true,
+      "passed": true
+    }
+  ],
+  "scope": "Owned real EN/FR browser authentication, independent sign review, password/reload/retry and actual certificate download. Synthetic original provider fixture, genuine domain closure/preparation. No provider or professional approval claim.",
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "aa890a14119fbb495ef6a694caae72181bdcaf495f1a0aaac8ba8e07be803fc2",
+    "services/reconciliation/reconciliation-sign-review.contracts.ts": "df2299715cd83c1e0f35968953160b04fb1754aca297c0812fce7b24f14eabac",
+    "actions/payments/reconciliation-sign-review.actions.ts": "0baca5c551272a34d28f10fd57fda6c7f5dae7ee7271d9fb0da8e8f0055f750e",
+    "actions/payments/reconciliation.actions.ts": "354e844660a299de8b1b4c188d770f3397586d3ecac963455a9985b17e32c793",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "93879e25f6644ef8ed8696ccc63fc14c5ac45cb6eb2b2423e3cddcc8a2f8836e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "a1a1dd640a81e7e33b7689898c45938dcc112272e5a639e764fa9a1713525af7",
+    "messages/en.json": "f37881d78fc49a1340e0739bbe62ebb04feefb67eef1980e4eb2bab3564cad98",
+    "messages/fr.json": "2b1bba2b88be42bf6a9ac6aefafad65b7fe8825bbc15069911bc3991276b83fa"
+  },
+  "sourceStable": true
+}

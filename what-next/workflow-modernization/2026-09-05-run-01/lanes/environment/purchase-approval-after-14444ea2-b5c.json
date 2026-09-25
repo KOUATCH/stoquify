@@ -1,0 +1,53 @@
+{
+  "run": "14444ea2-b5c",
+  "mode": "after",
+  "at": "2026-09-07T13:41:44.514Z",
+  "sourcesBefore": {
+    "services/purchase-order/purchase-order.service.ts": "99e1f4c1cea56d7c83e4c9bbdb244aa21c8f16151b7cb5bb72aa1695a4f1cb89",
+    "services/purchase-order/purchase-order-approval.ts": "6659801624b5e22393790e31c06e88f074746e5cf1a4597215d6ec98431a7e4d",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "dcd984b9e0bf5902cf372676d61ae695e148486c3ff853b26cf1071d29e0ea63"
+  },
+  "checks": [
+    {
+      "name": "role change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "FORBIDDEN",
+      "unchanged": true
+    },
+    {
+      "name": "session change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "FORBIDDEN",
+      "unchanged": true
+    },
+    {
+      "name": "stale-line change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "CONFLICT",
+      "unchanged": true
+    },
+    {
+      "name": "freshness change after review",
+      "status": "passed",
+      "rejected": true,
+      "code": "FRESH_AUTH_REQUIRED",
+      "unchanged": true
+    },
+    {
+      "name": "Exact retry recovers one approval",
+      "status": "passed",
+      "recovered": true,
+      "audits": 1,
+      "unchanged": true
+    }
+  ],
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchase-order/purchase-order.service.ts": "99e1f4c1cea56d7c83e4c9bbdb244aa21c8f16151b7cb5bb72aa1695a4f1cb89",
+    "services/purchase-order/purchase-order-approval.ts": "6659801624b5e22393790e31c06e88f074746e5cf1a4597215d6ec98431a7e4d",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "dcd984b9e0bf5902cf372676d61ae695e148486c3ff853b26cf1071d29e0ea63"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "at": "2026-09-13T13:47:11.233Z",
+  "baseline": "evidence/source-baseline-v128.json",
+  "sources": {
+    "actions/pos/session.actions.ts": "1b46478d53a07d6105346d5cb486b377bd9eb2c33115937b9259373ff45ec132",
+    "hooks/posHooks/usePosOperations.ts": "6ff2bd826108d8d1f637e339d61d470fa09ccb8a41d95f47e1bd2aa21bc0a6c2",
+    "components/pos/ProfessionalPOSSystem.tsx": "0a96cdb91b9cbb31cb0aa858596163ac8e9801a8079266dba3325b511f543975",
+    "messages/en.json": "10f78e57636ca30bc7701edaaaf5367019eeed6863a19ab5304999f85d6093c5",
+    "messages/fr.json": "773822b2d3888e9af44bd9ee1a487be9ba922afcc6dd4e9add3044326b0c95f5"
+  },
+  "tests": {
+    "passed": 36,
+    "suites": 4,
+    "receipt": "452a4c",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath actions/pos/__tests__/shift-open-policy.actions.test.ts actions/pos/__tests__/session.actions.test.ts components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx services/modules/__tests__/module-admission.service.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "acc989",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "lint": {
+    "passed": true,
+    "files": 5,
+    "receipt": "91e96a"
+  },
+  "policy": {
+    "file": "lanes/environment/pos-policy-v128-37537288-c052-4755-b0de-8431ad4aae33.json",
+    "receipt": "fc81eb",
+    "at": "2026-09-13T13:35:05.872Z",
+    "sourcesBefore": {
+      "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+      "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+      "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+      "actions/pos/session.actions.ts": "dde45e28d8c78b96acd3ae44fb8f36349f0d35080a0931f8d74d8bc76b9cd7b5",
+      "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1"
+    },
+    "cases": [
+      {
+        "scenario": "active",
+        "commercialWriteAllowed": true,
+        "commercialReadAllowed": true,
+        "commercialReason": "Tenant module entitlement is available.",
+        "shiftOpen": "admitted",
+        "closeAfterStop": "closed_with_retained_event"
+      },
+      {
+        "scenario": "empty-grants",
+        "commercialWriteAllowed": false,
+        "commercialReadAllowed": false,
+        "commercialReason": "Tenant is not entitled to this module.",
+        "shiftOpen": "admitted",
+        "closeAfterStop": "closed_with_retained_event"
+      },
+      {
+        "scenario": "read-only",
+        "commercialWriteAllowed": false,
+        "commercialReadAllowed": true,
+        "commercialReason": "Tenant module entitlement is read-only for this operation.",
+        "shiftOpen": "admitted",
+        "closeAfterStop": "closed_with_retained_event"
+      },
+      {
+        "scenario": "expired",
+        "commercialWriteAllowed": false,
+        "commercialReadAllowed": false,
+        "commercialReason": "Tenant module grant has expired.",
+        "shiftOpen": "admitted",
+        "closeAfterStop": "closed_with_retained_event"
+      },
+      {
+        "scenario": "suspended-dependency",
+        "commercialWriteAllowed": false,
+        "commercialReadAllowed": false,
+        "commercialReason": "Required module dependencies are missing or unavailable for this operation.",
+        "shiftOpen": "admitted",
+        "closeAfterStop": "closed_with_retained_event"
+      },
+      {
+        "scenario": "stopped-pos",
+        "commercialWriteAllowed": true,
+        "commercialReadAllowed": true,
+        "commercialReason": "Tenant module entitlement is available.",
+        "shiftOpen": "denied_by_stop_policy"
+      },
+      {
+        "scenario": "stopped-sales",
+        "commercialWriteAllowed": true,
+        "commercialReadAllowed": true,
+        "commercialReason": "Tenant module entitlement is available.",
+        "shiftOpen": "denied_by_stop_policy"
+      }
+    ],
+    "scope": "Owned PostgreSQL real services. Commercial guard evaluated directly, not a live tender action. No sale commit, provider or payment executed. Permitted shift close creates local event/outbox/audit only; no delivery worker invoked.",
+    "observationsVerified": true,
+    "finding": "Commercial denial does not prevent opening a shift; stop-new-work policy does. Closure remains possible after stop, including commercially restricted fixtures. This is an access-consistency gap, not a passing security certification.",
+    "sourcesAfter": {
+      "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+      "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+      "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+      "actions/pos/session.actions.ts": "dde45e28d8c78b96acd3ae44fb8f36349f0d35080a0931f8d74d8bc76b9cd7b5",
+      "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1"
+    },
+    "sourceStable": true,
+    "commercialGapResolved": false
+  },
+  "browser": {
+    "file": "lanes/environment/pos-stop-browser-v128-f84f0d70-ffc4-4b22-9585-6c1fa5984268.json",
+    "receipt": "b07656",
+    "at": "2026-09-13T13:42:48.020Z",
+    "sourcesBefore": {
+      "actions/pos/session.actions.ts": "1b46478d53a07d6105346d5cb486b377bd9eb2c33115937b9259373ff45ec132",
+      "hooks/posHooks/usePosOperations.ts": "6ff2bd826108d8d1f637e339d61d470fa09ccb8a41d95f47e1bd2aa21bc0a6c2",
+      "components/pos/ProfessionalPOSSystem.tsx": "0a96cdb91b9cbb31cb0aa858596163ac8e9801a8079266dba3325b511f543975",
+      "messages/en.json": "10f78e57636ca30bc7701edaaaf5367019eeed6863a19ab5304999f85d6093c5",
+      "messages/fr.json": "773822b2d3888e9af44bd9ee1a487be9ba922afcc6dd4e9add3044326b0c95f5"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "pageErrors": [],
+        "screenshots": [
+          "pos-stop-v128-en-1440-f84f0d70-ffc4-4b22-9585-6c1fa5984268.png",
+          "pos-stop-v128-en-768-f84f0d70-ffc4-4b22-9585-6c1fa5984268.png",
+          "pos-stop-v128-en-320-f84f0d70-ffc4-4b22-9585-6c1fa5984268.png"
+        ],
+        "readyMs": 19084,
+        "stoppedWithAmountRetainedAndNoShift": true,
+        "policyChangeDoesNotAutoSubmit": true,
+        "explicitKeyboardRetryOpensOnce": true,
+        "retainedClosureVerifiedByService": true
+      },
+      {
+        "locale": "fr",
+        "pageErrors": [],
+        "screenshots": [
+          "pos-stop-v128-fr-1440-f84f0d70-ffc4-4b22-9585-6c1fa5984268.png",
+          "pos-stop-v128-fr-768-f84f0d70-ffc4-4b22-9585-6c1fa5984268.png",
+          "pos-stop-v128-fr-320-f84f0d70-ffc4-4b22-9585-6c1fa5984268.png"
+        ],
+        "readyMs": 6641,
+        "stoppedWithAmountRetainedAndNoShift": true,
+        "policyChangeDoesNotAutoSubmit": true,
+        "explicitKeyboardRetryOpensOnce": true,
+        "retainedClosureVerifiedByService": true
+      }
+    ],
+    "scope": "Owned local credentials and actual server actions. Stop-policy fixture changes use local DB only. No commercial grant activation, sale, payment or external operation.",
+    "passed": true,
+    "sourcesAfter": {
+      "actions/pos/session.actions.ts": "1b46478d53a07d6105346d5cb486b377bd9eb2c33115937b9259373ff45ec132",
+      "hooks/posHooks/usePosOperations.ts": "6ff2bd826108d8d1f637e339d61d470fa09ccb8a41d95f47e1bd2aa21bc0a6c2",
+      "components/pos/ProfessionalPOSSystem.tsx": "0a96cdb91b9cbb31cb0aa858596163ac8e9801a8079266dba3325b511f543975",
+      "messages/en.json": "10f78e57636ca30bc7701edaaaf5367019eeed6863a19ab5304999f85d6093c5",
+      "messages/fr.json": "773822b2d3888e9af44bd9ee1a487be9ba922afcc6dd4e9add3044326b0c95f5"
+    },
+    "sourceStable": true
+  },
+  "verificationDetails": "POS_POLICY_RECOVERY_V128.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2883,
+      "tests": 1022,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 174,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2514,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

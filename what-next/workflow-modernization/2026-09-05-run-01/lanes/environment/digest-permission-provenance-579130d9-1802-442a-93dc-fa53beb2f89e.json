@@ -1,0 +1,105 @@
+{
+  "at": "2026-09-15T13:51:05.735Z",
+  "baseline": false,
+  "sourceBefore": {
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "services/daily-habit/daily-habit-digest.service.ts": "c46e4f280483f72a3f41582dcca3c3d0f50213eaedac27443b11aff550cfe280"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "states": [
+        {
+          "name": "narrow",
+          "finance": false,
+          "close": false,
+          "passed": true
+        },
+        {
+          "name": "explicit-finance",
+          "finance": true,
+          "close": false,
+          "passed": true
+        },
+        {
+          "name": "explicit-close",
+          "finance": true,
+          "close": true,
+          "passed": true
+        },
+        {
+          "name": "revoked-close",
+          "finance": true,
+          "close": false,
+          "passed": true
+        },
+        {
+          "name": "stored-legacy",
+          "finance": false,
+          "close": true,
+          "passed": true
+        },
+        {
+          "name": "revoked-all-source",
+          "finance": false,
+          "close": false,
+          "passed": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "digest-permission-provenance-579130d9-1802-442a-93dc-fa53beb2f89e-en.png"
+    },
+    {
+      "locale": "fr",
+      "states": [
+        {
+          "name": "narrow",
+          "finance": false,
+          "close": false,
+          "passed": true
+        },
+        {
+          "name": "explicit-finance",
+          "finance": true,
+          "close": false,
+          "passed": true
+        },
+        {
+          "name": "explicit-close",
+          "finance": true,
+          "close": true,
+          "passed": true
+        },
+        {
+          "name": "revoked-close",
+          "finance": true,
+          "close": false,
+          "passed": true
+        },
+        {
+          "name": "stored-legacy",
+          "finance": false,
+          "close": true,
+          "passed": true
+        },
+        {
+          "name": "revoked-all-source",
+          "finance": false,
+          "close": false,
+          "passed": true
+        }
+      ],
+      "errors": [],
+      "screenshot": "digest-permission-provenance-579130d9-1802-442a-93dc-fa53beb2f89e-fr.png"
+    }
+  ],
+  "noFinancialEffects": true,
+  "passed": true,
+  "sourceAfter": {
+    "lib/security/rbac-permissions.ts": "d6993cfb73c45426f44b0428d14ba86d23a5078ae4c13802aae4701cb595a815",
+    "lib/security/rbac.ts": "cfcfee37b7336fef505252c369ea071f6546fa810352f85a7992969bf3b30376",
+    "services/daily-habit/daily-habit-digest.service.ts": "c46e4f280483f72a3f41582dcca3c3d0f50213eaedac27443b11aff550cfe280"
+  },
+  "sourceStable": true
+}

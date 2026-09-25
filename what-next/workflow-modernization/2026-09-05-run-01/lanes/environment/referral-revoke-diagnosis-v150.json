@@ -1,0 +1,9 @@
+{
+  "at": "2026-09-15T10:57:32.869Z",
+  "scope": "Owned failed fixture; observe business-event error without changing guards",
+  "underlying": {
+    "message": "\nInvalid `tx.businessEvent.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\services\\events\\business-event.service.ts:197:42\n\n  194 }\n  195 \n  196 try {\n→ 197   const event = await tx.businessEvent.create({\n          data: {\n            organizationId: \"workflow_funnel_source_dfd62444-79be-4bfc-beb1-1a9990debe7c\",\n            eventType: \"ACCOUNTANT_ACCESS_REVOKED\",\n            eventSource: \"INTERNAL\",\n            schemaVersion: 1,\n            idempotencyKey: \"accountant-access-revoked:cmu2k44n70010maj8gev7fydo\",\n            payloadHash: \"4f166ee62f922268762666d92459266d6b8576898c4504cc0cf7d5da68e04e5d\",\n            payload: {\n              grantId: \"cmu2k44n70010maj8gev7fydo\",\n              accountantUserId: \"cmu2k44mv000xmaj8trgu04c3\",\n              revokedAt: \"2026-09-15T10:57:33.148Z\",\n              reason: \"Owned lifecycle verification\"\n            },\n            correlationId: \"evt_bac5e63a-2450-4f5b-bcfa-78d69e039c56\",\n            occurredAt: new Date(\"2026-09-15T10:57:33.167Z\"),\n            actorId: \"cmu2k44ig0001maj8yrtxcsp3\",\n            locationId: undefined,\n            registerId: undefined,\n            deviceId: undefined,\n            sourceType: \"AccountantAccessGrant\",\n                        ~~~~~~~~~~~~~~~~~~~~~~~\n            sourceId: \"cmu2k44n70010maj8gev7fydo\",\n            postingBatchId: undefined,\n            documentHash: undefined,\n            metadata: undefined,\n            audits: {\n              create: {\n                organizationId: \"workflow_funnel_source_dfd62444-79be-4bfc-beb1-1a9990debe7c\",\n                action: \"RECORDED"
+  },
+  "error": "Business event could not be recorded.",
+  "currentGrantStatus": "ACTIVE"
+}

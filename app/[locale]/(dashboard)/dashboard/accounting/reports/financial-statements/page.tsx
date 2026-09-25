@@ -26,11 +26,17 @@ import {
   formatAccountingMoney,
 } from "../../_components/accounting-ui";
 import { routeByKey, withAccountingSurfaceAccess } from "../../accounting-route-access"
+import { FinancialStatementLinesTable } from "./financial-statement-lines-table"
+import {
+  accountingBalanceSheetTableContract,
+  accountingProfitLossTableContract,
+} from "@/components/DataTableComponents"
 
 type ReportView = "overview" | "profit-loss" | "balance-sheet";
 
 type PageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
+  locale?: "en" | "fr";
 };
 
 function firstParam(value: string | string[] | undefined) {
@@ -96,12 +102,14 @@ function StatementLines({
   lines,
   total,
   currency,
+  locale,
   open = false,
 }: {
   title: string;
   lines: FinancialStatementLine[];
   total: string;
   currency: string;
+  locale: "en" | "fr";
   open?: boolean;
 }) {
   return (
@@ -121,54 +129,13 @@ function StatementLines({
           {signedMoney(total, currency)}
         </div>
       </summary>
-      <div className="max-h-[28rem] overflow-auto border-t border-[var(--dash-border-subtle)]">
-        <table className="dashboard-table-base w-full min-w-[640px] text-sm">
-          <caption className="sr-only">{title} account detail</caption>
-          <thead className="sticky top-0 z-10 bg-[var(--dash-surface)] text-left text-[0.68rem] uppercase tracking-[0.12em] text-[var(--dash-text-faint)]">
-            <tr>
-              <th className="px-4 py-2.5 font-semibold">Account</th>
-              <th className="px-4 py-2.5 font-semibold">Classification</th>
-              <th className="px-4 py-2.5 text-right font-semibold">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {lines.length ? (
-              lines.map((line) => (
-                <tr
-                  key={line.accountId}
-                  className="border-t border-[var(--dash-border-subtle)]"
-                >
-                  <td className="px-4 py-3">
-                    <div className="font-medium text-[var(--dash-text)]">
-                      {line.code} · {line.nameEn}
-                    </div>
-                    <div className="mt-0.5 text-xs text-[var(--dash-text-faint)]">
-                      {line.mappingKey || "No mapping key"}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-xs text-[var(--dash-text-soft)]">
-                    {line.classificationSource === "EXPLICIT_MAPPING_KEY"
-                      ? "Explicit mapping"
-                      : "Account-type fallback"}
-                  </td>
-                  <td className="px-4 py-3 text-right font-mono font-medium tabular-nums text-[var(--dash-text)]">
-                    {signedMoney(line.amount, currency)}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={3}
-                  className="px-4 py-8 text-center text-sm text-[var(--dash-text-soft)]"
-                >
-                  No posted activity in this section for the selected period.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <FinancialStatementLinesTable
+        title={title}
+        lines={lines}
+        currency={currency}
+        locale={locale}
+        contract={title === "Asset accounts" || title === "Liabilities" || title === "Equity" ? accountingBalanceSheetTableContract : accountingProfitLossTableContract}
+      />
     </details>
   );
 }
@@ -178,8 +145,8 @@ function Overview({ report }: { report: FinancialStatementsReport }) {
   const balance = report.balanceSheet.totals;
 
   return (
-    <div className="grid gap-4 xl:grid-cols-12">
-      <div className="xl:col-span-5">
+    <div className="grid min-w-0 grid-cols-1 gap-5">
+      <div className="min-w-0">
         <AccountingPanel
           title="Performance bridge"
           description="A compact path from revenue to net income."
@@ -225,7 +192,7 @@ function Overview({ report }: { report: FinancialStatementsReport }) {
         </AccountingPanel>
       </div>
 
-      <div className="xl:col-span-4">
+      <div className="min-w-0">
         <AccountingPanel
           title="EBITDA reconciliation"
           description="Transparent management measure; not a statutory subtotal."
@@ -282,7 +249,7 @@ function Overview({ report }: { report: FinancialStatementsReport }) {
         </AccountingPanel>
       </div>
 
-      <div className="xl:col-span-3">
+      <div className="min-w-0">
         <AccountingPanel
           title="Position snapshot"
           description={`Cumulative through ${accountingDate(report.period.endDate)}.`}
@@ -333,12 +300,12 @@ function Overview({ report }: { report: FinancialStatementsReport }) {
   );
 }
 
-function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
+function ProfitAndLoss({ report, locale }: { report: FinancialStatementsReport; locale: "en" | "fr" }) {
   const { sections, totals, ebitda } = report.profitAndLoss;
 
   return (
-    <div className="grid gap-4 xl:grid-cols-12">
-      <div className="xl:col-span-8">
+    <div className="grid min-w-0 grid-cols-1 gap-5">
+      <div className="min-w-0">
         <AccountingPanel
           title="Profit & Loss statement"
           description={`${accountingDate(report.period.startDate)} to ${accountingDate(report.period.endDate)} · posted ledger activity only.`}
@@ -348,6 +315,7 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
             lines={sections.revenue}
             total={totals.revenue}
             currency={report.currency}
+            locale={locale}
             open
           />
           <StatementLines
@@ -355,6 +323,7 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
             lines={sections.costOfSales}
             total={totals.costOfSales}
             currency={report.currency}
+            locale={locale}
           />
           <MetricRow
             label="Gross profit"
@@ -368,6 +337,7 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
             lines={sections.operatingExpenses}
             total={totals.operatingExpenses}
             currency={report.currency}
+            locale={locale}
           />
           <MetricRow
             label="Management EBITDA"
@@ -381,6 +351,7 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
             lines={sections.depreciationAndAmortization}
             total={totals.depreciationAndAmortization}
             currency={report.currency}
+            locale={locale}
           />
           <MetricRow
             label="Operating profit"
@@ -393,6 +364,7 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
             lines={sections.financeCosts}
             total={totals.financeCosts}
             currency={report.currency}
+            locale={locale}
           />
           <MetricRow
             label="Profit before tax"
@@ -405,6 +377,7 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
             lines={sections.incomeTax}
             total={totals.incomeTax}
             currency={report.currency}
+            locale={locale}
           />
           <MetricRow
             label="Net income"
@@ -416,7 +389,7 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
         </AccountingPanel>
       </div>
 
-      <div className="space-y-4 xl:col-span-4">
+      <div className="space-y-4 min-w-0">
         <AccountingPanel
           title="Management EBITDA"
           description="Formula and account-classification control."
@@ -470,11 +443,11 @@ function ProfitAndLoss({ report }: { report: FinancialStatementsReport }) {
   );
 }
 
-function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
+function BalanceSheet({ report, locale }: { report: FinancialStatementsReport; locale: "en" | "fr" }) {
   const { sections, totals } = report.balanceSheet;
 
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
+    <div className="grid min-w-0 grid-cols-1 gap-5">
       <AccountingPanel
         title="Assets"
         description={`Balances accumulated through ${accountingDate(report.period.endDate)}.`}
@@ -484,6 +457,7 @@ function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
           lines={sections.assets}
           total={totals.assets}
           currency={report.currency}
+          locale={locale}
           open
         />
         <MetricRow
@@ -503,6 +477,7 @@ function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
           lines={sections.liabilities}
           total={totals.liabilities}
           currency={report.currency}
+          locale={locale}
           open
         />
         <StatementLines
@@ -510,6 +485,7 @@ function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
           lines={sections.equity}
           total={totals.equity}
           currency={report.currency}
+          locale={locale}
           open
         />
         <MetricRow
@@ -526,7 +502,7 @@ function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
         />
       </AccountingPanel>
 
-      <div className="xl:col-span-2">
+      <div className="min-w-0">
         <div
           className={`rounded-lg border p-4 ${totals.isBalanced ? "border-[var(--dash-success)] bg-[var(--dash-success-soft)]" : "border-[var(--dash-danger)] bg-[var(--dash-danger-soft)]"}`}
         >
@@ -559,6 +535,7 @@ function BalanceSheet({ report }: { report: FinancialStatementsReport }) {
 
 async function FinancialStatementsPageImpl({
   searchParams,
+  locale = "en",
 }: PageProps) {
   await checkPermission("accounting.reports.read");
 
@@ -607,7 +584,7 @@ async function FinancialStatementsPageImpl({
           </div>
         </AccountingPanel>
       ) : (
-        <div className="space-y-5">
+        <div className="space-y-5" data-finance-result="financial-statements" data-finance-result-state="ready" data-finance-result-layout={view === "overview" ? "summary" : "table"}>
           <div className="rounded-lg border border-[var(--dash-info)] bg-[var(--dash-info-soft)] p-4">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
               <div className="flex min-w-0 items-start gap-3">
@@ -754,8 +731,8 @@ async function FinancialStatementsPageImpl({
           </div>
 
           {view === "overview" ? <Overview report={report} /> : null}
-          {view === "profit-loss" ? <ProfitAndLoss report={report} /> : null}
-          {view === "balance-sheet" ? <BalanceSheet report={report} /> : null}
+          {view === "profit-loss" ? <ProfitAndLoss report={report} locale={locale} /> : null}
+          {view === "balance-sheet" ? <BalanceSheet report={report} locale={locale} /> : null}
         </div>
       )}
     </AccountingPageShell>
@@ -774,6 +751,12 @@ export default async function AccountingRoutePage(props: any = {}) {
   return withAccountingSurfaceAccess({
     params: (props as { params?: Promise<{ locale: string }> }).params ?? Promise.resolve({ locale: "en" }),
     surface,
-    onAllowed: async () => FinancialStatementsPageImpl(props),
+    onAllowed: async () => {
+      const routeParams = await ((props as { params?: Promise<{ locale?: string }> }).params ?? Promise.resolve({ locale: "en" }))
+      return FinancialStatementsPageImpl({
+        ...props,
+        locale: routeParams.locale === "fr" ? "fr" : "en",
+      })
+    },
   })
 }

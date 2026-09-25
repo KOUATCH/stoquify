@@ -1,0 +1,387 @@
+{
+  "at": "2026-09-19T14:07:06.740Z",
+  "browserFrom": "analytics-only-permission",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "4fc7991d63d4543ac8bcdc627217cb299daa5a3fa8c28f102968d47291d21258",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "509930bc5f4ae45248d690e7974067a26c98284d0feb93d3e289723c30aacefe",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx": "3f89edc1bd3d1f3384c2d997871f5ef1d90f2bf850e9eba79f90dc7161df6109",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts": "564ee5a3abda4fa4cfc88848ac996b49165a3904cd554bf9a50c44f330947838",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "07dafccc60cced10f4a619c41b607d350f74dc2296861c54108f8299d5260f11",
+    "messages/fr.json": "dff8799a3a8206748b7865f9c6b2e608b163cf2e0eb85db001de4910cf5383ba"
+  },
+  "checks": [
+    {
+      "name": "legacy-default",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 450
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 160
+        }
+      ]
+    },
+    {
+      "name": "explicit-empty",
+      "core": false,
+      "weekly": false,
+      "destination": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 88
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 83
+        }
+      ]
+    },
+    {
+      "name": "both-active",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 143
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 140
+        }
+      ]
+    },
+    {
+      "name": "analytics-suspended",
+      "core": true,
+      "weekly": false,
+      "destination": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 71
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 69
+        }
+      ]
+    },
+    {
+      "name": "analytics-expired",
+      "core": true,
+      "weekly": false,
+      "destination": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 65
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 70
+        }
+      ]
+    },
+    {
+      "name": "analytics-future",
+      "core": true,
+      "weekly": false,
+      "destination": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 68
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 63
+        }
+      ]
+    },
+    {
+      "name": "analytics-missing",
+      "core": true,
+      "weekly": false,
+      "destination": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 53
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 57
+        }
+      ]
+    },
+    {
+      "name": "analytics-read-only",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 85
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 78
+        }
+      ]
+    },
+    {
+      "name": "analytics-read-only-flag",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 80
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 81
+        }
+      ]
+    },
+    {
+      "name": "recommended-reports-suspended",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 88
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 101
+        }
+      ]
+    },
+    {
+      "name": "analytics-stopped-retained",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 89
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 96
+        }
+      ]
+    },
+    {
+      "name": "dashboard-suspended",
+      "core": false,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 93
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 94
+        }
+      ]
+    },
+    {
+      "name": "dashboard-expired",
+      "core": false,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 94
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 95
+        }
+      ]
+    },
+    {
+      "name": "dashboard-future",
+      "core": false,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 94
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 96
+        }
+      ]
+    },
+    {
+      "name": "dashboard-missing",
+      "core": false,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 97
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 99
+        }
+      ]
+    },
+    {
+      "name": "dashboard-read-only",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 94
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 92
+        }
+      ]
+    },
+    {
+      "name": "dashboard-stopped-retained",
+      "core": true,
+      "weekly": true,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 94
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 91
+        }
+      ]
+    },
+    {
+      "name": "analytics-only-permission",
+      "core": false,
+      "weekly": true,
+      "destination": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 93,
+          "explainedUnavailableHandoff": true,
+          "screenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-only-permission-en.png",
+          "destinationScreenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-only-permission-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 181,
+          "explainedUnavailableHandoff": true,
+          "screenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-only-permission-fr.png",
+          "destinationScreenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-only-permission-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "analytics-permission-revoked",
+      "core": true,
+      "weekly": false,
+      "destination": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "serviceMs": 128,
+          "screenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-permission-revoked-en.png",
+          "destinationScreenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-permission-revoked-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "serviceMs": 107,
+          "screenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-permission-revoked-fr.png",
+          "destinationScreenshot": "digest-workspace-402f147b-28fb-42d2-8e08-2f91b75cecd1-analytics-permission-revoked-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "4fc7991d63d4543ac8bcdc627217cb299daa5a3fa8c28f102968d47291d21258",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "509930bc5f4ae45248d690e7974067a26c98284d0feb93d3e289723c30aacefe",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx": "3f89edc1bd3d1f3384c2d997871f5ef1d90f2bf850e9eba79f90dc7161df6109",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts": "564ee5a3abda4fa4cfc88848ac996b49165a3904cd554bf9a50c44f330947838",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "07dafccc60cced10f4a619c41b607d350f74dc2296861c54108f8299d5260f11",
+    "messages/fr.json": "dff8799a3a8206748b7865f9c6b2e608b163cf2e0eb85db001de4910cf5383ba"
+  },
+  "sourceStable": true
+}

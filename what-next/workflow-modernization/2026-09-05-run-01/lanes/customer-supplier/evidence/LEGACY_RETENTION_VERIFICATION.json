@@ -1,0 +1,117 @@
+{
+  "recordedAt": "2026-09-05T17:36:38.039Z",
+  "classification": "INJECTED_CUSTOMER_RETENTION_AND_ACTION_HOOK_VERIFICATION",
+  "productionApproval": false,
+  "baseline": {
+    "exitCode": 1,
+    "suites": 2,
+    "passed": 12,
+    "failed": 15,
+    "seconds": 5.068,
+    "toolSession": 64322,
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/customer/__tests__/customer-retention-policy.service.test.ts",
+      "actions/customers/__tests__/customer-legacy-removal.actions.test.ts",
+      "--silent"
+    ]
+  },
+  "final": {
+    "exitCode": 0,
+    "suites": 5,
+    "passed": 43,
+    "failed": 0,
+    "seconds": 7.386,
+    "toolSession": 26312,
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/customer/__tests__/customer-retention-policy.service.test.ts",
+      "services/customer/__tests__/customer-legacy.service.test.ts",
+      "services/customer/__tests__/customer-lifecycle.service.test.ts",
+      "actions/customers/__tests__/customer-legacy-removal.actions.test.ts",
+      "hooks/__tests__/customer-legacy-removal.test.tsx",
+      "--silent"
+    ]
+  },
+  "lint": {
+    "exitCode": 0,
+    "paths": [
+      "services/customer/customer.service.ts",
+      "actions/customers/customerAction2.ts",
+      "actions/customers/customerActions.ts",
+      "hooks/useCustomerQueries.ts",
+      "services/customer/__tests__/customer-retention-policy.service.test.ts",
+      "services/customer/__tests__/customer-legacy.service.test.ts",
+      "actions/customers/__tests__/customer-legacy-removal.actions.test.ts",
+      "hooks/__tests__/customer-legacy-removal.test.tsx"
+    ]
+  },
+  "baselineSourceHashes": [
+    {
+      "path": "services/customer/customer.service.ts",
+      "sha256": "0d2e606e3717e71cf9467b761ee5740df855ee3539202ce8c7c6d2c28260990d"
+    },
+    {
+      "path": "actions/customers/customerAction2.ts",
+      "sha256": "fc4a809e3c27bdb29e111a71eb0e2dba90a54e1431679e067e826a4f908d00a9"
+    },
+    {
+      "path": "actions/customers/customerActions.ts",
+      "sha256": "d3b20927ee7c7dab24fdf9efaf0ac154dd57346e0fc54630d41bcbd26b59799a"
+    },
+    {
+      "path": "hooks/useCustomerQueries.ts",
+      "sha256": "1431fc3b5374048f7cd526f33cb711d41cdb30f59844b4539773f03233a52536"
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "services/customer/customer.service.ts",
+      "sha256": "ecd253084fe0511111aa763b070edb6f2a9ab48566ec41d55d467753ed7ed92c"
+    },
+    {
+      "path": "actions/customers/customerAction2.ts",
+      "sha256": "6b34ab33729213519fd82920a426a4d766f468d19fabd50b583ca114e5e722eb"
+    },
+    {
+      "path": "actions/customers/customerActions.ts",
+      "sha256": "6c4a7f73c746614f4533a1c7e7acf797d36625f7a0a6b35c8c990fe40c0fb980"
+    },
+    {
+      "path": "hooks/useCustomerQueries.ts",
+      "sha256": "8176b8874bec6544c9b27552c02f41d8e5d8c7248af67b15db587d7619cb98b2"
+    },
+    {
+      "path": "services/customer/__tests__/customer-retention-policy.service.test.ts",
+      "sha256": "311c9b0fe556361522595ff55fe603b04fe3c6489d9fb08d266b40264dbe4542"
+    },
+    {
+      "path": "services/customer/__tests__/customer-legacy.service.test.ts",
+      "sha256": "91ccbb9ae8ab50ac96ab5d3fa1fe84654dfabfe56e729a4cfb215122777c2e53"
+    },
+    {
+      "path": "services/customer/__tests__/customer-lifecycle.service.test.ts",
+      "sha256": "a166a61ca319000914204513b852b368e8682b0e4425fa409e6b28630dad319f"
+    },
+    {
+      "path": "actions/customers/__tests__/customer-legacy-removal.actions.test.ts",
+      "sha256": "9c3d609f8c263c51f12bd28d5795b82eeccf3c608fcb252e3b233d4c3da28443"
+    },
+    {
+      "path": "hooks/__tests__/customer-legacy-removal.test.tsx",
+      "sha256": "c5af454149755980595ea20f088ffd5474dbe3ac87ca5311681279df0627ab8f"
+    }
+  ],
+  "limits": [
+    "Database calls injected; no real PostgreSQL/browser removal verification.",
+    "Pre-existing history-count/update race remains unverified and unresolved.",
+    "Inactive-customer settlement continuation remains a separate required domain task.",
+    "Current existing management retention categories preserved; no financial-history deletion."
+  ]
+}

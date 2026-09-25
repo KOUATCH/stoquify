@@ -1,0 +1,44 @@
+{
+  "generatedAt": "2026-09-23T20:21:43.971Z",
+  "root": "E:\\ohada saas\\Focused projects\\stoquify",
+  "releaseRequired": false,
+  "summary": {
+    "status": "ready",
+    "checkCount": 4,
+    "readyCheckCount": 4,
+    "blockerCount": 0,
+    "warningCount": 1,
+    "secretConfigured": false,
+    "secretVariable": null,
+    "secretValuePrinted": false
+  },
+  "checks": [
+    {
+      "id": "token_helper_exists",
+      "label": "Public receipt token helper exists",
+      "passed": true
+    },
+    {
+      "id": "token_helper_signs_and_expires",
+      "label": "Token helper signs, expires, and compares safely",
+      "passed": true
+    },
+    {
+      "id": "route_requires_token",
+      "label": "Public receipt route requires a token before service access",
+      "passed": true
+    },
+    {
+      "id": "service_verifies_token_before_lookup",
+      "label": "Public receipt service verifies token and registry before lookup",
+      "passed": true
+    }
+  ],
+  "blockers": [],
+  "warnings": [
+    {
+      "area": "receipt_token_secret",
+      "blocker": "Production public receipt token secret is not configured."
+    }
+  ]
+}

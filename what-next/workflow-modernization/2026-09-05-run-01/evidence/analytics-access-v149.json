@@ -1,0 +1,139 @@
+{
+  "at": "2026-09-15T10:49:18.252Z",
+  "baseline": "evidence/source-baseline-v149.json",
+  "baselineReceipt": "7323b4",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx": "087d47d60691ef8bc3e4bfe45ca8f976b7a4e8ff0a55cf9be81ebca564dffeb5",
+    "messages/en.json": "a3c60e8ac0dd853ab2bbf47cc62400c16b7fbea3c69eff7738f84cbe933ad433",
+    "messages/fr.json": "9ffd6f58fee39bd7339fe661a035166396c53ca68ab8a9d7bf49a41a603b917c"
+  },
+  "tests": {
+    "passed": 23,
+    "suites": 4,
+    "receipt": "a32684",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/access-recovery.test.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/recovery.test.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/route-audit.test.ts\" \"app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/page.test.tsx\""
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "89f0bc",
+    "command": "node node_modules/eslint/bin/eslint.js \"app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/access-recovery.test.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/page.test.tsx\""
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "ff990e",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/analytics-access-v149-642e241f-f2d6-4f2c-a660-d8d69648319c.json",
+    "receipt": "305a63",
+    "at": "2026-09-15T10:46:30.662Z",
+    "sourceBefore": {
+      "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx": "087d47d60691ef8bc3e4bfe45ca8f976b7a4e8ff0a55cf9be81ebca564dffeb5",
+      "messages/en.json": "a3c60e8ac0dd853ab2bbf47cc62400c16b7fbea3c69eff7738f84cbe933ad433",
+      "messages/fr.json": "9ffd6f58fee39bd7339fe661a035166396c53ca68ab8a9d7bf49a41a603b917c"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "deniedRoutes": [
+          "analytics",
+          "analytics/reports",
+          "analytics/referrals"
+        ],
+        "screenshots": [
+          "analytics-access-v149-en-analytics-1440-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-en-analytics-320-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-en-analytics-reports-1440-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-en-analytics-reports-320-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-en-analytics-referrals-1440-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-en-analytics-referrals-320-642e241f-f2d6-4f2c-a660-d8d69648319c.png"
+        ],
+        "pageErrors": [],
+        "retryRevalidatedPermissions": true,
+        "restoredAuthorizedRead": true,
+        "selectedFinancialRecordsUnchanged": true
+      },
+      {
+        "locale": "fr",
+        "deniedRoutes": [
+          "analytics",
+          "analytics/reports",
+          "analytics/referrals"
+        ],
+        "screenshots": [
+          "analytics-access-v149-fr-analytics-1440-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-fr-analytics-320-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-fr-analytics-reports-1440-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-fr-analytics-reports-320-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-fr-analytics-referrals-1440-642e241f-f2d6-4f2c-a660-d8d69648319c.png",
+          "analytics-access-v149-fr-analytics-referrals-320-642e241f-f2d6-4f2c-a660-d8d69648319c.png"
+        ],
+        "pageErrors": [],
+        "retryRevalidatedPermissions": true,
+        "restoredAuthorizedRead": true,
+        "selectedFinancialRecordsUnchanged": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx": "087d47d60691ef8bc3e4bfe45ca8f976b7a4e8ff0a55cf9be81ebca564dffeb5",
+      "messages/en.json": "a3c60e8ac0dd853ab2bbf47cc62400c16b7fbea3c69eff7738f84cbe933ad433",
+      "messages/fr.json": "9ffd6f58fee39bd7339fe661a035166396c53ca68ab8a9d7bf49a41a603b917c"
+    },
+    "sourceStable": true
+  },
+  "firstRuntime": {
+    "file": "lanes/environment/analytics-access-v149-444bda0c-2662-4a9d-90df-ecd139a9c685.json",
+    "receipt": "ba69e5",
+    "businessAssertionsPassed": true,
+    "pageErrors": [
+      "English Invalid or unexpected token; not reproduced in the instrumented repeat. Original cause remains unclassified."
+    ]
+  },
+  "testAttempts": [
+    {
+      "receipt": "46b834",
+      "result": "2 suites failed before execution due next-intl ESM; 2 passed, 5 tests."
+    },
+    {
+      "receipt": "b055ab",
+      "result": "10 tests failed because resetting all mocks erased the global IntersectionObserver fixture; 13 passed. Narrow guard resets corrected setup."
+    }
+  ],
+  "visualReview": {
+    "screenshotsPerRun": 12,
+    "inspected": "First-run French mobile reports denial screen; visible focus and readable wrapping",
+    "limits": [
+      "Other four RBAC-code browser paths and parent-layout redirects remain unverified.",
+      "Full screen-reader and zoom coverage remain open."
+    ]
+  },
+  "guide": "ANALYTICS_ACCESS_V149.md",
+  "coverage": {
+    "discoveredWorkflows": 257,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2924,
+      "tests": 1044,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 194,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "migrations": false,
+  "productionPerformanceCertified": false,
+  "build": {
+    "run": false,
+    "reason": "Owned actual application exercised; migration-bearing default build not invoked."
+  }
+}

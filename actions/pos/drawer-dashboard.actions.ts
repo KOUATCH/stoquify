@@ -1,6 +1,6 @@
 "use server"
 
-import { err, ok } from "@/services/_shared/action-response"
+import { posReadError, posReadResult } from "@/services/pos/pos-read-result"
 import { requireAnyPermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { drawerDashboardInputSchema } from "@/services/pos/drawer-dashboard.schemas"
@@ -31,8 +31,8 @@ export async function getCashDrawerDashboardAction(input: unknown) {
     })
     const parsed = drawerDashboardInputSchema.parse(input)
     const dashboard = await getCashDrawerDashboard({ ...parsed, organizationId: ctx.orgId })
-    return ok(dashboard)
+    return posReadResult(dashboard, ctx)
   } catch (error) {
-    return err(error)
+    return posReadError(error)
   }
 }

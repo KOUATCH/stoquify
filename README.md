@@ -44,6 +44,14 @@ pnpm install
 pnpm dev
 ```
 
+On Windows, startup reuses Prisma Client when its schema, package version, and
+engine match the installed dependencies. This avoids replacing a DLL that another
+local server has loaded. You can run the same check with `pnpm prisma:ensure`.
+
+To explicitly regenerate after schema changes, stop this project's running dev
+servers and Prisma Studio first, then run `pnpm prisma:generate`. Windows cannot
+replace the query engine DLL while one of those processes has it loaded.
+
 ## Environment Variables
 
 Create a `.env` file in the root directory and add the following variables:

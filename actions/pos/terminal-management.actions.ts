@@ -1,10 +1,11 @@
 "use server"
 
-import { revalidatePath, revalidateTag } from "next/cache"
+import { revalidatePOSAfterCommit } from "./cache-revalidation"
 import { safeLoggedActionErrorMessage } from "@/actions/_shared/safe-action-responses"
 import { requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { err, ok } from "@/services/_shared/action-response"
+import { posReadResult } from "@/services/pos/pos-read-result"
 import { BusinessRuleError, ForbiddenError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
 import {
   archiveTerminalForManagement,
@@ -17,13 +18,16 @@ import {
 } from "@/services/pos/terminal-management.service"
 import {
   TerminalManagementSchema,
+  TerminalManagementUpdateSchema,
   type TerminalManagementInput,
+  type TerminalManagementUpdateInput,
 } from "@/services/pos/terminal-management.schemas"
 
 export type {
   TerminalLocationOption,
   TerminalManagementData,
   TerminalManagementInput,
+  TerminalManagementUpdateInput,
   TerminalManagementRow,
 }
 
@@ -37,6 +41,11 @@ const ACTIONABLE_ERROR_MESSAGES = new Set([
   "Terminal number already exists",
   "Cannot deactivate terminal with an active session",
   "Cannot disable cash drawer while a drawer is open",
+  "Cannot move terminal with an active session or open drawer",
+  "Cannot move terminal with operating history; create a terminal at the new location",
+  "Terminal changed during editing; review its current session and try again",
+  "Terminal changed since this form was opened; review the latest configuration",
+  "Terminal changed since this confirmation was opened; review the latest configuration",
   "Terminal was created but could not be reloaded",
   "Terminal was updated but could not be reloaded",
   "Could not generate a unique terminal number",
@@ -138,16 +147,10 @@ async function observePOSTerminalModuleAccess(
 }
 
 function revalidateTerminalPaths(organizationId: string, terminalId?: string) {
-  revalidateTag("pos-terminals")
-  revalidateTag(`pos-terminals-${organizationId}`)
-
-  if (terminalId) {
-    revalidateTag(`pos-terminal-${terminalId}`)
-  }
-
-  revalidatePath("/[locale]/dashboard/settings/terminals", "page")
-  revalidatePath("/[locale]/dashboard/pos", "page")
-  revalidatePath("/[locale]/dashboard/cashDrawer", "page")
+  revalidatePOSAfterCommit({
+    tags: ["pos-terminals", `pos-terminals-${organizationId}`, ...(terminalId ? [`pos-terminal-${terminalId}`] : [])],
+    paths: ["/[locale]/dashboard/settings/terminals", "/[locale]/dashboard/pos", "/[locale]/dashboard/cashDrawer"],
+  })
 }
 
 export async function getTerminalManagementData(organizationId: string) {
@@ -159,14 +162,14 @@ export async function getTerminalManagementData(organizationId: string) {
     })
     const data = await getTerminalManagementDataForOrg(access.organizationId)
 
-    return ok(data)
+    return posReadResult(data, { orgId: access.organizationId, userId: access.userId })
   } catch (error) {
-    return err<TerminalManagementData>(safeLoggedActionErrorMessage(
+    return { success: false as const, data: null, error: safeLoggedActionErrorMessage(
       "Error fetching terminal management data",
       error,
       { action: "getTerminalManagementData" },
       getActionErrorMessage(error, "Failed to fetch terminal management data"),
-    ))
+    ) }
   }
 }
 
@@ -203,7 +206,7 @@ export async function createManagedTerminal(organizationId: string, input: Termi
 export async function updateManagedTerminal(
   organizationId: string,
   terminalId: string,
-  input: TerminalManagementInput,
+  input: TerminalManagementUpdateInput,
 ) {
   try {
     const scopedTerminalId = cleanText(terminalId)
@@ -221,10 +224,11 @@ export async function updateManagedTerminal(
       return err<TerminalManagementRow>("Terminal not found")
     }
 
-    const parsed = getValidationResult(input)
-
+    const parsed = TerminalManagementUpdateSchema.safeParse(input)
     if (!parsed.success) {
-      return err<TerminalManagementRow>(parsed.error)
+      return err<TerminalManagementRow>(parsed.error.issues.some(issue => issue.path[0] === "expectedRevision")
+        ? "Terminal changed since this form was opened; review the latest configuration"
+        : "Invalid terminal details; check name, location and number lengths")
     }
 
     const terminal = await updateTerminalForManagement(access.organizationId, scopedTerminalId, parsed.data)
@@ -241,7 +245,7 @@ export async function updateManagedTerminal(
   }
 }
 
-export async function archiveManagedTerminal(organizationId: string, terminalId: string) {
+export async function archiveManagedTerminal(organizationId: string, terminalId: string, expectedRevision: string) {
   try {
     const scopedTerminalId = cleanText(terminalId)
     const access = await assertOrganizationAccess(organizationId, {
@@ -258,7 +262,10 @@ export async function archiveManagedTerminal(organizationId: string, terminalId:
       return err<{ id: string }>("Terminal not found")
     }
 
-    const terminal = await archiveTerminalForManagement(access.organizationId, scopedTerminalId)
+    if (typeof expectedRevision !== "string" || !/^[a-f0-9]{64}$/.test(expectedRevision)) {
+      return err<{ id: string }>("Terminal changed since this confirmation was opened; review the latest configuration")
+    }
+    const terminal = await archiveTerminalForManagement(access.organizationId, scopedTerminalId, expectedRevision)
     revalidateTerminalPaths(access.organizationId, terminal.id)
 
     return ok(terminal)

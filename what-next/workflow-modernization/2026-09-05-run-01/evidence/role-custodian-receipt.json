@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-09-06T12:15:27.011Z",
+  "baseline": "evidence/source-baseline-v27.json",
+  "sources": {
+    "services/roles/role-write.service.ts": "68092c89897f9fdcb4b47db27e4c913feacb36195aaa08cda364d721f7d4dee9",
+    "services/roles/role-permission-policy.ts": "5b08e55b8b022073886603613b53c7d708e3dfd81cddb59cc15b495a7643f844",
+    "services/roles/role-command.ts": "d4984668d49ef4f2e91f5f86b7a2d1d19b4f1b6e5fc973b17abd9818749a2d1c",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/roles/__tests__/role.service.test.ts": "47947e2f4f0db4bc7d38e8a101a7f3873c4ff3f5bd029d3ffeb5f1d62dc478e4",
+    "actions/roles/__tests__/role-actions.test.ts": "7509ec4e6c27f5063424b8b81f3b02a626378523796f1f7635ee839756233f06",
+    "components/settings/__tests__/RoleForm.workflow.test.tsx": "61a490bd4fd529fb638a353087cb04b7025c36cf93e4fde8b49287a2881e1e33",
+    "services/security/__tests__/role-grant-policy.service.test.ts": "38b36bbad554a1983a1c7ce2d3c56b10131578e2216fff98f898d976562d7b7c"
+  },
+  "scope": [
+    "OA-ROLE-UPDATE"
+  ],
+  "tests": {
+    "kind": "transcribed_tool_result",
+    "chunk": "4cbfeb",
+    "passed": 70,
+    "failed": 0,
+    "suites": 4,
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/roles/__tests__/role.service.test.ts\" \"actions/roles/__tests__/role-actions.test.ts\" \"components/settings/__tests__/RoleForm.workflow.test.tsx\" \"services/security/__tests__/role-grant-policy.service.test.ts\"",
+    "nativeJestJsonRetained": false
+  },
+  "postgres": {
+    "file": "lanes/environment/role-custodian-bbf09459-0e1.json",
+    "passed": 5,
+    "failed": 0,
+    "chunk": "8637a5",
+    "sourceStable": true,
+    "originalAuthorityUnchanged": true
+  },
+  "lint": {
+    "exitCode": 0,
+    "chunk": "ca7b92"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "15dbd8"
+  },
+  "historicalFailure": {
+    "chunk": "7811a3",
+    "failed": 2,
+    "passed": 38,
+    "reason": "The guard counted member-assignment authority through shared aliases."
+  },
+  "browser": {
+    "status": "not_repeated_for_this_service_predicate",
+    "reason": "No interface change. Direct database tests verify concurrent guard behavior; earlier editor screenshots are historical UI evidence."
+  },
+  "remaining": [
+    "Member deactivation service remains unchanged and does not yet coordinate this guard or revoke sessions.",
+    "User directory still masks read failure and exposes misleading generic delete/edit controls.",
+    "Member assignment/reactivation and full platform workflows remain open."
+  ],
+  "completeWorkflowVerified": false,
+  "deployment": false,
+  "migration": false,
+  "externalEmail": false
+}

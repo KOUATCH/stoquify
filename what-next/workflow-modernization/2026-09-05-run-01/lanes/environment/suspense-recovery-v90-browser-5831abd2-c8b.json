@@ -1,0 +1,86 @@
+{
+  "at": "2026-09-09T06:50:28.872Z",
+  "run": "5831abd2-c8b",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseQueue.tsx": "4e59a6dc63a266fdd14ab7f8df76e0a691eecee58b40793728ac9422e91a515e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "b2268ade6193460bc7e4475006fb8d8712f17f640bf3db58bc5758969806df67",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "077984a665a2bde93666b9b4063e4a6f4d649e3ab608c5f161d06b730e0d2562",
+    "actions/payments/reconciliation.actions.ts": "34a2c2a97231fe072eab03f0e61d70b68ede6858d315b2fc53729afdfd330e05",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "d837420a7c9f2047aa4d2b7820defc7692557a5001ff0d5831586973e149e157",
+    "messages/fr.json": "de809db6852ab773d7a3018fe2b349206fc5412ebaaf09e8bb45e3c129bb0e63",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "hooks/payments/suspense-recovery.ts": "80f5feb1ce76f4f293b0daca1865c690893d58e6e11da723d6e8ad9bbbd484da"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Unsubmitted maker draft survives actual reload",
+        "Lost proposal response survives reload and exact retry without duplicate proposal audit",
+        "Normal maker session proposes from actual read model; persisted proposal confirmed",
+        "Actual EN/FR exact amount review, keyboard focus return and mobile/tablet reflow with reachable confirmation",
+        "Expired assurance rejected; real password step-up does not automatically post",
+        "Changed proposal rejected with zero journals; explicit refresh and re-review recover",
+        "Expired browser session and normal reauthentication retain the original pending approval; no automatic retry"
+      ],
+      "screenshots": [
+        "suspense-recovery-v90-en-review-desktop-5831abd2-c8b.png",
+        "suspense-recovery-v90-en-review-320-5831abd2-c8b.png",
+        "suspense-recovery-v90-en-review-390-5831abd2-c8b.png",
+        "suspense-recovery-v90-en-review-768-5831abd2-c8b.png",
+        "suspense-recovery-v90-en-stale-5831abd2-c8b.png",
+        "suspense-recovery-v90-en-restored-session-5831abd2-c8b.png",
+        "suspense-recovery-v90-en-failure-5831abd2-c8b.png"
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "loadMs": 23097,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'Suspense approval lane', exact: true }).getByText('This posting was already recorded. The retained approval and ledger evidence were returned without another posting.', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Suspense approval lane', exact: true }).getByText('This posting was already recorded. The retained approval and ledger evidence were returned without another posting.', { exact: true })\n"
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Unsubmitted maker draft survives actual reload",
+        "Lost proposal response survives reload and exact retry without duplicate proposal audit",
+        "Normal maker session proposes from actual read model; persisted proposal confirmed",
+        "Actual EN/FR exact amount review, keyboard focus return and mobile/tablet reflow with reachable confirmation",
+        "Expired assurance rejected; real password step-up does not automatically post",
+        "Changed proposal rejected with zero journals; explicit refresh and re-review recover",
+        "Expired browser session and normal reauthentication retain the original pending approval; no automatic retry"
+      ],
+      "screenshots": [
+        "suspense-recovery-v90-fr-review-desktop-5831abd2-c8b.png",
+        "suspense-recovery-v90-fr-review-320-5831abd2-c8b.png",
+        "suspense-recovery-v90-fr-review-390-5831abd2-c8b.png",
+        "suspense-recovery-v90-fr-review-768-5831abd2-c8b.png",
+        "suspense-recovery-v90-fr-stale-5831abd2-c8b.png",
+        "suspense-recovery-v90-fr-restored-session-5831abd2-c8b.png",
+        "suspense-recovery-v90-fr-failure-5831abd2-c8b.png"
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "loadMs": 7751,
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('region', { name: 'File approbation suspense', exact: true }).getByText('Cette écriture a déjà été enregistrée. L’approbation et les preuves comptables ont été restituées sans nouvelle écriture.', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'File approbation suspense', exact: true }).getByText('Cette écriture a déjà été enregistrée. L’approbation et les preuves comptables ont été restituées sans nouvelle écriture.', { exact: true })\n"
+    }
+  ],
+  "scope": "Actual isolated app, synthetic setup and normal password sign-in/step-up. No provider or statutory approval claim.",
+  "originalBefore": "22f890e274ce1cdc9f7bf870dc40f1383b05edf7aaf7ce62e913a096fef313c3",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseQueue.tsx": "4e59a6dc63a266fdd14ab7f8df76e0a691eecee58b40793728ac9422e91a515e",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "b2268ade6193460bc7e4475006fb8d8712f17f640bf3db58bc5758969806df67",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "782c7cb59007ac98a536b81c84d2d155e0e66b5e1c36121c498cec3d9632b238",
+    "services/reconciliation/payment-suspense-evidence.ts": "a8c2399b426152a73d5f885d4b587233cb205824277cb38c826db96e5d0cb5ed",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "077984a665a2bde93666b9b4063e4a6f4d649e3ab608c5f161d06b730e0d2562",
+    "actions/payments/reconciliation.actions.ts": "34a2c2a97231fe072eab03f0e61d70b68ede6858d315b2fc53729afdfd330e05",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "d837420a7c9f2047aa4d2b7820defc7692557a5001ff0d5831586973e149e157",
+    "messages/fr.json": "de809db6852ab773d7a3018fe2b349206fc5412ebaaf09e8bb45e3c129bb0e63",
+    "lib/auth-client.ts": "7cf52a8908ae9613d6880568d2a4c4a0e35cbf97891708b023ef500b47a9e757",
+    "hooks/payments/suspense-recovery.ts": "80f5feb1ce76f4f293b0daca1865c690893d58e6e11da723d6e8ad9bbbd484da"
+  },
+  "sourceStable": true
+}

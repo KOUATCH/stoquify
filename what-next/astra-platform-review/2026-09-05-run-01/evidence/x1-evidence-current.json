@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-09-05T09:15:11.223Z",
+  "manifestPath": "what-next/evidence/finance-x1/finance-x1-evidence-manifest.pending.json",
+  "status": "blocked",
+  "bindingStatus": "blocked-awaiting-approval",
+  "artifactCount": 0,
+  "blockerCount": 3,
+  "certificationClaimed": false,
+  "findings": [
+    {
+      "id": "product-budget-approval",
+      "path": "budgetApproval",
+      "detail": "Traceable product approval of the X1 performance budgets is required."
+    },
+    {
+      "id": "evidence-authorization",
+      "path": "evidenceAuthorization",
+      "detail": "Approved non-production credentials, fixture tenant, and seeded data are required."
+    },
+    {
+      "id": "authenticated-evidence-matrix",
+      "path": "evidenceStatus",
+      "detail": "A complete authenticated EN/FR desktop, tablet, and mobile matrix is required."
+    }
+  ]
+}

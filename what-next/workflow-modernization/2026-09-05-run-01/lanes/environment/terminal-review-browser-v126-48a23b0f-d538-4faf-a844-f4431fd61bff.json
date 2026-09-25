@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-13T13:12:11.404Z",
+  "sourcesBefore": {
+    "services/pos/terminal-configuration-revision.ts": "d2c38ba8ec1e80e0ce58c8639bcf383244a5b089c11b8c1dc74488a1a94b532e",
+    "services/pos/terminal-management.schemas.ts": "3a437658b561080afe47692276ddd495f2e0006722e80290138c3c530e7da1ce",
+    "services/pos/terminal-management.service.ts": "0af5619883b0214447820ad966ecf470b9b60bfd79336f1a192d278a657e5553",
+    "actions/pos/terminal-management.actions.ts": "a92fcf3f8c1694a244bc02ec49136215c0a496ee6b130cac170ce211fd68463b",
+    "hooks/posHooks/useTerminalManagement.ts": "363aff254c90b006f6e1a449fa8f9e76305af72eb321d9dcb6546c96d0ce3fe3",
+    "components/pos/TerminalManagementDashboard.tsx": "f6793bf8bf46cade88573d1659c0682f812d625e8e25ef0e7d4b68e01286257b",
+    "components/pos/terminal-draft.ts": "3b7d65348f5dcd7e16ac5c594367229799168050e4ee837b1cac3fa79ca10938"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [
+        "terminal-review-v126-en-1440-48a23b0f-d538-4faf-a844-f4431fd61bff.png",
+        "terminal-review-v126-en-768-48a23b0f-d538-4faf-a844-f4431fd61bff.png",
+        "terminal-review-v126-en-320-48a23b0f-d538-4faf-a844-f4431fd61bff.png"
+      ],
+      "readyMs": 12838,
+      "invalidDetailsExplained": true,
+      "staleSaveRejectedDraftRetained": true,
+      "reviewDoesNotSave": true,
+      "reviewedMergeSaved": true
+    }
+  ],
+  "scope": "Owned real credential login and terminal actions. Another operator represented by actual service update between form load and submit. No external operation.",
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Terminals unavailable', { exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('Terminals unavailable', { exact: true })\n",
+  "sourcesAfter": {
+    "services/pos/terminal-configuration-revision.ts": "d2c38ba8ec1e80e0ce58c8639bcf383244a5b089c11b8c1dc74488a1a94b532e",
+    "services/pos/terminal-management.schemas.ts": "3a437658b561080afe47692276ddd495f2e0006722e80290138c3c530e7da1ce",
+    "services/pos/terminal-management.service.ts": "0af5619883b0214447820ad966ecf470b9b60bfd79336f1a192d278a657e5553",
+    "actions/pos/terminal-management.actions.ts": "a92fcf3f8c1694a244bc02ec49136215c0a496ee6b130cac170ce211fd68463b",
+    "hooks/posHooks/useTerminalManagement.ts": "363aff254c90b006f6e1a449fa8f9e76305af72eb321d9dcb6546c96d0ce3fe3",
+    "components/pos/TerminalManagementDashboard.tsx": "f6793bf8bf46cade88573d1659c0682f812d625e8e25ef0e7d4b68e01286257b",
+    "components/pos/terminal-draft.ts": "3b7d65348f5dcd7e16ac5c594367229799168050e4ee837b1cac3fa79ca10938"
+  },
+  "sourceStable": true
+}

@@ -119,7 +119,7 @@ describe("branch daily-close completion action", () => {
         surface:
           "actions/end-of-day-close/branch-daily-close-completion.actions.ts",
         accessIntent: "read",
-        mode: "observe",
+        mode: "enforce",
       },
     })
   })

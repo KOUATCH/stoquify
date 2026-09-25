@@ -1,0 +1,92 @@
+{
+  "at": "2026-09-08T14:25:37.370Z",
+  "run": "501712f1-86e",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "8ba4db861bd9cbc3f05f9fe97a62be882720d33517a2596393a50cd2a82735e2",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "components/purchasing/APHistoryWorkbench.tsx": "6a6be30557bf7ed0eb3260f64bba6bfb5aaebfcbc8746c1dfde692d1f375b2af",
+    "lib/purchasing/ap-history-presentation.ts": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad",
+    "components/suppliers/SupplierManagementDashboard.tsx": "d4dcf8134b19569fb48b15aa52c5274fc7b79e5e256ab26bd62103d23a21eb63",
+    "actions/purchasing/ap-history.actions.ts": "16dfa889f045e5de6959031b09ac1f975aa1847c6a42b30c550fae35185406a8",
+    "hooks/useAPHistoryWorkbench.ts": "5f61c7db4199b710762ba682e45b15fe9a914f8b18696ec09ae63e32bae524d5",
+    "messages/en.json": "1e022ead58456363ac035a8452ec200339a341efae79a9ddb46b8653d6bf5838",
+    "messages/fr.json": "1e80a5741c8864278ac8942124e54ff05d502335c92f4df425b4f5ef5c648b18"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Unposted document amount is visible but no liability/movement is claimed, currency header localized, detail drawer and keyboard checked",
+        "Real independent approval produces the recognized current invoice remainder in the application",
+        "Archived obligation retained, inconsistent posted source unavailable, currencies separate, responsive widths and zoom checked",
+        "Failed action query is an error with no zero KPI; retry restores the evidence-aware history",
+        "Current permission denial hides financial rows and totals"
+      ],
+      "screenshots": [
+        "ap-history-financial-en-unposted-desktop-501712f1-86e.png",
+        "ap-history-financial-en-unposted-details-501712f1-86e.png",
+        "ap-history-financial-en-recognized-desktop-501712f1-86e.png",
+        "ap-history-financial-en-retained-mixed-unverified-501712f1-86e.png",
+        "ap-history-financial-en-responsive-320-501712f1-86e.png",
+        "ap-history-financial-en-responsive-390-501712f1-86e.png",
+        "ap-history-financial-en-responsive-768-501712f1-86e.png",
+        "ap-history-financial-en-zoom-501712f1-86e.png",
+        "ap-history-financial-en-query-error-501712f1-86e.png",
+        "ap-history-financial-en-permission-denied-501712f1-86e.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development history first-read observation",
+          "ms": 5682
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Unposted document amount is visible but no liability/movement is claimed, currency header localized, detail drawer and keyboard checked",
+        "Real independent approval produces the recognized current invoice remainder in the application",
+        "Archived obligation retained, inconsistent posted source unavailable, currencies separate, responsive widths and zoom checked",
+        "Failed action query is an error with no zero KPI; retry restores the evidence-aware history",
+        "Current permission denial hides financial rows and totals"
+      ],
+      "screenshots": [
+        "ap-history-financial-fr-unposted-desktop-501712f1-86e.png",
+        "ap-history-financial-fr-unposted-details-501712f1-86e.png",
+        "ap-history-financial-fr-recognized-desktop-501712f1-86e.png",
+        "ap-history-financial-fr-retained-mixed-unverified-501712f1-86e.png",
+        "ap-history-financial-fr-responsive-320-501712f1-86e.png",
+        "ap-history-financial-fr-responsive-390-501712f1-86e.png",
+        "ap-history-financial-fr-responsive-768-501712f1-86e.png",
+        "ap-history-financial-fr-zoom-501712f1-86e.png",
+        "ap-history-financial-fr-query-error-501712f1-86e.png",
+        "ap-history-financial-fr-permission-denied-501712f1-86e.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development history first-read observation",
+          "ms": 7843
+        }
+      ]
+    }
+  ],
+  "scope": "Owned local test database only. Real invoice approval in synthetic tenants; deliberately inconsistent synthetic invoices demonstrate unavailable evidence, not operational approvals.",
+  "originalBefore": "84147807ce8e82e14d474e2f9840618891b5d4696352c3cee43ad4d062b76866",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "8ba4db861bd9cbc3f05f9fe97a62be882720d33517a2596393a50cd2a82735e2",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "components/purchasing/APHistoryWorkbench.tsx": "6a6be30557bf7ed0eb3260f64bba6bfb5aaebfcbc8746c1dfde692d1f375b2af",
+    "lib/purchasing/ap-history-presentation.ts": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad",
+    "components/suppliers/SupplierManagementDashboard.tsx": "d4dcf8134b19569fb48b15aa52c5274fc7b79e5e256ab26bd62103d23a21eb63",
+    "actions/purchasing/ap-history.actions.ts": "16dfa889f045e5de6959031b09ac1f975aa1847c6a42b30c550fae35185406a8",
+    "hooks/useAPHistoryWorkbench.ts": "5f61c7db4199b710762ba682e45b15fe9a914f8b18696ec09ae63e32bae524d5",
+    "messages/en.json": "1e022ead58456363ac035a8452ec200339a341efae79a9ddb46b8653d6bf5838",
+    "messages/fr.json": "1e80a5741c8864278ac8942124e54ff05d502335c92f4df425b4f5ef5c648b18"
+  },
+  "sourceStable": true
+}

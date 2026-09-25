@@ -1,0 +1,136 @@
+{
+  "recordedAt": "2026-09-06T07:14:02.872Z",
+  "baseline": "evidence/source-baseline-v17.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "guide": "lanes/environment/INVITATION_REDEMPTION_AUTHORITY.md",
+  "coverage": {
+    "discoveredWorkflows": 206,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2462,
+      "tests": 847,
+      "pages": 147,
+      "routeHandlers": 17,
+      "actionSources": 150,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2029,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 214,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "sources": {
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "app/[locale]/(auth)/layout.tsx": "46847c8845d06d91eb61c671934bc0870a567e1ebf30c33d58df35dfdb0f3704",
+    "components/Forms/InvitedUserRegistration.tsx": "82f57a1567780096519142f6131730774bae5ad651a73b3e0b9cc77ca90b1a73",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "86c2925c70ca608fa42ae5e04d303cb9bd678faef8ee1d88ef51d388bdf9fe76",
+    "messages/fr.json": "ec31c35007d5f16e3b1437820573eda9f8ef52a79dca0b5b47b33f06ddd61005",
+    "components/auth/v2/__tests__/UserInvitationForm.test.tsx": "9bc4561d717710f31602ea61fe227ed0873756257583e70036071c53711be4e1",
+    "components/auth/v2/__tests__/InvitedUserRegistration.test.tsx": "5b20553e349dabf06740092b622355772d20db0740c24efb7df41fc6e1c051ca",
+    "services/communication/__tests__/user-invitation-delivery-worker.service.test.ts": "8d9923123f225eb3a19ce4bf562f4c43498637d9babb4375e0b39bba5cd01be4",
+    "services/users/__tests__/user-identity.service.test.ts": "c2f0322affd64cb72e8d419ba01db9275cc396031aec64e9ceb3e05d1d311f91",
+    "actions/users/__tests__/sendInvite.authorization.test.ts": "6fcefbaa06b19bab752fca21e4e8764a326671ef729de842568971c5ace1bf04",
+    "services/users/__tests__/user-invitation-redemption-authority.service.test.ts": "a0d77876c37581e44b9c110ba1ae148b18f1d65e00004e4b999ba2ea5dda1222",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts": "1aada20c4014ed82b41275e678f264ae40e111624e2ee42e3123dbcb4b403d7d",
+    "actions/users/__tests__/cancelInvite.test.ts": "8d0880ef2a97cf80c3a0fd58354fdcc95441d8d4de1a498706b7f54b43235582",
+    "services/users/__tests__/user-invitation-options.service.test.ts": "4e38ebfb107982890aac904790985bf94351568882f0b995c103f9ad89cc5d74",
+    "services/users/__tests__/user-invitation-management.service.test.ts": "a2f24660dcae808969461e27c8bfc4c9328da684cca9fbfa604ed6f290874cb1",
+    "actions/users/__tests__/getOrgInvites.test.ts": "4850b694209dfc2e0d0f0daed366089e6ba25e7923d4c120e3f99776947748fd"
+  },
+  "tests": {
+    "file": "evidence/invitation-provenance-after-03.json",
+    "passed": 183,
+    "suites": 11,
+    "chunk": "4fbb61",
+    "seconds": 7.185
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "session": 55154,
+    "chunk": "2ec36e",
+    "exitCode": 0
+  },
+  "lint": {
+    "files": 7,
+    "chunk": "5abad4",
+    "exitCode": 0
+  },
+  "diff": {
+    "chunk": "0b9f67",
+    "exitCode": 0
+  },
+  "postgres": {
+    "file": "lanes/environment/invitation-provenance-de46da02-030.json",
+    "passed": 22,
+    "failed": 0
+  },
+  "browser": {
+    "file": "lanes/environment/invitation-provenance-browser-browser-3d94908e-01e.json",
+    "passed": 0,
+    "failed": 2,
+    "reason": "Current per-IP cooldown; final recovery unverified",
+    "resumeAfter": "2026-09-06T07:33:11.574Z",
+    "resetCounters": false
+  },
+  "screenshots": [
+    {
+      "file": "evidence/invitation-provenance/en-invitation-unrecorded-3d94908e-01e.png",
+      "sha256": "c0d9882bee2bfc4eba3b06153ac7b2b7c197a76fa0304f310f190163863a903a"
+    },
+    {
+      "file": "evidence/invitation-provenance/en-invitation-no-javascript-3d94908e-01e.png",
+      "sha256": "2294bde8b1d1d7e00c99b8482859ad2ed75754073365baacea2854eb85ffb4eb"
+    },
+    {
+      "file": "evidence/invitation-provenance/en-invitation-ready-3d94908e-01e.png",
+      "sha256": "b61cca656a80c001e75bc3bcac06cd47157665817ae15dd39f1156479a305669"
+    },
+    {
+      "file": "evidence/invitation-provenance/en-invitation-recovery-3d94908e-01e.png",
+      "sha256": "7f857ade4e2848086c07b817e7ccb3002281056571076bf4b7a4991aa8ac0c4c"
+    },
+    {
+      "file": "evidence/invitation-provenance/en-invitation-failure-3d94908e-01e.png",
+      "sha256": "bc283ecf01d7a911d0d02acee4b3f4edd70c81c8957f5f042ad44ad188496bc2"
+    },
+    {
+      "file": "evidence/invitation-provenance/fr-invitation-unrecorded-3d94908e-01e.png",
+      "sha256": "7fa0ed3e0cbe50a3c3541d5f9a03078dd012c761f145108ae2dbe3fd188d1519"
+    },
+    {
+      "file": "evidence/invitation-provenance/fr-invitation-no-javascript-3d94908e-01e.png",
+      "sha256": "d98f24d7bf3223c1510165226b3e34ec61610d4556bc4fe79bb51ca908b33774"
+    },
+    {
+      "file": "evidence/invitation-provenance/fr-invitation-ready-3d94908e-01e.png",
+      "sha256": "b0535874313aac65a8c3440191a5d016165cc6899dc5bdfd9a45e88217cbbc00"
+    },
+    {
+      "file": "evidence/invitation-provenance/fr-invitation-recovery-3d94908e-01e.png",
+      "sha256": "001cc4a340df57b9a0bb7b032fc9c039a24fbe863e4ab40ccedbf74614034735"
+    },
+    {
+      "file": "evidence/invitation-provenance/fr-invitation-failure-3d94908e-01e.png",
+      "sha256": "27927763dc3b4d7228dd206b801830dfd9a9e17a8d2c6657380507cd33e3be26"
+    }
+  ],
+  "containment": "lanes/environment/invitation-provenance-v1-containment.json",
+  "completeWorkflowVerified": false
+}

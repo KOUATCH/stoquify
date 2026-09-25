@@ -3,29 +3,24 @@
 import { z } from "zod";
 
 import { requireFreshAuth } from "@/lib/security/auth-session";
-import { requireAnyPermission } from "@/lib/security/rbac";
-import { err, ok } from "@/services/_shared/action-response";
-import { BusinessRuleError } from "@/services/_shared/action-errors";
-import { hashNormalizedHistoryFilters } from "@/services/history/transaction-history-cursor";
+import { requireAnyPermission, type RbacContext } from "@/lib/security/rbac";
+import { ok } from "@/services/_shared/action-response";
+import { HistoryCursorError } from "@/services/history/transaction-history.types";
+import { BusinessRuleError, ForbiddenError, toSafeActionError } from "@/services/_shared/action-errors";
+import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions";
+import { AP_HISTORY_EXPORT_READ_PERMISSIONS, apHistoryExportSchema, prepareAPHistoryExport } from "@/services/purchasing/ap-history-export.service";
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { apHistoryFiltersSchema } from "@/services/purchasing/ap-history.schemas";
 import {
   readAPHistory,
   type APHistoryResult,
 } from "@/services/purchasing/ap-history.service";
-import {
-  buildExportWatermark,
-  evaluateExportSafety,
-} from "@/services/security/export-safety.service";
 
 export type { APHistoryResult };
 
 const historyReadActionSchema = z
   .object({ filters: apHistoryFiltersSchema.optional() })
   .strict();
-const historyExportActionSchema = historyReadActionSchema.extend({
-  rowCount: z.number().int().min(0).max(100_000).default(0),
-});
 
 const apReadPermissions = [
   "purchasing.ap.invoice.view",
@@ -34,7 +29,8 @@ const apReadPermissions = [
 ];
 
 async function enforceAPHistoryModule(
-  ctx: Awaited<ReturnType<typeof requireAnyPermission>>,
+  ctx: RbacContext,
+  surface = "actions/purchasing/ap-history.actions.ts:getAPHistoryAction",
 ) {
   const decision = await observeModuleAccess({
     organizationId: ctx.orgId,
@@ -42,7 +38,7 @@ async function enforceAPHistoryModule(
     actorPermissions: ctx.permissions,
     moduleSlug: "purchasing",
     surfaceType: "action",
-    surface: "actions/purchasing/ap-history.actions.ts:getAPHistoryAction",
+    surface,
     accessIntent: "read",
     mode: "enforce",
     audit: true,
@@ -66,51 +62,31 @@ export async function getAPHistoryAction(input: unknown = {}) {
     });
     return ok(history);
   } catch (error) {
-    return err(error);
+    const safe = toSafeActionError(error instanceof HistoryCursorError && error.code !== "not_configured" ? new BusinessRuleError("Invalid history cursor or filters. Refresh the history.", "VALIDATION_ERROR") : error);
+    return { success: false as const, data: null, error: safe.error, code: safe.code };
   }
 }
 
 export async function prepareAPHistoryExportAction(input: unknown = {}) {
   try {
-    const parsed = historyExportActionSchema.parse(input);
-    const ctx = await requireAnyPermission(
-      ["finance.reports.export", "reports.export"],
-      {
-        resource: "APHistoryExport",
-      },
-    );
-    await requireFreshAuth(300);
-    await enforceAPHistoryModule(ctx);
-    const filtersHash = hashNormalizedHistoryFilters(parsed.filters ?? {});
-    const watermarkId = buildExportWatermark({
-      organizationId: ctx.orgId,
-      actorId: ctx.userId,
-      scope: "supplier-ap-history",
-      filtersHash,
-      rowCount: parsed.rowCount,
-      fileType: "csv",
-      sensitivity: "financial",
-    });
-    const decision = evaluateExportSafety({
-      action: "report.export",
-      organizationId: ctx.orgId,
-      actorId: ctx.userId,
-      actorPermissions: ctx.permissions,
-      lastAuthAt: Date.now(),
-      resourceType: "APHistoryExport",
-      resourceId: "supplier-ap-history",
-      exportContext: {
-        scope: "supplier-ap-history",
-        filtersHash,
-        rowCount: parsed.rowCount,
-        fileType: "csv",
-        sensitivity: "financial",
-        watermarkId,
-      },
-    });
-    if (!decision.allowed) throw new BusinessRuleError(decision.safeMessage);
-    return ok({ decision });
+    const parsed = apHistoryExportSchema.parse(input);
+    const verified = await exportScope();
+    const file = await prepareAPHistoryExport(parsed, { organizationId: verified.ctx.orgId, actorId: verified.ctx.userId, actorPermissions: verified.ctx.permissions, lastAuthAt: verified.claims.lastAuthAt });
+    // Recheck current authority before returning private bytes after a potentially slow read.
+    const current = await exportScope();
+    if (current.ctx.orgId !== file.organizationId || current.ctx.userId !== file.actorId || current.claims.sessionId !== verified.claims.sessionId) throw new ForbiddenError("Export session changed. Retry from the current workspace.");
+    // Flight text decoding can consume a leading UTF-8 BOM. Preserve the audited bytes explicitly.
+    const { content, ...metadata } = file;
+    return { success: true as const, data: { ...metadata, contentBase64: Buffer.from(content, "utf8").toString("base64") }, error: null, code: null };
   } catch (error) {
-    return err(error);
+    const safe = toSafeActionError(error);
+    return { success: false as const, data: null, error: safe.error, code: safe.code };
   }
+}
+
+async function exportScope() {
+  const verified = await requireFreshAuth(300);
+  if (!hasAnyRbacPermission(verified.ctx.permissions, ["reports.export"]) || !hasAnyRbacPermission(verified.ctx.permissions, AP_HISTORY_EXPORT_READ_PERMISSIONS)) throw new ForbiddenError("AP read and report export permissions are required.");
+  await enforceAPHistoryModule(verified.ctx, "actions/purchasing/ap-history.actions.ts:prepareAPHistoryExportAction");
+  return verified;
 }

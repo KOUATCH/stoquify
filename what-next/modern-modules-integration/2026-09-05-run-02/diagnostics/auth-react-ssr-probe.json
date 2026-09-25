@@ -1,0 +1,63 @@
+{
+  "observedAt": "2026-09-05T14:27:10.191Z",
+  "classification": "READ_ONLY_EXTERNAL_REACT_REPRODUCTION",
+  "attemptedNetworkCalls": 0,
+  "databaseMutations": false,
+  "sessionMutations": false,
+  "versions": {
+    "nativeReact": "19.2.8",
+    "nextCompiledReact": "19.2.0-canary-0bdb9206-20250818",
+    "betterAuth": "1.6.26",
+    "next": "15.5.23"
+  },
+  "resolution": {
+    "nativeReact": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\react@19.2.8\\node_modules\\react\\index.js",
+    "betterAuthReact": "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\react@19.2.8\\node_modules\\react\\index.js",
+    "sameNativeResolution": true,
+    "nativeEqualsNextInstance": false
+  },
+  "cases": {
+    "nativeRenderer": {
+      "html": "<span>pending</span>",
+      "error": null
+    },
+    "nextRendererWithExternalAuth": {
+      "error": "Cannot read properties of null (reading 'useRef')",
+      "stack": [
+        "TypeError: Cannot read properties of null (reading 'useRef')",
+        "    at process.env.NODE_ENV.exports.useRef (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\react@19.2.8\\node_modules\\react\\cjs\\react.development.js:1260:33)",
+        "    at useStore (file:///E:/ohada%20saas/Focused%20projects/stoquify/node_modules/.pnpm/better-auth@1.6.26_@prisma+_d24fae1797ed323d5d6672531c718152/node_modules/better-auth/dist/client/react/react-store.mjs:28:22)",
+        "    at resolvedHooks.<computed> (file:///E:/ohada%20saas/Focused%20projects/stoquify/node_modules/.pnpm/better-auth@1.6.26_@prisma+_d24fae1797ed323d5d6672531c718152/node_modules/better-auth/dist/client/react/index.mjs:12:98)",
+        "    at Probe (E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-02\\diagnostics\\auth-react-ssr-probe.cjs:23:49)",
+        "    at Object.react_stack_bottom_frame (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12\\node_modules\\next\\dist\\compiled\\react-dom\\cjs\\react-dom-server-legacy.browser.development.js:9674:18)",
+        "    at renderWithHooks (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12\\node_modules\\next\\dist\\compiled\\react-dom\\cjs\\react-dom-server-legacy.browser.development.js:5046:19)",
+        "    at renderElement (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12\\node_modules\\next\\dist\\compiled\\react-dom\\cjs\\react-dom-server-legacy.browser.development.js:5481:23)",
+        "    at retryNode (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12\\node_modules\\next\\dist\\compiled\\react-dom\\cjs\\react-dom-server-legacy.browser.development.js:6401:31)",
+        "    at performWork (E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\.pnpm\\next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12\\node_modules\\next\\dist\\compiled\\react-dom\\cjs\\react-dom-server-legacy.browser.development.js:7337:17)"
+      ]
+    }
+  },
+  "bundleAtProbe": {
+    "path": ".next-modern-modules-integration/server/app/[locale]/(dashboard)/dashboard/inventory/transfers/page.js",
+    "exists": false,
+    "sha256": null,
+    "externalClient": null,
+    "externalSnippet": null,
+    "nextVendoredSsrReact": null
+  },
+  "priorBundleObservation": {
+    "externalClient": true,
+    "externalImplementation": "module.exports = import(\"better-auth/react\");",
+    "otherReactImports": "Next vendored/ssr/react.js",
+    "provenance": "Read directly from the generated transfer page before configuration edit; automatic Next restart subsequently removed the old bundle. Its file hash was not retained."
+  },
+  "configuration": {
+    "path": "next.config.mjs",
+    "afterSha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "beforeSha256": "da2494e5a02fd72abd83aa9e578aa93aebfcb82731acb99d0a413ab7496c4da4",
+    "beforeHashMethod": "Reverse the exact authorized one-line deletion; source hash was not recorded before applying it.",
+    "correction": "Remove only better-auth from serverExternalPackages; retain native/server adapters."
+  },
+  "expectedMismatchReproduced": true,
+  "scope": "This deliberately external Node import reproduces the former renderer mismatch; it is not a test of the corrected application bundle."
+}

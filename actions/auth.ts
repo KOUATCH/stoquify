@@ -11,22 +11,7 @@ import { registerOrganizationAccount } from "@/services/users/user-identity.serv
  */
 export async function registerUser(data: RegisterUserProps): Promise<AuthResponse> {
   try {
-    // Validate password confirmation
-    if (data.password !== data.confirmPassword) {
-      return {
-        success: false,
-        error: "Passwords do not match",
-      }
-    }
-
-    // Validate terms acceptance
-    if (!data.termsAccepted) {
-      return {
-        success: false,
-        error: "You must accept the terms and conditions",
-      }
-    }
-
+    // The service owns bounded input, strict acceptance and confirmation checks.
     return await registerOrganizationAccount(data, await getPublicIdentityRequestContext())
   } catch (error) {
     return safeSuccessActionErrorResult(error, {

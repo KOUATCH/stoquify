@@ -1,0 +1,514 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "E:\\ohada saas\\Focused projects\\stoquify\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.modern-modules.config.ts"
+    ],
+    "configFile": "E:\\ohada saas\\Focused projects\\stoquify\\playwright.modern-modules.config.ts",
+    "rootDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "E:/ohada saas/Focused projects/stoquify/what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop-en",
+        "name": "desktop-en",
+        "testDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/modern-modules\\.spec\\.ts$/"
+        ],
+        "timeout": 240000
+      },
+      {
+        "outputDir": "E:/ohada saas/Focused projects/stoquify/what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-fr",
+        "name": "mobile-fr",
+        "testDir": "E:/ohada saas/Focused projects/stoquify/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/modern-modules\\.spec\\.ts$/"
+        ],
+        "timeout": 240000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.62.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "modern-modules.spec.ts",
+      "file": "modern-modules.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "retailer: native selection, dependencies, review, activation and durable recovery",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 185475,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\u001b[22m\n\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:162:26",
+                    "location": {
+                      "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                      "column": 26,
+                      "line": 162
+                    },
+                    "snippet": "  160 |     await page.getByRole(\"tab\", { name: labels[locale].history, exact: true }).click()\n  161 |     const reopen = page.getByRole(\"button\", { name: labels[locale].reopen, exact: true }).first()\n> 162 |     await expect(reopen).toBeVisible()\n      |                          ^\n  163 |     await capture(page, info, `${journey}-history`)\n  164 |     await reopen.click()\n  165 |     await expect(page.getByRole(\"tab\", { name: labels[locale].configure, exact: true })).toHaveAttribute(\"aria-selected\", \"true\")"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                        "column": 26,
+                        "line": 162
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\u001b[22m\n\n\n  160 |     await page.getByRole(\"tab\", { name: labels[locale].history, exact: true }).click()\n  161 |     const reopen = page.getByRole(\"button\", { name: labels[locale].reopen, exact: true }).first()\n> 162 |     await expect(reopen).toBeVisible()\n      |                          ^\n  163 |     await capture(page, info, `${journey}-history`)\n  164 |     await reopen.click()\n  165 |     await expect(page.getByRole(\"tab\", { name: labels[locale].configure, exact: true })).toHaveAttribute(\"aria-selected\", \"true\")\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:162:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:44:28.491Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results\\modern-modules-retailer-na-476d8-vation-and-durable-recovery-desktop-en\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                    "column": 26,
+                    "line": 162
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-78068a84a82602eaf628",
+          "file": "modern-modules.spec.ts",
+          "line": 129,
+          "column": 7
+        },
+        {
+          "title": "service: native selection, dependencies, review, activation and durable recovery",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 59401,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\u001b[22m\n\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:162:26",
+                    "location": {
+                      "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                      "column": 26,
+                      "line": 162
+                    },
+                    "snippet": "  160 |     await page.getByRole(\"tab\", { name: labels[locale].history, exact: true }).click()\n  161 |     const reopen = page.getByRole(\"button\", { name: labels[locale].reopen, exact: true }).first()\n> 162 |     await expect(reopen).toBeVisible()\n      |                          ^\n  163 |     await capture(page, info, `${journey}-history`)\n  164 |     await reopen.click()\n  165 |     await expect(page.getByRole(\"tab\", { name: labels[locale].configure, exact: true })).toHaveAttribute(\"aria-selected\", \"true\")"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                        "column": 26,
+                        "line": 162
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Reopen as new draft', exact: true }).first()\u001b[22m\n\n\n  160 |     await page.getByRole(\"tab\", { name: labels[locale].history, exact: true }).click()\n  161 |     const reopen = page.getByRole(\"button\", { name: labels[locale].reopen, exact: true }).first()\n> 162 |     await expect(reopen).toBeVisible()\n      |                          ^\n  163 |     await capture(page, info, `${journey}-history`)\n  164 |     await reopen.click()\n  165 |     await expect(page.getByRole(\"tab\", { name: labels[locale].configure, exact: true })).toHaveAttribute(\"aria-selected\", \"true\")\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:162:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:47:40.066Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results\\modern-modules-service-nat-df0a8-vation-and-durable-recovery-desktop-en\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                    "column": 26,
+                    "line": 162
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-02bb31f81ec9e96f97e1",
+          "file": "modern-modules.spec.ts",
+          "line": 129,
+          "column": 7
+        },
+        {
+          "title": "legacy conversion preserves all existing canonical module grants",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 38103,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: 'Review your configuration', exact: true })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Review your configuration', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: 'Review your configuration', exact: true })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Review your configuration', exact: true })\u001b[22m\n\n    at reviewWithKeyboard (E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:101:24)\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:179:3",
+                    "location": {
+                      "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                      "column": 24,
+                      "line": 101
+                    },
+                    "snippet": "   99 |   await page.keyboard.press(\"Enter\")\n  100 |   const dialog = page.getByRole(\"dialog\", { name: labels[locale].dialog, exact: true })\n> 101 |   await expect(dialog).toBeVisible()\n      |                        ^\n  102 |   await expect.poll(() => dialog.evaluate((node) => node.contains(document.activeElement))).toBe(true)\n  103 |   const focusable = dialog.locator('button:not([disabled]),input:not([disabled]),a[href],[tabindex=\"0\"]')\n  104 |   await focusable.last().focus()"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                        "column": 24,
+                        "line": 101
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('dialog', { name: 'Review your configuration', exact: true })\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('dialog', { name: 'Review your configuration', exact: true })\u001b[22m\n\n\n   99 |   await page.keyboard.press(\"Enter\")\n  100 |   const dialog = page.getByRole(\"dialog\", { name: labels[locale].dialog, exact: true })\n> 101 |   await expect(dialog).toBeVisible()\n      |                        ^\n  102 |   await expect.poll(() => dialog.evaluate((node) => node.contains(document.activeElement))).toBe(true)\n  103 |   const focusable = dialog.locator('button:not([disabled]),input:not([disabled]),a[href],[tabindex=\"0\"]')\n  104 |   await focusable.last().focus()\n    at reviewWithKeyboard (E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:101:24)\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:179:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:48:43.191Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results\\modern-modules-legacy-conv-1f38a-ing-canonical-module-grants-desktop-en\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                    "column": 24,
+                    "line": 101
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-fd3bcd3b3c18859f8c8e",
+          "file": "modern-modules.spec.ts",
+          "line": 173,
+          "column": 5
+        },
+        {
+          "title": "employee without configuration permission receives the native denied state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop-en",
+              "projectName": "desktop-en",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5902,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:49:23.483Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-d473c239ec5a0f27c614",
+          "file": "modern-modules.spec.ts",
+          "line": 186,
+          "column": 5
+        },
+        {
+          "title": "retailer: native selection, dependencies, review, activation and durable recovery",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 69277,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Rouvrir dans un nouveau brouillon', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Rouvrir dans un nouveau brouillon', exact: true }).first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Rouvrir dans un nouveau brouillon', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Rouvrir dans un nouveau brouillon', exact: true }).first()\u001b[22m\n\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:162:26",
+                    "location": {
+                      "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                      "column": 26,
+                      "line": 162
+                    },
+                    "snippet": "  160 |     await page.getByRole(\"tab\", { name: labels[locale].history, exact: true }).click()\n  161 |     const reopen = page.getByRole(\"button\", { name: labels[locale].reopen, exact: true }).first()\n> 162 |     await expect(reopen).toBeVisible()\n      |                          ^\n  163 |     await capture(page, info, `${journey}-history`)\n  164 |     await reopen.click()\n  165 |     await expect(page.getByRole(\"tab\", { name: labels[locale].configure, exact: true })).toHaveAttribute(\"aria-selected\", \"true\")"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                        "column": 26,
+                        "line": 162
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Rouvrir dans un nouveau brouillon', exact: true }).first()\nExpected: visible\nTimeout: 30000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Rouvrir dans un nouveau brouillon', exact: true }).first()\u001b[22m\n\n\n  160 |     await page.getByRole(\"tab\", { name: labels[locale].history, exact: true }).click()\n  161 |     const reopen = page.getByRole(\"button\", { name: labels[locale].reopen, exact: true }).first()\n> 162 |     await expect(reopen).toBeVisible()\n      |                          ^\n  163 |     await capture(page, info, `${journey}-history`)\n  164 |     await reopen.click()\n  165 |     await expect(page.getByRole(\"tab\", { name: labels[locale].configure, exact: true })).toHaveAttribute(\"aria-selected\", \"true\")\n    at E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts:162:26"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:49:32.500Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "E:\\ohada saas\\Focused projects\\stoquify\\what-next\\modern-modules-integration\\2026-09-05-run-01\\evidence\\browser-results\\modern-modules-retailer-na-476d8-vation-and-durable-recovery-mobile-fr\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                    "column": 26,
+                    "line": 162
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-4e2345278db5faa4b7a3",
+          "file": "modern-modules.spec.ts",
+          "line": 129,
+          "column": 7
+        },
+        {
+          "title": "service: native selection, dependencies, review, activation and durable recovery",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61477,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:50:47.847Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-64d9abf7869bb79fc581",
+          "file": "modern-modules.spec.ts",
+          "line": 129,
+          "column": 7
+        },
+        {
+          "title": "legacy conversion preserves all existing canonical module grants",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "One isolated legacy fixture; bilingual layout covered by both customer journeys",
+                  "location": {
+                    "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                    "line": 174,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 277,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:51:50.168Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "One isolated legacy fixture; bilingual layout covered by both customer journeys",
+                      "location": {
+                        "file": "E:\\ohada saas\\Focused projects\\stoquify\\tests\\e2e\\modern-modules.spec.ts",
+                        "line": 174,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-e300939b5e9f46abe3c8",
+          "file": "modern-modules.spec.ts",
+          "line": 173,
+          "column": 5
+        },
+        {
+          "title": "employee without configuration permission receives the native denied state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-fr",
+              "projectName": "mobile-fr",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 9735,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-09-05T11:51:50.500Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "218d576312aefba8c4ba-9d8ea58b29bb4dec1604",
+          "file": "modern-modules.spec.ts",
+          "line": 186,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-05T11:44:21.919Z",
+    "duration": 465382.142,
+    "expected": 3,
+    "skipped": 1,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

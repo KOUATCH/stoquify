@@ -1,0 +1,20 @@
+{
+  "at": "2026-09-13T12:21:46.932Z",
+  "phase": "boundaries",
+  "sourceBefore": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+  "checks": [
+    {
+      "name": "tenant, cashier and reserved-stock denial preserve quantity",
+      "passed": true
+    },
+    {
+      "name": "controlled finalization between line read and deletion aborts edit and preserves retained line",
+      "passed": true,
+      "limitation": "Synthetic status transition isolates the cart/checkout race; not a complete financial checkout."
+    }
+  ],
+  "scope": "Real cart services on owned local PostgreSQL. Synthetic fixtures and controlled read barrier; no payment, posting or external operation.",
+  "passed": true,
+  "sourceAfter": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56",
+  "sourceStable": true
+}

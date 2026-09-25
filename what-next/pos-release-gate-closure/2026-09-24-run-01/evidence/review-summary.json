@@ -1,0 +1,96 @@
+{
+  "generatedAt": "2026-09-24T09:15:46.488Z",
+  "inventory": {
+    "exit": 0,
+    "activeFindings": 0,
+    "reviewedFixtureCallsites": 24
+  },
+  "governance": {
+    "originalRegression": {
+      "suites": 2,
+      "failed": 5,
+      "passed": 4,
+      "exitCode": 1
+    },
+    "focusedTests": {
+      "suites": 3,
+      "passed": 45,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "eslint": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "g1Gate": {
+      "exitCode": 1,
+      "technical": "13/13",
+      "approved": "0/11"
+    },
+    "programGate": {
+      "exitCode": 1,
+      "technical": "12/12",
+      "gates": "0/10",
+      "external": "0/9"
+    }
+  },
+  "focusedTests": {
+    "suites": 7,
+    "passed": 106,
+    "composition": "inventory 38 + governance 45 + build wrapper 23; no reruns added"
+  },
+  "wrapper": {
+    "lintExit": 0,
+    "completedAt": "2026-09-24T09:07:13.5527256Z",
+    "testExit": 0
+  },
+  "typecheck": {
+    "scope": "After final fixture/gate/build-wrapper edits and exact build configuration restoration",
+    "completedAt": "2026-09-24T09:14:33.8917244Z",
+    "command": "npm run typecheck",
+    "startedAt": "2026-09-24T09:14:05.8638300Z",
+    "exit": 0
+  },
+  "schema": {
+    "startedAt": "2026-09-24T08:46:28.3735145Z",
+    "command": "npm run prisma:validate",
+    "completedAt": "2026-09-24T08:46:45.4130540Z",
+    "exit": 0
+  },
+  "build": {
+    "status": "failed",
+    "exit": 1,
+    "childExit": 1,
+    "cleanedOutput": false,
+    "completedAt": "2026-09-24T09:12:54.088Z"
+  },
+  "cleanup": {
+    "completedAt": "2026-09-24T09:13:39.451Z",
+    "method": "Validated only run-owned include/reference changes; restored exact saved bytes",
+    "directoriesDeleted": 0,
+    "files": [
+      {
+        "path": "tsconfig.json",
+        "beforeSha256": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "observedBuildSha256": "7f1318332e6a832672e1e3624ae3b7273d51f425c4691d8baea8e85fffb588bb",
+        "restoredSha256": "254b180507594bf66fe34990b43ff01937db12b09f9ea30316eba451cedda328",
+        "exactRestore": true
+      },
+      {
+        "path": "next-env.d.ts",
+        "beforeSha256": "1550d102296cfd5137af24a82a7ab2ad491a687f08444211edcb630514516ab1",
+        "observedBuildSha256": "ecb9dde4ac890e2c0b79d31220ba491165dda92a2ca19f53976afe6aa9ac5192",
+        "restoredSha256": "1550d102296cfd5137af24a82a7ab2ad491a687f08444211edcb630514516ab1",
+        "exactRestore": true
+      }
+    ]
+  },
+  "buildSourceDrift": [],
+  "sourceDrift": [],
+  "productionAuthorized": false,
+  "cashierBrowser": "BLOCKED_PENDING_AUTHORIZED_LOGIN",
+  "decisionPackets": 11,
+  "externalProcedures": 9,
+  "actualApprovalsCreated": 0,
+  "applicationDatabaseMutations": 0
+}

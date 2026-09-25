@@ -1,0 +1,151 @@
+{
+  "at": "2026-09-15T10:40:20.667Z",
+  "baseline": "evidence/source-baseline-v148.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "app/[locale]/(dashboard)/dashboard/analytics/error.tsx": "c695b2c33d0e2c5930267f24875339781ac138dc02f3144a60b88858d2441bda",
+    "app/[locale]/(dashboard)/dashboard/analytics/loading.tsx": "a217237f006d8753f1807a2d12216200b5d5aee7d1c21dc672ec4cb7490b2e78",
+    "messages/en.json": "c6a62b44495909beca9751f26a8ddccf7a41943ecf3d9c0092dac6a96654594f",
+    "messages/fr.json": "117a8de4eed57a0152dadfb6982e048f2104cc57819d7caf692f361695691ecf"
+  },
+  "tests": {
+    "passed": 12,
+    "suites": 4,
+    "receipt": "35e391",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/recovery.test.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/route-audit.test.ts\" \"app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/page.test.tsx\" \"components/dashboard/__tests__/DashboardErrorState.test.tsx\""
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "a4fece",
+    "command": "node node_modules/eslint/bin/eslint.js \"app/[locale]/(dashboard)/dashboard/analytics/error.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/loading.tsx\" \"app/[locale]/(dashboard)/dashboard/analytics/__tests__/recovery.test.tsx\""
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "b4f6fb",
+    "session": 17944,
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "before": {
+    "file": "lanes/environment/pulse-recovery-v148-before-287fda68-bf0c-49c4-8d41-58cda38a3767.json",
+    "receipt": "32274b",
+    "at": "2026-09-15T10:31:06.850Z",
+    "phase": "before",
+    "sourceBefore": {
+      "app/[locale]/(dashboard)/dashboard/analytics/error.tsx": "2b6d300c237f993760aa2ff2ca031f82375f74184d1b3066d0eb2f1d01c6c55c"
+    },
+    "browser": [
+      {
+        "locale": "fr",
+        "screenshots": [],
+        "pageErrors": [],
+        "rscRequests": 0,
+        "failedReadNotZero": true,
+        "retryStillShowsError": true,
+        "freshRequestsAfterRetry": 0,
+        "frenchErrorIsEnglish": true
+      }
+    ],
+    "reproduced": true,
+    "sourceAfter": {
+      "app/[locale]/(dashboard)/dashboard/analytics/error.tsx": "2b6d300c237f993760aa2ff2ca031f82375f74184d1b3066d0eb2f1d01c6c55c"
+    },
+    "sourceStable": true
+  },
+  "runtime": {
+    "file": "lanes/environment/pulse-recovery-v148-after-6878df35-f728-43a5-877c-8f8ec6d5e365.json",
+    "receipt": "98f9d5",
+    "at": "2026-09-15T10:33:24.739Z",
+    "phase": "after",
+    "sourceBefore": {
+      "app/[locale]/(dashboard)/dashboard/analytics/error.tsx": "c695b2c33d0e2c5930267f24875339781ac138dc02f3144a60b88858d2441bda",
+      "app/[locale]/(dashboard)/dashboard/analytics/loading.tsx": "a217237f006d8753f1807a2d12216200b5d5aee7d1c21dc672ec4cb7490b2e78",
+      "messages/en.json": "c6a62b44495909beca9751f26a8ddccf7a41943ecf3d9c0092dac6a96654594f",
+      "messages/fr.json": "117a8de4eed57a0152dadfb6982e048f2104cc57819d7caf692f361695691ecf"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "pulse-recovery-v148-en-1440-6878df35-f728-43a5-877c-8f8ec6d5e365.png",
+          "pulse-recovery-v148-en-768-6878df35-f728-43a5-877c-8f8ec6d5e365.png",
+          "pulse-recovery-v148-en-320-6878df35-f728-43a5-877c-8f8ec6d5e365.png"
+        ],
+        "pageErrors": [],
+        "rscRequests": 2,
+        "failedReadNotZero": true,
+        "keyboardRetryRecovered": true,
+        "retryRevalidatesPermissions": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "pulse-recovery-v148-fr-1440-6878df35-f728-43a5-877c-8f8ec6d5e365.png",
+          "pulse-recovery-v148-fr-768-6878df35-f728-43a5-877c-8f8ec6d5e365.png",
+          "pulse-recovery-v148-fr-320-6878df35-f728-43a5-877c-8f8ec6d5e365.png"
+        ],
+        "pageErrors": [],
+        "rscRequests": 2,
+        "failedReadNotZero": true,
+        "keyboardRetryRecovered": true,
+        "retryRevalidatesPermissions": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "app/[locale]/(dashboard)/dashboard/analytics/error.tsx": "c695b2c33d0e2c5930267f24875339781ac138dc02f3144a60b88858d2441bda",
+      "app/[locale]/(dashboard)/dashboard/analytics/loading.tsx": "a217237f006d8753f1807a2d12216200b5d5aee7d1c21dc672ec4cb7490b2e78",
+      "messages/en.json": "c6a62b44495909beca9751f26a8ddccf7a41943ecf3d9c0092dac6a96654594f",
+      "messages/fr.json": "117a8de4eed57a0152dadfb6982e048f2104cc57819d7caf692f361695691ecf"
+    },
+    "sourceStable": true
+  },
+  "attempts": [
+    {
+      "receipt": "f475eb",
+      "file": "lanes/environment/pulse-recovery-v148-before-abedea21-d695-4329-af61-f44c461e811d.json",
+      "result": "Test setup timeout: wrong Retry label; actual old label Try again. Corrected reproduction retained separately."
+    },
+    {
+      "receipt": "18505c",
+      "result": "New Jest suite could not parse Lucide ESM; explicit icon mocks corrected test setup. Three other suites passed."
+    }
+  ],
+  "visualReview": {
+    "screenshots": 6,
+    "inspected": "French 320px error screenshot",
+    "limits": [
+      "Full screen-reader and zoom checks remain incomplete.",
+      "Loading fallback has unit coverage; controlled runtime duration remains unverified."
+    ]
+  },
+  "performance": {
+    "certified": false,
+    "context": "Slow initial local development startup; no production performance claim."
+  },
+  "guide": "BUSINESS_PULSE_RECOVERY_V148.md",
+  "coverage": {
+    "discoveredWorkflows": 256,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2923,
+      "tests": 1043,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 196,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "migrations": false,
+  "build": {
+    "run": false,
+    "reason": "Owned actual application exercised; migration-bearing default build not invoked."
+  }
+}

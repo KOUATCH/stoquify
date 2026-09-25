@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowUpRight, CalendarDays, Clock3, GitBranch, ShieldCheck } from "lucide-react"
 
+import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
 import { BIEvidenceBadgeRow } from "@/components/bi/BIEvidenceBadgeRow"
 import { BICommandModeTabs } from "@/components/bi/BICommandModeTabs"
 import { BIStateBadge } from "@/components/bi/BIStateBadge"
@@ -23,6 +24,9 @@ type BICommandBriefHeaderProps = {
   mode?: BICommandMode
   onModeChange?: (mode: BICommandMode) => void
   className?: string
+  locale?: string
+  timezone?: string
+  periodTimezone?: string
 }
 
 export function BICommandBriefHeader({
@@ -30,20 +34,24 @@ export function BICommandBriefHeader({
   mode = brief.mode,
   onModeChange,
   className,
+  locale = "en",
+  timezone,
+  periodTimezone,
 }: BICommandBriefHeaderProps) {
+  const t = biCopy[biLocale(locale)]
   return (
     <section className={cn(dashboardPanelClass, "p-4 md:p-5", className)}>
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0 max-w-5xl space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <BIStateBadge state={brief.state} />
+            <BIStateBadge state={brief.state} locale={locale} />
             <Badge variant="outline" className={cn("gap-1.5 border", dashboardToneClass("brand"))}>
               <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-              Command brief
+              {t.brief}
             </Badge>
             <Badge variant="outline" className="gap-1.5 rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
               <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
-              {brief.freshness.state}
+              {t[brief.freshness.state]}
             </Badge>
           </div>
 
@@ -59,6 +67,7 @@ export function BICommandBriefHeader({
           <div className={cn(dashboardRowClass, "p-3")}>
             <p className="text-sm font-semibold text-[var(--dash-text)]">{brief.conclusion}</p>
             <BIEvidenceBadgeRow
+              locale={locale}
               className="mt-3"
               evidenceGrade={brief.evidenceGrade}
               trustState={brief.trustState}
@@ -68,31 +77,36 @@ export function BICommandBriefHeader({
           </div>
         </div>
 
-        <aside className="flex w-full flex-col gap-3 xl:w-[420px]">
-          <BICommandModeTabs value={mode} onValueChange={onModeChange} />
+        <aside className="flex w-full min-w-0 flex-col gap-3 xl:w-[420px]">
+          <BICommandModeTabs value={mode} onValueChange={onModeChange} locale={locale} />
           <div className={cn(dashboardRowClass, "space-y-2 p-3 text-xs text-[var(--dash-text-soft)]")}>
-            <MetaLine icon={<CalendarDays className="h-3.5 w-3.5" />} label="Period">
-              {formatPeriod(brief.periodStart, brief.periodEnd)}
+            <MetaLine icon={<CalendarDays className="h-3.5 w-3.5" />} label={periodTimezone ? `${t.period} (${periodTimezone})` : t.period}>
+              {formatPeriod(brief.periodStart, brief.periodEnd, locale, periodTimezone ?? timezone)}
             </MetaLine>
-            <MetaLine icon={<Clock3 className="h-3.5 w-3.5" />} label="Generated">
-              {formatDateTime(brief.generatedAt)}
+            <MetaLine icon={<Clock3 className="h-3.5 w-3.5" />} label={t.generated}>
+              {formatDateTime(brief.generatedAt, locale, timezone)}
             </MetaLine>
-            <MetaLine icon={<GitBranch className="h-3.5 w-3.5" />} label="Sources">
-              {brief.sourceModules.length ? brief.sourceModules.join(", ") : "No sources"}
+            <MetaLine icon={<GitBranch className="h-3.5 w-3.5" />} label={t.sources}>
+              {brief.sourceModules.length ? brief.sourceModules.join(", ") : t.noSources}
             </MetaLine>
             {brief.reviewState ? (
-              <MetaLine icon={<ShieldCheck className="h-3.5 w-3.5" />} label="Review">
-                {brief.reviewState.state}
+              <MetaLine icon={<ShieldCheck className="h-3.5 w-3.5" />} label={t.review}>
+                {t[brief.reviewState.state]}
               </MetaLine>
             ) : null}
           </div>
           {brief.primaryAction && !brief.primaryAction.disabled ? (
-            <Button asChild size="sm" className="dashboard-button-primary h-10 rounded-lg">
+            <Button asChild size="sm" className="dashboard-button-primary h-auto min-h-10 max-w-full whitespace-normal break-words rounded-lg text-start">
               <Link href={brief.primaryAction.href}>
                 <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
                 {brief.primaryAction.label}
               </Link>
             </Button>
+          ) : brief.primaryAction?.disabled ? (
+            <div className="space-y-2">
+              <Button disabled size="sm" className="h-auto min-h-10 w-full whitespace-normal break-words text-start">{brief.primaryAction.label}</Button>
+              <p className="text-xs text-[var(--dash-text-soft)]">{brief.primaryAction.disabledReason}</p>
+            </div>
           ) : null}
         </aside>
       </div>
@@ -112,20 +126,21 @@ function MetaLine({ icon, label, children }: { icon: ReactNode; label: string; c
   )
 }
 
-function formatPeriod(start: string | null, end: string | null) {
-  if (!start && !end) return "Not set"
-  if (!start) return `Until ${formatDate(end)}`
-  if (!end) return `From ${formatDate(start)}`
-  return `${formatDate(start)} - ${formatDate(end)}`
+function formatPeriod(start: string | null, end: string | null, locale: string, timezone?: string) {
+  if (!start && !end) return biCopy[biLocale(locale)].notSet
+  if (!start) return `${biCopy[biLocale(locale)].until} ${formatDate(end, locale, timezone)}`
+  if (!end) return `${biCopy[biLocale(locale)].from} ${formatDate(start, locale, timezone)}`
+  return `${formatDate(start, locale, timezone)} - ${formatDate(end, locale, timezone)}`
 }
 
-function formatDate(value: string | null) {
-  if (!value) return "not set"
-  return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(new Date(value))
+function formatDate(value: string | null, locale: string, timezone?: string) {
+  if (!value) return biCopy[biLocale(locale)].notSet
+  return new Intl.DateTimeFormat(locale, { month: "short", day: "numeric", timeZone: timezone }).format(new Date(value))
 }
 
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("en", {
+function formatDateTime(value: string, locale: string, timezone?: string) {
+  return new Intl.DateTimeFormat(locale, {
+    timeZone: timezone,
     month: "short",
     day: "numeric",
     hour: "2-digit",

@@ -42,6 +42,8 @@ describe("landing public content contract", () => {
   const peopleToPay = read("components/landing/people-to-pay.tsx")
   const authLayout = read("components/auth/AuthLayout.tsx")
   const authCopy = read("components/auth/auth-copy.ts")
+  const publicAuthCopy = read("components/auth/public-auth-copy.ts")
+  const messageCopy = read("components/landing/landing-message-copy.ts")
 
   it("keeps fourteen equivalent, proof-oriented use cases in English and French", () => {
     expect(Object.keys(en.landing.useCases.items)).toEqual(expectedUseCases)
@@ -77,7 +79,7 @@ describe("landing public content contract", () => {
     expect(deepDives).toContain('t("controlSignal")')
   })
 
-  it("uses yesterday's branch-close screenshot as unobstructed product evidence", () => {
+  it("dates historical branch-close evidence and preserves the uncropped source image", () => {
     const sourceScreenshot = fs.readFileSync(path.join(
       root,
       "what-next",
@@ -100,19 +102,19 @@ describe("landing public content contract", () => {
     expect(productGallery).toContain("<figure")
     expect(productGallery).toContain("<figcaption")
     expect(productGallery).toContain("/images/product-command-branch-close-2026-07-18.png")
-    expect(productGallery).toContain("min-h-[28rem]")
-    expect(productGallery).toContain("sm:min-h-[34rem]")
-    expect(productGallery).toContain("lg:min-h-[48rem]")
-    expect(productGallery).toContain("object-left-top")
+    expect(productGallery).toContain("h-auto")
+    expect(productGallery).toContain("18 July 2026")
+    expect(productGallery).toContain("not live data")
+    expect(productGallery).not.toContain("object-cover")
     expect(productGallery).not.toContain("/images/dash.webp")
     expect(en.landing.gallery.screenshotAlt).toContain("read-only branch daily-close evidence")
     expect(fr.landing.gallery.screenshotAlt).toContain("lecture seule")
   })
 
   it("keeps public CTAs qualified and free from confusing protected module links", () => {
-    expect(landingHeader).toContain('href="/#pricing"')
-    expect(hero).toContain('href="/#pricing"')
-    expect(finalCta).toContain('href="/#pricing"')
+    expect(landingHeader).toContain('href="/register"')
+    expect(hero).toContain('href="/register"')
+    expect(finalCta).toContain('href="/register"')
     expect(pricing).toContain('href="/register"')
     expect(operationsMap).not.toContain('/dashboard/')
     expect(peopleToPay).not.toContain('/dashboard/people')
@@ -124,14 +126,14 @@ describe("landing public content contract", () => {
     expect(operationsMap).toContain('key: "procurement"')
     expect(operationsMap).toContain('key: "regulatedOps"')
     expect(operationsMap).not.toContain('key: "payroll"')
-    expect(en.landing.hero.primaryCta).toBe('Plan rollout')
-    expect(fr.landing.hero.primaryCta).toBe('Planifier le déploiement')
+    expect(messageCopy).toContain('Create your account')
+    expect(messageCopy).toContain('Créer votre compte')
     expect(en.landing.pricing.cta.note).toContain('not instant self-service activation')
     expect(fr.landing.pricing.cta.note).toContain('libre-service instantanée')
   })
 
   it("labels public visuals and sample operating data", () => {
-    expect(hero).toContain('proofKeys')
+    expect(hero).toContain('data-visual-classification="sample"')
     expect(heroDashboard).toContain('t("sampleLabel")')
     expect(en.landing.dashboard.sampleLabel).toContain('Sample')
     expect(fr.landing.dashboard.sampleLabel).toContain('exemple')
@@ -142,7 +144,11 @@ describe("landing public content contract", () => {
 
   it("keeps the auth journey additions compact and bilingual", () => {
     expect(authLayout).toContain("journeyCards.map")
-    expect(authLayout).toContain("min-h-[116px]")
+    expect(authLayout).toContain('variant === "register"')
+    expect(authLayout).not.toContain("moduleHighlights")
+    expect(authLayout).toContain('params.toString()')
+    expect(publicAuthCopy).toContain('After creating your account')
+    expect(publicAuthCopy).toContain('Après la création du compte')
     expect(authCopy).toContain('"Access checks"')
     expect(authCopy).toContain('"Contrôles d\'accès"')
     expect(authCopy).not.toContain("permission-aware")

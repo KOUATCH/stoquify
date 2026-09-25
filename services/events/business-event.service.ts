@@ -96,7 +96,15 @@ function outboxIdempotencyKey(
 
 function parseBusinessEventInput(input: RecordBusinessEventInput) {
   const parsed = recordBusinessEventInputSchema.safeParse(input)
-  if (parsed.success) return parsed.data
+  if (parsed.success) {
+    const event = parsed.data
+    return {
+      ...event,
+      metadata: event.sourceEntityType
+        ? { ...(event.metadata as Record<string, unknown> | undefined), sourceEntityType: event.sourceEntityType }
+        : event.metadata,
+    }
+  }
 
   throw new ApplicationError(
     "VALIDATION_ERROR",

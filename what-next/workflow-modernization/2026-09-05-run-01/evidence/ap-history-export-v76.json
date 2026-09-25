@@ -1,0 +1,134 @@
+{
+  "at": "2026-09-08T15:03:34.163Z",
+  "sourceBaseline": "evidence/source-baseline-v76.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "services/purchasing/ap-history.service.ts": "c5ae0394931bb15e72f87bcb60c071d9243da2a152e684aa9fa865b7d743c966",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/purchasing/ap-history-export.service.ts": "9cdcd7f822f804219cd26d6e44392589ded8a4ca48436d621d229589e7a31241",
+    "actions/purchasing/ap-history.actions.ts": "eb714503be7e7ebdacf871e5475656ded5304c75a0dcc503ed6c04e96b811844",
+    "components/purchasing/APHistoryExportDialog.tsx": "7f2d2f83ba995f8ffb12a4a93e109add25c23f52bac00dc1d24133aee0257c81",
+    "components/purchasing/APHistoryWorkbench.tsx": "b80a81533469da23a77ee2ebfa0a12607284a10067bd91415de508391d5955ea",
+    "hooks/useAPHistoryWorkbench.ts": "664d8a4a5a97338e0ba8c65f67566447804725e65fb317aacb47104f1238226b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx": "a7c1a54cc1b988941597ea2e42c667e4b62ec06f0d2a60b63309c2c39f218c20",
+    "messages/en.json": "87e8ffb32f05e39e79f9a2dabdb9ea4051baba291d8dd9a8d250fb4d020b0632",
+    "messages/fr.json": "5751d75c904d7a30c38776114ef31bca3c1a37ac40bb18f7548835cd1d8a0489",
+    "components/suppliers/__tests__/SupplierManagementDashboard.presentation.test.tsx": "123b2bd19e31944c54bfa3ec76938d36a2035f009924dc4cc01c9a15f18cec13",
+    "components/purchasing/__tests__/ap-history-export-download.test.tsx": "c71b43b97a379d6bb8fd2e8709eb9d1e4eea4c1b58f6bf69446272b6e94d807e",
+    "components/purchasing/__tests__/APHistoryExportDialog.test.tsx": "5ef7a13c9369d27064ed6ba44b842383e597425a2202fe71e48289865a39aa9b",
+    "services/purchasing/__tests__/ap-history.service.test.ts": "2ae218a2362eab2b7b7b483e19c96c1096f54ef9b47759c7b8838ff1e92517ca",
+    "services/purchasing/__tests__/ap-history-export.service.test.ts": "0813f46e98616401dc67bb6bc95ee0ed043c971463872c0e1c477de160e76720",
+    "actions/purchasing/__tests__/ap-history-export.actions.test.ts": "b56639bf16eb4a760d4d72db086c16f1c350d7fb4055bd64f049a73f68e9b046",
+    "services/purchasing/__tests__/ap-history-financial.test.ts": "59520528000b50b52205da4790c3eead881948f84236530d236bcf5a97c0afa2",
+    "components/purchasing/__tests__/APHistoryWorkbench.test.tsx": "8457f59b49661c0a8f145e89984182e0c4336be27de0b9f616c64a77e40ea83f",
+    "hooks/__tests__/useAPHistoryWorkbench.test.ts": "5905efb6eb3bc3906e55a1737814b9a2bb8a9bdeab6153245f1be65ae576ffc4",
+    "lib/purchasing/__tests__/ap-history-presentation.test.ts": "3654795f72c2fe89827a0beab017beca31a3cda4c9ee47c3e732cc0e235e12b8"
+  },
+  "tests": {
+    "file": "evidence/ap-history-export-tests-v76-byte-final.json",
+    "passed": 61,
+    "suites": 10
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 89929,
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "eslint thirteen changed production/test files",
+      "chunk": "7cce83",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "browser": "lanes/environment/ap-history-export-browser-f575d1af-867.json",
+  "screenshots": [
+    "lanes/environment/ap-history-export-en-fresh-auth-f575d1af-867.png",
+    "lanes/environment/ap-history-export-en-download-desktop-f575d1af-867.png",
+    "lanes/environment/ap-history-export-en-mobile-f575d1af-867.png",
+    "lanes/environment/ap-history-export-en-zoom-f575d1af-867.png",
+    "lanes/environment/ap-history-export-en-failed-download-f575d1af-867.png",
+    "lanes/environment/ap-history-export-en-export-denied-f575d1af-867.png",
+    "lanes/environment/ap-history-export-fr-fresh-auth-f575d1af-867.png",
+    "lanes/environment/ap-history-export-fr-download-desktop-f575d1af-867.png",
+    "lanes/environment/ap-history-export-fr-mobile-f575d1af-867.png",
+    "lanes/environment/ap-history-export-fr-zoom-f575d1af-867.png",
+    "lanes/environment/ap-history-export-fr-failed-download-f575d1af-867.png",
+    "lanes/environment/ap-history-export-fr-export-denied-f575d1af-867.png"
+  ],
+  "downloads": [
+    {
+      "file": "lanes/environment/ap-history-export-en-first-f575d1af-867.csv",
+      "bytes": 18059,
+      "contentHash": "sha256:f33abe612da28a7b6c2a1307f3914baa56ddc0af24374d1878d138e69c576224",
+      "auditId": "cmtssnsss00v7ma1snkv1nc83",
+      "rowCount": 63
+    },
+    {
+      "file": "lanes/environment/ap-history-export-en-retry-f575d1af-867.csv",
+      "bytes": 18059,
+      "contentHash": "sha256:d1242bb09825d1ada8b95142ff3427f56197de3a4573c1de3649cb16607fcc83",
+      "auditId": "cmtsso3ci00v9ma1s2mfoilzf",
+      "rowCount": 63
+    },
+    {
+      "file": "lanes/environment/ap-history-export-fr-first-f575d1af-867.csv",
+      "bytes": 18085,
+      "contentHash": "sha256:13b5ea21a7380e0013362bae547ad31c8511c911974ec4a28c77c980b5540d44",
+      "auditId": "cmtssoox200vfma1sq9hcvsbi",
+      "rowCount": 63
+    },
+    {
+      "file": "lanes/environment/ap-history-export-fr-retry-f575d1af-867.csv",
+      "bytes": 18085,
+      "contentHash": "sha256:e98aaca82557ca7f3cc4a6c16c7c8cd696482334c580740a8dbaf47770d21755",
+      "auditId": "cmtssoyg400vhma1s50ri5wr4",
+      "rowCount": 63
+    }
+  ],
+  "failedAttempts": [
+    "evidence/ap-history-export-tests-v76-expanded.json",
+    "lanes/environment/ap-history-export-browser-8fffd09d-b4f.json",
+    "lanes/environment/ap-history-export-browser-48e36952-0bd.json"
+  ],
+  "otherFailures": [
+    {
+      "session": 60073,
+      "kind": "typecheck",
+      "resolved": "RbacContext parameter corrected"
+    },
+    {
+      "session": 90946,
+      "kind": "test receipt write",
+      "assertions": "two passed",
+      "exitCode": 1,
+      "resolved": "Both included in final passing suite; EPERM receipt failure retained in tool output"
+    }
+  ],
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2720,
+      "tests": 956,
+      "pages": 155,
+      "routeHandlers": 18,
+      "actionSources": 166,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2284,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 207,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "next": "Complete PA-029 current-source/concurrent-pagination and reconciliation boundaries",
+  "migration": "none",
+  "externalActions": "none"
+}

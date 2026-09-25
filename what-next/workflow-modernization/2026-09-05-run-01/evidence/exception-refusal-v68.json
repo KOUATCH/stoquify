@@ -1,0 +1,281 @@
+{
+  "at": "2026-09-08T11:24:08.726Z",
+  "sourceBaseline": "evidence/source-baseline-v68.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "components/purchasing/InvoiceMatchExceptionWorkbench.tsx": "49644cf22c6acede0e90ad7df9c7b34694c80a9bc684d88c7a0c8ba06ad777bc",
+    "services/purchasing/invoice-match-exception.service.ts": "c70d255f250b7893656f4fae837093ace6953ed0f9d1520992967ddea46b3aa2",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "services/purchasing/invoice-match-exception-contracts.ts": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "9c11560d6d7f7ac7748e0230d632d7adffe8f40802bec676c69a6e80d9caccc8",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2ea511be8a9f8b1f03654293eaf605ed3e7dc235e9c3e1c3383fb2f22205631a",
+    "messages/en.json": "198b0e6949f66a34ee6e138c4845c81c59c37ccf52f955d118bd7092907c78a6",
+    "messages/fr.json": "fb10180cb9cd3d2ce1b779ed2b0f67ed6cab3824e5c5df0cf01058df583c9b79",
+    "services/purchasing/ap-control.service.ts": "a3d892b98feb7c8c74f8a8da0f166e1fcf65a9a5a6b0db2f6c3442fe413c7d8f",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "components/purchasing/APControlWorkbench.tsx": "0fb7561901c97eeae211d9ceed474c4292f065572f86ad94c8300bb1efe3fdfd",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741",
+    "components/purchasing/__tests__/InvoiceMatchExceptionWorkbench.test.tsx": "596b9aca590f7b2ce752a73c2edacc788a1990db5203d8790fe55a1ec151dee6",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "62ed2381740cc4a8560863eec569ef447af1d71ea0aab4bb4de8932e833d7c29",
+    "services/purchasing/__tests__/ap-ledger-retry.test.ts": "8eebbccd8a6a62a0abcd5c068d345ca262b18d605c536b57bfab52690f86eef0",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "22ce8f913469fb9734831d4a0f12c603fc4b9ee66363f58a2a8b0a9a7077d127",
+    "actions/purchasing/__tests__/invoice-approval.actions.test.ts": "b0b1d4ef62372b6c152ff8299963166ed54678c1eb470d78db7010407480e631",
+    "actions/purchasing/__tests__/invoice-match-exception.actions.test.ts": "90a4629b01f49f79210b00038bdd0511b644d120246694dbd3e03abf4460b308",
+    "services/purchasing/__tests__/invoice-match-exception-contracts.test.ts": "08b834d416e1442035602dc5bc5e6b961802434620be8be3064f4d5dcc0d7411"
+  },
+  "refusal": "lanes/environment/exception-refusal-after-369def68-234.json",
+  "refusalHashEncoding": "SHA256(JSON.stringify(UTF8 source text)); validated and normalized above",
+  "service": "lanes/environment/match-exception-service-afefa4fe-67a.json",
+  "browser": "lanes/environment/match-exception-browser-050a4d13-f8e.json",
+  "tests": "evidence/exception-refusal-tests-v68.json",
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-preview-050a4d13-f8e.png",
+      "sha256": "ac49fe484fdfa99f70db07e9de5ae3b7ffaf0294084607304c809c7fc7bb460c"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-320-050a4d13-f8e.png",
+      "sha256": "2c0175cfe9bced54d9b1b4b7edfe9c77b0ba65c55fb078153de473ad3b50b6fe"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-390-050a4d13-f8e.png",
+      "sha256": "aae291e5c748c5e31b0cd05db1584a6dcb27e380fb571f5939dc4eccc0bda2dc"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-768-050a4d13-f8e.png",
+      "sha256": "b65b22cac48629b14fd073adad99b7cf27980ec4b934683b68fdb3b9fb819ec0"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-stale-050a4d13-f8e.png",
+      "sha256": "f780e8ec07fd7a49d269db6b1b9f3001d18d24d8c1ab139cd505a195efdbdd5f"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-request-recovered-050a4d13-f8e.png",
+      "sha256": "46f790419a12ca9511fb789f70076abf763c76985b2a415dece727a0f8b5e8dd"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-preview-050a4d13-f8e.png",
+      "sha256": "a72a9bb43c720d89da9dd27a6ec8a7062a3c5d3eb62338900a068c652dc3313d"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-approved-050a4d13-f8e.png",
+      "sha256": "56050c00251c8ba24a0288f7ce9f3fc0a95aa31d4a8bce24b7aed70742089858"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-mobile-050a4d13-f8e.png",
+      "sha256": "93c055cd8d1e1e8ae1a12cccf0dddfcfc34c309f395c91f73fbc4bbd168e88f1"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-text200-050a4d13-f8e.png",
+      "sha256": "606b7e7a701f9e0ad3d42c1d76072b17b14d9ddd3c177174796f34eb74df850d"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-invoice-approval-handoff-050a4d13-f8e.png",
+      "sha256": "3e58e18ba3f1ca2b9eddcef54f6d8fafbd4f6cf8514da0a5581349f55b24da88"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-retained-history-050a4d13-f8e.png",
+      "sha256": "0734b41ff37b2c5ac6d93134aac0d682f08456c740628705de913d7d0e2839dd"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-unverified-approval-blocked-050a4d13-f8e.png",
+      "sha256": "bbc9e1822fca51e502afd4240e8828233f0b269802643f6a29940f5824fc3f2c"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-unverified-refusal-warning-mobile-050a4d13-f8e.png",
+      "sha256": "16d8a30bf12186348d22392cbb9efa221a1dc9d672ce5896fe4c00e25b3efc88"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-rejected-050a4d13-f8e.png",
+      "sha256": "428f05b4124880c23540868fe8f7668f89c5f835bacfe09088b6ab4ac6dc5d27"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-unverified-refusal-history-050a4d13-f8e.png",
+      "sha256": "5b0a936c3c96d09233a0726c90eef43565aaea34ad05a48ff462473d9e6be9b5"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-denied-050a4d13-f8e.png",
+      "sha256": "ffe9e269525bf3e5cfc46500800a9bddcce596f0aad85c4bb47ad9f6d8528af9"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-preview-050a4d13-f8e.png",
+      "sha256": "f082c790a7f6510c81614c5b50751b5fe5337ff819c6b5f8edcc171835b66640"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-320-050a4d13-f8e.png",
+      "sha256": "e089477e4f30b092e604b57ff72eb62fd7c16ec3e0057df9f418e152b7da5d71"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-390-050a4d13-f8e.png",
+      "sha256": "b412e14eeeb86a7afda0abd8f7b0237857b2e001e9cd9eec56cf767e33b9803c"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-768-050a4d13-f8e.png",
+      "sha256": "fcf16eb8d3dd6e3bfe882af883f432f8346c66c05b249ea8c04897f3329bf878"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-stale-050a4d13-f8e.png",
+      "sha256": "6f39095b94c2a3d3ee1ba70188901f407af06321e5c8db97d5a413df727fb320"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-request-recovered-050a4d13-f8e.png",
+      "sha256": "93aa9ed302a30c0d596facfe2c14cac750dab978cc91c5b7a94896b8a8034a35"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-preview-050a4d13-f8e.png",
+      "sha256": "3a28c0c946a85f792e4db9d5a81537ea5ae4b8ec4e4fc95b0eaafb5d2abbfbb7"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-approved-050a4d13-f8e.png",
+      "sha256": "e6b9a98520ae5150515521b3d974b8d33751cedf7f004e06255f952fcc3ee8e9"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-mobile-050a4d13-f8e.png",
+      "sha256": "011be448646877046978ee2f29ef3b423d8b6e2d746447e99a4540c8e6cd08c9"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-text200-050a4d13-f8e.png",
+      "sha256": "7a4fdd6aaea481e2b61e9b99622832765dbe8a5027b978c1945e181db3bc2d93"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-invoice-approval-handoff-050a4d13-f8e.png",
+      "sha256": "988fbef0290eaea6c830b64ef51a718ec089aec54b821b6152e00acac8b8acd3"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-retained-history-050a4d13-f8e.png",
+      "sha256": "453441477d372ce8f18247a757544f354a9b170f1a7568eb96c1971be2e49110"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-unverified-approval-blocked-050a4d13-f8e.png",
+      "sha256": "7873fcc6785090aed28284db02a352b57e9f9107ec7117cd26bceca09b9dd6b1"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-unverified-refusal-warning-mobile-050a4d13-f8e.png",
+      "sha256": "5f01cd2b2e4bcbb37e30b2ee66ff3ef747f9dc45e2614d7045466552f4ec6361"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-rejected-050a4d13-f8e.png",
+      "sha256": "abd853334c3cbf9fb807f63d2ae27f0c3a5d309de222adb058a52e1ea7c89bf7"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-unverified-refusal-history-050a4d13-f8e.png",
+      "sha256": "efb045c531ad03115fdce53facf5139f0576ba8ed671128afe74da69d4604d9d"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-denied-050a4d13-f8e.png",
+      "sha256": "20b4c0270f4ce449b1f94b16c8368b9ecb4a9b6ada387a2b29f530b6519ce86b"
+    }
+  ],
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/ap-control.service.ts services/purchasing/invoice-match-exception.service.ts services/purchasing/invoice-match-exception-contracts.ts components/purchasing/InvoiceMatchExceptionWorkbench.tsx services/purchasing/__tests__/invoice-match-exception-contracts.test.ts components/purchasing/__tests__/InvoiceMatchExceptionWorkbench.test.tsx",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "priorAttempts": [
+    "lanes/environment/exception-refusal-before-6e149e4e-fb3.json",
+    "lanes/environment/exception-refusal-after-e63661be-ee8.json",
+    "lanes/environment/exception-refusal-after-19903d2e-612.json"
+  ],
+  "timings": [
+    {
+      "locale": "en",
+      "observations": [
+        {
+          "name": "AP to request and preview development baseline",
+          "ms": 38165
+        }
+      ],
+      "meaning": "Development baseline; no approved performance-budget pass"
+    },
+    {
+      "locale": "fr",
+      "observations": [
+        {
+          "name": "AP to request and preview development baseline",
+          "ms": 15312
+        }
+      ],
+      "meaning": "Development baseline; no approved performance-budget pass"
+    }
+  ],
+  "verifiers": [
+    {
+      "path": "lanes/environment/verify-exception-refusal.cjs",
+      "sha256": "a46841de600ae4a4fdd529f87eada109aad25b44a9840330cee8b673deb0baa5"
+    },
+    {
+      "path": "lanes/environment/verify-exception-refusal-browser.cjs",
+      "sha256": "24e8a7265decfc46f38acc341a8faf7cd1677145cebf0452b184ca7c243a8b3e"
+    },
+    {
+      "path": "lanes/environment/verify-match-exception-service.cjs",
+      "sha256": "18cb8625861a42b744b6868afb60a56b68393eea24881e38246fa264ace4db46"
+    }
+  ],
+  "migration": "none",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2692,
+      "tests": 943,
+      "pages": 154,
+      "routeHandlers": 18,
+      "actionSources": 165,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2254,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 206,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

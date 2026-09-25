@@ -20,6 +20,8 @@ jest.mock("@/prisma/db", () => ({
     ledgerPostingBatch: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
     ledgerAuditEvent: { create: jest.fn() },
     businessEvent: { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() },
+    businessEventAudit: { create: jest.fn() },
+    businessEventAnomaly: { upsert: jest.fn() },
     closeRun: { findMany: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
     closePackExport: { findFirst: jest.fn(), update: jest.fn() },
     inventoryLevel: { findUnique: jest.fn(), updateMany: jest.fn(), create: jest.fn() },
@@ -36,6 +38,8 @@ const mockedDb = db as unknown as {
   ledgerPostingBatch: { findFirst: jest.Mock; create: jest.Mock; update: jest.Mock }
   ledgerAuditEvent: { create: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
+  businessEventAudit: { create: jest.Mock }
+  businessEventAnomaly: { upsert: jest.Mock }
   closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
   closePackExport: { findFirst: jest.Mock; update: jest.Mock }
   inventoryLevel: { findUnique: jest.Mock; updateMany: jest.Mock; create: jest.Mock }
@@ -107,6 +111,8 @@ beforeEach(() => {
     outboxMessages: args.data.outboxMessages.create,
   }))
   mockedDb.businessEvent.update.mockResolvedValue({ id: "event-1", status: "APPLIED" })
+  mockedDb.businessEventAudit.create.mockResolvedValue({ id: "conflict-audit-1" })
+  mockedDb.businessEventAnomaly.upsert.mockResolvedValue({ id: "conflict-anomaly-1" })
   mockedDb.closeRun.findMany.mockResolvedValue([])
   mockedDb.closeRun.findFirst.mockResolvedValue(null)
   mockedDb.closeRun.update.mockResolvedValue({ id: "close-run-1" })
@@ -451,16 +457,37 @@ it("rejects an idempotency conflict before stock mutation", async () => {
     }),
   ).rejects.toThrow("idempotency key")
 
-  expect(mockedDb.auditLog.create).toHaveBeenCalledWith(
+  expect(mockedDb.businessEventAudit.create).toHaveBeenCalledWith(
     expect.objectContaining({
       data: expect.objectContaining({
-        action: "BUSINESS_EVENT_IDEMPOTENCY_CONFLICT",
-        entityId: "event-existing-1",
+        action: "IDEMPOTENCY_CONFLICT",
+        organizationId: "org-1",
+        businessEventId: "event-existing-1",
+        payloadHash: "sha256:previous-payload",
+        attemptedPayloadHash: expect.stringMatching(/^[a-f0-9]{64}$/),
       }),
     }),
   )
+  expect(mockedDb.businessEventAnomaly.upsert).toHaveBeenCalledWith(expect.objectContaining({
+    create: expect.objectContaining({ organizationId: "org-1", businessEventId: "event-existing-1", anomalyType: "IDEMPOTENCY_PAYLOAD_CONFLICT", status: "OPEN", severity: "HIGH" }),
+  }))
   expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
   expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+})
+
+it("does not mutate stock when required conflict evidence cannot be recorded", async () => {
+  mockedDb.businessEvent.findUnique.mockResolvedValueOnce({
+    id: "event-existing-1", organizationId: "org-1", eventSource: "POS",
+    idempotencyKey: "pos-sale-stock:org-1:sale-1", payloadHash: "sha256:previous-payload", outboxMessages: [],
+  })
+  mockedDb.businessEventAudit.create.mockRejectedValueOnce(new Error("Evidence store unavailable"))
+  await expect(postPOSStockIssue({
+    organizationId: "org-1", saleId: "sale-1", orderNumber: "POS-001", locationId: "loc-1", actorId: "cashier-1", occurredAt: eventDate,
+    lines: [{ itemId: "item-1", quantity: 2, unitCost: 100 }],
+  })).rejects.toThrow("Business-event conflict evidence could not be recorded")
+  expect(mockedDb.inventoryLevel.updateMany).not.toHaveBeenCalled()
+  expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+  expect(mockedDb.businessEventAnomaly.upsert).not.toHaveBeenCalled()
 })
 
 it("blocks generic manual correction helpers without an explicit idempotency key", () => {

@@ -1,0 +1,34 @@
+{
+  "at": "2026-09-09T12:57:28.907Z",
+  "run": "130b09d7-ba8",
+  "checks": [
+    "EUR source / XAF base: authoritative approval and retry refused; item, journals, batches, source links, receipts and audit unchanged",
+    "Missing settings: authoritative approval and retry refused; item, journals, batches, source links, receipts and audit unchanged",
+    "XAF / XAF: actual posting retains exact fractional values and configured basis; replay preserves original evidence after a subsequent settings change",
+    "XAF: modified retained rate and base debit fail ledger verification; original fixture evidence restored",
+    "Independent source correction retains its exact counter-journal; second-cycle posting revalidates currency and preserves all three journals",
+    "EUR / EUR: actual posting retains exact fractional values and configured basis; replay preserves original evidence after a subsequent settings change",
+    "EUR: modified retained rate and base debit fail ledger verification; original fixture evidence restored",
+    "Concurrent accounting-currency update prevents posting; no suspense journal or completed approval is created"
+  ],
+  "sourcesBefore": {
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "2de0c3d59f5a50409c9de44543a71f80ba27053d2c56c320b86afa69e1237053",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0"
+  },
+  "scope": "Owned synthetic accounting currency and real posting/approval. No production, external delivery or professional approval.",
+  "originalBefore": "8085b543346f61eca72d7e8fd6b9681cd4af7ef4790cfff78151fcabd8e2eaeb",
+  "concurrentErrorCode": "CONFLICT",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "2de0c3d59f5a50409c9de44543a71f80ba27053d2c56c320b86afa69e1237053",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0"
+  },
+  "sourceStable": true
+}

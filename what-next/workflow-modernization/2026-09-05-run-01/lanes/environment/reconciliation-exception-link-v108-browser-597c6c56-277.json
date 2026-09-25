@@ -1,0 +1,70 @@
+{
+  "at": "2026-09-09T15:24:12.048Z",
+  "run": "597c6c56-277",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "e8c1ca1f576e8c6558d15c56ff4d4fa4ee8e09fac9d08262d4e5fbbe42b1d95e",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "c76eb0b30ca1f36873f8441c5d23d822f9c39d7935cf174472cdc59cf41651ae",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "components/finance/PaymentSuspenseQueue.tsx": "60ea5deb3dca35ccb53ab15223ac48f9b9cc0588b9553dd82a20aa483abb137b",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "messages/en.json": "ac33ea9b16ba905ca9e8fe1e1636976ccdcee03d80332a1c9e02db4b5e0383d5",
+    "messages/fr.json": "41fd32d42c023559dc68537877ff33160bddd9bfcc82f4c70f72d669a7155866"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "reconciliation-exception-link-v108-en-assigned-1440-597c6c56-277.png",
+        "reconciliation-exception-link-v108-en-assigned-320-597c6c56-277.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [],
+      "routeLoadMs": [
+        21485,
+        12990
+      ],
+      "readOnlyControlDisabledWithoutExceptionChange": true,
+      "keyboardAssignmentReachedBothRecords": true,
+      "priorMetadataRetained": true,
+      "reflow320": true,
+      "persistedAfterReload": true,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "reconciliation-exception-link-v108-fr-assigned-1440-597c6c56-277.png",
+        "reconciliation-exception-link-v108-fr-assigned-320-597c6c56-277.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1788967518050 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1788967529444 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1788967532089 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "routeLoadMs": [
+        11778,
+        10121
+      ],
+      "readOnlyControlDisabledWithoutExceptionChange": true,
+      "keyboardAssignmentReachedBothRecords": true,
+      "priorMetadataRetained": true,
+      "reflow320": true,
+      "persistedAfterReload": true,
+      "passed": true
+    }
+  ],
+  "scope": "Actual EN/FR loopback assignment of previously automatically created owned synthetic exceptions; real password authentication and server action. No live payment, financial posting, approval, sign-off or external delivery.",
+  "financialBefore": "e1bbd7f138889e39e0c5730184a831bd78b53ede5e25ced17fc43fcc9f06d399",
+  "financialUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "e8c1ca1f576e8c6558d15c56ff4d4fa4ee8e09fac9d08262d4e5fbbe42b1d95e",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "c76eb0b30ca1f36873f8441c5d23d822f9c39d7935cf174472cdc59cf41651ae",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "components/finance/PaymentSuspenseQueue.tsx": "60ea5deb3dca35ccb53ab15223ac48f9b9cc0588b9553dd82a20aa483abb137b",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "messages/en.json": "ac33ea9b16ba905ca9e8fe1e1636976ccdcee03d80332a1c9e02db4b5e0383d5",
+    "messages/fr.json": "41fd32d42c023559dc68537877ff33160bddd9bfcc82f4c70f72d669a7155866"
+  },
+  "sourceStable": true
+}

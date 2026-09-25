@@ -1,0 +1,58 @@
+{
+  "at": "2026-09-19T11:19:31.064Z",
+  "sourceBefore": {
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "c1da2f038f6ec68fd603653c0ba5581ca59116dbcdbd997ea3f55a4f2bccf008",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "middleware.ts": "f5c94d2cd6c478599afad2bff196156290a609d507d92df67c256af5915fbb22",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "components/auth/EnhancedLoginForm.tsx": "cd151af429d8465588dd624b51f25aec8e1b4b9fed37a3805b9ff452f95094c7",
+    "lib/auth-server.ts": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+    "lib/security/dashboard-session-recovery.ts": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "errors": [],
+      "expiredSyntheticSessions": 1,
+      "recoveryPath": "/en/login",
+      "callback": "/en/dashboard/daily-digest?digest=finance-cash&mode=command",
+      "expiredScreenshot": "digest-session-50216888-329a-4430-90f6-53cdf230360f-en-expired.png",
+      "restoredScreenshot": "digest-session-50216888-329a-4430-90f6-53cdf230360f-en-restored.png",
+      "restored": true
+    },
+    {
+      "locale": "fr",
+      "errors": [],
+      "expiredSyntheticSessions": 2,
+      "recoveryPath": "/fr/login",
+      "callback": "/fr/dashboard/daily-digest?digest=finance-cash&mode=command",
+      "expiredScreenshot": "digest-session-50216888-329a-4430-90f6-53cdf230360f-fr-expired.png",
+      "restoredScreenshot": "digest-session-50216888-329a-4430-90f6-53cdf230360f-fr-restored.png",
+      "restored": true
+    }
+  ],
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "lib/dashboard/snapshot-blocker-presentation.ts": "f4859b025a925f6961c88279396b726ef97a8ecf539aaab3ace6226150c04e8f",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "8eb1a06c4f6a41b67ef62451fcae0457d4bbf2ee55803bdf73e3178e347d211b",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "c1da2f038f6ec68fd603653c0ba5581ca59116dbcdbd997ea3f55a4f2bccf008",
+    "services/daily-habit/daily-habit-digest.service.ts": "683685581fb11717c240a7525d26bee18a270855b8761fc92d0a962b9801f1bf",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "middleware.ts": "f5c94d2cd6c478599afad2bff196156290a609d507d92df67c256af5915fbb22",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "023975d0e5b22039ffa5527563dfba70f8ede968e0cba8bd1f1bca4c063865ca",
+    "components/auth/EnhancedLoginForm.tsx": "cd151af429d8465588dd624b51f25aec8e1b4b9fed37a3805b9ff452f95094c7",
+    "lib/auth-server.ts": "78118c9d861ff17431026e66b7925c36e7b1e664d9f8e495f4ae0c787195f728",
+    "lib/security/dashboard-session-recovery.ts": "f492f2a34c3f71f3a26d50c27c6042aa89b7eaf73ee7b55d2502e02c4925c56a"
+  },
+  "sourceStable": true
+}

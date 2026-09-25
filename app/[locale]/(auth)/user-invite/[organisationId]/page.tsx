@@ -1,29 +1,23 @@
-import InvitedUserRegistration from "@/components/Forms/InvitedUserRegistration";
-import { GridBackground } from "@/components/reusable-ui/grid-background";
-import { getInviteRegistrationContext } from "@/services/users/user-identity.service";
+import InvitedUserRegistration from "@/components/Forms/InvitedUserRegistration"
+import { AuthV2Shell } from "@/components/auth/v2/AuthV2Shell"
+import { localizePath, pickLocale } from "@/i18n/routing"
+import { getInviteRegistrationContext } from "@/services/users/user-identity.service"
 
-const Page = async ({ searchParams }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
+export const dynamic = "force-dynamic"
 
-) => {
-
+export default async function Page({ params, searchParams }: {
+  params: Promise<{ locale: string }>
+  searchParams: Promise<{ token?: string | string[] }>
+}) {
+  const locale = pickLocale((await params).locale)
   const tokenParam = (await searchParams).token
   const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam
-  const invite = await getInviteRegistrationContext(token)
+  const alternatePath = "/user-invite/invitation" + (token ? "?token=" + encodeURIComponent(token) : "")
+  let invite = { email: "", roleName: "", organizationName: "", isValidInvite: false }, loadFailed = false
+  try { invite = await getInviteRegistrationContext(token, locale) }
+  catch { loadFailed = true }
 
-  return (
-    <GridBackground>
-      <div className="px-4">
-        <InvitedUserRegistration
-          token={token ?? ""}
-          email={invite.email}
-          roleName={invite.roleName}
-          organizationName={invite.organizationName}
-          isValidInvite={invite.isValidInvite}
-        />
-      </div>
-    </GridBackground>
-  );
+  return <AuthV2Shell locale={locale} variant="invite" alternatePath={alternatePath}>
+    <InvitedUserRegistration key={token ?? ""} locale={locale} token={token ?? ""} email={invite.email} roleName={invite.roleName} organizationName={invite.organizationName} isValidInvite={invite.isValidInvite} loadFailed={loadFailed} reloadHref={localizePath(alternatePath, locale)} />
+  </AuthV2Shell>
 }
-export default Page

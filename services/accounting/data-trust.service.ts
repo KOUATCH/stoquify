@@ -2636,7 +2636,7 @@ export async function exportAccountantTrustPack(
       eventSource: "INTERNAL",
       idempotencyKey: `accountant-trust-pack-export:${exportId}`,
       actorId: input.exportedById,
-      sourceType: "AccountantTrustPack",
+      sourceEntityType: "AccountantTrustPack",
       sourceId: exportId,
       documentHash: contentHash,
       payload: {

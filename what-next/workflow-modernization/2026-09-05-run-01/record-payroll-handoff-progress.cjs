@@ -1,0 +1,48 @@
+const fs = require('node:fs'), path = require('node:path');
+const root = __dirname;
+function write(file, text) {
+  const fd = fs.openSync(path.join(root, file), 'r+');
+  try { fs.writeFileSync(fd, text); fs.ftruncateSync(fd, Buffer.byteLength(text)); } finally { fs.closeSync(fd); }
+}
+function replace(text, before, after) { if (!text.includes(before)) throw new Error('Expected report content missing'); return text.replace(before, after); }
+const detail = `
+
+## Payroll Digest audience and destination read authority — 2026-09-19
+
+The shared payroll signal used review/write permissions although its destinations require read permissions. No existing Digest configuration included the payroll assignment role, so even permitted readers could not see those actions. Owner and finance views now include payroll actions after the server's existing source privacy/module gate and all required read permissions. No new workspace or automatic role grant is introduced.
+
+Employee-balance and payment/provider-forecast links use /dashboard/payroll/payments with payments.reconciliation.read AND payroll.command.read. Declaration forecast links require payroll.command.read; register links require payroll.reports.read AND payroll.command.read. General payroll exposure links require payroll.command.read. Current route catalogue and underlying balance action were inspected; forecast tests compare the generated link contract against the route catalogue. The branch-allocation rule remains a separately recorded destination-contract gap, outside the current Digest input set.
+
+BusinessSignal, BusinessSignalFact and ActionItem carry optional additionalRequiredPermissions. Queue filtering and candidate assignment use all-of evaluation with the existing canonical RBAC helper. Shared BI adapters and Digest action, risk and change links retain these requirements. Client metadata is explanatory; the destination rechecks current server authority. Employee-balance guidance now says to review evidence, without suggesting the reader is authorized to settle a balance. Canonical payroll review copy is translated into French with exact-string matching, preserving custom source wording and evidence.
+
+**Focused verification.** First run 67940b: 78 passed / six failed. Four failures were Jest table rows being expanded into individual parameters instead of a permission array; two asserted a title where BI actions deliberately use next-step labels. Corrected those fixtures without changing production authority. Run 6c1556 passed 53 tests. Final focused run 382d73 passed 89 tests in seven suites: payroll-action-access, business-signal-rules, action-queue, daily-habit-digest, daily-habit-source-visibility, daily-habit-signal-presentation and bi-evidence-adapter. Cases include either missing read permission, write-only grants, permitted and denied assignees, owner/finance visibility, no stockkeeper action, module denial, EN/FR and preserved custom text. Later shared-consumer checks and final static checks are recorded below.
+
+**Actual handoff.** [Owned EN/FR receipt](lanes/environment/digest-payroll-handoff-98ef5ce7-4ee3-4683-8335-edd9623cfce6.json), f6eb68, passed: normal password login, keyboard source activation, permitted employee-balance evidence, Back retaining command view, cached link denied after reconciliation-read revocation, refreshed service/UI action absent, zero page errors. No selected balance-case, balance-event, journal, payment or business-event mutations. Module access audits are expected. Fixtures are synthetic draft records in stoquify_local_registration_20260906_01, not payroll calculations or approvals. Browser requests were fenced to localhost:3110. Source hashes were stable throughout. Preparing the verifier first hit sandbox EPERM (0c4e39); the consequent missing-script attempt failed 62ae05. Approved creation 0c7db6 and run f89e28/f6eb68 succeeded. No automatic-review rejection occurred for these operations.
+
+Both locales retain actual source and destination screenshots in the receipt directory. Visual inspection of the French 390px source confirms wrapping and translated payroll actions, but source employee-balance warnings remain English. The destination screenshot still shows English payment-reconciliation headings/labels. The receipt's destinationHasEnglishBalanceHeading=false only means that exact heading was absent; it is not proof of localization. EN 1440px handoff took 25,827ms and FR 390px 1,598ms in the development server. These are observations with different warm/compile conditions, not a performance certification or speedup claim.
+
+**User/operator guidance.** Open /en/dashboard/daily-digest or /fr/dashboard/daily-digest, select the owner or finance view and use the payroll evidence action. The administrator obtains the reader's required grants from the existing role editor and confirms Payroll is readable for the organization through module controls. Grant only authority appropriate to the person's duties. The Digest does not activate modules or execute settlement, approval or posting. After revocation, refresh removes the action; a cached link is still checked at its destination. No new schema, migration, external approval, deployment or billing configuration is needed for this correction. Recover by restoring reviewed code and rechecking the affected read contracts; never bypass destination checks to restore a link.
+
+**Review and limits.** Architecture/backend owns the shared all-of contract and audience selection; IAM/privacy owns current destination and source authority; payroll/finance owns read-only evidence guidance and unchanged business records; UX/localization owns copy and keyboard handoff; quality/SRE owns source bindings, fixture failures and measurements. New statutory rules, country packs, POS, pricing and providers are not applicable to this correction. No professional certification is claimed. Remaining: source-warning/forecast localization, broader live module policies, branch signal/other dashboard contracts, stale/session/source-error combinations and complete accessibility checks. No full workflow is closed.
+`;
+const detailFile = 'DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md';
+const existingDetail = fs.readFileSync(path.join(root, detailFile), 'utf8');
+if (existingDetail.includes('## Payroll Digest audience and destination read authority')) throw new Error('Already recorded');
+write(detailFile, existingDetail + detail);
+let checklist = fs.readFileSync(path.join(root, 'DAILY_DIGEST_CLOSURE.md'), 'utf8');
+checklist = replace(checklist, 'Remaining: other live destinations, full module-policy cases', 'Owner/finance payroll read actions, all-of destination authority, EN/FR keyboard handoff, Back and cached-link revocation are verified. Remaining: other live destinations, full module-policy cases');
+checklist = replace(checklist, 'Remaining: other dynamic signal types/units; preserve user-authored text and source evidence.', 'Canonical payroll action guidance is translated; employee-balance source warnings and payroll destination labels still show English in French locale. Remaining: forecast details and other dynamic signal types/units; preserve user-authored text and source evidence.');
+write('DAILY_DIGEST_CLOSURE.md', checklist);
+let script = fs.readFileSync(path.join(root, 'reconcile-current-progress.cjs'), 'utf8');
+script = replace(script, 'payroll_source_privacy_enforced_before_composition_with_prior_signal_and_handoff_fixes', 'payroll_source_privacy_and_all_of_read_handoffs_in_owner_finance_views');
+script = replace(script, 'owned_en_fr_payroll_permission_and_module_revocation_privacy_verified', 'owned_en_fr_payroll_privacy_handoff_back_cached_revocation_verified');
+script = replace(script, "const itemRead = register.workflows.find", "digest.closureReview.verifiedCriteria.push('payroll_destination_all_of_read_permissions_and_owner_finance_audiences', 'en_fr_payroll_evidence_handoff_back_and_cached_link_revocation');\nconst itemRead = register.workflows.find");
+script = replace(script, 'Payroll amounts withheld before serialization; permission/module grant and revocation verified in EN/FR', 'Payroll privacy plus owner/finance evidence handoff, Back and current read authority verified in EN/FR');
+script = replace(script, 'payroll audience/destinations, other module cases, localization and accessibility', 'other module cases, dynamic source localization, stale/session cases and accessibility');
+script = replace(script, 'Resolve payroll signal destination/read-permission and audience contracts', 'Complete remaining source warnings and live module-policy cases');
+const start = script.indexOf('**Since the previous report:**');
+const end = script.indexOf('**Priority rationale:**', start);
+if (start < 0 || end < 0) throw new Error('Progress paragraph missing');
+script = script.slice(0, start) + '**Since the previous report:** corrected payroll signal destination permissions and made permitted actions visible in owner/finance views. Employee-balance links require both payroll-command and reconciliation read grants; assignment and BI links preserve that contract. Focused EN/FR tests and actual keyboard handoff, Back, cached-link revocation and refreshed-action removal passed without business mutations. Two bounded criteria added; no whole workflow closed. Shared-consumer regressions and remaining French source/destination copy are recorded in [detailed evidence](DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md). Module, source-recovery and accessibility criteria remain incomplete.\n\n' + script.slice(end);
+write('reconcile-current-progress.cjs', script);
+console.log('Recorded payroll handoff detail and prepared current-progress reconciliation.');

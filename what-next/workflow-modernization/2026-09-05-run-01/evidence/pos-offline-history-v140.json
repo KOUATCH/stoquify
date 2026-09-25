@@ -1,0 +1,157 @@
+{
+  "at": "2026-09-13T16:54:04.998Z",
+  "baseline": "evidence/source-baseline-v140.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/pos/offline-review.service.ts": "a810aec09020e68609e2650b26b53be145f50fafcc911f89326ade1e75e29ec1",
+    "actions/pos/offline-review.actions.ts": "cf7b6d75a11efd0976351dc74a2154415be9f30d15dbec5d1e6e6c66b6980d80",
+    "components/pos/offline/OfflineConflictReview.tsx": "d15eed18bb35709daf911078522951de1eeba0b64cc12ac66858f9254d26ec5b",
+    "components/pos/offline/OfflineConflictHistory.tsx": "643eb94585a3401b5483ee7f86310419d46f643b33fc025afbfddec29cc85f67",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "52c9b6d0953b72df716f3ec88b6b52bd383ae661cb6c0b0403dfb5f48deb5429",
+    "components/pos/offline/review-note-draft.ts": "fabc406778cb57c030a5c0d9813c2822df55563e7b7efe4fe603e797b6736d60",
+    "messages/en.json": "a6f984e78a993df3bf38336fe7d43504a60b33283f6ccb0d02394da8533520a9",
+    "messages/fr.json": "64fe7a25db93e4e74de310b4aeb4be6cfd4d10217be96fe479bab0c3cf2582b0"
+  },
+  "tests": {
+    "passed": 23,
+    "suites": 4,
+    "receipt": "fc3d1d",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath components/pos/__tests__/OfflineConflictReview.test.tsx components/pos/__tests__/OfflineConflictHistory.test.tsx components/pos/__tests__/review-note-draft.test.ts actions/pos/__tests__/offline-review.actions.test.ts"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "68c57f",
+    "command": "node node_modules/eslint/bin/eslint.js services/pos/offline-review.service.ts actions/pos/offline-review.actions.ts components/pos/offline/OfflineConflictReview.tsx components/pos/offline/OfflineConflictHistory.tsx components/pos/offline/OfflineSyncStatusStrip.tsx components/pos/offline/review-note-draft.ts components/pos/__tests__/OfflineConflictReview.test.tsx components/pos/__tests__/OfflineConflictHistory.test.tsx components/pos/__tests__/review-note-draft.test.ts actions/pos/__tests__/offline-review.actions.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "7d4879",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/offline-history-v140-bc154da6-d90c-46ee-a269-19c62ef5f94f.json",
+    "receipt": "474034",
+    "at": "2026-09-13T16:41:58.985Z",
+    "checks": [
+      "Keyset paging covers all same-timestamp rows once despite a newer arrival; status/reference/location/terminal/tenant filters stay scoped",
+      "All 23 durable review audits are pageable; unrelated action/private fields excluded; foreign object denied and reads leave financial/audit state unchanged",
+      "Resolved note/actor/time and original replay/journal audit remain discoverable; failed reads do not become empty history"
+    ],
+    "passed": true,
+    "sources": {
+      "services/pos/offline-review.service.ts": "a810aec09020e68609e2650b26b53be145f50fafcc911f89326ade1e75e29ec1",
+      "services/pos/offline-resolution.service.ts": "a6f3fb44f143a60cda7e1dbdd586bf9b0b2bbdda7a1137dacaaecb1e06c2ac86"
+    }
+  },
+  "browser": {
+    "file": "lanes/environment/offline-history-browser-v140-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.json",
+    "receipt": "a30369",
+    "at": "2026-09-13T16:47:41.546Z",
+    "sourcesBefore": {
+      "services/pos/offline-review.service.ts": "a810aec09020e68609e2650b26b53be145f50fafcc911f89326ade1e75e29ec1",
+      "actions/pos/offline-review.actions.ts": "cf7b6d75a11efd0976351dc74a2154415be9f30d15dbec5d1e6e6c66b6980d80",
+      "components/pos/offline/OfflineConflictReview.tsx": "d15eed18bb35709daf911078522951de1eeba0b64cc12ac66858f9254d26ec5b",
+      "components/pos/offline/OfflineConflictHistory.tsx": "643eb94585a3401b5483ee7f86310419d46f643b33fc025afbfddec29cc85f67",
+      "components/pos/offline/OfflineSyncStatusStrip.tsx": "52c9b6d0953b72df716f3ec88b6b52bd383ae661cb6c0b0403dfb5f48deb5429",
+      "components/pos/offline/review-note-draft.ts": "fabc406778cb57c030a5c0d9813c2822df55563e7b7efe4fe603e797b6736d60",
+      "messages/en.json": "a6f984e78a993df3bf38336fe7d43504a60b33283f6ccb0d02394da8533520a9",
+      "messages/fr.json": "64fe7a25db93e4e74de310b4aeb4be6cfd4d10217be96fe479bab0c3cf2582b0"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "offline-history-v140-en-1440-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png",
+          "offline-history-v140-en-768-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png",
+          "offline-history-v140-en-320-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png",
+          "offline-history-v140-en-text200-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png"
+        ],
+        "pageErrors": [],
+        "pagingAndRecordSwitchRetainsNote": true,
+        "refreshRestoresDraft": true,
+        "readyMs": 29912,
+        "resolutionHistorySurvivesReloadAndFailedQuery": true,
+        "readerCanInspectHistory": true,
+        "historyReachableWithoutOpenConflicts": true,
+        "revokedReadHidesHistory": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "offline-history-v140-fr-1440-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png",
+          "offline-history-v140-fr-768-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png",
+          "offline-history-v140-fr-320-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png",
+          "offline-history-v140-fr-text200-f2f04e0a-ecd9-4c83-aa1b-d34d22f27a4d.png"
+        ],
+        "pageErrors": [],
+        "pagingAndRecordSwitchRetainsNote": true,
+        "refreshRestoresDraft": true,
+        "readyMs": 31839,
+        "resolutionHistorySurvivesReloadAndFailedQuery": true,
+        "readerCanInspectHistory": true,
+        "historyReachableWithoutOpenConflicts": true,
+        "revokedReadHidesHistory": true
+      }
+    ],
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/offline-review.service.ts": "a810aec09020e68609e2650b26b53be145f50fafcc911f89326ade1e75e29ec1",
+      "actions/pos/offline-review.actions.ts": "cf7b6d75a11efd0976351dc74a2154415be9f30d15dbec5d1e6e6c66b6980d80",
+      "components/pos/offline/OfflineConflictReview.tsx": "d15eed18bb35709daf911078522951de1eeba0b64cc12ac66858f9254d26ec5b",
+      "components/pos/offline/OfflineConflictHistory.tsx": "643eb94585a3401b5483ee7f86310419d46f643b33fc025afbfddec29cc85f67",
+      "components/pos/offline/OfflineSyncStatusStrip.tsx": "52c9b6d0953b72df716f3ec88b6b52bd383ae661cb6c0b0403dfb5f48deb5429",
+      "components/pos/offline/review-note-draft.ts": "fabc406778cb57c030a5c0d9813c2822df55563e7b7efe4fe603e797b6736d60",
+      "messages/en.json": "a6f984e78a993df3bf38336fe7d43504a60b33283f6ccb0d02394da8533520a9",
+      "messages/fr.json": "64fe7a25db93e4e74de310b4aeb4be6cfd4d10217be96fe479bab0c3cf2582b0"
+    },
+    "sourceStable": true
+  },
+  "visualReview": {
+    "inspected": [
+      "EN 1440",
+      "FR 320",
+      "FR 320 at 200% text"
+    ],
+    "result": "Scoped timeline and controls reflow; retained IDs wrap. Native status label association fixed after initial browser timeout. Adjacent POS setup full accessibility review remains open."
+  },
+  "priorAttempts": [
+    {
+      "receipt": "82154e",
+      "result": "Jest command failed because a named hook test path did not exist; three valid suites passed 19 tests. Final command uses inspected files."
+    },
+    {
+      "receipt": "de0cae",
+      "result": "One new history test expected isolated count text; corrected to verify actual filtered service query."
+    },
+    {
+      "receipt": "696a22",
+      "file": "lanes/environment/offline-history-browser-v140-8ee89b92-82d4-4b2d-bfec-f088497dc927.json",
+      "result": "Paging and note recovery passed; status select label lookup timed out. Explicit separate label association fixed; source changed during that historical attempt, so final stable-source rerun governs."
+    }
+  ],
+  "build": {
+    "run": false,
+    "reason": "Actual app development integration verified; migration-bearing default build not invoked."
+  },
+  "guide": "OFFLINE_HISTORY_V140.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2908,
+      "tests": 1035,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2541,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

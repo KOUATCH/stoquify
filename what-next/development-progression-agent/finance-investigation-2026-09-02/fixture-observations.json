@@ -1,0 +1,105 @@
+{
+  "capturedAt": "2026-09-02T12:34:52.861Z",
+  "classification": "LOCAL_READ_ONLY_DIAGNOSTIC_NOT_RELEASE_EVIDENCE",
+  "database": "stoquify_replay_next_20260830",
+  "organizationId": "rds_org_001",
+  "monthStart": "2026-08-31T23:00:00.000Z",
+  "note": "Aggregate query timings are not route or full service latency. Dates and records reflect this diagnostic time, not the historical capture.",
+  "readings": [
+    {
+      "name": "transactionReadOnly",
+      "elapsedMs": 3,
+      "value": [
+        {
+          "transaction_read_only": "on"
+        }
+      ]
+    },
+    {
+      "name": "receivableDocumentsAsOfNow",
+      "elapsedMs": 33,
+      "value": 12
+    },
+    {
+      "name": "receivableDocumentDates",
+      "elapsedMs": 9,
+      "value": {
+        "_min": {
+          "issuedAt": "2026-05-01T09:00:00.000Z"
+        },
+        "_max": {
+          "issuedAt": "2026-05-12T09:00:00.000Z"
+        }
+      }
+    },
+    {
+      "name": "paymentsAllTime",
+      "elapsedMs": 34,
+      "value": 12
+    },
+    {
+      "name": "paymentsMonthToDate",
+      "elapsedMs": 7,
+      "value": 0
+    },
+    {
+      "name": "outboundPaymentsAllTime",
+      "elapsedMs": 6,
+      "value": 0
+    },
+    {
+      "name": "paymentDates",
+      "elapsedMs": 7,
+      "value": {
+        "_min": {
+          "createdAt": "2026-08-30T19:51:51.917Z"
+        },
+        "_max": {
+          "createdAt": "2026-08-30T19:51:51.917Z"
+        }
+      }
+    },
+    {
+      "name": "latest80PaymentDirections",
+      "elapsedMs": 7,
+      "value": {
+        "count": 12,
+        "incoming": 12,
+        "outgoing": 0
+      }
+    },
+    {
+      "name": "defaultFinancialStatementPeriod",
+      "elapsedMs": 23,
+      "value": {
+        "id": "rds_org_001_accounting_period_009",
+        "name": "September 2026",
+        "startDate": "2026-09-01T00:00:00.000Z",
+        "endDate": "2026-09-30T23:59:59.999Z",
+        "status": "OPEN"
+      }
+    },
+    {
+      "name": "postedEntriesInSelectedPeriod",
+      "elapsedMs": 20,
+      "value": 0
+    },
+    {
+      "name": "postedEntriesCumulativeThroughPeriodEnd",
+      "elapsedMs": 9,
+      "value": 14
+    },
+    {
+      "name": "postedEntryDates",
+      "elapsedMs": 5,
+      "value": {
+        "_min": {
+          "entryDate": "2026-03-10T09:00:00.000Z"
+        },
+        "_max": {
+          "entryDate": "2026-05-12T09:00:00.000Z"
+        }
+      }
+    }
+  ]
+}

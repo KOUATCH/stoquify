@@ -457,7 +457,7 @@ export function composeCashCommandData(input: ComposeCashCommandInput): CashComm
   const evidenceGrade = strongestVisibleGrade(cards.map((card) => card.evidenceGrade))
   const state = commandState(cards, input.actionQueue.summary.total)
   const primaryAction =
-    summary.unreconciledCash > 0 || summary.openSuspenseCount > 0
+    summary.unreconciledCash === null || summary.unreconciledCash > 0 || summary.openSuspenseCount > 0
       ? reconciliationAction
       : drawerState.highRiskAlertCount > 0
         ? drawerAction
@@ -693,11 +693,11 @@ function buildChanges(input: {
           currentValue: tenantOperating.metrics.cashCollected,
         })
       : null,
-    suspense && paymentTruth.metrics.openSuspenseAmount > 0
+    suspense && paymentTruth.metrics.openSuspenseCount > 0
       ? changeFromCard({
           card: suspense,
           title: "Unreconciled cash remains open",
-          detail: `${formatAmount(paymentTruth.metrics.openSuspenseAmount, input.input.currency)} remains in suspense.`,
+          detail: paymentTruth.metrics.openSuspenseAmount === null ? "Open suspense spans currencies without a verified converted total. Review the currency breakdown." : `${formatAmount(paymentTruth.metrics.openSuspenseAmount, input.input.currency)} remains in suspense.`,
           businessImpact: "Cash cannot be treated as fully trusted until suspense is cleared or explained.",
           direction: "worsened",
           severity: paymentTruth.metrics.criticalExceptionCount > 0 ? "critical" : "high",
@@ -807,10 +807,10 @@ function buildRisks(input: {
       title: "Unreconciled cash",
       detail: "Suspense value is the first cash-trust blocker.",
       businessImpact: "Unresolved suspense weakens daily cash, owner reporting, and close readiness.",
-      severity: paymentTruth.metrics.openSuspenseAmount > 0 ? "high" : "info",
-      severityScore: paymentTruth.metrics.openSuspenseAmount > 0 ? 86 : 10,
+      severity: paymentTruth.metrics.openSuspenseCount > 0 ? "high" : "info",
+      severityScore: paymentTruth.metrics.openSuspenseCount > 0 ? 86 : 10,
       moneyImpact: paymentTruth.metrics.openSuspenseAmount,
-      urgency: paymentTruth.metrics.openSuspenseAmount > 0 ? "today" : "watch",
+      urgency: paymentTruth.metrics.openSuspenseCount > 0 ? "today" : "watch",
       actionLink: input.reconciliationAction,
     }),
     riskFromCard({
@@ -920,7 +920,7 @@ function buildTrustSignals(input: {
       label: "Open suspense",
       value: String(paymentTruth.metrics.openSuspenseCount),
       detail:
-        paymentTruth.metrics.openSuspenseAmount > 0
+        paymentTruth.metrics.openSuspenseAmount !== null && paymentTruth.metrics.openSuspenseAmount > 0
           ? formatAmount(paymentTruth.metrics.openSuspenseAmount, input.input.currency)
           : null,
       tone: paymentTruth.metrics.openSuspenseCount > 0 ? "gold" : "success",
@@ -1297,7 +1297,7 @@ function buildBriefSummary(summary: CashCommandSummary, currency: string) {
 }
 
 function buildBriefConclusion(summary: CashCommandSummary) {
-  if (summary.unreconciledCash > 0 || summary.openSuspenseCount > 0) {
+  if (summary.unreconciledCash === null || summary.unreconciledCash > 0 || summary.openSuspenseCount > 0) {
     return "Start with suspense: unreconciled cash must be explained before today can be trusted."
   }
   if (summary.drawerAlertCount > 0) {
@@ -1321,7 +1321,8 @@ function dateLabel(value: string | null) {
   if (Number.isNaN(parsed.getTime())) return "the forecast horizon"
   return new Intl.DateTimeFormat("en", { month: "short", day: "numeric" }).format(parsed)
 }
-function formatAmount(value: number, currency: string) {
+function formatAmount(value: number | null, currency: string) {
+  if (value === null) return "total unavailable"
   return `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(value)} ${currency}`
 }
 

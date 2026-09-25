@@ -9,13 +9,15 @@ const nextConfig = {
   distDir: nextDistDir,
   serverExternalPackages: [
     'argon2',
-    'better-auth',
     '@better-auth/core',
     '@better-auth/prisma-adapter',
     '@better-auth/kysely-adapter',
     '@prisma/client',
+    // Load the provider SDK natively instead of compiling its Effect graph per route.
+    'uploadthing',
   ],
   experimental: {
+    serverActions: { bodySizeLimit: '5mb' },
     // Reduce memory usage and improve caching
     optimizePackageImports: ['@/components', '@/lib'],
     // Disable worker threads to fix Jest worker issues

@@ -1,0 +1,486 @@
+{
+  "run": "5dc14fd9-17a",
+  "startedAt": "2026-09-07T12:50:58.376Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "0fdcbbb7345aefc1965a4a86c1818a4752146ef507388fb6a6a4024fcc52f8c5",
+    "messages/fr.json": "12ed23a1a4674862538c062c59d22c80437c5de12b6ed24d42576faade7f1597",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+    "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+    "services/purchase-order/purchase-order.service.ts": "af336a52624a3b0bfd11d5776f796b85b555786aa30e57aeec32ce03a56ec91b",
+    "services/purchase-order/purchase-order.schemas.ts": "66665cbe749324de4775a5e062e65ed5db34701aab91d71cde09dd5457488b9b",
+    "services/purchase-order/purchase-order-edit-record.ts": "320e8a461d4b0385a1b5cd527b21e95b7dd91f17940ff5279585bdf8c47a3938",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "afb08213aa5a8f56165f1cd3331aba221ac733689462da543d299b3369b05631",
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "614442739e86e9cacd48e612482f2414e35ef3d6e043d7db4b7f7eb5e09322e1",
+    "components/purchase-orders/purchase-order-edit-draft.ts": "31b7504818f11424200ec015c9a122b620b178a43a8526f355682dc1ba4c04d2",
+    "components/purchase-orders/purchase-order-edit-model.ts": "9a24a0a36c6146db2a65334ba5c31729f15c9cd63eff3bf423f65e2000adc024",
+    "hooks/useRecentPurchaseOrderQueries.ts": "242cee7d2ef4de6062a9c4fb5ee5e615236af17b35de953a97cd5add676a52e6",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "d7c4a98b98e9d4383abeabc5967551ba5c8c9d9e8a8f4f27c26a9bdb46037306"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "purchase-edit-en-independent-comparison-5dc14fd9-17a.png",
+        "purchase-edit-en-overlap-choice-5dc14fd9-17a.png",
+        "purchase-edit-en-comparison-mobile-5dc14fd9-17a.png",
+        "purchase-edit-en-comparison-text-resize-5dc14fd9-17a.png",
+        "purchase-edit-en-unknown-outcome-5dc14fd9-17a.png",
+        "purchase-edit-en-reload-recovery-5dc14fd9-17a.png",
+        "purchase-edit-en-failed-5dc14fd9-17a.png"
+      ],
+      "layouts": [
+        {
+          "width": 1440,
+          "height": 1000,
+          "scrollWidth": 974,
+          "clientWidth": 974,
+          "documentWidth": 1440,
+          "viewport": 1440
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 498,
+          "clientWidth": 498,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "documentWidth": 320,
+          "viewport": 320
+        }
+      ],
+      "pageErrors": [],
+      "actionRequests": [
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:51:35.236Z",
+          "startedMs": 1788785495236,
+          "state": "failed",
+          "elapsedMs": 6354,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:51:43.999Z",
+          "startedMs": 1788785503999,
+          "state": "failed",
+          "elapsedMs": 2907,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:51:44.682Z",
+          "startedMs": 1788785504682,
+          "state": "failed",
+          "elapsedMs": 4564,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:51:46.414Z",
+          "startedMs": 1788785506414,
+          "state": "failed",
+          "elapsedMs": 2839,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:51:48.133Z",
+          "startedMs": 1788785508133,
+          "state": "failed",
+          "elapsedMs": 11195,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:52:01.982Z",
+          "startedMs": 1788785521982,
+          "state": "failed",
+          "elapsedMs": 2521,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:52:06.421Z",
+          "startedMs": 1788785526421,
+          "state": "pending"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:52:26.818Z",
+          "startedMs": 1788785546818,
+          "state": "finished",
+          "elapsedMs": 1667
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:52:30.284Z",
+          "startedMs": 1788785550284,
+          "state": "failed",
+          "elapsedMs": 2661,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:52:30.660Z",
+          "startedMs": 1788785550660,
+          "state": "failed",
+          "elapsedMs": 4550,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:52:32.393Z",
+          "startedMs": 1788785552393,
+          "state": "finished",
+          "elapsedMs": 2826
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:52:34.006Z",
+          "startedMs": 1788785554006,
+          "state": "failed",
+          "elapsedMs": 6869,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:52:48.301Z",
+          "startedMs": 1788785568301,
+          "state": "failed",
+          "elapsedMs": 4988,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:52:55.187Z",
+          "startedMs": 1788785575187,
+          "state": "pending"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:53:02.030Z",
+          "startedMs": 1788785582030,
+          "state": "failed",
+          "elapsedMs": 1280,
+          "reason": "net::ERR_FAILED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:53:10.619Z",
+          "startedMs": 1788785590619,
+          "state": "failed",
+          "elapsedMs": 1171,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:53:13.910Z",
+          "startedMs": 1788785593910,
+          "state": "pending"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:53:21.259Z",
+          "startedMs": 1788785601259,
+          "state": "failed",
+          "elapsedMs": 662,
+          "reason": "net::ERR_ABORTED"
+        }
+      ],
+      "completed": [
+        "Two tabs: stale rejection, keyboard comparison, independent changes merged and persisted",
+        "Overlapping field requires explicit choice; desktop/tablet/mobile and 200% text reflow",
+        "Dropped response after commit: exact command retained across reload, recovered once, no duplicate audit or changes"
+      ],
+      "passed": false,
+      "twoEditorsReadyMs": 20506,
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('form', { name: 'Edit purchase order' }).getByRole('alert')\nExpected substring: \"Your current access does not allow this save\"\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('form', { name: 'Edit purchase order' }).getByRole('alert')\n"
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "purchase-edit-fr-independent-comparison-5dc14fd9-17a.png",
+        "purchase-edit-fr-overlap-choice-5dc14fd9-17a.png",
+        "purchase-edit-fr-comparison-mobile-5dc14fd9-17a.png",
+        "purchase-edit-fr-comparison-text-resize-5dc14fd9-17a.png",
+        "purchase-edit-fr-unknown-outcome-5dc14fd9-17a.png",
+        "purchase-edit-fr-reload-recovery-5dc14fd9-17a.png",
+        "purchase-edit-fr-authority-denied-retained-5dc14fd9-17a.png"
+      ],
+      "layouts": [
+        {
+          "width": 1440,
+          "height": 1000,
+          "scrollWidth": 974,
+          "clientWidth": 974,
+          "documentWidth": 1440,
+          "viewport": 1440
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 498,
+          "clientWidth": 498,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 254,
+          "clientWidth": 254,
+          "documentWidth": 320,
+          "viewport": 320
+        }
+      ],
+      "pageErrors": [],
+      "actionRequests": [
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:54:30.308Z",
+          "startedMs": 1788785670308,
+          "state": "failed",
+          "elapsedMs": 1118,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:54:32.567Z",
+          "startedMs": 1788785672567,
+          "state": "failed",
+          "elapsedMs": 1815,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:54:33.032Z",
+          "startedMs": 1788785673032,
+          "state": "failed",
+          "elapsedMs": 3054,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:54:33.805Z",
+          "startedMs": 1788785673805,
+          "state": "failed",
+          "elapsedMs": 2128,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:54:35.854Z",
+          "startedMs": 1788785675854,
+          "state": "failed",
+          "elapsedMs": 1275,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:54:39.201Z",
+          "startedMs": 1788785679201,
+          "state": "failed",
+          "elapsedMs": 1356,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:54:42.633Z",
+          "startedMs": 1788785682633,
+          "state": "pending"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:54:51.672Z",
+          "startedMs": 1788785691672,
+          "state": "failed",
+          "elapsedMs": 941,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:54:53.680Z",
+          "startedMs": 1788785693680,
+          "state": "failed",
+          "elapsedMs": 4371,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:54:53.818Z",
+          "startedMs": 1788785693818,
+          "state": "failed",
+          "elapsedMs": 5398,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "other",
+          "startedAt": "2026-09-07T12:54:56.173Z",
+          "startedMs": 1788785696173,
+          "state": "failed",
+          "elapsedMs": 3169,
+          "reason": "net::ERR_ABORTED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:54:58.236Z",
+          "startedMs": 1788785698236,
+          "state": "finished",
+          "elapsedMs": 1995
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:55:09.440Z",
+          "startedMs": 1788785709440,
+          "state": "finished",
+          "elapsedMs": 1592
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:55:12.653Z",
+          "startedMs": 1788785712653,
+          "state": "pending"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:55:21.946Z",
+          "startedMs": 1788785721946,
+          "state": "failed",
+          "elapsedMs": 1142,
+          "reason": "net::ERR_FAILED"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:55:33.511Z",
+          "startedMs": 1788785733511,
+          "state": "finished",
+          "elapsedMs": 1427
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:55:37.355Z",
+          "startedMs": 1788785737355,
+          "state": "pending"
+        },
+        {
+          "tab": "primary",
+          "startedAt": "2026-09-07T12:55:44.978Z",
+          "startedMs": 1788785744978,
+          "state": "failed",
+          "elapsedMs": 1005,
+          "reason": "net::ERR_ABORTED"
+        }
+      ],
+      "completed": [
+        "Two tabs: stale rejection, keyboard comparison, independent changes merged and persisted",
+        "Overlapping field requires explicit choice; desktop/tablet/mobile and 200% text reflow",
+        "Dropped response after commit: exact command retained across reload, recovered once, no duplicate audit or changes",
+        "Current role revocation denies save and preserves unsaved draft"
+      ],
+      "passed": true,
+      "twoEditorsReadyMs": 7436
+    }
+  ],
+  "scope": "Actual EN/FR purchase draft editing through current local app 3110, real password sign-in, two browser tabs, dropped response after server processing, scoped role revocation. Owned fixtures only; external traffic blocked; no migrations or posting.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+    "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "0fdcbbb7345aefc1965a4a86c1818a4752146ef507388fb6a6a4024fcc52f8c5",
+    "messages/fr.json": "12ed23a1a4674862538c062c59d22c80437c5de12b6ed24d42576faade7f1597",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+    "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+    "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+    "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+    "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+    "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+    "services/purchase-order/purchase-order.service.ts": "af336a52624a3b0bfd11d5776f796b85b555786aa30e57aeec32ce03a56ec91b",
+    "services/purchase-order/purchase-order.schemas.ts": "66665cbe749324de4775a5e062e65ed5db34701aab91d71cde09dd5457488b9b",
+    "services/purchase-order/purchase-order-edit-record.ts": "320e8a461d4b0385a1b5cd527b21e95b7dd91f17940ff5279585bdf8c47a3938",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "afb08213aa5a8f56165f1cd3331aba221ac733689462da543d299b3369b05631",
+    "components/purchase-orders/ModernEditPurchaseOrderForm.tsx": "614442739e86e9cacd48e612482f2414e35ef3d6e043d7db4b7f7eb5e09322e1",
+    "components/purchase-orders/purchase-order-edit-draft.ts": "31b7504818f11424200ec015c9a122b620b178a43a8526f355682dc1ba4c04d2",
+    "components/purchase-orders/purchase-order-edit-model.ts": "9a24a0a36c6146db2a65334ba5c31729f15c9cd63eff3bf423f65e2000adc024",
+    "hooks/useRecentPurchaseOrderQueries.ts": "242cee7d2ef4de6062a9c4fb5ee5e615236af17b35de953a97cd5add676a52e6",
+    "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx": "d7c4a98b98e9d4383abeabc5967551ba5c8c9d9e8a8f4f27c26a9bdb46037306"
+  },
+  "sourceStable": true,
+  "completedAt": "2026-09-07T12:55:48.011Z"
+}

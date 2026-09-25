@@ -1,0 +1,12 @@
+{
+  "id": "X1-LOCAL-PERFORMANCE-CHARACTERIZATION",
+  "eligible": true,
+  "scope": "Measure X1 finance route loading and populated/empty table behavior against the existing authorized disposable fixtures. Inspect recorded slow routes first; proposed budgets remain unapproved and historical timings are not p75 measurements.",
+  "prerequisites": [
+    "x1-contract-tests",
+    "x1-matrix-list"
+  ],
+  "authorityBoundary": "Confirm the session's local fixture/browser authorization before another authenticated run. No production acceptance is implied.",
+  "acceptance": "Save repeatable route timings and row-state evidence, identify bottlenecks, and propose the smallest source-backed fix with focused regression checks.",
+  "executionPrompt": "Inspect the current X1 local baseline and route/read-model implementations. Establish whether each zero-row observation is expected or a missing fixture. Measure repeat runs on the authorized local fixture target; retain EN/FR, tenant isolation, redaction and accounting truth. Implement only the demonstrated bottleneck fix, verify it, and save before/after evidence. Keep proposed budgets and external acceptance pending."
+}

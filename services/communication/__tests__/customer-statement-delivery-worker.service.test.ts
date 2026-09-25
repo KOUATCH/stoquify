@@ -37,6 +37,7 @@ import { db } from "@/prisma/db"
 import { openCustomerStatementDeliveryEnvelope } from "@/services/accounting/customer-statement-delivery-envelope"
 import { verifyCustomerStatementAccessToken } from "@/services/accounting/customer-statement-token"
 import {
+  hashBusinessPayload,
   markBusinessEventAppliedInTx,
   recordBusinessEventInTx,
 } from "@/services/events/business-event.service"
@@ -59,6 +60,9 @@ const mockVerifyToken = verifyCustomerStatementAccessToken as jest.Mock
 const mockRecordEvent = recordBusinessEventInTx as jest.Mock
 const mockMarkApplied = markBusinessEventAppliedInTx as jest.Mock
 const now = new Date("2026-08-09T10:05:00.000Z")
+const statementPayload = { recordedBalance: "125.50" }
+const statementHash = hashBusinessPayload(statementPayload)
+const rawHash = (value: string) => createHash("sha256").update(value).digest("hex")
 
 const sealedEnvelope = "v1.sealed-envelope"
 const sealedEnvelopeHash = "sha256:" + createHash("sha256")
@@ -69,7 +73,7 @@ const payload = {
   deliveryId: "delivery-1",
   organizationId: "org-1",
   statementSnapshotId: "statement-1",
-  statementContentHash: "c".repeat(64),
+  statementContentHash: statementHash,
   tokenId: "token-1",
   attributionId: "attribution-1",
   referralCode: "referral_code_123",
@@ -93,26 +97,32 @@ const request = {
   attempts: 1,
   maxAttempts: 5,
   payload,
-  payloadHash: "d".repeat(64),
+  payloadHash: hashBusinessPayload(payload),
+  metadata: null,
+  updatedAt: now,
 }
 
 const delivery = {
   id: "delivery-1",
   organizationId: "org-1",
   statementSnapshotId: "statement-1",
-  statementContentHash: "c".repeat(64),
+  statementContentHash: statementHash,
   tokenId: "token-1",
   attributionId: "attribution-1",
   destinationHash: payload.destinationHash,
   consentEvidenceHash: payload.consentEvidenceHash,
   channel: "EMAIL",
+  locale: "EN",
+  states: [{ status: "QUEUED" }],
   payloadHash: "e".repeat(64),
   token: {
     id: "token-1",
+    tokenHash: rawHash("signed-token"),
+    jtiHash: rawHash("signed-jti"),
     status: "ACTIVE",
     revokedAt: null,
     expiresAt: new Date("2026-09-08T10:00:00.000Z"),
-    statementContentHash: "c".repeat(64),
+    statementContentHash: statementHash,
   },
   attribution: {
     id: "attribution-1",
@@ -121,20 +131,19 @@ const delivery = {
   statementSnapshot: {
     id: "statement-1",
     statementNumber: "STM-2026-001",
-    contentHash: "c".repeat(64),
+    contentHash: statementHash,
+    statementPayload,
+    truncated: false,
     closingBalance: { toFixed: () => "125.50" },
     currency: "XAF",
-    organization: { name: "Demo Shop" },
+    organization: { name: "Demo Shop", isActive: true, deletedAt: null },
   },
 }
 
 function settlementTx() {
   return {
     businessEventOutbox: {
-      findFirst: jest.fn().mockResolvedValue({
-        id: "outbox-1",
-        payloadHash: request.payloadHash,
-      }),
+      findFirst: jest.fn().mockResolvedValue(request),
       updateMany: jest.fn().mockResolvedValue({ count: 1 }),
     },
     customerStatementDelivery: {
@@ -150,6 +159,7 @@ function settlementTx() {
     customerStatementDeliveryState: {
       create: jest.fn().mockResolvedValue({ id: "state-2" }),
     },
+    customerStatementAccessToken: { updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
     auditLog: {
       create: jest.fn().mockResolvedValue({ id: "audit-1" }),
     },
@@ -161,6 +171,7 @@ describe("customer statement delivery worker", () => {
     jest.clearAllMocks()
     mockDb.businessEventOutbox.findFirst.mockResolvedValue(request)
     mockDb.customerStatementDelivery.findFirst.mockResolvedValue(delivery)
+    mockDb.$transaction.mockImplementation(async (callback: (value: unknown) => unknown) => callback(settlementTx()))
     mockOpenEnvelope.mockReturnValue({
       destination: "customer@example.com",
       accessUrl: "https://stoquify.test/customer-statement/statement-1?token=signed-token&ref=referral_code_123",
@@ -173,7 +184,8 @@ describe("customer statement delivery worker", () => {
       ok: true,
       payload: {
         organizationId: "org-1",
-        statementContentHash: "c".repeat(64),
+        statementContentHash: statementHash,
+        jti: "signed-jti",
       },
     })
     mockRecordEvent.mockResolvedValue({
@@ -193,6 +205,7 @@ describe("customer statement delivery worker", () => {
       .mockResolvedValueOnce({ count: 0 })
 
     const claimed = await claimCustomerStatementDeliveries({
+      organizationId: "org-1",
       workerId: "worker-1",
       now,
     })
@@ -212,6 +225,7 @@ describe("customer statement delivery worker", () => {
     })
 
     const result = await processCustomerStatementDelivery({
+      organizationId: "org-1",
       requestId: "outbox-1",
       workerId: "worker-1",
       now,
@@ -243,6 +257,8 @@ describe("customer statement delivery worker", () => {
   })
 
   it("fails the lease closed before provider access when envelope integrity drifts", async () => {
+    const transaction = settlementTx()
+    mockDb.$transaction.mockImplementation(async (callback: (value: unknown) => unknown) => callback(transaction))
     mockDb.businessEventOutbox.findFirst.mockResolvedValue({
       ...request,
       payload: { ...payload, sealedEnvelopeHash: "sha256:" + "0".repeat(64) },
@@ -251,18 +267,66 @@ describe("customer statement delivery worker", () => {
     const send = jest.fn()
 
     await expect(processCustomerStatementDelivery({
+      organizationId: "org-1",
       requestId: "outbox-1",
       workerId: "worker-1",
       now,
       dependencies: { sendCustomerStatementDelivery: send },
-    })).rejects.toThrow("envelope hash does not match")
+    })).resolves.toMatchObject({ status: "DEAD_LETTER" })
 
     expect(send).not.toHaveBeenCalled()
-    expect(mockDb.businessEventOutbox.updateMany).toHaveBeenCalledWith(expect.objectContaining({
+    expect(transaction.businessEventOutbox.updateMany).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({
-        status: BusinessOutboxStatus.FAILED,
+        status: BusinessOutboxStatus.DEAD_LETTER,
         lastErrorCode: "STATEMENT_DELIVERY_INTEGRITY_FAILED",
       }),
     }))
+    expect(transaction.customerStatementDeliveryState.create).toHaveBeenCalledWith({ data: expect.objectContaining({ status: "DEAD_LETTER" }) })
+  })
+
+  it("rejects a missing tenant before reading or claiming work", async () => {
+    await expect(claimCustomerStatementDeliveries({ organizationId: "", workerId: "worker-1" })).rejects.toThrow()
+    expect(mockDb.businessEventOutbox.findMany).not.toHaveBeenCalled()
+  })
+
+  it.each(["REVOKED", "EXPIRED"])("retains a cancelled outcome without dispatching %s access", async status => {
+    const transaction = settlementTx(), send = jest.fn()
+    mockDb.$transaction.mockImplementation(async callback => callback(transaction))
+    mockDb.customerStatementDelivery.findFirst.mockResolvedValue({ ...delivery, token: { ...delivery.token, status } })
+    expect(await processCustomerStatementDelivery({ organizationId: "org-1", requestId: "outbox-1", workerId: "worker-1", now, dependencies: { sendCustomerStatementDelivery: send } })).toMatchObject({ status: "CANCELLED" })
+    expect(send).not.toHaveBeenCalled()
+    expect(transaction.customerStatementDeliveryState.create).toHaveBeenCalledWith({ data: expect.objectContaining({ status: "CANCELLED" }) })
+  })
+
+  it("observes an already reserved operation without sending or settling it again", async () => {
+    mockDb.businessEventOutbox.findFirst.mockResolvedValue({ ...request, metadata: { statementDispatch: { version: 1, attempt: 1, executionId: "826a101c-ad93-43e6-87cd-5629d2f3dd9e", reservedAt: now.toISOString(), outcome: "RESERVED" } } })
+    const send = jest.fn()
+    expect(await processCustomerStatementDelivery({ organizationId: "org-1", requestId: "outbox-1", workerId: "worker-1", now, dependencies: { sendCustomerStatementDelivery: send } })).toMatchObject({ status: "PROCESSING" })
+    expect(send).not.toHaveBeenCalled(); expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+
+  it("holds a legacy retried request with no dispatch evidence instead of guessing it was not sent", async () => {
+    mockDb.businessEventOutbox.findFirst.mockResolvedValue({ ...request, attempts: 2 })
+    const send = jest.fn()
+    expect(await processCustomerStatementDelivery({ organizationId: "org-1", requestId: "outbox-1", workerId: "worker-1", now, dependencies: { sendCustomerStatementDelivery: send } })).toMatchObject({ status: "DEFERRED", code: "PROVIDER_OUTCOME_UNKNOWN" })
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it.each(["throw", "timeout", "missing-reference"])("holds %s after reserving dispatch and never schedules automatic retry", async kind => {
+    const transaction = settlementTx()
+    mockDb.$transaction.mockImplementation(async callback => callback(transaction))
+    const send = jest.fn(() => kind === "throw" ? Promise.reject(new Error("private provider details")) : kind === "timeout" ? new Promise<never>(() => {}) : Promise.resolve({ status: "SENT" as const, retryable: false, message: "accepted without evidence" }))
+    const result = await processCustomerStatementDelivery({ organizationId: "org-1", requestId: "outbox-1", workerId: "worker-1", now, providerTimeoutMs: 5, dependencies: { sendCustomerStatementDelivery: send } })
+    expect(result).toMatchObject({ status: "DEFERRED", code: "PROVIDER_OUTCOME_UNKNOWN" }); expect(send).toHaveBeenCalledTimes(1)
+    expect(transaction.businessEventOutbox.updateMany).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ status: "DEFERRED", lastErrorMessage: null }), where: expect.objectContaining({ organizationId: "org-1", attempts: 1, metadata: { path: ["statementDispatch", "executionId"], equals: expect.any(String) } }) }))
+  })
+
+  it("does not settle acceptance after losing its generation", async () => {
+    const transaction = settlementTx()
+    transaction.businessEventOutbox.findFirst.mockResolvedValue(null)
+    mockDb.$transaction.mockImplementation(async callback => callback(transaction))
+    const send = jest.fn().mockResolvedValue({ status: "SENT", providerReference: "accepted", retryable: false, message: "accepted" })
+    expect(await processCustomerStatementDelivery({ organizationId: "org-1", requestId: "outbox-1", workerId: "worker-1", now, dependencies: { sendCustomerStatementDelivery: send } })).toMatchObject({ status: "LEASE_LOST" })
+    expect(transaction.customerStatementDeliveryState.create).not.toHaveBeenCalled()
   })
 })

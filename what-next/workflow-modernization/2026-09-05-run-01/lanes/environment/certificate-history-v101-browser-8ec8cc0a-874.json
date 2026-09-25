@@ -1,0 +1,146 @@
+{
+  "at": "2026-09-09T12:24:57.493Z",
+  "run": "8ec8cc0a-874",
+  "sourcesBefore": {
+    "components/finance/ReconciliationCertificateHistory.tsx": "97eeb3b05f01a3b907cf2b3560864170270dd314ccea263d9fb003ed15a156a7",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d6bf72aecb454cc0d33b388de9587f96bf03cfa709e0b55ec6c53422284b8a00",
+    "services/reconciliation/reconciliation-certificate-history.service.ts": "2d6503d6be9685af7c3075d44d662c8a667325dcf53749c76e4e1b3322d6078f",
+    "services/reconciliation/reconciliation-certificate-history.contracts.ts": "127ec0302868e710af0d12f1143f13efbdbc7d84e6775e179f4a4715c06a274b",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "57681f328bc19b07687dec7e00a414e37a51a165f4a4609fae2bc716502f52a0",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "messages/en.json": "5a4566db726a31f49ff322f7b1c8c5fa8646914524c0ef47000b56fe4c69f65c",
+    "messages/fr.json": "725daad0ae6b6f4d93b6bc0526ee413bee899077f7be092d6340c3631f92d5a5"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Actual pagination reaches target beyond recent 5/12 runs and returns to first page",
+        "Failed history search retains previous results with stale warning; exact search retry succeeds",
+        "New browser session recovers oldest own receipt through explicit fresh authentication; exact bytes, unchanged receipt count, keyboard focus return",
+        "Read-only user retains history but recovery controls require current export permission"
+      ],
+      "screenshots": [
+        "certificate-history-v101-en-runs-desktop-8ec8cc0a-874.png",
+        "certificate-history-v101-en-failed-refresh-8ec8cc0a-874.png",
+        "certificate-history-v101-en-old-receipt-desktop-8ec8cc0a-874.png",
+        "certificate-history-v101-en-history-320-8ec8cc0a-874.png",
+        "certificate-history-v101-en-history-390-8ec8cc0a-874.png",
+        "certificate-history-v101-en-history-768-8ec8cc0a-874.png",
+        "certificate-history-v101-en-history-text200-8ec8cc0a-874.png",
+        "certificate-history-v101-en-fresh-auth-8ec8cc0a-874.png",
+        "certificate-history-v101-en-recovered-8ec8cc0a-874.png",
+        "certificate-history-v101-en-export-denied-8ec8cc0a-874.png"
+      ],
+      "downloads": [
+        {
+          "filename": "certificate-history-v101-en-recovered-8ec8cc0a-874.json",
+          "receiptId": "5ebdf10d-8fb1-4ce1-be97-e613c4ac201d",
+          "sha256": "5ac8584d17dc714ffda9709ccd5edc2a80aacb72e597643ec1457e05da9cff44"
+        }
+      ],
+      "layout": [
+        {
+          "width": 320,
+          "left": 41,
+          "right": 279,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 41,
+          "right": 349,
+          "violations": []
+        },
+        {
+          "width": 768,
+          "left": 261,
+          "right": 727,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 81,
+          "right": 309,
+          "violations": []
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 27786
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Actual pagination reaches target beyond recent 5/12 runs and returns to first page",
+        "Failed history search retains previous results with stale warning; exact search retry succeeds",
+        "New browser session recovers oldest own receipt through explicit fresh authentication; exact bytes, unchanged receipt count, keyboard focus return",
+        "Read-only user retains history but recovery controls require current export permission"
+      ],
+      "screenshots": [
+        "certificate-history-v101-fr-runs-desktop-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-failed-refresh-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-old-receipt-desktop-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-history-320-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-history-390-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-history-768-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-history-text200-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-fresh-auth-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-recovered-8ec8cc0a-874.png",
+        "certificate-history-v101-fr-export-denied-8ec8cc0a-874.png"
+      ],
+      "downloads": [
+        {
+          "filename": "certificate-history-v101-fr-recovered-8ec8cc0a-874.json",
+          "receiptId": "820a445d-7aac-4e3e-aea3-5707c03dd194",
+          "sha256": "65fdbd84d80dcd0b44ed7c956d3fa9ea76519c0c08bd98643113ac7edb02c6c1"
+        }
+      ],
+      "layout": [
+        {
+          "width": 320,
+          "left": 41,
+          "right": 279,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 41,
+          "right": 349,
+          "violations": []
+        },
+        {
+          "width": 768,
+          "left": 261,
+          "right": 727,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 81,
+          "right": 309,
+          "violations": []
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 10022
+    }
+  ],
+  "scope": "Owned loopback application, normal password sessions, real history/export actions and downloaded file bytes. All certificates issued by actual capture/match/sign services under synthetic provider/payment setup.",
+  "originalBefore": "08a134823edfcc50a59dff114fa8feda4813ca8430814605247fcabe2db1e2dc",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/ReconciliationCertificateHistory.tsx": "97eeb3b05f01a3b907cf2b3560864170270dd314ccea263d9fb003ed15a156a7",
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "27c7bd09293153a040246910a6ee2f608a75e16a0ac9d56991a6c7d5071b171d",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d6bf72aecb454cc0d33b388de9587f96bf03cfa709e0b55ec6c53422284b8a00",
+    "services/reconciliation/reconciliation-certificate-history.service.ts": "2d6503d6be9685af7c3075d44d662c8a667325dcf53749c76e4e1b3322d6078f",
+    "services/reconciliation/reconciliation-certificate-history.contracts.ts": "127ec0302868e710af0d12f1143f13efbdbc7d84e6775e179f4a4715c06a274b",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "57681f328bc19b07687dec7e00a414e37a51a165f4a4609fae2bc716502f52a0",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "messages/en.json": "5a4566db726a31f49ff322f7b1c8c5fa8646914524c0ef47000b56fe4c69f65c",
+    "messages/fr.json": "725daad0ae6b6f4d93b6bc0526ee413bee899077f7be092d6340c3631f92d5a5"
+  },
+  "sourceStable": true
+}

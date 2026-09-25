@@ -1,0 +1,110 @@
+{
+  "run": "cdd4771d-fd2",
+  "mode": "browser",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T10:12:32.218Z",
+  "sourcesBefore": {
+    "services/organization/organization-profile-input.ts": "2695de2ead0eee23bf6b7ae19d98c54038dfd08707da5f1ea32b38c705111a9e",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "services/organization/organization-settings.service.ts": "1e5ca31bcb23cdda3ba0a48e2399972bb3e528716deba7db9b7d243e0f36c9bb",
+    "services/organization/organization-read.service.ts": "8b42420cf3d81fc65ba4b1d93fc8116893eb476a0a79350c8ab36751787b4ad3",
+    "actions/organization/organization-settings-actions.ts": "7fad736216e08d456329f9e5b5749a477a48cc81fac62ddbbcb56fe85ff2103b",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/settings/OrganizationSettingsForm.tsx": "76f07f0614b3235b90d82cb4948c1a9352a8162a932c1f25549739fe2fd9cb54",
+    "app/[locale]/(dashboard)/dashboard/settings/company/page.tsx": "aa78f1f474b2bf9b974bcd222e728872124b6ec314377436c36f27b3985ced85",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "components/ui/select.tsx": "7ef0812b5c194d01300e67fe2330b8ef95268ae5b1683d665f42636d91d75fab",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-organization-profile-denied-cdd4771d-fd2.png",
+        "en-organization-profile-read-only-cdd4771d-fd2.png",
+        "en-organization-profile-ready-cdd4771d-fd2.png",
+        "en-organization-profile-regional-options-cdd4771d-fd2.png",
+        "en-organization-profile-review-cdd4771d-fd2.png",
+        "en-organization-profile-fresh-auth-required-cdd4771d-fd2.png",
+        "en-organization-profile-saved-cdd4771d-fd2.png",
+        "en-organization-profile-stale-draft-cdd4771d-fd2.png",
+        "en-organization-profile-compare-cdd4771d-fd2.png",
+        "en-organization-profile-transport-recovery-cdd4771d-fd2.png",
+        "en-organization-profile-recovered-cdd4771d-fd2.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 3980,
+      "overlayBackground": "rgb(31, 49, 57)",
+      "saveMs": 3703,
+      "newAudits": 3,
+      "freshAuth": true,
+      "staleDraftMerge": true,
+      "transportRecovery": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-organization-profile-denied-cdd4771d-fd2.png",
+        "fr-organization-profile-read-only-cdd4771d-fd2.png",
+        "fr-organization-profile-ready-cdd4771d-fd2.png",
+        "fr-organization-profile-regional-options-cdd4771d-fd2.png",
+        "fr-organization-profile-review-cdd4771d-fd2.png",
+        "fr-organization-profile-fresh-auth-required-cdd4771d-fd2.png",
+        "fr-organization-profile-saved-cdd4771d-fd2.png",
+        "fr-organization-profile-stale-draft-cdd4771d-fd2.png",
+        "fr-organization-profile-compare-cdd4771d-fd2.png",
+        "fr-organization-profile-transport-recovery-cdd4771d-fd2.png",
+        "fr-organization-profile-recovered-cdd4771d-fd2.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 4193,
+      "overlayBackground": "rgb(31, 49, 57)",
+      "saveMs": 2676,
+      "newAudits": 3,
+      "freshAuth": true,
+      "staleDraftMerge": true,
+      "transportRecovery": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Only new explicitly owned organization-profile fixtures in the existing isolated registration database are used. No registration throttles, baseline organizations, production data or existing credentials are changed.",
+    "Real browser authentication and password step-up; no seeded assurance. All nonlocal browser requests are blocked and this app's existing network fence blocks external server fetch.",
+    "Evidence covers profile viewing, editing, fresh authentication, stale merge, transport recovery and durable audit. Organization creation/membership handoff and controlled currency migration remain separate work.",
+    "Viewport/reduced-motion checks do not establish native zoom, screen-reader or complete accessibility certification."
+  ],
+  "originalAuthorityBefore": "204b97b495ab4152e69644c1a171a084d23d2d114c7729f6bf2fd13eb477c262",
+  "originalAuthorityAfter": "204b97b495ab4152e69644c1a171a084d23d2d114c7729f6bf2fd13eb477c262",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T10:14:11.902Z",
+  "sourcesAfter": {
+    "services/organization/organization-profile-input.ts": "2695de2ead0eee23bf6b7ae19d98c54038dfd08707da5f1ea32b38c705111a9e",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "services/organization/organization-settings.service.ts": "1e5ca31bcb23cdda3ba0a48e2399972bb3e528716deba7db9b7d243e0f36c9bb",
+    "services/organization/organization-read.service.ts": "8b42420cf3d81fc65ba4b1d93fc8116893eb476a0a79350c8ab36751787b4ad3",
+    "actions/organization/organization-settings-actions.ts": "7fad736216e08d456329f9e5b5749a477a48cc81fac62ddbbcb56fe85ff2103b",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/settings/OrganizationSettingsForm.tsx": "76f07f0614b3235b90d82cb4948c1a9352a8162a932c1f25549739fe2fd9cb54",
+    "app/[locale]/(dashboard)/dashboard/settings/company/page.tsx": "aa78f1f474b2bf9b974bcd222e728872124b6ec314377436c36f27b3985ced85",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "components/ui/select.tsx": "7ef0812b5c194d01300e67fe2330b8ef95268ae5b1683d665f42636d91d75fab",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+  },
+  "sourceStable": true,
+  "driverSha256": "9abd784ef81f1149eef8a6ce279ef9d43039e30c477fa31593b573451781fb04",
+  "passed": 2,
+  "failed": 0
+}

@@ -92,8 +92,10 @@ async function evaluateCustomersRouteAccess(
         node: (
           <DashboardRouteState
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
-            message={noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE}
+            eyebrow={locale === "fr" ? noActiveOrg ? "Organisation requise" : "Autorisation requise" : undefined}
+            primaryLabel={locale === "fr" ? "Retour au tableau de bord" : "Back to dashboard"}
+            title={locale === "fr" ? noActiveOrg ? "Ce parcours nécessite une organisation active" : "Ce parcours n’est pas disponible pour ce rôle" : noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
+            message={locale === "fr" ? noActiveOrg ? "Actualisez votre session depuis le tableau de bord pour charger les données client de votre organisation." : "Votre rôle ne dispose pas des droits nécessaires. Demandez à votre administrateur de vérifier vos autorisations." : noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE}
             primaryHref={localizePath("/dashboard", locale)}
           />
         ),
@@ -124,6 +126,8 @@ async function evaluateCustomersRouteAccess(
         node: (
           <DashboardRouteState
             kind="locked_module"
+            eyebrow={locale === "fr" ? "Module indisponible" : undefined}
+            primaryLabel={locale === "fr" ? "Retour au tableau de bord" : "Back to dashboard"}
             title={moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`}
             message={moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE}
             primaryHref={localizePath("/dashboard", locale)}

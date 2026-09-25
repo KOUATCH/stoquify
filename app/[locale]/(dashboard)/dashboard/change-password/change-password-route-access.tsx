@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { getTranslations } from "next-intl/server"
 
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
@@ -31,9 +32,6 @@ type ChangePasswordRouteAccessResult =
       context: ChangePasswordRouteContext
       locale: Locale
     }
-
-const NO_ACTIVE_ORG_TITLE_SUFFIX = "needs an active organization"
-const PERMISSION_DENIED_TITLE_SUFFIX = "is not available for this role"
 
 function getPermissionMode(surface: ChangePasswordRouteSurface): PermissionMode {
   return surface.permissionMode ?? "single"
@@ -75,18 +73,17 @@ async function evaluateChangePasswordRouteAccess(
   } catch (error) {
     if (error instanceof RbacError) {
       const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+      const t = await getTranslations({ locale, namespace: "passwordChange" })
 
       return {
         kind: "blocked",
         node: (
           <DashboardRouteState
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={
-              noActiveOrg
-                ? surface.noActiveOrgTitle ?? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}`
-                : surface.permissionDeniedTitle ?? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`
-            }
-            message={noActiveOrg ? surface.noActiveOrgMessage : surface.permissionDeniedMessage}
+            eyebrow={t(noActiveOrg ? "orgEyebrow" : "permissionEyebrow")}
+            title={t(noActiveOrg ? "orgTitle" : "deniedTitle")}
+            message={t(noActiveOrg ? "orgBody" : "deniedBody")}
+            primaryLabel={t("cancel")}
             primaryHref={localizePath(
               noActiveOrg
                 ? surface.noActiveOrgPrimaryHref ?? "/dashboard"

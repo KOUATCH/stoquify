@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-13T14:36:20.702Z",
+  "sourceBefore": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+  "checks": [
+    "Missing exact result is explicit and creates no sale",
+    "Own recorded sale readable under read-only grant without effects",
+    "Cross-scope reads reveal no result; altered original request rejected",
+    "Current refunded status distinguished from original committed response",
+    "Database refuses modification of completed result evidence; no trigger disabled"
+  ],
+  "scope": "Owned PostgreSQL with actual cash posting and refund. Synthetic result-lifecycle/corruption fixtures; no external payment, receipt delivery or live approval.",
+  "passed": true,
+  "sourceAfter": "9fd306a47cf765de204f046b6c8cc8dcb1740c7ec2af1777515dbd8acd20e24e",
+  "sourceStable": true
+}

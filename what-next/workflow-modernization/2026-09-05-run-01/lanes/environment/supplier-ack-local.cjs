@@ -1,0 +1,8 @@
+const helper=require('./registration-local.cjs'),path=require('node:path'),crypto=require('node:crypto'),{spawn}=require('node:child_process');
+const base='http://127.0.0.1:3110',secret=()=>crypto.createHmac('sha256',helper.metadata().authSecret).update('owned-supplier-ack-verification').digest('hex');
+async function start(){const target=helper.targetUrl();target.searchParams.set('connection_limit','8');const record=await helper.withClient(target,helper.assertOwned),preload=path.join(__dirname,'registration-network-fence.cjs').replaceAll('\\','/');
+  const env={...process.env,DATABASE_URL:target.toString(),DIRECT_URL:target.toString(),NEXTAUTH_URL:base,NEXT_PUBLIC_BASE_URL:base,NEXT_DIST_DIR:'.next-workflow-supplier',AUTH_SECRET:record.authSecret,NEXTAUTH_SECRET:record.authSecret,PUBLIC_IDENTITY_ABUSE_HASH_SECRET:record.authSecret,AQSTOQFLOW_SUPPLIER_PO_TOKEN_SECRET:secret(),RESEND_API_KEY:'',RESEND_FROM_EMAIL:'verification@example.invalid',NODE_OPTIONS:((process.env.NODE_OPTIONS||'')+' --require "'+preload+'"').trim()};
+  const child=spawn(process.execPath,[path.join(helper.root,'node_modules/next/dist/bin/next'),'dev','-H','127.0.0.1','-p','3110'],{cwd:helper.root,env,stdio:['ignore','pipe','pipe'],shell:false,windowsHide:true});
+  child.stdout.on('data',value=>{if(/Ready in/.test(String(value)))console.log('Owned supplier application ready on '+base);});child.stderr.on('data',value=>{if(/EADDRINUSE/.test(String(value)))console.error('Supplier verification port is already in use');});child.on('exit',code=>{console.log('Owned supplier application exited '+code);process.exitCode=code||0;});
+}
+if(require.main===module)start().catch(e=>{console.error(String(e.code||e.name));process.exitCode=1});module.exports={...helper,base,secret};

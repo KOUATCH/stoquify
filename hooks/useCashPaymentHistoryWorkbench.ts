@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useMemo, useState, useTransition } from "react"
+import { useCallback, useMemo, useTransition } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
@@ -10,6 +10,7 @@ import {
   type CashPaymentHistoryResult,
 } from "@/actions/pos/cash-payment-history.actions"
 import type { TransactionHistoryFilters } from "@/components/dashboard/history/TransactionHistoryWorkbenchShell"
+import { usePermissions } from "@/hooks/usePermissions"
 
 const PAGE_SIZES = [25, 50, 100] as const
 const LANES = ["all", "cash", "payment"] as const
@@ -93,59 +94,71 @@ export function useCashPaymentHistoryWorkbench() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
-  const [exportStatus, setExportStatus] = useState<string | null>(null)
+  const { user, organizationId, permissionState, permissions, hasAnyPermission } = usePermissions()
+  const canRead = permissionState === "ready" && Boolean(user?.id && organizationId) && hasAnyPermission([
+    "finance.cash-drawer.read", "finance.read", "payments.reconciliation.read", "finance.payments.read", "pos.read", "OPERATE_POS",
+  ])
+  const canExport = canRead && hasAnyPermission(["payments.export", "reports.export"])
 
   const filters = useMemo(
     () => parseCashPaymentHistorySearchParams(new URLSearchParams(searchParams.toString())),
     [searchParams],
   )
   const actionFilters = useMemo(() => filtersForCashPaymentHistoryAction(filters), [filters])
+  const authority = JSON.stringify([user?.id, organizationId, [...permissions].sort(), actionFilters])
   const historyQuery = useQuery({
-    queryKey: ["cash-payment-history-workbench", actionFilters],
-    queryFn: async (): Promise<CashPaymentHistoryResult> => {
+    queryKey: ["cash-payment-history-workbench", authority],
+    enabled: canRead,
+    queryFn: async ({ signal }): Promise<CashPaymentHistoryResult> => {
       const response = await getCashPaymentHistoryAction({ filters: actionFilters })
+      signal.throwIfAborted()
       if (!response.success) {
-        throw new Error(response.error || "Cash/payment history failed to load")
+        throw Object.assign(new Error(response.error || "Cash/payment history failed to load"), { code: "code" in response ? response.code : undefined })
+      }
+      if (response.data.scope?.organizationId !== organizationId || response.data.scope?.actorUserId !== user?.id) {
+        throw Object.assign(new Error("History workspace changed. Refresh the current workspace."), { code: "FORBIDDEN" })
       }
       return response.data
     },
-    placeholderData: (previous) => previous,
+    retry: false,
   })
+  const result = canRead && !historyQuery.isError ? historyQuery.data : undefined
   const exportMutation = useMutation({
-    mutationFn: async () => {
-      const rowCount = historyQuery.data?.summary.transactionCount ?? 0
-      const response = await prepareCashPaymentHistoryExportAction({
-        filters: filtersForCashPaymentHistoryExport(filters),
-        rowCount,
-      })
+    mutationFn: async (request: { authority: string; filters: ReturnType<typeof filtersForCashPaymentHistoryExport>; rowCount: number }) => {
+      const response = await prepareCashPaymentHistoryExportAction({ filters: request.filters, rowCount: request.rowCount })
       if (!response.success) throw new Error(response.error || "Cash/payment history export failed")
       return response.data
     },
-    onSuccess: () => setExportStatus("ready"),
-    onError: (error) => setExportStatus(error instanceof Error ? error.message : "Cash/payment history export failed"),
   })
+  const { reset: resetExport } = exportMutation
+  const currentExport = canExport && exportMutation.variables?.authority === authority
   const replaceWith = useCallback(
     (patch: Partial<CashPaymentHistoryUrlFilters>) => {
       const href = buildCashPaymentHistoryHref(pathname, new URLSearchParams(searchParams.toString()), patch)
+      resetExport()
       startTransition(() => router.replace(href, { scroll: false }))
     },
-    [pathname, router, searchParams],
+    [pathname, router, searchParams, resetExport],
   )
+  const errorCode = (historyQuery.error as (Error & { code?: string }) | null)?.code
 
   return {
     filters,
-    result: historyQuery.data,
-    rows: historyQuery.data?.rows ?? [],
+    result,
+    rows: result?.rows ?? [],
     selectedRowId: filters.selected ?? null,
-    isLoading: historyQuery.isLoading || isPending,
+    isLoading: permissionState === "loading" || (canRead && historyQuery.isPending) || isPending,
     isFetching: historyQuery.isFetching,
-    isError: historyQuery.isError,
+    isError: historyQuery.isError || permissionState === "error",
+    permissionDenied: permissionState === "signed_out" || (permissionState === "ready" && !canRead) || ["FORBIDDEN", "UNAUTHORIZED", "UNAUTHENTICATED"].includes(errorCode ?? ""),
+    noOrganization: permissionState === "ready" && !organizationId,
     error: historyQuery.error,
     refetch: historyQuery.refetch,
-    hasMore: historyQuery.data?.pageInfo.hasMore ?? false,
-    nextCursor: historyQuery.data?.pageInfo.nextCursor ?? null,
-    exportStatus,
-    isExporting: exportMutation.isPending,
+    hasMore: result?.pageInfo.hasMore ?? false,
+    nextCursor: result?.pageInfo.nextCursor ?? null,
+    exportStatus: currentExport && exportMutation.isSuccess ? "ready" : currentExport && exportMutation.isError ? exportMutation.error.message : null,
+    isExporting: currentExport && exportMutation.isPending,
+    canExport,
     updateFilters: replaceWith,
     resetFilters: () =>
       replaceWith({
@@ -162,11 +175,16 @@ export function useCashPaymentHistoryWorkbench() {
         cursor: undefined,
         selected: undefined,
       }),
-    selectRow: (selected: string | null) => replaceWith({ selected: selected ?? undefined }),
+    selectRow: (selected: string | null) => router.replace(
+      buildCashPaymentHistoryHref(pathname, new URLSearchParams(searchParams.toString()), { selected: selected ?? undefined }),
+      { scroll: false },
+    ),
     nextPage: () => {
-      if (historyQuery.data?.pageInfo.nextCursor) replaceWith({ cursor: historyQuery.data.pageInfo.nextCursor, selected: undefined })
+      if (result?.pageInfo.nextCursor) replaceWith({ cursor: result.pageInfo.nextCursor, selected: undefined })
     },
-    exportHistory: () => exportMutation.mutate(),
+    exportHistory: () => {
+      if (canExport && !exportMutation.isPending) exportMutation.mutate({ authority, filters: filtersForCashPaymentHistoryExport(filters), rowCount: result?.summary.transactionCount ?? 0 })
+    },
   }
 }
 

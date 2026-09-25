@@ -1,0 +1,154 @@
+{
+  "policyPackId": "STOQ-X1-AUTOMATION-DELEGATION-PACK",
+  "policyPackVersion": 1,
+  "status": "DRAFT_UNSIGNED",
+  "effectiveFrom": null,
+  "expiresAt": null,
+  "productionAuthorityDelegated": false,
+  "scope": {
+    "program": "X1 finance/accounting table harmonization",
+    "environment": "non-production",
+    "databaseCandidate": "stoquify_replay_next_20260830",
+    "authorizedTenantCandidate": "rds_org_001",
+    "foreignProbeTenantCandidate": "rds_org_002",
+    "personaRole": "external_accountant",
+    "personaUserIdCandidate": "rds_org_001_compliance_user_external_accountant",
+    "budgetContractVersion": 1,
+    "requiredLocales": ["en", "fr"],
+    "requiredViewports": ["desktop", "tablet", "mobile"],
+    "requiredArtifactCount": 42,
+    "requiredRoutes": [
+      "/dashboard/finance/receivables/history",
+      "/dashboard/finance/payables",
+      "/dashboard/finance/cash-flow",
+      "/dashboard/accounting/journals",
+      "/dashboard/accounting/reports/trial-balance",
+      "/dashboard/accounting/reports/financial-statements",
+      "/dashboard/accounting/accountant-portal"
+    ]
+  },
+  "policies": [
+    {
+      "policyId": "STOQ-X1-POL-001",
+      "title": "X1 Product Performance Budget Standing Approval and Automation Delegation",
+      "status": "DRAFT_UNSIGNED",
+      "decision": null,
+      "authorityReference": null,
+      "approvalRecordId": null,
+      "approvedByUserId": null,
+      "approvedByRole": "product_approver",
+      "approvedAt": null,
+      "effectiveFrom": null,
+      "expiresAt": null,
+      "contentSha256": null,
+      "signatureReference": null,
+      "delegatedActions": [
+        "validate_signed_budget_policy",
+        "collect_approved_run_measurements",
+        "compare_budget_contract_v1",
+        "record_budget_pass_or_fail",
+        "block_on_missing_or_failed_measurement"
+      ],
+      "prohibitedActions": [
+        "change_budget_thresholds",
+        "waive_failed_budget",
+        "declare_customer_sla",
+        "authorize_production",
+        "issue_certification"
+      ]
+    },
+    {
+      "policyId": "STOQ-X1-POL-002",
+      "title": "X1 Non-Production Credential, Tenant and Authenticated Evidence Delegation",
+      "status": "DRAFT_UNSIGNED",
+      "decision": null,
+      "securityAuthorityReference": null,
+      "managedSecretsAuthorityReference": null,
+      "fixtureDataAuthorityReference": null,
+      "securityApprovedByUserId": null,
+      "managedSecretsApprovedByUserId": null,
+      "fixtureDataApprovedByUserId": null,
+      "automationServicePrincipalId": null,
+      "secretManagerProvider": null,
+      "secretReference": null,
+      "approvedTargetOrigin": null,
+      "authorizedTenantId": null,
+      "foreignProbeTenantId": null,
+      "approvedPersonaUserId": null,
+      "seededDataApprovalReference": null,
+      "retentionPolicyReference": null,
+      "effectiveFrom": null,
+      "expiresAt": null,
+      "contentSha256": null,
+      "securitySignatureReference": null,
+      "managedSecretsSignatureReference": null,
+      "fixtureDataSignatureReference": null,
+      "delegatedActions": [
+        "retrieve_scoped_secret_with_workload_identity",
+        "authenticate_external_accountant",
+        "create_ephemeral_storage_state",
+        "run_read_only_x1_matrix",
+        "run_read_only_tenant_override_probe",
+        "scan_artifacts_for_secrets",
+        "delete_temporary_authentication_material"
+      ],
+      "prohibitedActions": [
+        "target_production",
+        "disclose_secret",
+        "change_role_or_permission",
+        "change_entitlement",
+        "seed_reset_or_migrate_database",
+        "perform_finance_mutation",
+        "upload_storage_state"
+      ]
+    },
+    {
+      "policyId": "STOQ-X1-POL-003",
+      "title": "X1 Automated Technical Evidence Review and Gate Promotion Delegation",
+      "status": "DRAFT_UNSIGNED",
+      "decision": null,
+      "independentReleaseAuthorityReference": null,
+      "approvedByUserId": null,
+      "evidenceVerifierServicePrincipalId": null,
+      "evidenceStoreReference": null,
+      "retentionPolicyReference": null,
+      "effectiveFrom": null,
+      "expiresAt": null,
+      "contentSha256": null,
+      "signatureReference": null,
+      "delegatedActions": [
+        "validate_policies_and_signatures",
+        "recompute_artifact_hashes",
+        "evaluate_deterministic_x1_criteria",
+        "set_x1_technical_gate_passed_or_blocked",
+        "create_remediation_record"
+      ],
+      "prohibitedActions": [
+        "authorize_pilot",
+        "authorize_production",
+        "deploy_code",
+        "accept_residual_risk",
+        "waive_nonwaivable_failure",
+        "issue_legal_accounting_security_or_accessibility_certification"
+      ]
+    }
+  ],
+  "activationRule": {
+    "requiresAllPoliciesStatus": "ACTIVE_SIGNED",
+    "requiresValidSignatures": true,
+    "requiresMatchingContentHashes": true,
+    "requiresEffectiveAtRunTime": true,
+    "requiresNoRevocation": true,
+    "requiresExactScopeMatch": true,
+    "otherwiseState": "AWAITING_AUTHORITY"
+  },
+  "allowedLifecycleStates": [
+    "DRAFT_UNSIGNED",
+    "PENDING_APPROVAL",
+    "ACTIVE_SIGNED",
+    "SUSPENDED",
+    "EXPIRED",
+    "REVOKED",
+    "SUPERSEDED"
+  ]
+}

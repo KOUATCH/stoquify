@@ -120,7 +120,7 @@ describe("manager action center actions", () => {
             moduleSlug: "dashboard",
             surface: "actions/manager-action-center/manager-action-center.actions.ts",
             accessIntent: "read",
-            mode: "observe",
+            mode: "enforce",
           },
         }),
       ]),

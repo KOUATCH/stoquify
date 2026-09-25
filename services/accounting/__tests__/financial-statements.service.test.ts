@@ -133,6 +133,127 @@ function account(
   };
 }
 
+describe("financial statements retain archived posted account evidence", () => {
+  const descriptors = [
+    { ...account("retained-cash", "571", "Retained cash", ChartAccountType.ASSET, ChartAccountNormalBalance.DEBIT, "CASH_ON_HAND"), deletedAt: new Date("2026-08-01"), organizationId: "org-1" },
+    { ...account("retained-equity", "101", "Retained capital", ChartAccountType.EQUITY, ChartAccountNormalBalance.CREDIT, "SHARE_CAPITAL"), deletedAt: new Date("2026-08-01"), organizationId: "org-1" },
+    { ...account("retained-sales", "701", "Retained revenue", ChartAccountType.REVENUE, ChartAccountNormalBalance.CREDIT, "SALES_REVENUE"), deletedAt: new Date("2026-08-01"), organizationId: "org-1" },
+    { ...account("retained-expense", "622", "Retained expense", ChartAccountType.EXPENSE, ChartAccountNormalBalance.DEBIT, null), deletedAt: new Date("2026-08-01"), organizationId: "org-1" },
+    { ...account("active-unused", "521", "Unused active account", ChartAccountType.ASSET, ChartAccountNormalBalance.DEBIT, null), deletedAt: null, organizationId: "org-1" },
+    { ...account("archived-unused", "522", "Unused archived account", ChartAccountType.ASSET, ChartAccountNormalBalance.DEBIT, null), deletedAt: new Date("2026-08-01"), organizationId: "org-1" },
+    { ...account("draft-only", "523", "Draft-only account", ChartAccountType.ASSET, ChartAccountNormalBalance.DEBIT, null), deletedAt: new Date("2026-08-01"), organizationId: "org-1" },
+    { ...account("future-only", "524", "Future-only account", ChartAccountType.ASSET, ChartAccountNormalBalance.DEBIT, null), deletedAt: new Date("2026-08-01"), organizationId: "org-1" },
+    { ...account("foreign", "525", "Other tenant account", ChartAccountType.ASSET, ChartAccountNormalBalance.DEBIT, null), deletedAt: new Date("2026-08-01"), organizationId: "org-other" },
+  ];
+  const entries = [
+    { accountId: "retained-cash", debit: 200, credit: 0, entryDate: new Date("2026-05-15"), periodId: "period-may", status: "POSTED", organizationId: "org-1" },
+    { accountId: "retained-equity", debit: 0, credit: 200, entryDate: new Date("2026-05-15"), periodId: "period-may", status: "POSTED", organizationId: "org-1" },
+    { accountId: "retained-cash", debit: 100, credit: 0, entryDate: new Date("2026-06-15"), periodId: period.id, status: "POSTED", organizationId: "org-1" },
+    { accountId: "retained-sales", debit: 0, credit: 100, entryDate: new Date("2026-06-15"), periodId: period.id, status: "POSTED", organizationId: "org-1" },
+    { accountId: "retained-expense", debit: 30, credit: 0, entryDate: new Date("2026-06-16"), periodId: period.id, status: "REVERSED", organizationId: "org-1" },
+    { accountId: "retained-cash", debit: 0, credit: 30, entryDate: new Date("2026-06-16"), periodId: period.id, status: "REVERSED", organizationId: "org-1" },
+    { accountId: "draft-only", debit: 500, credit: 0, entryDate: new Date("2026-06-16"), periodId: period.id, status: "DRAFT", organizationId: "org-1" },
+    { accountId: "future-only", debit: 600, credit: 0, entryDate: new Date("2026-07-16"), periodId: "period-july", status: "POSTED", organizationId: "org-1" },
+    { accountId: "foreign", debit: 700, credit: 0, entryDate: new Date("2026-06-16"), periodId: period.id, status: "POSTED", organizationId: "org-other" },
+  ];
+  function matchingEntries(where: Record<string, any>) {
+    const entryWhere = where.journalEntry ?? {};
+    return entries.filter(entry =>
+      (!where.organizationId || where.organizationId === entry.organizationId) &&
+      (!entryWhere.organizationId || entryWhere.organizationId === entry.organizationId) &&
+      (!entryWhere.status || entryWhere.status.in.includes(entry.status)) &&
+      (!entryWhere.periodId || entryWhere.periodId === entry.periodId) &&
+      (!entryWhere.entryDate?.gte || entry.entryDate >= entryWhere.entryDate.gte) &&
+      (!entryWhere.entryDate?.lte || entry.entryDate <= entryWhere.entryDate.lte),
+    );
+  }
+  let readDescriptors: typeof descriptors;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    readDescriptors = [];
+    mockDb.accountingPeriod.findFirst.mockResolvedValue(period);
+    mockDb.accountingPeriod.findMany.mockResolvedValue([period]);
+    mockDb.organizationAccountingSettings.findUnique.mockResolvedValue({ baseCurrency: "XAF" });
+    mockDb.organization.findUnique.mockResolvedValue({ currency: "XAF" });
+    mockDb.chartOfAccount.findMany.mockImplementation(async ({ where }) => {
+      readDescriptors = descriptors.filter(descriptor => {
+        if (where.organizationId !== descriptor.organizationId || (where.type && !where.type.in.includes(descriptor.type))) return false;
+        if (where.deletedAt === null && descriptor.deletedAt !== null) return false;
+        return !where.OR || where.OR.some((condition: Record<string, any>) =>
+          condition.deletedAt === null ? descriptor.deletedAt === null :
+            condition.journalLines?.some && matchingEntries(condition.journalLines.some).some(entry => entry.accountId === descriptor.id),
+        );
+      });
+      return readDescriptors;
+    });
+    mockDb.journalEntryLine.groupBy.mockImplementation(async ({ where }) => {
+      const totals = new Map<string, { debit: number; credit: number }>();
+      for (const entry of matchingEntries(where)) {
+        const total = totals.get(entry.accountId) ?? { debit: 0, credit: 0 };
+        total.debit += entry.debit;
+        total.credit += entry.credit;
+        totals.set(entry.accountId, total);
+      }
+      return [...totals].map(([accountId, total]) => ({ accountId, _sum: { debit: new Prisma.Decimal(total.debit), credit: new Prisma.Decimal(total.credit) } }));
+    });
+  });
+
+  it("preserves prior-period opening evidence and archived current-period revenue and costs", async () => {
+    const report = await getFinancialStatements({ organizationId: "org-1", periodId: period.id });
+    expect(report.profitAndLoss.totals).toMatchObject({ revenue: "100.00", operatingExpenses: "30.00", netIncome: "70.00" });
+    expect(report.balanceSheet.totals).toMatchObject({ assets: "270.00", equity: "200.00", accumulatedEarnings: "70.00", liabilitiesAndEquity: "270.00", difference: "0.00", isBalanced: true });
+    expect(report.ledgerChecks.periodActivity.isBalanced).toBe(true);
+    expect(report.ledgerChecks.cumulativeActivity.isBalanced).toBe(true);
+  });
+
+  it("includes current unused accounts while excluding archived rows without in-scope posted evidence", async () => {
+    await getFinancialStatements({ organizationId: "org-1", periodId: period.id });
+    expect(readDescriptors.map(descriptor => descriptor.id)).toEqual([
+      "retained-cash", "retained-equity", "retained-sales", "retained-expense", "active-unused",
+    ]);
+    expect(mockDb.chartOfAccount.findMany).toHaveBeenCalledWith(expect.objectContaining({
+      where: expect.objectContaining({ organizationId: "org-1", OR: [
+        { deletedAt: null },
+        { journalLines: { some: { organizationId: "org-1", journalEntry: { organizationId: "org-1", status: { in: ["POSTED", "REVERSED"] }, entryDate: { lte: period.endDate } } } } },
+      ] }),
+    }));
+  });
+
+  it("propagates a failed descriptor read rather than certifying a zero statement", async () => {
+    mockDb.chartOfAccount.findMany.mockRejectedValue(new Error("account evidence unavailable"));
+    await expect(getFinancialStatements({ organizationId: "org-1", periodId: period.id })).rejects.toThrow("account evidence unavailable");
+  });
+
+  it.each(["period", "cumulative"])("rejects missing %s account evidence instead of omitting posted amounts", async (scope) => {
+    const unknownActivity = [{ accountId: "missing-account", _sum: { debit: new Prisma.Decimal(50), credit: new Prisma.Decimal(0) } }];
+    mockDb.journalEntryLine.groupBy
+      .mockResolvedValueOnce(scope === "period" ? unknownActivity : [])
+      .mockResolvedValueOnce(scope === "cumulative" ? unknownActivity : []);
+    await expect(getFinancialStatements({ organizationId: "org-1", periodId: period.id })).rejects.toThrow(/account evidence/i);
+  });
+
+  it("rejects foreign account descriptors even when a scoped ledger result refers to their ID", async () => {
+    mockDb.chartOfAccount.findMany.mockResolvedValue([{ ...descriptors[0], organizationId: "org-other" }]);
+    mockDb.journalEntryLine.groupBy.mockResolvedValue([{ accountId: "retained-cash", _sum: { debit: new Prisma.Decimal(50), credit: new Prisma.Decimal(0) } }]);
+    await expect(getFinancialStatements({ organizationId: "org-1", periodId: period.id })).rejects.toThrow(/account evidence/i);
+  });
+
+  it("recognizes retained MEMO descriptors without classifying them as financial statement accounts", async () => {
+    mockDb.chartOfAccount.findMany.mockResolvedValue([{
+      ...account("memo", "900", "Memo only", ChartAccountType.MEMO, ChartAccountNormalBalance.DEBIT, null),
+      organizationId: "org-1",
+    }]);
+    mockDb.journalEntryLine.groupBy.mockResolvedValue([{
+      accountId: "memo", _sum: { debit: new Prisma.Decimal(50), credit: new Prisma.Decimal(50) },
+    }]);
+    const report = await getFinancialStatements({ organizationId: "org-1", periodId: period.id });
+    expect(report.profitAndLoss.totals.revenue).toBe("0.00");
+    expect(report.balanceSheet.totals.assets).toBe("0.00");
+    expect(report.ledgerChecks.periodActivity.isBalanced).toBe(true);
+  });
+});
+
 function activity(accountId: string, debit: number, credit: number) {
   return {
     accountId,
@@ -252,7 +373,7 @@ describe("accounting financial statements", () => {
       expect.objectContaining({
         where: expect.objectContaining({
           organizationId: "org-1",
-          deletedAt: null,
+          OR: expect.arrayContaining([{ deletedAt: null }]),
         }),
       }),
     );

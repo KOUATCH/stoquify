@@ -1,0 +1,240 @@
+{
+  "at": "2026-09-08T11:05:20.481Z",
+  "sourceBaseline": "evidence/source-baseline-v67.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "components/purchasing/InvoiceMatchExceptionWorkbench.tsx": "d9b8668cff89f9d4d9d610d3897b815348e13262b364982f42c8ef91abaab30d",
+    "services/purchasing/invoice-match-exception.service.ts": "c775239d217a940889ca49bad282f780b1372cec28ad56d1f8aaf49dd9d19ddd",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8",
+    "actions/purchasing/invoice-match-exception.actions.ts": "24ff9474427f552fee4f05682a77d0f857a755943dc8bf00daaa1362222e152e",
+    "services/purchasing/invoice-match-exception-contracts.ts": "f870588f4cabb5e11a59e1ea7aff1c774ca3f055bd1377d1ab0824912bb4322d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx": "9d96560f2a9e72443f868f773ac77cb08907ba3f3aff29398cd281447777e654",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx": "5f6285c36d1a078de176c022c93aa1bdbbcba57e956f84aa346280d08d1ce2af",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "9c11560d6d7f7ac7748e0230d632d7adffe8f40802bec676c69a6e80d9caccc8",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2ea511be8a9f8b1f03654293eaf605ed3e7dc235e9c3e1c3383fb2f22205631a",
+    "messages/en.json": "8b57cd8df92ceabf18051db5c3ac1de231e0419e6c5bd33873dffff901e78c56",
+    "messages/fr.json": "7116e0a585f61cfc816ce4db5f61d1e571f9e36d9f87a01f7a7185ddeb88fe1a",
+    "services/purchasing/ap-control.service.ts": "c0434994a18a7f43cddc41f88654316ffb34834d965b0f91bc1509775635ff68",
+    "components/purchasing/InvoiceApprovalWorkbench.tsx": "0b8d32be8f35210fdea2df7f28e857921525e4d54d8628d34549e22d9af76a79",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "components/purchasing/APControlWorkbench.tsx": "0fb7561901c97eeae211d9ceed474c4292f065572f86ad94c8300bb1efe3fdfd",
+    "actions/purchasing/ap-control.actions.ts": "22b51f08f3228998529483f4db88d87aca0d1c08115f721eea5159e74ee58741",
+    "components/purchasing/__tests__/InvoiceMatchExceptionWorkbench.test.tsx": "f3bc9dd0614328c4d385613838d4447aeca4491e313732bdf41338fc5853b69c",
+    "components/purchasing/__tests__/InvoiceApprovalWorkbench.test.tsx": "8798609af1ae26fba1d753da1687bf79ef91d439d8aa2941490a67fcfbaf79de",
+    "components/purchasing/__tests__/APControlWorkbench.presentation.test.tsx": "9d2660f53fe649c4b4ca433b045f93ad854e4653d0397eea3654441f88d3f2a7",
+    "actions/purchasing/__tests__/invoice-match-exception.actions.test.ts": "90a4629b01f49f79210b00038bdd0511b644d120246694dbd3e03abf4460b308",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/__tests__/page.test.tsx": "386f522971e99220e65622a6d744c134279ca0cd0ca73c71e4f3da71a280b8a6",
+    "services/purchasing/__tests__/invoice-match-exception-contracts.test.ts": "cac0113f4913374a5c399dd88a8d57865d348beab4e9f14ed20310ccbe89d414",
+    "app/[locale]/(dashboard)/dashboard/purchases/__tests__/route-audit.test.ts": "f1226ffbe6c553b594f16c9d776f86b8986ff912496b1da2ff171892b5b293bf"
+  },
+  "browser": "lanes/environment/match-exception-browser-9c001410-2e8.json",
+  "backendUnchangedEvidence": "lanes/environment/match-exception-service-7d68e71a-6fe.json",
+  "tests": "evidence/match-exception-ui-tests-current.json",
+  "screenshots": [
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-preview-9c001410-2e8.png",
+      "sha256": "5198c8a0a44f76ae1e3dca94a911a50169b1019ab74e44a6978f438f97356032"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-320-9c001410-2e8.png",
+      "sha256": "af9aa2b0431319efaea6a42b6897829b9736e12df08eb5565b27af3903c511e7"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-390-9c001410-2e8.png",
+      "sha256": "c9a9ca6280041dbb6f5ef345ddd465b6e39c8b527df9d50af1786450821e30e3"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-maker-768-9c001410-2e8.png",
+      "sha256": "d2b8c33bad7093d77bf35074193773379e58e679027c6369ba6b754a528990f1"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-stale-9c001410-2e8.png",
+      "sha256": "82369f012e1b8dc5011d3929699476427ed29dd0c9980bc56fc56c53c53a5c11"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-request-recovered-9c001410-2e8.png",
+      "sha256": "b92aebde7ece5deddf2a622d3dfda70eb838fb42190492c95d021a36dd7ff07e"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-preview-9c001410-2e8.png",
+      "sha256": "9376cfd802ec7541ad3cbdea45be785ed49740e43181916ae86ea01e408be540"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-approved-9c001410-2e8.png",
+      "sha256": "f288ff62d168f9b5c4013c897a060fda19f4b7e39988d4b79923f0a210ba8181"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-mobile-9c001410-2e8.png",
+      "sha256": "1ee221eb7b13c6dbfcc555ec0ce22d8d5a784bcfe26a24e872887c674e988336"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-reviewer-text200-9c001410-2e8.png",
+      "sha256": "606b7e7a701f9e0ad3d42c1d76072b17b14d9ddd3c177174796f34eb74df850d"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-invoice-approval-handoff-9c001410-2e8.png",
+      "sha256": "df4f7c38c721e4671fd67e9abbd59257e829446cd5e01fc94fe549dee4232c94"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-retained-history-9c001410-2e8.png",
+      "sha256": "390738fa4c07be81c821c647895376574b7d71183ef021baca5737383becd46d"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-rejected-9c001410-2e8.png",
+      "sha256": "040f31fecd994006d2a50c56be4f4c560b55c26029223c7a10bafc21f0a87e27"
+    },
+    {
+      "locale": "en",
+      "path": "evidence/match-exception-screenshots/match-exception-en-denied-9c001410-2e8.png",
+      "sha256": "1ac2295605b83b381377007f0fcfba1d87396f0fb9a8125d87f8fe1639c93ab3"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-preview-9c001410-2e8.png",
+      "sha256": "f922eb9b13ee30ecbb5c28783710beb3bcee241cf94d13ab3ab059a404dc0e04"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-320-9c001410-2e8.png",
+      "sha256": "a78505b6a99893ccbf752fd76f32d6d915ff9839a42c60bee8b8aeb6f9483d18"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-390-9c001410-2e8.png",
+      "sha256": "990189ff9a9d9638b91a278345a36bed704412040d2931b1514c11a860e20f45"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-maker-768-9c001410-2e8.png",
+      "sha256": "6b47479332d7c802dd915acea7d462e39fa1b953674e1d6e6e1fced8ae1cdc94"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-stale-9c001410-2e8.png",
+      "sha256": "e7133268a065e352647b2006be662362f69a7314aceb2c3343857f78e47de513"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-request-recovered-9c001410-2e8.png",
+      "sha256": "227b1068e42f79ccb41d3493262a24368f41dfd58d294fe99af5a12dab1fb53e"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-preview-9c001410-2e8.png",
+      "sha256": "1f01667d0815378648e39cba5204c01da1b1962cfaf55f6a197c06161f3fe41c"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-approved-9c001410-2e8.png",
+      "sha256": "a9b9e462ccf1d47d1cacf912863e95261e8dd7849a26252a2ec8227aae366c61"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-mobile-9c001410-2e8.png",
+      "sha256": "4a2fe5712481de84253cb604f2ed0a7554a1ce7037fcc05c23a594850079e871"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-reviewer-text200-9c001410-2e8.png",
+      "sha256": "7a4fdd6aaea481e2b61e9b99622832765dbe8a5027b978c1945e181db3bc2d93"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-invoice-approval-handoff-9c001410-2e8.png",
+      "sha256": "217b8a1d4da49dadcfcbc3ca7b6ba6439edc109ffd171a67cf903d0366f1e47a"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-retained-history-9c001410-2e8.png",
+      "sha256": "73e0737fe44c066edd12436cb0b6549cb8c072f3dd116d6f5a464a66b1eaec0b"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-rejected-9c001410-2e8.png",
+      "sha256": "e8909a5dba5a9ce7a186b138d84c7af8ffd292a947f06300f313cc56506ef392"
+    },
+    {
+      "locale": "fr",
+      "path": "evidence/match-exception-screenshots/match-exception-fr-denied-9c001410-2e8.png",
+      "sha256": "6c45948fe2443b2fa6d93c5da63377bb367fec65177abd880abd20b34d6b3a61"
+    }
+  ],
+  "priorAttempts": [
+    "evidence/match-exception-ui-tests-initial.json",
+    "evidence/match-exception-ui-tests-final.json",
+    "lanes/environment/match-exception-browser-db152c50-896.json"
+  ],
+  "interruptedAttempt": "Session 43110 stopped during correction of Intl formatting options; no completed browser result claimed.",
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js components/purchasing/APControlWorkbench.tsx components/purchasing/InvoiceMatchExceptionWorkbench.tsx components/purchasing/__tests__/InvoiceMatchExceptionWorkbench.test.tsx app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "verifier": {
+    "path": "lanes/environment/verify-match-exception-browser.cjs",
+    "sha256": "d31447d58a41f6f13789e34a8579ee5bff5d738d24704089b7451656e3f7c501"
+  },
+  "timings": [
+    {
+      "locale": "en",
+      "observations": [
+        {
+          "name": "AP to request and preview development baseline",
+          "ms": 38356
+        }
+      ],
+      "meaning": "Development baseline only; no approved performance budget pass"
+    },
+    {
+      "locale": "fr",
+      "observations": [
+        {
+          "name": "AP to request and preview development baseline",
+          "ms": 16471
+        }
+      ],
+      "meaning": "Development baseline only; no approved performance budget pass"
+    }
+  ],
+  "migration": "none",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2692,
+      "tests": 943,
+      "pages": 154,
+      "routeHandlers": 18,
+      "actionSources": 165,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2254,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 206,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

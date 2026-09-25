@@ -434,6 +434,7 @@ export interface ReserveInventoryRequest {
 
 // ===== FILTER TYPES =====
 export interface InventoryFilters {
+  transferEligible?: boolean
   locationId?: string
   categoryId?: string
   brandId?: string

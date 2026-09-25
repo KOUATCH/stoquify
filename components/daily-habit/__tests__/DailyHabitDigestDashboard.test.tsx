@@ -25,7 +25,7 @@ jest.mock("lucide-react", () => {
   )
 })
 describe("DailyHabitDigestDashboard role states", () => {
-  it("explains when no role-specific workspace is available", () => {
+  it.each([undefined, "America/New_York"])("explains missing workspaces and formats the server-owned timezone %s", timezone => {
     const data = {
       organizationId: "org-1",
       organizationName: "Atelier OHADA",
@@ -33,6 +33,7 @@ describe("DailyHabitDigestDashboard role states", () => {
       periodStart: "2026-07-11T00:00:00.000Z",
       periodEnd: "2026-07-11T23:59:59.999Z",
       currency: "XAF",
+      timezone,
       digests: [],
       actionQueue: {
         summary: {},
@@ -53,7 +54,9 @@ describe("DailyHabitDigestDashboard role states", () => {
 
     expect(screen.getByRole("heading", { name: "No Daily Digest workspace is available" })).toBeInTheDocument()
     expect(screen.getByRole("link", { name: "Back to dashboard" })).toHaveAttribute("href", "/en/dashboard")
-    expect(screen.getByText(/7 role workspace\(s\) are hidden/)).toBeInTheDocument()
+    expect(screen.getByText("7 workspace(s) are hidden by the current role, permissions or module access.")).toBeInTheDocument()
     expect(screen.getByText("XAF")).toBeInTheDocument()
+    expect(screen.getByText(`Generated (${timezone ?? "UTC"})`)).toBeVisible()
+    expect(screen.getByText(timezone ? "Jul 11, 04:00 AM" : "Jul 11, 08:00 AM")).toBeVisible()
   })
 })

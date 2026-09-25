@@ -1,0 +1,63 @@
+
+ROUTE /en/dashboard/manager-action-center/daily-close
+FILE app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx; components/manager-action-center/BranchDailyCloseWorkspace.tsx; components/manager-action-center/BranchDailyCloseReviewCommand.tsx; components/manager-action-center/BranchDailyCloseSignOffCommand.tsx
+DEPENDENCIES actions/end-of-day-close/branch-daily-close-completion.actions.ts; lib/security/rbac.ts; app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx; services/end-of-day-close/branch-daily-close-completion-contracts.ts; services/end-of-day-close/end-of-day-close-readiness-contracts.ts; lib/utils.ts; actions/end-of-day-close/branch-daily-close-review.actions.ts; actions/end-of-day-close/branch-daily-close-sign-off.actions.ts; actions/security/step-up-auth.actions.ts
+REDIRECTS []
+HEADINGS Branch daily close | Select a business date | daily-close-location | Completion state | Evidence coverage | Start daily-close review | Sign daily close | Confirm daily-close sign-off | Password
+PROPS locationId | businessDate | Daily close is not available for this role | Select a managed location | Select a business date | Enter a valid business date | Permission or operating scope is unavailable / Daily-close evidence is unavailable | Business date | Generated | Contract version | Completion state | Evidence alignment | Readiness | Authorized location | Evidence coverage | Supported checks | Unsupported checks | Coverage complete | Close evidence checklist | Source | Observed | Readiness blockers | Sign-off evidence | Active sign-off | Signed at | Signed by | Control claims | Payment reconciliation | Readiness promotion | Final accounting close | dailyCloseSignPassword | Enter your password
+CONTROLS Manager Action Center (Button, {}, components/manager-action-center/BranchDailyCloseWorkspace.tsx:237)
+Manager Action Center (Link, {"href":"backHref"}, components/manager-action-center/BranchDailyCloseWorkspace.tsx:238)
+Business date Load close evidence (input, {"type":"\"hidden\"","name":"\"locationId\""}, components/manager-action-center/BranchDailyCloseWorkspace.tsx:254)
+Business date (input, {"name":"\"businessDate\"","type":"\"date\"","required":"true"}, components/manager-action-center/BranchDailyCloseWorkspace.tsx:257)
+Load close evidence (Button, {"type":"\"submit\""}, components/manager-action-center/BranchDailyCloseWorkspace.tsx:266)
+Starting review / Review started / Start review (Button, {"type":"\"button\"","onClick":"startReview","disabled":"isPending || terminal"}, components/manager-action-center/BranchDailyCloseReviewCommand.tsx:126)
+Signing daily close / Daily close signed / Sign daily close (Button, {"type":"\"button\"","onClick":"() => changeDialogOpen(true)","disabled":"isPending || terminal"}, components/manager-action-center/BranchDailyCloseSignOffCommand.tsx:228)
+Password (Input, {"name":"\"dailyCloseSignPassword\"","type":"\"password\"","onChange":"(event) => setPassword(event.target.value)","disabled":"isPending","required":"true"}, components/manager-action-center/BranchDailyCloseSignOffCommand.tsx:276)
+Cancel (Button, {"type":"\"button\"","onClick":"() => changeDialogOpen(false)","disabled":"isPending"}, components/manager-action-center/BranchDailyCloseSignOffCommand.tsx:298)
+Verifying and signing / Verify and sign (Button, {"type":"\"submit\"","disabled":"isPending"}, components/manager-action-center/BranchDailyCloseSignOffCommand.tsx:301)
+
+ROUTE /en/dashboard/manager-action-center
+FILE app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx; components/dashboard/DashboardErrorState.tsx; components/manager-action-center/ManagerActionCenterDashboard.tsx; components/bi/index.ts; components/bi/BIActionPriorityBoard.tsx; components/bi/BIEvidenceBadgeRow.tsx; components/evidence/EvidenceGradeBadge.tsx; components/bi/BIStateBadge.tsx; components/bi/BIStateSurface.tsx; components/bi/BIEmptyState.tsx; components/bi/BICommandBriefHeader.tsx; components/bi/BICommandModeTabs.tsx; components/bi/BIBusinessTruthZone.tsx; components/bi/BIKpiCard.tsx; components/bi/BIProofDrawerHost.tsx; components/evidence/ProofTrailDrawer.tsx; components/bi/BIRiskOpportunityRadar.tsx; components/bi/BITrustLegend.tsx; components/bi/BIWhatChangedStrip.tsx; components/manager-action-center/PaymentReconciliationSignOffCommand.tsx; components/manager-action-center/ManagerLocationActionCenterDashboard.tsx
+DEPENDENCIES services/_shared/action-errors.ts; services/manager-action-center/manager-action-center-query.service.ts; app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx; lib/utils.ts; services/bi/bi-contracts.ts; services/manager-action-center/manager-action-center-contracts.ts; services/evidence/evidence-contracts.ts; actions/payments/reconciliation.actions.ts; actions/security/step-up-auth.actions.ts; services/reconciliation/payment-reconciliation-sign-off-command-state-contracts.ts; services/manager-action-center/manager-location-action-center-contracts.ts; services/snapshots/snapshot-contracts.ts
+REDIRECTS []
+HEADINGS Daily run sheet | Manager actions | Business signals | Proof Trail | Confirm reconciliation sign-off | Password | No managed location is available | Snapshot trust | Freshness
+PROPS Manager Action Center is unavailable for this operating scope | The operating scope could not be verified safely. No tenant or location evidence has been shown. | Manager Action Center | Manager Action Center | Do first today | Open | Due today | Critical | Overdue | Hidden | Due | Role | Required permission | No manager action is visible for this tenant and permission set. | No business signal is visible for this tenant and permission set. | No action in this lane | No visible action is due | Period | Generated | Sources | Review | Proof-only drill-through needs a proof drawer host. | No proof subject was supplied. | Evidence Nodes | Evidence Edges | Blockers | Redactions | No ranked risk is visible | No important changes yet | Provider | Business date | Internal | External | Matched | Matches | Exceptions | paymentReconciliationSignPassword | Enter your password | Location responsibility | Generated | Period | Branch evidence contains redactions | Snapshot status | Display state | Evidence | Source modules | Snapshot generated | Latest source observation | Expected maximum age | Stale | Branch blockers | Redactions | Visible branch actions | Due | Owner role | Required permission | Supported branch metrics
+CONTROLS [dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"handleRetry"}, components/dashboard/DashboardErrorState.tsx:59)
+[dynamic or icon-only label] (Link, {"href":"dashboardHref"}, components/dashboard/DashboardErrorState.tsx:68)
+Open (Button, {}, components/manager-action-center/ManagerActionCenterDashboard.tsx:341)
+Open (Link, {"href":"item.actionLink.href"}, components/manager-action-center/ManagerActionCenterDashboard.tsx:347)
+[dynamic or icon-only label] (Button, {}, components/manager-action-center/ManagerActionCenterDashboard.tsx:459)
+[dynamic or icon-only label] (Link, {"href":"insight.actionLink.href"}, components/manager-action-center/ManagerActionCenterDashboard.tsx:465)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:139)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:154)
+[dynamic or icon-only label] (Button, {}, components/bi/BIActionPriorityBoard.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIActionPriorityBoard.tsx:168)
+[dynamic or icon-only label] (Button, {}, components/bi/BICommandBriefHeader.tsx:90)
+[dynamic or icon-only label] (Link, {"href":"brief.primaryAction.href"}, components/bi/BICommandBriefHeader.tsx:91)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onValueChange?.(mode)"}, components/bi/BICommandModeTabs.tsx:41)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIBusinessTruthZone.tsx:65)
+[dynamic or icon-only label] (Button, {}, components/bi/BIBusinessTruthZone.tsx:77)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIBusinessTruthZone.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"card.actionLink.disabled"}, components/bi/BIKpiCard.tsx:67)
+[dynamic or icon-only label] (Link, {"href":"card.actionLink.href"}, components/bi/BIKpiCard.tsx:81)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:96)
+Proof-only drill-through needs a proof drawer host. (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:111)
+[dynamic or icon-only label] (Button, {}, components/bi/BIKpiCard.tsx:125)
+[dynamic or icon-only label] (Link, {"href":"drillThrough.href"}, components/bi/BIKpiCard.tsx:131)
+No proof subject was supplied. (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:46)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:62)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isLoading","onClick":"() => {\n          onOpenSubject?.(subject)\n          setOpen(true)\n        }"}, components/bi/BIProofDrawerHost.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIRiskOpportunityRadar.tsx:123)
+[dynamic or icon-only label] (Button, {}, components/bi/BIRiskOpportunityRadar.tsx:137)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIRiskOpportunityRadar.tsx:138)
+Signing reconciliation / Reconciliation signed / Review and sign (Button, {"type":"\"button\"","disabled":"isPending || terminal"}, components/manager-action-center/PaymentReconciliationSignOffCommand.tsx:313)
+Password (Input, {"name":"\"paymentReconciliationSignPassword\"","type":"\"password\"","onChange":"(event) => setPassword(event.target.value)","disabled":"isPending","required":"true"}, components/manager-action-center/PaymentReconciliationSignOffCommand.tsx:432)
+Cancel (Button, {"type":"\"button\"","onClick":"() => changeDialogOpen(false)","disabled":"isPending"}, components/manager-action-center/PaymentReconciliationSignOffCommand.tsx:464)
+Verifying and signing / Verify and sign (Button, {"type":"\"submit\"","disabled":"isPending"}, components/manager-action-center/PaymentReconciliationSignOffCommand.tsx:472)
+[dynamic or icon-only label] (TabsTrigger, {}, components/manager-action-center/ManagerLocationActionCenterDashboard.tsx:318)
+Daily close (Button, {}, components/manager-action-center/ManagerLocationActionCenterDashboard.tsx:395)
+Daily close (Link, {"href":"dailyCloseHref"}, components/manager-action-center/ManagerLocationActionCenterDashboard.tsx:396)
+Open action (Button, {}, components/manager-action-center/ManagerLocationActionCenterDashboard.tsx:563)
+Open action (Link, {"href":"item.actionPath"}, components/manager-action-center/ManagerLocationActionCenterDashboard.tsx:564)

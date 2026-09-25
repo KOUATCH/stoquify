@@ -1,12 +1,11 @@
 "use client"
 
-import { useCallback, useMemo, useState, useTransition } from "react"
+import { useCallback, useMemo, useTransition } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 
 import {
   getAPHistoryAction,
-  prepareAPHistoryExportAction,
   type APHistoryResult,
 } from "@/actions/purchasing/ap-history.actions"
 import type { TransactionHistoryFilters } from "@/components/dashboard/history/TransactionHistoryWorkbenchShell"
@@ -45,34 +44,23 @@ export function filtersForAPHistoryAction(filters: APHistoryUrlFilters) {
   }
 }
 
-export function useAPHistoryWorkbench() {
+export function useAPHistoryWorkbench({ organizationId, actorId }: { organizationId: string; actorId: string }) {
+  const queryClient = useQueryClient()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
-  const [exportStatus, setExportStatus] = useState<string | null>(null)
   const filters = useMemo(() => parseAPHistorySearchParams(searchParams), [searchParams])
   const actionFilters = useMemo(() => filtersForAPHistoryAction(filters), [filters])
   const historyQuery = useQuery({
-    queryKey: ["ap-history-workbench", actionFilters],
+    queryKey: ["ap-history-workbench", organizationId, actorId, actionFilters],
     queryFn: async (): Promise<APHistoryResult> => {
       const response = await getAPHistoryAction({ filters: actionFilters })
-      if (!response.success) throw new Error(response.error || "AP history failed to load")
+      if (!response.success) throw Object.assign(new Error(response.error || "AP history failed to load"), { code: "code" in response ? response.code : undefined })
+      if (response.data.scope?.organizationId !== organizationId || response.data.scope?.actorUserId !== actorId) throw Object.assign(new Error("History workspace changed. Refresh the current workspace."), { code: "FORBIDDEN" })
       return response.data
     },
-    placeholderData: (previous) => previous,
-  })
-  const exportMutation = useMutation({
-    mutationFn: async () => {
-      const response = await prepareAPHistoryExportAction({
-        filters: filtersForAPHistoryExport(filters),
-        rowCount: historyQuery.data?.summary.transactionCount ?? 0,
-      })
-      if (!response.success) throw new Error(response.error || "AP history export failed")
-      return response.data
-    },
-    onSuccess: () => setExportStatus("ready"),
-    onError: (error) => setExportStatus(error instanceof Error ? error.message : "AP history export failed"),
+    retry: (count, error) => !["CONFLICT", "VALIDATION_ERROR", "FORBIDDEN", "AUTH_REQUIRED"].includes((error as Error & { code?: string }).code ?? "") && count < 1,
   })
   const replaceWith = useCallback(
     (patch: Partial<APHistoryUrlFilters>) => {
@@ -89,33 +77,38 @@ export function useAPHistoryWorkbench() {
     selectedRowId: filters.selected ?? null,
     isLoading: historyQuery.isLoading || isPending,
     isError: historyQuery.isError,
+    isStale: ["CONFLICT", "VALIDATION_ERROR"].includes((historyQuery.error as (Error & { code?: string }) | null)?.code ?? ""),
     error: historyQuery.error,
     refetch: historyQuery.refetch,
+    restartHistory: () => {
+      // A rejected continuation must not recover into a still-fresh cached first page.
+      queryClient.removeQueries({ queryKey: ["ap-history-workbench", organizationId, actorId], type: "inactive" })
+      if (!filters.cursor) void historyQuery.refetch()
+      replaceWith({ cursor: undefined, selected: undefined })
+    },
     hasMore: historyQuery.data?.pageInfo.hasMore ?? false,
-    exportStatus,
-    isExporting: exportMutation.isPending,
     updateFilters: replaceWith,
     resetFilters: () => replaceWith({ lane: undefined, dateFrom: undefined, dateTo: undefined, pageSize: 50, cursor: undefined, selected: undefined }),
-    selectRow: (selected: string | null) => replaceWith({ selected: selected ?? undefined }),
+    // Selecting retained details does not reload the data. Tracking this as a
+    // filter transition replaces the table with a loader and destroys the
+    // drawer's focus-return target on both opening and closing.
+    selectRow: (selected: string | null) => router.replace(
+      buildAPHistoryHref(pathname, new URLSearchParams(searchParams.toString()), { selected: selected ?? undefined }),
+      { scroll: false },
+    ),
     nextPage: () => {
       if (historyQuery.data?.pageInfo.nextCursor) replaceWith({ cursor: historyQuery.data.pageInfo.nextCursor, selected: undefined })
     },
-    exportHistory: () => exportMutation.mutate(),
   }
 }
 
-function filtersForAPHistoryExport(filters: APHistoryUrlFilters) {
-  const { cursor: _cursor, selected: _selected, search: _search, type: _type, ...rest } = filters
-  return filtersForAPHistoryAction(rest)
-}
-
-function buildAPHistoryHref(pathname: string, params: URLSearchParams, patch: Partial<APHistoryUrlFilters>) {
+export function buildAPHistoryHref(pathname: string, params: URLSearchParams, patch: Partial<APHistoryUrlFilters>) {
   const next = new URLSearchParams(params)
   for (const [key, value] of Object.entries(patch)) {
     if (value === undefined || value === null || value === "") next.delete(key)
     else next.set(key, String(value))
   }
-  if (!("cursor" in patch)) next.delete("cursor")
+  if (!("cursor" in patch) && Object.keys(patch).some(key => key !== "selected")) next.delete("cursor")
   if (!("selected" in patch)) next.delete("selected")
   const query = next.toString()
   return query ? `${pathname}?${query}` : pathname

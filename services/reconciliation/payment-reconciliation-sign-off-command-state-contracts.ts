@@ -68,6 +68,7 @@ export type PaymentReconciliationSignOffCommandReadOnlyReason =
   | "SIGN_PERMISSION_REQUIRED"
   | "MODULE_WRITE_UNAVAILABLE"
   | "MAKER_CHECKER_REQUIRED"
+  | "PREPARER_CHECKER_REQUIRED"
 
 export type PaymentReconciliationSignOffCommandStateControls = Readonly<{
   projectionPurpose: "SOURCE_OWNED_SIGN_OFF_COMMAND_STATE_ONLY"

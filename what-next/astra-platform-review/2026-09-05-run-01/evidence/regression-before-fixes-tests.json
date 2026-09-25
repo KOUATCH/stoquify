@@ -1,0 +1,73 @@
+{
+  "suites": 2,
+  "passedSuites": 0,
+  "failedSuites": 2,
+  "tests": 12,
+  "passedTests": 10,
+  "failedTests": 2,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "app/api/uploads/[...path]/__tests__/route.test.ts",
+      "status": "failed",
+      "assertions": [
+        {
+          "title": "GET /api/uploads/[...path] returns 401 before path, module, permission, or filesystem checks when RBAC context is missing",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] returns 403 for cross-organization asset paths before module or filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] requires dashboard module entitlement before RBAC permission or filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] requires dashboard.read before filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] blocks path traversal before filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] blocks unsupported file types before filesystem checks",
+          "status": "passed"
+        },
+        {
+          "title": "GET /api/uploads/[...path] serves same-organization supported image assets after guard checks pass",
+          "status": "failed"
+        }
+      ],
+      "message": "  ● GET /api/uploads/[...path] › serves same-organization supported image assets after guard checks pass\n\n    expect(received).toBe(expected) // Object.is equality\n\n    Expected: \"private, no-store\"\n    Received: \"public, max-age=86400\"\n\n      201 |     expect(response.headers.get(\"Content-Type\")).toBe(\"image/webp\")\n      202 |     expect(response.headers.get(\"X-Content-Type-Options\")).toBe(\"nosniff\")\n    > 203 |     expect(response.headers.get(\"Cache-Control\")).toBe(\"private, no-store\")\n          |                                                   ^\n      204 |   })\n      205 | })\n      206 |\n\n      at Object.toBe (app/api/uploads/[...path]/__tests__/route.test.ts:203:51)\n"
+    },
+    {
+      "file": "lib/security/__tests__/rbac.test.ts",
+      "status": "failed",
+      "assertions": [
+        {
+          "title": "RBAC live session validation rejects a revoked session even when a cookie cache could still identify the user",
+          "status": "failed"
+        },
+        {
+          "title": "RBAC live session validation loads current permissions for a valid live session",
+          "status": "passed"
+        },
+        {
+          "title": "RBAC live session validation denies access when the session authority cannot be reached",
+          "status": "passed"
+        },
+        {
+          "title": "rbac tenant isolation allows access to the active organization without auditing a denial",
+          "status": "passed"
+        },
+        {
+          "title": "rbac tenant isolation denies cross-organization access even for wildcard users",
+          "status": "passed"
+        }
+      ],
+      "message": "  ● RBAC live session validation › rejects a revoked session even when a cookie cache could still identify the user\n\n    expect(received).resolves.toBeNull()\n\n    Received: {\"fetchedAt\": 1788599151811, \"isSuperUser\": false, \"orgId\": \"org-a\", \"organizationName\": \"Org A\", \"permissions\": [], \"roles\": [], \"source\": \"better-auth\", \"user\": {\"email\": undefined, \"firstName\": \"Ada\", \"id\": \"user-1\", \"image\": undefined, \"lastName\": \"Lovelace\", \"name\": \"Ada Lovelace\", \"organizationId\": \"org-a\", \"organizationName\": \"Org A\", \"permissions\": [], \"phone\": \"\", \"roles\": []}, \"userId\": \"user-1\"}\n\n      69 |     })\n      70 |\n    > 71 |     await expect(getOptionalRbacContext()).resolves.toBeNull()\n         |                                                     ^\n      72 |     await expect(requireRbacContext()).rejects.toMatchObject({ code: \"UNAUTHENTICATED\", status: 401 })\n      73 |     expect(db.user.findFirst).not.toHaveBeenCalled()\n      74 |   })\n\n      at Object.toBeNull (node_modules/.pnpm/expect@30.4.1/node_modules/expect/build/index.js:2140:20)\n      at Object.toBeNull (lib/security/__tests__/rbac.test.ts:71:53)\n"
+    }
+  ]
+}

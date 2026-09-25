@@ -18,6 +18,7 @@ export type PurchaseCorrectionLedgerReversalInput = {
     | typeof AccountingSourceType.PURCHASE_RETURN
     | typeof AccountingSourceType.SUPPLIER_CREDIT_NOTE
   sourceId: string
+  originalSourceId: string
   sourceNumber: string
   sourceDate: Date
   originalJournalEntryId: string | null
@@ -56,17 +57,46 @@ export async function reversePurchaseCorrectionLedgerInTx(
   tx: Prisma.TransactionClient,
   input: PurchaseCorrectionLedgerReversalInput,
 ): Promise<APPostingStatus | null> {
+  // The reversal still changes stock or supplier obligations when the original
+  // journal failed to post. Its accounting date must satisfy the same control.
+  const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)
+  const postingPurpose = input.sourceType === AccountingSourceType.PURCHASE_RETURN
+    ? AccountingPostingPurpose.PURCHASE_RETURN
+    : AccountingPostingPurpose.SUPPLIER_CREDIT_NOTE
   if (!input.originalJournalEntryId) {
+    const retainedJournal = await tx.journalEntry.findFirst({
+      where: { organizationId: input.organizationId, sourceType: input.sourceType, sourceId: input.originalSourceId },
+      select: { id: true },
+    })
+    if (retainedJournal) throw new BusinessRuleError("The original correction has journal evidence that requires review before reversal.")
     if (input.originalPostingBatchId) {
-      await tx.ledgerPostingBatch.updateMany({
+      const changed = await tx.ledgerPostingBatch.updateMany({
         where: {
           id: input.originalPostingBatchId,
           organizationId: input.organizationId,
-          status: { not: LedgerPostingBatchStatus.REVERSED },
+          sourceType: input.sourceType,
+          sourceId: input.originalSourceId,
+          postingPurpose,
+          status: { in: [LedgerPostingBatchStatus.PENDING, LedgerPostingBatchStatus.FAILED] },
+          journalEntries: { none: {} },
         },
         data: { status: LedgerPostingBatchStatus.REVERSED, reversedAt: new Date() },
       })
+      if (changed.count !== 1) throw new BusinessRuleError("The original correction posting evidence changed or is inconsistent. Review it before reversal.")
+    } else {
+      const retainedBatch = await tx.ledgerPostingBatch.findFirst({
+        where: { organizationId: input.organizationId, sourceType: input.sourceType, sourceId: input.originalSourceId },
+        select: { id: true },
+      })
+      if (retainedBatch) throw new BusinessRuleError("The original correction has posting evidence that requires review before reversal.")
     }
+    await tx.ledgerAuditEvent.create({ data: {
+      organizationId: input.organizationId, actorId: input.actorId ?? null,
+      action: "PURCHASING_AP_UNPOSTED_CORRECTION_REVERSED", resourceType: input.sourceType,
+      resourceId: input.originalSourceId, postingBatchId: input.originalPostingBatchId ?? null,
+      message: `${input.sourceNumber} reversed an unposted correction; no journal reversal was created.`,
+      metadata: json({ originalSourceId: input.originalSourceId, reversalSourceId: input.sourceId, reversalPeriodId: period.id, documentHash: input.documentHash, reason: input.reason }),
+    } })
     return null
   }
 
@@ -75,6 +105,7 @@ export async function reversePurchaseCorrectionLedgerInTx(
       id: input.originalJournalEntryId,
       organizationId: input.organizationId,
       sourceType: input.sourceType,
+      sourceId: input.originalSourceId,
     },
     include: {
       lines: { orderBy: { lineNumber: "asc" } },
@@ -86,10 +117,6 @@ export async function reversePurchaseCorrectionLedgerInTx(
     throw new BusinessRuleError("Purchase correction journal has already been reversed or is not posted.")
   }
 
-  const period = await getOpenPeriodForDate(input.organizationId, input.sourceDate, tx)
-  const postingPurpose = input.sourceType === AccountingSourceType.PURCHASE_RETURN
-    ? AccountingPostingPurpose.PURCHASE_RETURN
-    : AccountingPostingPurpose.SUPPLIER_CREDIT_NOTE
   const batch = await createLedgerPostingBatch(
     {
       organizationId: input.organizationId,

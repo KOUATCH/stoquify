@@ -2,6 +2,8 @@
 
 const fs = require("fs")
 const path = require("path")
+const { createHash } = require("node:crypto")
+const ts = require("typescript")
 
 const FORBIDDEN_MUTATIONS = [
   {
@@ -30,6 +32,31 @@ const IGNORE_DIRS = new Set([
 ])
 
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"])
+
+// Exact reviewed executables only. A manifest cannot approve another path or
+// omit a transitive database guard. Changes require source review, never an
+// automatic hash-refresh command in the gate.
+const WORKFLOW_FIXTURE_ROOT = "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/"
+const WORKFLOW_GUARDS = [
+  "scripts/disposable-fixture-guard.js",
+  `${WORKFLOW_FIXTURE_ROOT}statement-recipient-fixtures.cjs`,
+  `${WORKFLOW_FIXTURE_ROOT}registration-local.cjs`,
+  "scripts/run-modern-modules-postgres-smoke.js",
+  "scripts/modern-modules-local-verification.js",
+  "scripts/prisma-local-fresh-bootstrap.js",
+]
+const FIXTURE_GUARDS = new Map([
+  ...["boost-pos-demo-stock.ts", "supplier-po-ack-e2e-fixture.js", "modern-modules-lifecycle-fixture.ts"].map(file => [`scripts/${file}`, ["scripts/disposable-fixture-guard.js"]]),
+  ...[
+    "verify-cart-access-browser-v130.cjs", "verify-cart-access-v130.cjs", "verify-digest-inventory.cjs",
+    "verify-digest-stock-access.cjs", "verify-pos-cart-concurrency-v130.cjs", "verify-pos-cart-v122.cjs",
+    "verify-tender-access-v131.cjs",
+  ].map(file => [`${WORKFLOW_FIXTURE_ROOT}${file}`, WORKFLOW_GUARDS]),
+  ...[
+    "verify-pulse-actions-v145.cjs", "verify-pulse-observations-v146.cjs",
+    "verify-report-browser-v141.cjs", "verify-report-cost-v141.cjs",
+  ].map(file => [`${WORKFLOW_FIXTURE_ROOT}${file}`, [...WORKFLOW_GUARDS, `${WORKFLOW_FIXTURE_ROOT}verify-tender-access-v131.cjs`]]),
+])
 
 function parseArgs(argv) {
   const args = {
@@ -100,7 +127,7 @@ function walk(root, directory, files) {
   return files
 }
 
-function classifyFinding(relativePath, delegate, operation, sourceText) {
+function classifyFinding(relativePath, delegate, operation, reviewedFixtures) {
   const file = relativePath.replace(/\\/g, "/")
 
   if (file.startsWith("services/inventory/")) {
@@ -127,6 +154,15 @@ function classifyFinding(relativePath, delegate, operation, sourceText) {
       classification: "SEED_OR_MIGRATION_ONLY",
       migrationOrder: 0,
       reason: "Seed and migration code is outside runtime final-stock workflows.",
+    }
+  }
+
+  if (reviewedFixtures.has(file)) {
+    return {
+      allowed: true,
+      classification: "REVIEWED_DISPOSABLE_FIXTURE",
+      migrationOrder: 0,
+      reason: reviewedFixtures.get(file),
     }
   }
 
@@ -185,20 +221,11 @@ function classifyFinding(relativePath, delegate, operation, sourceText) {
   }
 
   if (file.startsWith("scripts/")) {
-    if (sourceText.includes("@inventory-boundary-demo-script")) {
-      return {
-        allowed: true,
-        classification: "SCRIPT_DEMO_SEED_ONLY",
-        migrationOrder: 0,
-        reason: "This script is explicitly marked as demo/seed-only and is outside runtime final-stock workflows.",
-      }
-    }
-
     return {
       allowed: false,
       classification: "SCRIPT_STOCK_MUTATION",
       migrationOrder: 5,
-      reason: "Runtime-like scripts that mutate stock must either use the kernel or be explicitly seed-only.",
+      reason: "Scripts must use the kernel or have a reviewed, hash-bound disposable fixture classification.",
     }
   }
 
@@ -210,31 +237,67 @@ function classifyFinding(relativePath, delegate, operation, sourceText) {
   }
 }
 
-function scanFile(root, filePath) {
+function loadReviewedFixtures(root) {
+  const manifestPath = path.join(root, "scripts/inventory-boundary-fixtures.json")
+  const reviewed = new Map()
+  if (!fs.existsSync(manifestPath)) return reviewed
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"))
+  if (manifest.version !== 1 || !Array.isArray(manifest.fixtures)) throw new Error("Invalid inventory fixture review manifest.")
+  const hashes = new Map()
+  function matches(file, expected) {
+    if (typeof file !== "string" || file.includes("\\") || file.split("/").includes("..") || path.isAbsolute(file) || !/^[a-f0-9]{64}$/.test(expected)) return false
+    if (!hashes.has(file)) {
+      const absolute = path.join(root, file)
+      // Normalize only line endings so Git checkout settings cannot invalidate a review.
+      hashes.set(file, fs.existsSync(absolute) ? createHash("sha256").update(fs.readFileSync(absolute, "utf8").replace(/\r\n/g, "\n")).digest("hex") : null)
+    }
+    return hashes.get(file) === expected
+  }
+  for (const fixture of manifest.fixtures) {
+    if (!fixture.reason || !Array.isArray(fixture.guards) || fixture.guards.length === 0) continue
+    const required = FIXTURE_GUARDS.get(fixture.file)
+    if (!required || fixture.guards.length !== required.length || !required.every(file => fixture.guards.some(guard => guard.file === file))) continue
+    if (matches(fixture.file, fixture.sha256) && fixture.guards.every(guard => matches(guard.file, guard.sha256))) reviewed.set(fixture.file, fixture.reason)
+  }
+  return reviewed
+}
+
+function propertyName(node) {
+  if (ts.isPropertyAccessExpression(node)) return node.name.text
+  if (ts.isElementAccessExpression(node) && node.argumentExpression && ts.isStringLiteralLike(node.argumentExpression)) return node.argumentExpression.text
+  return null
+}
+
+function scanFile(root, filePath, reviewedFixtures) {
   const relativePath = toRepoPath(root, filePath)
   const text = fs.readFileSync(filePath, "utf8")
   const lines = text.split(/\r?\n/)
   const findings = []
 
-  lines.forEach((line, index) => {
-    for (const rule of FORBIDDEN_MUTATIONS) {
-      for (const operation of rule.operations) {
-        const pattern = new RegExp(`\\b${rule.delegate}\\s*\\.\\s*${operation}\\s*\\(`)
-        if (!pattern.test(line)) continue
-
-        const classification = classifyFinding(relativePath, rule.delegate, operation, text)
+  if (!/inventoryLevel|inventoryTransaction/.test(text)) return findings
+  const source = ts.createSourceFile(filePath, text, ts.ScriptTarget.Latest, true)
+  function visit(node) {
+    if (ts.isCallExpression(node)) {
+      const operation = propertyName(node.expression)
+      const delegate = node.expression.expression && propertyName(node.expression.expression)
+      const rule = FORBIDDEN_MUTATIONS.find(rule => rule.delegate === delegate && rule.operations.includes(operation))
+      if (rule) {
+        const index = source.getLineAndCharacterOfPosition(node.getStart(source)).line
+        const classification = classifyFinding(relativePath, rule.delegate, operation, reviewedFixtures)
         findings.push({
           file: relativePath,
           line: index + 1,
           delegate: rule.delegate,
           operation,
           risk: rule.risk,
-          snippet: line.trim(),
+          snippet: lines[index].trim(),
           ...classification,
         })
       }
     }
-  })
+    ts.forEachChild(node, visit)
+  }
+  visit(source)
 
   return findings
 }
@@ -313,7 +376,7 @@ function renderMarkdown(root, mode, findings, includeAllowed) {
   lines.push("2. Migrate purchasing goods receipt inventory effects to a goods-receipt stock event.")
   lines.push("3. Migrate POS sale, refund, and void inventory effects to POS inventory events.")
   lines.push("4. Wrap or retire legacy inventory action helpers and shared inventory helpers.")
-  lines.push("5. Convert runtime-like scripts to kernel calls or mark them seed-only.")
+  lines.push("5. Convert runtime-like scripts to kernel calls or review and hash-bind their disposable database guards.")
   lines.push("6. Turn this gate from report mode to fail mode once active violations reach zero.")
   lines.push("")
 
@@ -354,7 +417,8 @@ function main() {
   const args = parseArgs(process.argv)
   const root = path.resolve(args.root)
   const files = walk(root, root, [])
-  const findings = files.flatMap((file) => scanFile(root, file))
+  const reviewedFixtures = loadReviewedFixtures(root)
+  const findings = files.flatMap((file) => scanFile(root, file, reviewedFixtures))
   const summary = summarize(findings)
   const markdown = renderMarkdown(root, args.mode, findings, args.includeAllowed)
 

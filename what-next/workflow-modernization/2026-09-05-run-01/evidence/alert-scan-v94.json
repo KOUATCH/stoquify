@@ -1,0 +1,88 @@
+{
+  "at": "2026-09-09T08:28:09.825Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v94.json",
+  "sources": {
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "36b4e9baa43ba9cdc88934cface102d09a081e4d29c94b3a4cddc585e99902cb",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "scripts/reconciliation-alert-worker.ts": "3569c665644111ae1265613317bfde9f1ea12945f0c6beed208fec442d7afd2c",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d674643c445bac8968701e93fe876db6c5521ca6e44b9de6ee0966c3fbc55c7c",
+    "messages/en.json": "70907055344bb20525fd3c73e6557a789b639f349e84183e14945e981ca283dd",
+    "messages/fr.json": "ac7f90512a13bc0a96f4bb1f3987839cebe5f60fe531cc62e6468c42d32f0176",
+    "scripts/__tests__/reconciliation-alert-worker.test.ts": "e22d8423dc719f8f473247f2a1e203199d1da0fa97d5fe13ecf176b867aa591d",
+    "services/payments/__tests__/payment-reconciliation-inbox-worker.service.test.ts": "6012a8486fe5fabd0ae3d8676e848a13749612f5b7572499d8c8f8c5d7bb3085",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "b59fb7bd90233e21372b1fb1a462e8878deaf7d0c5344c2348a4bcef891d3061",
+    "services/reconciliation/__tests__/payment-reconciliation-alert-scan.service.test.ts": "132ac500561a954d12f48ca32e4154c90c8624c4b619e7a5a83b407b5b90be65",
+    "services/reconciliation/__tests__/payment-reconciliation-summary.service.test.ts": "9b01c7d4f7bfa4f144062cbe7c362f812b2dcdf1c13e4761de5227863027fe46",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "edd7b4055b86a4c5dee2413a1b506027d912016ece253cc63912bb1114cc673c",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts": "9ed31f120f32961ae3de88f69bb3d23c193a12bec14817327453038873deb4bd",
+    "services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts": "729d7f8b92dda05d932174c106c86192b6871e10bc841d497645c7a31522553e"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"scripts/__tests__/reconciliation-alert-worker.test.ts\" \"services/payments/__tests__/payment-reconciliation-inbox-worker.service.test.ts\" \"components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx\" \"services/reconciliation/__tests__/payment-reconciliation-alert-scan.service.test.ts\" \"services/reconciliation/__tests__/payment-reconciliation-summary.service.test.ts\" \"services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts\" \"services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts\" \"services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts\" --json --outputFile=\"what-next/workflow-modernization/2026-09-05-run-01/evidence/alert-scan-final-v94.json\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+    "database": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-alert-scan-v94.cjs",
+    "browser": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-alert-scan-browser-v94.cjs",
+    "baseline": "node what-next/workflow-modernization/2026-09-05-run-01/capture-source-baseline.cjs",
+    "lint": "node node_modules/eslint/bin/eslint.js services/reconciliation/payment-reconciliation-alert-scan.service.ts services/reconciliation/payment-reconciliation-dashboard.service.ts scripts/reconciliation-alert-worker.ts scripts/__tests__/reconciliation-alert-worker.test.ts services/reconciliation/__tests__/payment-reconciliation-alert-scan.service.test.ts components/finance/PaymentReconciliationWorkbench.tsx components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx"
+  },
+  "tests": {
+    "file": "evidence/alert-scan-final-v94.json",
+    "session": 36815,
+    "passed": 99,
+    "suites": 8,
+    "exitCode": 0
+  },
+  "database": {
+    "file": "lanes/environment/alert-scan-v94-db-9fea95f9-807.json",
+    "checks": 10,
+    "exitCode": 0,
+    "sourceStable": true,
+    "originalUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/alert-scan-v94-browser-9bb6b73c-e8a.json",
+    "session": 78169,
+    "exitCode": 0,
+    "screenshots": "evidence/alert-scan-v94-screenshots",
+    "sourceStable": true,
+    "originalUnchanged": true
+  },
+  "typecheck": {
+    "session": 52854,
+    "exitCode": 0
+  },
+  "lint": {
+    "chunk": "3fcbdf",
+    "exitCode": 0,
+    "files": 7
+  },
+  "previousGoalTurn": "progress: v93 notification identity and retry integrity",
+  "cutover": {
+    "applied": false,
+    "automaticApprovalReviewRejectedRemoval": true,
+    "reason": "Replacement schedule not operational; risk of missed alerts",
+    "legacyTriggerRetained": true
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 228,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2781,
+      "tests": 981,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2374,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

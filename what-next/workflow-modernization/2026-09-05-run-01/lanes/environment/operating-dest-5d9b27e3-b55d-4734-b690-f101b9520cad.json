@@ -1,0 +1,242 @@
+{
+  "at": "2026-09-19T14:18:13.991Z",
+  "sourceBefore": {
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "c0282ffe869bb13a3f4fbe571186333b8a7e677b1e1ec553839a7671e2066fb9",
+    "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx": "48477e86142b194dd82fbc2d90ea301552f103aaac08ec0789af8bf15ae99eb1",
+    "actions/owner-war-room/owner-war-room.actions.ts": "6f154950d73fa55b1fb5ef03897e829695209a780a101c5df949d63c3e8a7010",
+    "actions/manager-action-center/manager-action-center.actions.ts": "01e401ea7fcabefdbaedefe9b379ffb339f1e922c0e3230520daaa92aaa921e1",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "b370a4f4d6a957f61b97ab57439a72a7727a5cbf77b7a5ef93c6088b8ef5fdac",
+    "messages/fr.json": "38122c8ba71b191e2bca6d46f27c0d789a6b62fb4fd109b81ffc352ec3c17ee3"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "locale": "en",
+      "route": "owner-war-room",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 5049,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-explicit-empty-en-owner-war-room.png"
+    },
+    {
+      "name": "explicit-empty",
+      "locale": "en",
+      "route": "manager-action-center",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 58905,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-explicit-empty-en-manager-action-center.png"
+    },
+    {
+      "name": "explicit-empty",
+      "locale": "en",
+      "route": "manager-action-center/daily-close",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 32357,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-explicit-empty-en-manager-action-center-daily-close.png"
+    },
+    {
+      "name": "explicit-empty",
+      "locale": "fr",
+      "route": "owner-war-room",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 3090,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-explicit-empty-fr-owner-war-room.png"
+    },
+    {
+      "name": "explicit-empty",
+      "locale": "fr",
+      "route": "manager-action-center",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 7633,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-explicit-empty-fr-manager-action-center.png"
+    },
+    {
+      "name": "explicit-empty",
+      "locale": "fr",
+      "route": "manager-action-center/daily-close",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 20784,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-explicit-empty-fr-manager-action-center-daily-close.png"
+    },
+    {
+      "name": "active",
+      "locale": "en",
+      "route": "owner-war-room",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 7738,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-active-en-owner-war-room.png"
+    },
+    {
+      "name": "active",
+      "locale": "en",
+      "route": "manager-action-center",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 27014,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-active-en-manager-action-center.png"
+    },
+    {
+      "name": "active",
+      "locale": "en",
+      "route": "manager-action-center/daily-close",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 6795,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-active-en-manager-action-center-daily-close.png"
+    },
+    {
+      "name": "active",
+      "locale": "fr",
+      "route": "owner-war-room",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 14813,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-active-fr-owner-war-room.png"
+    },
+    {
+      "name": "active",
+      "locale": "fr",
+      "route": "manager-action-center",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 23688,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-active-fr-manager-action-center.png"
+    },
+    {
+      "name": "active",
+      "locale": "fr",
+      "route": "manager-action-center/daily-close",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 18465,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-active-fr-manager-action-center-daily-close.png"
+    },
+    {
+      "name": "suspended-after-read",
+      "locale": "en",
+      "route": "owner-war-room",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 4784,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-suspended-after-read-en-owner-war-room.png"
+    },
+    {
+      "name": "suspended-after-read",
+      "locale": "en",
+      "route": "manager-action-center",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 8007,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-suspended-after-read-en-manager-action-center.png"
+    },
+    {
+      "name": "suspended-after-read",
+      "locale": "en",
+      "route": "manager-action-center/daily-close",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 7414,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-suspended-after-read-en-manager-action-center-daily-close.png"
+    },
+    {
+      "name": "suspended-after-read",
+      "locale": "fr",
+      "route": "owner-war-room",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 6316,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-suspended-after-read-fr-owner-war-room.png"
+    },
+    {
+      "name": "suspended-after-read",
+      "locale": "fr",
+      "route": "manager-action-center",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 23823,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-suspended-after-read-fr-manager-action-center.png"
+    },
+    {
+      "name": "suspended-after-read",
+      "locale": "fr",
+      "route": "manager-action-center/daily-close",
+      "allowed": false,
+      "passed": true,
+      "elapsedMs": 18298,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-suspended-after-read-fr-manager-action-center-daily-close.png"
+    },
+    {
+      "name": "stopped-retained",
+      "locale": "en",
+      "route": "owner-war-room",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 7118,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-stopped-retained-en-owner-war-room.png"
+    },
+    {
+      "name": "stopped-retained",
+      "locale": "en",
+      "route": "manager-action-center",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 18283,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-stopped-retained-en-manager-action-center.png"
+    },
+    {
+      "name": "stopped-retained",
+      "locale": "en",
+      "route": "manager-action-center/daily-close",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 5540,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-stopped-retained-en-manager-action-center-daily-close.png"
+    },
+    {
+      "name": "stopped-retained",
+      "locale": "fr",
+      "route": "owner-war-room",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 10841,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-stopped-retained-fr-owner-war-room.png"
+    },
+    {
+      "name": "stopped-retained",
+      "locale": "fr",
+      "route": "manager-action-center",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 29017,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-stopped-retained-fr-manager-action-center.png"
+    },
+    {
+      "name": "stopped-retained",
+      "locale": "fr",
+      "route": "manager-action-center/daily-close",
+      "allowed": true,
+      "passed": true,
+      "elapsedMs": 25105,
+      "screenshot": "operating-dest-5d9b27e3-b55d-4734-b690-f101b9520cad-stopped-retained-fr-manager-action-center-daily-close.png"
+    }
+  ],
+  "noBusinessMutations": true,
+  "passed": true,
+  "sourceAfter": {
+    "app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx": "c0282ffe869bb13a3f4fbe571186333b8a7e677b1e1ec553839a7671e2066fb9",
+    "app/[locale]/(dashboard)/dashboard/manager-action-center/manager-action-route-access.tsx": "48477e86142b194dd82fbc2d90ea301552f103aaac08ec0789af8bf15ae99eb1",
+    "actions/owner-war-room/owner-war-room.actions.ts": "6f154950d73fa55b1fb5ef03897e829695209a780a101c5df949d63c3e8a7010",
+    "actions/manager-action-center/manager-action-center.actions.ts": "01e401ea7fcabefdbaedefe9b379ffb339f1e922c0e3230520daaa92aaa921e1",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "messages/en.json": "b370a4f4d6a957f61b97ab57439a72a7727a5cbf77b7a5ef93c6088b8ef5fdac",
+    "messages/fr.json": "38122c8ba71b191e2bca6d46f27c0d789a6b62fb4fd109b81ffc352ec3c17ee3"
+  },
+  "sourceStable": true
+}

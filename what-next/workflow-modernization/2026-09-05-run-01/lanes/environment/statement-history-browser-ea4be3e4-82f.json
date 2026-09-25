@@ -1,0 +1,187 @@
+{
+  "run": "ea4be3e4-82f",
+  "fixtureFile": "statement-history-postgres-cef5d114-085.json",
+  "startedAt": "2026-09-07T07:14:50.310Z",
+  "sourcesBefore": {
+    "components/customers/CustomerStatementHistory.tsx": "05ebf01c8ef856b3d30b9cb5605780d197d589f63b87c6e5deb86308e774004f",
+    "components/customers/CustomerStatementWorkflow.tsx": "4526962a24343534ccec13b82e942538f8e7e16bec66a5ecac0be214cc9e8acf",
+    "hooks/customer-statement-request.ts": "362e6fb5719ba61e1fa851f325200cbb1b8e1c863cacc7e1f098215af4c23072",
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "actions/accounting/customer-statement-history.actions.ts": "1ff57815a13397c7fdfe7cfb4236afaab98132c1a0f85eea135221bdd7b6ad4e",
+    "actions/accounting/customer-statement.actions.ts": "04afc8d016beabe8bd3a1a0dcfc0a89654f9d1f4968062bb5c6b2cf27d8c4620",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx": "381f235ae135827f9c6846b303864e647dfbcb681850f62685eac485b5a95b05",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts": "83e5b6f633474cc4ca53365a0c44b114c776b9b1d578a3377dd69df358e0a1b5",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-statement-history-denied-ea4be3e4-82f.png",
+        "en-statement-history-saved-history-ea4be3e4-82f.png",
+        "en-statement-history-failed-refresh-ea4be3e4-82f.png",
+        "en-statement-history-queue-unconfirmed-ea4be3e4-82f.png",
+        "en-statement-history-delivery-recovered-ea4be3e4-82f.png",
+        "en-statement-history-new-tab-history-ea4be3e4-82f.png",
+        "en-statement-history-revoked-ea4be3e4-82f.png",
+        "en-statement-history-reflow-320-100-ea4be3e4-82f.png",
+        "en-statement-history-reflow-320-200-ea4be3e4-82f.png",
+        "en-statement-history-reflow-390-100-ea4be3e4-82f.png",
+        "en-statement-history-reflow-390-200-ea4be3e4-82f.png",
+        "en-statement-history-reflow-768-100-ea4be3e4-82f.png",
+        "en-statement-history-reflow-768-200-ea4be3e4-82f.png",
+        "en-statement-history-reflow-1440-100-ea4be3e4-82f.png",
+        "en-statement-history-reflow-1440-200-ea4be3e4-82f.png",
+        "en-statement-history-read-only-ea4be3e4-82f.png"
+      ],
+      "reflow": [
+        {
+          "width": 320,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "actionVisible": true
+        }
+      ],
+      "routeReadyMs": 1811,
+      "foreignObjectNoHistory": true,
+      "historyReadsCreateNothing": true,
+      "staleRefreshPreservesRecordsAndBlocksNewCopy": true,
+      "historicalDeliveryLostAckReloadKeepsOneNewCopy": true,
+      "newTabHistoryRecoveredWithoutMutation": true,
+      "revocationWrongPasswordLostAckAndRetryVerified": true,
+      "realReadOnlyHistoryAndDirectQueueDenial": true,
+      "originalPermissionsRestored": true
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-statement-history-denied-ea4be3e4-82f.png",
+        "fr-statement-history-saved-history-ea4be3e4-82f.png",
+        "fr-statement-history-failed-refresh-ea4be3e4-82f.png",
+        "fr-statement-history-queue-unconfirmed-ea4be3e4-82f.png",
+        "fr-statement-history-delivery-recovered-ea4be3e4-82f.png",
+        "fr-statement-history-new-tab-history-ea4be3e4-82f.png",
+        "fr-statement-history-revoked-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-320-100-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-320-200-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-390-100-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-390-200-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-768-100-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-768-200-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-1440-100-ea4be3e4-82f.png",
+        "fr-statement-history-reflow-1440-200-ea4be3e4-82f.png",
+        "fr-statement-history-read-only-ea4be3e4-82f.png"
+      ],
+      "reflow": [
+        {
+          "width": 320,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "actionVisible": true
+        }
+      ],
+      "routeReadyMs": 5770,
+      "foreignObjectNoHistory": true,
+      "historyReadsCreateNothing": true,
+      "staleRefreshPreservesRecordsAndBlocksNewCopy": true,
+      "historicalDeliveryLostAckReloadKeepsOneNewCopy": true,
+      "newTabHistoryRecoveredWithoutMutation": true,
+      "revocationWrongPasswordLostAckAndRetryVerified": true,
+      "realReadOnlyHistoryAndDirectQueueDenial": true,
+      "originalPermissionsRestored": true
+    }
+  ],
+  "scope": "Owned local browser and real PostgreSQL. Historical reads, explicit new-copy recovery and link revocation; no worker or external send. Temporary module authority applies only to synthetic fixtures and is restored.",
+  "originalBefore": "ef6f8119ad79dda4966fa60670ff9cecd85665b2f3429124a52e5e1b1171ed73",
+  "originalAfter": "ef6f8119ad79dda4966fa60670ff9cecd85665b2f3429124a52e5e1b1171ed73",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T07:16:35.423Z",
+  "sourcesAfter": {
+    "components/customers/CustomerStatementHistory.tsx": "05ebf01c8ef856b3d30b9cb5605780d197d589f63b87c6e5deb86308e774004f",
+    "components/customers/CustomerStatementWorkflow.tsx": "4526962a24343534ccec13b82e942538f8e7e16bec66a5ecac0be214cc9e8acf",
+    "hooks/customer-statement-request.ts": "362e6fb5719ba61e1fa851f325200cbb1b8e1c863cacc7e1f098215af4c23072",
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "actions/accounting/customer-statement-history.actions.ts": "1ff57815a13397c7fdfe7cfb4236afaab98132c1a0f85eea135221bdd7b6ad4e",
+    "actions/accounting/customer-statement.actions.ts": "04afc8d016beabe8bd3a1a0dcfc0a89654f9d1f4968062bb5c6b2cf27d8c4620",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx": "381f235ae135827f9c6846b303864e647dfbcb681850f62685eac485b5a95b05",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts": "83e5b6f633474cc4ca53365a0c44b114c776b9b1d578a3377dd69df358e0a1b5",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

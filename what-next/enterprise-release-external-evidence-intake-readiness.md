@@ -1,6 +1,6 @@
 # Enterprise Release External Evidence Intake Readiness
 
-**Evaluated:** 2026-08-11T13:35:38.171Z
+**Evaluated:** 2026-08-28T12:37:23.549Z
 **Status:** `EXTERNAL_EVIDENCE_REQUIRED`
 **Release posture:** `DEVELOPMENT_CONTINUES_PILOT_AND_PRODUCTION_FAIL_CLOSED`
 **Checks passed:** 1/6

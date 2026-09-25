@@ -1,0 +1,168 @@
+{
+  "run": "e56578ff-cdc",
+  "at": "2026-09-07T18:10:17.084Z",
+  "sourcesBefore": {
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "b232c18d9f0bd5b63f40592357eb1f3141df391e5bb653c96ff8bede10f0d36d",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c18a77c528db1e5c252ab4bb42e90a93ae82912ffcef43c83ee34906952dee41",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "59080a453fa0cbbfe24be100cff78b7ad3b946dfffcde7258ff1646cba4b85b1",
+    "messages/en.json": "af0742e7d3719c9a3fa5b4a478dc55479b68757d802570bb648bf47b3066e327",
+    "messages/fr.json": "fe5203d32d970d0658c65bc22fe3a6f891c369a30f224efbe5c9a8a65f6b8348"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "completed": [
+        "Held review shows fractional quantity, exact currency value and stock consequences; keyboard, responsive and text reflow checked",
+        "Stale submission has no receipt; lost committed response recovers after reload with one held receipt",
+        "Original inspector cannot accept own failed inspection; current password permits rejection without stock effects",
+        "Passed receipt posts exact 0.125 stock and history displays separate accounting review, not a journal success"
+      ],
+      "screenshots": [
+        "receiving-en-review-held-desktop-e56578ff-cdc.png",
+        "receiving-en-review-768-e56578ff-cdc.png",
+        "receiving-en-review-390-e56578ff-cdc.png",
+        "receiving-en-review-320-e56578ff-cdc.png",
+        "receiving-en-text-reflow-e56578ff-cdc.png",
+        "receiving-en-stale-review-e56578ff-cdc.png",
+        "receiving-en-committed-response-lost-e56578ff-cdc.png",
+        "receiving-en-reload-recovery-e56578ff-cdc.png",
+        "receiving-en-recovered-held-e56578ff-cdc.png",
+        "receiving-en-rejected-no-stock-e56578ff-cdc.png",
+        "receiving-en-received-stock-accounting-review-e56578ff-cdc.png",
+        "receiving-en-receipt-history-e56578ff-cdc.png",
+        "receiving-en-failure-e56578ff-cdc.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 255,
+          "clientWidth": 255
+        }
+      ],
+      "timings": [
+        {
+          "name": "order-detail",
+          "ms": 5166
+        },
+        {
+          "name": "order-detail",
+          "ms": 2206
+        }
+      ],
+      "pageErrors": [],
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByRole('button', { name: 'Confirm decision', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 px-4 py-2 dashboard-button-primary h-auto min-h-11 whitespace-normal\">Confirm decision</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    103 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is not enabled\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "completed": [
+        "Held review shows fractional quantity, exact currency value and stock consequences; keyboard, responsive and text reflow checked",
+        "Stale submission has no receipt; lost committed response recovers after reload with one held receipt",
+        "Original inspector cannot accept own failed inspection; current password permits rejection without stock effects",
+        "Passed receipt posts exact 0.125 stock and history displays separate accounting review, not a journal success"
+      ],
+      "screenshots": [
+        "receiving-fr-review-held-desktop-e56578ff-cdc.png",
+        "receiving-fr-review-768-e56578ff-cdc.png",
+        "receiving-fr-review-390-e56578ff-cdc.png",
+        "receiving-fr-review-320-e56578ff-cdc.png",
+        "receiving-fr-text-reflow-e56578ff-cdc.png",
+        "receiving-fr-stale-review-e56578ff-cdc.png",
+        "receiving-fr-committed-response-lost-e56578ff-cdc.png",
+        "receiving-fr-reload-recovery-e56578ff-cdc.png",
+        "receiving-fr-recovered-held-e56578ff-cdc.png",
+        "receiving-fr-rejected-no-stock-e56578ff-cdc.png",
+        "receiving-fr-received-stock-accounting-review-e56578ff-cdc.png",
+        "receiving-fr-receipt-history-e56578ff-cdc.png",
+        "receiving-fr-failure-e56578ff-cdc.png"
+      ],
+      "layouts": [
+        {
+          "width": 768,
+          "height": 1024,
+          "scrollWidth": 734,
+          "clientWidth": 734,
+          "documentWidth": 768,
+          "viewport": 768
+        },
+        {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 356,
+          "clientWidth": 356,
+          "documentWidth": 390,
+          "viewport": 390
+        },
+        {
+          "width": 320,
+          "height": 800,
+          "scrollWidth": 286,
+          "clientWidth": 286,
+          "documentWidth": 320,
+          "viewport": 320
+        },
+        {
+          "textResize": "200%",
+          "scrollWidth": 254,
+          "clientWidth": 254
+        }
+      ],
+      "timings": [
+        {
+          "name": "order-detail",
+          "ms": 2184
+        },
+        {
+          "name": "order-detail",
+          "ms": 2045
+        }
+      ],
+      "pageErrors": [],
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByRole('button', { name: 'Confirmer la décision', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 px-4 py-2 dashboard-button-primary h-auto min-h-11 whitespace-normal\">Confirmer la décision</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    113 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is not enabled\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n"
+    }
+  ],
+  "scope": "Actual authenticated owned local application 3110, synthetic approved-order setup, real receiving/inspection/stock effects. Accounting review remains explicitly outstanding.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchase-orders/PurchaseReceivingWorkbench.tsx": "b232c18d9f0bd5b63f40592357eb1f3141df391e5bb653c96ff8bede10f0d36d",
+    "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "b118b511ac36ded0821921475984cbce18ad42745e79b800e28a0c2153eaad78",
+    "services/purchase-order/purchase-order.service.ts": "1f10cbcd5705df833d5af1559b60fcba306b4e054935aab234bfd9160e488497",
+    "services/purchase-order/purchase-receiving-authority.ts": "7fa073228e441c2319ade8480dd4334451893033035bccb6306a1aac654285cd",
+    "services/purchase-order/purchase-receiving-contracts.ts": "08422bdd3f2cc67d32659f2def56a664d4aeb5cbd9f70536307e044bf6b0cd76",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "c18a77c528db1e5c252ab4bb42e90a93ae82912ffcef43c83ee34906952dee41",
+    "actions/purchaseOrderWorkflow/purchase-receiving.actions.ts": "59080a453fa0cbbfe24be100cff78b7ad3b946dfffcde7258ff1646cba4b85b1",
+    "messages/en.json": "af0742e7d3719c9a3fa5b4a478dc55479b68757d802570bb648bf47b3066e327",
+    "messages/fr.json": "fe5203d32d970d0658c65bc22fe3a6f891c369a30f224efbe5c9a8a65f6b8348"
+  },
+  "sourceStable": true
+}

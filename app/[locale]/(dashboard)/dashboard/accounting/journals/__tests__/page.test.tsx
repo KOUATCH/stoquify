@@ -7,6 +7,7 @@ import {
 import { checkPermission } from "@/config/useAuth"
 
 import AccountingJournalsPage from "../page"
+jest.mock("next-intl/server", () => ({ getTranslations: jest.fn(async ({ locale }) => (key: string) => `${locale}:${key}`) }))
 
 jest.mock("@/app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access", () => ({
   routeByKey: jest.fn(() => ({ key: "accounting-test" })),
@@ -29,6 +30,11 @@ jest.mock("lucide-react", () => {
   const Icon = (props: Record<string, unknown>) => React.createElement("svg", props)
 
   return {
+    Search: Icon,
+    X: Icon,
+    Check: Icon,
+    ChevronDown: Icon,
+    ChevronUp: Icon,
     BookOpenCheck: Icon,
     FilePlus2: Icon,
     RotateCcw: Icon,
@@ -97,6 +103,14 @@ const pageProps = {
 }
 
 describe("AccountingJournalsPage", () => {
+  it.each(["en", "fr"])("explains unavailable suspense reversal in %s without offering a generic reversal", async locale => {
+    const row = { id: "suspense-journal", entryNumber: "SP-0001", entryDate: new Date("2026-09-09T00:00:00Z"), status: "POSTED", sourceType: "PAYMENT_SUSPENSE", memo: "Suspense evidence", journal: { code: "SP", nameEn: "Suspense" }, period: { name: "September" }, lines: [{ debit: "100.25", credit: "0" }, { debit: "0", credit: "100.25" }] }
+    mockListJournalEntriesAction.mockResolvedValue({ success: true, data: [row] })
+    render(await AccountingJournalsPage({ params: Promise.resolve({ locale }), searchParams: Promise.resolve({}) }))
+    expect(screen.getByText(`${locale}:reversalUnavailable`)).toBeVisible()
+    expect(screen.queryByRole("button", { name: "Reverse" })).not.toBeInTheDocument()
+    expect(screen.getByText("SP-0001")).toBeVisible()
+  })
   beforeEach(() => {
     jest.clearAllMocks()
     mockCheckPermission.mockResolvedValue(true)

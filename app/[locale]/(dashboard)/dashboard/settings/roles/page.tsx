@@ -3,11 +3,13 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import getOrgRoles from "@/actions/roles/getOrgRoles"
-import DataTable from "@/components/DataTableComponents/DataTable"
-import { checkPermission, getAuthenticatedUser } from "@/config/useAuth"
+import { getAuthenticatedUser } from "@/config/useAuth"
+import { requirePermission } from "@/lib/security/rbac"
+import { hasRbacPermission } from "@/lib/security/rbac-permissions"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { LayoutGrid, Plus, ShieldCheck, UsersRound } from "lucide-react"
-import { columns } from "./columns"
+import { RoleTable } from "./columns"
 import { routeByKey, withSettingsSurfaceAccess } from "../settings-route-access"
 
 type RolePageProps = {
@@ -16,6 +18,7 @@ type RolePageProps = {
 
 const copy = {
   en: {
+    loadFailed: "Role catalogue could not load", loadMessage: "The role query failed. No role count or empty result can be confirmed. Refresh to try again.", retry: "Refresh roles",
     title: "Role Management",
     subtitle:
       "Define role names, permissions context, and role-level access boundaries from one central governance surface.",
@@ -32,20 +35,21 @@ const copy = {
     settings: "Settings",
   },
   fr: {
-    title: "Gestion des roles",
+    loadFailed: "Le catalogue des rôles n’a pas pu être chargé", loadMessage: "La recherche des rôles a échoué. Aucun total ni résultat vide ne peut être confirmé. Actualisez pour réessayer.", retry: "Actualiser les rôles",
+    title: "Gestion des rôles",
     subtitle:
-      "Definissez les noms de roles, les descriptions et les seuils d'acces a partir d'une surface de gouvernance centrale.",
-    metrics: "Resume des roles",
-    totalRoles: "Roles au total",
-    rolesWithDescription: "Roles avec description",
-    rolesWithoutDescription: "Roles sans description",
+      "Définissez les noms, les responsabilités et les autorisations des rôles de votre organisation.",
+    metrics: "Résumé des rôles",
+    totalRoles: "Rôles au total",
+    rolesWithDescription: "Rôles avec description",
+    rolesWithoutDescription: "Rôles sans description",
     module: "Module",
-    tableTitle: "Catalogue des roles",
-    tableDescription: "Consultez les roles et ouvrez chaque ligne pour modifier et appliquer la gouvernance.",
-    addRole: "Ajouter un role",
+    tableTitle: "Catalogue des rôles",
+    tableDescription: "Consultez les rôles et ouvrez les actions autorisées sur chaque ligne.",
+    addRole: "Ajouter un rôle",
     organization: "Espace organisation",
     noOrganization: "Aucun contexte d'organisation n'est disponible pour cet utilisateur.",
-    settings: "Parametres",
+    settings: "Paramètres",
   },
 } as const
 
@@ -63,7 +67,7 @@ async function RolesPageImpl({ params }: RolePageProps) {
   const locale = pickLocale(rawLocale)
   const labels = copy[locale]
 
-  await checkPermission("READ_ROLES")
+  const ctx = await requirePermission("roles.read")
   const user = await getAuthenticatedUser()
   const organizationId = user?.organizationId ?? ""
   const organizationName = user?.organizationName ?? ""
@@ -83,7 +87,8 @@ async function RolesPageImpl({ params }: RolePageProps) {
   }
 
   const res = await getOrgRoles(organizationId)
-  const roles = res.data || []
+  if (!res.success) return <DashboardRouteState kind="error" eyebrow={labels.tableTitle} title={labels.loadFailed} message={labels.loadMessage} primaryHref={localizePath("/dashboard/settings/roles", locale)} primaryLabel={labels.retry} />
+  const roles = res.data
   const rolesWithDescription = roles.filter((role) => (role.description ?? "").trim().length > 0).length
 
   return (
@@ -140,7 +145,7 @@ async function RolesPageImpl({ params }: RolePageProps) {
               <h2 className="text-lg font-semibold text-[var(--dash-text)]">{labels.tableTitle}</h2>
               <p className="mt-1 text-sm leading-6 text-[var(--dash-text-soft)]">{labels.tableDescription}</p>
             </div>
-            <Button
+            {hasRbacPermission(ctx.permissions, "roles.create") && <Button
               asChild
               className="h-10 rounded-lg bg-[var(--dash-brand-strong)] text-white hover:brightness-110"
               size="sm"
@@ -149,15 +154,13 @@ async function RolesPageImpl({ params }: RolePageProps) {
                 <Plus className="mr-1 h-4 w-4" />
                 {labels.addRole}
               </Link>
-            </Button>
+            </Button>}
           </div>
           <div className="mt-5 rounded-lg border border-white/10 bg-white/[0.03] p-4">
-            <DataTable
-              columns={columns}
+            <RoleTable
               data={roles}
               locale={locale}
-              searchPlaceholder="Search roles or permissions"
-              variant="landing"
+              canUpdate={hasRbacPermission(ctx.permissions, "roles.update")}
             />
           </div>
         </section>

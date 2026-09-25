@@ -11,14 +11,14 @@ import {
 import { assertActiveOrganization } from "@/services/_shared/assert-active-organization"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import type { PhotoStorageSettings, StorageType } from "@/types/storage"
-import { promises as fs } from "fs"
+import { PICTURE_MAX_BYTES, PICTURE_MIME_TYPES } from "@/lib/media/policy"
 import { revalidatePath } from "next/cache"
-import path from "path"
+
 
 type StorageSettings = PhotoStorageSettings & { alreadyExists?: boolean }
 
-const defaultAllowedFileTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"]
-const defaultMaxFileSize = 1024 * 1024
+const defaultAllowedFileTypes = [...PICTURE_MIME_TYPES]
+const defaultMaxFileSize = PICTURE_MAX_BYTES
 
 function buildLocalStoragePath(organizationId: string) {
   return `/uploads/${organizationId}`
@@ -77,7 +77,7 @@ function defaultStorageConfiguration(
   return {
     id: `storage_${organizationId}`,
     organizationId,
-    storageType: overrides.storageType ?? "local",
+    storageType: "online",
     localStoragePath: overrides.localStoragePath ?? buildLocalStoragePath(organizationId),
     maxFileSize: overrides.maxFileSize ?? defaultMaxFileSize,
     allowedFileTypes: overrides.allowedFileTypes ?? defaultAllowedFileTypes,
@@ -86,11 +86,6 @@ function defaultStorageConfiguration(
   }
 }
 
-async function ensureLocalStorageDirectories(organizationId: string) {
-  const orgDirectory = path.join(process.cwd(), "public", "uploads", organizationId)
-  await fs.mkdir(orgDirectory, { recursive: true })
-  return orgDirectory
-}
 
 export async function getStorageConfiguration(organizationId: string) {
   try {
@@ -151,25 +146,13 @@ export async function updateStorageConfiguration(
       "actions/storage/storage-config-actions.ts#updateStorageConfiguration",
     )
 
-    if (storageType !== "local" && storageType !== "online") {
-      return {
-        success: false,
-        error: 'Storage type must be either "local" or "online"',
-        data: null,
-      }
+    // Storage policy is deployment-owned. Never acknowledge an unpersisted override.
+    if (storageType !== "online" || localStoragePath ||
+        (maxFileSize !== undefined && maxFileSize !== defaultMaxFileSize) ||
+        (allowedFileTypes !== undefined && JSON.stringify([...allowedFileTypes].sort()) !== JSON.stringify([...defaultAllowedFileTypes].sort()))) {
+      return { success: false, error: "Pictures use managed online storage with a 4 MB limit. Per-organization overrides are unavailable.", data: null }
     }
-
-    const config = defaultStorageConfiguration(ctx.orgId, {
-      storageType,
-      localStoragePath: localStoragePath || buildLocalStoragePath(ctx.orgId),
-      maxFileSize: maxFileSize || defaultMaxFileSize,
-      allowedFileTypes: allowedFileTypes || defaultAllowedFileTypes,
-    })
-
-    if (config.storageType === "local") {
-      await ensureLocalStorageDirectories(ctx.orgId)
-    }
-
+    const config = defaultStorageConfiguration(ctx.orgId)
     revalidatePath("/dashboard/settings")
     revalidatePath("/dashboard/settings/company")
 
@@ -210,7 +193,7 @@ export async function initializeStorageForOrganization(organizationId: string) {
     )
 
     await assertActiveOrganization(ctx.orgId)
-    await ensureLocalStorageDirectories(ctx.orgId)
+
 
     return {
       success: true,

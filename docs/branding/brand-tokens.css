@@ -1,0 +1,57 @@
+/* Proposal only. No production styles modified. */
+@font-face{font-family:Manrope;src:url("fonts/Manrope-Variable.ttf") format("truetype");font-weight:200 800;font-display:swap}
+@font-face{font-family:Inter;src:url("fonts/Inter-Variable.ttf") format("truetype");font-weight:100 900;font-display:swap}
+.stoquify-brand {
+ --sq-font-display:Manrope,Arial,sans-serif;
+ --sq-font-body:Inter,"Segoe UI",Arial,sans-serif;
+ --sq-radius-control:8px;
+ --sq-radius-card:16px;
+ --sq-space-unit:4px;
+ --sq-brand:#087F72;
+ --sq-accent:#D6F36A;
+ --sq-secondary:#A5E6D5;
+}
+.stoquify-brand[data-theme="light"] {
+ --sq-background: #F5F7F2;
+ --sq-surface: #FFFFFF;
+ --sq-surface-raised: #FFFFFF;
+ --sq-text: #142B2B;
+ --sq-text-muted: #526762;
+ --sq-border: #C9D4CE;
+ --sq-control-border: #70867E;
+ --sq-action: #087F72;
+ --sq-action-hover: #06675D;
+ --sq-on-action: #FFFFFF;
+ --sq-focus: #087F72;
+ --sq-success: #1E6F42;
+ --sq-success-bg: #E5F4E9;
+ --sq-warning: #805000;
+ --sq-warning-bg: #FFF1D6;
+ --sq-error: #B42336;
+ --sq-error-bg: #FDE9ED;
+ --sq-info: #245AA8;
+ --sq-info-bg: #E8F0FC;
+}
+.stoquify-brand[data-theme="dark"] {
+ --sq-background: #102322;
+ --sq-surface: #193431;
+ --sq-surface-raised: #23413C;
+ --sq-text: #F5F7F2;
+ --sq-text-muted: #B7CDC3;
+ --sq-border: #36524C;
+ --sq-control-border: #7A998C;
+ --sq-action: #A5E6D5;
+ --sq-action-hover: #BCEEE1;
+ --sq-on-action: #102322;
+ --sq-focus: #D6F36A;
+ --sq-success: #8DDDAB;
+ --sq-success-bg: #193D2C;
+ --sq-warning: #FFD089;
+ --sq-warning-bg: #44351C;
+ --sq-error: #FFADB8;
+ --sq-error-bg: #48282F;
+ --sq-info: #ADCDFF;
+ --sq-info-bg: #233853;
+}
+.stoquify-brand .sq-numeric{font-variant-numeric:tabular-nums lining-nums}
+.stoquify-brand :focus-visible{outline:3px solid var(--sq-focus);outline-offset:3px}

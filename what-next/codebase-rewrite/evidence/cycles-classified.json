@@ -1,0 +1,223 @@
+{
+  "recordedAt": "2026-09-24T03:55:55.255Z",
+  "method": "Classify only the eight original source-import SCCs using TypeScript transpileModule with repository options and ESNext imports. Removed edges are erased during transpilation. Surviving edges include deferred literal imports; presence does not establish eager initialization failure. No bundler execution or nonliteral dynamic-import analysis.",
+  "sourceGroups": 8,
+  "groupsWithEmittedCycles": 1,
+  "groups": [
+    {
+      "files": [
+        "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+        "services/reconciliation/payment-suspense-read.service.ts"
+      ],
+      "hasEmittedCycle": false,
+      "removedEdges": [
+        {
+          "from": "services/reconciliation/payment-suspense-read.service.ts",
+          "to": "services/reconciliation/payment-reconciliation-dashboard.service.ts"
+        }
+      ],
+      "survivingEdges": [
+        {
+          "from": "services/reconciliation/payment-reconciliation-dashboard.service.ts",
+          "to": "services/reconciliation/payment-suspense-read.service.ts"
+        }
+      ]
+    },
+    {
+      "files": [
+        "services/accounting/close-assurance-pack.service.ts",
+        "services/accounting/journal-close-invalidation.service.ts",
+        "services/accounting/posting.service.ts",
+        "services/inventory/inventory-adjustment.service.ts",
+        "services/inventory/inventory-close-invalidation.service.ts",
+        "services/inventory/inventory-count.service.ts",
+        "services/inventory/inventory-transfer.service.ts",
+        "services/inventory/inventory-valuation.service.ts"
+      ],
+      "hasEmittedCycle": true,
+      "removedEdges": [],
+      "survivingEdges": [
+        {
+          "from": "services/accounting/close-assurance-pack.service.ts",
+          "to": "services/inventory/inventory-valuation.service.ts"
+        },
+        {
+          "from": "services/accounting/journal-close-invalidation.service.ts",
+          "to": "services/accounting/close-assurance-pack.service.ts"
+        },
+        {
+          "from": "services/accounting/posting.service.ts",
+          "to": "services/accounting/journal-close-invalidation.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-adjustment.service.ts",
+          "to": "services/accounting/posting.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-adjustment.service.ts",
+          "to": "services/inventory/inventory-close-invalidation.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-close-invalidation.service.ts",
+          "to": "services/accounting/close-assurance-pack.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-count.service.ts",
+          "to": "services/inventory/inventory-adjustment.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-transfer.service.ts",
+          "to": "services/inventory/inventory-close-invalidation.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-valuation.service.ts",
+          "to": "services/inventory/inventory-transfer.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-valuation.service.ts",
+          "to": "services/inventory/inventory-adjustment.service.ts"
+        },
+        {
+          "from": "services/inventory/inventory-valuation.service.ts",
+          "to": "services/inventory/inventory-count.service.ts"
+        }
+      ]
+    },
+    {
+      "files": [
+        "services/communication/whatsapp-receipt-outbox.service.ts",
+        "services/communication/whatsapp-receipt.provider.ts",
+        "services/pos/receipt.service.ts"
+      ],
+      "hasEmittedCycle": false,
+      "removedEdges": [
+        {
+          "from": "services/communication/whatsapp-receipt-outbox.service.ts",
+          "to": "services/pos/receipt.service.ts"
+        },
+        {
+          "from": "services/communication/whatsapp-receipt.provider.ts",
+          "to": "services/pos/receipt.service.ts"
+        }
+      ],
+      "survivingEdges": [
+        {
+          "from": "services/communication/whatsapp-receipt-outbox.service.ts",
+          "to": "services/communication/whatsapp-receipt.provider.ts"
+        },
+        {
+          "from": "services/pos/receipt.service.ts",
+          "to": "services/communication/whatsapp-receipt-outbox.service.ts"
+        },
+        {
+          "from": "services/pos/receipt.service.ts",
+          "to": "services/communication/whatsapp-receipt.provider.ts"
+        }
+      ]
+    },
+    {
+      "files": [
+        "services/analytics/cash-report-evidence.ts",
+        "services/analytics/completed-sales-evidence.ts",
+        "services/analytics/financial-reports.service.ts"
+      ],
+      "hasEmittedCycle": false,
+      "removedEdges": [
+        {
+          "from": "services/analytics/completed-sales-evidence.ts",
+          "to": "services/analytics/financial-reports.service.ts"
+        }
+      ],
+      "survivingEdges": [
+        {
+          "from": "services/analytics/cash-report-evidence.ts",
+          "to": "services/analytics/completed-sales-evidence.ts"
+        },
+        {
+          "from": "services/analytics/financial-reports.service.ts",
+          "to": "services/analytics/completed-sales-evidence.ts"
+        },
+        {
+          "from": "services/analytics/financial-reports.service.ts",
+          "to": "services/analytics/cash-report-evidence.ts"
+        }
+      ]
+    },
+    {
+      "files": [
+        "components/notifications/NotificationSystem.tsx",
+        "lib/notifications/presentation.ts"
+      ],
+      "hasEmittedCycle": false,
+      "removedEdges": [
+        {
+          "from": "lib/notifications/presentation.ts",
+          "to": "components/notifications/NotificationSystem.tsx"
+        }
+      ],
+      "survivingEdges": [
+        {
+          "from": "components/notifications/NotificationSystem.tsx",
+          "to": "lib/notifications/presentation.ts"
+        }
+      ]
+    },
+    {
+      "files": [
+        "services/organization/organization-profile-update.service.ts",
+        "services/organization/organization-settings.service.ts"
+      ],
+      "hasEmittedCycle": false,
+      "removedEdges": [
+        {
+          "from": "services/organization/organization-profile-update.service.ts",
+          "to": "services/organization/organization-settings.service.ts"
+        }
+      ],
+      "survivingEdges": [
+        {
+          "from": "services/organization/organization-settings.service.ts",
+          "to": "services/organization/organization-profile-update.service.ts"
+        }
+      ]
+    },
+    {
+      "files": [
+        "services/roles/role-write.service.ts",
+        "services/roles/role.service.ts"
+      ],
+      "hasEmittedCycle": false,
+      "removedEdges": [
+        {
+          "from": "services/roles/role-write.service.ts",
+          "to": "services/roles/role.service.ts"
+        }
+      ],
+      "survivingEdges": [
+        {
+          "from": "services/roles/role.service.ts",
+          "to": "services/roles/role-write.service.ts"
+        }
+      ]
+    },
+    {
+      "files": [
+        "components/ui/groups/inventory/ItemForm2.tsx",
+        "components/ui/groups/inventory/ItemManagement.tsx"
+      ],
+      "hasEmittedCycle": false,
+      "removedEdges": [
+        {
+          "from": "components/ui/groups/inventory/ItemForm2.tsx",
+          "to": "components/ui/groups/inventory/ItemManagement.tsx"
+        }
+      ],
+      "survivingEdges": [
+        {
+          "from": "components/ui/groups/inventory/ItemManagement.tsx",
+          "to": "components/ui/groups/inventory/ItemForm2.tsx"
+        }
+      ]
+    }
+  ]
+}

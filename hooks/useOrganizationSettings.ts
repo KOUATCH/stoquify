@@ -9,8 +9,6 @@ import {
   updateOrganizationSettings,
   updateOrganizationCurrency,
   updateOrganizationTimezone,
-  updateInventoryStartDate,
-  updateFiscalYearStart
 } from '@/actions/organization/organization-settings-actions'
 import type { OrganizationManagementRow } from '@/actions/organization/organization-settings-actions'
 import type { Locale } from '@/types/bilingual'
@@ -52,11 +50,11 @@ const notificationCopy = {
     createError: "Organization Creation Failed",
   },
   fr: {
-    success: "Organisation mise a jour",
-    successBody: "Les parametres de l'organisation ont ete mis a jour.",
-    error: "Echec de mise a jour",
-    currency: "La devise a ete mise a jour.",
-    timezone: "Le fuseau horaire a ete mis a jour.",
+    success: "Organisation mise à jour",
+    successBody: "Les paramètres de l’organisation ont été mis à jour.",
+    error: "Échec de mise à jour",
+    currency: "La devise a été mise à jour.",
+    timezone: "Le fuseau horaire a été mis à jour.",
     createSuccess: "Organisation creee",
     createSuccessBody: "L'organisation a ete ajoutee a la table de gestion.",
     createError: "Echec de creation",
@@ -77,6 +75,40 @@ function invalidateOrganizationQueries(queryClient: ReturnType<typeof useQueryCl
   queryClient.invalidateQueries({
     queryKey: organizationQueryKeys.managementRows(organizationId)
   })
+}
+
+export class OrganizationSettingsWorkflowError extends Error {
+  constructor(public readonly code: string, message: string) { super(message); this.name = 'OrganizationSettingsWorkflowError' }
+}
+
+export function organizationSettingsError(code: string, locale: Locale) {
+  const messages: Record<string, [string, string]> = {
+    FRESH_AUTH_REQUIRED: ['Confirm your password, then review and save again.', 'Confirmez votre mot de passe, puis vérifiez et enregistrez à nouveau.'],
+    CONFLICT: ['The saved profile changed. Load the latest version and compare it with your draft before saving.', 'Le profil enregistré a changé. Chargez la dernière version et comparez-la à votre brouillon avant de l’enregistrer.'],
+    VALIDATION_ERROR: ['Check the name, currency, timezone and calendar values.', 'Vérifiez le nom, la devise, le fuseau horaire et les valeurs du calendrier.'],
+    FORBIDDEN: ['You no longer have permission to update this organization. Your draft is kept on this page.', 'Vous n’avez plus le droit de modifier cette organisation. Votre brouillon reste sur cette page.'],
+    NOT_FOUND: ['This organization is no longer available. Reload your workspace.', 'Cette organisation n’est plus disponible. Rechargez votre espace de travail.'],
+    BUSINESS_RULE_VIOLATION: ['This operating change needs a separate migration review. Your saved settings have not changed.', 'Ce changement nécessite une revue de migration distincte. Les paramètres enregistrés sont inchangés.'],
+    UNCERTAIN: ['The save could not be confirmed. Load the saved profile and compare it with your draft before trying again.', 'L’enregistrement n’a pas pu être confirmé. Chargez le profil enregistré et comparez-le à votre brouillon avant de réessayer.'],
+  }
+  return (messages[code] ?? messages.UNCERTAIN)[locale === 'fr' ? 1 : 0]
+}
+
+async function saveProfile(action: () => ReturnType<typeof updateOrganizationSettings>, organizationId: string, locale: Locale) {
+  try {
+    const result = await action()
+    if (!result.success) {
+      const code = 'code' in result && result.code ? result.code : 'UNCERTAIN'
+      throw new OrganizationSettingsWorkflowError(code, organizationSettingsError(code, locale))
+    }
+    if (!result.data || result.data.id !== organizationId || !Number.isFinite(new Date(result.data.updatedAt).getTime())) {
+      throw new OrganizationSettingsWorkflowError('UNCERTAIN', organizationSettingsError('UNCERTAIN', locale))
+    }
+    return result.data
+  } catch (error) {
+    if (error instanceof OrganizationSettingsWorkflowError) throw error
+    throw new OrganizationSettingsWorkflowError('UNCERTAIN', organizationSettingsError('UNCERTAIN', locale))
+  }
 }
 
 // Hook for fetching organization settings
@@ -149,33 +181,25 @@ export function useCreateOrganizationSettings(scopeOrganizationId: string, local
 // Hook for updating organization settings
 export function useUpdateOrganizationSettings(locale: Locale = 'en') {
   const queryClient = useQueryClient()
-  const notifications = useNotifications()
-  const copy = notificationCopy[locale]
 
   return useMutation({
+    retry: false,
     meta: { operation: 'update', entity: 'Organization Settings' , suppressSuccessNotification: true, suppressErrorNotification: true },
     mutationFn: async ({
       organizationId,
-      data
+      data,
+      expectedUpdatedAt,
     }: {
       organizationId: string
       data: OrganizationSettingsMutationData
+      expectedUpdatedAt: string
     }) => {
-      const result = await updateOrganizationSettings(organizationId, data)
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update organization settings')
-      }
-
-      return result.data
+      return saveProfile(() => updateOrganizationSettings(organizationId, data, expectedUpdatedAt), organizationId, locale)
     },
-    onSuccess: (data, variables) => {
+    onSuccess: async (data, variables) => {
+      await queryClient.cancelQueries({ queryKey: organizationQueryKeys.settings(variables.organizationId) })
+      queryClient.setQueryData(organizationQueryKeys.settings(variables.organizationId), (previous: { canUpdate?: boolean } | undefined) => ({ ...data, canUpdate: previous?.canUpdate ?? false }))
       invalidateOrganizationQueries(queryClient, variables.organizationId)
-
-      notifications.success(copy.success, copy.successBody)
-    },
-    onError: (error: Error) => {
-      notifications.error(copy.error, error.message || copy.error)
     },
   })
 }
@@ -187,15 +211,10 @@ export function useUpdateCurrency(locale: Locale = 'en') {
   const copy = notificationCopy[locale]
 
   return useMutation({
+    retry: false,
     meta: { operation: 'update', entity: 'Currency' , suppressSuccessNotification: true, suppressErrorNotification: true },
-    mutationFn: async ({ organizationId, currency }: { organizationId: string, currency: string }) => {
-      const result = await updateOrganizationCurrency(organizationId, currency)
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update currency')
-      }
-
-      return result.data
+    mutationFn: async ({ organizationId, currency, expectedUpdatedAt }: { organizationId: string, currency: string, expectedUpdatedAt: string }) => {
+      return saveProfile(() => updateOrganizationCurrency(organizationId, currency, expectedUpdatedAt), organizationId, locale)
     },
     onSuccess: (data, variables) => {
       invalidateOrganizationQueries(queryClient, variables.organizationId)
@@ -215,15 +234,10 @@ export function useUpdateTimezone(locale: Locale = 'en') {
   const copy = notificationCopy[locale]
 
   return useMutation({
+    retry: false,
     meta: { operation: 'update', entity: 'Timezone' , suppressSuccessNotification: true, suppressErrorNotification: true },
-    mutationFn: async ({ organizationId, timezone }: { organizationId: string, timezone: string }) => {
-      const result = await updateOrganizationTimezone(organizationId, timezone)
-
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to update timezone')
-      }
-
-      return result.data
+    mutationFn: async ({ organizationId, timezone, expectedUpdatedAt }: { organizationId: string, timezone: string, expectedUpdatedAt: string }) => {
+      return saveProfile(() => updateOrganizationTimezone(organizationId, timezone, expectedUpdatedAt), organizationId, locale)
     },
     onSuccess: (data, variables) => {
       invalidateOrganizationQueries(queryClient, variables.organizationId)

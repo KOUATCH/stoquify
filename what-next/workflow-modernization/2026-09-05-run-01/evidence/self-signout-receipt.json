@@ -1,0 +1,302 @@
+{
+  "recordedAt": "2026-09-06T18:38:35.873Z",
+  "baseline": "evidence/source-baseline-v38.json",
+  "workflow": "OA-SELF-SIGNOUT",
+  "sources": {
+    "services/security/self-sign-out.service.ts": "0740a35ae29b6488ba4c3eabbfc03dc45f324d79d73ea96f0d8d3fc2516c26c4",
+    "lib/security/self-sign-out-plugin.ts": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3",
+    "lib/security/self-sign-out-copy.ts": "faa60df473b042556226493747334a2d909dcb0fef52ae07aa54a27605cf1be8",
+    "lib/auth.ts": "cbb5447afeaa3bb04e420b6e9033bf14059c09cac403346bf67cd9e6a5068522",
+    "lib/auth-client.ts": "c59265a308acfe015acc769871fcace0532a6b1d8b9028e517740d41f10f26da",
+    "components/dashboard/Navbar.tsx": "36337cd0a5a61ea7c3dca348a1d0444e6a8eb33bf4f122be6fc394ea1f19885c",
+    "components/dashboard/Sidebar.tsx": "62024b77626f20ed6bfe0176c1a45ecd484b8f415896890b48dc724660b94c2e",
+    "components/dashboard/SessionRecoverySignOutButton.tsx": "f9ffe729473024b54161c30c64d59952c82afcc34dac2bd2c3af9847223bd7eb",
+    "components/UserDropdownMenu.tsx": "b9b16967985af691cf06054fa9d6726b43bab04c1bdb176e609fe875083af890",
+    "components/NotAuthorized.tsx": "880c053c5285769fa1cadce2849e1c6924b0efcf4131b72925f4855371153904",
+    "components/ui/sheet.tsx": "70dd8f7b659383ae1015830f05955286d971a4f38afe41cdabd9e8da0f48d5e0",
+    "app/api/auth/[...all]/route.ts": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "node_modules/better-auth/dist/api/index.mjs": "ed9ff22e34787cf2402c2f986517f4e861d4263cea7da49e6c5edc858e997dbf",
+    "node_modules/better-auth/dist/cookies/index.mjs": "c9fae72096771f4136183278073d1e97c327c599d553d6171af1b6f72a50a18f",
+    "services/security/__tests__/self-sign-out.service.test.ts": "8a37ea5762969d208c9544f367e95b422c75be93275e54050827a2865ad45db3",
+    "lib/__tests__/self-sign-out-client.test.ts": "d51ba1aaeda531241d2758d44684adb880a495033a9f10aa204d217d8da9a5b3",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "lib/security/audit-log.ts": "660e7f919983ea941f607f521272b2953b7c219a76324da2cc805e61017852f6",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+  },
+  "evidence": {
+    "postgres": "lanes/environment/self-signout-postgres-312d1848-6e2.json",
+    "endpoint": "lanes/environment/self-signout-endpoint-c2888098-f98.json",
+    "browser": "lanes/environment/self-signout-browser-f0ecea89-22b.json",
+    "mobile": "lanes/environment/self-signout-browser-8ccace65-f5b.json"
+  },
+  "verification": {
+    "unit": {
+      "file": "evidence/self-signout-tests-02.json",
+      "passed": 27,
+      "suites": 4,
+      "chunk": "7ece0e"
+    },
+    "postgres": {
+      "passed": 8,
+      "chunk": "f85e4d"
+    },
+    "endpoint": {
+      "passed": 5,
+      "chunk": "0309ed"
+    },
+    "browser": {
+      "passed": 10,
+      "chunk": "0540b6"
+    },
+    "mobile": {
+      "passed": 2,
+      "textAndWidthCases": 8,
+      "chunk": "7f1291"
+    },
+    "typecheck": {
+      "exitCode": 0,
+      "chunk": "6f78d3",
+      "laterChanges": "Presentation-only Navbar width/wrapping/logo/button classes and Sheet close z-index; no type/API changes after this pass."
+    },
+    "lint": {
+      "allChangedFiles": {
+        "exitCode": 0,
+        "chunk": "576105"
+      },
+      "finalPresentationFiles": {
+        "exitCode": 0,
+        "chunk": "12d949"
+      }
+    }
+  },
+  "screenshots": [
+    {
+      "source": "lanes/environment/en-self-signout-sidebar-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-sidebar-failed-f0ecea89-22b.png",
+      "sha256": "feb5c028f27cdf894d8441d391284c5f2d5bdd1af5c1c89f60aaeae74fd71a2a"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-sidebar-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-sidebar-confirmed-f0ecea89-22b.png",
+      "sha256": "8d33df4ee325013592e74f0662fadc8ef7bb359e321b0d472f760b5fc9333728"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-failed-f0ecea89-22b.png",
+      "sha256": "2e590e809b211932dee7eaae2d870bf2f272be7e86ca4f3af17952f75e34fba9"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-reflow-200-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-reflow-200-f0ecea89-22b.png",
+      "sha256": "95a9a97907fc38109b6119b1de2df3c2c8d3ea50e7815d249c8762d241ef3e7b"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-confirmed-f0ecea89-22b.png",
+      "sha256": "fde8eb72e1f32d429995c4e8879302c034d09fd8665ea47f55159d5b5368fffc"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-menu-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-menu-failed-f0ecea89-22b.png",
+      "sha256": "66c617b9bedf6d83cfafcbc45eb243b8815778b9ca965d3f449ce545a35a4fce"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-menu-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-menu-confirmed-f0ecea89-22b.png",
+      "sha256": "23f9ef636a7bfd2aca351738fef82f672c9dace5e5149050e723c970d5089a0b"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-denied-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-denied-failed-f0ecea89-22b.png",
+      "sha256": "a241e14cfd0e2aa932afe7089eda8a9ac4182a985cbe50bb3c711a162e2801b4"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-denied-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-denied-confirmed-f0ecea89-22b.png",
+      "sha256": "23f9ef636a7bfd2aca351738fef82f672c9dace5e5149050e723c970d5089a0b"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-sidebar-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-sidebar-failed-f0ecea89-22b.png",
+      "sha256": "5885996a2e14c4b07184f9ffee3bb960b01ec3b9ba75eee8fb372ce2fdf1b94f"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-sidebar-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-sidebar-confirmed-f0ecea89-22b.png",
+      "sha256": "81885f709896bedcfb0a700f3fa0f95b9bf53fbb546c8e4ce91aaa53bab4b863"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-failed-f0ecea89-22b.png",
+      "sha256": "3ae569455bcee2792e1d4b1462fed6a22fd72514c34730b805c4af05ff700a7c"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-reflow-200-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-reflow-200-f0ecea89-22b.png",
+      "sha256": "6c352ffd64403588942bade0f7a2ca224e37482f3b528587b1818a0095452b11"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-confirmed-f0ecea89-22b.png",
+      "sha256": "42a5a809798925229adbac9cae5f228fb2797ecf18d06cfd1f3774f3e7ad4214"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-menu-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-menu-failed-f0ecea89-22b.png",
+      "sha256": "744a6ab5a5242ef7c47a1539e02ed34c7ad931207b546fc1938ce2c39f43f6b8"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-menu-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-menu-confirmed-f0ecea89-22b.png",
+      "sha256": "81885f709896bedcfb0a700f3fa0f95b9bf53fbb546c8e4ce91aaa53bab4b863"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-denied-failed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-denied-failed-f0ecea89-22b.png",
+      "sha256": "a5d44b17b8da60a7f0ce7c69ab03ebfea9f5f98b49518162f17fd9ebc995455b"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-denied-confirmed-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-denied-confirmed-f0ecea89-22b.png",
+      "sha256": "81885f709896bedcfb0a700f3fa0f95b9bf53fbb546c8e4ce91aaa53bab4b863"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-lost-f0ecea89-22b.png",
+      "file": "evidence/self-signout/en-self-signout-lost-f0ecea89-22b.png",
+      "sha256": "5aa9ba30a5d57ec99d66b8e78c17026a63bdf7bb0a2ca4f5a6eab47fd12c99e5"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-lost-f0ecea89-22b.png",
+      "file": "evidence/self-signout/fr-self-signout-lost-f0ecea89-22b.png",
+      "sha256": "093e038fd05e4edf105d33b0463f6c23de6f7465522105218179cfc424a0c78b"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-failed-8ccace65-f5b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-failed-8ccace65-f5b.png",
+      "sha256": "ecc7b285138811653db9c87b4af81299205e81c8544507b5af5fb7d5f816fe46"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-reflow-320-100-8ccace65-f5b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-reflow-320-100-8ccace65-f5b.png",
+      "sha256": "7a4093a254d9ee61cba3cb0f53529cb518c44a7bba00ad947a92277d6bc6bf7a"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-reflow-320-200-8ccace65-f5b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-reflow-320-200-8ccace65-f5b.png",
+      "sha256": "9b40afc90d6e8f95b2da23b8cfcf88800dbe531f7491506f328d154deacee0d8"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-reflow-390-100-8ccace65-f5b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-reflow-390-100-8ccace65-f5b.png",
+      "sha256": "6d4fbb2d7e128a457e9a4ecc764cafb663415ea40cd4e8d4f7d89752a34f8c06"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-reflow-390-200-8ccace65-f5b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-reflow-390-200-8ccace65-f5b.png",
+      "sha256": "1a1c293e5c5c090251d92f7856801c42db920da0e84f38b299162927012cf6b5"
+    },
+    {
+      "source": "lanes/environment/en-self-signout-mobile-confirmed-8ccace65-f5b.png",
+      "file": "evidence/self-signout/en-self-signout-mobile-confirmed-8ccace65-f5b.png",
+      "sha256": "adeaedaeb39615bc2650d549618b8dc3709a58ff5a9107817b43a10d94afe2e2"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-failed-8ccace65-f5b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-failed-8ccace65-f5b.png",
+      "sha256": "fc5a2f373178a7019a796f60aa7ddb8b954977458c433a73c9f203df62e8435a"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-reflow-320-100-8ccace65-f5b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-reflow-320-100-8ccace65-f5b.png",
+      "sha256": "624378ccb953085b2dc245ec1af7927547bf1669d989cb3ba782a10bf031215b"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-reflow-320-200-8ccace65-f5b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-reflow-320-200-8ccace65-f5b.png",
+      "sha256": "66155c5e5f5714eab4f0e06768b1e09ee00cb81144a26dd2de5f8ede66f831e5"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-reflow-390-100-8ccace65-f5b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-reflow-390-100-8ccace65-f5b.png",
+      "sha256": "3c405dc7758c19b66a972983fb396e38841eec2b263a0bafe893edc6e229e0f4"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-reflow-390-200-8ccace65-f5b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-reflow-390-200-8ccace65-f5b.png",
+      "sha256": "504d5650bcb5eb673f1a69263d7eb71de2b6009acabb2bc24f03009140cda408"
+    },
+    {
+      "source": "lanes/environment/fr-self-signout-mobile-confirmed-8ccace65-f5b.png",
+      "file": "evidence/self-signout/fr-self-signout-mobile-confirmed-8ccace65-f5b.png",
+      "sha256": "13f11377018a60b21f08d516b209cbf0a8e2f20dc502c3c279f40f268a8340db"
+    }
+  ],
+  "sourceDeltaAfterFullBrowser": [
+    {
+      "file": "components/dashboard/Navbar.tsx",
+      "before": "30d1cebdcfa4fdf6910c5af60a0a52173541a635696ce409778de8eb3d43ddff",
+      "after": "36337cd0a5a61ea7c3dca348a1d0444e6a8eb33bf4f122be6fc394ea1f19885c",
+      "reason": "Drawer width/header wrapping/dark logo/button minimum height; behavior unchanged and final mobile journey rerun."
+    },
+    {
+      "file": "components/ui/sheet.tsx",
+      "before": "5d2a929209da08e82f5214e8f0aff57406d2c603b5c72e6784a4be299f1b61e6",
+      "after": "70dd8f7b659383ae1015830f05955286d971a4f38afe41cdabd9e8da0f48d5e0",
+      "reason": "Close-control z-index fixes real pointer interception; final mobile hit/click/keyboard checks passed."
+    }
+  ],
+  "before": {
+    "provider": "lanes/environment/self-signout-provider-before-8a82fc94-4a6.json",
+    "browser": "lanes/environment/self-signout-browser-before-3b005967-781.json"
+  },
+  "failedAttempts": "evidence/self-signout-initial-attempts.md",
+  "timings": [
+    {
+      "case": "en sidebar failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 43680
+    },
+    {
+      "case": "en mobile failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 4037
+    },
+    {
+      "case": "en menu failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 2402
+    },
+    {
+      "case": "en denied failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 955
+    },
+    {
+      "case": "fr sidebar failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 1225
+    },
+    {
+      "case": "fr mobile failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 923
+    },
+    {
+      "case": "fr menu failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 1422
+    },
+    {
+      "case": "fr denied failure stays visible, retry confirms persisted sign-out",
+      "signOutToLoginMs": 1289
+    }
+  ],
+  "limitations": [
+    "Native zoom, assistive technology and complete contrast remain unverified.",
+    "Global cached authentication on unrelated transports remains unchanged; no universal immediate invalidation claim.",
+    "Audit retention/organization-delete policy and end-user sign-out export remain separate unfinished reviews.",
+    "Development 43,680ms first transition and 923–4,037ms remaining initial cases are observations, not performance acceptance.",
+    "Full platform inventory and workflow remediation remain active."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

@@ -1,0 +1,87 @@
+{
+  "run": "6d27d7df-2dc",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T16:29:57.783Z",
+  "sourcesBefore": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "707e80cb91e0f2953091c0a81989e98581d6b91a2ef499cec2312ead6c04f0a3",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "57619f0b4f8b3364b316009c9ba755451ed4f0087e56aa15d0e447addad0e276",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "defectsReproduced": [
+        "Canonical profile-read authority cannot open security settings because PASSWORD_READ is not mapped"
+      ],
+      "screenshots": [
+        "en-account-management-before-canonical-permission-denied-6d27d7df-2dc.png",
+        "en-account-management-before-failure-6d27d7df-2dc.png"
+      ],
+      "hasCanonicalProfileRead": true,
+      "hasLegacyPasswordRead": false,
+      "securityReadyMs": 10332,
+      "forgedRevocationBanner": "not exercised: blocked by earlier route permission defect",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('menuitem', { name: /My Profile/ })\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "defectsReproduced": [
+        "Canonical profile-read authority cannot open security settings because PASSWORD_READ is not mapped"
+      ],
+      "screenshots": [
+        "fr-account-management-before-canonical-permission-denied-6d27d7df-2dc.png",
+        "fr-account-management-before-failure-6d27d7df-2dc.png"
+      ],
+      "hasCanonicalProfileRead": true,
+      "hasLegacyPasswordRead": false,
+      "securityReadyMs": 5879,
+      "forgedRevocationBanner": "not exercised: blocked by earlier route permission defect",
+      "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('menuitem', { name: /My Profile/ })\u001b[22m\n"
+    }
+  ],
+  "workflowPassed": false,
+  "limitations": [
+    "Read-only reproduction with synthetic accounts; no session revocation or profile mutation is submitted."
+  ],
+  "graphHints": [
+    {
+      "file": "graphify-out/graph_components.json",
+      "nodes": [
+        {
+          "id": "userdropdownmenu_tsx",
+          "community": 199,
+          "label": "UserDropdownMenu.tsx"
+        }
+      ]
+    },
+    {
+      "file": "graphify-out/graph_app.json",
+      "nodes": [
+        {
+          "id": "locale_dashboard_dashboard_settings_security_page_tsx",
+          "community": 10,
+          "label": "page.tsx"
+        }
+      ]
+    }
+  ],
+  "completedAt": "2026-09-06T16:31:28.603Z",
+  "sourcesAfter": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "707e80cb91e0f2953091c0a81989e98581d6b91a2ef499cec2312ead6c04f0a3",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "57619f0b4f8b3364b316009c9ba755451ed4f0087e56aa15d0e447addad0e276",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018"
+  },
+  "sourceStable": true,
+  "driverSha256": "b4c5abc9333d26c2f651d5f081f8c6ab8a5d622a79adb9b9a8474dc5ff1ac102",
+  "reproduced": 2
+}

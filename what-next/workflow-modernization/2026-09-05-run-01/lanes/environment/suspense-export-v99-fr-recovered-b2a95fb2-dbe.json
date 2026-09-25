@@ -1,0 +1,175 @@
+{
+  "schema": "stoquify.suspense-correction-evidence.v1",
+  "purpose": "Historical correction evidence; not a new approval, statutory certificate or current settlement confirmation",
+  "organizationId": "workflow_supplier_ack_en_suspense-export-browser-b2a95fb2-dbe-fr",
+  "selectedRecord": {
+    "id": "e24d8f0c-f2f7-4ed7-965f-cc6474c14b63",
+    "revision": "sha256:cae8c03b3d4ba4ef41c1fcce005754da8c09234aaf0d6d704087d8ec7f68b2d9",
+    "payloadHash": "7016e3efe3dac251ae4cbdcf79e26a57362f14fd65514fcc1e59dbb3ee079692",
+    "kind": "SUSPENSE_CORRECTION_APPROVED_V1",
+    "recordedAt": "2026-09-09T10:58:28.809Z",
+    "suspenseItemId": "cmttzjdvg006xmaq8bk31gwro",
+    "cycle": 1,
+    "proposedById": "cmttzjdu5006gmaq8b9tjb6fb",
+    "decidedById": "cmttzjcz80047maq81u2nzbj9",
+    "reason": "Independent source correction review",
+    "reversalDate": "2026-09-09",
+    "originalJournalId": "cmttzje2c0078maq84ethvtv2",
+    "originalJournalHash": "sha256:613178c516cfeb69d1ff95b23935deca0894763177db4a8d3457dc586572befd"
+  },
+  "proposal": {
+    "id": "d38f1b3b-69bf-49de-bfd5-e8c7e5684e6e",
+    "revision": "sha256:480a85adbbeb22e54e64b863980705dcf37652d475d7971a721ddaf0198afdfa",
+    "payloadHash": "e91bce6fa90f253ff37529ae20eb302fda9e44881600e150368b46288b55872e",
+    "kind": "SUSPENSE_CORRECTION_PROPOSED_V1",
+    "recordedAt": "2026-09-09T10:58:28.534Z",
+    "suspenseItemId": "cmttzjdvg006xmaq8bk31gwro",
+    "cycle": 1,
+    "proposedById": "cmttzjdu5006gmaq8b9tjb6fb",
+    "decidedById": null,
+    "reason": "Owned correction of reviewed source evidence",
+    "reversalDate": "2026-09-09",
+    "originalJournalId": "cmttzje2c0078maq84ethvtv2",
+    "originalJournalHash": "sha256:613178c516cfeb69d1ff95b23935deca0894763177db4a8d3457dc586572befd"
+  },
+  "originalApproval": {
+    "id": "cmttzje44007jmaq8sejr6eea",
+    "payloadHash": "da869d54e6807187ab72872209e9ccb90e1266ea9994133f2506dee83146509c",
+    "auditId": "cmttzje4f007lmaq8fz4xmsrm",
+    "approvedById": "cmttzjdu5006gmaq8b9tjb6fb",
+    "proposedById": "cmttzjcz80047maq81u2nzbj9",
+    "approvedAt": "2026-09-09T10:00:00.000Z",
+    "reviewedRevision": "sha256:fac20197bfa34fd960f84621921dcdbd72ac85b62ab4418ca7fd62cb72137a82",
+    "sourceHash": "sha256:d8059151337c7962188aef6c767654dc78c266ef27263efbf346d17642430695",
+    "proposalHash": "sha256:487e78bd48f34b7b03c8db351e29e3cad2a8c3066ce3dafb1e967cc9a2531a5f"
+  },
+  "originalJournal": {
+    "id": "cmttzje2c0078maq84ethvtv2",
+    "number": "SP-20260909-0001",
+    "entryDate": "2026-09-09T10:00:00.000Z",
+    "periodId": "cmttzjd32004wmaq8ar66pfak",
+    "sourceType": "PAYMENT_SUSPENSE",
+    "sourceId": "cmttzjdvg006xmaq8bk31gwro",
+    "purpose": "SUSPENSE_RECLASSIFICATION",
+    "batchId": "cmttzjdzn0076maq8hm479d32",
+    "cycle": 1,
+    "statusAtExport": "REVERSED",
+    "currency": "XAF",
+    "postedById": "cmttzjdu5006gmaq8b9tjb6fb",
+    "reversalOfEntryId": null,
+    "retainedFinancialHash": "sha256:613178c516cfeb69d1ff95b23935deca0894763177db4a8d3457dc586572befd",
+    "lines": [
+      {
+        "lineNumber": 1,
+        "accountId": "cmttzjdus006mmaq8l2ff6uwj",
+        "currency": "XAF",
+        "debit": "100.25",
+        "credit": "0",
+        "baseDebit": "100.25",
+        "baseCredit": "0",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      },
+      {
+        "lineNumber": 2,
+        "accountId": "cmttzjdux006omaq8lfj7202e",
+        "currency": "XAF",
+        "debit": "0",
+        "credit": "100.25",
+        "baseDebit": "0",
+        "baseCredit": "100.25",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      }
+    ],
+    "sourceLinks": [
+      {
+        "id": "cmttzje36007dmaq8y550n71e",
+        "sourceId": "cmttzjdvg006xmaq8bk31gwro",
+        "sourceType": "PAYMENT_SUSPENSE"
+      }
+    ]
+  },
+  "reversalJournal": {
+    "id": "cmttzjehk007zmaq8ep337dtk",
+    "number": "SC-e24d8f0c-f2f7-4ed7-965f-cc6474c14b63",
+    "entryDate": "2026-09-09T00:00:00.000Z",
+    "periodId": "cmttzjd32004wmaq8ar66pfak",
+    "sourceType": "PAYMENT_SUSPENSE",
+    "sourceId": "cmttzjdvg006xmaq8bk31gwro",
+    "purpose": "REVERSAL",
+    "batchId": "cmttzjeh8007xmaq8kedq0yot",
+    "cycle": 1,
+    "statusAtExport": "POSTED",
+    "currency": "XAF",
+    "postedById": "cmttzjcz80047maq81u2nzbj9",
+    "reversalOfEntryId": "cmttzje2c0078maq84ethvtv2",
+    "retainedFinancialHash": "sha256:6783bfbdc2bd0696d3cacfc8b8dfd7e3908a3675e72869be53a340c74a401077",
+    "lines": [
+      {
+        "lineNumber": 1,
+        "accountId": "cmttzjdus006mmaq8l2ff6uwj",
+        "currency": "XAF",
+        "debit": "0",
+        "credit": "100.25",
+        "baseDebit": "0",
+        "baseCredit": "100.25",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      },
+      {
+        "lineNumber": 2,
+        "accountId": "cmttzjdux006omaq8lfj7202e",
+        "currency": "XAF",
+        "debit": "100.25",
+        "credit": "0",
+        "baseDebit": "100.25",
+        "baseCredit": "0",
+        "exchangeRate": "1",
+        "locationId": null,
+        "customerId": null,
+        "supplierId": null,
+        "itemId": null,
+        "dimensionsHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+      }
+    ],
+    "sourceLinks": [
+      {
+        "id": "cmttzjeib0084maq8bmju5i80",
+        "sourceId": "cmttzjdvg006xmaq8bk31gwro",
+        "sourceType": "PAYMENT_SUSPENSE"
+      }
+    ]
+  },
+  "sourceObservedAtExport": {
+    "suspenseItemId": "cmttzjdvg006xmaq8bk31gwro",
+    "status": "REOPENED",
+    "updatedAt": "2026-09-09T10:58:28.830Z"
+  },
+  "export": {
+    "receiptId": "c610fc85-f0ee-4ea7-aa5f-f9f98b72a090",
+    "exportedAt": "2026-09-09T10:58:47.851Z",
+    "exportedById": "cmttzjcz80047maq81u2nzbj9",
+    "watermarkId": "stoquify-correction-c610fc85-f0ee-4ea7-aa5f-f9f98b72a090",
+    "redactions": [
+      "Raw provider payloads",
+      "Unrelated item metadata",
+      "Prior certificate payloads",
+      "Journal descriptions",
+      "Raw dimensions (hash retained)"
+    ],
+    "verification": "File SHA-256 detects changed bytes; application audit references are not an independent cryptographic signer certificate"
+  }
+}

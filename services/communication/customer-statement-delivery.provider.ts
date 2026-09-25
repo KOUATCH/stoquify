@@ -17,7 +17,7 @@ export type CustomerStatementProviderInput = {
 }
 
 export type CustomerStatementProviderResult = {
-  status: "SENT" | "DEFERRED" | "FAILED"
+  status: "SENT" | "DEFERRED" | "FAILED" | "UNKNOWN"
   providerReference?: string
   retryable: boolean
   message: string
@@ -82,12 +82,16 @@ async function sendEmail(
       html: copy.html,
     })
     if (error) {
+      // This installed SDK exposes the error name, not an HTTP status field.
+      const retryable = error.name === "rate_limit_exceeded"
+      const rejected = ["missing_required_field", "invalid_idempotency_key", "invalid_access", "invalid_parameter", "invalid_region", "rate_limit_exceeded", "missing_api_key", "invalid_api_Key", "invalid_from_address", "validation_error", "not_found", "method_not_allowed"].includes(error.name)
       return {
-        status: "FAILED",
-        retryable: true,
-        message: "Statement email provider rejected the request.",
+        status: rejected ? "FAILED" : "UNKNOWN",
+        retryable,
+        message: rejected ? "Statement email provider rejected the request." : "Statement email provider outcome is unknown.",
       }
     }
+    if (!data?.id?.trim()) return { status: "UNKNOWN", retryable: false, message: "Statement email acceptance evidence is missing." }
     return {
       status: "SENT",
       providerReference: data?.id,
@@ -96,9 +100,9 @@ async function sendEmail(
     }
   } catch {
     return {
-      status: "FAILED",
-      retryable: true,
-      message: "Statement email provider is temporarily unavailable.",
+      status: "UNKNOWN",
+      retryable: false,
+      message: "Statement email provider outcome is unknown.",
     }
   }
 }
@@ -183,23 +187,26 @@ async function sendWhatsApp(
     )
     const payload = await response.json().catch(() => null)
     if (!response.ok) {
+      const rejected = response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 409
       return {
-        status: "FAILED",
-        retryable: response.status >= 500 || response.status === 429,
-        message: "Statement WhatsApp provider rejected the request.",
+        status: rejected ? "FAILED" : "UNKNOWN",
+        retryable: response.status === 429,
+        message: rejected ? "Statement WhatsApp provider rejected the request." : "Statement WhatsApp provider outcome is unknown.",
       }
     }
+    const reference = whatsAppReference(payload)
+    if (!reference?.trim()) return { status: "UNKNOWN", retryable: false, message: "Statement WhatsApp acceptance evidence is missing." }
     return {
       status: "SENT",
-      providerReference: whatsAppReference(payload),
+      providerReference: reference,
       retryable: false,
       message: "Statement WhatsApp message was accepted by the provider.",
     }
   } catch {
     return {
-      status: "FAILED",
-      retryable: true,
-      message: "Statement WhatsApp provider is temporarily unavailable.",
+      status: "UNKNOWN",
+      retryable: false,
+      message: "Statement WhatsApp provider outcome is unknown.",
     }
   }
 }

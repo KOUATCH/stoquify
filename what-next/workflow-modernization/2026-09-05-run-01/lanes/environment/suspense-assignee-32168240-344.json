@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-09T01:25:27.779Z",
+  "run": "32168240-344",
+  "sourcesBefore": {
+    "services/reconciliation/payment-suspense-workflow.service.ts": "d45fe51d4d51238bf901988e77e197735d4969bd2459bbae90a7d436ce7c34fe",
+    "actions/payments/reconciliation.actions.ts": "057ffb77276ff20c0877dc9adcc00b894aecefb0b904c5fa7d4e72684507e18d"
+  },
+  "checks": [
+    "Foreign assignee rejected; suspense, exceptions, audit, inbox and ledger unchanged",
+    "Inactive same-tenant assignee rejected; suspense, exceptions, audit, inbox and ledger unchanged",
+    "Missing assignee rejected without account disclosure; suspense, exceptions, audit, inbox and ledger unchanged",
+    "Foreign suspense item rejected; suspense, exceptions, audit, inbox and ledger unchanged",
+    "Missing permission rejected with denial audit only; no ownership or inbox effect",
+    "Active same-tenant assignment commits aligned suspense, exception, audit and in-app owner evidence"
+  ],
+  "scope": "Owned local database, actual assignment service, synthetic actors and explicit control context. Does not prove public authorization or external delivery.",
+  "originalBefore": "7d10f8d73176e22240e5076df1579bdff8d6d05a005009398c29cb9529889da8",
+  "denialAuditChangedSnapshot": true,
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-suspense-workflow.service.ts": "d45fe51d4d51238bf901988e77e197735d4969bd2459bbae90a7d436ce7c34fe",
+    "actions/payments/reconciliation.actions.ts": "057ffb77276ff20c0877dc9adcc00b894aecefb0b904c5fa7d4e72684507e18d"
+  },
+  "sourceStable": true
+}

@@ -692,7 +692,8 @@ function renderCardIcon(id: OwnerWarRoomCardId, className: string) {
   return <Icon className={className} aria-hidden="true" />
 }
 
-function formatMetric(value: number, unit: string, locale: string) {
+function formatMetric(value: number | null, unit: string, locale: string) {
+  if (value === null) return locale.startsWith("fr") ? "Total indisponible" : "Total unavailable"
   if (unit === "score") return `${Math.round(value)}%`
   return new Intl.NumberFormat(locale, {
     maximumFractionDigits: unit === "value" ? 0 : 1,

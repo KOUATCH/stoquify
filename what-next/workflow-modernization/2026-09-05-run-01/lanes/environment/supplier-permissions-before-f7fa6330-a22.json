@@ -1,0 +1,52 @@
+{
+  "run": "f7fa6330-a22",
+  "startedAt": "2026-09-07T09:57:51.456Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "5e2ce58b9a8451b4fe4d018797ffae09045a619c078812a5f86bd14ad2a29723",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "ea965a8d8c5565f0c2aca8c8c83eddbf3615aa2365e832cfbaf7db065593938d",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ad146b7ea0a3015badb5c4f9d3a50403a2230c1f02d29af9dbdaae94ecc3597b",
+    "messages/fr.json": "5cd4d422a2977fe3381d6a576154a942391858d3d6c93fe9ebebf7890532b4ce",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+  },
+  "checks": [
+    "Registry disables response but public read still advertises response permission"
+  ],
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "orderBefore": "d122f79e2d8058c5f64e1c21054dfd744d0f62fa10eabae56a489847fa552282",
+  "error": "\nInvalid `tx.supplierPoAccessToken.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\services\\purchase-order\\supplier-po-acknowledgement.service.ts:598:48\n\n  595   metadata: { boundary: \"supplier-po-acknowledgement-pilot\" },\n  596   outboxMessages: [],\n  597 })\n→ 598 const row = await tx.supplierPoAccessToken.create(\nError occurred during query execution:\nConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(PostgresError { code: \"23514\", message: \"new row for relation \\\"supplier_po_access_tokens\\\" violates check constraint \\\"supplier_po_access_tokens_scope_check\\\"\", severity: \"ERROR\", detail: Some(\"Failing row contains (cmtr2hr2q001lmatonk898j3e, workflow_supplier_ack_fr_f7fa6330-a22, cmtr2hr2c001dmatoqzmz8a4b, dff3963f32ca9c55ca0a4ff94e76ffc1501d080d1a71e2391ede647fa273ad6d, 4ffd1d6ac4d7364d0c68a3a8b31b790babc2c2f97867b9c10504d0cbf2038070, a2fb3a5134ca51588755759dd39df041e67e6fb05555bd1656a95b013c76168c, 601dc9661df46de322250586a8132aca89401780df0a7a8dbb9bb5d894825db9, f, f, ACTIVE, supplier-invite-fr-f7fa6330-a22, supplier-invite-correlation-fr-f7fa6330-a22, cmtr2hr2n001hmatoibfaha2t, cmtr2hr1m000xmatoz6fhjdfw, 2026-09-07 09:57:52.053, 2026-09-14 09:57:52.053, null, null, null, null, 0, {\\\"inviteOnly\\\": true, \\\"rawTokenStored\\\": false}, 2026-09-07 09:57:52.082, 2026-09-07 09:57:52.082).\"), column: None, hint: None }), transient: false })",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "5e2ce58b9a8451b4fe4d018797ffae09045a619c078812a5f86bd14ad2a29723",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "ea965a8d8c5565f0c2aca8c8c83eddbf3615aa2365e832cfbaf7db065593938d",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ad146b7ea0a3015badb5c4f9d3a50403a2230c1f02d29af9dbdaae94ecc3597b",
+    "messages/fr.json": "5cd4d422a2977fe3381d6a576154a942391858d3d6c93fe9ebebf7890532b4ce",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+  },
+  "sourceStable": true
+}

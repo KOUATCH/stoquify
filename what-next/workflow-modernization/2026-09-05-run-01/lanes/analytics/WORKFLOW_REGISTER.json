@@ -1,0 +1,580 @@
+{
+  "schemaVersion": 1,
+  "lane": "analytics",
+  "evidenceDate": "2026-09-15T12:43:53.518Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 7,
+    "completeWorkflowVerified": 0,
+    "denominatorStatus": "Provisional semantic reports; legacy sales analytics, business pulse and remaining analytical entry points are separate open discovery work."
+  },
+  "graphHints": [
+    {
+      "graph": "graph_app.json",
+      "node": "locale_dashboard_dashboard_analytics_reports_reportsclient_tsx",
+      "community": 11
+    },
+    {
+      "graph": "graph_actions.json",
+      "node": "analytics_financial_reports_ts",
+      "community": 60
+    },
+    {
+      "graph": "graph_components.json",
+      "node": "reports_financial_summary_report_tsx",
+      "community": 136
+    },
+    {
+      "graph": "graph_components.json",
+      "node": "reports_item_performance_report_tsx",
+      "community": 8
+    },
+    {
+      "graph": "graph_actions.json",
+      "node": "analytics_get_sales_analytics_ts",
+      "community": 61
+    }
+  ],
+  "workflows": [
+    {
+      "id": "AN-SALE-MARGIN",
+      "name": "Review completed sales and original margins",
+      "purpose": "Understand completed/delivered original sale activity and tax-exclusive margin without substituting current catalogue costs or claiming posted profit.",
+      "domain": "reporting-analytics",
+      "personas": [
+        "Owner",
+        "Finance or operations report reader"
+      ],
+      "authority": "Existing reports.read with server-derived organization and assertCanUseOrganization. Summary/item additionally validate current organization and owned location. No approval, activation or business mutation.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx",
+        "actions/analytics/financial-reports.ts#getFinancialSummaryReport",
+        "actions/analytics/analytics/financial-reports.ts",
+        "components/reports/financial-summary-report.tsx",
+        "actions/analytics/getSalesAnalytics.ts#getSalesAnalytics",
+        "actions/analytics/get-sales-analytics.ts"
+      ],
+      "services": [
+        "services/analytics/financial-reports.service.ts#getFinancialSummaryReportReadModel",
+        "services/analytics/completed-sales-evidence.ts",
+        "services/analytics/daily-sales-period.ts",
+        "services/analytics/sales-analytics.service.ts#getSalesAnalyticsReadModel"
+      ],
+      "records": [
+        "Organization",
+        "Location",
+        "SalesOrder",
+        "SalesOrderLine",
+        "InventoryTransaction",
+        "Payment",
+        "Item"
+      ],
+      "transitions": [
+        "Select date/scope",
+        "Authorize report read",
+        "Resolve consistent calendar and source snapshot",
+        "Validate recorded amounts and original cost coverage",
+        "Show activity or unavailable margin",
+        "Compare preceding calendar period",
+        "Inspect hourly values",
+        "Retry failure; retain report/date through refresh and responsive remount"
+      ],
+      "sideEffects": [
+        "Read only apart from existing access auditing; no financial, inventory, payment or approval changes"
+      ],
+      "implementationStatus": "original_cost_tax_basis_nullable_evidence_and_scoped_snapshot_corrected",
+      "reviewStatus": "source_unit_owned_database_and_en_fr_browser_partial_journey_verified",
+      "runtimeStatus": "partial_actual_en_fr_desktop_tablet_mobile_failure_recovery_and_authority_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../REPORT_COST_V141.md",
+        "../../evidence/report-cost-v141.json",
+        "../../LEGACY_ANALYTICS_V143.md",
+        "../../evidence/legacy-analytics-v143.json",
+        "../../ANALYTICS_ACCESS_V149.md",
+        "../../evidence/analytics-access-v149.json"
+      ],
+      "remaining": [
+        "Full net returns/credits and posted financial tie-out are not implemented by this operational report.",
+        "Date-only cross-timezone semantics; large-history bounds/performance; per-record cost drill-down; legacy source reconciliation and complete accessibility/release review."
+      ],
+      "compatibilityReadReview": "Legacy action variants reuse verified scope/cost/count contracts or completed-order aggregation. No current UI caller of the legacy user/product/cash exports found; action/service and owned database evidence only.",
+      "accessRecoveryReview": "Shared analytics wrapper classifies five current RBAC codes in EN/FR; source errors propagate. Forbidden route visits and recovery after permission restoration verified in owned browser; other four codes unit-tested, full parent-layout/auth journeys open."
+    },
+    {
+      "id": "AN-ITEM-PERFORMANCE",
+      "name": "Compare item sales, original margins and current availability",
+      "purpose": "Compare historical product sales without catalogue repricing, retain sold archived items and distinguish selected-period activity from current stock.",
+      "domain": "reporting-analytics",
+      "personas": [
+        "Owner",
+        "Finance or operations report reader"
+      ],
+      "authority": "Existing reports.read with server-derived organization and assertCanUseOrganization. Summary/item additionally validate current organization and owned location. No approval, activation or business mutation.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx",
+        "actions/analytics/financial-reports.ts#getItemPerformanceReport",
+        "components/reports/item-performance-report.tsx",
+        "actions/analytics/getSalesAnalytics.ts#getProductPerformance",
+        "actions/analytics/get-sales-analytics.ts"
+      ],
+      "services": [
+        "services/analytics/financial-reports.service.ts#getItemPerformanceReportReadModel",
+        "services/analytics/completed-sales-evidence.ts",
+        "services/analytics/daily-sales-period.ts",
+        "services/analytics/sales-analytics.service.ts#getProductPerformanceReadModel"
+      ],
+      "records": [
+        "Item",
+        "InventoryLevel",
+        "SalesOrder",
+        "SalesOrderLine",
+        "InventoryTransaction",
+        "Category",
+        "Brand"
+      ],
+      "transitions": [
+        "Select item report and period",
+        "Authorize current scope",
+        "Read original cost and current inventory snapshot",
+        "Search/rank products",
+        "Show missing costs honestly",
+        "Inspect current stock scope",
+        "Recover failed read and retained report view"
+      ],
+      "sideEffects": [
+        "Read only apart from existing access auditing; no financial, inventory, payment or approval changes"
+      ],
+      "implementationStatus": "original_cost_tax_basis_nullable_evidence_and_scoped_snapshot_corrected",
+      "reviewStatus": "source_unit_owned_database_and_en_fr_browser_partial_journey_verified",
+      "runtimeStatus": "partial_actual_en_fr_desktop_tablet_mobile_failure_recovery_and_authority_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../REPORT_COST_V141.md",
+        "../../evidence/report-cost-v141.json",
+        "../../LEGACY_ANALYTICS_V143.md",
+        "../../evidence/legacy-analytics-v143.json",
+        "../../ANALYTICS_ACCESS_V149.md",
+        "../../evidence/analytics-access-v149.json"
+      ],
+      "remaining": [
+        "Full correction/credit lifecycle and ledger tie-out; record-level cost drill-down.",
+        "Item search/sort persistence, zero-denominator turnover semantics, date-only timezone contract, historical versus current stock context and full accessibility."
+      ],
+      "compatibilityReadReview": "Legacy action variants reuse verified scope/cost/count contracts or completed-order aggregation. No current UI caller of the legacy user/product/cash exports found; action/service and owned database evidence only.",
+      "accessRecoveryReview": "Shared analytics wrapper classifies five current RBAC codes in EN/FR; source errors propagate. Forbidden route visits and recovery after permission restoration verified in owned browser; other four codes unit-tested, full parent-layout/auth journeys open."
+    },
+    {
+      "id": "AN-CASHIER-PERFORMANCE",
+      "name": "Review cashier activity and closing counts",
+      "purpose": "Understand period activity and whole-shift closing differences without inventing employee ratings or interpreting an open count as zero variance.",
+      "domain": "reporting-analytics",
+      "personas": [
+        "Owner",
+        "Finance or operations report reader"
+      ],
+      "authority": "Existing reports.read, server-derived organization, assertCanUseOrganization, active organization and owned location. No approval, activation or business mutation.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx",
+        "actions/analytics/financial-reports.ts#getCashierPerformanceReport",
+        "components/reports/cashier-performance-report.tsx",
+        "actions/analytics/getSalesAnalytics.ts#getUserPerformance",
+        "actions/analytics/get-sales-analytics.ts"
+      ],
+      "services": [
+        "services/analytics/financial-reports.service.ts#getCashierPerformanceReportReadModel",
+        "services/analytics/cash-report-evidence.ts",
+        "services/analytics/completed-sales-evidence.ts#completedReportScope",
+        "services/analytics/sales-analytics.service.ts#getUserPerformanceReadModel"
+      ],
+      "records": [
+        "POSSession",
+        "SalesOrder",
+        "User",
+        "CashDrawerTransaction",
+        "CashDrawer",
+        "Location",
+        "POSTerminal"
+      ],
+      "transitions": [
+        "Select report/site/calendar period",
+        "Authorize server scope",
+        "Read one repeatable source snapshot",
+        "Validate movement directions and closing evidence",
+        "Show unavailable evidence separately from genuine zero activity",
+        "Review period flow and whole-shift counts",
+        "Recover failure with retry and retained report/date selection"
+      ],
+      "sideEffects": [
+        "Read only apart from existing access auditing; no financial, inventory, payment or approval changes"
+      ],
+      "implementationStatus": "cash_direction_count_evidence_period_scope_and_localized_ui_corrected",
+      "reviewStatus": "source_unit_owned_database_and_en_fr_browser_partial_journey_verified",
+      "runtimeStatus": "partial_actual_en_fr_desktop_tablet_mobile_failure_recovery_and_authority_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../REPORT_COST_V141.md",
+        "../../evidence/report-cost-v141.json",
+        "../../CASH_REPORTS_V142.md",
+        "../../evidence/cash-reports-v142.json",
+        "../../LEGACY_ANALYTICS_V143.md",
+        "../../evidence/legacy-analytics-v143.json",
+        "../../ANALYTICS_ACCESS_V149.md",
+        "../../evidence/analytics-access-v149.json"
+      ],
+      "remaining": [
+        "Large-history bounds/pagination and source-record drill-down; source completeness and missing-movement investigation; no full ledger or net-sales credit tie-out.",
+        "Cross-browser date-only timezone semantics, legacy reconciliation provenance, full accessibility and reviewed operational rollout remain open."
+      ],
+      "compatibilityReadReview": "Legacy action variants reuse verified scope/cost/count contracts or completed-order aggregation. No current UI caller of the legacy user/product/cash exports found; action/service and owned database evidence only.",
+      "accessRecoveryReview": "Shared analytics wrapper classifies five current RBAC codes in EN/FR; source errors propagate. Forbidden route visits and recovery after permission restoration verified in owned browser; other four codes unit-tested, full parent-layout/auth journeys open."
+    },
+    {
+      "id": "AN-CASH-MOVEMENTS",
+      "name": "Review cash movements and drawer reconciliation records",
+      "purpose": "Understand actual cash movement with explicit balance and direction semantics and retained session reconciliation.",
+      "domain": "reporting-analytics",
+      "personas": [
+        "Owner",
+        "Finance or operations report reader"
+      ],
+      "authority": "Existing reports.read, server-derived organization, assertCanUseOrganization, active organization and owned location. No approval, activation or business mutation.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx",
+        "actions/analytics/financial-reports.ts#getCashFlowReport",
+        "components/reports/cash-flow-report.tsx",
+        "actions/analytics/getSalesAnalytics.ts#getCashReconciliationReports",
+        "actions/analytics/get-sales-analytics.ts"
+      ],
+      "services": [
+        "services/analytics/financial-reports.service.ts#getCashFlowReportReadModel",
+        "services/analytics/cash-report-evidence.ts",
+        "services/analytics/completed-sales-evidence.ts#completedReportScope",
+        "services/analytics/sales-analytics.service.ts#getCashReconciliationReportsReadModel"
+      ],
+      "records": [
+        "CashDrawerTransaction",
+        "CashDrawer",
+        "POSSession",
+        "Location",
+        "User",
+        "POSTerminal"
+      ],
+      "transitions": [
+        "Select report/site/calendar period",
+        "Authorize server scope",
+        "Read one repeatable source snapshot",
+        "Validate movement directions and closing evidence",
+        "Show unavailable evidence separately from genuine zero activity",
+        "Review period flow and whole-shift counts",
+        "Recover failure with retry and retained report/date selection"
+      ],
+      "sideEffects": [
+        "Read only apart from existing access auditing; no financial, inventory, payment or approval changes"
+      ],
+      "implementationStatus": "cash_direction_count_evidence_period_scope_and_localized_ui_corrected",
+      "reviewStatus": "source_unit_owned_database_and_en_fr_browser_partial_journey_verified",
+      "runtimeStatus": "partial_actual_en_fr_desktop_tablet_mobile_failure_recovery_and_authority_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../REPORT_COST_V141.md",
+        "../../evidence/report-cost-v141.json",
+        "../../CASH_REPORTS_V142.md",
+        "../../evidence/cash-reports-v142.json",
+        "../../LEGACY_ANALYTICS_V143.md",
+        "../../evidence/legacy-analytics-v143.json",
+        "../../ANALYTICS_ACCESS_V149.md",
+        "../../evidence/analytics-access-v149.json"
+      ],
+      "remaining": [
+        "Large-history bounds/pagination and source-record drill-down; source completeness and missing-movement investigation; no full ledger or net-sales credit tie-out.",
+        "Cross-browser date-only timezone semantics, legacy reconciliation provenance, full accessibility and reviewed operational rollout remain open."
+      ],
+      "compatibilityReadReview": "Legacy action variants reuse verified scope/cost/count contracts or completed-order aggregation. No current UI caller of the legacy user/product/cash exports found; action/service and owned database evidence only.",
+      "accessRecoveryReview": "Shared analytics wrapper classifies five current RBAC codes in EN/FR; source errors propagate. Forbidden route visits and recovery after permission restoration verified in owned browser; other four codes unit-tested, full parent-layout/auth journeys open."
+    },
+    {
+      "id": "AN-BUSINESS-PULSE",
+      "name": "Review Business pulse and follow operating signals",
+      "purpose": "Read current sales, active POS sessions and inventory signals, compare periods and follow role-appropriate work links.",
+      "domain": "reporting-analytics",
+      "personas": [
+        "Owner",
+        "Authorized dashboard or report reader"
+      ],
+      "authority": "Existing analytics route allows reports.read OR dashboard.read. Legacy summary action requires reports.read. Organization derived by route/action; service validates owned location.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/analytics/page.tsx",
+        "components/analytics/BusinessPulseDashboard.tsx",
+        "actions/analytics/getSalesAnalytics.ts#getDashboardSummary"
+      ],
+      "services": [
+        "services/analytics/sales-analytics.service.ts#getBusinessPulseCommandReadModel",
+        "services/analytics/sales-analytics.service.ts#getDashboardSummaryReadModel",
+        "services/analytics/sales-analytics.service.ts#getSalesAnalyticsReadModel",
+        "services/analytics/business-pulse-snapshot.ts",
+        "services/analytics/business-pulse-links.ts"
+      ],
+      "records": [
+        "Organization",
+        "Location",
+        "SalesOrder",
+        "SalesOrderLine",
+        "Payment",
+        "POSSession",
+        "Item",
+        "InventoryLevel"
+      ],
+      "transitions": [
+        "Resolve authorized organization, configured currency/timezone and selected/default site",
+        "Read completed sales and operating counts in one repeatable snapshot",
+        "Derive tenant-calendar day/week/month comparisons",
+        "Show unavailable summary if no active default site",
+        "Inspect command brief and operating figures",
+        "Follow supporting work links",
+        "Refresh after source changes"
+      ],
+      "sideEffects": [
+        "Read-only operational summary; actual sales/voids happen in their existing services"
+      ],
+      "implementationStatus": "cause_specific_en_fr_access_recovery_and_fresh_server_retry_corrected",
+      "reviewStatus": "partial_service_and_actual_en_fr_browser_verified",
+      "runtimeStatus": "partial_actual_en_fr_failed_read_recovery_and_permission_revocation_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../LEGACY_ANALYTICS_V143.md",
+        "../../evidence/legacy-analytics-v143.json",
+        "../../BUSINESS_PULSE_CONTEXT_V144.md",
+        "../../evidence/pulse-context-v144.json",
+        "../../BUSINESS_PULSE_ACTIONS_V145.md",
+        "../../evidence/pulse-actions-v145.json",
+        "../../BUSINESS_PULSE_OBSERVATIONS_V146.md",
+        "../../evidence/pulse-observations-v146.json",
+        "../../BUSINESS_PULSE_COVERAGE_V147.md",
+        "../../evidence/pulse-coverage-v147.json",
+        "../../BUSINESS_PULSE_RECOVERY_V148.md",
+        "../../evidence/pulse-recovery-v148.json",
+        "../../ANALYTICS_ACCESS_V149.md",
+        "../../evidence/analytics-access-v149.json"
+      ],
+      "remaining": [
+        "Controlled runtime loading timing, network interruption and broader analytics-subroute failure variants remain open; loading fallback has EN/FR unit coverage.",
+        "Full generated/shared-control EN/FR localization remains incomplete, the denied title is now localized.",
+        "Precise affected-item and uncovered-item drill-through, location applicability and catalogue-filter alignment remain open.",
+        "Coverage is tracked items with any scoped active-site record, not an item/location matrix or synchronization completeness proof.",
+        "Source freshness, volume performance, module-aware action availability, pointer stability, zoom and screen-reader coverage remain open.",
+        "Comparable-trading-period analysis is not implemented; current asymmetry is explicitly described."
+      ],
+      "accessRecoveryReview": "Shared analytics wrapper classifies five current RBAC codes in EN/FR; source errors propagate. Forbidden route visits and recovery after permission restoration verified in owned browser; other four codes unit-tested, full parent-layout/auth journeys open."
+    },
+    {
+      "id": "AN-REFERRAL-FUNNEL",
+      "name": "Review referral attribution by source and campaign",
+      "purpose": "Read aggregate customer-statement and accountant-invite attribution records without recipient contact or raw request data.",
+      "domain": "reporting-analytics",
+      "personas": [
+        "Authorized analytics reader"
+      ],
+      "authority": "analytics.read at route and action; action derives organization from current RBAC and asserts requested organization access.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx",
+        "actions/referrals/referral-funnel.actions.ts",
+        "components/referrals/ReferralFunnelDashboard.tsx"
+      ],
+      "services": [
+        "services/referrals/referral-funnel-read-model.service.ts#getReferralFunnelReadModel",
+        "services/referrals/referral-attribution.service.ts",
+        "services/accounting/accountant-client-invite.service.ts",
+        "services/accounting/accountant-access.service.ts"
+      ],
+      "records": [
+        "ReferralAttribution",
+        "ReferralAttributionEvent"
+      ],
+      "transitions": [
+        "Authorize route and current organization",
+        "Read scoped attributions and CLICK/CONVERSION events",
+        "Group by source and campaign",
+        "Display aggregate totals or empty evidence",
+        "Recover unavailable or denied read"
+      ],
+      "sideEffects": [
+        "Read only except existing access auditing"
+      ],
+      "implementationStatus": "prepared_links_registration_and_actual_invitation_acceptance_counts_corrected",
+      "reviewStatus": "partial_current_source_service_postgres_and_browser_verified",
+      "runtimeStatus": "partial_actual_en_fr_populated_and_prior_denied_route_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../ANALYTICS_ACCESS_V149.md",
+        "../../evidence/analytics-access-v149.json",
+        "../../REFERRAL_FUNNEL_V150.md",
+        "../../evidence/referral-funnel-v150.json"
+      ],
+      "remaining": [
+        "All-time event volume remains unbounded; aggregation/pagination, consistency and freshness under concurrency need review.",
+        "Complete provider delivery, recipient behavior, source completeness and accepted-state evidence validity are not certified.",
+        "Empty/failure browser variants, full screen-reader/zoom and broader authority transport coverage remain open."
+      ]
+    },
+    {
+      "id": "AN-DAILY-DIGEST",
+      "name": "Read role-scoped Daily Digest and continue to source workflows",
+      "purpose": "Review permitted operating snapshots, evidence and actions for a daily/weekly role workspace.",
+      "domain": "analytics",
+      "personas": [
+        "Owner",
+        "Manager",
+        "Finance/accountant",
+        "Stockkeeper and other configured roles"
+      ],
+      "authority": "Current route permissions, service role/permission scope and applicable module access; agent and proposal releases remain separately controlled.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx",
+        "components/daily-habit/DailyHabitDigestDashboard.tsx"
+      ],
+      "prerequisites": [
+        "Active organization and current allowed role/permissions",
+        "Underlying source snapshots; missing data must not establish readiness"
+      ],
+      "transitions": [
+        "Authorize route",
+        "Read scoped snapshots and compose role digests",
+        "Select role workspace and inspect evidence",
+        "Open permitted source workflow or governed agent assistance",
+        "Refresh/recover and retain interpretation of source freshness"
+      ],
+      "completionConditions": [
+        "Correct scoped digest and actionable source navigation across required states; not fully verified"
+      ],
+      "services": [
+        "services/daily-habit/daily-habit-digest.service.ts",
+        "services/agents/agent-rollout.service.ts",
+        "services/ai/copilot-proposal-release.service.ts",
+        "services/daily-habit/daily-habit-digest-presentation.ts"
+      ],
+      "records": [
+        "Underlying snapshots and domain records",
+        "Authorization audits",
+        "Agent records only when separately authorized"
+      ],
+      "sideEffects": [
+        "Read/audit; downstream work requires its own authorized workflow"
+      ],
+      "downstream": [
+        "Operating source workspaces",
+        "AI-COMMAND",
+        "AI-PROPOSAL"
+      ],
+      "implementationStatus": "digest_expiry_navigation_and_selected_workspace_visibility_corrected",
+      "reviewStatus": "partial_current_source_and_visual_review",
+      "runtimeStatus": "owned_en_fr_operating_handoffs_and_126_workspace_views_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../PROPOSAL_RECOVERY_V153.md",
+        "../../evidence/proposal-recovery-v153.json",
+        "../../DAILY_DIGEST_RECOVERY_V154.md",
+        "../../evidence/digest-recovery-v154.json",
+        "../../DAILY_DIGEST_LOCALIZATION_V155.md",
+        "../../evidence/digest-localization-v155.json",
+        "../../DAILY_DIGEST_MODES_V156.md",
+        "../../evidence/digest-modes-v156.json",
+        "../../SIDEBAR_HYDRATION_DIAGNOSIS_V157.md",
+        "../../evidence/sidebar-hydration-v157.json",
+        "../../DAILY_DIGEST_SETUP_GUIDANCE_V158.md",
+        "../../evidence/digest-setup-v158.json",
+        "../../DAILY_DIGEST_OBSERVATIONS_V159.md",
+        "../../evidence/digest-observations-v159.json",
+        "../../DAILY_DIGEST_METRIC_TRUTH_V160.md",
+        "../../evidence/digest-metrics-v160.json",
+        "../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md"
+      ],
+      "remaining": [
+        "Seven-day weekly aggregation and selected-period evidence are verified. Audit remaining source rules, generated labels/units and destination localization. Agent adapter/validator handoff and disabled release are verified; enabled governed-run lifecycle still requires genuine release authorization.",
+        "Shared permission provenance, close and payment handoffs are verified. Finance/reconciliation and payroll module matrices are verified. Close module, direct-page and read-action boundaries are verified; inventory source/direct item read boundaries are verified; purchasing source/list read admission is verified; core/Weekly grants and analytics destination are verified; Owner/Manager/daily-close page and action grants are verified; Digest authority, keyboard handoff, current revocation, top entry and Back are verified in EN/FR; broader governed-agent lifecycle remains. Compilation overhead and full-document navigation were identified in development; production performance remains unverified. Inventory Loss has its own explicit module guard.",
+        "Evidence badge aria rule and Chromium text exposure pass. EN/FR Manager all-mode rendered text contrast and primary focus/hover verified; axe contrast remains incomplete due to pseudo-elements. 126 seven-workspace EN/FR keyboard/reflow/reduced-motion views now pass, including selected-label visibility. Remaining: other workspace-content contrast and text enlargement. Native screen-reader speech/browser zoom are unverified limits."
+      ],
+      "status": "In progress",
+      "closureReview": {
+        "checklist": "DAILY_DIGEST_CLOSURE.md",
+        "evidence": "DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md",
+        "verifiedCriteria": [
+          "overdue-count-date-status-tenant-location-contract",
+          "source-read-failure-not-zero",
+          "en-fr-purchasing-keyboard-handoff-and-date-correction",
+          "current-source-permission-removal",
+          "risk-source-freshness-isolated-regression",
+          "en-fr-empty-observation-non-assurance-three-widths",
+          "source-severity-preserved-with-unassessed-urgency",
+          "all-composed-source-organizations-validated",
+          "server-disabled-modes-and-first-enabled-keyboard-activation",
+          "en-fr-command-action-label-reflow-and-localized-source-impact",
+          "five-persona-en-fr-source-module-handoff-contracts",
+          "evidence-badge-text-chromium-and-aria-rule",
+          "stored-permission-provenance-en-fr-grant-revoke-and-api",
+          "en-fr-close-signal-handoff-back-and-revocation",
+          "close-reader-controls-fail-closed-and-refresh-retains-notes",
+          "payment-suspense-currency-scope-null-propagation-and-recovery",
+          "en-fr-payment-warning-handoff-back-and-revocation",
+          "en-fr-source-link-back-view-restoration-and-cached-link-current-authority",
+          "inventory_value_does_not_infer_dead_stock",
+          "inventory_summary_and_item_handoff_authority_en_fr",
+          "payroll_source_details_permission_module_and_revocation_before_serialization",
+          "payroll_destination_all_of_read_permissions_and_owner_finance_audiences",
+          "en_fr_payroll_evidence_handoff_back_and_cached_link_revocation",
+          "canonical_source_warnings_localized_in_nested_digest_representations",
+          "fr_320px_source_code_reflow_keyboard_and_revoked_privacy",
+          "persisted_payroll_module_read_matrix_en_fr",
+          "expired_session_en_fr_form_restores_digest_and_mode",
+          "stale_and_blocked_source_timing_en_fr_refresh",
+          "controlled_payment_query_failure_rejects_and_retry_retains_blockers",
+          "en_fr_manager_three_mode_rendered_contrast",
+          "primary_hover_keyboard_focus_and_clipping",
+          "actual_en_fr_app_query_exception_failed_retry_and_source_recovery",
+          "request_clock_preserves_one_utc_day_across_sources",
+          "owned_en_fr_overlapping_read_period_and_tenant_isolation",
+          "inventory_loss_canonical_french_copy_preserves_source_and_causation",
+          "en_fr_loss_detail_reflow_and_revoked_privacy",
+          "genuine_weekly_source_window_and_current_balance_semantics",
+          "en_fr_weekly_period_keyboard_refresh_and_revocation",
+          "weekly_midnight_overlapping_read_tenant_isolation",
+          "en_fr_real_digest_agent_projection_validator_and_revocation",
+          "hydrated_disabled_agent_and_missing_release_no_mutation",
+          "agent_request_language_and_workspace_revision_state_isolation",
+          "finance_reconciliation_persisted_read_matrix_en_fr",
+          "finance_denied_details_suppressed_with_source_limitations_retained",
+          "en_fr_hydrated_finance_and_command_keyboard_grant_transitions",
+          "close_assurance_persisted_read_matrix_en_fr",
+          "close_source_details_restricted_without_clearing_limitations",
+          "close_direct_pages_and_read_actions_share_current_read_gate",
+          "inventory_persisted_read_matrix_and_summary_detail_separation_en_fr",
+          "inventory_direct_page_action_and_retained_read_admission",
+          "item_query_failure_failed_retry_and_filtered_recovery_en_fr",
+          "purchasing_persisted_en_fr_read_matrix_and_restricted_manager_summary",
+          "purchasing_list_read_handoff_retention_and_recommended_dependency",
+          "purchasing_read_actions_and_route_wrappers_deny_before_domain_queries",
+          "core_and_weekly_persisted_19_state_read_matrix_en_fr",
+          "analytics_destination_any_of_permission_and_current_module_gate",
+          "en_fr_empty_workspace_and_disabled_weekly_handoff_explanations",
+          "operating_dashboard_pages_current_module_read_gate_en_fr",
+          "operating_read_actions_enforce_and_retained_admission",
+          "digest_operating_handoff_authority_persisted_service_matrix_en_fr",
+          "owner_handoff_denial_en_fr_route_recovery_unit_verified",
+          "expired_evidence_is_stale_not_a_business_blocker_en_fr",
+          "owned_en_fr_operating_handoff_authority_and_revocation",
+          "digest_top_entry_and_back_restore_en_fr",
+          "owner_denial_french_mobile_rendering",
+          "seven_workspace_en_fr_three_mode_three_width_keyboard_reflow_motion",
+          "selected_workspace_label_not_clipped_after_selection",
+          "digest_read_no_background_business_mutation"
+        ],
+        "completeWorkflowVerified": false
+      }
+    }
+  ]
+}

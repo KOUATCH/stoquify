@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-12T19:39:40.376Z",
+  "run": "f865ccdd-6de",
+  "sourcesBefore": {
+    "services/reconciliation/payment-exception-closure.service.ts": "6af9604836ab50f4059b2980ae9fbf17d9b584efe183d35f89d6967049b5dec9",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "28ac4d449560675932e82098d0cf529148d5198fc6b9f379ee6c757ad8e97015",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "bc470b257b98d6d3f6d340b20fb7ec6057b2a55792d4f0487f72f5adeb0924ea",
+    "services/reconciliation/payment-exception-source-evidence.ts": "08492d66f11f481511d832517cadc8e0894e359874373cffcc3602167ba45896",
+    "services/reconciliation/payment-exception-link.service.ts": "71f5f14d8ce9772993969bc9ceba45aa00f97c2da1aaf6de9d1760e7156199f5",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8ef8bc71cb31a11bdbd9a2613889cb2d6829dcdaa31bddeb1d682220292268cd",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "67327d4e8a166730c68bde930d3cc0899f6ccacdf335f18c5a4b26b4d6cebbeb",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "checks": [
+    "Read scope, active actor, fresh authority, proposal replay and self-approval refusal.",
+    "Rejection retains obligation; late audit failure rolls back closure, receipt, run and close effects.",
+    "Competing approvals and exact retry produce one retained decision; complete financial/source lineage enters the manifest; closure posts no money and does not sign the run.",
+    "Real independent clearing reversal reopens the exception and retains its closure decision; obsolete closure replay is refused."
+  ],
+  "scope": "Guarded owned PostgreSQL: actual source-pair repair, suspense posting, independently posted clearing, financial resolution, separate exception decision and source-owned reopening. Direct trusted service control inputs, not browser authentication or live approval.",
+  "originalBefore": "cc7256ae0ac92db975eb32cc2ac5832b598a925a81cbfeb347950093912699f7",
+  "fixture": {
+    "organizationId": "workflow_supplier_ack_en_link-repair-closure-f865ccdd-6de",
+    "exceptionId": "cmtysh9hi002umatoeuyx8mgg",
+    "itemId": "cmtysh9i0002wmato33u6xkmr",
+    "runId": "cmtysh9g3002smatomojdqgs3"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-exception-closure.service.ts": "6af9604836ab50f4059b2980ae9fbf17d9b584efe183d35f89d6967049b5dec9",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "28ac4d449560675932e82098d0cf529148d5198fc6b9f379ee6c757ad8e97015",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "bc470b257b98d6d3f6d340b20fb7ec6057b2a55792d4f0487f72f5adeb0924ea",
+    "services/reconciliation/payment-exception-source-evidence.ts": "08492d66f11f481511d832517cadc8e0894e359874373cffcc3602167ba45896",
+    "services/reconciliation/payment-exception-link.service.ts": "71f5f14d8ce9772993969bc9ceba45aa00f97c2da1aaf6de9d1760e7156199f5",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8ef8bc71cb31a11bdbd9a2613889cb2d6829dcdaa31bddeb1d682220292268cd",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "67327d4e8a166730c68bde930d3cc0899f6ccacdf335f18c5a4b26b4d6cebbeb",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae"
+  },
+  "sourceStable": true
+}

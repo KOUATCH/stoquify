@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-09-05T09:15:11.231Z",
+  "status": "blocked",
+  "approvalManifestPath": "what-next/evidence/finance-x1/finance-x1-evidence-manifest.pending.json",
+  "runId": null,
+  "targetOrigin": "http://127.0.0.1:3000",
+  "storageStateConfigured": false,
+  "blockerCount": 3,
+  "certificationClaimed": false,
+  "findings": [
+    {
+      "id": "traceable-approvals",
+      "path": "evidenceStatus",
+      "detail": "The input manifest must contain approved budgets and evidence authorization before capture."
+    },
+    {
+      "id": "run-id",
+      "path": "FINANCE_X1_EVIDENCE_RUN_ID",
+      "detail": "A non-placeholder run ID of 6 to 81 safe characters is required."
+    },
+    {
+      "id": "approved-storage-state",
+      "path": "PLAYWRIGHT_FINANCE_X1_STORAGE_STATE",
+      "detail": "An explicitly approved external-accountant storage-state path is required."
+    }
+  ]
+}

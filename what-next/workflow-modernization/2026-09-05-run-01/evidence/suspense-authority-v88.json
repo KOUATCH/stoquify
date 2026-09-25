@@ -1,0 +1,108 @@
+{
+  "at": "2026-09-09T01:31:52.818Z",
+  "sourceBaseline": "evidence/source-baseline-v88.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "009-aqstoqflow-payment-reconciliation-moat",
+  "sources": {
+    "services/reconciliation/payment-suspense-workflow.service.ts": "d45fe51d4d51238bf901988e77e197735d4969bd2459bbae90a7d436ce7c34fe",
+    "actions/payments/reconciliation.actions.ts": "057ffb77276ff20c0877dc9adcc00b894aecefb0b904c5fa7d4e72684507e18d",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "5f378b8615f2d49136db8f022f6e5e3ac3f81a3a9994f6b5886b53d8f45ec902",
+    "actions/payments/__tests__/suspense-guard.integration.test.ts": "2eb3937a0f00cd4962a918bf3caab6a235478fd3c7975bc57c36388dff99ad24",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "8b6d1eb2d83b3ff0c6ba9683e26b2961b8a47aa480364030b132fb5ce9557998",
+    "actions/modules/__tests__/module-control.actions.test.ts": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf",
+    "services/modules/__tests__/module-entitlement.service.test.ts": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "c940fc92e41945b6b0eff4612729910d235aabc62ae4398615f22347ee1603b4",
+    "services/_shared/__tests__/protect.test.ts": "d6bf7d5a69aba6f2ea6b4b8b31ec52a0509155718fb312bf531ecc86c364fc4d",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "41832c491673908ecd1a44d88d9d512a0ec9e91a4f25ddafaedb15e450115c7f",
+    "lib/security/__tests__/auth-session.test.ts": "2f0a15a52d33434bede0db6bbfa0d218effbead85b38feeb07f3511d6275efc2",
+    "actions/payments/__tests__/reconciliation-workbench.actions.test.ts": "87204d279ac9ec8581a68872091eebc5bb506b82597e8d4f8c699c251a466a0a",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "d9db96b9746ef30e22d5b0f283367a041fb92bed5edbdea20f3a4aee9ac5dd54"
+  },
+  "tests": {
+    "file": "evidence/suspense-authority-final-v88.json",
+    "passed": 86,
+    "suites": 10,
+    "session": 67431,
+    "exitCode": 0
+  },
+  "database": {
+    "file": "lanes/environment/suspense-assignee-32168240-344.json",
+    "checks": 6,
+    "session": 69799,
+    "exitCode": 0,
+    "sourceStable": true,
+    "originalUnchanged": true,
+    "publicAuthorityVerified": false
+  },
+  "commands": [
+    {
+      "command": "Full typecheck; exact command in verification guide",
+      "session": 57570,
+      "priorSession": 34776,
+      "exitCode": 0
+    },
+    {
+      "command": "Five changed files ESLint; exact list in verification guide",
+      "terminalChunk": "58c12f",
+      "exitCode": 0
+    }
+  ],
+  "sourceBaselineCapture": {
+    "session": 90571,
+    "exitCode": 0
+  },
+  "failedAttempts": [
+    {
+      "session": 50453,
+      "file": "evidence/suspense-authority-before-v88.json",
+      "passed": 15,
+      "failed": 5
+    },
+    {
+      "session": 81760,
+      "file": "lanes/environment/suspense-assignee-76a760ca-2dd.json",
+      "reason": "Expected foreign-assignee denial was not enforced; actual fixture assignment succeeded."
+    },
+    {
+      "session": 32147,
+      "file": "lanes/environment/suspense-assignee-236444f5-0e7.json",
+      "checksPassed": 4,
+      "reason": "Verifier expected different wording for a correct permission denial; assertion corrected."
+    }
+  ],
+  "browser": "Not run; no UI changes. Public-session journeys remain incomplete.",
+  "fullBuild": "Not run; no schema or UI change.",
+  "previousGoalTurn": "progress: v87 owner-service corrections, runtime evidence and coverage expansion",
+  "coverage": {
+    "discoveredWorkflows": 226,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2761,
+      "tests": 970,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2357,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "remaining": [
+    "Reviewed proposal revisions and stale/concurrent transitions",
+    "Terminal approval retry and draft preservation",
+    "Real-session module/RBAC and EN/FR accessibility journeys",
+    "Deactivation/reassignment races and historical invalid-owner repair",
+    "All remaining platform workflows"
+  ],
+  "nextRecommendedSkill": "010-aqstoqflow-inventory-valuation-kernel after outstanding reconciliation priorities"
+}

@@ -6,6 +6,7 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import {
   assertBalancedJournalEntry,
@@ -308,6 +309,7 @@ export async function createManualJournalEntry(
   const entryDate = new Date(input.entryDate)
 
   return db.$transaction(async (tx) => {
+    await assertModuleNewWorkInTx(tx, { organizationId, moduleSlug: "accounting", operation: "accounting.manual-journal.create" })
     const journal = await assertJournalIsManualReady(organizationId, input.journalId, tx)
     const period = await getOpenPeriodForDate(organizationId, entryDate, tx)
 

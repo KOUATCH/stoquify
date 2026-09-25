@@ -1,6 +1,6 @@
 "use server"
 
-import { revalidatePath, revalidateTag } from "next/cache"
+import { revalidatePOSAfterCommit } from "./cache-revalidation"
 
 import { protect, type ProtectedActionResponse } from "@/services/_shared/protect"
 import {
@@ -76,10 +76,10 @@ function asRecord(input: unknown) {
 }
 
 function revalidateOfflineSync() {
-  revalidateTag("pos-offline-sync")
-  revalidateTag("pos-sessions")
-  revalidatePath("/[locale]/dashboard/pos", "page")
-  revalidatePath("/[locale]/dashboard/accounting/accountant-portal", "page")
+  revalidatePOSAfterCommit({
+    tags: ["pos-offline-sync", "pos-sessions"],
+    paths: ["/[locale]/dashboard/pos", "/[locale]/dashboard/accounting/accountant-portal"],
+  })
 }
 
 const getDashboard = protect<unknown, OfflineSyncDashboardData>(

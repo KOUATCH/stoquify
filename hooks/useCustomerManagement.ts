@@ -10,6 +10,7 @@ import {
   getCustomerManagementData,
   prepareCustomerExportAction,
   updateManagedCustomer,
+  type CustomerCreationResult,
   type CustomerDetailAnalytics,
   type CustomerExportRequest,
   type CustomerExportResult,
@@ -35,6 +36,7 @@ const copy = {
   en: {
     createTitle: "Customer created",
     createBody: "The customer is ready for POS, sales orders, receipts, and receivables.",
+    createRefreshBody: "The customer was saved, but some views could not refresh. Refresh the customer list before creating another record.",
     updateTitle: "Customer updated",
     updateBody: "The customer record and dependent sales views were refreshed.",
     archiveTitle: "Customer archived",
@@ -48,6 +50,7 @@ const copy = {
   fr: {
     createTitle: "Client cree",
     createBody: "Le client est pret pour POS, commandes, recus et creances.",
+    createRefreshBody: "Le client a été enregistré, mais certaines vues n’ont pas pu être actualisées. Actualisez la liste des clients avant de créer une autre fiche.",
     updateTitle: "Client mis a jour",
     updateBody: "La fiche client et les vues de vente dependantes ont ete actualisees.",
     archiveTitle: "Client archive",
@@ -60,23 +63,27 @@ const copy = {
   },
 } as const
 
-function invalidateCustomerQueries(queryClient: QueryClient, organizationId: string, customerId?: string) {
-  queryClient.invalidateQueries({ queryKey: customerManagementKeys.dashboard(organizationId) })
-  queryClient.invalidateQueries({ queryKey: CustomerKeys.lists() })
-  queryClient.invalidateQueries({ queryKey: CustomerKeys.orgCustomers(organizationId) })
-  queryClient.invalidateQueries({ queryKey: CustomerKeys.briefOrgCustomers(organizationId) })
-  queryClient.invalidateQueries({ queryKey: CustomerKeys.completeOrgCustomers(organizationId) })
-  queryClient.invalidateQueries({ queryKey: ["customers"] })
-  queryClient.invalidateQueries({ queryKey: ["orgCustomers"] })
-  queryClient.invalidateQueries({ queryKey: ["orgCustomers", organizationId] })
+async function invalidateCustomerQueries(queryClient: QueryClient, organizationId: string, customerId?: string, reportErrors = false) {
+  const keys: ReadonlyArray<unknown>[] = [
+    customerManagementKeys.dashboard(organizationId),
+    CustomerKeys.lists(),
+    CustomerKeys.orgCustomers(organizationId),
+    CustomerKeys.briefOrgCustomers(organizationId),
+    CustomerKeys.completeOrgCustomers(organizationId),
+    ["customers"],
+    ["orgCustomers"],
+    ["orgCustomers", organizationId],
+  ]
 
   if (customerId) {
-    queryClient.invalidateQueries({ queryKey: customerManagementKeys.detail(organizationId, customerId) })
-    queryClient.invalidateQueries({ queryKey: CustomerKeys.detail(customerId) })
-    queryClient.invalidateQueries({ queryKey: customerManagementKeys.analytics(organizationId, customerId) })
-    queryClient.invalidateQueries({ queryKey: ["customers", customerId] })
-    queryClient.invalidateQueries({ queryKey: ["customer", customerId] })
+    keys.push(customerManagementKeys.detail(organizationId, customerId), CustomerKeys.detail(customerId),
+      customerManagementKeys.analytics(organizationId, customerId), ["customers", customerId], ["customer", customerId])
   }
+
+  const results = await Promise.allSettled(keys.map(async queryKey =>
+    queryClient.invalidateQueries({ queryKey }, { throwOnError: reportErrors }),
+  ))
+  return results.every(result => result.status === "fulfilled")
 }
 
 export function useManagedCustomer(organizationId: string, customerId: string) {
@@ -165,9 +172,13 @@ export function useCreateManagedCustomer(organizationId: string, locale: Locale 
 
       return result.data
     },
-    onSuccess: (customer?: CustomerManagementRow) => {
-      invalidateCustomerQueries(queryClient, organizationId, customer?.id)
-      notifications.success(t.createTitle, t.createBody)
+    onSuccess: async (customer: CustomerCreationResult) => {
+      const refreshed = await invalidateCustomerQueries(queryClient, organizationId, customer.id, true)
+      if (!refreshed || customer.cacheStatus === "deferred") {
+        notifications.warning(t.createTitle, t.createRefreshBody)
+      } else {
+        notifications.success(t.createTitle, t.createBody)
+      }
     },
     onError: (error: Error) => {
       notifications.error(t.errorTitle, error.message || t.errorTitle)

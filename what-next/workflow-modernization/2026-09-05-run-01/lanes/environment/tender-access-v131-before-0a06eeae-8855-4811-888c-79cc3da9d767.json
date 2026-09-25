@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-13T14:17:26.919Z",
+  "phase": "before",
+  "checks": [
+    {
+      "operation": "commit",
+      "restrictedWrite": "admitted",
+      "passed": true
+    },
+    {
+      "operation": "refund",
+      "restrictedWrite": "admitted",
+      "passed": true
+    },
+    {
+      "operation": "void",
+      "restrictedWrite": "admitted",
+      "passed": true
+    }
+  ],
+  "scope": "Owned local PostgreSQL, actual cash sale/posting/correction services, synthetic accounts and rules; no external payment, delivery, statutory approval or live activation.",
+  "sourceBefore": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+  "passed": true,
+  "sourceAfter": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+  "sourceStable": true
+}

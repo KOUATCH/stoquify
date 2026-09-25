@@ -1,823 +1,369 @@
 "use client"
 
-import { notify } from "@/lib/notifications/notify"
-import { Badge } from "@/components/ui/badge"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useFieldArray, useForm, type FieldPath } from "react-hook-form"
+import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { ArrowLeft, Plus, Save, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { useUpdatePurchaseOrder } from "@/hooks/useRecentPurchaseOrderQueries"
 import { getLocaleFromPathname, localizePath } from "@/i18n/routing"
-import { cn } from "@/lib/utils"
-import { DEFAULT_LOCALE } from "@/types/bilingual"
-import { PurchaseOrderWithRelations } from "@/types/purchase-orders-system-types"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { format } from "date-fns"
-import { ArrowLeft, CalendarIcon, CheckCircle, Plus, Save, Trash2 } from "lucide-react"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useMemo, useState } from "react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-
-const lineItemSchema = z.object({
-  id: z.string().optional(),
-  itemId: z.string().min(1, "Item is required"),
-  itemName: z.string().optional(),
-  orderedQuantity: z.number().min(0.01, "Quantity must be greater than 0"),
-  unitCost: z.number().min(0, "Unit cost must be 0 or greater"),
-  taxAmount: z.number().min(0, "Tax amount must be 0 or greater"),
-  discount: z.number().min(0, "Discount must be 0 or greater").default(0),
-  lineTotal: z.number().optional(),
-})
-
-const purchaseOrderSchema = z.object({
-  orderNumber: z.string().min(1, "Order number is required"),
-  supplierId: z.string().min(1, "Supplier is required"),
-  locationId: z.string().min(1, "Location is required"),
-  expectedDeliveryDate: z.date().optional(),
-  notes: z.string().optional(),
-  internalNotes: z.string().optional(),
-  reference: z.string().optional(),
-  paymentTerms: z.string().optional(),
-  shippingMethod: z.string().optional(),
-  shippingCost: z.number().min(0, "Shipping cost must be 0 or greater").default(0),
-  discount: z.number().min(0, "Discount must be 0 or greater").default(0),
-  lines: z.array(lineItemSchema).min(1, "At least one line item is required"),
-})
-
-type PurchaseOrderFormData = z.infer<typeof purchaseOrderSchema>
+import { notify } from "@/lib/notifications/notify"
+import type { PurchaseOrderWithRelations } from "@/types/purchase-orders-system-types"
+import { formatPurchaseOrderMoney } from "./purchase-order-money"
+import { purchaseOrderEditDefaults, purchaseOrderEditPayload, purchaseOrderEditTotals, type PurchaseOrderEditValues } from "./purchase-order-edit-model"
+import { getCurrentPurchaseOrderDraft } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction"
+import { comparePurchaseOrderDraft, editFields, purchaseOrderDraftKey, readPurchaseOrderDraft, resolvePurchaseOrderDraft, type EditField } from "./purchase-order-edit-draft"
+import type { UpdatePurchaseOrderDTO } from "@/types/purchase-orders-system-types"
 
 interface ModernEditPurchaseOrderFormProps {
   purchaseOrder: PurchaseOrderWithRelations
   suppliers: Array<{ id: string; name: string; email?: string }>
   locations: Array<{ id: string; name: string }>
-  items: Array<{ id: string; name: string; sku: string; sellingPrice?: number }>
+  items: Array<{ id: string; name: string; sku: string; costPrice?: number }>
   organizationId: string
+  actorId: string
+  currency: string
 }
 
-export function ModernEditPurchaseOrderForm({
-  purchaseOrder,
-  suppliers,
-  locations,
-  items,
-  organizationId
-}: ModernEditPurchaseOrderFormProps) {
+export function ModernEditPurchaseOrderForm({ purchaseOrder, suppliers, locations, items, organizationId, actorId, currency }: ModernEditPurchaseOrderFormProps) {
+  const t = useTranslations("purchaseOrderEdit")
   const router = useRouter()
-  const pathname = usePathname()
-  const locale = getLocaleFromPathname(pathname) ?? DEFAULT_LOCALE
-  const localizedHref = (href: string) => localizePath(href, locale)
-  const { mutate: updatePurchaseOrder, isPending } = useUpdatePurchaseOrder()
-  const [currentStep, setCurrentStep] = useState(0)
-
-  const steps = [
-    { title: "Order Details", description: "Basic purchase order information" },
-    { title: "Supplier & Location", description: "Select supplier and delivery location" },
-    { title: "Line Items", description: "Add items to your purchase order" },
-    { title: "Additional Info", description: "Shipping, payment terms, and notes" }
-  ]
-
-  const form = useForm<PurchaseOrderFormData>({
-    resolver: zodResolver(purchaseOrderSchema),
-    defaultValues: {
-      orderNumber: purchaseOrder.orderNumber,
-      supplierId: purchaseOrder.supplier?.id || "",
-      locationId: purchaseOrder.locationId || "",
-      expectedDeliveryDate: purchaseOrder.expectedDeliveryDate ? new Date(purchaseOrder.expectedDeliveryDate) : undefined,
-      notes: purchaseOrder.notes || "",
-      internalNotes: "", // This field might not exist in the type
-      reference: "", // This field might not exist in the type
-      paymentTerms: purchaseOrder.paymentTerms || "",
-      shippingMethod: "", // This field might not exist in the type
-      shippingCost: purchaseOrder.shippingCost || 0,
-      discount: purchaseOrder.discount || 0,
-      lines: purchaseOrder.lines.map(line => ({
-        id: line.id,
-        itemId: line.itemId || "",
-        itemName: line.item?.name || "",
-        orderedQuantity: line.orderedQuantity || 0,
-        unitCost: line.unitCost || 0,
-        taxAmount: line.taxAmount || 0,
-        discount: line.discount || 0,
-        lineTotal: line.lineTotal || 0,
-      }))
-    }
+  const locale = getLocaleFromPathname(usePathname()) ?? "en"
+  const savedHref = localizePath(`/dashboard/purchase-orders/${purchaseOrder.id}`, locale)
+  const mutation = useUpdatePurchaseOrder({ handlesFeedbackLocally: true })
+  const locked = purchaseOrder.status !== "DRAFT"
+  const [pendingRequest, setPendingRequest] = useState<UpdatePurchaseOrderDTO | null>(null)
+  const readOnly = locked || !!pendingRequest
+  const baseline = useRef({ revision: purchaseOrder.editRevision ?? "", values: purchaseOrderEditDefaults(purchaseOrder) })
+  const [comparison, setComparison] = useState<PurchaseOrderWithRelations | null>(null)
+  const [choices, setChoices] = useState<Partial<Record<EditField, "draft" | "current">>>({})
+  const [checking, setChecking] = useState(false)
+  const [storageFailed, setStorageFailed] = useState(false)
+  const draftKey = purchaseOrderDraftKey(organizationId, actorId, purchaseOrder.id)
+  const submitting = useRef(false)
+  const alertRef = useRef<HTMLDivElement>(null)
+  const backRef = useRef<HTMLButtonElement>(null)
+  const stepRef = useRef<HTMLHeadingElement>(null)
+  const comparisonRef = useRef<HTMLHeadingElement>(null)
+  const [ready, setReady] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [step, setStep] = useState(0)
+  const [failure, setFailure] = useState<"rejected" | "unknown" | "validation" | "stale" | "denied" | null>(null)
+  const [showLeave, setShowLeave] = useState(false)
+  const orderDate = new Date(purchaseOrder.orderDate).toISOString().slice(0, 10)
+  const schema = useMemo(() => z.object({
+    supplierId: z.string().min(1, t("required")),
+    locationId: z.string().min(1, t("required")),
+    expectedDeliveryDate: z.string().refine((value) => {
+      if (!value) return !purchaseOrder.expectedDeliveryDate
+      return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)) && value >= orderDate
+    }, t("invalidDate")),
+    paymentTerms: z.string(),
+    notes: z.string(),
+    shippingCost: z.number({ invalid_type_error: t("nonnegative") }).finite(t("nonnegative")).min(0, t("nonnegative")),
+    lines: z.array(z.object({
+      itemId: z.string().min(1, t("required")),
+      quantity: z.number({ invalid_type_error: t("positiveQuantity") }).finite(t("positiveQuantity")).positive(t("positiveQuantity")).max(999_999_999.999, t("positiveQuantity")).refine(value => /^\d{1,9}(?:\.\d{1,3})?$/.test(String(value)), t("positiveQuantity")),
+      unitPrice: z.number({ invalid_type_error: t("nonnegative") }).finite(t("nonnegative")).min(0, t("nonnegative")),
+      taxRate: z.number({ invalid_type_error: t("taxRange") }).finite(t("taxRange")).min(0, t("taxRange")).max(100, t("taxRange")),
+      discount: z.number({ invalid_type_error: t("nonnegative") }).finite(t("nonnegative")).min(0, t("nonnegative")),
+      notes: z.string(),
+    })).min(1, t("atLeastOne")),
+  }).superRefine((value, ctx) => {
+    const seen = new Set<string>()
+    value.lines.forEach((line, index) => {
+      if (seen.has(line.itemId)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["lines", index, "itemId"], message: t("duplicateItem") })
+      seen.add(line.itemId)
+    })
+  }), [t, orderDate, purchaseOrder.expectedDeliveryDate])
+  const form = useForm<PurchaseOrderEditValues>({
+    resolver: zodResolver(schema),
+    defaultValues: purchaseOrderEditDefaults(purchaseOrder),
   })
+  const lines = useFieldArray({ control: form.control, name: "lines" })
+  const values = form.watch()
+  const totals = purchaseOrderEditTotals(values)
+  const steps = [t("details"), t("parties"), t("items"), t("terms")]
+  const money = (amount: number) => formatPurchaseOrderMoney(amount, locale, currency)
+  const busy = !ready || pending || checking
+  const stepFields: Array<FieldPath<PurchaseOrderEditValues>[]> = [["expectedDeliveryDate"], ["supplierId", "locationId"], ["lines"], ["paymentTerms", "notes", "shippingCost"]]
 
-  const { watch, setValue, getValues } = form
-  const watchedLines = watch("lines")
-  const watchedShippingCost = watch("shippingCost")
-  const watchedDiscount = watch("discount")
-
-  // Calculate totals
-  const { subtotal, taxTotal, total } = useMemo(() => {
-    const lineSubtotal = watchedLines.reduce((sum, line) => sum + (line.orderedQuantity * line.unitCost), 0)
-    const lineTaxTotal = watchedLines.reduce((sum, line) => sum + line.taxAmount, 0)
-    const lineDiscount = watchedLines.reduce((sum, line) => sum + (line.discount || 0), 0)
-
-    const subtotal = lineSubtotal - lineDiscount
-    const taxTotal = lineTaxTotal
-    const total = subtotal + taxTotal + (watchedShippingCost || 0) - (watchedDiscount || 0)
-
-    return { subtotal, taxTotal, total }
-  }, [watchedLines, watchedShippingCost, watchedDiscount])
-
-  // Update line totals when quantities or costs change
   useEffect(() => {
-    const lines = getValues("lines")
-    lines.forEach((line, index) => {
-      const lineTotal = (line.orderedQuantity * line.unitCost) - (line.discount || 0) + line.taxAmount
-      setValue(`lines.${index}.lineTotal`, lineTotal)
-    })
-  }, [watchedLines, setValue, getValues])
-
-  const addLineItem = () => {
-    const currentLines = getValues("lines")
-    setValue("lines", [...currentLines, {
-      itemId: "",
-      orderedQuantity: 1,
-      unitCost: 0,
-      taxAmount: 0,
-      discount: 0,
-    }])
-  }
-
-  const removeLineItem = (index: number) => {
-    const currentLines = getValues("lines")
-    if (currentLines.length > 1) {
-      setValue("lines", currentLines.filter((_, i) => i !== index))
-    }
-  }
-
-  const onSubmit = (data: PurchaseOrderFormData) => {
-    const updateData = {
-      id: purchaseOrder.id,
-      organizationId,
-      supplierId: data.supplierId,
-      locationId: data.locationId,
-      date: typeof purchaseOrder.orderDate === "string"
-        ? purchaseOrder.orderDate
-        : (purchaseOrder.orderDate instanceof Date
-          ? purchaseOrder.orderDate.toISOString()
-          : new Date().toISOString()),
-      expectedDeliveryDate: data.expectedDeliveryDate?.toISOString() || "",
-      paymentTerms: data.paymentTerms,
-      notes: data.notes,
-      shippingCost: data.shippingCost,
-      orderLines: data.lines.map(line => ({
-        itemId: line.itemId,
-        quantity: line.orderedQuantity,
-        unitPrice: line.unitCost,
-        discount: line.discount,
-        taxRate: line.taxAmount / (line.orderedQuantity * line.unitCost) || 0,
-        notes: line.itemName
-      }))
-    }
-
-    updatePurchaseOrder(updateData, {
-      onSuccess: () => {
-        notify.success("Purchase order updated successfully!")
-        router.push(localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}`))
-      },
-      onError: (error: any) => {
-        if (error?.message?.includes("NEXT_REDIRECT")) {
-          notify.success("Purchase order updated successfully!")
-          router.push(localizedHref(`/dashboard/purchase-orders/${purchaseOrder.id}`))
-        } else {
-          notify.error(error?.message || "Failed to update purchase order")
-        }
+    try {
+      const stored = readPurchaseOrderDraft(sessionStorage.getItem(draftKey), { organizationId, actorId, orderId: purchaseOrder.id })
+      if (stored) {
+        baseline.current = { revision: stored.baselineRevision, values: stored.baselineValues }
+        form.reset(stored.baselineValues)
+        for (const field of editFields) form.setValue(field, stored.values[field], { shouldDirty: true })
+        setPendingRequest(stored.pending)
+        if (stored.pending) { setStep(3); setFailure("unknown") }
       }
-    })
+    } catch { setStorageFailed(true) }
+    setReady(true)
+  }, [actorId, draftKey, form, organizationId, purchaseOrder.id])
+  useEffect(() => {
+    if (!ready) return
+    try {
+      if (!form.formState.isDirty && !pendingRequest) { sessionStorage.removeItem(draftKey); return }
+      sessionStorage.setItem(draftKey, JSON.stringify({ version: 1, organizationId, actorId, orderId: purchaseOrder.id, baselineRevision: baseline.current.revision, baselineValues: baseline.current.values, values, pending: pendingRequest }))
+    } catch { setStorageFailed(true) }
+  }, [actorId, draftKey, form.formState.isDirty, organizationId, pendingRequest, purchaseOrder.id, ready, values])
+  useEffect(() => { if (failure || locked) alertRef.current?.focus() }, [failure, locked])
+  useEffect(() => { if (comparison) comparisonRef.current?.focus() }, [comparison])
+  useEffect(() => {
+    if (!form.formState.isDirty) return
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault() }
+    window.addEventListener("beforeunload", warn)
+    return () => window.removeEventListener("beforeunload", warn)
+  }, [form.formState.isDirty])
+
+  function moveStep(next: number) {
+    if (failure === "validation") setFailure(null)
+    setStep(next)
+    requestAnimationFrame(() => stepRef.current?.focus())
   }
 
-  const nextStep = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1)
+  async function continueStep() {
+    if (locked) { moveStep(step + 1); return }
+    if (await form.trigger(stepFields[step], { shouldFocus: true })) moveStep(step + 1)
+  }
+
+  async function save(data: PurchaseOrderEditValues) {
+    if (submitting.current || !ready || (locked && !pendingRequest) || comparison) return
+    if (step !== 3) { await continueStep(); return }
+    submitting.current = true
+    setPending(true)
+    setFailure(null)
+    let confirmed = false
+    try {
+      const request = pendingRequest ?? purchaseOrderEditPayload(purchaseOrder, organizationId, data, { expectedRevision: baseline.current.revision, idempotencyKey: crypto.randomUUID() })
+      setPendingRequest(request)
+      // Persist the exact command before transport, without session credentials.
+      try { sessionStorage.setItem(draftKey, JSON.stringify({ version: 1, organizationId, actorId, orderId: purchaseOrder.id, baselineRevision: baseline.current.revision, baselineValues: baseline.current.values, values: data, pending: request })) } catch { setStorageFailed(true) }
+      const result = await mutation.mutateAsync(request)
+      if (!result.success || !result.data) {
+        if (result.code === "CONFLICT") { setPendingRequest(null); setFailure("stale") }
+        else if (result.code === "FORBIDDEN" || result.code === "AUTH_REQUIRED") { setPendingRequest(null); setFailure("denied") }
+        else if (result.code === "VALIDATION_ERROR" || result.code === "BUSINESS_RULE_VIOLATION" || result.code === "IDEMPOTENCY_CONFLICT") { setPendingRequest(null); setFailure("rejected") }
+        else setFailure("unknown")
+        return
+      }
+      if (result.data.editReceipt?.requestReference !== request.idempotencyKey || result.data.editReceipt.orderId !== purchaseOrder.id) { setFailure("unknown"); return }
+      confirmed = true
+      setPendingRequest(null)
+      try { sessionStorage.removeItem(draftKey) } catch { /* The completed command can be safely replayed if storage remains. */ }
+      form.reset(data)
+      notify.success(t("saved"))
+      router.push(savedHref)
+    } catch {
+      // Unknown transport outcomes keep the draft; no redirect, reset or automatic retry.
+      setFailure("unknown")
+    } finally {
+      if (!confirmed) {
+        submitting.current = false
+        setPending(false)
+      }
     }
   }
 
-  const prevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1)
-    }
+  async function compareCurrent() {
+    if (checking || pending) return
+    setChecking(true)
+    try {
+      const result = await getCurrentPurchaseOrderDraft(purchaseOrder.id, organizationId)
+      if (!result.success || !result.data?.editRevision) { setFailure(result.code === "FORBIDDEN" || result.code === "AUTH_REQUIRED" ? "denied" : "rejected"); return }
+      setComparison(result.data); setChoices({})
+    } catch { setFailure("unknown") }
+    finally { setChecking(false) }
   }
 
-  const selectedSupplier = suppliers.find(s => s.id === watch("supplierId"))
-  const selectedLocation = locations.find(l => l.id === watch("locationId"))
+  function applyComparedDraft(useCurrent = false) {
+    if (!comparison?.editRevision || comparison.status !== "DRAFT") return
+    const currentValues = purchaseOrderEditDefaults(comparison)
+    const merged = useCurrent ? currentValues : resolvePurchaseOrderDraft(baseline.current.values, form.getValues(), currentValues, choices)
+    if (!merged) return
+    baseline.current = { revision: comparison.editRevision, values: currentValues }
+    form.reset(currentValues)
+    for (const field of editFields) form.setValue(field, merged[field], { shouldDirty: true })
+    setPendingRequest(null); setComparison(null); setFailure(null); setStep(3)
+    requestAnimationFrame(() => stepRef.current?.focus())
+  }
 
-  return (
-    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[72rem] px-4 py-6 text-[var(--dash-text)] sm:px-6 sm:py-8">
-        <div className="dashboard-glass-panel mb-8 flex items-center justify-between rounded-lg p-6">
-          <div className="flex items-center gap-4">
-            <div className="rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-brand-soft)] p-3 text-[var(--dash-brand-strong)] shadow-[0_16px_34px_rgba(47,125,246,0.18)]">
-              <Save className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="flex items-center gap-3 text-2xl font-semibold tracking-normal text-[var(--dash-text)]">
-                Edit Purchase Order
-              </h1>
-              <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
-                Modify your purchase order with modern efficiency
-              </p>
-              <div className="flex items-center gap-4 mt-3">
-                <Badge variant="outline" className="dashboard-filter-chip flex items-center gap-2 rounded-lg px-3 py-1">
-                  <CheckCircle className="h-4 w-4 text-[var(--dash-info)]" />
-                  {purchaseOrder.orderNumber}
-                </Badge>
-                <Badge variant={purchaseOrder.status === 'DRAFT' ? 'secondary' : 'default'} className="dashboard-filter-chip rounded-lg px-3 py-1 font-medium">
-                  {purchaseOrder.status}
-                </Badge>
-              </div>
-            </div>
-          </div>
+  const fieldLabel = (field: EditField) => t(({ supplierId: "supplier", locationId: "location", expectedDeliveryDate: "deliveryDate", paymentTerms: "paymentTerms", notes: "notes", shippingCost: "shipping", lines: "items" } as const)[field])
+  function comparisonValue(field: EditField, value: PurchaseOrderEditValues) {
+    if (field === "supplierId") return suppliers.find(option => option.id === value.supplierId)?.name ?? t("currentUnavailable")
+    if (field === "locationId") return locations.find(option => option.id === value.locationId)?.name ?? t("currentUnavailable")
+    if (field === "shippingCost") return money(value.shippingCost)
+    if (field === "lines") return value.lines.map(line => `${items.find(item => item.id === line.itemId)?.name ?? t("currentUnavailable")}: ${line.quantity} × ${money(line.unitPrice)} · ${t("taxRate")}: ${line.taxRate}% · ${t("lineDiscount")}: ${money(line.discount)}${line.notes ? ` · ${line.notes}` : ""}`).join("\n")
+    return String(value[field] || "—")
+  }
 
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.back()}
-              className="dashboard-button-secondary flex items-center gap-2 rounded-lg"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-          </div>
-        </div>
+  function numericField(name: FieldPath<PurchaseOrderEditValues>, label: string, quantity = false) {
+    return <FormField control={form.control} name={name} render={({ field }) => <FormItem>
+      <FormLabel>{label}</FormLabel>
+      <FormControl><Input className="dashboard-control" type="number" min="0" step={quantity ? "0.001" : "any"} readOnly={readOnly}
+        name={field.name} ref={field.ref} onBlur={field.onBlur} value={typeof field.value === "number" && Number.isFinite(field.value) ? field.value : ""}
+        onChange={(event) => field.onChange(event.target.value === "" ? Number.NaN : Number(event.target.value))} /></FormControl>
+      <FormMessage />
+    </FormItem>} />
+  }
 
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-center">
-                <div className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-md border text-sm font-medium transition-colors",
-                  index === currentStep
-                    ? "border-[var(--dash-brand)] bg-[var(--dash-brand)] text-white"
-                    : index < currentStep
-                      ? "border-[var(--dash-success)] bg-[var(--dash-success)] text-white"
-                      : "border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.74)] text-[var(--dash-text-soft)]"
-                )}>
-                  {index < currentStep ? (
-                    <CheckCircle className="h-5 w-5" />
-                  ) : (
-                    index + 1
-                  )}
+  function textField(name: "paymentTerms" | "notes", label: string, multiline = false) {
+    return <FormField control={form.control} name={name} render={({ field }) => <FormItem>
+      <FormLabel>{label}</FormLabel><FormControl>{multiline
+        ? <Textarea {...field} rows={3} className="dashboard-control" readOnly={readOnly} />
+        : <Input {...field} className="dashboard-control" readOnly={readOnly} />}</FormControl><FormMessage />
+    </FormItem>} />
+  }
+
+  function summary() {
+    return <section aria-label={t("preview")} className="min-w-0 space-y-3 rounded-lg border border-[var(--dash-border-subtle)] p-3 sm:p-4">
+      <h3 className="font-semibold">{t("preview")}</h3>
+      <p className="text-sm text-[var(--dash-text-muted)]">{t("currency", { currency })}</p>
+      <dl className="space-y-2 text-sm">
+        {([[t("subtotal"), totals.subtotal], [t("tax"), totals.taxAmount], [t("discount"), totals.discount], [t("shipping"), values.shippingCost], [t("total"), totals.total]] as const).map(([label, value]) =>
+          <div key={label} className="flex flex-wrap justify-between gap-x-4 gap-y-1"><dt className="min-w-0 max-w-full">{label}</dt><dd className="min-w-0 max-w-full font-semibold tabular-nums">{money(value)}</dd></div>)}
+      </dl>
+      <p className="text-sm leading-6 text-[var(--dash-text-muted)]">{t("calculationHelp")}</p>
+    </section>
+  }
+
+  return <div className="dashboard-landing-theme dark min-h-screen min-w-0 [overflow-wrap:anywhere]"><div className="dashboard-landing-content mx-auto w-full min-w-0 max-w-5xl space-y-6 px-4 py-6 text-[var(--dash-text)] sm:px-6">
+    <header className="space-y-3">
+      <Button ref={backRef} type="button" variant="outline" className="dashboard-button-secondary h-auto min-h-10 max-w-full whitespace-normal text-left" disabled={pending}
+        onClick={() => form.formState.isDirty ? setShowLeave(true) : router.push(savedHref)}><ArrowLeft className="mr-2 size-4 shrink-0" aria-hidden="true" />{t("back")}</Button>
+      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+      <p className="text-sm leading-6 text-[var(--dash-text-muted)]">{t("subtitle")}</p>
+      <p className="break-words font-medium">{purchaseOrder.orderNumber} · {t(({ DRAFT: "draft", SUBMITTED: "statusSubmitted", APPROVED: "statusApproved", PARTIALLY_RECEIVED: "statusPartiallyReceived", RECEIVED: "statusReceived", COMPLETED: "statusCompleted", CANCELLED: "statusCancelled" } as const)[purchaseOrder.status])}</p>
+      <p className="text-sm leading-6 text-[var(--dash-text-muted)]">{t(locked ? "invalidOrder" : "draftScope")}</p>
+    </header>
+
+    <nav aria-label={t("progress")}>
+      <ol className="grid grid-cols-1 gap-2 text-sm min-[380px]:grid-cols-2 md:grid-cols-4">{steps.map((label, index) => <li key={label} aria-current={index === step ? "step" : undefined}
+        className={`rounded-lg border p-3 ${index === step ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)]" : "border-[var(--dash-border-subtle)]"}`}>
+        <span className="mr-2 font-semibold">{index + 1}.</span>{label}
+      </li>)}</ol>
+    </nav>
+
+    <Form {...form}><form aria-label={t("title")} aria-busy={busy} onSubmit={(event) => {
+      if (pendingRequest) { event.preventDefault(); void save(form.getValues()); return }
+      if (locked) { event.preventDefault(); return }
+      void form.handleSubmit(save, (errors) => {
+      setStep(errors.expectedDeliveryDate ? 0 : errors.supplierId || errors.locationId ? 1 : errors.lines ? 2 : 3)
+      setFailure("validation")
+      })(event)
+    }} className="space-y-5">
+      <fieldset disabled={busy} className="min-w-0 space-y-5">
+        <Card className="dashboard-glass-panel min-w-0 text-[var(--dash-text)]">
+          <CardHeader className="p-4 sm:p-6"><CardTitle><h2 ref={stepRef} tabIndex={-1} className="rounded-md text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)]">{steps[step]}</h2></CardTitle>
+            <p className="text-sm text-[var(--dash-text-muted)]">{t("step", { current: step + 1, total: steps.length })}</p></CardHeader>
+          <CardContent className="space-y-5 p-4 pt-0 sm:p-6 sm:pt-0">
+            {step === 0 ? <>
+              <dl className="grid gap-4 text-sm sm:grid-cols-2">
+                <div><dt className="text-[var(--dash-text-muted)]">{t("number")}</dt><dd className="mt-1 break-words font-medium">{purchaseOrder.orderNumber}</dd><dd className="mt-1 text-[var(--dash-text-muted)]">{t("numberHelp")}</dd></div>
+                <div><dt className="text-[var(--dash-text-muted)]">{t("orderDate")}</dt><dd className="mt-1">{new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" }).format(new Date(purchaseOrder.orderDate))}</dd></div>
+              </dl>
+              <FormField control={form.control} name="expectedDeliveryDate" render={({ field }) => <FormItem>
+                <FormLabel>{t("deliveryDate")}</FormLabel><FormControl><Input {...field} type="date" min={orderDate} className="dashboard-control w-full min-w-0" readOnly={readOnly} /></FormControl>
+                <p className="text-sm text-[var(--dash-text-muted)]">{t("dateHelp")}</p><FormMessage />
+              </FormItem>} />
+            </> : null}
+
+            {step === 1 ? <div className="grid gap-5 sm:grid-cols-2">
+              <FormField control={form.control} name="supplierId" render={({ field }) => <FormItem><FormLabel>{t("supplier")}</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange} disabled={busy || readOnly}><FormControl><SelectTrigger className="dashboard-control"><SelectValue placeholder={t("chooseSupplier")} /></SelectTrigger></FormControl>
+                  <SelectContent className="enterprise-floating-surface">{!suppliers.some((option) => option.id === field.value) && field.value ? <SelectItem value={field.value}>{purchaseOrder.supplier?.name ?? t("currentUnavailable")}</SelectItem> : null}{suppliers.map((option) => <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>)}</SelectContent></Select>
+                {!suppliers.length ? <p className="text-sm">{t("noSuppliers")}</p> : null}<FormMessage /></FormItem>} />
+              <FormField control={form.control} name="locationId" render={({ field }) => <FormItem><FormLabel>{t("location")}</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange} disabled={busy || readOnly}><FormControl><SelectTrigger className="dashboard-control"><SelectValue placeholder={t("chooseLocation")} /></SelectTrigger></FormControl>
+                  <SelectContent className="enterprise-floating-surface">{!locations.some((option) => option.id === field.value) && field.value ? <SelectItem value={field.value}>{purchaseOrder.location?.name ?? t("currentUnavailable")}</SelectItem> : null}{locations.map((option) => <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>)}</SelectContent></Select>
+                {!locations.length ? <p className="text-sm">{t("noLocations")}</p> : null}<FormMessage /></FormItem>} />
+            </div> : null}
+
+            {step === 2 ? <>
+              {!items.length ? <p className="text-sm" role="status">{t("noItems")}</p> : null}
+              {lines.fields.map((line, index) => <fieldset key={line.id} className="min-w-0 space-y-4 rounded-lg border border-[var(--dash-border-subtle)] p-4">
+                <legend className="px-2 font-medium">{t("line", { number: index + 1 })}</legend>
+                <FormField control={form.control} name={`lines.${index}.itemId`} render={({ field }) => <FormItem><FormLabel>{t("item")}</FormLabel>
+                  <Select value={field.value} onValueChange={(value) => {
+                    field.onChange(value)
+                    // Preserve an existing quoted cost. A newly added line can use the current cost suggestion.
+                    if (!line.itemId) form.setValue(`lines.${index}.unitPrice`, items.find((item) => item.id === value)?.costPrice ?? 0, { shouldDirty: true })
+                  }} disabled={busy || readOnly}><FormControl><SelectTrigger className="dashboard-control"><SelectValue placeholder={t("chooseItem")} /></SelectTrigger></FormControl>
+                    <SelectContent className="enterprise-floating-surface">{!items.some((item) => item.id === field.value) && field.value ? <SelectItem value={field.value}>{purchaseOrder.lines.find((item) => item.itemId === field.value)?.item?.name ?? t("currentUnavailable")}</SelectItem> : null}
+                      {items.map((item) => <SelectItem key={item.id} value={item.id}>{item.name} · {item.sku}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>} />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {numericField(`lines.${index}.quantity`, t("quantity"), true)}
+                  {numericField(`lines.${index}.unitPrice`, t("unitPrice"))}
+                  {numericField(`lines.${index}.taxRate`, t("taxRate"))}
+                  {numericField(`lines.${index}.discount`, t("lineDiscount"))}
                 </div>
-                {index < steps.length - 1 && (
-                  <div className={cn(
-                    "ml-4 h-1 w-20 rounded-md",
-                    index < currentStep ? "bg-[var(--dash-success)]" : "bg-[var(--dash-border-subtle)]"
-                  )} />
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="mt-4">
-            <h3 className="font-semibold text-[var(--dash-text)]">{steps[currentStep].title}</h3>
-            <p className="text-sm text-[var(--dash-text-soft)]">{steps[currentStep].description}</p>
-          </div>
-        </div>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <Card className="dashboard-glass-panel rounded-lg text-[var(--dash-text)]">
-              <CardContent className="p-8">
-                {/* Step 1: Order Details */}
-                {currentStep === 0 && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="orderNumber"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium text-[var(--dash-text-muted)]">Order Number</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                className="dashboard-control rounded-lg"
-                                placeholder="PO-001"
-                                disabled={purchaseOrder.status !== 'DRAFT'}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="reference"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium text-[var(--dash-text-muted)]">Reference</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                className="dashboard-control rounded-lg"
-                                placeholder="External reference"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <FormField
-                      control={form.control}
-                      name="expectedDeliveryDate"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium text-[var(--dash-text-muted)]">Expected Delivery Date</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    "dashboard-button-secondary w-full rounded-lg pl-3 text-left font-normal",
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Pick a date</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                disabled={(date) =>
-                                  date < new Date() || date < new Date("1900-01-01")
-                                }
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
-
-                {/* Step 2: Supplier & Location */}
-                {currentStep === 1 && (
-                  <div className="space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="supplierId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium text-[var(--dash-text-muted)]">Supplier</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="dashboard-control rounded-lg">
-                                <SelectValue placeholder="Select a supplier" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {suppliers.map((supplier) => (
-                                <SelectItem key={supplier.id} value={supplier.id}>
-                                  <div className="flex flex-col">
-                                    <span className="font-medium">{supplier.name}</span>
-                                    {supplier.email && (
-                                      <span className="text-sm text-slate-500">{supplier.email}</span>
-                                    )}
-                                  </div>
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="locationId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium text-[var(--dash-text-muted)]">Delivery Location</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="dashboard-control rounded-lg">
-                                <SelectValue placeholder="Select a location" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {locations.map((location) => (
-                                <SelectItem key={location.id} value={location.id}>
-                                  {location.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    {(selectedSupplier || selectedLocation) && (
-                      <div className="mt-6 rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)] p-4">
-                        <h4 className="mb-2 font-medium text-[var(--dash-text)]">Selection Summary</h4>
-                        {selectedSupplier && (
-                          <p className="text-sm text-[var(--dash-text-soft)]">
-                            <span className="font-medium">Supplier:</span> {selectedSupplier.name}
-                          </p>
-                        )}
-                        {selectedLocation && (
-                          <p className="text-sm text-[var(--dash-text-soft)]">
-                            <span className="font-medium">Location:</span> {selectedLocation.name}
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Step 3: Line Items */}
-                {currentStep === 2 && (
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-[var(--dash-text)]">Line Items</h3>
-                      <Button
-                        type="button"
-                        onClick={addLineItem}
-                        variant="outline"
-                        size="sm"
-                        className="dashboard-button-secondary rounded-lg"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Item
-                      </Button>
-                    </div>
-
-                    <div className="space-y-4">
-                      {watchedLines.map((line, index) => (
-                        <Card key={index} className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.5)]">
-                          <CardContent className="p-4">
-                            <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                              <div className="md:col-span-2">
-                                <FormField
-                                  control={form.control}
-                                  name={`lines.${index}.itemId`}
-                                  render={({ field }) => (
-                                    <FormItem>
-                                      <FormLabel className="text-sm text-[var(--dash-text-muted)]">Item</FormLabel>
-                                      <Select
-                                        onValueChange={(value) => {
-                                          field.onChange(value)
-                                          const selectedItem = items.find(item => item.id === value)
-                                          if (selectedItem) {
-                                            setValue(`lines.${index}.itemName`, selectedItem.name)
-                                            if (selectedItem.sellingPrice) {
-                                              setValue(`lines.${index}.unitCost`, selectedItem.sellingPrice)
-                                            }
-                                          }
-                                        }}
-                                        value={field.value}
-                                      >
-                                        <FormControl>
-                                          <SelectTrigger className="dashboard-control rounded-lg text-sm">
-                                            <SelectValue placeholder="Select item" />
-                                          </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                          {items.map((item) => (
-                                            <SelectItem key={item.id} value={item.id}>
-                                              <div className="flex flex-col">
-                                                <span className="font-medium">{item.name}</span>
-                                                <span className="text-xs text-slate-500">{item.sku}</span>
-                                              </div>
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                      <FormMessage />
-                                    </FormItem>
-                                  )}
-                                />
-                              </div>
-                              <FormField
-                                control={form.control}
-                                name={`lines.${index}.orderedQuantity`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-sm text-[var(--dash-text-muted)]">Quantity</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        step="0.01"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                        className="dashboard-control rounded-lg text-sm"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={form.control}
-                                name={`lines.${index}.unitCost`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-sm text-[var(--dash-text-muted)]">Unit Cost</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        step="0.01"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                        className="dashboard-control rounded-lg text-sm"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <FormField
-                                control={form.control}
-                                name={`lines.${index}.taxAmount`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel className="text-sm text-[var(--dash-text-muted)]">Tax</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        step="0.01"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                        className="dashboard-control rounded-lg text-sm"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-                              <div className="flex items-end gap-2">
-                                <div className="flex-1">
-                                  <FormLabel className="text-sm text-[var(--dash-text-muted)]">Line Total</FormLabel>
-                                  <div className="mt-2 text-sm font-medium text-[var(--dash-text)]">
-                                    ${((line.orderedQuantity * line.unitCost) - (line.discount || 0) + line.taxAmount).toFixed(2)}
-                                  </div>
-                                </div>
-                                {watchedLines.length > 1 && (
-                                  <Button
-                                    type="button"
-                                    onClick={() => removeLineItem(index)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="rounded-md text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/40"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-
-                    {/* Summary */}
-                    <Card className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)]">
-                      <CardContent className="p-4">
-                        <div className="grid grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <div className="text-[var(--dash-text-soft)]">Subtotal</div>
-                            <div className="font-semibold text-[var(--dash-text)]">${subtotal.toFixed(2)}</div>
-                          </div>
-                          <div>
-                            <div className="text-[var(--dash-text-soft)]">Tax Total</div>
-                            <div className="font-semibold text-[var(--dash-text)]">${taxTotal.toFixed(2)}</div>
-                          </div>
-                          <div>
-                            <div className="text-[var(--dash-text-soft)]">Total</div>
-                            <div className="text-lg font-semibold text-[var(--dash-info)]">${total.toFixed(2)}</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                {/* Step 4: Additional Info */}
-                {currentStep === 3 && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="shippingMethod"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium text-[var(--dash-text-muted)]">Shipping Method</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                className="dashboard-control rounded-lg"
-                                placeholder="e.g., Standard, Express"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="shippingCost"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium text-[var(--dash-text-muted)]">Shipping Cost</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                step="0.01"
-                                {...field}
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                className="dashboard-control rounded-lg"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="paymentTerms"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium text-[var(--dash-text-muted)]">Payment Terms</FormLabel>
-                            <FormControl>
-                              <Input
-                                {...field}
-                                className="dashboard-control rounded-lg"
-                                placeholder="e.g., Net 30"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="discount"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="font-medium text-[var(--dash-text-muted)]">Order Discount</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="number"
-                                step="0.01"
-                                {...field}
-                                onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                                className="dashboard-control rounded-lg"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <FormField
-                      control={form.control}
-                      name="notes"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium text-[var(--dash-text-muted)]">Notes</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              {...field}
-                              className="dashboard-control rounded-lg"
-                              placeholder="Public notes visible to supplier"
-                              rows={3}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="internalNotes"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="font-medium text-[var(--dash-text-muted)]">Internal Notes</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              {...field}
-                              className="dashboard-control rounded-lg"
-                              placeholder="Internal notes (not visible to supplier)"
-                              rows={3}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Final Summary */}
-                    <Card className="rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(24,38,45,0.58)]">
-                      <CardHeader>
-                        <CardTitle className="text-[var(--dash-text)]">Order Summary</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <div className="space-y-2">
-                              <div className="flex justify-between">
-                                <span className="text-[var(--dash-text-soft)]">Subtotal:</span>
-                                <span className="font-medium">${subtotal.toFixed(2)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-[var(--dash-text-soft)]">Tax:</span>
-                                <span className="font-medium">${taxTotal.toFixed(2)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-[var(--dash-text-soft)]">Shipping:</span>
-                                <span className="font-medium">${(watchedShippingCost || 0).toFixed(2)}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-[var(--dash-text-soft)]">Discount:</span>
-                                <span className="font-medium">-${(watchedDiscount || 0).toFixed(2)}</span>
-                              </div>
-                              <div className="flex justify-between border-t pt-2">
-                                <span className="font-semibold text-[var(--dash-text)]">Total:</span>
-                                <span className="text-lg font-bold text-[var(--dash-success)]">${total.toFixed(2)}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div className="space-y-1 text-xs text-[var(--dash-text-soft)]">
-                              <div><span className="font-medium">Items:</span> {watchedLines.length}</div>
-                              <div><span className="font-medium">Supplier:</span> {selectedSupplier?.name}</div>
-                              <div><span className="font-medium">Location:</span> {selectedLocation?.name}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-
-                {/* Navigation Buttons */}
-                <div className="flex justify-between border-t border-[var(--dash-border-subtle)] pt-6">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={prevStep}
-                    disabled={currentStep === 0}
-                    className="dashboard-button-secondary min-w-24 rounded-lg"
-                  >
-                    Previous
-                  </Button>
-
-                  <div className="flex gap-3">
-                    {currentStep < steps.length - 1 ? (
-                      <Button
-                        type="button"
-                        onClick={nextStep}
-                        className="dashboard-button-primary min-w-24 rounded-lg"
-                      >
-                        Next
-                      </Button>
-                    ) : (
-                      <Button
-                        type="submit"
-                        disabled={isPending}
-                        className="dashboard-button-primary min-w-32 rounded-lg"
-                      >
-                        {isPending ? (
-                          <div className="flex items-center gap-2">
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                            Updating...
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Save className="h-4 w-4" />
-                            Update Purchase Order
-                          </div>
-                        )}
-                      </Button>
-                    )}
-                  </div>
+                <FormField control={form.control} name={`lines.${index}.notes`} render={({ field }) => <FormItem><FormLabel>{t("lineNotes")}</FormLabel><FormControl><Textarea {...field} rows={2} className="dashboard-control" readOnly={readOnly} /></FormControl><FormMessage /></FormItem>} />
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm">{t("lineTotal")}: <strong>{money(values.lines[index].quantity * values.lines[index].unitPrice * (1 + values.lines[index].taxRate / 100) - values.lines[index].discount)}</strong></p>
+                  <Button type="button" variant="outline" className="dashboard-button-secondary h-auto min-h-10 whitespace-normal" disabled={readOnly || lines.fields.length === 1}
+                    onClick={() => lines.remove(index)}><Trash2 className="mr-2 size-4 shrink-0" aria-hidden="true" />{t("removeLine", { number: index + 1 })}</Button>
                 </div>
-              </CardContent>
-            </Card>
-          </form>
-        </Form>
-      </div>
-    </div>
-  )
+              </fieldset>)}
+              <Button type="button" variant="outline" className="dashboard-button-secondary" disabled={readOnly || !items.length} onClick={() => lines.append({ itemId: "", quantity: 1, unitPrice: 0, taxRate: 0, discount: 0, notes: "" })}><Plus className="mr-2 size-4" aria-hidden="true" />{t("addLine")}</Button>
+              {summary()}
+            </> : null}
+
+            {step === 3 ? <>
+              <div className="grid gap-5 sm:grid-cols-2">{textField("paymentTerms", t("paymentTerms"))}{numericField("shippingCost", t("shipping"))}</div>
+              {textField("notes", t("notes"), true)}
+              {summary()}
+            </> : null}
+          </CardContent>
+        </Card>
+        <div className="flex flex-wrap justify-between gap-3">
+          <Button type="button" variant="outline" className="dashboard-button-secondary h-auto min-h-10 max-w-full whitespace-normal" disabled={step === 0} onClick={() => moveStep(step - 1)}>{t("previous")}</Button>
+          {step < 3
+            ? <Button key="continue" type="button" className="dashboard-button-primary h-auto min-h-10 max-w-full whitespace-normal" onClick={(event) => { event.preventDefault(); void continueStep() }}>{t("next")}</Button>
+            : <Button key="save" type="submit" disabled={(locked && !pendingRequest) || !!comparison} className="dashboard-button-primary h-auto min-h-10 max-w-full whitespace-normal"><Save className="mr-2 size-4 shrink-0" aria-hidden="true" />{pending ? t("saving") : pendingRequest ? t("retrySave") : t("save")}</Button>}
+        </div>
+      </fieldset>
+      {pending ? <p role="status" className="text-sm">{t("pendingHelp")}</p> : null}
+      {storageFailed ? <p role="status" className="text-sm">{t("storageUnavailable")}</p> : null}
+      {failure || locked ? <div ref={alertRef} role="alert" tabIndex={-1} className="space-y-2 rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-4 text-sm leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)]">
+        <p className="font-semibold">{t(failure === "stale" ? "staleTitle" : failure === "denied" ? "deniedTitle" : failure === "unknown" ? "unknownTitle" : failure === "validation" ? "validationTitle" : failure ? "failedTitle" : "lockedTitle")}</p>
+        {failure && failure !== "validation" ? <p>{t(failure === "stale" ? "staleHelp" : failure === "denied" ? "deniedHelp" : failure === "unknown" ? "retryHelp" : "failed")}</p> : null}
+        {locked ? <><p>{t("invalidOrder")}</p><p>{t("lockedRecovery")}</p></> : null}
+        {failure !== "validation" || locked ? <a href={savedHref} target="_blank" rel="noreferrer" className="inline-block underline underline-offset-4">{t("openSaved")}</a> : null}
+        {failure && failure !== "validation" ? <Button type="button" variant="outline" className="dashboard-button-secondary h-auto max-w-full whitespace-normal" disabled={pending || checking} onClick={() => void compareCurrent()}>{checking ? t("checkingCurrent") : t("compareCurrent")}</Button> : null}
+      </div> : null}
+    </form></Form>
+
+    {comparison ? <section aria-labelledby="purchase-draft-comparison-title" className="dashboard-glass-panel min-w-0 space-y-4 rounded-lg p-4">
+      <h2 id="purchase-draft-comparison-title" ref={comparisonRef} tabIndex={-1} className="text-lg font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)]">{t("compareTitle")}</h2>
+      <p className="text-sm leading-6">{t("mergeHelp")}</p>
+      {comparison.status !== "DRAFT" ? <p role="status">{t("invalidOrder")}</p> : null}
+      {editFields.map(field => {
+        const current = purchaseOrderEditDefaults(comparison)
+        const conflict = comparePurchaseOrderDraft(baseline.current.values, values, current).conflicts.includes(field)
+        return <fieldset key={field} className="min-w-0 space-y-3 rounded-md border border-[var(--dash-border-subtle)] p-3">
+          <legend className="px-2 font-medium">{fieldLabel(field)}</legend>
+          <dl className="grid min-w-0 gap-3 text-sm sm:grid-cols-2"><div><dt className="text-[var(--dash-text-muted)]">{t("currentValues")}</dt><dd className="mt-1 whitespace-pre-wrap">{comparisonValue(field, current)}</dd></div><div><dt className="text-[var(--dash-text-muted)]">{t("yourDraft")}</dt><dd className="mt-1 whitespace-pre-wrap">{comparisonValue(field, values)}</dd></div></dl>
+          {conflict ? <Select value={choices[field] ?? ""} onValueChange={value => setChoices(previous => ({ ...previous, [field]: value as "draft" | "current" }))} disabled={comparison.status !== "DRAFT"}>
+            <SelectTrigger className="dashboard-control h-auto min-h-10 whitespace-normal" aria-label={`${fieldLabel(field)}: ${t("chooseResolution")}`}><SelectValue placeholder={t("chooseResolution")} /></SelectTrigger><SelectContent className="enterprise-floating-surface"><SelectItem value="current">{t("keepCurrent")}</SelectItem><SelectItem value="draft">{t("keepDraft")}</SelectItem></SelectContent>
+          </Select> : null}
+        </fieldset>
+      })}
+      <div className="flex flex-wrap gap-3"><Button type="button" className="dashboard-button-primary h-auto max-w-full whitespace-normal" disabled={comparison.status !== "DRAFT" || !resolvePurchaseOrderDraft(baseline.current.values, values, purchaseOrderEditDefaults(comparison), choices)} onClick={() => applyComparedDraft()}>{t("applyComparison")}</Button><Button type="button" variant="outline" className="dashboard-button-secondary h-auto max-w-full whitespace-normal" disabled={comparison.status !== "DRAFT"} onClick={() => applyComparedDraft(true)}>{t("useCurrent")}</Button><Button type="button" variant="outline" className="dashboard-button-secondary h-auto max-w-full whitespace-normal" onClick={() => setComparison(null)}>{t("closeComparison")}</Button></div>
+    </section> : null}
+
+    <Dialog open={showLeave} onOpenChange={setShowLeave}><DialogContent className="enterprise-floating-surface" onCloseAutoFocus={(event) => { event.preventDefault(); backRef.current?.focus() }}>
+      <DialogHeader><DialogTitle>{t("leaveTitle")}</DialogTitle><DialogDescription>{t("leaveDescription")}</DialogDescription></DialogHeader>
+      <DialogFooter><Button type="button" variant="outline" className="dashboard-button-secondary h-auto whitespace-normal" onClick={() => setShowLeave(false)}>{t(locked ? "stayReadOnly" : "stay")}</Button><Button type="button" variant="destructive" className="h-auto whitespace-normal" onClick={() => { try { sessionStorage.removeItem(draftKey) } catch { /* Local storage is unavailable. */ } setPendingRequest(null); form.reset(); router.push(savedHref) }}>{t("discard")}</Button></DialogFooter>
+    </DialogContent></Dialog>
+  </div></div>
 }

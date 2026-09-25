@@ -25,7 +25,7 @@ export default defineConfig({
     ? undefined
     : {
         command: `npx next dev -p ${webServerPort}`,
-        url: baseURL,
+        url: process.env.PLAYWRIGHT_READINESS_PATH ? new URL(process.env.PLAYWRIGHT_READINESS_PATH, baseURL).toString() : baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 240_000,
       },
@@ -41,7 +41,7 @@ export default defineConfig({
     },
     {
       name: "inventory-items-authenticated-release",
-      testMatch: /inventory-items-authenticated-release\.spec\.ts/,
+      testMatch: /(?:inventory-items-authenticated-release|item-media-create)\.spec\.ts/,
       dependencies: ["inventory-items-auth-setup"],
       use: {
         ...devices["Desktop Chrome"],

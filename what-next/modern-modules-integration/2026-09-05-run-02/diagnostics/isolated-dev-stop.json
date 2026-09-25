@@ -1,0 +1,18 @@
+{
+  "observedStoppedAt": "2026-09-05T14:54:20.2831738Z",
+  "reason": "Parent requested temporary shutdown of owned development server while source edits and isolated build proceed under memory pressure.",
+  "scope": "127.0.0.1:3107 only",
+  "unifiedExecSession": 88906,
+  "verifiedBefore": [
+    { "pid": 15148, "parentPid": 21412, "owner": "modern-modules-local-verification.js start" },
+    { "pid": 22128, "parentPid": 15148, "owner": "Next dev -H 127.0.0.1 -p3107" },
+    { "pid": 23420, "parentPid": 22128, "owner": "Next start-server.js; actual127.0.0.1:3107 listener" }
+  ],
+  "method": "Ctrl+C sent to the original owned unified exec session; no force-kill command used",
+  "sessionExitCode": 1,
+  "remainingOwnedProcessIds": [],
+  "remaining3107Listeners": [],
+  "otherProcessesTargeted": false,
+  "browserContextsClosedBeforeStop": true,
+  "restart": "Await parent completion of build/source freeze; restart only through existing isolated helper when requested."
+}

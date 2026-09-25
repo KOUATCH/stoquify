@@ -1,0 +1,321 @@
+{
+  "recordedAt": "2026-09-07T07:18:28.903Z",
+  "sourceBaseline": "evidence/source-baseline-v41.json",
+  "workflows": [
+    "CS-STATEMENT-HISTORY",
+    "CS-STATEMENT-REVOKE",
+    "CS-STATEMENT-DELIVERY-QUEUE"
+  ],
+  "overlap": "NTF-STATEMENT-QUEUE is the same canonical delivery workflow, not another coverage increment.",
+  "sources": {
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "components/customers/CustomerStatementHistory.tsx": "05ebf01c8ef856b3d30b9cb5605780d197d589f63b87c6e5deb86308e774004f",
+    "components/customers/CustomerStatementWorkflow.tsx": "4526962a24343534ccec13b82e942538f8e7e16bec66a5ecac0be214cc9e8acf",
+    "hooks/customer-statement-request.ts": "362e6fb5719ba61e1fa851f325200cbb1b8e1c863cacc7e1f098215af4c23072",
+    "actions/accounting/customer-statement-history.actions.ts": "1ff57815a13397c7fdfe7cfb4236afaab98132c1a0f85eea135221bdd7b6ad4e",
+    "actions/accounting/customer-statement.actions.ts": "04afc8d016beabe8bd3a1a0dcfc0a89654f9d1f4968062bb5c6b2cf27d8c4620",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx": "381f235ae135827f9c6846b303864e647dfbcb681850f62685eac485b5a95b05",
+    "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts": "83e5b6f633474cc4ca53365a0c44b114c776b9b1d578a3377dd69df358e0a1b5",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "components/customers/__tests__/CustomerStatementWorkflow.test.tsx": "5a45d57cafa3faa14ef9fc1c40c135f14d77edbdef3aba7e0198254fde30e5f7",
+    "actions/accounting/__tests__/customer-statement.actions.test.ts": "3594df1dc7f5eb7839519d4fc7a0910b7b37d2495a4d515b7e069be30462d5d8",
+    "components/customers/__tests__/CustomerStatementHistory.test.tsx": "cd8e816d3dca3ee557438cececedae43c144fc5feabb2287795bcdef83dd4795",
+    "actions/accounting/__tests__/customer-statement-history.actions.test.ts": "68ec973b7a11fde20df9df4d5f0a4a3f9c9ae83d6bed8488f08586fe0e76a7ca",
+    "hooks/__tests__/customer-statement-request.test.ts": "729e3ef434c0ce0b605d70e6c214fc3380316fdb1db5969c3526f5619c2cb62c",
+    "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx": "2cead3701b05e3e2a036f2d12f5869b85bba6ffcebdc484bb1178b6d4f5b32c0",
+    "services/accounting/__tests__/customer-statement-history.service.test.ts": "5116580011a4a4fe2a970b516c2a6eed67baaef2183d6e26392f08883d3c08a4",
+    "app/[locale]/(dashboard)/dashboard/customers/__tests__/route-audit.test.ts": "0fb6cdfec2a29393ae64b09d86dc3ee64830953abea3356df60df93ee68c2fc0",
+    "app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx": "1e633e69f1a6aa4c9f13278a2d8f077b22f3ecac7e7fa264b383cae62f2d8974",
+    "actions/modules/__tests__/module-control.actions.test.ts": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf",
+    "services/modules/__tests__/module-entitlement.service.test.ts": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc",
+    "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+    "services/accounting/customer-statement.schemas.ts": "2a52c60020a6c033715d8725295b383e040e9326120be4ea78b15446a622616b",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8"
+  },
+  "browser": "lanes/environment/statement-history-browser-ea4be3e4-82f.json",
+  "postgres": "lanes/environment/statement-history-postgres-cef5d114-085.json",
+  "verification": {
+    "tests": {
+      "file": "evidence/statement-history-tests-03.json",
+      "passed": 48,
+      "suites": 7
+    },
+    "accessRegression": {
+      "file": "evidence/statement-history-access-regression-01.json",
+      "passed": 29,
+      "suites": 4
+    },
+    "postgres": {
+      "checks": 5,
+      "chunk": "558051"
+    },
+    "browser": {
+      "journeys": 2,
+      "widthTextCases": 16,
+      "screenshots": 32
+    },
+    "tools": {
+      "recordedAt": "2026-09-07",
+      "workspace": "E:/ohada saas/Focused projects/stoquify",
+      "typecheck": {
+        "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false",
+        "exitCode": 0,
+        "terminalReceipt": "4408b3",
+        "scope": "Existing tsconfig and its pre-existing exclusions. Final rerun after owned app startup; no full-build claim."
+      },
+      "lint": {
+        "command": "node node_modules/eslint/bin/eslint.js --no-cache <files>",
+        "exitCode": 0,
+        "terminalReceipt": "fa7f7c",
+        "files": [
+          "services/accounting/customer-statement-history.service.ts",
+          "actions/accounting/customer-statement-history.actions.ts",
+          "components/customers/CustomerStatementHistory.tsx",
+          "components/customers/CustomerStatementWorkflow.tsx",
+          "hooks/customer-statement-request.ts",
+          "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+          "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+          "services/accounting/__tests__/customer-statement-history.service.test.ts",
+          "actions/accounting/__tests__/customer-statement-history.actions.test.ts",
+          "components/customers/__tests__/CustomerStatementHistory.test.tsx",
+          "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+          "hooks/__tests__/customer-statement-request.test.ts",
+          "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx"
+        ]
+      },
+      "tests": {
+        "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath <seven paths recorded in result> --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-history-tests-03.json",
+        "exitCode": 0,
+        "terminalReceipt": "09163f",
+        "file": "evidence/statement-history-tests-03.json",
+        "passed": 48,
+        "suites": 7
+      },
+      "accessRegression": {
+        "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath app/[locale]/(dashboard)/dashboard/customers/__tests__/route-audit.test.ts app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx services/modules/__tests__/module-entitlement.service.test.ts actions/modules/__tests__/module-control.actions.test.ts --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-history-access-regression-01.json",
+        "exitCode": 0,
+        "terminalReceipt": "aca28b",
+        "passed": 29,
+        "suites": 4
+      },
+      "postgres": {
+        "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-history-postgres.cjs",
+        "file": "lanes/environment/statement-history-postgres-cef5d114-085.json",
+        "exitCode": 0,
+        "terminalReceipt": "558051",
+        "checks": 5
+      },
+      "browser": {
+        "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-history-browser.cjs statement-history-postgres-cef5d114-085.json",
+        "exitCode": 0,
+        "terminalReceipt": "bde72e",
+        "file": "lanes/environment/statement-history-browser-ea4be3e4-82f.json",
+        "journeys": 2,
+        "widthTextCases": 16,
+        "screenshots": 32,
+        "visualReview": "Inspected actual FR 320px/200% action wrapping, EN read-only history and FR revocation screenshot. Revocation screenshot captures the retained old list while its successful follow-up refresh is loading; current database status and subsequent read-only screenshot provide final state evidence. Native zoom and screen readers not exercised. Existing header fragments run together ('puispartagez'); record for a subsequent wording correction."
+      },
+      "baseline": {
+        "command": "node what-next/workflow-modernization/2026-09-05-run-01/capture-source-baseline.cjs",
+        "exitCode": 0,
+        "terminalReceipt": "c044a2",
+        "file": "evidence/source-baseline-v41.json"
+      }
+    }
+  },
+  "screenshots": [
+    {
+      "source": "lanes/environment/en-statement-history-denied-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-denied-ea4be3e4-82f.png",
+      "sha256": "0d083fe4d0c804ad6726be84f55cc352ab1e44325f6bcd2381ac60515feb9f2b"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-saved-history-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-saved-history-ea4be3e4-82f.png",
+      "sha256": "3695198611569e152e0e6a4a03b2e730939eb32fcbab7f60861bd1778a3a93cd"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-failed-refresh-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-failed-refresh-ea4be3e4-82f.png",
+      "sha256": "8eecfdb6d5577b60195d916dc8aea6dbdf1adb27b1dc76f19eeebe1dba7f5178"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-queue-unconfirmed-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-queue-unconfirmed-ea4be3e4-82f.png",
+      "sha256": "49f3810ceedf08bc950011b16ee3540e6684a0763ee7a6a9a0cf4b4c96c21e12"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-delivery-recovered-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-delivery-recovered-ea4be3e4-82f.png",
+      "sha256": "2846b43b62d91048def2475b94c1249fbaf8d98aa67f758663122ac616c14ca7"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-new-tab-history-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-new-tab-history-ea4be3e4-82f.png",
+      "sha256": "80827d6cae561b00030b5b76928c7e859d30587b00e090b1605fc0c7d1fc30e6"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-revoked-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-revoked-ea4be3e4-82f.png",
+      "sha256": "f67869a3fb954f996c11d49c6fe46b649dd9d2d777f206dedd4ec9ff7e6f8ee4"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-320-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-320-100-ea4be3e4-82f.png",
+      "sha256": "d294c6f9b58a2b668f6f9291f2d159d5d88622c2c023d6a4a4e2c1c2b838dd31"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-320-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-320-200-ea4be3e4-82f.png",
+      "sha256": "e06cfaaadf4311772b2cfa13b9d3332ab55e06c536919cfc944ca8c07eb3b1b1"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-390-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-390-100-ea4be3e4-82f.png",
+      "sha256": "675b120a4198eb2a6efcd6d9993b066685237839fb2dfbd8998d1eb2b0d39493"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-390-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-390-200-ea4be3e4-82f.png",
+      "sha256": "ea9d9386965bad134387bcf931b6b944ca1a756a3f428ef6f25e15a44c3aa26f"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-768-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-768-100-ea4be3e4-82f.png",
+      "sha256": "3c6a104a91ca68faf01e1a530fc54547acf32cdbad82d3485d8fe5630e21aef0"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-768-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-768-200-ea4be3e4-82f.png",
+      "sha256": "23ef38cb2ec255f8271e325e9886935ab229935ca2caa7656d2f3b542a202224"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-1440-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-1440-100-ea4be3e4-82f.png",
+      "sha256": "9699fdd7989a66f1400a524b3fa2070f2f22d01ec30a7678a34f308698f1e40f"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-reflow-1440-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-reflow-1440-200-ea4be3e4-82f.png",
+      "sha256": "3dddd5e611241dfdce97c49cbb1def5a321a8fd915a4c271514f3468880c2537"
+    },
+    {
+      "source": "lanes/environment/en-statement-history-read-only-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/en-statement-history-read-only-ea4be3e4-82f.png",
+      "sha256": "d3eb4753164854dbef03439a9e886cac655ae7fc338ca8d5d15513358a82409f"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-denied-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-denied-ea4be3e4-82f.png",
+      "sha256": "f6edca4224d3687313317d05efaf85370acb44f58fb701fb99f430cf9e074766"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-saved-history-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-saved-history-ea4be3e4-82f.png",
+      "sha256": "a7e3f87a010524535a65b0f73d66a01090c62b19873881427d6befc004f825d3"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-failed-refresh-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-failed-refresh-ea4be3e4-82f.png",
+      "sha256": "2d36608b4c2e239bc4af9be3bc0eca50ab2a758168406a4b07a6c699fb76a374"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-queue-unconfirmed-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-queue-unconfirmed-ea4be3e4-82f.png",
+      "sha256": "f4341876df07ba2c602601cbac59f2c0cac760ae7b47b64c517634782c64bd4e"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-delivery-recovered-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-delivery-recovered-ea4be3e4-82f.png",
+      "sha256": "e878cd6ea23a6f4288cfcec1cd8ffb92a39cfd185f646f056e8a643d2cf66df0"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-new-tab-history-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-new-tab-history-ea4be3e4-82f.png",
+      "sha256": "540bcd745951235379ba0ce3bbf8a0e0ccce87dc075cf4fa8af87a2d68ce541b"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-revoked-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-revoked-ea4be3e4-82f.png",
+      "sha256": "e0fffbb641eae969f0860b7d3967e9352db1967b5632c94d406bbb1b375342ff"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-320-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-320-100-ea4be3e4-82f.png",
+      "sha256": "efc45ac3bfc19e35f1007b3b82c54396b0ee3032fee9052cda6dca1c5d7334c3"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-320-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-320-200-ea4be3e4-82f.png",
+      "sha256": "1f45623a93cc0e80da31a37d4e303d4fbdbd6c8f541ff4bcdd54049ba7bcfb32"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-390-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-390-100-ea4be3e4-82f.png",
+      "sha256": "160d3c8c05628542b61abdf498f1014749d5caad68cb7fb257ba5f3476750d65"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-390-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-390-200-ea4be3e4-82f.png",
+      "sha256": "0e5709339ffb0b5698858041f0303fb814eaa0a06aa693d43531d1da190717b9"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-768-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-768-100-ea4be3e4-82f.png",
+      "sha256": "a0ecb68b5d024cd7c64426f1ff23688179168e97c6531fa91487996f10806884"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-768-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-768-200-ea4be3e4-82f.png",
+      "sha256": "f53b29078e577f58720a94dc4b24a16c777171fa630155533a6efbc77e4a6cf0"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-1440-100-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-1440-100-ea4be3e4-82f.png",
+      "sha256": "06c99b6cb7d28d2c9c75d8a32d2f91b0595c2e59266bff33b4a467f9486abc32"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-reflow-1440-200-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-reflow-1440-200-ea4be3e4-82f.png",
+      "sha256": "f7c21c10f4a5b98f9107c14b68b378f2657b975b4716cef73c2fb4639eed43b9"
+    },
+    {
+      "source": "lanes/environment/fr-statement-history-read-only-ea4be3e4-82f.png",
+      "file": "evidence/statement-history/fr-statement-history-read-only-ea4be3e4-82f.png",
+      "sha256": "decbdee479b07fb24188f7b77a987690047c3cfd386bef479f736a32fa17adba"
+    }
+  ],
+  "developmentTimings": [
+    {
+      "locale": "en",
+      "routeReadyMs": 1811
+    },
+    {
+      "locale": "fr",
+      "routeReadyMs": 5770
+    }
+  ],
+  "latencyMeaning": "Authorized reload of an owned local development route. Different work and environment from v40; no controlled before/after improvement or production budget claim.",
+  "failedAttempts": [
+    "evidence/statement-history-attempts.md"
+  ],
+  "limitations": [
+    "Unreadable local command metadata can be inspected alongside history but still needs a controlled resolution workflow before another request is enabled in that tab.",
+    "Empty-source snapshots and recorded zero balances were exercised; populated receivable/ledger calculations and the complete financial lifecycle remain unverified by this batch.",
+    "Provider worker processing, unknown provider outcomes, public recipient revocation races and complete retained-obligation lifecycle remain open workflows.",
+    "Native screen readers, native browser zoom and full contrast/accessibility audit remain open; sixteen CSS text-enlargement cases are bounded layout evidence.",
+    "The existing foreign-object not-found heading remains English in the French route; broader not-found localization remains an engineering issue.",
+    "No full build, production performance acceptance, deployment, external message, X1 approval/clearance or professional certification."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalMessages": false,
+  "completeWorkflowVerified": false
+}

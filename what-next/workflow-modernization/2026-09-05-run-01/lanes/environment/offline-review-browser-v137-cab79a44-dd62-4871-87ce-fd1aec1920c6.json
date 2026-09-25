@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-13T15:49:15.549Z",
+  "sourcesBefore": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/ProfessionalPOSSystem.tsx": "f870ee1629a3c6ddd3550852b07224febd8a350bbeb21e1b3a9f179138f3e6a1",
+    "components/pos/offline/OfflineConflictReview.tsx": "d4102c92fd2519a7052af835ae6506739ec4d08e3de77e34cda9141c61fd928c",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "09490b9581514c28c848e109beda1aaf71a9222bdba70e924016b772e3395166",
+    "hooks/posHooks/useOfflineSync.ts": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+    "messages/en.json": "accdd3b7b1f46f2899b96a6e687812f074404a8fc94bb2ca5d24575ddd465031",
+    "messages/fr.json": "c66a64c980bcd44260e8c12916c530c3a42b91f5ba853b77a42d753504b5dc43"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "pageErrors": [],
+      "initialText": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Tender operator-review-a80023cc-9ac1-4284-a698-8af5ef3c9314\n\nOWNED REVIEW OPERATOR\nSession\nMODULES\n6\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nOPERATIONS\n1\nSales\nCustomers, sales, and POS entry points\n2\nOverview\nPOS\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n3\nFinance\nCash, profitability, payments, and reconciliation\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n2\nO\n\noperator-review-a80023cc-9ac1-4284-a698-8af5ef3c931453f949d3-f069-47a4-a112-4756703996f2@example.invalid\n\noperator-review-a80023cc-9ac1-4284-a698-8af5ef3c931453f949d3-f069-47a4-a112-4756703996f2@example.invalid\n\nPOS\n\nOperations / Sales / POS\n\nFR\nO\n\nLOADING\n\nChecking the current checkout workspace\n\nLoading your current access, shift, stock and cart. Please wait before changing the sale.\n\nBack to dashboard",
+      "readyMs": 13422
+    }
+  ],
+  "scope": "Owned synthetic unresolved conflict; actual authentication, server actions, review audit and financial snapshots. Does not enable offline ingestion or replay.",
+  "error": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByTestId('offline-conflict-review').getByRole('alert')\nExpected: \"The evidence changed. Load current evidence, review it and save again; your note is retained.\"\nReceived: \"Sign in again to confirm your identity, then return and save the review explicitly.\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByTestId('offline-conflict-review').getByRole('alert')\n    116 × locator resolved to <p role=\"alert\" class=\"text-[var(--dash-danger)]\">Sign in again to confirm your identity, then retu…</p>\n        - unexpected value \"Sign in again to confirm your identity, then return and save the review explicitly.\"\n",
+  "sourcesAfter": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/ProfessionalPOSSystem.tsx": "f870ee1629a3c6ddd3550852b07224febd8a350bbeb21e1b3a9f179138f3e6a1",
+    "components/pos/offline/OfflineConflictReview.tsx": "d4102c92fd2519a7052af835ae6506739ec4d08e3de77e34cda9141c61fd928c",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "09490b9581514c28c848e109beda1aaf71a9222bdba70e924016b772e3395166",
+    "hooks/posHooks/useOfflineSync.ts": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+    "messages/en.json": "accdd3b7b1f46f2899b96a6e687812f074404a8fc94bb2ca5d24575ddd465031",
+    "messages/fr.json": "c66a64c980bcd44260e8c12916c530c3a42b91f5ba853b77a42d753504b5dc43"
+  },
+  "sourceStable": true
+}

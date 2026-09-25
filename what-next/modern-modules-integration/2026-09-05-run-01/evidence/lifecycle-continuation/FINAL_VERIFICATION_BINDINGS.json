@@ -1,0 +1,1043 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-09-05T14:11:40.777Z",
+  "classification": "ISOLATED_VERIFICATION_AGGREGATE",
+  "productionApproval": false,
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "scopeNote": "This is a current source/capture snapshot. Only the PostgreSQL receipt records before/after unchanged bindings during its execution. Browser receipts are separate runs; later French transfer boundary corrections do not retroactively rebind the earlier lifecycle checks.",
+  "receipts": [
+    {
+      "name": "browser-results-lifecycle-full.json",
+      "sha256": "acb7c6ecbbee4ef0a0bc036ffeed65f5d86210d053ecdc62f005e3a9fc74f922",
+      "stats": {
+        "startTime": "2026-09-05T13:28:23.765Z",
+        "duration": 491383.642,
+        "expected": 10,
+        "skipped": 2,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "name": "browser-results-mobile-capture-final.json",
+      "sha256": "9d0d314587c4ac3b3970244b77e23058b39b4e845dfe623c8c7515c0be7cecc5",
+      "stats": {
+        "startTime": "2026-09-05T13:38:42.247Z",
+        "duration": 234511.35,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "name": "browser-results-stopped-work-fr.json",
+      "sha256": "54f30dd51339ab3485e1f63a839349d7059c5eb685ee5d5f0569ccb1a44bed4c",
+      "stats": {
+        "startTime": "2026-09-05T14:09:36.082Z",
+        "duration": 68108.545,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "sources": [
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "22dc997434afc2d7f5d2332e226e7fe3a41887f9ecad7b3bcbf3e03d0d96fc06",
+      "modifiedAt": "2026-09-05T13:14:39.941Z"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "8766c25d759076bcd8d2de7d150e671dbb7dfb46bd66568c3833260a637552a0",
+      "modifiedAt": "2026-09-05T12:36:44.121Z"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04",
+      "modifiedAt": "2026-09-05T13:15:32.366Z"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "a16a5913ad9fd1f09a7958b12df2cea95cc0f358ef253afb654ae154d495263b",
+      "modifiedAt": "2026-09-05T12:54:43.581Z"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01",
+      "modifiedAt": "2026-09-05T13:12:43.743Z"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b",
+      "modifiedAt": "2026-09-05T12:38:22.773Z"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439",
+      "modifiedAt": "2026-09-05T13:06:59.823Z"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "2dd910be6c62d976487e8f5e7ee1e6a3685b39ed9fb0fbc22f65cb19ffebe8a1",
+      "modifiedAt": "2026-09-05T12:33:13.907Z"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "eecb236e32167fedb1dacd27151599fc42590823078fe4d5cb62a2d5cbcb2aff",
+      "modifiedAt": "2026-09-05T12:54:43.585Z"
+    },
+    {
+      "path": "hooks/useTransferQueries.ts",
+      "sha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1",
+      "modifiedAt": "2026-09-05T14:07:12.540Z"
+    },
+    {
+      "path": "components/inventory/transfers/CreateTransferModal.tsx",
+      "sha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb",
+      "modifiedAt": "2026-09-05T14:07:12.542Z"
+    },
+    {
+      "path": "lib/modules/module-operation-error.ts",
+      "sha256": "b61ed2a4d548d8808c851af2f05bd3712c947fa47ead7d837227cfdd7071c06f",
+      "modifiedAt": "2026-09-05T13:35:17.802Z"
+    },
+    {
+      "path": "lib/error-handling/error-handler.ts",
+      "sha256": "246b2f97c703bde1f73659da5ce837b4a44f51e8bb7f17e748469af18d1e31ef",
+      "modifiedAt": "2026-07-02T04:58:57.420Z"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+      "modifiedAt": "2026-09-05T13:53:29.056Z"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "1cb547f672147aa69733eb753e9e6e6d4d099b1488ad7de66c18357527385d01",
+      "modifiedAt": "2026-09-05T13:36:58.310Z"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "529dc6fb533505c65474c1b54386e9c3c2c261146dd15618a7cdec57a37e4d7c",
+      "modifiedAt": "2026-09-05T13:36:58.338Z"
+    },
+    {
+      "path": "tests/e2e/modern-modules.spec.ts",
+      "sha256": "d47af5e915e254fc888a7f45438481dea5be90882ec3c2feff41fe8b0ab61ba8",
+      "modifiedAt": "2026-09-05T14:06:29.114Z"
+    },
+    {
+      "path": "playwright.modern-modules.config.ts",
+      "sha256": "8dcdd148e8b0a77f9a982ab2e3a91a20df5dda38810e2a691139777516bb6e63",
+      "modifiedAt": "2026-09-05T13:28:12.441Z"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75",
+      "modifiedAt": "2026-09-05T13:35:42.892Z"
+    },
+    {
+      "path": "scripts/modern-modules-lifecycle-fixture.ts",
+      "sha256": "a5bd229bb1e487938c3befa3edb2f24a793e2cf1925f16466c85ec546f4905d2",
+      "modifiedAt": "2026-09-05T13:39:43.102Z"
+    },
+    {
+      "path": "scripts/run-modern-modules-lifecycle-fixture.js",
+      "sha256": "dbb782910fbf1ae9363081b1a5d72e821e0082b7fd702be5f08474100301e0c7",
+      "modifiedAt": "2026-09-05T13:39:43.103Z"
+    },
+    {
+      "path": "lib/auth-client.ts",
+      "sha256": "282aa45adf3637c7de07beac0233d2167a83518315f795819a0acecedec66948",
+      "modifiedAt": "2026-07-02T04:58:57.411Z"
+    },
+    {
+      "path": "hooks/useClientAuth.ts",
+      "sha256": "c76b06c6630426a3c5aa5d898d8b02bd13634aa09bdced72ed1f20baf3c7df7b",
+      "modifiedAt": "2026-07-02T04:58:57.348Z"
+    },
+    {
+      "path": "components/inventory/transfers/TransferDashboard.tsx",
+      "sha256": "1d2013ac354ae64ecc1642371464f43fc76d9fb8397531c0d5f1322625bb9e56",
+      "modifiedAt": "2026-08-23T16:44:16.005Z"
+    }
+  ],
+  "postgresReceipt": {
+    "name": "modern-modules-postgres-smoke-b3c4a2958253.json",
+    "sha256": "574974d1c145b40fd94d291adff7bc39550d80ef91cd3a62cfd480f18944ff62",
+    "currentComparison": [
+      {
+        "path": "services/modules/module-composition.service.ts",
+        "recordedSha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04",
+        "currentSha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04",
+        "unchanged": true
+      },
+      {
+        "path": "services/modules/module-entitlement.service.ts",
+        "recordedSha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d",
+        "currentSha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d",
+        "unchanged": true
+      },
+      {
+        "path": "services/modules/module-lifecycle-readiness.service.ts",
+        "recordedSha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01",
+        "currentSha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01",
+        "unchanged": true
+      },
+      {
+        "path": "services/modules/module-stop-policy.service.ts",
+        "recordedSha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439",
+        "currentSha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439",
+        "unchanged": true
+      },
+      {
+        "path": "scripts/modern-modules-lifecycle-fixture.ts",
+        "recordedSha256": "ae73103abf21a1bad42b1f5d328b3089f6b2ff43973a3141d4b8d398c52de199",
+        "currentSha256": "a5bd229bb1e487938c3befa3edb2f24a793e2cf1925f16466c85ec546f4905d2",
+        "unchanged": false
+      },
+      {
+        "path": "scripts/modern-modules-postgres-smoke.ts",
+        "recordedSha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb",
+        "currentSha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb",
+        "unchanged": true
+      },
+      {
+        "path": "prisma/schema.prisma",
+        "recordedSha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+        "currentSha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+        "unchanged": true
+      },
+      {
+        "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+        "recordedSha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb",
+        "currentSha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb",
+        "unchanged": true
+      },
+      {
+        "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+        "recordedSha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66",
+        "currentSha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66",
+        "unchanged": true
+      },
+      {
+        "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+        "recordedSha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73",
+        "currentSha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73",
+        "unchanged": true
+      },
+      {
+        "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+        "recordedSha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c",
+        "currentSha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c",
+        "unchanged": true
+      }
+    ],
+    "postRunDeltaExplanation": "Only scripts/modern-modules-lifecycle-fixture.ts adds the exact French retailer browser inventory-denial stage; earlier accounting/provider/POS stages are unchanged. All PG-recorded production inputs remain unchanged. Later transfer notice/permission corrections are verified by the separate French browser receipt."
+  },
+  "performance": {
+    "measurementKind": "observed-development-route-load-no-certified-budget",
+    "timings": [
+      {
+        "name": "desktop-en-retailer-builder.png",
+        "usefulResultMs": 8185,
+        "capturedAt": "2026-09-05T13:28:40.567Z"
+      },
+      {
+        "name": "desktop-en-service-builder.png",
+        "usefulResultMs": 6163,
+        "capturedAt": "2026-09-05T13:29:42.612Z"
+      },
+      {
+        "name": "desktop-en-service-fr-desktop-builder.png",
+        "usefulResultMs": 6793,
+        "capturedAt": "2026-09-05T13:30:34.681Z"
+      },
+      {
+        "name": "mobile-fr-retailer-builder.png",
+        "usefulResultMs": 9504,
+        "capturedAt": "2026-09-05T13:39:04.494Z"
+      },
+      {
+        "name": "mobile-fr-retailer-en-mobile-builder.png",
+        "usefulResultMs": 5481,
+        "capturedAt": "2026-09-05T13:41:26.077Z"
+      },
+      {
+        "name": "mobile-fr-service-builder.png",
+        "usefulResultMs": 6987,
+        "capturedAt": "2026-09-05T13:40:42.221Z"
+      }
+    ],
+    "minimumMs": 5481,
+    "maximumMs": 9504,
+    "medianMs": 6890
+  },
+  "screenshots": [
+    {
+      "name": "desktop-en-legacy-preservation.png",
+      "sha256": "f6985e45246f2317b70acbb715d94f36aed28460672739df313b05274f64c64b",
+      "capturedAt": "2026-09-05T13:31:45.167Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "INPUT"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "desktop-en-permission-denied.png",
+      "sha256": "20e0b682c2ce9d90c999f16e5db64339a38d327e1bfbdc4aa90a3c237df357d5",
+      "capturedAt": "2026-09-05T13:31:50.762Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "INPUT"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "desktop-en-retailer-builder.png",
+      "sha256": "706486040e2febe72ccad76f93dedfbeadea6b261f380bc29b420bb2db7a9da4",
+      "capturedAt": "2026-09-05T13:28:40.567Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "INPUT"
+      },
+      "evidenceTarget": "viewport",
+      "usefulResultMs": 8185
+    },
+    {
+      "name": "desktop-en-retailer-history.png",
+      "sha256": "249358b93952507f4e60446d678e57383667207916b4b1aa6661527215091e19",
+      "capturedAt": "2026-09-05T13:29:12.232Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 638,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "desktop-en-retailer-preparation-active.png",
+      "sha256": "b0f6290764826914048f54ab5b74b88b71fa885f2669a60005e740d89325f29a",
+      "capturedAt": "2026-09-05T13:29:03.860Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 373,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "LI"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "desktop-en-retailer-preparation-waiting.png",
+      "sha256": "b47e287c530a2526b48d22ab3ac497c69faafa519c6f68587f69005987204170",
+      "capturedAt": "2026-09-05T13:28:56.336Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 443,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "LI"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "desktop-en-retailer-retained-history.png",
+      "sha256": "0bed889a227db4d2cbfa8526594539c126df6472bec85e5059a04c623dcd4b94",
+      "capturedAt": "2026-09-05T13:29:28.085Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 708,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "desktop-en-retailer-retained-workspace.png",
+      "sha256": "dfda8972d71ce0fc61ca8628fa9e86c388270bcf0e67ea0012e2bb4961ee435f",
+      "capturedAt": "2026-09-05T13:29:26.932Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 568,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "P"
+      },
+      "evidenceTarget": "#module-retained-title"
+    },
+    {
+      "name": "desktop-en-retailer-review.png",
+      "sha256": "ec087f6c72a3089838e8f56d5381e4982931410b0510dc78ccdeaa44928ad1ed",
+      "capturedAt": "2026-09-05T13:28:48.238Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 655,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "DIV"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "desktop-en-retailer-workspace.png",
+      "sha256": "dc69e0cf220434ca2daa2dd36e30928ce89a33cf664b04bae4c00e59eb513b42",
+      "capturedAt": "2026-09-05T13:29:04.883Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 376,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "SPAN"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "desktop-en-service-builder.png",
+      "sha256": "861d7352d4084221e84fc31d24f157f9cd7da9a8e40443f2bce020adc061c3f1",
+      "capturedAt": "2026-09-05T13:29:42.612Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "INPUT"
+      },
+      "evidenceTarget": "viewport",
+      "usefulResultMs": 6163
+    },
+    {
+      "name": "desktop-en-service-fr-desktop-builder.png",
+      "sha256": "d7edb8abda7281912f40cdcd16dc2fe117144e79968f3a8b5b42650b39a60daa",
+      "capturedAt": "2026-09-05T13:30:34.681Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "INPUT"
+      },
+      "evidenceTarget": "viewport",
+      "usefulResultMs": 6793
+    },
+    {
+      "name": "desktop-en-service-fr-desktop-history.png",
+      "sha256": "d0d486207a14073580df4116b7ef65bd3959daed8dd61e170c835d24c4525e50",
+      "capturedAt": "2026-09-05T13:31:11.745Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 638,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "desktop-en-service-fr-desktop-preparation-active.png",
+      "sha256": "646db060097bb2976c547b3401ee28f7af572ffc64187074156be36a25edaa04",
+      "capturedAt": "2026-09-05T13:31:00.036Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 373,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "LI"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "desktop-en-service-fr-desktop-preparation-waiting.png",
+      "sha256": "8772cb778bdf1393b500c349cc32c41568600dfeace1b4335e8672fd4d96a841",
+      "capturedAt": "2026-09-05T13:30:52.886Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 443,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "LI"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "desktop-en-service-fr-desktop-review.png",
+      "sha256": "e805576456b61922d10914a3e946944c8b2f16a00f21378b56e3cf3f18458d1e",
+      "capturedAt": "2026-09-05T13:30:42.843Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 655,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "DIV"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "desktop-en-service-fr-desktop-workspace.png",
+      "sha256": "825f5b159591cc5e636c6ba09b4c215141084fd0791dd6150124d4a0cb47d905",
+      "capturedAt": "2026-09-05T13:31:01.166Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 376,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "SPAN"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "desktop-en-service-history.png",
+      "sha256": "098c10948d0e2c40b9b83847f5e283ce58113d400f403e0eeec5c7f336bb8c59",
+      "capturedAt": "2026-09-05T13:30:19.085Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 638,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "desktop-en-service-preparation-active.png",
+      "sha256": "5018b4ca4b1ae244773d4fe73b0771ab9c19a7bca121bd1f2a24fdaae7763ae3",
+      "capturedAt": "2026-09-05T13:30:11.333Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 373,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "SPAN"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "desktop-en-service-preparation-waiting.png",
+      "sha256": "75f960a5ba155358615f22ed6ee7403c6c84fc905cf68b944f5b5d4188d49460",
+      "capturedAt": "2026-09-05T13:30:03.550Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 443,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "LI"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "desktop-en-service-review.png",
+      "sha256": "41e2c2a83321f1a6f69bd595d49c3bff5ec511f521e4d2dcee52cec761ba94e1",
+      "capturedAt": "2026-09-05T13:29:56.112Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 655,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "DIV"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "desktop-en-service-workspace.png",
+      "sha256": "75248145688a576d67b553b56fca9672ae51b1b41098e1a1343c15fe829d746d",
+      "capturedAt": "2026-09-05T13:30:12.320Z",
+      "layout": {
+        "width": 1440,
+        "height": 1100,
+        "scrollY": 376,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "SPAN"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-inventory-new-work-denied.png",
+      "sha256": "b3efe5d09ee765039b165d750ea385f1faae42671fe101a2d7fa22faa2638246",
+      "capturedAt": "2026-09-05T14:10:42.638Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "DIV"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-permission-denied.png",
+      "sha256": "9d1648b775b0f3a24eaeab0ebeb8d62597e7981104992e63d817a82b19ee1eb4",
+      "capturedAt": "2026-09-05T13:35:47.505Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "HEADER"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-retailer-builder.png",
+      "sha256": "e74fba9fd4d47e68740b8187111ead7d443142e3e4578e79b50e8c1e73dd8034",
+      "capturedAt": "2026-09-05T13:39:04.494Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "HEADER"
+      },
+      "evidenceTarget": "viewport",
+      "usefulResultMs": 9504
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-builder.png",
+      "sha256": "ca22d8fc115ad3107923f9ed9ed65fd2fd8c6b3938bab1857f841b16fd63ebf6",
+      "capturedAt": "2026-09-05T13:41:26.077Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "HEADER"
+      },
+      "evidenceTarget": "viewport",
+      "usefulResultMs": 5481
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-history.png",
+      "sha256": "8798e3f445739fcac3351b84b8aad1b62355e68622d4319e73a5b7b62e821a63",
+      "capturedAt": "2026-09-05T13:42:18.403Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 958,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-preparation-active.png",
+      "sha256": "f4f5f9d567793da6065493610da3065404bfe7674f39cb11a7f644fcee3bbc16",
+      "capturedAt": "2026-09-05T13:42:08.688Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 681,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "OL"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-preparation-waiting.png",
+      "sha256": "73452c39a193cdd5a18984afe2408da6702c0ee6c680a842e962b435bc3007e6",
+      "capturedAt": "2026-09-05T13:41:46.401Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 681,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "OL"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-retained-history.png",
+      "sha256": "3ccda978f6c67f9abb0ffcce873357eea2d09610af78adb520bda0d4bbb6c562",
+      "capturedAt": "2026-09-05T13:42:36.213Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 1096,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-retained-workspace.png",
+      "sha256": "1dc557ff81abd2aaa9b64bc8c5a440421b387b779965e7e55f167baa851ec9c6",
+      "capturedAt": "2026-09-05T13:42:35.460Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 2458,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "SPAN"
+      },
+      "evidenceTarget": "#module-retained-title"
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-review.png",
+      "sha256": "07f1a8d158e6c326b3f151ac16156bf32f914263d98e84ff508d9e1e77bd1d47",
+      "capturedAt": "2026-09-05T13:41:36.280Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "H2"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-retailer-en-mobile-workspace.png",
+      "sha256": "db5bf6e52cec593c6e126e335bef708fd066f11bd3655e9af9b8d2e83d53add8",
+      "capturedAt": "2026-09-05T13:42:09.143Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 1052,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-retailer-history.png",
+      "sha256": "feec7a7651706b1d0b3d38d4438417103e596ef2cf26600f9780a1eb5d3efad6",
+      "capturedAt": "2026-09-05T13:40:09.951Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 1020,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-retailer-preparation-active.png",
+      "sha256": "dd0e78056d10ccad41bb008eb731f8c9ea70ab78a06f12f8cfb626e91fa3682c",
+      "capturedAt": "2026-09-05T13:39:58.494Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 743,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "OL"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "mobile-fr-retailer-preparation-waiting.png",
+      "sha256": "0d043865dfb0cab9737d4d5152e63e2ddde14d5727e974ac5b16a9a3cf324223",
+      "capturedAt": "2026-09-05T13:39:45.761Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 743,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "OL"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "mobile-fr-retailer-retained-history.png",
+      "sha256": "dec6a1a7bacff4ce3c50c4298e04328ad471d67aec9b593b31f2023aa18bf324",
+      "capturedAt": "2026-09-05T13:40:29.057Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 1182,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-retailer-retained-workspace.png",
+      "sha256": "e6d0d7cf0ab47663c7fc0ca6f81c422d1fe59072fc54e996e70fec35e92396db",
+      "capturedAt": "2026-09-05T13:40:27.466Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 2568,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "SPAN"
+      },
+      "evidenceTarget": "#module-retained-title"
+    },
+    {
+      "name": "mobile-fr-retailer-review.png",
+      "sha256": "d03476e0303e442a155ea362171fa948a6adb1fa40277af68315283cafd94780",
+      "capturedAt": "2026-09-05T13:39:15.564Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "H2"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-retailer-workspace.png",
+      "sha256": "37f80d3c4c91d282ac16dda9171b334a4d293e97afe464d9b6b24ad4b13b50fb",
+      "capturedAt": "2026-09-05T13:39:59.356Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 1114,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-service-builder.png",
+      "sha256": "1c2e84610120196f783b6a09be35b70f6e8b857fac496cd1928364951821d30f",
+      "capturedAt": "2026-09-05T13:40:42.221Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "HEADER"
+      },
+      "evidenceTarget": "viewport",
+      "usefulResultMs": 6987
+    },
+    {
+      "name": "mobile-fr-service-history.png",
+      "sha256": "7810a1f4c07f2079facdc8ee240a4a7c9c0c84084a4b382ab654c1031b617f29",
+      "capturedAt": "2026-09-05T13:41:12.982Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 1020,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    },
+    {
+      "name": "mobile-fr-service-preparation-active.png",
+      "sha256": "ff942c686df67e94b240a5ab81f6d16580ba09ddc8c4db55bef3cd4801a7beb4",
+      "capturedAt": "2026-09-05T13:41:06.660Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 743,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "OL"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "mobile-fr-service-preparation-waiting.png",
+      "sha256": "bca2bf2678a4a52abfb59c62f81754c2b504c661e0a68e544c72c6c4b9d065e9",
+      "capturedAt": "2026-09-05T13:40:59.883Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 743,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "OL"
+      },
+      "evidenceTarget": "#module-lifecycle-title"
+    },
+    {
+      "name": "mobile-fr-service-reflow-320.png",
+      "sha256": "f50ebe6b410c97da14ff5e4c2e3ed7c5fe4ea64deec73d51d0dcd4e109e50e90",
+      "capturedAt": "2026-09-05T13:36:33.475Z",
+      "layout": {
+        "width": 320,
+        "height": 1112,
+        "scrollY": 5662,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "H2"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-service-reflow-834.png",
+      "sha256": "d812bc3ffb8bd7d38e2d7380190b9c345e80e209fa2735bb7f8558532354f3a7",
+      "capturedAt": "2026-09-05T13:36:11.839Z",
+      "layout": {
+        "width": 834,
+        "height": 1112,
+        "scrollY": 3220,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "DIV"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-service-review-reachable-320.png",
+      "sha256": "f659945f74ccc551f0e44ec06c9a65c8fab2067710b2ffbb11695a5ccc8bec07",
+      "capturedAt": "2026-09-05T13:36:25.958Z",
+      "layout": {
+        "width": 320,
+        "height": 1112,
+        "scrollY": 5662,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "ARTICLE"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-service-review-reachable-834.png",
+      "sha256": "c84bd558b4147dd127eddeefc8216ba3fcf466182674f70952f844ef76c35e26",
+      "capturedAt": "2026-09-05T13:36:00.382Z",
+      "layout": {
+        "width": 834,
+        "height": 1112,
+        "scrollY": 3220,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "P"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-service-review.png",
+      "sha256": "73c8fdc5022e812dd00be666d3e798a6d9f42024f5cd4cf628663747fb9b03e9",
+      "capturedAt": "2026-09-05T13:40:50.255Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 0,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "H2"
+      },
+      "evidenceTarget": "viewport"
+    },
+    {
+      "name": "mobile-fr-service-workspace.png",
+      "sha256": "46b4815bafe27b171700584fb27b59df15e5daa2abc5c74efe92deba4539fffa",
+      "capturedAt": "2026-09-05T13:41:07.278Z",
+      "layout": {
+        "width": 390,
+        "height": 844,
+        "scrollY": 1114,
+        "scrollX": 0,
+        "overflowPx": 0,
+        "viewportTopTag": "BUTTON"
+      },
+      "evidenceTarget": "[role=\"tabpanel\"][data-state=\"active\"] h2"
+    }
+  ],
+  "limitations": [
+    "POS, sales, reconciliation and accounting operational stops remain unsupported pending trustworthy continuation.",
+    "The shared auth useSession SSR useRef-null error was observed after a clean restart; client rendering recovered and the real transfer denial/no-write check passed.",
+    "Earlier almost-white, in-flight active and occluded notice screenshots are preserved separately and are not final visual proof.",
+    "Synthetic readiness rows and fixtures are not production accounting, provider or approval evidence."
+  ],
+  "finalFrenchSourceBinding": {
+    "before": {
+      "startedAt": "2026-09-05T14:09:31.693Z",
+      "sources": [
+        {
+          "path": "components/inventory/transfers/CreateTransferModal.tsx",
+          "sha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb"
+        },
+        {
+          "path": "hooks/useTransferQueries.ts",
+          "sha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1"
+        },
+        {
+          "path": "lib/security/rbac-permissions.ts",
+          "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+        },
+        {
+          "path": "tests/e2e/modern-modules.spec.ts",
+          "sha256": "d47af5e915e254fc888a7f45438481dea5be90882ec3c2feff41fe8b0ab61ba8"
+        }
+      ]
+    },
+    "checkedAfterAt": "2026-09-05T14:11:40.806Z",
+    "comparison": [
+      {
+        "path": "components/inventory/transfers/CreateTransferModal.tsx",
+        "beforeSha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb",
+        "afterSha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb",
+        "unchanged": true
+      },
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "beforeSha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1",
+        "afterSha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1",
+        "unchanged": true
+      },
+      {
+        "path": "lib/security/rbac-permissions.ts",
+        "beforeSha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+        "afterSha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+        "unchanged": true
+      },
+      {
+        "path": "tests/e2e/modern-modules.spec.ts",
+        "beforeSha256": "d47af5e915e254fc888a7f45438481dea5be90882ec3c2feff41fe8b0ab61ba8",
+        "afterSha256": "d47af5e915e254fc888a7f45438481dea5be90882ec3c2feff41fe8b0ab61ba8",
+        "unchanged": true
+      }
+    ]
+  }
+}

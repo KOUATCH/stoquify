@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-08T11:32:24.928Z",
+  "run": "3b8d4387-38e",
+  "before": false,
+  "checks": [
+    {
+      "name": "OPEN replacement retains original evidence and requires a new decision",
+      "status": "passed"
+    },
+    {
+      "name": "APPROVED replacement retains original evidence and requires a new decision",
+      "status": "passed"
+    },
+    {
+      "name": "REJECTED replacement retains original evidence and requires a new decision",
+      "status": "passed"
+    },
+    {
+      "name": "expiry-event failure rolls back expiry and replacement before exact retry",
+      "status": "passed"
+    },
+    {
+      "name": "new-request failure rolls back expiry and replacement before exact retry",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent exact renewal expires once and creates one replacement",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "9664809700f5e10cad6937d93972cc8916faadac843957328075443c9081fa2b",
+    "services/purchasing/invoice-match-exception.service.ts": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82",
+    "services/purchasing/invoice-match-exception-contracts.ts": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8"
+  },
+  "originalBefore": "e74596ce9e2abbd636171f1aaf9b6ce4eeb94c0ce9dea9d889cfc8de6ea972f2",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "9664809700f5e10cad6937d93972cc8916faadac843957328075443c9081fa2b",
+    "services/purchasing/invoice-match-exception.service.ts": "e0808721f2c4b864b84b561cf50f119ecc5a825fcab486dd8d33c4d5b9e43c82",
+    "services/purchasing/invoice-match-exception-contracts.ts": "5f76b37d195f1ee9468b6fd889baeb31403708ed89f50725f0e3fa8578e23f83",
+    "services/purchasing/invoice-match-exception-authority.ts": "2e0fee486bb74a7694fe064d34a7ea3380c56e002b3932128f96707712f21ac8"
+  },
+  "sourceStable": true
+}

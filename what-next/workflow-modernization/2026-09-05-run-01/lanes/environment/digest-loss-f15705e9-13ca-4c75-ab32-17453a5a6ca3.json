@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-19T12:08:59.098Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "components/bi/BIWhatChangedStrip.tsx": "7d30e3d3ac48a72f44e36a33f48c9a297a41114d080a562c10add1f2656f51e7"
+  },
+  "browser": [],
+  "serverPid": 21340,
+  "serverDiagnostics": "# SERVER_ERROR:  Error [PrismaClientInitializationError]: \nInvalid `prisma.user.findFirst()` invocation:\n\n\nToo many database connections opened: FATAL: sorry, too many clients already\n    at async Object.before [as handler] (webpack-internal:///(rsc)/./lib/auth.ts:143:26) {\n  clientVersion: '6.19.3',\n  errorCode: undefined,\n  retryable: undefined\n}\n",
+  "passed": false,
+  "error": "Expected values to be strictly equal:\n\n500 !== 200\n",
+  "testServerStopped": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-signal-presentation.ts": "f7df909f3dd1b0e53694b9ea0d634cf5ca4c4fd509fcb5feffa741d5829728db",
+    "services/daily-habit/daily-habit-digest.service.ts": "de968221475135a721058d5ad312b59a10863c1d5ea87a19128984beba1be1fe",
+    "services/daily-habit/daily-habit-digest-presentation.ts": "8d1cf49ffc11621067c9b2a410ea70a2cdf8a62442bb5cff257875805796a80e",
+    "services/snapshots/inventory-loss-snapshot.service.ts": "17293e00dd007a7407f406fc9c56ea6d490744bdf025e325603bbdca79200bc6",
+    "services/inventory/inventory-loss-read.service.ts": "b6291294d77cfca9f652045167b45db1c26bc401b57e1666a6ac16c45261d438",
+    "lib/dashboard/snapshot-source-blocker-presentation.ts": "b569505ecc6f1cc42eabe2a85ec98b86b89c25580cb4934b4bdd51ab8fde541d",
+    "components/bi/BIWhatChangedStrip.tsx": "7d30e3d3ac48a72f44e36a33f48c9a297a41114d080a562c10add1f2656f51e7"
+  },
+  "sourceStable": true
+}

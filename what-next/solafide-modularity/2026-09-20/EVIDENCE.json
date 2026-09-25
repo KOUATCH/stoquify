@@ -1,0 +1,482 @@
+{
+  "schemaVersion": 1,
+  "auditDate": "2026-09-20",
+  "workspace": "E:/ohada saas/Focused projects/stoquify",
+  "head": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "scope": "Read-only application/competitor audit; writes restricted to requested report artifacts",
+  "additionalBenchmark": "Odoo Enterprise",
+  "sources": [
+    {
+      "id": "SOL-FEATURES",
+      "url": "https://solafideonline.com/features/",
+      "title": "Solafide ERP features",
+      "access": "web retrieval and public browser",
+      "classification": "advertised_public",
+      "summary": "Core accounting, domain feature groups and industry add-ons; backend structure unverified.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-INDUSTRIES",
+      "url": "https://solafideonline.com/industries/",
+      "title": "Solafide industry solutions",
+      "access": "web retrieval",
+      "classification": "advertised_public",
+      "summary": "Industry-oriented combinations; claimed customer outcomes were not independently checked.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-SUPPORT",
+      "url": "https://solafideonline.com/support/",
+      "title": "Solafide help center",
+      "access": "web retrieval",
+      "classification": "documented_public",
+      "summary": "Entity/onboarding/role guidance and identified printed-manual gaps.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-API",
+      "url": "https://solafideonline.com/api-docs/",
+      "title": "Solafide REST API documentation",
+      "access": "web retrieval",
+      "classification": "documented_public",
+      "summary": "Plan-qualified personal access tokens and entity-scoped examples. App-hosted Swagger not accessed.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-OFFLINE",
+      "url": "https://solafideonline.com/features/mobile-offline/",
+      "title": "Solafide mobile and offline",
+      "access": "web retrieval",
+      "classification": "advertised_public",
+      "summary": "Automatic offline synchronization advertised; entitlement-change replay semantics unverified.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-HOME",
+      "url": "https://solafideonline.com/",
+      "title": "Solafide homepage",
+      "access": "web retrieval",
+      "classification": "advertised_public",
+      "summary": "Task-oriented workflows and local-market positioning; historical audit prices not reused as a verified plan matrix.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-PRICING",
+      "url": "https://solafideonline.com/pricing/",
+      "title": "Solafide pricing link",
+      "access": "blocked redirect to app.solafideonline.com",
+      "classification": "unknown",
+      "summary": "Automatic approval review denied authenticated-origin access due to possible private tenant/session exposure. No bypass followed.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-DEMO",
+      "url": "https://solafideonline.com/demo/",
+      "title": "Solafide demo",
+      "access": "web retrieval",
+      "classification": "advertised_public",
+      "summary": "Public demo material only; no tenant workflow executed.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "SOL-PARTNERS",
+      "url": "https://solafideonline.com/partners/",
+      "title": "Solafide partners",
+      "access": "web retrieval",
+      "classification": "advertised_public",
+      "summary": "Partner-facing material inspected as commercial context; no partner economics verified.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "ODOO-PRICING",
+      "url": "https://www.odoo.com/pricing",
+      "title": "Odoo pricing",
+      "access": "official search-index result and live public browser",
+      "classification": "observed_public_documentation",
+      "summary": "Single-app entry and broader paid plans separate packaging from technical module boundaries; no price quote issued.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "ODOO-MANIFEST",
+      "url": "https://www.odoo.com/documentation/19.0/developer/reference/backend/module.html",
+      "title": "Odoo 19 module manifests",
+      "access": "live public browser; official localized indexed reference cross-check",
+      "classification": "documented_public",
+      "summary": "Dependency metadata, supporting modules and link-module integration; not proof of separate deployments.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "ODOO-APPS",
+      "url": "https://www.odoo.com/documentation/19.0/applications/general/apps_modules.html",
+      "title": "Odoo 19 apps and modules",
+      "access": "live public browser",
+      "classification": "documented_public",
+      "summary": "Install/uninstall dependency and data-deletion warnings; no removal executed.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "ODOO-COMPANIES",
+      "url": "https://www.odoo.com/documentation/19.0/applications/general/companies/multi_company.html",
+      "title": "Odoo 19 multi-company",
+      "access": "official search-indexed documentation",
+      "classification": "documented_public",
+      "summary": "Some shared reference records and company-specific transactions; not an unrelated-tenant sharing model.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    },
+    {
+      "id": "ODOO-ONLINE",
+      "url": "https://www.odoo.com/documentation/19.0/administration/odoo_online.html",
+      "title": "Odoo 19 Online",
+      "access": "live public browser",
+      "classification": "documented_public",
+      "summary": "Managed deployment and custom-module support boundaries; no exhaustive customization comparison.",
+      "accessedAt": "2026-09-20",
+      "runtimeVerified": false
+    }
+  ],
+  "findings": [
+    {
+      "id": "STQ-01",
+      "classification": "source_confirmed_and_pure_probe",
+      "confidence": "high",
+      "claim": "19 canonical module slugs, including three core presentation/platform entries.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-control-contracts.ts",
+          "line": 1
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-catalog.service.ts",
+          "line": 60
+        }
+      ],
+      "verification": [
+        "P14"
+      ],
+      "implication": "Preserve IDs; separate customer vocabulary from internal module identities."
+    },
+    {
+      "id": "STQ-02",
+      "classification": "source_confirmed_and_mocked_test",
+      "confidence": "high",
+      "claim": "Retailer/services presets and existing configuration UI already implement part of workflow composition.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/components/modules/ModuleCompositionWorkbench.tsx",
+          "line": 27
+        }
+      ],
+      "verification": [
+        "ModuleCompositionWorkbench.test.tsx: 34 passed"
+      ],
+      "implication": "Extend the existing composer; adoption benefit still requires a user study."
+    },
+    {
+      "id": "STQ-03",
+      "classification": "schema_and_source_confirmed",
+      "confidence": "high",
+      "claim": "Configuration, grants, commands and lifecycle evidence are separate models.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/prisma/schema.prisma",
+          "line": 9147
+        }
+      ],
+      "limitations": [
+        "Deployed schema/migrations not inspected"
+      ],
+      "implication": "Retain the authority/history design."
+    },
+    {
+      "id": "STQ-04",
+      "classification": "source_confirmed_and_mocked_test",
+      "confidence": "high",
+      "claim": "Preview hashes, revisions, actor scope and idempotency protect configuration changes.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-composition.service.ts",
+          "line": 156
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/actions/modules/module-composition.actions.ts",
+          "line": 18
+        }
+      ],
+      "verification": [
+        "module-composition.service.test.ts: 45 passed",
+        "module-composition.actions.test.ts: 8 passed"
+      ],
+      "limitations": [
+        "Real PostgreSQL concurrency not tested"
+      ],
+      "implication": "Preserve and validate integrated transaction behavior."
+    },
+    {
+      "id": "STQ-05",
+      "classification": "source_confirmed_and_pure_probe",
+      "confidence": "high",
+      "claim": "Low-level default observes; specific transports enforce; item creation explicitly observes before its service.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-control-contracts.ts",
+          "line": 1
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/_shared/protect.ts",
+          "line": 85
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/lib/security/server-authz.ts",
+          "line": 114
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/actions/item/items.ts",
+          "line": 48
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/item/item.service.ts",
+          "line": 1013
+        }
+      ],
+      "verification": [
+        "P08",
+        "module-transport.integration.test.ts: 15 passed"
+      ],
+      "limitations": [
+        "No live exploit or entire-surface coverage claim",
+        "Item-create finding is source-level; no new real record created"
+      ],
+      "implication": "Complete the commercial enforcement map before monetized restrictions; no global mode switch."
+    },
+    {
+      "id": "STQ-06",
+      "classification": "source_confirmed_scope_limit",
+      "confidence": "high",
+      "claim": "Composer explicitly has no-purchase semantics and preserves existing legacy grants; commercial provider provisioning not demonstrated.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-composition.service.ts",
+          "line": 181
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-composition.service.ts",
+          "line": 225
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/prisma/schema.prisma",
+          "line": 9166
+        }
+      ],
+      "limitations": [
+        "Search scope: current services, actions, app/api, schema and module reports; not a universal absence claim"
+      ],
+      "implication": "Treat package purchase/provisioning as separately specified work."
+    },
+    {
+      "id": "STQ-07",
+      "classification": "source_confirmed_and_mocked_test",
+      "confidence": "high",
+      "claim": "Inventory, purchasing, payroll and manual-journal stop supported; sales/POS/direct reconciliation stop unsupported.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-stop-policy.service.ts",
+          "line": 28
+        }
+      ],
+      "verification": [
+        "module-stop-policy.service.test.ts: 10 passed"
+      ],
+      "implication": "Do not promise universal deactivation."
+    },
+    {
+      "id": "STQ-08",
+      "classification": "source_confirmed",
+      "confidence": "high",
+      "claim": "Catalog entries and actual destinations differ; reports requires analytics eligibility in destination mapping.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-catalog.service.ts",
+          "line": 171
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-catalog.service.ts",
+          "line": 243
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-composition.service.ts",
+          "line": 23
+        }
+      ],
+      "limitations": [
+        "Missing composition destination is not proof of absent domain functionality"
+      ],
+      "implication": "Reconcile advertised scope and hidden prerequisites."
+    },
+    {
+      "id": "STQ-09",
+      "classification": "source_confirmed_and_mocked_test",
+      "confidence": "high",
+      "claim": "Readiness checks use actual accounting, terminals, providers, payroll period and restricted compliance scope.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-lifecycle-readiness.service.ts",
+          "line": 60
+        }
+      ],
+      "verification": [
+        "module-lifecycle-readiness.service.test.ts: 8 passed"
+      ],
+      "limitations": [
+        "No production provider or statutory certification"
+      ],
+      "implication": "Retain scope-specific readiness and explain it to users."
+    },
+    {
+      "id": "STQ-10",
+      "classification": "source_confirmed_design_risk",
+      "confidence": "medium",
+      "claim": "Eligibility, readiness, destination, recipe and operational dependencies are defined separately.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-catalog.service.ts",
+          "line": 10
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-operational-dependencies.ts",
+          "line": 9
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-composition.service.ts",
+          "line": 23
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/components/modules/ModuleCompositionWorkbench.tsx",
+          "line": 27
+        }
+      ],
+      "implication": "Validate consistency while preserving distinct dependency meanings."
+    },
+    {
+      "id": "STQ-11",
+      "classification": "pure_probe_verified",
+      "confidence": "high",
+      "claim": "Several historical resolver defects are corrected in current functions.",
+      "sources": [
+        {
+          "path": "evidence/behavior-probes.json"
+        }
+      ],
+      "verification": [
+        "P01",
+        "P03",
+        "P04",
+        "P05",
+        "P06",
+        "P07",
+        "P09"
+      ],
+      "limitations": [
+        "Isolated real-function execution with stubs; no full-system claim"
+      ],
+      "implication": "Do not reopen corrected work based only on old reports."
+    },
+    {
+      "id": "STQ-12",
+      "classification": "source_confirmed_with_inference",
+      "confidence": "medium",
+      "claim": "Retained admission policy is distinct from suspended/expired grant read access.",
+      "sources": [
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-entitlement.service.ts",
+          "line": 368
+        },
+        {
+          "path": "E:/ohada saas/Focused projects/stoquify/services/modules/module-admission.service.ts",
+          "line": 34
+        }
+      ],
+      "verification": [
+        "P03",
+        "P10",
+        "P11",
+        "P12"
+      ],
+      "implication": "Future commercial cancellation must deliberately preserve defined retained authority rather than merely retain rows."
+    },
+    {
+      "id": "REC-01",
+      "classification": "recommendation",
+      "confidence": "medium_high",
+      "claim": "C foundation plus bounded D1 experience is the preferred incremental direction.",
+      "sources": [
+        "STQ-01",
+        "STQ-02",
+        "STQ-03",
+        "STQ-04",
+        "ODOO-MANIFEST",
+        "SOL-INDUSTRIES"
+      ],
+      "limitations": [
+        "User outcomes and economics unmeasured"
+      ],
+      "implication": "Run the purchasing recipe experiment before broader investment."
+    },
+    {
+      "id": "REC-02",
+      "classification": "hypothesis",
+      "confidence": "medium",
+      "claim": "A small bundle menu or broad-suite plan may be clearer than per-internal-module charges.",
+      "sources": [
+        "ODOO-PRICING",
+        "STQ-06"
+      ],
+      "limitations": [
+        "No willingness-to-pay or unit-cost evidence"
+      ],
+      "implication": "Compare commercial prototypes and costs; do not set production prices from this audit."
+    }
+  ],
+  "verification": {
+    "jest": {
+      "suites": 14,
+      "passed": 199,
+      "failed": 0,
+      "pending": 0,
+      "result": "evidence/jest-results.json",
+      "scope": "Existing tests; persistence/session test doubles; bounded CJS configuration"
+    },
+    "pureProbes": {
+      "passed": 14,
+      "failed": 0,
+      "result": "evidence/behavior-probes.json"
+    },
+    "graphs": "evidence/graph-extracts.json",
+    "sourceHashes": "evidence/source-hashes.json"
+  },
+  "unknowns": [
+    "Solafide authenticated modular lifecycle and current plan matrix",
+    "Competitor production architecture and operational correctness",
+    "Stoquify full entry-point enforcement coverage",
+    "Real database concurrency and migrations",
+    "External subscription billing/provisioning behavior",
+    "Live usability, accessibility, performance, retention and willingness to pay"
+  ],
+  "automaticApprovalDenial": {
+    "action": "Follow Solafide public pricing link to app.solafideonline.com",
+    "reason": "Authenticated-origin access could expose private tenant/session content; no permission evidence for that inspection",
+    "disposition": "No workaround or private inspection; public comparison completed with explicit limits"
+  }
+}

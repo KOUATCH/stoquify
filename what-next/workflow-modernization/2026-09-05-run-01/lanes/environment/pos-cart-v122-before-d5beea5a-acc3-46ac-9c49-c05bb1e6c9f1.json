@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-13T12:10:11.095Z",
+  "phase": "before",
+  "sourceBefore": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22",
+  "checks": [
+    {
+      "name": "reproduced silent quantity substitution",
+      "passed": true
+    },
+    {
+      "name": "reproduced cart removal after shift close",
+      "passed": true
+    },
+    {
+      "name": "reproduced lost concurrent cart addition",
+      "quantity": "2",
+      "passed": true
+    }
+  ],
+  "scope": "Real cart services on owned local PostgreSQL. Synthetic fixtures and controlled read barrier; no payment, posting or external operation.",
+  "passed": true,
+  "sourceAfter": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22",
+  "sourceStable": true
+}

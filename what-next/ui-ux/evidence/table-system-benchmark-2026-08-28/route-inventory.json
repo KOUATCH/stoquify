@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-08-28",
+  "scope": "Representative table-bearing routes across each Stoquify module family; not an exhaustive route census.",
+  "routes": [
+    {
+      "module": "Inventory",
+      "route": "/dashboard/inventory/items",
+      "surface": "ItemManagement",
+      "archetype": "master-reference",
+      "tableImplementation": "shared DataTable",
+      "dataOwnership": "server query/paginated initial data with client table interaction",
+      "access": ["inventory.items.read"],
+      "strengths": ["shared wrapper", "pagination", "server entry point"],
+      "gaps": ["saved views", "persistent column order/width", "selection scope", "adaptive mobile"]
+    },
+    {
+      "module": "Inventory",
+      "route": "/dashboard/inventory/movements",
+      "surface": "InventoryMovementHistoryWorkbench",
+      "archetype": "evidence-audit-ledger",
+      "tableImplementation": "bespoke workbench using normalized history controls",
+      "dataOwnership": "query-backed history",
+      "access": ["inventory.levels.read"],
+      "strengths": ["date-range pattern", "history semantics", "domain-specific filters"],
+      "gaps": ["shared saved-view contract", "export provenance", "mobile evidence"]
+    },
+    {
+      "module": "Inventory",
+      "route": "/dashboard/inventory/loss-control",
+      "surface": "loss-control workbench",
+      "archetype": "transaction-work-queue",
+      "tableImplementation": "bespoke/native",
+      "dataOwnership": "domain query",
+      "access": ["inventory.levels.read"],
+      "strengths": ["exception-oriented domain surface"],
+      "gaps": ["standard queue views", "bulk eligibility/recovery", "shared responsive behavior"]
+    },
+    {
+      "module": "Inventory",
+      "route": "/dashboard/inventory/brands",
+      "surface": "EnhancedBrandsManagement",
+      "archetype": "master-reference",
+      "tableImplementation": "bespoke/native",
+      "dataOwnership": "bounded management surface",
+      "access": ["inventory.brands.read"],
+      "strengths": ["domain management workflow"],
+      "gaps": ["shared shell adoption", "persistent views", "mobile adaptation"]
+    },
+    {
+      "module": "Inventory",
+      "route": "/dashboard/inventory/units",
+      "surface": "UnitsManagementDashboard",
+      "archetype": "master-reference",
+      "tableImplementation": "shared DataTable adopter",
+      "dataOwnership": "bounded management surface",
+      "access": ["inventory.units.read"],
+      "strengths": ["shared table precedent"],
+      "gaps": ["governed role/personal views", "archetype mobile behavior"]
+    },
+    {
+      "module": "Purchasing",
+      "route": "/dashboard/purchase-orders",
+      "surface": "PurchaseOrderManagement",
+      "archetype": "transaction-work-queue",
+      "tableImplementation": "shared DataTable",
+      "dataOwnership": "server query/paginated initial data with client table interaction",
+      "access": ["purchases.orders.read", "module:purchasing"],
+      "strengths": ["shared wrapper", "route/module gate", "domain row actions"],
+      "gaps": ["saved status queues", "all-matching semantics", "partial-failure recovery"]
+    },
+    {
+      "module": "Purchasing",
+      "route": "/dashboard/purchase-orders/analytics",
+      "surface": "PurchaseOrderAnalyticsTable",
+      "archetype": "analytical-high-volume",
+      "tableImplementation": "bespoke/native",
+      "dataOwnership": "analytics query",
+      "access": ["purchases.orders.read", "module:purchasing"],
+      "strengths": ["explicit aria-sort", "sorting tests", "date-range controls"],
+      "gaps": ["persistent grouping/columns", "performance envelope", "adaptive phone alternative"]
+    },
+    {
+      "module": "Purchasing",
+      "route": "/dashboard/suppliersSystem",
+      "surface": "SupplierManagementDashboard",
+      "archetype": "master-reference",
+      "tableImplementation": "bespoke/native",
+      "dataOwnership": "supplier query",
+      "access": ["route-specific supplier permissions"],
+      "strengths": ["dedicated supplier workflow"],
+      "gaps": ["shared shell", "task views", "column persistence"]
+    },
+    {
+      "module": "Finance",
+      "route": "/dashboard/finance/reconciliation",
+      "surface": "PaymentReconciliationWorkbench",
+      "archetype": "evidence-audit-ledger",
+      "secondaryArchetype": "transaction-work-queue",
+      "tableImplementation": "specialized bespoke workbench",
+      "dataOwnership": "server-owned reconciliation read model",
+      "access": ["payments.reconciliation.read", "module:payment_reconciliation"],
+      "strengths": ["proof semantics", "module gate", "domain-specific states", "EN/FR denial copy"],
+      "gaps": ["canonical filter grammar", "saved recon views", "query-snapshot export", "shared selection contract"]
+    },
+    {
+      "module": "Finance",
+      "route": "/dashboard/finance/payables",
+      "surface": "FinanceSpecializedLedgerSurfaces",
+      "archetype": "transaction-work-queue",
+      "tableImplementation": "specialized native/bespoke",
+      "dataOwnership": "finance/AP read model",
+      "access": ["finance.payables.read", "finance.read", "purchasing.ap.invoice.view"],
+      "strengths": ["cross-domain authorization taxonomy", "specialized ledger semantics"],
+      "gaps": ["canonical queue views", "bulk action policy", "mobile priority columns"]
+    },
+    {
+      "module": "Finance",
+      "route": "/dashboard/finance/receivables",
+      "surface": "FinanceSpecializedLedgerSurfaces",
+      "archetype": "transaction-work-queue",
+      "tableImplementation": "specialized native/bespoke",
+      "dataOwnership": "finance/AR read model",
+      "access": ["finance.receivables.read", "finance.read"],
+      "strengths": ["cash-impact domain context"],
+      "gaps": ["overdue/task saved views", "selection/recovery contract", "export manifest"]
+    },
+    {
+      "module": "Finance",
+      "route": "/dashboard/finance/cash-payment-history",
+      "surface": "TransactionHistoryWorkbenchShell",
+      "archetype": "evidence-audit-ledger",
+      "tableImplementation": "shared history workbench pattern",
+      "dataOwnership": "cash/payment history query",
+      "access": ["finance/cash/payment route permissions", "module:cash_drawer", "module:payment_reconciliation"],
+      "strengths": ["shared history shell", "date-range pattern", "dual module boundary"],
+      "gaps": ["saved evidence views", "export provenance", "consistent responsive behavior"]
+    },
+    {
+      "module": "Accounting",
+      "route": "/dashboard/accounting/journals",
+      "surface": "journal list surface",
+      "archetype": "evidence-audit-ledger",
+      "tableImplementation": "route-owned accounting surface",
+      "dataOwnership": "accounting read model",
+      "access": ["accounting.journal.read"],
+      "strengths": ["explicit accounting permission", "separate create permission"],
+      "gaps": ["posted-versus-draft presentation contract", "export evidence", "column persistence"]
+    },
+    {
+      "module": "Accounting",
+      "route": "/dashboard/accounting/reports/trial-balance",
+      "surface": "trial-balance report surface",
+      "archetype": "finance-statement",
+      "tableImplementation": "route-owned report table",
+      "dataOwnership": "accounting report read model",
+      "access": ["accounting.reports.read"],
+      "strengths": ["report permission boundary"],
+      "gaps": ["statement preset", "frozen identity columns", "period/entity/currency export context", "mobile drilldown"]
+    },
+    {
+      "module": "HRIS",
+      "route": "/dashboard/people/approvals",
+      "surface": "HrisApprovalInboxView",
+      "archetype": "transaction-work-queue",
+      "tableImplementation": "specialized workbench",
+      "dataOwnership": "HRIS approval read model",
+      "access": ["hris.people.read"],
+      "strengths": ["HRIS truth boundary", "purpose-built queue"],
+      "gaps": ["saved manager views", "bulk policy", "redaction-aware export"]
+    },
+    {
+      "module": "HRIS",
+      "route": "/dashboard/people/history",
+      "surface": "people movement history",
+      "archetype": "evidence-audit-ledger",
+      "tableImplementation": "route-owned history workbench",
+      "dataOwnership": "HRIS history read model",
+      "access": ["hris.people.read"],
+      "strengths": ["separate HRIS history permission boundary"],
+      "gaps": ["effective-date filter contract", "redaction and export manifest", "mobile timeline"]
+    },
+    {
+      "module": "Payroll",
+      "route": "/dashboard/payroll/employees",
+      "surface": "payroll employee surface",
+      "archetype": "master-reference",
+      "tableImplementation": "route-owned payroll workbench",
+      "dataOwnership": "payroll read model",
+      "access": ["payroll.employees.read", "module:payroll"],
+      "strengths": ["module gate", "dedicated payroll permission", "bilingual route states"],
+      "gaps": ["role views", "effective-date context", "redaction-aware columns", "phone adaptation"]
+    },
+    {
+      "module": "Payroll",
+      "route": "/dashboard/payroll/register",
+      "surface": "payroll register surface",
+      "archetype": "finance-statement",
+      "secondaryArchetype": "evidence-audit-ledger",
+      "tableImplementation": "specialized payroll table",
+      "dataOwnership": "payroll register read model",
+      "access": ["payroll route-specific permission", "module:payroll"],
+      "strengths": ["controlled payroll context"],
+      "gaps": ["statement/tie-out preset", "country-pack and period context", "evidence export"]
+    },
+    {
+      "module": "POS",
+      "route": "/dashboard/pos",
+      "surface": "ProfessionalPOSSystem",
+      "archetype": "operational-shell-with-bounded-tables",
+      "tableImplementation": "specialized POS surface",
+      "dataOwnership": "POS services and protected actions",
+      "access": ["OPERATE_POS"],
+      "strengths": ["single-purpose permission", "domain-specific operational UI"],
+      "gaps": ["consistent history table contract", "offline/replay status semantics", "terminal-sized evidence"]
+    },
+    {
+      "module": "POS/Finance",
+      "route": "/dashboard/finance/cash-drawer",
+      "surface": "CashDrawerManagementDashboard",
+      "archetype": "transaction-work-queue",
+      "secondaryArchetype": "evidence-audit-ledger",
+      "tableImplementation": "specialized native/bespoke",
+      "dataOwnership": "cash drawer read model",
+      "access": ["finance.cash-drawer.read", "finance.read"],
+      "strengths": ["explicit aria-sort", "cash-control context"],
+      "gaps": ["shared view/selection contract", "export evidence", "mobile drawer/terminal adaptation"]
+    },
+    {
+      "module": "Sales",
+      "route": "/dashboard/customers",
+      "surface": "customer management surface",
+      "archetype": "master-reference",
+      "tableImplementation": "route-owned management table",
+      "dataOwnership": "customer read model",
+      "access": ["customers route access gate"],
+      "strengths": ["dedicated route access catalog"],
+      "gaps": ["saved segments/views", "column persistence", "bulk recovery", "phone detail"]
+    },
+    {
+      "module": "Compliance",
+      "route": "/dashboard/assurance",
+      "surface": "assurance evidence surface",
+      "archetype": "evidence-audit-ledger",
+      "tableImplementation": "specialized assurance surface",
+      "dataOwnership": "assurance read model",
+      "access": ["assurance route access gate"],
+      "strengths": ["proof/evidence product language", "dedicated access boundary"],
+      "gaps": ["immutable evidence preset", "saved exception views", "standard export manifest"]
+    },
+    {
+      "module": "Administration",
+      "route": "/dashboard/settings",
+      "surface": "settings reference tables",
+      "archetype": "bounded-detail",
+      "secondaryArchetype": "master-reference",
+      "tableImplementation": "mixed shared and route-owned tables",
+      "dataOwnership": "settings services/actions",
+      "access": ["settings route access gate"],
+      "strengths": ["shared table adopters exist for bounded reference data"],
+      "gaps": ["consistent simple preset", "new bespoke-table governance", "localized action/status semantics"]
+    }
+  ]
+}
+

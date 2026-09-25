@@ -1,0 +1,68 @@
+{
+  "at": "2026-09-09T12:52:12.380Z",
+  "run": "cb89ae66-7fb",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseQueue.tsx": "d1c96b9527a8c0ccd0f39932c019f8de65ca59991f2bc585148b9d4f047b25e8",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "2de0c3d59f5a50409c9de44543a71f80ba27053d2c56c320b86afa69e1237053",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "messages/en.json": "19012a49dc2733e27bf590b6c12fa1aca98cd241c9ab11f934e1e23a81e8da30",
+    "messages/fr.json": "b6a4486b364fd9c1d24f84e233495c74129fb5027a86832b8aedbb405cc230f6"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "suspense-currency-v102-en-denied-desktop-cb89ae66-7fb.png",
+        "suspense-currency-v102-en-denied-320-cb89ae66-7fb.png",
+        "suspense-currency-v102-en-denied-390-cb89ae66-7fb.png",
+        "suspense-currency-v102-en-denied-768-cb89ae66-7fb.png",
+        "suspense-currency-v102-en-text200-cb89ae66-7fb.png",
+        "suspense-currency-v102-en-recovered-cb89ae66-7fb.png"
+      ],
+      "stages": [
+        "Fresh-authentication gate enforced; real password step-up does not automatically post",
+        "Normal checker session receives localized currency guidance; source, financial records and retained receipts unchanged",
+        "Refresh restores the retained approval; explicit retry remains safely refused; mobile/tablet and 200% text reflow checked",
+        "After correcting only the synthetic setup, explicit retry posts exactly once in EUR and retains the original source amount"
+      ],
+      "pageErrors": [],
+      "routeLoadMs": 28288,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "suspense-currency-v102-fr-denied-desktop-cb89ae66-7fb.png",
+        "suspense-currency-v102-fr-denied-320-cb89ae66-7fb.png",
+        "suspense-currency-v102-fr-denied-390-cb89ae66-7fb.png",
+        "suspense-currency-v102-fr-denied-768-cb89ae66-7fb.png",
+        "suspense-currency-v102-fr-text200-cb89ae66-7fb.png",
+        "suspense-currency-v102-fr-recovered-cb89ae66-7fb.png"
+      ],
+      "stages": [
+        "Fresh-authentication gate enforced; real password step-up does not automatically post",
+        "Normal checker session receives localized currency guidance; source, financial records and retained receipts unchanged",
+        "Refresh restores the retained approval; explicit retry remains safely refused; mobile/tablet and 200% text reflow checked",
+        "After correcting only the synthetic setup, explicit retry posts exactly once in EUR and retains the original source amount"
+      ],
+      "pageErrors": [],
+      "routeLoadMs": 35796,
+      "passed": true
+    }
+  ],
+  "scope": "Actual owned application, normal password sessions and synthetic accounting setup only. No production currency change or financial approval.",
+  "originalBefore": "4e7254d82f8b1a1061ffa3f46a1ea4f8354023a9cfd16c8d01b307a5dd705839",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseQueue.tsx": "d1c96b9527a8c0ccd0f39932c019f8de65ca59991f2bc585148b9d4f047b25e8",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "2de0c3d59f5a50409c9de44543a71f80ba27053d2c56c320b86afa69e1237053",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "messages/en.json": "19012a49dc2733e27bf590b6c12fa1aca98cd241c9ab11f934e1e23a81e8da30",
+    "messages/fr.json": "b6a4486b364fd9c1d24f84e233495c74129fb5027a86832b8aedbb405cc230f6"
+  },
+  "sourceStable": true
+}

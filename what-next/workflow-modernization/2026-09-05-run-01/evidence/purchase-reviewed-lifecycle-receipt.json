@@ -1,0 +1,466 @@
+{
+  "recordedAt": "2026-09-07T16:26:36.047Z",
+  "source": {
+    "branch": "codex/migration-control-plane-release-2026-08-29",
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "hashes": {
+      "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+      "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+      "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+      "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+      "services/purchase-order/supplier-po-acknowledgement.service.ts": "54bdf3d1c706af3ca153aa23592ba97aa3dae6bb72ab2f54fd2971ac61762402",
+      "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "accc82574173dae4e363f21c943b171b2a587f37490a12354f8d4366459cc01a",
+      "services/purchase-order/supplier-po-access-token.ts": "a6c8c04cc44f075ef4c461b8ed2c448ab7f279c7c2499159d77b415be1d05588",
+      "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "aebd6dbb219324f3858ad99a96943dc51ffdb919c63d1af160f87be57f445376",
+      "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "b05c2f2d41c20539ce931fc0a7a3847b5d0a359adf7638f45e42a7c162bb3d3a",
+      "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+      "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+      "messages/en.json": "9af4a63f752e7af8f092fbd36b03e2d11f9e749c338e52506874668fc8dafef9",
+      "messages/fr.json": "ef14a547185ba934064d4f31e38f3f97457b529c590e6e5c8cd4d0f1e90d0788",
+      "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+      "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+      "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+      "app/globals.css": "7745f0c29bd364f6ac7eca1afa31026d4a1f7496434a9648aa05c48231ae281a",
+      "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+      "services/purchase-order/supplier-po-buyer-contracts.ts": "37c15a67f675017a26fb9ef426b812165ed6e78d9bd85207e52181b404625ed6",
+      "services/purchase-order/supplier-po-buyer-authority.ts": "c5ccc3bf077cee046178fe8b8529a3ae8b223793b278c24f5bac9d0f60f3e2c0",
+      "hooks/supplier-po-buyer-request.ts": "35464e158079ac52064e0733ddf5e81e65f451a8d61d6c3d170fedf027572020",
+      "components/purchase-orders/SupplierPoBuyerWorkflow.tsx": "0780546e102bfb83005916c72524161f50417d3b5550a014db0e9bbbe26cfa62",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx": "c2ed164eca97744e575d3bcce99f4178264c6f7c86b5241c72681f191780437d",
+      "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+      "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e",
+      "app/[locale]/(dashboard)/dashboard/purchase-orders/purchase-orders-route-access.tsx": "db8d7196af58a5adc66411ad3edca49bb8170a17e2bf871be43f9d76ea1713f8",
+      "services/purchase-order/supplier-po-proposal-evidence.ts": "e2fce6a1746d9e83ddf7bd99742d863ce082ac49b5d8367a115b4583ddcdab50",
+      "services/purchase-order/purchase-order.service.ts": "1aa32d40f04d79cdb32b3207c66aa5fe6c56459d08d0a21f70e05458cd747a3d",
+      "services/purchase-order/purchase-order-lifecycle.ts": "ba1cdcffcc0578dc47d6376bd0a1098e0378f27e78f3da3bdb16c40d484b9bff",
+      "services/purchase-order/purchase-order-lifecycle-contracts.ts": "828e92b74326624d42edf42c0565f2a642c046d19585643ee9b9712b06b843f5",
+      "services/purchase-order/purchase-order-capabilities.ts": "04a72597d0b6514a2ea3665057cf709b4e1c9ab8c63db65c1f11f9b6dabf3679",
+      "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "80dbf212f84e267ab421fad508418b6153095255c467eeafe741cf92de8d6e53",
+      "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx": "5759aee7ece99d02783f8c253bac0cf871b25acfa67b63cd559b52ba912ac533",
+      "components/purchase-orders/PurchaseOrderDecisionHistory.tsx": "0816da78b24707fca88ef360d1e23279e15c37c7b94bba54ddcf277e2f59d295",
+      "services/purchase-order/purchase-order-decision-history.ts": "be8361a935df47d81a1ccfbb70d9f7b512c905ccf6a3d67bae3d00637380c954",
+      "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx": "4f7dd1de004a444438fe8d249af67e353831414b5f3a3a2eec310cbe44ad13c6",
+      "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx": "2755141f2e51c3e35522b7d48772900eba4bdade0a800b16536b14d8e1f6389b",
+      "hooks/useRecentPurchaseOrderQueries.ts": "a334e694c62e85244238e6bd14fedb4def9261c6fc233f4cdb4a116bfe384038",
+      "services/purchasing/ap-control.service.ts": "ac3e51aa39fa18fdbda79ad8570950ca97531d066e7e42f0ba7a8223707e5c06",
+      "services/_shared/action-errors.ts": "48f48543b2b715b06d09cd42f18cd4b27ff5b8b93579f5cb214f8bf726c04afd",
+      "services/purchase-order/purchase-order.schemas.ts": "3a30b55d2b470a21dcf15333401f40f5faf3f8b8093b93614301afbfd265ec7c",
+      "services/purchase-order/__tests__/purchase-order.service.test.ts": "d15e7a2f5981ae059f0bb3af68481aaf1ef904cbb57062a3b896b44e07394d89",
+      "services/purchasing/__tests__/ap-control.service.test.ts": "0b202b1257125cea90dd87db8712f3e18f47cf5e8a07b1d6c8943c15d5267a75",
+      "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts": "90b088b7540ce73dd27b8d0356d0e36e92f34e1c48ed0ce8198a07c83aaf07c6",
+      "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx": "48cb4fec65a02d06e979c749987982fe4de137d024eefcf89cc47e6d968d1f99",
+      "components/purchase-orders/__tests__/PurchaseOrderLifecycleDialog.test.tsx": "adf589c92c1f3f91483b525fa8ffe13cd4f3fb74126fec31cffc97e528615e64",
+      "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx": "caa8200588f185e516cf5d22818491898dadc2d47116326781e8dc92f287223e",
+      "components/purchase-orders/__tests__/PurchaseOrderDecisionHistory.test.tsx": "0c1be9e5c739440f972a4963ce875aeecde51f28fdeefe45d11c429a924f49f5",
+      "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx": "352c8c0680f3e05fc1576d24c3705c2f85c0a8565e1891718580d7950b920e50",
+      "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx": "f6e2f79dcfc97e7c623ceb64194b995e3bc0669be6dbf4c38c963dbea14935ec",
+      "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "b1a987358c074d966b45cbcf9da283e13f0f8538b707e1c61ddce17e3467b20e",
+      "services/purchase-order/__tests__/purchase-order-capabilities.test.ts": "4e76a9f3a493e949de5721050de1acfde9b2f9eff0696f204bf9c0d94a1503ec",
+      "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts": "a11ab9a15199ff319781eb3b77102d492e699e37d6c940ef54ceedd39d037326",
+      "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts": "5a3151a3c8c3ea59b0232e3da077cf1d4b43bfcbc4b76e97c6f69043ef653878",
+      "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+      "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+      "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+      "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+      "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+      "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+      "jest.config.ts": "561766ffe3e607729d4aa188a83ef35a75b501afa6f539864dfdc444942ebc59",
+      "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494",
+      "components/DataTableComponents/useCanonicalTableUrlState.ts": "76cc0e6bc242002e668ad54d47af621774cc038fd11cfdf717679c122284d173",
+      "components/DataTableComponents/table-system-contract.ts": "429d385364d502580a69ae784542ef410f8f9c4a40a067bf5f951e672a2938c2"
+    }
+  },
+  "paths": {
+    "baseline": "evidence/source-baseline-v53.json",
+    "tests": "evidence/purchase-lifecycle-tests-5abdd130-abf.json",
+    "checks": "evidence/purchase-lifecycle-checks-5abdd130-abf.json",
+    "postgres": "lanes/environment/purchase-lifecycle-after-ad7b102e-576.json",
+    "browser": "lanes/environment/purchase-lifecycle-browser-39ebd95d-538.json",
+    "before": "lanes/environment/purchase-lifecycle-before-74dcaf6f-08e.json",
+    "attempts": "evidence/purchase-reviewed-lifecycle-attempts.md",
+    "guide": "lanes/purchasing-ap/PURCHASE_ORDER_REVIEWED_LIFECYCLE.md"
+  },
+  "guide": "lanes/purchasing-ap/PURCHASE_ORDER_REVIEWED_LIFECYCLE.md",
+  "verificationScripts": {
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-fixtures.cjs": "d31a92f0e49c9a923b72e54af93c0178126400b2f6d07aba86bc858bf7f96b10",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/supplier-ack-local.cjs": "9fda9a8e13251bf6945c036accca4c18f2c03715d8cd164c4aa11ba32b3d49cd",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-lifecycle-postgres.cjs": "84758871781e2cb97ea7a771e38cbee000dbc55777b8ad403f1590544d0b02d8",
+    "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-lifecycle-browser.cjs": "352d78e1e13431121d617e29cadcbf1e6d588277b2c3bb707841b4c6594e81f8",
+    "what-next/workflow-modernization/2026-09-05-run-01/verify-purchase-lifecycle.cjs": "6bf123b5b411d4a91246a38c61bb4901b1f6fdf157f5840c149a4c32d8619817",
+    "what-next/workflow-modernization/2026-09-05-run-01/publish-purchase-reviewed-lifecycle-v53.cjs": "a87bb18b260d9372d0dc6a5a73fa02d005643909aea637462fd19825a65fc00b"
+  },
+  "screenshots": [
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-submit-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-submit-review-39ebd95d-538.png",
+      "sha256": "2172982b681fff384e6bbece5fcf4df44a644976e140a3c2b9f598ff7856c628"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-stale-submit-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-stale-submit-39ebd95d-538.png",
+      "sha256": "7fd668a391c0315429e5ca4e9e63c2eb57ce07349f1793371f26197eec4cb4b2"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-review-768-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-review-768-39ebd95d-538.png",
+      "sha256": "3587b12bd6bb8696784e2e93f96135a993ce11abc970bd01267e250179576577"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-review-390-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-review-390-39ebd95d-538.png",
+      "sha256": "93e5c44c9a65f83bfb262271ca750d3e251ca84404b58c16d612378cadf57370"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-review-320-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-review-320-39ebd95d-538.png",
+      "sha256": "fd02c923ce084f63041e222950b58a2f9e78d03888bff249cc5d4817bb258a5c"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-text-reflow-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-text-reflow-39ebd95d-538.png",
+      "sha256": "4b2076ae0e49047c9ab53631e7c43da4d75c6676d87314cd01d3f16bb8fa0aa2"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-submission-receipt-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-submission-receipt-39ebd95d-538.png",
+      "sha256": "bd44f237790b19da85be8a8d1cb99750ea8237605b22d06f35cd1f9037d9b097"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-cancel-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-cancel-review-39ebd95d-538.png",
+      "sha256": "0b4d6d972f2074db66aa83d0079264890a1510b4bb0efeea0a2f24ff736e238f"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-cancel-authority-denied-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-cancel-authority-denied-39ebd95d-538.png",
+      "sha256": "5679ee6328dce6c46a7816da3dd2323d0fcc2b9506637e318552ee5ab1914e8a"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-cancellation-receipt-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-cancellation-receipt-39ebd95d-538.png",
+      "sha256": "27bb7022a14c699105933dab7d8a451a53ce146ee6deecb3431998fb650aa012"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-complete-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-complete-review-39ebd95d-538.png",
+      "sha256": "447fc9189f90bae59dccf812068e34696aec25c6f065a4cc210c868644e66257"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-completion-receipt-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-completion-receipt-39ebd95d-538.png",
+      "sha256": "b5d6755e54fca59116383ff4f8d4cb093645967213ebca9166e8b4e5c2d3eda6"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-archive-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-archive-review-39ebd95d-538.png",
+      "sha256": "16f3433a5bd900577bcf902c42276644ec500b82864cd08dbe158decbbeb6688"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-archive-unknown-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-archive-unknown-39ebd95d-538.png",
+      "sha256": "e03418df529c0035f91a79f86dddd63ab8c3ed196474629c98332dbdd007771d"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-archive-reload-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-archive-reload-39ebd95d-538.png",
+      "sha256": "fef1cba878b6f3bbaee8c0097798d797838ae104022044f5f8fc5f741dbf4e84"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-archive-recovered-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-archive-recovered-39ebd95d-538.png",
+      "sha256": "d86dbb2317a0649ec45b66dc738b741714f9f8dfab7e4bf4156638092d00f129"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-archived-history-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-archived-history-39ebd95d-538.png",
+      "sha256": "26dd0467b11f7f98477682b610e999b5f835756c07c97605cc82dfa739f8bde2"
+    },
+    {
+      "locale": "en",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-en-archived-history-mobile-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-en-archived-history-mobile-39ebd95d-538.png",
+      "sha256": "addab013f27e67e29c0c6a3d0583413c45fb6b129531cfe4472ee6b3ea6104e5"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-submit-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-submit-review-39ebd95d-538.png",
+      "sha256": "fcb0be1bcb1e5c226f44b7c245b781dc2b38d906b605618460280fb0a6c0b24e"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-stale-submit-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-stale-submit-39ebd95d-538.png",
+      "sha256": "a613c4103c0c0b3f9c153e436bd3b579702831a71679c55714a8310e2ea0166d"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-review-768-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-review-768-39ebd95d-538.png",
+      "sha256": "c4fe91c30b006b27ba45bd73bbf96423512f7bb50eff9653082b87f2e9b33789"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-review-390-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-review-390-39ebd95d-538.png",
+      "sha256": "5cba135f1f5c29fe226b2938b555521200746acb4ef04a6298c8836470dadd61"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-review-320-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-review-320-39ebd95d-538.png",
+      "sha256": "f694e2f66535d8ff29f26752b8e10adf8243613b20775372250a432eae4e9767"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-text-reflow-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-text-reflow-39ebd95d-538.png",
+      "sha256": "5acdc98246e1cce14c713533d784b8ecc31059edb22c7d949c3de7f22c0c305e"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-submission-receipt-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-submission-receipt-39ebd95d-538.png",
+      "sha256": "c7a9d443ae3e4dc509c98f9e555f242390bb94b6af4c89ab49dda84fcf7fb5df"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-cancel-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-cancel-review-39ebd95d-538.png",
+      "sha256": "a687ebf505815a65655828fc8cf619a1cc99c64d69e5b427f76a23564f5841c9"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-cancel-authority-denied-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-cancel-authority-denied-39ebd95d-538.png",
+      "sha256": "469147e3bf2da3b261f46d7d314474652f5ba4298f2c3324fe43071843860759"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-cancellation-receipt-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-cancellation-receipt-39ebd95d-538.png",
+      "sha256": "89deba2d5c913fa8250ae9fb69ed559213ba10cfef27f55e579dd54ee94edcf7"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-complete-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-complete-review-39ebd95d-538.png",
+      "sha256": "4e1f2ebfaaf3bc20df8230bdf02a41741e1975f7b9b3d34810ce34bb04b34f24"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-completion-receipt-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-completion-receipt-39ebd95d-538.png",
+      "sha256": "a36e6b7d29eced9d1c55605ebcf12ec587fcbae2158132a4eaa2cbb0adf1d788"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-archive-review-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-archive-review-39ebd95d-538.png",
+      "sha256": "c1fa64daebb337cf59eba3b0c37fde218528d340f9618c8ba0560cda8f4cdc65"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-archive-unknown-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-archive-unknown-39ebd95d-538.png",
+      "sha256": "dfa22ae9a9b7e950f58f10b35576fa893d17440af86180b95516f5de4acb65a3"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-archive-reload-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-archive-reload-39ebd95d-538.png",
+      "sha256": "2ce3ebe4e1fe7da87bc7a3944ba98d910e2dfe831ad6f4a613d9be37e88e1684"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-archive-recovered-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-archive-recovered-39ebd95d-538.png",
+      "sha256": "b152f6074b05880ed762573038ce553e2460d8826adf9dee98f64ceb2a99d5f2"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-archived-history-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-archived-history-39ebd95d-538.png",
+      "sha256": "7229e9776b8ec067ab5ba1263b062d594b748e9b60593f65a39dc3067610491b"
+    },
+    {
+      "locale": "fr",
+      "file": "evidence/purchase-reviewed-lifecycle-screenshots/purchase-lifecycle-fr-archived-history-mobile-39ebd95d-538.png",
+      "source": "lanes/environment/purchase-lifecycle-fr-archived-history-mobile-39ebd95d-538.png",
+      "sha256": "41ce1d346330510b173da2dfa94419d57c3dc9460e17b4db9edd5db721f75f8d"
+    }
+  ],
+  "results": {
+    "tests": 159,
+    "suites": 13,
+    "postgresGroups": 24,
+    "browserJourneys": 2,
+    "browserSteps": 10,
+    "screenshots": 36,
+    "financialAndOriginalRoleInvariantsPreserved": true
+  },
+  "commands": [
+    {
+      "name": "tests",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--runTestsByPath",
+        "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx",
+        "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts",
+        "services/purchase-order/__tests__/purchase-order-capabilities.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-model.test.ts",
+        "components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts",
+        "services/purchasing/__tests__/ap-control.service.test.ts",
+        "components/purchase-orders/__tests__/PurchaseOrderLifecycleDialog.test.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderDecisionHistory.test.tsx",
+        "--json",
+        "--outputFile=what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\purchase-lifecycle-tests-5abdd130-abf.json"
+      ],
+      "cwd": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 26001,
+      "stdout": "",
+      "stderr": "\nTest Suites: 13 passed, 13 total\nTests:       159 passed, 159 total\nSnapshots:   0 total\nTime:        18.872 s, estimated 21 s\nRan all test suites within paths \"components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx\", \"components/purchase-orders/__tests__/PurchaseOrderApprovalDialog.test.tsx\", \"components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx\", \"services/purchase-order/__tests__/purchase-order.service.test.ts\", \"hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx\", \"actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts\", \"services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts\", \"services/purchase-order/__tests__/purchase-order-capabilities.test.ts\", \"components/purchase-orders/__tests__/purchase-order-edit-model.test.ts\", \"components/purchase-orders/__tests__/purchase-order-edit-draft.test.ts\", \"services/purchasing/__tests__/ap-control.service.test.ts\", \"components/purchase-orders/__tests__/PurchaseOrderLifecycleDialog.test.tsx\", \"components/purchase-orders/__tests__/PurchaseOrderDecisionHistory.test.tsx\".\nTest results written to: what-next\\workflow-modernization\\2026-09-05-run-01\\evidence\\purchase-lifecycle-tests-5abdd130-abf.json\n"
+    },
+    {
+      "name": "typecheck",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "--max-old-space-size=6144",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--pretty",
+        "false"
+      ],
+      "cwd": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 43644,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "lint",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "node_modules/eslint/bin/eslint.js",
+        "services/purchase-order/purchase-order.service.ts",
+        "services/purchase-order/purchase-order-lifecycle.ts",
+        "services/purchase-order/purchase-order-lifecycle-contracts.ts",
+        "services/purchase-order/purchase-order.schemas.ts",
+        "services/purchase-order/purchase-order-capabilities.ts",
+        "services/purchase-order/__tests__/purchase-order.service.test.ts",
+        "services/purchasing/ap-control.service.ts",
+        "services/purchasing/__tests__/ap-control.service.test.ts",
+        "services/_shared/action-errors.ts",
+        "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+        "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+        "hooks/useRecentPurchaseOrderQueries.ts",
+        "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+        "components/purchase-orders/PurchaseOrderLifecycleDialog.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderLifecycleDialog.test.tsx",
+        "components/purchase-orders/ModernPurchaseOrderDetailPage.tsx",
+        "components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx",
+        "components/ui/groups/purchase-orders/__tests__/PurchaseOrderManagement.test.tsx",
+        "services/purchase-order/purchase-order-decision-history.ts",
+        "components/purchase-orders/PurchaseOrderDecisionHistory.tsx",
+        "components/purchase-orders/__tests__/PurchaseOrderDecisionHistory.test.tsx"
+      ],
+      "cwd": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0,
+      "signal": null,
+      "elapsedMs": 7244,
+      "stdout": "\nE:\\ohada saas\\Focused projects\\stoquify\\components\\purchase-orders\\PurchaseOrderDecisionHistory.tsx\n  26:187  warning  The ref value 'generation.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'generation.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps\n\n✖ 1 problem (0 errors, 1 warning)\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "postgres",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-lifecycle-postgres.cjs"
+      ],
+      "cwd": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0
+    },
+    {
+      "name": "browser",
+      "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-purchase-lifecycle-browser.cjs"
+      ],
+      "cwd": "E:\\ohada saas\\Focused projects\\stoquify",
+      "exit": 0
+    }
+  ],
+  "timings": [
+    {
+      "locale": "en",
+      "timings": [
+        {
+          "name": "detail submit",
+          "ms": 6136
+        },
+        {
+          "name": "detail complete",
+          "ms": 5168
+        },
+        {
+          "name": "register ready",
+          "ms": 15029
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "timings": [
+        {
+          "name": "detail submit",
+          "ms": 3433
+        },
+        {
+          "name": "detail complete",
+          "ms": 3236
+        },
+        {
+          "name": "register ready",
+          "ms": 11064
+        }
+      ]
+    }
+  ],
+  "completeWorkflowVerified": false,
+  "limitations": [
+    "Whole-platform discovery, connected workflow remediation and release verification remain unfinished.",
+    "Complete receiving/inspection/inventory/AP/ledger/reconciliation journeys remain open; completion fixtures use explicitly synthetic legacy received-goods evidence.",
+    "Approved-order amendments, fractional quantities and supplier communication/retention boundaries remain open.",
+    "Interactive batch review is absent; batch service partial retry is verified.",
+    "History covers the latest 100 reviewed lifecycle decisions; legacy synthesized history, older approval browsing and exports remain open.",
+    "Native assistive technology, native zoom, comprehensive contrast and the full release build remain unverified; development timings are not a production performance pass.",
+    "No deployment, external notification, payment, X1 clearance or professional certification; prior unrelated approval-review rejections remain respected."
+  ]
+}

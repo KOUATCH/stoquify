@@ -1,0 +1,3 @@
+# Implement the bounded offline admission pilot
+
+Use what-next/stoquify-engineering-approach-review.md as the design brief. Reinspect the current working tree and characterize services/pos/offline-sync.service.ts admission decisions before editing. Extract only its ordered per-event policy/snapshot/signature/sequence/hash decision into a pure, typed policy module. Preserve scoped reads, lazy signature checking, per-event clock timing, messages, duplicate handling, hashes, transactions, persisted states, deployment gates and replay behavior. Add focused precedence/boundary tests, run the six reviewed regression suites and the relevant type/boundary checks, and save evidence. Do not enable offline replay, change schemas, move unrelated code or overwrite concurrent work.

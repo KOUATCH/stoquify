@@ -1,0 +1,110 @@
+{
+  "at": "2026-09-13T09:31:06.349Z",
+  "sourcesBefore": {
+    "services/reconciliation/payment-exception-closure.service.ts": "26a990c8297cc3294538a07a2e1c96b8bfa5d3cbde45c0a2623f43acc43d3095",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "f3c03e326be6a1ffa7946ed0b565a0246d26e4706437def9e3b18a2b9bf048ec",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "9493426135107c54b5c725ea5db93c2f19423d375395adb95ab1162da8ae96de",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "actions/payments/exception-closure.actions.ts": "fa36f788fbffbd2c035563c421441ec37259dcd265d1830e4ced82f8322f33a4",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "5b702ff472526803259a567ea5cf9ff7a21b904bd9fff20da134bece058d98b5",
+    "components/finance/PaymentSuspenseQueue.tsx": "3f91373be0dbf4b17306a2613349c7ba79f653594debd8e57ce76b4efbfe134c",
+    "messages/en.json": "85787c0a85feec02999954e224b471ecbb12a5f55c9570d7b3ed7ff80d4f2357",
+    "messages/fr.json": "f54abc341848d22839c510f6bbb81c6dae5e62a517851261a0691e785396bf25"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "routeLoadMs": [
+        30192,
+        29392
+      ],
+      "screenshots": [
+        "exception-recovery-v113-en-history-320-0afb03e9-665.png",
+        "exception-recovery-v113-en-failure-0afb03e9-665.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "Failed to load resource: net::ERR_FAILED",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789291929156 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789291930696 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789291936141 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789291948047 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789291998511 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292019178 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292013839 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292015764 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292022340 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292021219 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292031014 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "malformedDraftAndFailedReset": true,
+      "committedLossReloadAndExactRetry": true,
+      "staleProposalPreservedAndRefused": true,
+      "closureAfterFreshReview": true,
+      "mobileWidth": {
+        "current": 212,
+        "oldPaddingReplay": 160
+      },
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Exception cases and decisions', exact: true }).getByRole('region', { name: 'Exception cmtzm6jc9002uma5o5r5laiu0', exact: true }).getByRole('button', { name: 'Verify current closure evidence', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">Verify current closure evidence</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    114 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is not enabled\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n",
+      "stack": [
+        "locator.click: Timeout 60000ms exceeded.",
+        "Call log:",
+        "\u001b[2m  - waiting for getByRole('region', { name: 'Exception cases and decisions', exact: true }).getByRole('region', { name: 'Exception cmtzm6jc9002uma5o5r5laiu0', exact: true }).getByRole('button', { name: 'Verify current closure evidence', exact: true })\u001b[22m",
+        "\u001b[2m    - locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">Verify current closure evidence</button>\u001b[22m",
+        "\u001b[2m  - attempting click action\u001b[22m"
+      ]
+    },
+    {
+      "locale": "fr",
+      "routeLoadMs": [
+        7950,
+        7372
+      ],
+      "screenshots": [
+        "exception-recovery-v113-fr-history-320-0afb03e9-665.png",
+        "exception-recovery-v113-fr-failure-0afb03e9-665.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "Failed to load resource: net::ERR_FAILED",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292133051 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292137472 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292144661 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292154842 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292152025 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292161038 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292165830 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.",
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1789292159457 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "malformedDraftAndFailedReset": true,
+      "committedLossReloadAndExactRetry": true,
+      "staleProposalPreservedAndRefused": true,
+      "closureAfterFreshReview": true,
+      "mobileWidth": {
+        "current": 212,
+        "oldPaddingReplay": 160
+      },
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('region', { name: 'Dossiers et décisions d’exception', exact: true }).getByRole('region', { name: 'Exception cmtzmbgl90092ma5o74b6vwsu', exact: true }).getByRole('button', { name: 'Vérifier les preuves actuelles de clôture', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">Vérifier les preuves actuelles de clôture</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    114 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m        - element is not enabled\u001b[22m\n\u001b[2m      - retrying click action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n",
+      "stack": [
+        "locator.click: Timeout 60000ms exceeded.",
+        "Call log:",
+        "\u001b[2m  - waiting for getByRole('region', { name: 'Dossiers et décisions d’exception', exact: true }).getByRole('region', { name: 'Exception cmtzmbgl90092ma5o74b6vwsu', exact: true }).getByRole('button', { name: 'Vérifier les preuves actuelles de clôture', exact: true })\u001b[22m",
+        "\u001b[2m    - locator resolved to <button disabled class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">Vérifier les preuves actuelles de clôture</button>\u001b[22m",
+        "\u001b[2m  - attempting click action\u001b[22m"
+      ]
+    }
+  ],
+  "scope": "Actual EN/FR recovery on owned fixtures: malformed local draft, failed reset read, committed proposal with deliberately lost HTTP response, exact retry, stale closure during real financial recovery, independent closure, and real financial reversal/reopening. Mobile padding comparison replays old CSS only; it changes no business state.",
+  "sourcesAfter": {
+    "services/reconciliation/payment-exception-closure.service.ts": "26a990c8297cc3294538a07a2e1c96b8bfa5d3cbde45c0a2623f43acc43d3095",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "f3c03e326be6a1ffa7946ed0b565a0246d26e4706437def9e3b18a2b9bf048ec",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "9493426135107c54b5c725ea5db93c2f19423d375395adb95ab1162da8ae96de",
+    "services/reconciliation/payment-suspense-resolution-recovery.service.ts": "ec50b8af37f29578a19201c9cb8f342a78c907d3dcb5f80ca28f00c89e93668d",
+    "actions/payments/exception-closure.actions.ts": "fa36f788fbffbd2c035563c421441ec37259dcd265d1830e4ced82f8322f33a4",
+    "components/finance/PaymentExceptionClosurePanel.tsx": "5b702ff472526803259a567ea5cf9ff7a21b904bd9fff20da134bece058d98b5",
+    "components/finance/PaymentSuspenseQueue.tsx": "3f91373be0dbf4b17306a2613349c7ba79f653594debd8e57ce76b4efbfe134c",
+    "messages/en.json": "85787c0a85feec02999954e224b471ecbb12a5f55c9570d7b3ed7ff80d4f2357",
+    "messages/fr.json": "f54abc341848d22839c510f6bbb81c6dae5e62a517851261a0691e785396bf25"
+  },
+  "sourceStable": true
+}

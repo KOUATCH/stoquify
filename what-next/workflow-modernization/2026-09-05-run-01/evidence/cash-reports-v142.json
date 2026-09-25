@@ -1,0 +1,273 @@
+{
+  "at": "2026-09-13T18:04:59.907Z",
+  "baseline": "evidence/source-baseline-v142.json",
+  "baselineReceipt": "67999a",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+    "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58",
+    "components/reports/cashier-performance-report.tsx": "5eb2ab08bfb2a1b08c5795095d41b6c2d7251e4a5b739671a0bd799afea5baaf",
+    "components/reports/cash-flow-report.tsx": "feaa31470fa062fe9efdb5cc3f421e0ee04f09d642538f56053e25c43148f1fb",
+    "components/reports/cash-count-records.tsx": "b869aeb1db3e537cff6e55b79d1b21f9d39dabcdef6aed72506d13a4ae66dfb9",
+    "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "47a7255edc5ce98223786f51ef8b2b91556803878f4dfd4085e00d67aeda55c3",
+    "messages/en.json": "c579aa72cf492d49dfda79d4de208ad59b686f2b8a1b622a702772d261c68cf5",
+    "messages/fr.json": "8cbcc9b550f3662775ff27871d3d6833483094e13e3033d9ba59163fe6cc486a"
+  },
+  "tests": {
+    "passed": 60,
+    "suites": 7,
+    "receipt": "1431c5",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/analytics/__tests__/cash-report-evidence.test.ts services/analytics/__tests__/completed-sales-evidence.test.ts services/analytics/__tests__/financial-reports.service.test.ts actions/analytics/analytics/__tests__/financial-reports.authorization.test.ts components/reports/__tests__/item-performance-report.test.tsx components/reports/__tests__/financial-summary-report.test.tsx app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/ReportsClient.test.tsx --silent"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "f4c193",
+    "files": [
+      "services/analytics/cash-report-evidence.ts",
+      "services/analytics/financial-reports.service.ts",
+      "services/analytics/__tests__/cash-report-evidence.test.ts",
+      "components/reports/cashier-performance-report.tsx",
+      "components/reports/cash-flow-report.tsx",
+      "components/reports/cash-count-records.tsx",
+      "app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/ReportsClient.test.tsx"
+    ],
+    "command": "node node_modules/eslint/bin/eslint.js services/analytics/cash-report-evidence.ts services/analytics/financial-reports.service.ts services/analytics/__tests__/cash-report-evidence.test.ts components/reports/cashier-performance-report.tsx components/reports/cash-flow-report.tsx components/reports/cash-count-records.tsx app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/ReportsClient.test.tsx"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "845eec",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/cash-reports-v142-after-98334144-d17b-4530-a917-0d3b08b6171d.json",
+    "receipt": "9e2c68",
+    "command": "node lanes/environment/verify-cash-reports-v142.cjs --after",
+    "at": "2026-09-13T18:02:24.063Z",
+    "phase": "after",
+    "sourceBefore": {
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+      "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+    },
+    "checks": [
+      {
+        "name": "uncounted_shift",
+        "status": "ACTIVE",
+        "variance": null,
+        "performanceScore": null
+      },
+      {
+        "name": "closing_count_is_not_outflow",
+        "cashIn": 100,
+        "cashOut": 0,
+        "net": 100,
+        "expectedOperationalNet": 100
+      },
+      {
+        "name": "void_return_is_outflow",
+        "cashIn": 100,
+        "cashOut": 100,
+        "net": 0,
+        "expectedOperationalNet": 0
+      },
+      {
+        "name": "foreign_location_denied",
+        "passed": true
+      },
+      {
+        "name": "missing_expected_count_stays_unknown",
+        "passed": true
+      },
+      {
+        "name": "inconsistent_direction_unavailable",
+        "passed": true
+      },
+      {
+        "name": "genuine_empty_period",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "scope": "Owned local database and actual synthetic POS sale, void and close services; report reads add no financial effects. Isolated count/movement corruption exercises missing evidence. No live payment, external provider, deployment or statutory approval.",
+    "sourceAfter": {
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+      "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+    },
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/cash-browser-v142-90098b7c-ac4a-4466-8e97-4dfa0839c701.json",
+    "receipt": "0dec54",
+    "command": "node lanes/environment/verify-cash-browser-v142.cjs",
+    "at": "2026-09-13T18:00:01.778Z",
+    "sourceBefore": {
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "components/reports/cashier-performance-report.tsx": "5eb2ab08bfb2a1b08c5795095d41b6c2d7251e4a5b739671a0bd799afea5baaf",
+      "components/reports/cash-flow-report.tsx": "feaa31470fa062fe9efdb5cc3f421e0ee04f09d642538f56053e25c43148f1fb",
+      "components/reports/cash-count-records.tsx": "b869aeb1db3e537cff6e55b79d1b21f9d39dabcdef6aed72506d13a4ae66dfb9",
+      "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "47a7255edc5ce98223786f51ef8b2b91556803878f4dfd4085e00d67aeda55c3",
+      "messages/en.json": "c579aa72cf492d49dfda79d4de208ad59b686f2b8a1b622a702772d261c68cf5",
+      "messages/fr.json": "8cbcc9b550f3662775ff27871d3d6833483094e13e3033d9ba59163fe6cc486a"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "cash-v142-en-cashier-1440-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-en-cashier-768-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-en-cashier-320-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-en-cashflow-1440-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-en-cashflow-768-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-en-cashflow-320-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-en-text200-90098b7c-ac4a-4466-8e97-4dfa0839c701.png"
+        ],
+        "pageErrors": [],
+        "readyMs": 8101,
+        "openShiftIsUncounted": true,
+        "signedShortageVisible": true,
+        "keyboardReportSelection": true,
+        "closingCountExcluded": true,
+        "reflow200": true,
+        "failureRecovery": true,
+        "inconsistentMovementIsUnavailable": true,
+        "refreshPreserved": true,
+        "revokedReadDenied": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "cash-v142-fr-cashier-1440-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-fr-cashier-768-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-fr-cashier-320-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-fr-cashflow-1440-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-fr-cashflow-768-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-fr-cashflow-320-90098b7c-ac4a-4466-8e97-4dfa0839c701.png",
+          "cash-v142-fr-text200-90098b7c-ac4a-4466-8e97-4dfa0839c701.png"
+        ],
+        "pageErrors": [],
+        "readyMs": 5572,
+        "openShiftIsUncounted": true,
+        "signedShortageVisible": true,
+        "keyboardReportSelection": true,
+        "closingCountExcluded": true,
+        "reflow200": true,
+        "failureRecovery": true,
+        "inconsistentMovementIsUnavailable": true,
+        "refreshPreserved": true,
+        "revokedReadDenied": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+      "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+      "components/reports/cashier-performance-report.tsx": "5eb2ab08bfb2a1b08c5795095d41b6c2d7251e4a5b739671a0bd799afea5baaf",
+      "components/reports/cash-flow-report.tsx": "feaa31470fa062fe9efdb5cc3f421e0ee04f09d642538f56053e25c43148f1fb",
+      "components/reports/cash-count-records.tsx": "b869aeb1db3e537cff6e55b79d1b21f9d39dabcdef6aed72506d13a4ae66dfb9",
+      "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "47a7255edc5ce98223786f51ef8b2b91556803878f4dfd4085e00d67aeda55c3",
+      "messages/en.json": "c579aa72cf492d49dfda79d4de208ad59b686f2b8a1b622a702772d261c68cf5",
+      "messages/fr.json": "8cbcc9b550f3662775ff27871d3d6833483094e13e3033d9ba59163fe6cc486a"
+    },
+    "sourceStable": true
+  },
+  "before": {
+    "file": "lanes/environment/cash-reports-v142-before-c7c5f3ab-af52-4e5f-860a-f6fd0f010521.json",
+    "receipt": "b5d961",
+    "at": "2026-09-13T17:47:46.211Z",
+    "phase": "before",
+    "sourceBefore": {
+      "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+      "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+    },
+    "checks": [
+      {
+        "name": "uncounted_shift",
+        "status": "ACTIVE",
+        "variance": 0,
+        "performanceScore": 100
+      },
+      {
+        "name": "closing_count_is_not_outflow",
+        "cashIn": 100,
+        "cashOut": 100,
+        "net": 0,
+        "expectedOperationalNet": 100
+      },
+      {
+        "name": "void_return_is_outflow",
+        "cashIn": 200,
+        "cashOut": 0,
+        "net": 200,
+        "expectedOperationalNet": 0
+      }
+    ],
+    "reproduced": true,
+    "scope": "Owned local database and actual synthetic POS sale, void and close services; report reads add no financial effects. No live payment, external provider, deployment or statutory approval.",
+    "sourceAfter": {
+      "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+      "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+    },
+    "sourceStable": true
+  },
+  "priorAttempts": [
+    {
+      "receipt": "f3bc87",
+      "result": "Typecheck found nullable variance typing in aggregation; recorded-state invariant is now explicit."
+    },
+    {
+      "receipt": "795ea9",
+      "result": "55 focused tests passed, one empty-copy assertion expected obsolete performance wording; updated the assertion for the corrected activity description."
+    },
+    {
+      "receipt": "2f9c3e",
+      "result": "Initial three actual POS reproductions passed after correction; final database receipt binds the completed helper and seven cases."
+    },
+    {
+      "receipt": "ebb235",
+      "result": "Sandbox EPERM on source write; exact inspected patch applied with narrow approved execution dd7079."
+    }
+  ],
+  "visualReview": {
+    "screenshots": 14,
+    "inspected": [
+      "EN cashier desktop",
+      "FR cash-flow mobile",
+      "FR cash-flow 200% text"
+    ],
+    "limits": [
+      "No real screen-reader or professional accessibility review. Long French words can break at extreme narrow/enlarged width.",
+      "Only local development latency observed; no production performance certification."
+    ]
+  },
+  "build": {
+    "run": false,
+    "reason": "Current application compiled and exercised through the existing development server. Migration-bearing default build not run."
+  },
+  "guide": "CASH_REPORTS_V142.md",
+  "coverage": {
+    "discoveredWorkflows": 255,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2915,
+      "tests": 1038,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2542,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 199,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

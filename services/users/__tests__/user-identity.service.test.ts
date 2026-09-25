@@ -6,14 +6,19 @@ import { logSecurityEvent } from "@/lib/security/audit-log"
 import { db } from "@/prisma/db"
 import { recordReferralConversionInTx } from "@/services/referrals/referral-attribution.service"
 import { enforcePublicIdentityAbuseLimits } from "@/services/security/public-identity-abuse.service"
+import { Resend } from "resend"
+import { readInvitationRedemptionAuthority } from "../user-invitation-redemption-authority.service"
+jest.mock("../user-invitation-redemption-authority.service", () => ({ readInvitationRedemptionAuthority: jest.fn() }))
 import {
   acceptInvitationWorkflow,
-  changeUserPasswordWorkflow,
   completePasswordResetWorkflow,
   createOrganizationOwner,
   requestPasswordResetLinkWorkflow,
+  requestEmailVerificationCodeWorkflow,
   registerOrganizationAccount,
   sendInviteWorkflow,
+  getInviteRegistrationContext,
+  listOrganizationInvites,
   verifyEmailOtpWorkflow,
 } from "../user-identity.service"
 
@@ -42,10 +47,12 @@ jest.mock("resend", () => ({
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    invite: { findUnique: jest.fn(), findMany: jest.fn() },
     user: {
       findFirst: jest.fn(),
       findUnique: jest.fn(),
       update: jest.fn(),
+      updateMany: jest.fn(),
     },
   },
 }))
@@ -100,10 +107,12 @@ jest.mock("@/lib/token", () => ({
 
 const mockDb = db as unknown as {
   $transaction: jest.Mock
+  invite: { findUnique: jest.Mock; findMany: jest.Mock }
   user: {
     findFirst: jest.Mock
     findUnique: jest.Mock
     update: jest.Mock
+    updateMany: jest.Mock
   }
 }
 const mockHashPolicyCompliantPassword = hashPolicyCompliantPassword as jest.Mock
@@ -114,11 +123,79 @@ const mockLogSecurityEvent = logSecurityEvent as jest.Mock
 const mockEnforcePublicIdentityAbuseLimits = enforcePublicIdentityAbuseLimits as jest.Mock
 
 const mockRecordReferralConversionInTx = recordReferralConversionInTx as jest.Mock
+const mockResend = Resend as jest.Mock
+
+describe("email verification resend recovery", () => {
+  const pendingUser = () => ({
+    id: "user-1", email: "owner@example.com", organizationId: "org-1",
+    isVerified: false, emailVerified: false, isActive: true,
+    verificationToken: "654321", verificationTokenExpires: new Date(Date.now() + 600000),
+  })
+  const response = { status: 200, error: null, data: null }
+
+  it("requests delivery of the current valid OTP without changing its expiry or credentials", async () => {
+    mockDb.user.findFirst.mockResolvedValue(pendingUser())
+    await expect(requestEmailVerificationCodeWorkflow("user-1", " OWNER@example.com ", { ipAddress: "203.0.113.10" })).resolves.toEqual(response)
+    expect(mockEnforcePublicIdentityAbuseLimits).toHaveBeenCalledWith(expect.objectContaining({ operation: "email_otp_resend", subject: "user-1", requestContext: { ipAddress: "203.0.113.10" } }))
+    expect(mockDb.user.findFirst).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({ id: "user-1", email: { equals: "owner@example.com", mode: "insensitive" }, isVerified: false, emailVerified: false, isActive: true }) }))
+    expect(mockResend).toHaveBeenCalledTimes(1)
+    expect(mockDb.user.updateMany).not.toHaveBeenCalled()
+    expect(mockSyncUserCredentialPassword).not.toHaveBeenCalled()
+  })
+
+  it("rotates an expired code only while the same unverified state still exists", async () => {
+    const user = { ...pendingUser(), verificationTokenExpires: new Date(Date.now() - 1000) }
+    mockDb.user.findFirst.mockResolvedValue(user)
+    mockDb.user.updateMany.mockResolvedValue({ count: 1 })
+    await expect(requestEmailVerificationCodeWorkflow("user-1", user.email)).resolves.toEqual(response)
+    expect(mockDb.user.updateMany).toHaveBeenCalledWith({ where: expect.objectContaining({ id: user.id, verificationToken: user.verificationToken, verificationTokenExpires: user.verificationTokenExpires, isVerified: false, emailVerified: false, isActive: true }), data: { verificationToken: "123456", verificationTokenExpires: expect.any(Date) } })
+    expect(mockResend).toHaveBeenCalledTimes(1)
+  })
+
+  it("does not send a losing concurrent rotation", async () => {
+    mockDb.user.findFirst.mockResolvedValue({ ...pendingUser(), verificationTokenExpires: null })
+    mockDb.user.updateMany.mockResolvedValue({ count: 0 })
+    await expect(requestEmailVerificationCodeWorkflow("user-1", "owner@example.com")).resolves.toEqual(response)
+    expect(mockResend).not.toHaveBeenCalled()
+  })
+
+  it("preserves a live password-reset token", async () => {
+    mockDb.user.findFirst.mockResolvedValue({ ...pendingUser(), verificationToken: "a".repeat(32) })
+    await expect(requestEmailVerificationCodeWorkflow("user-1", "owner@example.com")).resolves.toEqual(response)
+    expect(mockDb.user.updateMany).not.toHaveBeenCalled()
+    expect(mockResend).not.toHaveBeenCalled()
+  })
+
+  it("does not reveal an unknown, verified, disabled or mismatched account", async () => {
+    mockDb.user.findFirst.mockResolvedValue(null)
+    await expect(requestEmailVerificationCodeWorkflow("user-1", "wrong@example.com")).resolves.toEqual(response)
+    expect(mockResend).not.toHaveBeenCalled()
+  })
+
+  it("limits resend before lookup and mail", async () => {
+    mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({ allowed: false })
+    await expect(requestEmailVerificationCodeWorkflow("user-1", "owner@example.com")).resolves.toEqual(response)
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+    expect(mockResend).not.toHaveBeenCalled()
+  })
+
+  it("keeps provider rejection private without a sent audit or account failure", async () => {
+    mockDb.user.findFirst.mockResolvedValue(pendingUser())
+    mockResend.mockImplementationOnce(() => ({ emails: { send: jest.fn().mockResolvedValue({ data: null, error: { message: "provider detail" } }) } }))
+    await expect(requestEmailVerificationCodeWorkflow("user-1", "owner@example.com")).resolves.toEqual(response)
+    expect(mockLogSecurityEvent).not.toHaveBeenCalledWith(expect.objectContaining({ type: "AUTH_EMAIL_VERIFICATION_SENT" }))
+  })
+})
+
 beforeEach(() => {
+  ;(readInvitationRedemptionAuthority as jest.Mock).mockReset().mockResolvedValue({ issueId: "issue-1", issuerId: "issuer-1", payloadHash: "approval-hash", rolePermissions: ["items.read"] })
+  mockResend.mockClear()
   mockDb.$transaction.mockReset()
+  mockDb.invite.findUnique.mockReset()
   mockDb.user.findFirst.mockReset()
   mockDb.user.findUnique.mockReset()
   mockDb.user.update.mockReset()
+  mockDb.user.updateMany.mockReset()
   mockHashPolicyCompliantPassword.mockReset()
   mockVerifyUserCredentialPassword.mockReset()
   mockSyncUserCredentialPassword.mockReset()
@@ -137,6 +214,18 @@ beforeEach(() => {
 })
 
 function runTransactionWith(tx: unknown) {
+  const invitation = tx as { role?: { findFirst?: jest.Mock }; invite?: { create?: jest.Mock }; user?: { findFirst: jest.Mock }; businessEvent?: unknown; auditLog?: { create: jest.Mock } }
+  if (invitation.role?.findFirst && invitation.invite?.create && invitation.user) {
+    process.env.RESEND_FROM_EMAIL = "invites@example.invalid"
+    process.env.NEXT_PUBLIC_BASE_URL = "http://127.0.0.1:3107"
+    invitation.user.findFirst.mockImplementation(async args => args.where.id ? {
+      id: "admin-1", isLocked: false, isVerified: true, emailVerified: true,
+      organization: { name: "Demo Org", isActive: true, deletedAt: null },
+      roles: [{ permissions: ["users.invite", "users.roles.assign", "dashboard.read", "items.read"] }],
+    } : null)
+    invitation.businessEvent = { findUnique: jest.fn().mockResolvedValue(null), create: jest.fn().mockResolvedValue({ id: "issue-1" }) }
+    invitation.auditLog = { create: jest.fn() }
+  }
   mockDb.$transaction.mockImplementation(async (handler) => handler(tx))
 }
 
@@ -156,6 +245,131 @@ const inviteActor = {
 }
 const inviteGrantAuthority = ["users.invite", "users.roles.assign"]
 
+describe("invitation input and register boundaries", () => {
+  it.each([null, undefined, {}, { token: 5 }, { token: "a".repeat(64), password: "x".repeat(129) }, { token: "a".repeat(64), password: "Local!Password123", firstName: "x".repeat(101) }, { token: "a".repeat(64), password: "Local!Password123", phone: { unsafe: true } }])("rejects malformed redemption before lookup or hashing", async input => {
+    expect(await acceptInvitationWorkflow(input as Parameters<typeof acceptInvitationWorkflow>[0])).toMatchObject({ status: 400, data: null, code: "INVITATION_INVALID" })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockHashPolicyCompliantPassword).not.toHaveBeenCalled()
+    expect(mockEnforcePublicIdentityAbuseLimits).toHaveBeenCalled()
+  })
+  it("rejects malformed issuance even when the service is called directly", async () => {
+    expect(await sendInviteWorkflow({ actor: inviteActor, actorPermissions: inviteGrantAuthority, email: "not-email", roleId: "role-1" })).toMatchObject({ status: 400, data: null })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(mockResend).not.toHaveBeenCalled()
+  })
+  it("derives expired state without changing accepted or cancelled records", async () => {
+    const role = { nameEn: "Reader", nameFr: "Lecteur", code: "reader" }
+    mockDb.invite.findMany.mockResolvedValue(["PENDING", "ACCEPTED", "CANCELLED"].map((status, index) => ({ id: String(index), email: "colleague@example.invalid", organizationId: "org-1", roleId: "reader", updatedAt: new Date("2020-01-01"), status, expiresAt: new Date("2020-01-01"), role })))
+    const result = await listOrganizationInvites("org-1")
+    expect(result.rows.map(row => row.status)).toEqual(["EXPIRED", "ACCEPTED", "CANCELLED"])
+    expect(result.rows[0].storedStatus).toBe("PENDING")
+    expect(Number.isNaN(Date.parse(result.asOf))).toBe(false)
+    expect(mockDb.invite.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { organizationId: "org-1" }, select: expect.not.objectContaining({ token: true }) }))
+  })
+  it("propagates a failed register read and rejects an empty organization", async () => {
+    mockDb.invite.findMany.mockRejectedValueOnce(new Error("offline"))
+    await expect(listOrganizationInvites("org-1")).rejects.toThrow("offline")
+    mockDb.invite.findMany.mockClear()
+    await expect(listOrganizationInvites("")).rejects.toThrow("Organization scope is required")
+    expect(mockDb.invite.findMany).not.toHaveBeenCalled()
+  })
+})
+
+describe("current invitation redemption", () => {
+  const token = "b".repeat(64)
+  const invitation = () => ({ id: "invite-current", token, email: "Invited@Example.com", organizationId: "org-1", roleId: "role-1", status: "PENDING", expiresAt: new Date(Date.now() + 60000), organization: { name: "Scoped org", isActive: true, deletedAt: null }, role: { id: "role-1", organizationId: "org-1", permissions: ["items.read"], nameEn: "Reader", nameFr: "Lecteur", code: "reader" } })
+  function setup(row = invitation()) {
+    const tx = {
+      invite: { findUnique: jest.fn().mockResolvedValue(row), updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
+      user: { findFirst: jest.fn().mockResolvedValue(null), create: jest.fn().mockResolvedValue({ id: "invited-user", email: "invited@example.com" }) },
+      passwordHistory: { create: jest.fn() }, auditLog: { create: jest.fn() },
+    }
+    runTransactionWith(tx)
+    return tx
+  }
+  it("claims the current invitation before credentials and persists audit in the same transaction", async () => {
+    const tx = setup()
+    const input = { token, password: "Local!Password123", firstName: "Invited", email: "forged@example.com", organizationId: "foreign", roleId: "admin" }
+    expect(await acceptInvitationWorkflow(input)).toMatchObject({ status: 200, data: { email: "invited@example.com", organizationId: "org-1", roleId: "role-1" } })
+    expect(tx.invite.updateMany).toHaveBeenCalledWith({ where: expect.objectContaining({ id: "invite-current", token, email: "Invited@Example.com", roleId: "role-1", organizationId: "org-1", status: "PENDING", expiresAt: { gt: expect.any(Date) }, organization: { isActive: true, deletedAt: null }, role: { organizationId: "org-1", NOT: { permissions: { has: "*" } } } }), data: { status: "ACCEPTED" } })
+    expect(tx.invite.updateMany.mock.invocationCallOrder[0]).toBeLessThan(tx.user.create.mock.invocationCallOrder[0])
+    expect(mockUpsertCredentialAccount).toHaveBeenCalledWith(tx, { userId: "invited-user", passwordHash: "hash-1" })
+    expect(tx.auditLog.create).toHaveBeenCalledWith({ data: { entityType: "SecurityEvent", entityId: "invited-user", action: "INVITE_REDEEMED", userId: "invited-user", organizationId: "org-1", changes: { inviteId: "invite-current", roleId: "role-1", issueId: "issue-1", issuerId: "issuer-1", approvalPayloadHash: "approval-hash", rolePermissions: ["items.read"] } } })
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+    expect(mockResend).not.toHaveBeenCalled()
+  })
+  it.each(["disabled", "deleted", "foreign-role", "wildcard-role"])("refuses %s before credentials", async condition => {
+    const row = invitation()
+    if (condition === "disabled") row.organization.isActive = false
+    if (condition === "deleted") Object.assign(row.organization, { deletedAt: new Date() })
+    if (condition === "foreign-role") row.role.organizationId = "foreign"
+    if (condition === "wildcard-role") row.role.permissions = ["*"]
+    const tx = setup(row)
+    expect(await acceptInvitationWorkflow({ token, password: "Local!Password123" })).toMatchObject({ status: 403, data: null })
+    expect(mockHashPolicyCompliantPassword).not.toHaveBeenCalled()
+    expect(tx.invite.updateMany).not.toHaveBeenCalled()
+    expect(tx.user.create).not.toHaveBeenCalled()
+  })
+  it("does not overwrite concurrent redemption, cancellation, reissue or authority change", async () => {
+    const tx = setup()
+    tx.invite.updateMany.mockResolvedValue({ count: 0 })
+    expect(await acceptInvitationWorkflow({ token, password: "Local!Password123" })).toMatchObject({ status: 409, data: null })
+    expect(tx.user.create).not.toHaveBeenCalled()
+    expect(mockUpsertCredentialAccount).not.toHaveBeenCalled()
+    expect(tx.auditLog.create).not.toHaveBeenCalled()
+  })
+  it("rechecks expiry after password hashing", async () => {
+    jest.useFakeTimers().setSystemTime(new Date("2026-09-06T12:00:00Z"))
+    try {
+      const tx = setup()
+      mockHashPolicyCompliantPassword.mockImplementation(async () => { jest.setSystemTime(new Date("2026-09-06T12:02:00Z")); return { ok: true, hash: "hash" } })
+      expect(await acceptInvitationWorkflow({ token, password: "Local!Password123" })).toMatchObject({ status: 410, data: null })
+      expect(tx.invite.updateMany).toHaveBeenCalledWith({ where: expect.objectContaining({ token, status: "PENDING", expiresAt: { lte: new Date("2026-09-06T12:02:00Z") } }), data: { status: "EXPIRED" } })
+      expect(tx.user.create).not.toHaveBeenCalled()
+    } finally { jest.useRealTimers() }
+  })
+  it("keeps invalid passwords from consuming the invitation", async () => {
+    const tx = setup()
+    mockHashPolicyCompliantPassword.mockResolvedValue({ ok: false, message: "Choose a stronger password" })
+    expect(await acceptInvitationWorkflow({ token, password: "weak" })).toMatchObject({ status: 400 })
+    expect(tx.invite.updateMany).not.toHaveBeenCalled()
+    expect(tx.user.create).not.toHaveBeenCalled()
+  })
+  it("rejects unrecorded approval before hashing or consuming a link", async () => {
+    const tx = setup()
+    ;(readInvitationRedemptionAuthority as jest.Mock).mockResolvedValue(null)
+    expect(await acceptInvitationWorkflow({ token, password: "Local!Password123" })).toMatchObject({ status: 403, code: "INVITATION_REISSUE_REQUIRED", data: null })
+    expect(mockHashPolicyCompliantPassword).not.toHaveBeenCalled()
+    expect(tx.invite.updateMany).not.toHaveBeenCalled()
+    expect(tx.user.create).not.toHaveBeenCalled()
+    mockDb.invite.findUnique.mockResolvedValue(invitation())
+    expect(await getInviteRegistrationContext(token)).toMatchObject({ email: "", roleName: "", isValidInvite: false })
+  })
+  it("rechecks authority with locks after hashing and rejects a changed approval", async () => {
+    const tx = setup()
+    ;(readInvitationRedemptionAuthority as jest.Mock).mockResolvedValueOnce({ issueId: "issue-1", payloadHash: "approval-hash" }).mockResolvedValueOnce(null)
+    expect(await acceptInvitationWorkflow({ token, password: "Local!Password123" })).toMatchObject({ status: 403, code: "INVITATION_REISSUE_REQUIRED", data: null })
+    expect(readInvitationRedemptionAuthority).toHaveBeenLastCalledWith(tx, expect.objectContaining({ token }), tx)
+    expect(mockHashPolicyCompliantPassword).toHaveBeenCalledTimes(1)
+    expect(tx.invite.updateMany).not.toHaveBeenCalled()
+    expect(tx.user.create).not.toHaveBeenCalled()
+  })
+  it("does not claim success if mandatory audit persistence fails", async () => {
+    const tx = setup()
+    tx.auditLog.create.mockRejectedValue(new Error("audit unavailable"))
+    await expect(acceptInvitationWorkflow({ token, password: "Local!Password123" })).rejects.toThrow("audit unavailable")
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+  })
+  it("rejects malformed tokens and hides invalid invitation metadata", async () => {
+    expect(await acceptInvitationWorkflow({ token: "forged", password: "Local!Password123" })).toMatchObject({ status: 400 })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+    expect(await getInviteRegistrationContext("forged")).toMatchObject({ email: "", roleName: "", isValidInvite: false })
+    expect(mockDb.invite.findUnique).not.toHaveBeenCalled()
+    mockDb.invite.findUnique.mockResolvedValue({ ...invitation(), organization: { name: "Private disabled org", isActive: false, deletedAt: null } })
+    expect(await getInviteRegistrationContext(token)).toMatchObject({ email: "", roleName: "", isValidInvite: false })
+  })
+})
+
 function buildInviteTransaction(role: InviteRoleFixture | null) {
   return {
     role: {
@@ -173,6 +387,22 @@ function buildInviteTransaction(role: InviteRoleFixture | null) {
 }
 
 describe("user identity service creation and invite workflows", () => {
+  it("loads identity read workflows without constructing an email provider", () => {
+    jest.isolateModules(() => {
+      const isolatedProvider = jest.requireMock("resend").Resend as jest.Mock
+      isolatedProvider.mockClear()
+      jest.requireActual("../user-identity.service")
+      expect(isolatedProvider).not.toHaveBeenCalled()
+    })
+  })
+
+  it("records invitation intent without contacting an email provider", async () => {
+    const tx = buildInviteTransaction({ id: "role-1", nameEn: "Reader", nameFr: "Lecteur", code: "reader", organizationId: "org-1", permissions: ["items.read"] })
+    runTransactionWith(tx)
+    await expect(sendInviteWorkflow({ actor: inviteActor, actorPermissions: [...inviteGrantAuthority, "items.read"], email: "invite@example.com", roleId: "role-1" })).resolves.toMatchObject({ status: 200, data: { delivery: "PENDING" } })
+    expect(mockResend).not.toHaveBeenCalled()
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+  })
   it("preserves the legacy registration conflict response without creating an organization", async () => {
     const tx = {
       user: {
@@ -211,6 +441,7 @@ describe("user identity service creation and invite workflows", () => {
   it("creates the legacy owner administrator role with canonical explicit permissions", async () => {
     const verificationExpiresAt = new Date(Date.now() + 60_000)
     const tx = {
+      auditLog: { create: jest.fn() },
       user: {
         findUnique: jest.fn().mockResolvedValueOnce(null).mockResolvedValueOnce(null),
         create: jest.fn().mockResolvedValue({
@@ -281,7 +512,7 @@ describe("user identity service creation and invite workflows", () => {
           expiresAt: new Date("2020-01-01T00:00:00Z"),
           role: { id: "role-1", organizationId: "org-1" },
         }),
-        update: jest.fn().mockResolvedValue({ id: "invite-1" }),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
       user: {
         create: jest.fn(),
@@ -290,7 +521,7 @@ describe("user identity service creation and invite workflows", () => {
     runTransactionWith(tx)
 
     const result = await acceptInvitationWorkflow({
-      token: "invite-token",
+      token: "a".repeat(64),
       password: "Password123!",
     })
 
@@ -298,9 +529,10 @@ describe("user identity service creation and invite workflows", () => {
       error: "Invitation link has expired",
       status: 410,
       data: null,
+      code: "INVITATION_EXPIRED",
     })
-    expect(tx.invite.update).toHaveBeenCalledWith({
-      where: { id: "invite-1" },
+    expect(tx.invite.updateMany).toHaveBeenCalledWith({
+      where: { id: "invite-1", token: "a".repeat(64), status: "PENDING", expiresAt: { lte: expect.any(Date) } },
       data: { status: "EXPIRED" },
     })
     expect(tx.user.create).not.toHaveBeenCalled()
@@ -340,10 +572,11 @@ describe("user identity service creation and invite workflows", () => {
       roleId: "role-1",
     })
 
-    expect(result).toEqual({
-      error: "This email user@example.com is already invited, Another invitation cannot be sent",
+    expect(result).toMatchObject({
+      error: "This email already has a pending invitation",
       status: 409,
       data: null,
+      code: "INVITATION_PENDING",
     })
     expect(tx.invite.create).not.toHaveBeenCalled()
     expect(tx.invite.update).not.toHaveBeenCalled()
@@ -357,7 +590,7 @@ describe("user identity service creation and invite workflows", () => {
       roleId: "role-1",
     })
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       error: "You are not allowed to invite users with roles",
       status: 403,
       data: null,
@@ -383,7 +616,7 @@ describe("user identity service creation and invite workflows", () => {
       roleId: "role-1",
     })
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       error: "You cannot grant the selected role",
       status: 403,
       data: null,
@@ -410,7 +643,7 @@ describe("user identity service creation and invite workflows", () => {
       roleId: "role-1",
     })
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       error: "You cannot grant the selected role",
       status: 403,
       data: null,
@@ -437,7 +670,7 @@ describe("user identity service creation and invite workflows", () => {
       roleId: "role-2",
     })
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       error: "Invalid role for this organization",
       status: 403,
       data: null,
@@ -474,10 +707,10 @@ describe("user identity service creation and invite workflows", () => {
       roleId: "role-1",
     })
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       error: null,
       status: 200,
-      data: { id: "email-1" },
+      data: { issueId: "issue-1", delivery: "PENDING" },
     })
     expect(tx.invite.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
@@ -486,14 +719,8 @@ describe("user identity service creation and invite workflows", () => {
         roleId: "role-1",
       }),
     })
-    expect(mockLogSecurityEvent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        userId: "admin-1",
-        organizationId: "org-1",
-        resource: "user@example.com",
-        details: { roleId: "role-1" },
-      }),
-    )
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+    expect(mockResend).not.toHaveBeenCalled()
   })
 
   it("persists v2 registration onboarding context and creates a verified workflow payload", async () => {
@@ -502,6 +729,7 @@ describe("user identity service creation and invite workflows", () => {
 
     const verificationExpiresAt = new Date(Date.now() + 60_000)
     const tx = {
+      auditLog: { create: jest.fn() },
       organization: {
         findUnique: jest.fn().mockResolvedValue(null),
         create: jest.fn().mockResolvedValue({
@@ -566,7 +794,7 @@ describe("user identity service creation and invite workflows", () => {
 
     expect(result).toEqual({
       success: true,
-      message: "Account created successfully! Please check your email to verify your account.",
+      message: "Account created. Continue to email verification; you can request a code there if needed.",
       data: {
         userId: "user-1",
         organizationId: "org-1",
@@ -637,73 +865,32 @@ describe("user identity service creation and invite workflows", () => {
       accountantInviteAccepted: true,
       now: expect.any(Date),
     })
-    expect(mockLogSecurityEvent).toHaveBeenCalledWith(
+    expect(tx.auditLog.create).toHaveBeenCalledWith({ data:
       expect.objectContaining({
-        type: "AUTH_REGISTERED",
+        action: "AUTH_REGISTERED",
         userId: "user-1",
         organizationId: "org-1",
-        details: expect.objectContaining({
+        changes: expect.objectContaining({
+          termsAccepted: true,
           onboarding: expect.objectContaining({
             source: "aqstoqflow-register-v2",
             defaultLocationId: "location-1",
           }),
         }),
       }),
-    )
+    })
   })
 })
 
 describe("user identity service password and auth edge cases", () => {
-  it("rejects self-service password updates when the old password is wrong", async () => {
-    mockDb.user.findFirst.mockResolvedValue({
-      id: "user-1",
-      email: "user@example.com",
-    })
-    mockVerifyUserCredentialPassword.mockResolvedValue(false)
-
-    const result = await changeUserPasswordWorkflow({
-      actor: { id: "user-1", organizationId: "org-1" },
-      targetUserId: "user-1",
-      oldPassword: "wrong-password",
-      newPassword: "Password123!",
-      isSelfChange: true,
-    })
-
-    expect(result).toEqual({ error: "Old Password Incorrect", status: 403 })
-    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  const resetToken = "a".repeat(32)
+  const resetTransaction = (count = 1) => ({
+    $queryRaw: jest.fn().mockImplementation(async (sql: TemplateStringsArray) => sql.join("").includes("FROM organizations") ? [{ isActive: true, deletedAt: null }] : [{ userId: "user-1", accountId: "user-1" }]),
+    user: { updateMany: jest.fn().mockResolvedValue({ count }), update: jest.fn() },
+    auditLog: { create: jest.fn().mockResolvedValue({ id: "reset-audit" }) },
   })
-
-  it("revokes sessions when a password update succeeds", async () => {
-    const tx = {}
-    mockDb.user.findFirst.mockResolvedValue({
-      id: "user-2",
-      email: "user@example.com",
-    })
-    runTransactionWith(tx)
-
-    const result = await changeUserPasswordWorkflow({
-      actor: { id: "admin-1", organizationId: "org-1" },
-      targetUserId: "user-2",
-      oldPassword: "",
-      newPassword: "Password123!",
-      isSelfChange: false,
-    })
-
-    expect(result).toEqual({ error: null, status: 200 })
-    expect(mockSyncUserCredentialPassword).toHaveBeenCalledWith(tx, {
-      userId: "user-2",
-      passwordHash: "hash-1",
-      revokeSessions: true,
-    })
-    expect(mockLogSecurityEvent).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "AUTH_PASSWORD_CHANGED",
-        userId: "admin-1",
-        organizationId: "org-1",
-        resource: "user-2",
-      }),
-    )
-  })
+  // Password-change cases moved to user-password-change.service.test.ts with
+  // current authority, session, concurrency and mandatory-audit coverage.
 
   it("keeps reset-link requests generic when the account is unknown", async () => {
     mockDb.user.findFirst.mockResolvedValue(null)
@@ -712,6 +899,23 @@ describe("user identity service password and auth edge cases", () => {
 
     expect(result).toEqual({ status: 200, error: null, data: null })
     expect(mockDb.user.update).not.toHaveBeenCalled()
+  })
+
+  it("rolls back reset completion when the required transaction audit cannot be written", async () => {
+    const tx = resetTransaction()
+    tx.auditLog.create.mockRejectedValue(new Error("reset audit unavailable"))
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    runTransactionWith(tx)
+    await expect(completePasswordResetWorkflow("user@example.com", resetToken, "Password123!")).rejects.toThrow("reset audit unavailable")
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+  })
+
+  it("keeps reset delivery rejection generic without claiming a successful send", async () => {
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    mockResend.mockImplementationOnce(() => ({ emails: { send: jest.fn().mockResolvedValue({ data: null, error: { message: "provider rejected" } }) } }))
+    expect(await requestPasswordResetLinkWorkflow("user@example.com")).toEqual({ status: 200, error: null, data: null })
+    expect(mockLogSecurityEvent).toHaveBeenCalledWith(expect.objectContaining({ type: "AUTH_PASSWORD_RESET_REQUESTED" }))
+    expect(mockLogSecurityEvent).not.toHaveBeenCalledWith(expect.objectContaining({ type: "AUTH_EMAIL_VERIFICATION_SENT" }))
   })
 
   it("rejects invalid password reset tokens without mutating credentials", async () => {
@@ -731,6 +935,89 @@ describe("user identity service password and auth edge cases", () => {
     expect(mockDb.$transaction).not.toHaveBeenCalled()
   })
 
+  it("consumes a reset token in the credential transaction before changing the password", async () => {
+    const tx = resetTransaction()
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    runTransactionWith(tx)
+
+    const result = await completePasswordResetWorkflow("USER@example.com", resetToken, "Password123!")
+
+    expect(result).toEqual({ status: 200, error: null, data: null })
+    expect(tx.user.updateMany).toHaveBeenCalledWith({
+      where: { id: "user-1", organizationId: "org-1", isActive: true, password: undefined, email: { equals: "user@example.com", mode: "insensitive" }, verificationToken: resetToken, verificationTokenExpires: { gt: expect.any(Date) } },
+      data: { verificationToken: null, verificationTokenExpires: null },
+    })
+    expect(tx.user.updateMany.mock.invocationCallOrder[0]).toBeLessThan(mockSyncUserCredentialPassword.mock.invocationCallOrder[0])
+    expect(mockSyncUserCredentialPassword).toHaveBeenCalledWith(tx, { userId: "user-1", passwordHash: "hash-1", revokeSessions: true })
+    expect(tx.user.update).not.toHaveBeenCalled()
+    expect(tx.auditLog.create).toHaveBeenCalledWith({ data: { organizationId: "org-1", userId: "user-1", entityType: "SecurityEvent", entityId: "user-1", action: "AUTH_PASSWORD_RESET_COMPLETED", changes: { sessionsRevoked: true, resetLinkConsumed: true } } })
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+  })
+
+  it("rejects a reset token consumed or replaced while password policy was checked", async () => {
+    const tx = resetTransaction(0)
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    runTransactionWith(tx)
+
+    const result = await completePasswordResetWorkflow("user@example.com", resetToken, "Password123!")
+
+    expect(result).toEqual({ status: 404, error: "Please use a valid reset link", data: null })
+    expect(mockSyncUserCredentialPassword).not.toHaveBeenCalled()
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+  })
+
+  it("permits only one credential change when two requests read the same reset token", async () => {
+    const tx = resetTransaction()
+    tx.user.updateMany.mockResolvedValueOnce({ count: 1 }).mockResolvedValueOnce({ count: 0 })
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    runTransactionWith(tx)
+
+    const results = await Promise.all([
+      completePasswordResetWorkflow("user@example.com", resetToken, "Password123!"),
+      completePasswordResetWorkflow("user@example.com", resetToken, "Password456!"),
+    ])
+
+    expect(results.map(result => result.status).sort()).toEqual([200, 404])
+    expect(mockSyncUserCredentialPassword).toHaveBeenCalledTimes(1)
+    expect(tx.auditLog.create).toHaveBeenCalledTimes(1)
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+  })
+
+  it.each([[], [{ isActive: false, deletedAt: null }], [{ isActive: true, deletedAt: new Date() }]])("rejects unavailable organization at commit without consuming the link: %j", async (...rows) => {
+    const tx = resetTransaction()
+    tx.$queryRaw.mockResolvedValue(rows)
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    runTransactionWith(tx)
+    expect((await completePasswordResetWorkflow("user@example.com", resetToken, "Password123!")).status).toBe(404)
+    expect(tx.user.updateMany).not.toHaveBeenCalled()
+  })
+  it.each([
+    [{ userId: "foreign", accountId: "user-1" }],
+    [{ userId: "user-1", accountId: "foreign" }],
+    [{ userId: "user-1", accountId: "user-1" }, { userId: "user-1", accountId: "legacy" }],
+  ])("rolls back an ambiguous credential mapping: %j", async (...rows) => {
+    const tx = resetTransaction()
+    tx.$queryRaw.mockResolvedValueOnce([{ isActive: true, deletedAt: null }]).mockResolvedValueOnce(rows)
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    runTransactionWith(tx)
+    expect((await completePasswordResetWorkflow("user@example.com", resetToken, "Password123!")).status).toBe(404)
+    expect(mockSyncUserCredentialPassword).not.toHaveBeenCalled()
+    expect(tx.auditLog.create).not.toHaveBeenCalled()
+  })
+  it.each(["WEAK", "BREACHED", "RECENTLY_USED", "CONTAINS_EMAIL"])("retains policy code %s for localized feedback", async code => {
+    mockDb.user.findFirst.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1" })
+    mockHashPolicyCompliantPassword.mockResolvedValue({ ok: false, code, message: "policy rejected" })
+    expect(await completePasswordResetWorkflow("user@example.com", resetToken, "Password123!")).toMatchObject({ status: 400, code })
+    expect(mockDb.$transaction).not.toHaveBeenCalled()
+  })
+  it("bounds public reset input before database lookup or password hashing", async () => {
+    expect((await completePasswordResetWorkflow("x".repeat(255) + "@example.invalid", resetToken, "Password123!")).status).toBe(404)
+    expect((await completePasswordResetWorkflow("user@example.com", resetToken, "x".repeat(129))).status).toBe(400)
+    expect(await requestPasswordResetLinkWorkflow(null as unknown as string)).toEqual({ status: 200, error: null, data: null })
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+    expect(mockHashPolicyCompliantPassword).not.toHaveBeenCalled()
+  })
+
   it("verifies email OTPs and clears the token on success", async () => {
     mockDb.user.findUnique.mockResolvedValue({
       id: "user-1",
@@ -739,13 +1026,13 @@ describe("user identity service password and auth edge cases", () => {
       verificationToken: "123456",
       verificationTokenExpires: new Date(Date.now() + 60_000),
     })
-    mockDb.user.update.mockResolvedValue({ id: "user-1" })
+    mockDb.user.updateMany.mockResolvedValue({ count: 1 })
 
     const result = await verifyEmailOtpWorkflow("user-1", "123456")
 
     expect(result).toEqual({ status: 200 })
-    expect(mockDb.user.update).toHaveBeenCalledWith({
-      where: { id: "user-1" },
+    expect(mockDb.user.updateMany).toHaveBeenCalledWith({
+      where: { id: "user-1", verificationToken: "123456", verificationTokenExpires: { gt: expect.any(Date) } },
       data: {
         isVerified: true,
         emailVerified: true,
@@ -761,6 +1048,33 @@ describe("user identity service password and auth edge cases", () => {
         resource: "user@example.com",
       }),
     )
+  })
+
+  it("does not accept an email verification code as a password-reset token", async () => {
+    const result = await completePasswordResetWorkflow("user@example.com", "123456", "Password123!")
+    expect(result.status).toBe(404)
+    expect(mockDb.user.findFirst).not.toHaveBeenCalled()
+    expect(mockHashPolicyCompliantPassword).not.toHaveBeenCalled()
+  })
+
+  it("does not accept a reset token as an email verification code", async () => {
+    expect(await verifyEmailOtpWorkflow("user-1", resetToken)).toEqual({ status: 403 })
+    expect(mockDb.user.findUnique).not.toHaveBeenCalled()
+    expect(mockDb.user.updateMany).not.toHaveBeenCalled()
+  })
+
+  it.each([null, new Date(0)])("rejects an OTP with missing or expired validity: %s", async expiry => {
+    mockDb.user.findUnique.mockResolvedValue({ id: "user-1", verificationToken: "123456", verificationTokenExpires: expiry })
+    expect(await verifyEmailOtpWorkflow("user-1", "123456")).toEqual({ status: 403 })
+    expect(mockDb.user.updateMany).not.toHaveBeenCalled()
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
+  })
+
+  it("rejects an OTP replaced or consumed after the initial read", async () => {
+    mockDb.user.findUnique.mockResolvedValue({ id: "user-1", email: "user@example.com", organizationId: "org-1", verificationToken: "123456", verificationTokenExpires: new Date(Date.now() + 60_000) })
+    mockDb.user.updateMany.mockResolvedValue({ count: 0 })
+    expect(await verifyEmailOtpWorkflow("user-1", "123456")).toEqual({ status: 403 })
+    expect(mockLogSecurityEvent).not.toHaveBeenCalled()
   })
   it("blocks registration before password hashing or tenant creation when throttled", async () => {
     mockEnforcePublicIdentityAbuseLimits.mockResolvedValue({
@@ -804,6 +1118,7 @@ describe("user identity service password and auth edge cases", () => {
       error: "Too many invitation attempts. Please try again later.",
       status: 429,
       data: null,
+      code: "RATE_LIMITED",
     })
     expect(mockDb.$transaction).not.toHaveBeenCalled()
   })

@@ -25,6 +25,11 @@ import {
   type PayrollRunWorkbenchResult,
 } from "@/actions/payroll/payroll-control.actions";
 import PayrollRunWorkbench from "../PayrollRunWorkbench";
+import en from "@/messages/en.json";
+import fr from "@/messages/fr.json";
+
+let mockLocale = "en";
+jest.mock("next-intl", () => ({ useTranslations: () => (key: "deniedMessage" | "deniedTitle") => (mockLocale === "fr" ? fr : en).moduleComposition.stop[key] }));
 
 const mockRefresh = jest.fn();
 
@@ -354,8 +359,23 @@ function workbenchData(): PayrollRunWorkbenchResult {
 }
 
 describe("PayrollRunWorkbench", () => {
+  it.each(["en", "fr"])("localizes a stopped payroll calculation in %s without reporting success", async locale => {
+    mockLocale = locale;
+    const data = workbenchData();
+    data.runs[0].status = PayrollRunStatus.DRAFT;
+    data.runs[0].nextActions = [{ id: "calculate", label: "Calculate payroll run", requiredPermission: "payroll.runs.calculate", requiresFreshAuth: false, requiresSeparateApprover: false, href: null, allowed: true, blockedBy: [] }];
+    mockCalculatePayrollRunAction.mockResolvedValueOnce({ success: false, error: "English fallback", code: "FORBIDDEN", reason: "MODULE_NEW_WORK_STOPPED", correlationId: "denial-reference" });
+    render(<PayrollRunWorkbench data={data} locale={locale === "fr" ? "fr" : "en"} />);
+    fireEvent.click(screen.getByRole("button", { name: "Open calculation drawer" }));
+    fireEvent.click(screen.getByRole("button", { name: "Calculate run" }));
+    expect(await screen.findByText((locale === "fr" ? fr : en).moduleComposition.stop.deniedMessage)).toBeVisible();
+    expect(screen.queryByText("Payroll calculation requested.")).not.toBeInTheDocument();
+    expect(mockRefresh).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockLocale = "en";
     mockApprovePayrollRunAction.mockResolvedValue({
       success: true,
       data: { id: "run-1" },

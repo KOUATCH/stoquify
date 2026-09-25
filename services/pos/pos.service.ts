@@ -14,6 +14,12 @@ import {
 import { db } from "@/prisma/db"
 import { currencyFractionDigits } from "@/lib/i18n/organization-money"
 import { ApplicationError, BusinessRuleError, ConflictError, ForbiddenError, NotFoundError } from "@/services/_shared/action-errors"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
+import { assertPOSShiftOpeningAccessInTx, POSShiftOpeningAccessError, POS_SHIFT_OPEN_ACCESS_POLICY } from "./shift-opening-access"
+import { assertPOSCartWriteAccessInTx, POSCartWriteAccessError, POS_CART_WRITE_POLICY_VERSION, type POSCartWriteScope } from "./cart-write-access"
+import { posCartRevision } from "./cart-revision"
+import { assertCheckoutLeaseInTx, retireShiftDraftsInTx, retainedCheckoutRequest } from "./checkout-state"
+import { assertPOSTenderWriteAccessInTx, auditPOSTenderWriteDenial, type POSTenderWriteScope } from "./tender-write-access"
 import { postRefund } from "@/services/accounting/postings/post-refund"
 import { postPayment } from "@/services/accounting/postings/post-payment"
 import { postSale } from "@/services/accounting/postings/post-sale"
@@ -364,7 +370,7 @@ function nextRefundNumber() {
   return `REF-${date}-${entropy}`
 }
 
-function lineMath(input: CartLineInput) {
+export function lineMath(input: CartLineInput) {
   const quantity = input.quantity
   const unitPrice = input.unitPrice
   const discount = input.discount ?? new Prisma.Decimal(0)
@@ -860,7 +866,7 @@ async function getWalkInCustomer(tx: Prisma.TransactionClient, organizationId: s
   })
 }
 
-async function getOrCreateDraftCart(
+export async function getOrCreateDraftCart(
   tx: Prisma.TransactionClient,
   input: UserScoped<{
     locationId: string
@@ -896,12 +902,19 @@ async function getOrCreateDraftCart(
       sessionId: input.sessionId,
       createdById: input.userId,
       status: "DRAFT",
+      posCartState: "ACTIVE",
       deletedAt: null,
     },
     orderBy: { updatedAt: "desc" },
   })
 
   if (existing) return existing
+
+  await assertModuleNewWorkInTx(tx, {
+    organizationId: input.organizationId,
+    moduleSlug: "pos",
+    operation: "pos.cart.create",
+  })
 
   const terminal = await tx.pOSStation.findFirst({
     where: {
@@ -936,7 +949,7 @@ async function getOrCreateDraftCart(
   })
 }
 
-async function recalculateCartTotals(tx: Prisma.TransactionClient, salesOrderId: string) {
+export async function recalculateCartTotals(tx: Prisma.TransactionClient, salesOrderId: string) {
   const lines = await tx.salesOrderLine.findMany({
     where: { salesOrderId },
     select: {
@@ -995,6 +1008,7 @@ async function mapCart(salesOrderId: string, organizationId: string) {
 
   return {
     id: cart.id,
+    revision: posCartRevision(cart),
     orderNumber: cart.orderNumber,
     status: cart.status,
     locationId: cart.locationId,
@@ -1215,6 +1229,12 @@ export async function openPOSShift(rawInput: UserScoped) {
   if (existing) throw new BusinessRuleError("Terminal already has an open shift")
 
   const session = await db.$transaction(async (tx) => {
+    await assertModuleNewWorkInTx(tx, {
+      organizationId: rawInput.organizationId,
+      moduleSlug: "pos",
+      operation: "pos.shift.open",
+    })
+    await assertPOSShiftOpeningAccessInTx(tx, { organizationId: rawInput.organizationId, userId: rawInput.userId })
     const created = await tx.pOSSession.create({
       data: {
         sessionNumber: nextSessionNumber(),
@@ -1287,6 +1307,16 @@ export async function openPOSShift(rawInput: UserScoped) {
     })
 
     return created
+  }).catch(async error => {
+    if (error instanceof POSShiftOpeningAccessError) {
+      // The admission transaction has rolled back. Retain the denial separately.
+      await db.auditLog.create({ data: {
+        organizationId: rawInput.organizationId, userId: rawInput.userId,
+        entityType: "POSStation", entityId: input.terminalId, action: "POS_SHIFT_OPEN_ENTITLEMENT_DENIED",
+        changes: { policyId: POS_SHIFT_OPEN_ACCESS_POLICY.id, policyVersion: POS_SHIFT_OPEN_ACCESS_POLICY.version, reason: "POS_SHIFT_ENTITLEMENT_UNAVAILABLE" },
+      } })
+    }
+    throw error
   })
 
   return getActivePOSSession({
@@ -1396,6 +1426,7 @@ export async function closePOSShift(rawInput: UserScoped) {
       data: { status: "CLOSED", endTime: closedAt, closingBalance: actualBalance, variance, notes },
     })
     if (sessionTransition.count !== 1) throw new POSShiftTransitionConflict()
+    await retireShiftDraftsInTx(tx, { organizationId: rawInput.organizationId, userId: rawInput.userId, sessionId: input.sessionId })
 
     const drawerTransition = await tx.cashDrawer.updateMany({
       where: {
@@ -1662,6 +1693,7 @@ export async function listPOSCatalogItems(rawInput: OrgScoped) {
 
 export async function getActivePOSCart(rawInput: UserScoped) {
   const input = activeCartSchema.parse(rawInput)
+  if (!input.sessionId) return null
   const cart = await db.salesOrder.findFirst({
     where: {
       organizationId: rawInput.organizationId,
@@ -1670,6 +1702,7 @@ export async function getActivePOSCart(rawInput: UserScoped) {
       sessionId: input.sessionId,
       createdById: rawInput.userId,
       status: "DRAFT",
+      posCartState: "ACTIVE",
       deletedAt: null,
     },
     orderBy: { updatedAt: "desc" },
@@ -1683,7 +1716,8 @@ export async function addPOSCartLine(rawInput: UserScoped) {
   const input = addCartLineSchema.parse(rawInput)
   const quantityToAdd = toDecimal(input.quantity)
 
-  const cart = await db.$transaction(async (tx) => {
+  const cart = await runCartEdit({ organizationId: rawInput.organizationId, userId: rawInput.userId, resourceId: input.terminalId, operation: "add" }, async (tx) => {
+    if (typeof rawInput.checkoutLeaseId === "string" && input.sessionId) await assertCheckoutLeaseInTx(tx, { ...rawInput, sessionId: input.sessionId }, rawInput.checkoutLeaseId, false, true)
     const item = await tx.item.findFirst({
       where: {
         id: input.itemId,
@@ -1766,11 +1800,54 @@ export async function addPOSCartLine(rawInput: UserScoped) {
   return mapCart(cart.id, rawInput.organizationId)
 }
 
+async function runCartEdit<T>(scope: POSCartWriteScope, edit: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+  // Retry only serialization failures: PostgreSQL has rolled back every effect.
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await db.$transaction(async tx => {
+        await assertPOSCartWriteAccessInTx(tx, scope)
+        return edit(tx)
+      }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+    } catch (error) {
+      if (error instanceof POSCartWriteAccessError) {
+        await db.auditLog.create({ data: {
+          organizationId: scope.organizationId, userId: scope.userId,
+          entityType: scope.operation === "add" ? "POSStation" : "SalesOrder", entityId: scope.resourceId,
+          action: "POS_CART_WRITE_ENTITLEMENT_DENIED",
+          changes: { policyId: `pos.cart.${scope.operation}`, policyVersion: POS_CART_WRITE_POLICY_VERSION, reason: "POS_CART_WRITE_UNAVAILABLE" },
+        } })
+      }
+      if (prismaErrorCode(error) !== "P2034") throw error
+      if (attempt >= 2) throw new ConflictError("Cart changed concurrently; refresh before trying again")
+    }
+  }
+}
+
+async function requireEditableCart(tx: Prisma.TransactionClient, input: UserScoped<{ salesOrderId: string; checkoutLeaseId?: unknown }>) {
+  const cart = await tx.salesOrder.findFirst({
+    where: { id: input.salesOrderId, organizationId: input.organizationId, createdById: input.userId, status: "DRAFT", posCartState: "ACTIVE", deletedAt: null },
+    select: { sessionId: true, locationId: true, terminalId: true },
+  })
+  if (!cart) throw new NotFoundError("Draft POS cart not found")
+  if (!cart.sessionId) throw new BusinessRuleError("Use your own active cashier shift to edit this cart")
+  if (typeof input.checkoutLeaseId === "string") await assertCheckoutLeaseInTx(tx, { ...input, sessionId: cart.sessionId }, input.checkoutLeaseId, false, true)
+  const session = await tx.pOSSession.findFirst({
+    where: {
+      id: cart.sessionId, organizationId: input.organizationId, userId: input.userId,
+      locationId: cart.locationId, terminalId: cart.terminalId!, status: "ACTIVE",
+      terminal: { is: { currentSessionId: cart.sessionId } },
+    },
+    select: { id: true },
+  })
+  if (!session) throw new BusinessRuleError("Use your own active cashier shift to edit this cart")
+}
+
 export async function updatePOSCartLine(rawInput: UserScoped) {
   const input = updateCartLineSchema.parse(rawInput)
-  let quantity = toDecimal(input.quantity)
+  const quantity = toDecimal(input.quantity)
 
-  await db.$transaction(async (tx) => {
+  await runCartEdit({ organizationId: rawInput.organizationId, userId: rawInput.userId, resourceId: input.salesOrderId, operation: "update" }, async (tx) => {
+    await requireEditableCart(tx, { ...rawInput, salesOrderId: input.salesOrderId })
     const line = await tx.salesOrderLine.findFirst({
       where: {
         id: input.lineId,
@@ -1802,17 +1879,10 @@ export async function updatePOSCartLine(rawInput: UserScoped) {
 
     const inventoryLevel = await tx.inventoryLevel.findUnique({
       where: { itemId_locationId: { itemId: line.itemId, locationId: line.salesOrder.locationId } },
-      select: { quantityOnHand: true },
+      select: { quantityAvailable: true },
     })
-    const quantityOnHand = toDecimal(inventoryLevel?.quantityOnHand)
-    if (line.item.trackInventory && quantityOnHand.lt(quantity)) {
-      quantity = quantityOnHand
-    }
-
-    if (quantity.lte(0)) {
-      await tx.salesOrderLine.delete({ where: { id: line.id } })
-      await recalculateCartTotals(tx, input.salesOrderId)
-      return
+    if (line.item.trackInventory && toDecimal(inventoryLevel?.quantityAvailable).lt(quantity)) {
+      throw new BusinessRuleError("Insufficient stock at this location")
     }
 
     const { taxAmount, lineTotal } = lineMath({
@@ -1836,7 +1906,8 @@ export async function updatePOSCartLine(rawInput: UserScoped) {
 export async function removePOSCartLine(rawInput: UserScoped) {
   const input = removeCartLineSchema.parse(rawInput)
 
-  await db.$transaction(async (tx) => {
+  await runCartEdit({ organizationId: rawInput.organizationId, userId: rawInput.userId, resourceId: input.salesOrderId, operation: "remove" }, async (tx) => {
+    await requireEditableCart(tx, { ...rawInput, salesOrderId: input.salesOrderId })
     const line = await tx.salesOrderLine.findFirst({
       where: {
         id: input.lineId,
@@ -1944,10 +2015,12 @@ function posSaleCommitRequestHash(
     notes?: string
     tenders: POSTenderInput[]
     receipt?: { channel: string; locale?: string }
+    expectedCartRevision?: string
   },
 ) {
   return hashBusinessPayload({
     requestSchemaVersion: POS_SALE_COMMIT_RESULT_SCHEMA_VERSION,
+    ...(input.expectedCartRevision ? { expectedCartRevision: input.expectedCartRevision } : {}),
     organizationId: rawInput.organizationId,
     actorId: rawInput.userId,
     salesOrderId: input.salesOrderId,
@@ -2072,8 +2145,71 @@ async function auditPOSSaleCommitReplayConflict(
   })
 }
 
+/** Trusted service-only evidence read; caller supplies the original actor and transaction. */
+export async function readPOSSaleCommitStatusInTx(tx: Prisma.TransactionClient, rawInput: UserScoped) {
+  const input = commitSaleSchema.parse(rawInput)
+  const requestHash = posSaleCommitRequestHash(rawInput, input)
+    const record = await tx.pOSCommitResult.findFirst({ where: {
+      organizationId: rawInput.organizationId, actorId: rawInput.userId,
+      locationId: input.locationId, terminalId: input.terminalId, sessionId: input.sessionId,
+      salesOrderId: input.salesOrderId, clientCommitId: input.clientCommitId,
+    } })
+    if (!record) {
+      const draft = await tx.salesOrder.findFirst({ where: {
+          id: input.salesOrderId, organizationId: rawInput.organizationId, createdById: rawInput.userId,
+          locationId: input.locationId, terminalId: input.terminalId, sessionId: input.sessionId,
+          status: "DRAFT", deletedAt: null,
+      }, include: { lines: true, session: { select: { status: true, endTime: true } } } })
+      // A closed shift cannot accept a late commit: sale and shift closing both
+      // conditionally claim the ACTIVE session in serializable transactions.
+      // Retired drafts are fenced by the closed session; unknown active attempts stay recoverable.
+      if (draft && (draft.lines.length === 0 || draft.posCartState === "RETIRED") && draft.session?.status === "CLOSED" && draft.session.endTime) {
+        return { kind: "NOT_COMMITTED" as const, reason: draft.lines.length === 0 ? "EMPTY_CART_CLOSED_SHIFT" as const : "RETIRED_CART_CLOSED_SHIFT" as const }
+      }
+      if (draft && !input.expectedCartRevision) return { kind: "CART_REVIEW_REQUIRED" as const }
+      if (draft && posCartRevision(draft) !== input.expectedCartRevision) return { kind: "CART_CHANGED" as const }
+      return { kind: "NOT_FOUND" as const }
+    }
+    try { assertPOSCommitRegistryRequest(record, rawInput, input, requestHash) }
+    catch (error) {
+      if (error instanceof POSSaleCommitReplayConflict) throw new ApplicationError("DUPLICATE_KEY_CONFLICT", "The recovery request does not match the original sale request", 409)
+      throw error
+    }
+    if (record.status === "CLAIMED") return { kind: "PENDING" as const }
+    const result = readStoredPOSCommitResult(record)
+    const sale = await tx.salesOrder.findFirst({ where: {
+      id: record.salesOrderId, organizationId: rawInput.organizationId, createdById: rawInput.userId,
+      locationId: record.locationId, terminalId: record.terminalId, sessionId: record.sessionId,
+    }, select: { status: true, paymentStatus: true } })
+    if (!sale) throw new ConflictError("Stored POS result source is unavailable")
+    return {
+      kind: "RECORDED" as const, clientCommitId: record.clientCommitId, saleId: result.saleId,
+      orderNumber: result.orderNumber, total: result.total,
+      originalStatus: result.status, currentStatus: sale.status, paymentStatus: sale.paymentStatus,
+      receiptStatus: record.status === "COMMITTED" ? "RETRY_REQUIRED" as const : result.receiptStatus,
+      observedAt: new Date().toISOString(),
+    }
+}
+
+/** Retained own-result lookup only. Never calls commit or receipt completion. */
+export async function getPOSSaleCommitStatus(rawInput: UserScoped) {
+  return db.$transaction(tx => readPOSSaleCommitStatusInTx(tx, rawInput), { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead }).catch((error: unknown) => {
+    if (error instanceof POSSaleCommitReplayConflict) {
+      // The internal conflict carries stored evidence for mutation auditing.
+      // A retained-result read must not pass that record to generic logging.
+      throw new ApplicationError(
+        "DUPLICATE_KEY_CONFLICT",
+        "The recovery request does not match the original sale request",
+        409,
+      )
+    }
+    throw error
+  })
+}
+
 export async function commitPOSSale(rawInput: UserScoped) {
   const input = commitSaleSchema.parse(rawInput)
+  const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "commit" }
   assertSupportedSaleTenders(input.tenders)
   assertSupportedDevelopmentReceipt(input.receipt)
   const requestHash = posSaleCommitRequestHash(rawInput, input)
@@ -2098,6 +2234,18 @@ export async function commitPOSSale(rawInput: UserScoped) {
       }
     }
 
+    if (typeof rawInput.checkoutLeaseId === "string") {
+      const workspace = await assertCheckoutLeaseInTx(tx, { ...rawInput, sessionId: input.sessionId }, rawInput.checkoutLeaseId, true)
+      const retained = retainedCheckoutRequest(workspace.pendingRequest)
+      if (!retained || posSaleCommitRequestHash(rawInput, retained) !== requestHash) throw new ConflictError("POS_CHECKOUT_RECOVERY_REQUIRED")
+    }
+    await assertPOSTenderWriteAccessInTx(tx, writeScope)
+    await assertModuleNewWorkInTx(tx, {
+      organizationId: rawInput.organizationId,
+      moduleSlug: "pos",
+      operation: "pos.sale.commit",
+    })
+
     const sale = await tx.salesOrder.findFirst({
       where: {
         id: input.salesOrderId,
@@ -2107,6 +2255,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
         sessionId: input.sessionId,
         createdById: rawInput.userId,
         status: "DRAFT",
+        posCartState: "ACTIVE",
         deletedAt: null,
       },
       include: {
@@ -2121,6 +2270,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
                 nameEn: true,
                 nameFr: true,
                 costPrice: true,
+                sellingPrice: true,
+                taxRate: { select: { rate: true } },
                 trackInventory: true,
                 inventoryLevels: {
                   where: { locationId: input.locationId },
@@ -2142,7 +2293,13 @@ export async function commitPOSSale(rawInput: UserScoped) {
     })
 
     if (!sale) throw new NotFoundError("Draft POS sale not found")
+    if (!input.expectedCartRevision || posCartRevision(sale) !== input.expectedCartRevision) {
+      throw new ApplicationError("CONFLICT", "Review the current cart before confirming this sale", 409, true, { reason: "POS_CART_REVISION_CHANGED" })
+    }
     if (sale.lines.length === 0) throw new BusinessRuleError("Cannot commit an empty cart")
+    if (typeof rawInput.checkoutLeaseId === "string" && sale.lines.some(line =>
+      !line.unitPrice.equals(line.item.sellingPrice) || !line.taxRate.equals(line.item.taxRate?.rate ?? 0),
+    )) throw new ConflictError("POS_CHECKOUT_PRICES_CHANGED")
 
     const session = await tx.pOSSession.findFirst({
       where: {
@@ -2776,6 +2933,7 @@ export async function commitPOSSale(rawInput: UserScoped) {
         isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
       })
     } catch (error) {
+      await auditPOSTenderWriteDenial(error, writeScope)
       if (error instanceof POSSaleCommitReplayConflict) {
         await auditPOSSaleCommitReplayConflict(rawInput.organizationId, rawInput.userId, error)
         throw new ApplicationError(
@@ -2875,8 +3033,8 @@ export async function commitPOSSale(rawInput: UserScoped) {
       resultHash: hashBusinessPayload(completedEnvelope),
       completedAt: new Date(),
     },
-  })
-  if (completion.count === 1) {
+  }).catch(() => null)
+  if (completion?.count === 1) {
     return { ...completedResult, replayed: outcome.callerReplayed }
   }
 
@@ -2893,13 +3051,11 @@ export async function commitPOSSale(rawInput: UserScoped) {
       requestHash,
       status: "COMPLETED",
     },
-  })
+  }).catch(() => null)
   if (!racedCompletion) {
-    throw new ApplicationError(
-      "DATABASE_CONFLICT",
-      "POS commit result completion changed unexpectedly",
-      409,
-    )
+    // The financial transaction and its COMMITTED envelope are already durable.
+    // Receipt completion is repairable; losing it must never report a failed sale.
+    return { ...outcome.result, replayed: outcome.callerReplayed, receipt: null, receiptStatus: "RETRY_REQUIRED" as const }
   }
   return readStoredPOSCommitResult(racedCompletion)
 }
@@ -2971,6 +3127,20 @@ function activeCorrectionPayments(sale: CorrectionSale) {
   return sale.payments.filter((payment) => !payment.deletedAt)
 }
 
+function assertSupportedCorrectionPayments(payments: CorrectionSale["payments"]) {
+  // This workflow can reverse local cash and receivables only. A captured
+  // electronic payment needs provider reversal evidence before changing truth.
+  if (payments.some(payment => payment.method !== PaymentMethod.CASH && payment.method !== PaymentMethod.CREDIT)) {
+    throw new ApplicationError(
+      "BUSINESS_RULE_VIOLATION",
+      "This sale uses a payment method that cannot yet be refunded or voided through POS. Its recorded payment remains unchanged; contact finance for the supported reversal process.",
+      422,
+      true,
+      { reason: "POS_CORRECTION_PAYMENT_RAIL_UNSUPPORTED" },
+    )
+  }
+}
+
 function sumPaymentMethod(payments: CorrectionSale["payments"], method: PaymentMethod) {
   return payments
     .filter((payment) => !payment.deletedAt && payment.method === method)
@@ -3008,10 +3178,24 @@ async function requireActiveCorrectionSession(
       userId: input.userId,
       status: "ACTIVE",
     },
-    select: { id: true, expectedBalance: true },
+    select: {
+      id: true,
+      expectedBalance: true,
+      terminal: {
+        select: { organizationId: true, locationId: true, currentSessionId: true, isActive: true },
+      },
+    },
   })
 
   if (!session) throw new BusinessRuleError("Active cashier shift not found")
+  if (
+    !session.terminal.isActive ||
+    session.terminal.organizationId !== input.organizationId ||
+    session.terminal.locationId !== input.locationId ||
+    session.terminal.currentSessionId !== session.id
+  ) {
+    throw new ConflictError("Terminal and active cashier shift state do not match")
+  }
   return session
 }
 
@@ -3133,33 +3317,56 @@ async function applyCashDrawerOutflow(
     sessionId: string
     userId: string
     amount: Prisma.Decimal
+    expectedBalance: Prisma.Decimal | null
     type: "REFUND" | "RETURN"
     reason: string
   },
 ) {
   if (params.amount.lte(0)) return null
 
-  const drawer = await tx.cashDrawer.findFirst({
-    where: { terminalId: params.terminalId, locationId: params.locationId },
-    orderBy: { createdAt: "asc" },
-    select: {
-      id: true,
-      isOpen: true,
-      currentBalance: true,
-      expectedBalance: true,
+  const openingTransactions = await tx.cashDrawerTransaction.findMany({
+    where: {
+      sessionId: params.sessionId,
+      type: "OPENING_BALANCE",
+      cashDrawer: { is: { terminalId: params.terminalId, locationId: params.locationId } },
     },
+    select: {
+      cashDrawer: {
+        select: { id: true, isOpen: true, currentBalance: true, expectedBalance: true },
+      },
+    },
+    take: 2,
   })
 
-  if (!drawer?.isOpen) throw new BusinessRuleError("Cash drawer is not open for this terminal")
+  if (params.expectedBalance === null || openingTransactions.length !== 1) {
+    throw new ConflictError("Active cashier shift cash drawer evidence is incomplete")
+  }
+  const drawer = openingTransactions[0].cashDrawer
+  if (
+    !drawer.isOpen ||
+    !toDecimal(drawer.currentBalance).eq(params.expectedBalance) ||
+    !toDecimal(drawer.expectedBalance).eq(params.expectedBalance)
+  ) {
+    throw new ConflictError("Cash drawer balance evidence does not match the active cashier shift")
+  }
 
   const balanceAfter = subtractMoney(drawer.currentBalance, params.amount).toDecimalPlaces(2)
-  await tx.cashDrawer.update({
-    where: { id: drawer.id },
+  if (balanceAfter.lt(0)) throw new BusinessRuleError("Cash drawer has insufficient funds for this correction")
+  const drawerTransition = await tx.cashDrawer.updateMany({
+    where: {
+      id: drawer.id,
+      isOpen: true,
+      currentBalance: drawer.currentBalance,
+      expectedBalance: drawer.expectedBalance,
+    },
     data: {
       currentBalance: balanceAfter,
       expectedBalance: subtractMoney(drawer.expectedBalance, params.amount).toDecimalPlaces(2),
     },
   })
+  if (drawerTransition.count !== 1) {
+    throw new ConflictError("Cash drawer changed; refresh before correcting the sale")
+  }
 
   await tx.cashDrawerTransaction.create({
     data: {
@@ -3231,8 +3438,10 @@ function assertNoPriorRefunds(sale: CorrectionSale) {
 
 export async function refundPOSSale(rawInput: UserScoped) {
   const input = refundPOSSaleSchema.parse(rawInput)
+  const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "refund" }
 
   return db.$transaction(async (tx) => {
+    await assertPOSTenderWriteAccessInTx(tx, writeScope)
     const now = new Date()
     const sale = await loadCompletedSaleForCorrection(tx, {
       organizationId: rawInput.organizationId,
@@ -3241,7 +3450,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
       terminalId: input.terminalId,
       sessionId: input.sessionId,
     })
-    await requireActiveCorrectionSession(tx, {
+    const session = await requireActiveCorrectionSession(tx, {
       organizationId: rawInput.organizationId,
       sessionId: input.sessionId,
       terminalId: input.terminalId,
@@ -3252,6 +3461,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
     assertNoPriorRefunds(sale)
 
     const payments = activeCorrectionPayments(sale)
+    assertSupportedCorrectionPayments(payments)
     if (payments.some((payment) => payment.method === PaymentMethod.CREDIT)) {
       throw new BusinessRuleError("On-account POS sales must be voided or settled before refunding")
     }
@@ -3317,6 +3527,7 @@ export async function refundPOSSale(rawInput: UserScoped) {
       sessionId: input.sessionId,
       userId: rawInput.userId,
       amount: cashOutflow,
+      expectedBalance: session.expectedBalance,
       type: "REFUND",
       reason: `POS refund ${sale.orderNumber}: ${input.reason}`,
     })
@@ -3433,13 +3644,18 @@ export async function refundPOSSale(rawInput: UserScoped) {
       refundPostingBatchIds,
       totalRefunded: moneyToNumber(totalRefundable),
     } satisfies RefundPOSSaleResult
+  }).catch(async (error) => {
+    await auditPOSTenderWriteDenial(error, writeScope)
+    throw error
   })
 }
 
 export async function voidPOSSale(rawInput: UserScoped) {
   const input = voidPOSSaleSchema.parse(rawInput)
+  const writeScope: POSTenderWriteScope = { organizationId: rawInput.organizationId, userId: rawInput.userId, salesOrderId: input.salesOrderId, operation: "void" }
 
   return db.$transaction(async (tx) => {
+    await assertPOSTenderWriteAccessInTx(tx, writeScope)
     const now = new Date()
     const sale = await loadCompletedSaleForCorrection(tx, {
       organizationId: rawInput.organizationId,
@@ -3448,7 +3664,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
       terminalId: input.terminalId,
       sessionId: input.sessionId,
     })
-    await requireActiveCorrectionSession(tx, {
+    const session = await requireActiveCorrectionSession(tx, {
       organizationId: rawInput.organizationId,
       sessionId: input.sessionId,
       terminalId: input.terminalId,
@@ -3458,6 +3674,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
 
     assertNoPriorRefunds(sale)
     const payments = activeCorrectionPayments(sale)
+    assertSupportedCorrectionPayments(payments)
     if (payments.length === 0) throw new BusinessRuleError("Cannot void a sale without payment rows")
 
     const cashOutflow = sumPaymentMethod(payments, PaymentMethod.CASH)
@@ -3505,6 +3722,7 @@ export async function voidPOSSale(rawInput: UserScoped) {
       sessionId: input.sessionId,
       userId: rawInput.userId,
       amount: cashOutflow,
+      expectedBalance: session.expectedBalance,
       type: "RETURN",
       reason: `POS void ${sale.orderNumber}: ${input.reason}`,
     })
@@ -3632,5 +3850,8 @@ export async function voidPOSSale(rawInput: UserScoped) {
       voidJournalEntryId: voidJournalEntry.id,
       voidPostingBatchId,
     } satisfies VoidPOSSaleResult
+  }).catch(async (error) => {
+    await auditPOSTenderWriteDenial(error, writeScope)
+    throw error
   })
 }

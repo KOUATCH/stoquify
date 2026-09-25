@@ -1,0 +1,101 @@
+{
+  "recordedAt": "2026-09-05T17:00:46.970Z",
+  "classification": "MOCK_BASED_PUBLIC_RESPONSE_RETRY_VERIFICATION",
+  "productionApproval": false,
+  "baseline": {
+    "exitCode": 1,
+    "suites": 2,
+    "tests": 20,
+    "passed": 16,
+    "failed": 4,
+    "seconds": 3.729,
+    "failures": [
+      "Customer exact replay after promise date rejected by relative window",
+      "Customer changed payload replay returns date error instead of identity conflict",
+      "Supplier exact replay after delivery date rejected by relative window",
+      "Supplier changed payload replay returns date error instead of identity conflict"
+    ]
+  },
+  "final": {
+    "exitCode": 0,
+    "suites": 6,
+    "passed": 34,
+    "failed": 0,
+    "seconds": 4.518,
+    "toolSession": 71525,
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts",
+      "services/accounting/__tests__/customer-statement-access.service.test.ts",
+      "services/accounting/__tests__/customer-statement-token.test.ts",
+      "services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts",
+      "services/purchase-order/__tests__/supplier-po-access-token.test.ts",
+      "services/purchase-order/__tests__/supplier-po-authority-boundary.test.ts",
+      "--silent"
+    ]
+  },
+  "lint": {
+    "exitCode": 0,
+    "paths": [
+      "services/accounting/customer-statement-recipient-action.service.ts",
+      "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts",
+      "services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts"
+    ]
+  },
+  "sourceHashes": [
+    {
+      "path": "services/accounting/customer-statement-recipient-action.service.ts",
+      "sha256": "5b8f169ae50dc9c589dd6a7692452e1e9dd88538c6f767c0ed2a0097c84496e0"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-acknowledgement.service.ts",
+      "sha256": "ae675a914fcd26b3a67e85413923716d8b905966f6fdfd3099bc5ca33eba253a"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-statement-recipient-action.service.test.ts",
+      "sha256": "4847720eccdc7fbcc0e1b1605a75376918c6deaf17e5daeea363480c39c31a67"
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-proposal-retry.test.ts",
+      "sha256": "8fbf26aa1e3250687e2c85d343ed7d1bff4c7e9c662bc9577aafd8bf61d5cd0d"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-statement-access.service.test.ts",
+      "sha256": "37610c181ead58aa62f1551785bfd73e8f5c3a76a5eb618b35ebfc2434224272"
+    },
+    {
+      "path": "services/accounting/__tests__/customer-statement-token.test.ts",
+      "sha256": "f08c471b0224d684a9a4de50f817bcc9f2c9f69a7ffdc1dda5466cbf1c30b073"
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-access-token.test.ts",
+      "sha256": "510aa13aa4da3ee0f3a393886dfeb509fd358ad696e19b7dd197525461e54193"
+    },
+    {
+      "path": "services/purchase-order/__tests__/supplier-po-authority-boundary.test.ts",
+      "sha256": "230b4212870006a7598f13ed06f5675e4c3f2801998c279be335ca315e888b63"
+    },
+    {
+      "path": "services/accounting/customer-statement-access.service.ts",
+      "sha256": "9768f75d576312cb3cbd074fd0ead2abf8a7e1875946007682db0c988a3cae08"
+    },
+    {
+      "path": "services/accounting/customer-statement-token.ts",
+      "sha256": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517"
+    },
+    {
+      "path": "services/purchase-order/supplier-po-access-token.ts",
+      "sha256": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c"
+    }
+  ],
+  "limits": [
+    "Injected transaction doubles do not prove PostgreSQL locking/immutability/races.",
+    "No browser, live database, external provider or messaging calls executed.",
+    "Customer token-denial wiring tests inject denial; adjacent access/token suites check implementation independently.",
+    "Real access logging remains intentional; replay creates no additional business action/proposal/state/event/successful-creation audit in these tests."
+  ]
+}

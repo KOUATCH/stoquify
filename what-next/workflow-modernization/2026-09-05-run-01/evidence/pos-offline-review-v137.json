@@ -1,0 +1,171 @@
+{
+  "at": "2026-09-13T16:01:43.179Z",
+  "baseline": "evidence/source-baseline-v137.json",
+  "sources": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/ProfessionalPOSSystem.tsx": "f870ee1629a3c6ddd3550852b07224febd8a350bbeb21e1b3a9f179138f3e6a1",
+    "components/pos/offline/OfflineConflictReview.tsx": "f0edae5f58c7fb0c85ccc1f5e5d123100812d15ef91ff9cde985218ff3bc2d7e",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "94641162699f1114f270da1e39fe1f0b563da4fdf048f4f9ad14bf83fc803a17",
+    "hooks/posHooks/useOfflineSync.ts": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+    "messages/en.json": "450889362158308412d629e4ac835b43f8bdf894d9e2602c1912dc0436ad0055",
+    "messages/fr.json": "a1a2e629946998dc9b974e384d7bf93031e6928ae0c2bcb077773d99c006cc89"
+  },
+  "tests": {
+    "passed": 71,
+    "suites": 7,
+    "receipt": "b4d03c",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath actions/pos/__tests__/offline-review.actions.test.ts actions/pos/__tests__/sync.actions.test.ts services/pos/__tests__/offline-sync.service.test.ts hooks/posHooks/__tests__/offline-dashboard-scope.test.ts components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx components/pos/__tests__/ProfessionalPOSSystem.receipt-token-visibility.test.tsx components/pos/__tests__/OfflineConflictReview.test.tsx"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "43376b",
+    "command": "node node_modules/eslint/bin/eslint.js services/pos/offline-review.service.ts actions/pos/offline-review.actions.ts actions/pos/__tests__/offline-review.actions.test.ts components/pos/offline/OfflineConflictReview.tsx components/pos/offline/OfflineSyncStatusStrip.tsx components/pos/ProfessionalPOSSystem.tsx components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx components/pos/__tests__/ProfessionalPOSSystem.receipt-token-visibility.test.tsx components/pos/__tests__/OfflineConflictReview.test.tsx hooks/posHooks/useOfflineSync.ts hooks/posHooks/__tests__/offline-dashboard-scope.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "e39f53",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/offline-review-v137-466b26e1-7d7f-4e37-b629-97495f6646b3.json",
+    "at": "2026-09-13T15:38:10.567Z",
+    "checks": [
+      "Scoped review persists named actor/note while financial snapshots and open-blocker count stay unchanged",
+      "Exact retry has one review audit; changed stale input is rejected",
+      "Concurrent reviewers cannot overwrite the same reviewed revision; exactly one wins"
+    ],
+    "passed": true,
+    "source": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810"
+  },
+  "browser": {
+    "file": "lanes/environment/offline-review-browser-v137-fe73fed5-32c7-418b-89ee-548c463c748e.json",
+    "receipt": "7cb558",
+    "at": "2026-09-13T15:58:29.172Z",
+    "sourcesBefore": {
+      "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+      "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+      "components/pos/ProfessionalPOSSystem.tsx": "f870ee1629a3c6ddd3550852b07224febd8a350bbeb21e1b3a9f179138f3e6a1",
+      "components/pos/offline/OfflineConflictReview.tsx": "f0edae5f58c7fb0c85ccc1f5e5d123100812d15ef91ff9cde985218ff3bc2d7e",
+      "components/pos/offline/OfflineSyncStatusStrip.tsx": "94641162699f1114f270da1e39fe1f0b563da4fdf048f4f9ad14bf83fc803a17",
+      "hooks/posHooks/useOfflineSync.ts": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+      "messages/en.json": "450889362158308412d629e4ac835b43f8bdf894d9e2602c1912dc0436ad0055",
+      "messages/fr.json": "a1a2e629946998dc9b974e384d7bf93031e6928ae0c2bcb077773d99c006cc89"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "offline-review-v137-en-1440-fe73fed5-32c7-418b-89ee-548c463c748e.png",
+          "offline-review-v137-en-768-fe73fed5-32c7-418b-89ee-548c463c748e.png",
+          "offline-review-v137-en-320-fe73fed5-32c7-418b-89ee-548c463c748e.png",
+          "offline-review-v137-en-text200-fe73fed5-32c7-418b-89ee-548c463c748e.png"
+        ],
+        "pageErrors": [],
+        "initialText": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Tender operator-review-c1eabadd-4068-47a2-88e2-d830fb634c18\n\nOWNED REVIEW OPERATOR\nSession\nMODULES\n6\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nOPERATIONS\n1\nSales\nCustomers, sales, and POS entry points\n2\nOverview\nPOS\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n3\nFinance\nCash, profitability, payments, and reconciliation\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n2\nO\n\noperator-review-c1eabadd-4068-47a2-88e2-d830fb634c18cc6acc26-8f2d-4b41-8015-460926cb2193@example.invalid\n\noperator-review-c1eabadd-4068-47a2-88e2-d830fb634c18cc6acc26-8f2d-4b41-8015-460926cb2193@example.invalid\n\nPOS\n\nOperations / Sales / POS\n\nFR\nO\n\nLOADING\n\nChecking the current checkout workspace\n\nLoading your current access, shift, stock and cart. Please wait before changing the sale.\n\nBack to dashboard",
+        "readyMs": 14567,
+        "explicitFreshAuthenticationNoAutomaticSave": true,
+        "staleRejectedDraftRetained": true,
+        "lostResponseRetrySingleAuditBlockerRetained": true,
+        "text200NoHorizontalOverflow": true,
+        "readOnlyReviewerDenied": true,
+        "readPermissionRevocationHidesReview": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "offline-review-v137-fr-1440-fe73fed5-32c7-418b-89ee-548c463c748e.png",
+          "offline-review-v137-fr-768-fe73fed5-32c7-418b-89ee-548c463c748e.png",
+          "offline-review-v137-fr-320-fe73fed5-32c7-418b-89ee-548c463c748e.png",
+          "offline-review-v137-fr-text200-fe73fed5-32c7-418b-89ee-548c463c748e.png"
+        ],
+        "pageErrors": [],
+        "initialText": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Tender operator-review-4e5e67fa-7bd0-49db-b25e-c3bb862d5279\n\nOWNED REVIEW OPERATOR\nSession\nMODULES\n6\nPILOTAGE\n2\nTableau de bord\nVue d’ensemble des opérations\nCentre de pilotage\nPilotage quotidien pour la direction et les responsables\n3\nOPÉRATIONS\n1\nVentes\nClients, ventes et point de vente\n2\nVue d’ensemble\nPoint de vente\nFINANCE ET CONTRÔLES\n2\nComptabilité\nGrand livre, clôture, rapports et contrôles\n3\nFinance\nTrésorerie, rentabilité, paiements et rapprochement\n2\nGOUVERNANCE\n1\nParamètres\nEntreprise, rôles, emplacements, modules et sécurité\n2\nO\n\noperator-review-4e5e67fa-7bd0-49db-b25e-c3bb862d5279cc6acc26-8f2d-4b41-8015-460926cb2193@example.invalid\n\noperator-review-4e5e67fa-7bd0-49db-b25e-c3bb862d5279cc6acc26-8f2d-4b41-8015-460926cb2193@example.invalid\n\nPoint de vente\n\nOpérations / Ventes / Point de vente\n\nEN\nO\n\nCHARGEMENT\n\nVérification de l’espace de caisse actuel\n\nChargement de vos droits actuels, de votre session, du stock et du panier. Patientez avant de modifier la vente.\n\nRetour au tableau de bord",
+        "readyMs": 16023,
+        "explicitFreshAuthenticationNoAutomaticSave": true,
+        "staleRejectedDraftRetained": true,
+        "lostResponseRetrySingleAuditBlockerRetained": true,
+        "text200NoHorizontalOverflow": true,
+        "readOnlyReviewerDenied": true,
+        "readPermissionRevocationHidesReview": true
+      }
+    ],
+    "scope": "Owned synthetic unresolved conflict; actual authentication, server actions, review audit and financial snapshots. Does not enable offline ingestion or replay.",
+    "passed": true,
+    "sourcesAfter": {
+      "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+      "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+      "components/pos/ProfessionalPOSSystem.tsx": "f870ee1629a3c6ddd3550852b07224febd8a350bbeb21e1b3a9f179138f3e6a1",
+      "components/pos/offline/OfflineConflictReview.tsx": "f0edae5f58c7fb0c85ccc1f5e5d123100812d15ef91ff9cde985218ff3bc2d7e",
+      "components/pos/offline/OfflineSyncStatusStrip.tsx": "94641162699f1114f270da1e39fe1f0b563da4fdf048f4f9ad14bf83fc803a17",
+      "hooks/posHooks/useOfflineSync.ts": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+      "messages/en.json": "450889362158308412d629e4ac835b43f8bdf894d9e2602c1912dc0436ad0055",
+      "messages/fr.json": "a1a2e629946998dc9b974e384d7bf93031e6928ae0c2bcb077773d99c006cc89"
+    },
+    "sourceStable": true
+  },
+  "earlierAttempts": [
+    {
+      "file": "lanes/environment/offline-review-browser-v137-4e2b9d96-9c67-4595-b43f-1ff225a294db.json",
+      "functionalPassed": false,
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review conflicts', exact: true })\u001b[22m\n",
+      "meaning": "Historical attempt; superseded by final functional and panel-level visual verification."
+    },
+    {
+      "file": "lanes/environment/offline-review-browser-v137-4c9b69f8-ce6b-4492-9722-f78c5e278da8.json",
+      "functionalPassed": false,
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review conflicts', exact: true })\u001b[22m\n",
+      "meaning": "Historical attempt; superseded by final functional and panel-level visual verification."
+    },
+    {
+      "file": "lanes/environment/offline-review-browser-v137-5f1d1800-c9cc-430d-88a5-5e9824f35cc9.json",
+      "functionalPassed": false,
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review conflicts', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button aria-expanded=\"false\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2\">Review conflicts</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"flex flex-wrap items-center gap-2\">…</div> from <header class=\"dashboard-landing-content sticky top-16 z-20 border-b border-[var(--dash-border-subtle)] bg-[rgba(20,33,41,0.92)] px-4 py-3 text-white shadow-[0_18px_42px_rgba(5,12,16,0.22)] backdrop-blur-xl lg:top-[68px]\">…</header> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <div class=\"flex flex-wrap items-center gap-2\">…</div> from <header class=\"dashboard-landing-c",
+      "meaning": "Historical attempt; superseded by final functional and panel-level visual verification."
+    },
+    {
+      "file": "lanes/environment/offline-review-browser-v137-cab79a44-dd62-4871-87ce-fd1aec1920c6.json",
+      "functionalPassed": false,
+      "error": "expect(locator).toHaveText(expected) failed\n\nLocator:  getByTestId('offline-conflict-review').getByRole('alert')\nExpected: \"The evidence changed. Load current evidence, review it and save again; your note is retained.\"\nReceived: \"Sign in again to confirm your identity, then return and save the review explicitly.\"\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByTestId('offline-conflict-review').getByRole('alert')\n    116 × locator resolved to <p role=\"alert\" class=\"text-[var(--dash-danger)]\">Sign in again to confirm your identity, then retu…</p>\n        - unexpected value \"Sign in again to confirm your identity, then return and save the review explicitly.\"\n",
+      "meaning": "Historical attempt; superseded by final functional and panel-level visual verification."
+    },
+    {
+      "file": "lanes/environment/offline-review-browser-v137-bc552289-9118-426d-a85d-f69eec97efe9.json",
+      "functionalPassed": false,
+      "error": "expect(locator).toHaveText(expected) failed\n\nLocator: getByTestId('offline-conflict-review').getByRole('status')\nExpected: \"Review recorded. Financial and synchronization blockers remain until a verified correction resolves them.\"\nError: strict mode violation: getByTestId('offline-conflict-review').getByRole('status') resolved to 2 elements:\n    1) <p role=\"status\">Loading or saving review…</p> aka getByText('Loading or saving review…')\n    2) <p role=\"status\">Review recorded. Financial and synchronization bl…</p> aka getByText('Review recorded. Financial')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByTestId('offline-conflict-review').getByRole('status')\n    5 × locator resolved to <p role=\"status\">Loading or saving review…</p>\n      - unexpected value \"Loading or saving review…\"\n",
+      "meaning": "Historical attempt; superseded by final functional and panel-level visual verification."
+    },
+    {
+      "file": "lanes/environment/offline-review-browser-v137-74aa36c0-2301-4e3f-8d5a-6c889809d957.json",
+      "functionalPassed": false,
+      "error": "\nInvalid `db.organization.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-tender-access-v131.cjs:7:24\n\n  4 const hash=()=>crypto.createHash('sha256').update(fs.readFileSync(path.join(f.root,'services/pos/pos.service.ts'))).digest('hex');report.sourceBefore=hash();\n  5 async function fixture(label){\n  6  const organizationId='workflow_tender_'+label+'_'+stamp;\n→ 7  await db.organization.create(\nUnique constraint failed on the fields: (`id`)",
+      "meaning": "Historical attempt; superseded by final functional and panel-level visual verification."
+    },
+    {
+      "file": "lanes/environment/offline-review-browser-v137-6a983e47-8bb8-4398-8e07-b6c3632fafb3.json",
+      "functionalPassed": true,
+      "error": null,
+      "meaning": "Historical attempt; superseded by final functional and panel-level visual verification."
+    }
+  ],
+  "guide": "OFFLINE_REVIEW_V137.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2903,
+      "tests": 1033,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2526,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

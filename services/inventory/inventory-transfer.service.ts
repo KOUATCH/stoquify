@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
 import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import {
   ApplicationError,
@@ -28,7 +29,7 @@ import {
 
 type DbClient = Prisma.TransactionClient | typeof db
 
-const transferInclude = {
+export const transferInclude = {
   fromLocation: {
     select: {
       id: true,
@@ -534,6 +535,7 @@ export async function createStockTransfer(
   const parsed = createStockTransferInputSchema.parse(input)
 
   const run = async (tx: Prisma.TransactionClient): Promise<CreateStockTransferResult> => {
+    await assertModuleNewWorkInTx(tx, { organizationId: parsed.organizationId, moduleSlug: "inventory", operation: "inventory.transfer.create" })
     if (parsed.fromLocationId === parsed.toLocationId) {
       throw new BusinessRuleError("Source and destination locations cannot be the same.")
     }

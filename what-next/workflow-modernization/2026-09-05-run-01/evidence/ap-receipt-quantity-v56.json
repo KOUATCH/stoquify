@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-08T07:41:51.377Z",
+  "baseline": "evidence/source-baseline-v56.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "2354ea848c9308fa6437fe69aea1aaa4af72797b0ef3ef7ba50f766fcca61a46",
+    "services/purchasing/ap-control.schemas.ts": "194f6f10e5657cd53b9364abe6e5bff021ffd039d515899366d23a2bf4496484",
+    "services/purchase-order/purchase-receiving-workbench.service.ts": "4946a7d926a5caddb80de8af3b03b49bd05e53353cec8d05b0e55dbe4def700f",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "5f72b6517c1d7c9b290928342cba9a2bcf21b5534cacd7343233001b63c3c377",
+    "actions/purchasing/ap-control.actions.ts": "33361722d1150fdf84fdb442e97a9be09359a8a0b0db0fd33a2419a40edd9983",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "d9c9c91ac2fa78cac3ca5349a68e5c47a15d2a24777daaaf52fd5a4c7bc466d9",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1"
+  },
+  "verifier": {
+    "path": "lanes/environment/verify-ap-receipt-quantity.cjs",
+    "sha256": "9c3c57bae59503455afba6086d4bf946d31a6eb14553a0ce40ef11d4c0150cbf"
+  },
+  "before": "lanes/environment/ap-receipt-quantity-141a2d78-73f.json",
+  "after": "lanes/environment/ap-receipt-quantity-3a32154a-d92.json",
+  "tests": "evidence/ap-receipt-quantity-after-20260908.json",
+  "commands": [
+    {
+      "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/purchasing/__tests__/ap-control.service.test.ts actions/purchasing/__tests__/ap-control.actions.test.ts services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts --json --outputFile what-next/workflow-modernization/2026-09-05-run-01/evidence/ap-receipt-quantity-after-20260908.json",
+      "status": "passed",
+      "tests": 57,
+      "suites": 3
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/ap-control.service.ts services/purchasing/__tests__/ap-control.service.test.ts",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-ap-receipt-quantity.cjs",
+      "status": "passed",
+      "groups": 4
+    }
+  ],
+  "originalUnchanged": true,
+  "migration": "none",
+  "browser": "not run for this backend correction; full interactive PA-016 remains missing",
+  "completeWorkflowVerified": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2655,
+      "tests": 931,
+      "pages": 149,
+      "routeHandlers": 18,
+      "actionSources": 161,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2174,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

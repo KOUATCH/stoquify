@@ -1,0 +1,216 @@
+{
+  "at": "2026-09-13T18:28:17.096Z",
+  "baseline": "evidence/source-baseline-v144.json",
+  "baselineReceipt": "e3fe5e",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/analytics/sales-analytics.service.ts": "9e1aaad390ba524e5fb837d72d69aab62b1fc61d6dcaaa15ab3f87563bb0860f",
+    "services/analytics/business-pulse-contracts.ts": "01e3fe9bf29e2fd4608f49d5f0506a1f923b8c9cf7fce3231779ef935d99977d",
+    "components/analytics/BusinessPulseDashboard.tsx": "80166e11c50b0eba95e441239638ebf65ea7348d4b24059f8b79b24433eefc47",
+    "services/analytics/business-pulse-snapshot.ts": "d5c4972387ce73171289f3354b208034538ddd205ca1b2c340676c1a2bb8df1d",
+    "components/bi/BICommandBriefHeader.tsx": "989f76c7adbe5599c35a38572258d66b6d90a72d3ffa6bc6f9999c20875828e9",
+    "components/bi/BIKpiCard.tsx": "4a34960afa741a2e03d255d3252afece1122f8d00df20dad95f223950cecb862"
+  },
+  "tests": {
+    "passed": 38,
+    "suites": 5,
+    "receipt": "96cc30",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/analytics/__tests__/business-pulse-snapshot.test.ts services/analytics/__tests__/legacy-sales-analytics.test.ts services/analytics/__tests__/business-pulse.service.test.ts components/bi/__tests__/bi-command-primitives.test.tsx actions/analytics/__tests__/sales-analytics.authorization.test.ts --silent"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "bf4c70",
+    "command": "node node_modules/eslint/bin/eslint.js services/analytics/sales-analytics.service.ts services/analytics/business-pulse-snapshot.ts services/analytics/business-pulse-contracts.ts services/analytics/__tests__/business-pulse-snapshot.test.ts services/analytics/__tests__/business-pulse.service.test.ts services/analytics/__tests__/legacy-sales-analytics.test.ts components/analytics/BusinessPulseDashboard.tsx components/bi/BICommandBriefHeader.tsx components/bi/BIKpiCard.tsx components/bi/__tests__/bi-command-primitives.test.tsx"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "1a5d74",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/pulse-context-v144-after-8c4374f4-5700-4bcb-973e-c1e49bdbdda3.json",
+    "receipt": "a4847d",
+    "at": "2026-09-13T18:25:57.021Z",
+    "phase": "after",
+    "sourceBefore": {
+      "services/analytics/sales-analytics.service.ts": "9e1aaad390ba524e5fb837d72d69aab62b1fc61d6dcaaa15ab3f87563bb0860f",
+      "services/analytics/business-pulse-contracts.ts": "01e3fe9bf29e2fd4608f49d5f0506a1f923b8c9cf7fce3231779ef935d99977d",
+      "components/analytics/BusinessPulseDashboard.tsx": "80166e11c50b0eba95e441239638ebf65ea7348d4b24059f8b79b24433eefc47"
+    },
+    "checks": [
+      {
+        "name": "organization_currency",
+        "expected": "EUR",
+        "observed": "EUR"
+      },
+      {
+        "name": "calendar_period",
+        "passed": true
+      },
+      {
+        "name": "no_location_context",
+        "currency": "EUR",
+        "state": "blocked"
+      },
+      {
+        "name": "repeatable_snapshot_during_real_concurrent_close",
+        "reportedActive": 1,
+        "currentActive": 0,
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "services/analytics/sales-analytics.service.ts": "9e1aaad390ba524e5fb837d72d69aab62b1fc61d6dcaaa15ab3f87563bb0860f",
+      "services/analytics/business-pulse-contracts.ts": "01e3fe9bf29e2fd4608f49d5f0506a1f923b8c9cf7fce3231779ef935d99977d",
+      "components/analytics/BusinessPulseDashboard.tsx": "80166e11c50b0eba95e441239638ebf65ea7348d4b24059f8b79b24433eefc47"
+    },
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/pulse-browser-v144-eff31931-df29-458e-b0a1-30d06935ea64.json",
+    "receipt": "0fd712",
+    "at": "2026-09-13T18:24:43.822Z",
+    "sourceBefore": {
+      "services/analytics/sales-analytics.service.ts": "9e1aaad390ba524e5fb837d72d69aab62b1fc61d6dcaaa15ab3f87563bb0860f",
+      "services/analytics/business-pulse-snapshot.ts": "d5c4972387ce73171289f3354b208034538ddd205ca1b2c340676c1a2bb8df1d",
+      "services/analytics/business-pulse-contracts.ts": "01e3fe9bf29e2fd4608f49d5f0506a1f923b8c9cf7fce3231779ef935d99977d",
+      "components/analytics/BusinessPulseDashboard.tsx": "80166e11c50b0eba95e441239638ebf65ea7348d4b24059f8b79b24433eefc47",
+      "components/bi/BICommandBriefHeader.tsx": "989f76c7adbe5599c35a38572258d66b6d90a72d3ffa6bc6f9999c20875828e9",
+      "components/bi/BIKpiCard.tsx": "4a34960afa741a2e03d255d3252afece1122f8d00df20dad95f223950cecb862"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "pulse-v144-en-1440-eff31931-df29-458e-b0a1-30d06935ea64.png",
+          "pulse-v144-en-768-eff31931-df29-458e-b0a1-30d06935ea64.png",
+          "pulse-v144-en-320-eff31931-df29-458e-b0a1-30d06935ea64.png",
+          "pulse-v144-en-blocked-eff31931-df29-458e-b0a1-30d06935ea64.png"
+        ],
+        "pageErrors": [],
+        "draftExcluded": true,
+        "readyMs": 5817,
+        "completedSaleVisible": true,
+        "organizationCurrencyAndTimezoneVisible": true,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "voidRemovedFromCurrentCompletedSales": true,
+        "noLocationNotZero": true,
+        "dashboardPermissionRemainsAuthorized": true,
+        "allAnalyticsPermissionsRevokedDenied": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "pulse-v144-fr-1440-eff31931-df29-458e-b0a1-30d06935ea64.png",
+          "pulse-v144-fr-768-eff31931-df29-458e-b0a1-30d06935ea64.png",
+          "pulse-v144-fr-320-eff31931-df29-458e-b0a1-30d06935ea64.png",
+          "pulse-v144-fr-blocked-eff31931-df29-458e-b0a1-30d06935ea64.png"
+        ],
+        "pageErrors": [],
+        "draftExcluded": true,
+        "readyMs": 3133,
+        "completedSaleVisible": true,
+        "organizationCurrencyAndTimezoneVisible": true,
+        "mainFits1440": true,
+        "mainFits768": true,
+        "mainFits320": true,
+        "voidRemovedFromCurrentCompletedSales": true,
+        "noLocationNotZero": true,
+        "dashboardPermissionRemainsAuthorized": true,
+        "allAnalyticsPermissionsRevokedDenied": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "services/analytics/sales-analytics.service.ts": "9e1aaad390ba524e5fb837d72d69aab62b1fc61d6dcaaa15ab3f87563bb0860f",
+      "services/analytics/business-pulse-snapshot.ts": "d5c4972387ce73171289f3354b208034538ddd205ca1b2c340676c1a2bb8df1d",
+      "services/analytics/business-pulse-contracts.ts": "01e3fe9bf29e2fd4608f49d5f0506a1f923b8c9cf7fce3231779ef935d99977d",
+      "components/analytics/BusinessPulseDashboard.tsx": "80166e11c50b0eba95e441239638ebf65ea7348d4b24059f8b79b24433eefc47",
+      "components/bi/BICommandBriefHeader.tsx": "989f76c7adbe5599c35a38572258d66b6d90a72d3ffa6bc6f9999c20875828e9",
+      "components/bi/BIKpiCard.tsx": "4a34960afa741a2e03d255d3252afece1122f8d00df20dad95f223950cecb862"
+    },
+    "sourceStable": true
+  },
+  "before": {
+    "file": "lanes/environment/pulse-context-v144-before-53625cac-325d-4639-9dd2-b79bbdafe8ee.json",
+    "receipt": "8e6574",
+    "at": "2026-09-13T18:17:54.458Z",
+    "phase": "before",
+    "sourceBefore": {
+      "services/analytics/sales-analytics.service.ts": "ebeeed637be4c7119b4833863f70c13e10bac04503da559b053136e6348f40a0",
+      "services/analytics/business-pulse-contracts.ts": "427905cee356fcf4da72129b240ffba4e8e846648e42566b438c8248712d3e3d",
+      "components/analytics/BusinessPulseDashboard.tsx": "c3bda83e08e44d933f9a5e4f74243de93df77e0f14e6870cf9ac575c1fd227eb"
+    },
+    "checks": [
+      {
+        "name": "organization_currency",
+        "expected": "EUR",
+        "observed": "XAF"
+      },
+      {
+        "name": "no_location_context",
+        "currency": "XAF",
+        "state": "blocked"
+      }
+    ],
+    "reproduced": true,
+    "sourceAfter": {
+      "services/analytics/sales-analytics.service.ts": "ebeeed637be4c7119b4833863f70c13e10bac04503da559b053136e6348f40a0",
+      "services/analytics/business-pulse-contracts.ts": "427905cee356fcf4da72129b240ffba4e8e846648e42566b438c8248712d3e3d",
+      "components/analytics/BusinessPulseDashboard.tsx": "c3bda83e08e44d933f9a5e4f74243de93df77e0f14e6870cf9ac575c1fd227eb"
+    },
+    "sourceStable": true
+  },
+  "priorAttempts": [
+    {
+      "file": "lanes/environment/pulse-browser-v144-095c4ee4-6b46-4c0b-971d-22199cc8e1c2.json",
+      "receipt": "f72779",
+      "result": "Currency, timezone, unavailable site and permission cases passed. Subsequent review corrected whole-unit rounding; final browser binds minor-unit formatter."
+    }
+  ],
+  "visualReview": {
+    "screenshots": 8,
+    "inspected": [
+      "Earlier FR blocked mobile",
+      "Final FR desktop"
+    ],
+    "limits": [
+      "Mixed-language generated text remains visible and open.",
+      "Shared timeline event timestamps may use viewer timezone; report period/header use explicit tenant timezone.",
+      "No full keyboard/screen-reader/zoom certification."
+    ]
+  },
+  "performance": {
+    "enMs": 5817,
+    "frMs": 3133,
+    "context": "Local development route-ready observations. Not comparable production benchmarks."
+  },
+  "guide": "BUSINESS_PULSE_CONTEXT_V144.md",
+  "coverage": {
+    "discoveredWorkflows": 256,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2919,
+      "tests": 1041,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2542,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 196,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "build": {
+    "run": false,
+    "reason": "Actual current local application exercised; default migration-bearing build not invoked."
+  }
+}

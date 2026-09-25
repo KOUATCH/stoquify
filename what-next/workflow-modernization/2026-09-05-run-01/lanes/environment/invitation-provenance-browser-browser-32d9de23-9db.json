@@ -1,0 +1,76 @@
+{
+  "mode": "browser",
+  "attempt": "32d9de23-9db",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T07:00:17.566Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "9511efd94a5366bed6e17d4b489e2bac1bf6d1871ff31716dbf299c954537954",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "edc9e76eba02e3cc68b381e07b9af003121f51d23f4bc574d37f3c2834168503",
+    "messages/fr.json": "e76e718e7026916c926896c3b3dd579677b590a818240c14fc5b814902a9f371",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-invitation-unrecorded-32d9de23-9db.png",
+        "en-invitation-failure-32d9de23-9db.png"
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator:  getByText('Enable JavaScript and reload this page to create your account securely.', { exact: true })\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for getByText('Enable JavaScript and reload this page to create your account securely.', { exact: true })\n    14 × locator resolved to <p class=\"text-sm text-[#922e2e]\">Enable JavaScript and reload this page to create …</p>\n       - unexpected value \"hidden\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-invitation-unrecorded-32d9de23-9db.png",
+        "fr-invitation-failure-32d9de23-9db.png"
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator:  getByText('Activez JavaScript et rechargez cette page pour créer votre compte en toute sécurité.', { exact: true })\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 5000ms\n  - waiting for getByText('Activez JavaScript et rechargez cette page pour créer votre compte en toute sécurité.', { exact: true })\n    13 × locator resolved to <p class=\"text-sm text-[#922e2e]\">Activez JavaScript et rechargez cette page pour c…</p>\n       - unexpected value \"hidden\"\n"
+    }
+  ],
+  "blockedBrowserOrigins": [],
+  "limitations": [
+    "Owned synthetic issuers are test preconditions; real issuance service records approval and queue. No invitation transport exists and no email delivery is claimed.",
+    "Real application services, password policy, credential creation and sign-in; no success response body is mocked.",
+    "Browser external requests are blocked; server password-breach lookup uses the existing application configuration and is not measured by the browser interceptor."
+  ],
+  "originalAuthorityBefore": "e192a9c24f88246430955a4323bb7e80b6548265e025db89faee30c68d9af3d0",
+  "originalAuthorityAfter": "e192a9c24f88246430955a4323bb7e80b6548265e025db89faee30c68d9af3d0",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T07:00:34.806Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-redemption-authority.service.ts": "0a4dcf0012ff6b90251cc00d33a659764312a7088e02cada0fadb247d7214cf6",
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/users/user-identity.service.ts": "d499d068ef0ca2789a5def955a3a3882f3197b4a26d3ecffeebef8d87347e610",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "components/Forms/InvitedUserRegistration.tsx": "9511efd94a5366bed6e17d4b489e2bac1bf6d1871ff31716dbf299c954537954",
+    "components/auth/v2/AuthV2Shell.tsx": "96bf416af579b94626386b9376c858ab2cbe0b2e0048d6a2bbb2583d24a8cbfd",
+    "app/[locale]/(auth)/user-invite/[organisationId]/page.tsx": "261b10a83cb3fb01c6277594646047d6693488038edcfd290848c475cb455433",
+    "messages/en.json": "edc9e76eba02e3cc68b381e07b9af003121f51d23f4bc574d37f3c2834168503",
+    "messages/fr.json": "e76e718e7026916c926896c3b3dd579677b590a818240c14fc5b814902a9f371",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "b93f4dab611ecd7bd0b4c42de4c6ae8d9c80260df159b40bfa8260d8d70458f3",
+  "passed": 0,
+  "failed": 2
+}

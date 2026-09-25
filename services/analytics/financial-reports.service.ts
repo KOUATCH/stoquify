@@ -1,11 +1,13 @@
 import "server-only"
 
-import { Prisma, type SalesOrderStatus } from "@prisma/client"
-import { endOfDay, format, startOfDay } from "date-fns"
+import { Prisma } from "@prisma/client"
+import { format, startOfDay } from "date-fns"
 import { createHash } from "node:crypto"
 
+import { completedReportScope, completedReportSales, completedSalesEvidence, reportDecimal, reportGrowth, type CostEvidence } from "./completed-sales-evidence"
+
 import { db } from "@/prisma/db"
-import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { classifyReportCashMovement, elapsedShiftHours, reportCashMovements, reportCashSessions, reportSessionCount, type CashCountStatus } from "./cash-report-evidence"
 
 export type ReportFreshness = "CURRENT_AS_OF_GENERATION" | "HISTORICAL_PERIOD"
 export type ReportEvidenceStatus = "OPERATIONAL_READ_MODEL"
@@ -35,31 +37,36 @@ export interface ReportProvenance {
   rowCount: number
   filterHash: string
   currency: string
+  timezone?: string
 }
 
 export interface FinancialSummaryReport {
   period: string
   provenance: ReportProvenance
   totalRevenue: number
-  totalCost: number
-  grossProfit: number
-  grossMargin: number
+  netRevenue: number
+  costEvidence: CostEvidence
+  timezone: string
+  totalCost: number | null
+  grossProfit: number | null
+  grossMargin: number | null
   totalTransactions: number
   averageTransactionValue: number
   totalItemsSold: number
   cashSales: number
   cardSales: number
   digitalSales: number
-  revenueChange: number
-  transactionChange: number
-  profitChange: number
+  revenueChange: number | null
+  transactionChange: number | null
+  profitChange: number | null
   topSellingItems: Array<{
     itemId: string
     itemName: string
     itemSku: string
     quantitySold: number
     revenue: number
-    profit: number
+    profit: number | null
+    itemNameFr: string | null
   }>
   hourlyBreakdown: Array<{
     hour: number
@@ -74,24 +81,29 @@ export interface CashierPerformanceReport {
   cashierName: string
   totalSales: number
   totalTransactions: number
-  averageTransactionValue: number
+  averageTransactionValue: number | null
   sessionsWorked: number
-  totalHoursWorked: number
-  salesPerHour: number
-  totalCashHandled: number
-  cashVariance: number
-  averageVariance: number
-  variancePercentage: number
-  transactionsPerHour: number
-  performanceScore: number
+  elapsedShiftHours: number
+  cashReceipts: number | null
+  cashOutflows: number | null
+  cashVariance: number | null
+  absoluteVariance: number | null
+  recordedCountSessions: number
+  openCountSessions: number
+  outsidePeriodCountSessions: number
+  inconsistentCountSessions: number
+  inconsistentMovements: number
+  /** Deprecated: operational counts do not establish employee performance. */
+  performanceScore: null
   sessions: Array<{
     sessionId: string
     sessionNumber: string
     startTime: Date
     endTime: Date | null
-    openingBalance: number
+    expectedClosing: number | null
     closingBalance: number | null
     variance: number | null
+    countStatus: CashCountStatus
     totalSales: number
     transactionCount: number
   }>
@@ -106,54 +118,54 @@ export interface ItemPerformanceReport {
   brand: string
   quantitySold: number
   totalRevenue: number
-  totalCost: number
-  grossProfit: number
-  profitMargin: number
+  netRevenue: number
+  itemNameFr: string | null
+  costEvidence: CostEvidence
+  totalCost: number | null
+  grossProfit: number | null
+  profitMargin: number | null
   averageSellingPrice: number
   currentStock: number
   availableToSell: number
   reservedStock: number
   stockValue: number
   turnoverRate: number
-  daysOfStock: number
-  daysOfAvailableStock: number
+  daysOfStock: number | null
+  daysOfAvailableStock: number | null
   stockScope: "organization" | "location"
   stockScopeLabel: string
   stockStatus: "in_stock" | "low_stock" | "out_of_stock"
-  salesTrend: "increasing" | "decreasing" | "stable"
-  revenueChange: number
-  quantityChange: number
+  salesTrend: "increasing" | "decreasing" | "stable" | "unavailable"
+  revenueChange: number | null
+  quantityChange: number | null
 }
 
 export interface CashFlowReport {
   period: string
   provenance: ReportProvenance
-  totalCashSales: number
-  cashFromReturns: number
-  otherCashIn: number
-  totalCashIn: number
-  cashRefunds: number
-  cashPayouts: number
-  otherCashOut: number
-  totalCashOut: number
-  netCashFlow: number
-  dailyBreakdown: Array<{
-    date: string
-    cashIn: number
-    cashOut: number
-    netFlow: number
-    runningBalance: number
-  }>
+  totalCashSales: number | null
+  otherCashIn: number | null
+  totalCashIn: number | null
+  cashReturns: number | null
+  cashRefunds: number | null
+  cashPayouts: number | null
+  otherCashOut: number | null
+  totalCashOut: number | null
+  netCashFlow: number | null
+  inconsistentMovements: number
+  excludedCounts: { opening: number; closing: number; reconciliation: number }
+  dailyBreakdown: Array<{ date: string; cashIn: number | null; cashOut: number | null; netFlow: number | null; cumulativeNetMovement: number | null }>
   drawerReconciliation: Array<{
     sessionId: string
     sessionNumber: string
     stationName: string
     cashierName: string
     openingBalance: number
-    expectedClosing: number
+    expectedClosing: number | null
     actualClosing: number | null
     variance: number | null
-    status: string
+    countStatus: CashCountStatus
+    endTime: Date | null
   }>
 }
 
@@ -176,25 +188,12 @@ function periodLabel(start: Date, end: Date) {
   return `${format(start, "MMM dd, yyyy")} - ${format(end, "MMM dd, yyyy")}`
 }
 
-const completedSalesStatuses: SalesOrderStatus[] = ["COMPLETED", "DELIVERED"]
-
 function stableHash(value: Record<string, unknown>) {
   return createHash("sha256").update(JSON.stringify(value, Object.keys(value).sort())).digest("hex")
 }
 
 export function scopedLocationId(locationId: OptionalLocationId) {
   return locationId && locationId !== "all" ? locationId : undefined
-}
-
-async function getReportCurrency(organizationId: string) {
-  const organization = await db.organization.findUnique({
-    where: { id: organizationId },
-    select: { currency: true },
-  })
-  if (!organization?.currency) {
-    throw new BusinessRuleError("Organization currency is unavailable")
-  }
-  return organization.currency.trim().toUpperCase()
 }
 
 export function buildReportProvenance(input: {
@@ -205,6 +204,7 @@ export function buildReportProvenance(input: {
   sourceTables: string[]
   rowCount: number
   currency: string
+  timezone?: string
 }): ReportProvenance {
   const now = new Date()
   const locationScope = scopedLocationId(input.locationId)
@@ -215,6 +215,7 @@ export function buildReportProvenance(input: {
     periodEnd: input.end.toISOString(),
     sourceTables: input.sourceTables.join(","),
     currency: input.currency,
+    timezone: input.timezone,
   })
 
   return {
@@ -222,6 +223,7 @@ export function buildReportProvenance(input: {
     sourceLabel: "Service-backed operational database read model",
     sourceTables: input.sourceTables,
     currency: input.currency,
+    timezone: input.timezone,
     periodStart: input.start.toISOString(),
     periodEnd: input.end.toISOString(),
     generatedAt: now.toISOString(),
@@ -238,462 +240,125 @@ export function buildReportProvenance(input: {
   }
 }
 
-async function getSalesOrders(organizationId: string, locationId: OptionalLocationId, start: Date, end: Date) {
-  const locationScope = scopedLocationId(locationId)
-
-  return db.salesOrder.findMany({
-    where: {
-      organizationId,
-      ...(locationScope ? { locationId: locationScope } : {}),
-      deletedAt: null,
-      orderDate: { gte: start, lte: end },
-      status: { in: completedSalesStatuses },
-    },
-    include: {
-      lines: {
-        include: {
-          item: {
-            select: {
-              id: true,
-              nameEn: true,
-              sku: true,
-              costPrice: true,
-            },
-          },
-        },
-      },
-      payments: {
-        where: { deletedAt: null },
-        select: { method: true, amount: true, status: true },
-      },
-    },
-  })
+export async function getFinancialSummaryReportReadModel(input: AnalyticsReportReadModelInput): Promise<FinancialSummaryReport> {
+  return db.$transaction(async tx => {
+    const scope = await completedReportScope(tx, input)
+    const sales = await completedReportSales(tx, scope)
+    const previousSales = await completedReportSales(tx, scope, scope.previousStart, scope.start)
+    const current = await completedSalesEvidence(tx, scope.organizationId, sales)
+    const previous = await completedSalesEvidence(tx, scope.organizationId, previousSales)
+    const payments = sales.flatMap(order => order.payments)
+    const tender = (methods: string[]) => payments.filter(payment => methods.includes(payment.method)).reduce((sum, payment) => sum.plus(reportDecimal(payment.amount)), new Prisma.Decimal(0)).toNumber()
+    const hours = new Map(Array.from({ length: 24 }, (_, hour) => [hour, { revenue: new Prisma.Decimal(0), transactions: 0 }]))
+    const hourFormatter = new Intl.DateTimeFormat("en", { timeZone: scope.timezone, hour: "2-digit", hourCycle: "h23" })
+    for (const order of sales) {
+      const bucket = hours.get(Number(hourFormatter.format(order.orderDate)))!
+      bucket.revenue = bucket.revenue.plus(reportDecimal(order.total)); bucket.transactions += 1
+    }
+    return {
+      period: periodLabel(scope.start, scope.end), timezone: scope.timezone,
+      provenance: buildReportProvenance({ ...scope, sourceTables: ["salesOrder", "salesOrderLine", "payment", "inventoryTransaction", "item"], rowCount: sales.length }),
+      totalRevenue: current.revenue.toNumber(), netRevenue: current.net.toNumber(), totalCost: current.cost?.toNumber() ?? null,
+      grossProfit: current.profit?.toNumber() ?? null, grossMargin: current.profit !== null && current.net.gt(0) ? current.profit.div(current.net).times(100).toNumber() : null,
+      costEvidence: current.costEvidence, totalTransactions: sales.length, totalItemsSold: current.quantity.toNumber(),
+      averageTransactionValue: sales.length ? current.revenue.div(sales.length).toNumber() : 0,
+      cashSales: tender(["CASH"]), cardSales: tender(["CARD"]), digitalSales: tender(["MOBILE_MONEY", "BANK_TRANSFER", "STORE_CREDIT"]),
+      revenueChange: reportGrowth(current.revenue, previous.revenue), transactionChange: reportGrowth(new Prisma.Decimal(sales.length), new Prisma.Decimal(previousSales.length)), profitChange: reportGrowth(current.profit, previous.profit),
+      topSellingItems: Array.from(current.items.entries()).map(([itemId, item]) => ({ itemId, itemName: item.name, itemNameFr: item.nameFr, itemSku: item.sku, quantitySold: item.quantity.toNumber(), revenue: item.revenue.toNumber(), profit: item.cost === null ? null : item.net.minus(item.cost).toNumber() })).sort((a, b) => b.revenue - a.revenue).slice(0, 10),
+      hourlyBreakdown: Array.from(hours.entries()).map(([hour, bucket]) => ({ hour, revenue: bucket.revenue.toNumber(), transactions: bucket.transactions })),
+    }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }
 
-export async function getFinancialSummaryReportReadModel(
-  input: AnalyticsReportReadModelInput,
-): Promise<FinancialSummaryReport> {
-  const { organizationId, locationId, startDate, endDate } = input
-  const start = startOfDay(startDate)
-  const end = endOfDay(endDate)
-  const currency = await getReportCurrency(organizationId)
-  const salesOrders = await getSalesOrders(organizationId, locationId, start, end)
+export async function getCashierPerformanceReportReadModel(input: AnalyticsReportReadModelInput): Promise<CashierPerformanceReport[]> {
+  return db.$transaction(async tx => {
+    const scope = await completedReportScope(tx, input), observedAt = new Date()
+    const sessions = await reportCashSessions(tx, scope), movements = await reportCashMovements(tx, scope)
+    const provenance = buildReportProvenance({ ...scope, sourceTables: ["pOSSession", "salesOrder", "cashDrawerTransaction", "user"], rowCount: sessions.length + movements.length })
+    const groups = new Map<string, typeof sessions>()
+    for (const session of sessions) groups.set(session.userId, [...(groups.get(session.userId) ?? []), session])
+    return Array.from(groups, ([cashierId, shifts]) => {
+      const ids = new Set(shifts.map(shift => shift.id)), zero = new Prisma.Decimal(0)
+      const rows = shifts.map(shift => {
+        const count = reportSessionCount(shift, scope)
+        return { sessionId: shift.id, sessionNumber: shift.sessionNumber, startTime: shift.startTime, endTime: shift.endTime, expectedClosing: count.expected, closingBalance: count.counted, variance: count.variance, countStatus: count.status, totalSales: shift.salesOrders.reduce((sum, order) => sum.plus(reportDecimal(order.total)), zero).toNumber(), transactionCount: shift.salesOrders.length }
+      })
+      const recorded = rows.filter(row => row.countStatus === "RECORDED"), inconsistentCountSessions = rows.filter(row => row.countStatus === "INCONSISTENT").length
+      const cash = movements.filter(row => row.sessionId && ids.has(row.sessionId)).map(classifyReportCashMovement)
+      const inconsistentMovements = cash.filter(row => row.kind === "INCONSISTENT").length
+      const cashAmount = (kind: "INFLOW" | "OUTFLOW") => inconsistentMovements ? null : cash.filter(row => row.kind === kind).reduce((sum, row) => sum.plus(row.amount), zero).toNumber()
+      const variance = (absolute: boolean) => !recorded.length || inconsistentCountSessions ? null : recorded.reduce((sum, row) => sum.plus(absolute ? reportDecimal(row.variance!).abs() : reportDecimal(row.variance!)), zero).toNumber()
+      const sales = shifts.flatMap(shift => shift.salesOrders), totalSales = sales.reduce((sum, order) => sum.plus(reportDecimal(order.total)), zero)
+      return { provenance, cashierId, cashierName: displayUser(shifts[0].user), totalSales: totalSales.toNumber(), totalTransactions: sales.length, averageTransactionValue: sales.length ? totalSales.div(sales.length).toNumber() : null,
+        sessionsWorked: shifts.length, elapsedShiftHours: shifts.reduce((sum, shift) => sum + elapsedShiftHours(shift, scope, observedAt), 0), cashReceipts: cashAmount("INFLOW"), cashOutflows: cashAmount("OUTFLOW"), cashVariance: variance(false), absoluteVariance: variance(true),
+        recordedCountSessions: recorded.length, openCountSessions: rows.filter(row => row.countStatus === "OPEN").length, outsidePeriodCountSessions: rows.filter(row => row.countStatus === "OUTSIDE_PERIOD").length, inconsistentCountSessions, inconsistentMovements, performanceScore: null, sessions: rows }
+    })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
+}
 
-  const totalRevenue = salesOrders.reduce((sum, order) => sum + toNumber(order.total), 0)
-  const totalCost = salesOrders.reduce(
-    (sum, order) =>
-      sum +
-      order.lines.reduce(
-        (lineSum, line) => lineSum + toNumber(line.item.costPrice) * toNumber(line.quantity),
-        0,
-      ),
-    0,
-  )
-  const grossProfit = totalRevenue - totalCost
-  const grossMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0
-  const totalTransactions = salesOrders.length
-  const averageTransactionValue = totalTransactions > 0 ? totalRevenue / totalTransactions : 0
-  const totalItemsSold = salesOrders.reduce(
-    (sum, order) => sum + order.lines.reduce((lineSum, line) => lineSum + toNumber(line.quantity), 0),
-    0,
-  )
-
-  const payments = salesOrders.flatMap((order) => order.payments)
-  const cashSales = payments.filter((payment) => payment.method === "CASH").reduce((sum, payment) => sum + toNumber(payment.amount), 0)
-  const cardSales = payments.filter((payment) => payment.method === "CARD").reduce((sum, payment) => sum + toNumber(payment.amount), 0)
-  const digitalSales = payments
-    .filter((payment) => ["MOBILE_MONEY", "BANK_TRANSFER", "STORE_CREDIT"].includes(payment.method))
-    .reduce((sum, payment) => sum + toNumber(payment.amount), 0)
-
-  const periodLength = end.getTime() - start.getTime()
-  const comparisonStart = new Date(start.getTime() - periodLength)
-  const comparisonEnd = new Date(end.getTime() - periodLength)
-  const comparisonOrders = await getSalesOrders(organizationId, locationId, comparisonStart, comparisonEnd)
-  const comparisonRevenue = comparisonOrders.reduce((sum, order) => sum + toNumber(order.total), 0)
-  const comparisonTransactions = comparisonOrders.length
-  const comparisonCost = comparisonOrders.reduce(
-    (sum, order) =>
-      sum +
-      order.lines.reduce(
-        (lineSum, line) => lineSum + toNumber(line.item.costPrice) * toNumber(line.quantity),
-        0,
-      ),
-    0,
-  )
-  const comparisonProfit = comparisonRevenue - comparisonCost
-
-  const revenueChange = comparisonRevenue > 0 ? ((totalRevenue - comparisonRevenue) / comparisonRevenue) * 100 : 0
-  const transactionChange =
-    comparisonTransactions > 0 ? ((totalTransactions - comparisonTransactions) / comparisonTransactions) * 100 : 0
-  const profitChange = comparisonProfit > 0 ? ((grossProfit - comparisonProfit) / comparisonProfit) * 100 : 0
-
-  const itemSales = new Map<string, { name: string; sku: string; quantity: number; revenue: number; cost: number }>()
-  for (const order of salesOrders) {
-    for (const line of order.lines) {
-      const existing = itemSales.get(line.itemId) || {
-        name: line.item.nameEn,
-        sku: line.item.sku,
-        quantity: 0,
-        revenue: 0,
-        cost: 0,
+export async function getItemPerformanceReportReadModel(input: AnalyticsReportReadModelInput): Promise<ItemPerformanceReport[]> {
+  return db.$transaction(async tx => {
+    const scope = await completedReportScope(tx, input)
+    const current = await completedSalesEvidence(tx, scope.organizationId, await completedReportSales(tx, scope))
+    const previous = await completedSalesEvidence(tx, scope.organizationId, await completedReportSales(tx, scope, scope.previousStart, scope.start))
+    const items = await tx.item.findMany({
+      where: { organizationId: scope.organizationId, OR: [{ deletedAt: null, isActive: true }, { id: { in: [...current.items.keys()] } }] },
+      include: { category: { select: { titleEn: true } }, brand: { select: { nameEn: true } }, inventoryLevels: { where: scope.locationId ? { locationId: scope.locationId } : undefined, select: { quantityOnHand: true, quantityAvailable: true, quantityReserved: true, totalValue: true } } },
+    })
+    const provenance = buildReportProvenance({ ...scope, sourceTables: ["item", "inventoryLevel", "salesOrderLine", "salesOrder", "inventoryTransaction"], rowCount: items.length })
+    return items.map(item => {
+      const sale = current.items.get(item.id), prior = previous.items.get(item.id), zero = new Prisma.Decimal(0)
+      const revenue = sale?.revenue ?? zero, net = sale?.net ?? zero, quantity = sale?.quantity ?? zero, cost = sale ? sale.cost : zero
+      const profit = cost === null ? null : net.minus(cost)
+      const stock = (field: "quantityOnHand" | "quantityAvailable" | "quantityReserved" | "totalValue") => item.inventoryLevels.reduce((sum, level) => sum.plus(reportDecimal(level[field])), zero).toNumber()
+      const currentStock = stock("quantityOnHand"), availableToSell = stock("quantityAvailable"), quantitySold = quantity.toNumber()
+      const revenueChange = reportGrowth(revenue, prior?.revenue ?? zero), quantityChange = reportGrowth(quantity, prior?.quantity ?? zero)
+      return {
+        provenance, itemId: item.id, itemName: item.nameEn, itemNameFr: item.nameFr, itemSku: item.sku, category: item.category?.titleEn || "Uncategorized", brand: item.brand?.nameEn || "Unbranded",
+        quantitySold, totalRevenue: revenue.toNumber(), netRevenue: net.toNumber(), totalCost: cost?.toNumber() ?? null, grossProfit: profit?.toNumber() ?? null, profitMargin: profit !== null && net.gt(0) ? profit.div(net).times(100).toNumber() : null,
+        costEvidence: sale?.costEvidence ?? { basis: "ORIGINAL_STOCK_ISSUES", coveredGroups: 0, uncoveredGroups: 0 },
+        averageSellingPrice: quantity.gt(0) ? revenue.div(quantity).toNumber() : toNumber(item.sellingPrice),
+        currentStock, availableToSell, reservedStock: stock("quantityReserved"), stockValue: stock("totalValue"),
+        turnoverRate: currentStock > 0 ? quantitySold / currentStock : quantitySold > 0 ? quantitySold : 0,
+        daysOfStock: quantitySold > 0 ? currentStock / quantitySold * scope.calendarDays : null, daysOfAvailableStock: quantitySold > 0 ? availableToSell / quantitySold * scope.calendarDays : null,
+        stockScope: scope.locationId ? "location" : "organization", stockScopeLabel: scope.locationId ? "Selected report location" : "Organization-wide stock",
+        stockStatus: availableToSell <= 0 ? "out_of_stock" : availableToSell <= toNumber(item.minStockLevel) ? "low_stock" : "in_stock",
+        salesTrend: quantityChange === null ? "unavailable" : quantityChange > 0 ? "increasing" : quantityChange < 0 ? "decreasing" : "stable", revenueChange, quantityChange,
       }
-      existing.quantity += toNumber(line.quantity)
-      existing.revenue += toNumber(line.lineTotal)
-      existing.cost += toNumber(line.item.costPrice) * toNumber(line.quantity)
-      itemSales.set(line.itemId, existing)
-    }
-  }
-
-  const topSellingItems = Array.from(itemSales.entries())
-    .map(([itemId, data]) => ({
-      itemId,
-      itemName: data.name,
-      itemSku: data.sku,
-      quantitySold: data.quantity,
-      revenue: data.revenue,
-      profit: data.revenue - data.cost,
-    }))
-    .sort((a, b) => b.revenue - a.revenue)
-    .slice(0, 10)
-
-  const hourly = new Map<number, { revenue: number; transactions: number }>()
-  for (let hour = 0; hour < 24; hour += 1) hourly.set(hour, { revenue: 0, transactions: 0 })
-  for (const order of salesOrders) {
-    const bucket = hourly.get(order.orderDate.getHours())!
-    bucket.revenue += toNumber(order.total)
-    bucket.transactions += 1
-  }
-
-  return {
-    period: periodLabel(start, end),
-    provenance: buildReportProvenance({
-      organizationId,
-      locationId,
-      start,
-      end,
-      currency,
-      sourceTables: ["salesOrder", "salesOrderLine", "payment", "item"],
-      rowCount: salesOrders.length,
-    }),
-    totalRevenue,
-    totalCost,
-    grossProfit,
-    grossMargin,
-    totalTransactions,
-    averageTransactionValue,
-    totalItemsSold,
-    cashSales,
-    cardSales,
-    digitalSales,
-    revenueChange,
-    transactionChange,
-    profitChange,
-    topSellingItems,
-    hourlyBreakdown: Array.from(hourly.entries()).map(([hour, data]) => ({ hour, ...data })),
-  }
-}
-
-export async function getCashierPerformanceReportReadModel(
-  input: AnalyticsReportReadModelInput,
-): Promise<CashierPerformanceReport[]> {
-  const { organizationId, locationId, startDate, endDate } = input
-  const start = startOfDay(startDate)
-  const end = endOfDay(endDate)
-  const currency = await getReportCurrency(organizationId)
-  const locationScope = scopedLocationId(locationId)
-
-  const sessions = await db.pOSSession.findMany({
-    where: {
-      organizationId,
-      ...(locationScope ? { locationId: locationScope } : {}),
-      startTime: { gte: start, lte: end },
-    },
-    include: {
-      user: { select: { id: true, firstName: true, lastName: true, email: true } },
-      salesOrders: {
-        where: { deletedAt: null, status: { in: completedSalesStatuses } },
-        select: { id: true, total: true },
-      },
-    },
-    orderBy: { startTime: "asc" },
-  })
-
-  const byCashier = new Map<string, CashierPerformanceReport>()
-  const provenance = buildReportProvenance({
-    organizationId,
-    locationId,
-    start,
-    end,
-    currency,
-    sourceTables: ["pOSSession", "salesOrder", "user"],
-    rowCount: sessions.length,
-  })
-  for (const session of sessions) {
-    const cashierId = session.userId
-    const sessionSales = session.salesOrders.reduce((sum, order) => sum + toNumber(order.total), 0)
-    const hoursWorked = ((session.endTime ?? new Date()).getTime() - session.startTime.getTime()) / 3_600_000
-    const sessionVariance = session.variance === null ? null : toNumber(session.variance)
-
-    const report =
-      byCashier.get(cashierId) ||
-      ({
-        provenance,
-        cashierId,
-        cashierName: displayUser(session.user),
-        totalSales: 0,
-        totalTransactions: 0,
-        averageTransactionValue: 0,
-        sessionsWorked: 0,
-        totalHoursWorked: 0,
-        salesPerHour: 0,
-        totalCashHandled: 0,
-        cashVariance: 0,
-        averageVariance: 0,
-        variancePercentage: 0,
-        transactionsPerHour: 0,
-        performanceScore: 0,
-        sessions: [],
-      } satisfies CashierPerformanceReport)
-
-    report.totalSales += sessionSales
-    report.totalTransactions += session.transactionCount
-    report.sessionsWorked += 1
-    report.totalHoursWorked += Math.max(hoursWorked, 0)
-    report.totalCashHandled += toNumber(session.cashTotal)
-    report.cashVariance += sessionVariance ?? 0
-    report.sessions.push({
-      sessionId: session.id,
-      sessionNumber: session.sessionNumber,
-      startTime: session.startTime,
-      endTime: session.endTime,
-      openingBalance: toNumber(session.openingBalance),
-      closingBalance: session.closingBalance === null ? null : toNumber(session.closingBalance),
-      variance: sessionVariance,
-      totalSales: sessionSales,
-      transactionCount: session.transactionCount,
     })
-    byCashier.set(cashierId, report)
-  }
-
-  return Array.from(byCashier.values()).map((report) => {
-    const averageTransactionValue = report.totalTransactions > 0 ? report.totalSales / report.totalTransactions : 0
-    const salesPerHour = report.totalHoursWorked > 0 ? report.totalSales / report.totalHoursWorked : 0
-    const transactionsPerHour = report.totalHoursWorked > 0 ? report.totalTransactions / report.totalHoursWorked : 0
-    const averageVariance = report.sessionsWorked > 0 ? report.cashVariance / report.sessionsWorked : 0
-    const variancePercentage = report.totalCashHandled > 0 ? (Math.abs(report.cashVariance) / report.totalCashHandled) * 100 : 0
-    const performanceScore = Math.max(0, Math.min(100, 100 - variancePercentage))
-    return {
-      ...report,
-      provenance,
-      averageTransactionValue,
-      salesPerHour,
-      transactionsPerHour,
-      averageVariance,
-      variancePercentage,
-      performanceScore,
-    }
-  })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }
 
-export async function getItemPerformanceReportReadModel(
-  input: AnalyticsReportReadModelInput,
-): Promise<ItemPerformanceReport[]> {
-  const { organizationId, locationId, startDate, endDate } = input
-  const start = startOfDay(startDate)
-  const end = endOfDay(endDate)
-  const currency = await getReportCurrency(organizationId)
-  const locationScope = scopedLocationId(locationId)
-
-  const items = await db.item.findMany({
-    where: { organizationId, deletedAt: null, isActive: true },
-    include: {
-      category: { select: { titleEn: true } },
-      brand: { select: { nameEn: true } },
-      inventoryLevels: {
-        where: locationScope ? { locationId: locationScope } : undefined,
-        select: { quantityOnHand: true, quantityAvailable: true, quantityReserved: true, totalValue: true },
-      },
-      salesOrderLines: {
-        where: {
-          salesOrder: {
-            organizationId,
-            ...(locationScope ? { locationId: locationScope } : {}),
-            deletedAt: null,
-            orderDate: { gte: start, lte: end },
-            status: { in: completedSalesStatuses },
-          },
-        },
-        select: { quantity: true, lineTotal: true },
-      },
-    },
-  })
-  const provenance = buildReportProvenance({
-    organizationId,
-    locationId,
-    start,
-    end,
-    currency,
-    sourceTables: ["item", "inventoryLevel", "salesOrderLine", "salesOrder"],
-    rowCount: items.length,
-  })
-
-  return items.map((item) => {
-    const quantitySold = item.salesOrderLines.reduce((sum, line) => sum + toNumber(line.quantity), 0)
-    const totalRevenue = item.salesOrderLines.reduce((sum, line) => sum + toNumber(line.lineTotal), 0)
-    const totalCost = quantitySold * toNumber(item.costPrice)
-    const grossProfit = totalRevenue - totalCost
-    const profitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0
-    const averageSellingPrice = quantitySold > 0 ? totalRevenue / quantitySold : toNumber(item.sellingPrice)
-    const currentStock = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.quantityOnHand), 0)
-    const availableToSell = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.quantityAvailable), 0)
-    const reservedStock = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.quantityReserved), 0)
-    const stockValue = item.inventoryLevels.reduce((sum, level) => sum + toNumber(level.totalValue), 0)
-    const turnoverRate = currentStock > 0 ? quantitySold / currentStock : quantitySold > 0 ? quantitySold : 0
-    const daysOfStock = quantitySold > 0 ? (currentStock / quantitySold) * 30 : 0
-    const daysOfAvailableStock = quantitySold > 0 ? (availableToSell / quantitySold) * 30 : 0
-    const minStock = toNumber(item.minStockLevel)
-    const stockStatus: ItemPerformanceReport["stockStatus"] =
-      availableToSell <= 0 ? "out_of_stock" : availableToSell <= minStock ? "low_stock" : "in_stock"
-
-    return {
-      provenance,
-      itemId: item.id,
-      itemName: item.nameEn,
-      itemSku: item.sku,
-      category: item.category?.titleEn || "Uncategorized",
-      brand: item.brand?.nameEn || "Unbranded",
-      quantitySold,
-      totalRevenue,
-      totalCost,
-      grossProfit,
-      profitMargin,
-      averageSellingPrice,
-      currentStock,
-      availableToSell,
-      reservedStock,
-      stockValue,
-      turnoverRate,
-      daysOfStock,
-      daysOfAvailableStock,
-      stockScope: locationScope ? "location" : "organization",
-      stockScopeLabel: locationScope ? "Selected report location" : "Organization-wide stock",
-      stockStatus,
-      salesTrend: "stable",
-      revenueChange: 0,
-      quantityChange: 0,
+export async function getCashFlowReportReadModel(input: AnalyticsReportReadModelInput): Promise<CashFlowReport> {
+  return db.$transaction(async tx => {
+    const scope = await completedReportScope(tx, input)
+    const transactions = await reportCashMovements(tx, scope), sessions = await reportCashSessions(tx, scope)
+    const zero = new Prisma.Decimal(0), classified = transactions.map(row => ({ ...row, ...classifyReportCashMovement(row) }))
+    const inconsistentMovements = classified.filter(row => row.kind === "INCONSISTENT").length
+    const sum = (predicate: (row: typeof classified[number]) => boolean) => classified.filter(predicate).reduce((total, row) => total.plus(row.amount), zero)
+    const amount = (type: string) => inconsistentMovements ? null : sum(row => row.type === type).toNumber()
+    const cashIn = sum(row => row.kind === "INFLOW"), cashOut = sum(row => row.kind === "OUTFLOW")
+    const dateFormat = new Intl.DateTimeFormat("en-CA", { timeZone: scope.timezone, year: "numeric", month: "2-digit", day: "2-digit" })
+    const daily = new Map<string, { incoming: Prisma.Decimal; outgoing: Prisma.Decimal; inconsistent: boolean }>()
+    for (const row of classified) {
+      if (!["INFLOW", "OUTFLOW", "INCONSISTENT"].includes(row.kind)) continue
+      const parts = dateFormat.formatToParts(row.createdAt), part = (type: string) => parts.find(value => value.type === type)!.value
+      const date = part("year") + "-" + part("month") + "-" + part("day"), bucket = daily.get(date) ?? { incoming: zero, outgoing: zero, inconsistent: false }
+      if (row.kind === "INFLOW") bucket.incoming = bucket.incoming.plus(row.amount)
+      if (row.kind === "OUTFLOW") bucket.outgoing = bucket.outgoing.plus(row.amount)
+      if (row.kind === "INCONSISTENT") bucket.inconsistent = true
+      daily.set(date, bucket)
     }
-  })
-}
-
-export async function getCashFlowReportReadModel(
-  input: AnalyticsReportReadModelInput,
-): Promise<CashFlowReport> {
-  const { organizationId, locationId, startDate, endDate } = input
-  const start = startOfDay(startDate)
-  const end = endOfDay(endDate)
-  const currency = await getReportCurrency(organizationId)
-  const locationScope = scopedLocationId(locationId)
-
-  const transactions = await db.cashDrawerTransaction.findMany({
-    where: {
-      createdAt: { gte: start, lte: end },
-      cashDrawer: {
-        ...(locationScope ? { locationId: locationScope } : {}),
-        location: { organizationId },
-      },
-    },
-    orderBy: { createdAt: "asc" },
-  })
-
-  const totalCashSales = transactions
-    .filter((transaction) => transaction.type === "SALE")
-    .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-  const cashFromReturns = transactions
-    .filter((transaction) => transaction.type === "RETURN")
-    .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-  const otherCashIn = transactions
-    .filter((transaction) => transaction.type === "CASH_IN" || transaction.type === "OPENING_BALANCE")
-    .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-  const cashRefunds = transactions
-    .filter((transaction) => transaction.type === "REFUND")
-    .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-  const cashPayouts = transactions
-    .filter((transaction) => transaction.type === "PAYOUT")
-    .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-  const otherCashOut = transactions
-    .filter((transaction) => transaction.type === "CASH_OUT" || transaction.type === "CLOSING_BALANCE")
-    .reduce((sum, transaction) => sum + toNumber(transaction.amount), 0)
-
-  const totalCashIn = totalCashSales + cashFromReturns + otherCashIn
-  const totalCashOut = cashRefunds + cashPayouts + otherCashOut
-  const netCashFlow = totalCashIn - totalCashOut
-
-  const dailyMap = new Map<string, { cashIn: number; cashOut: number }>()
-  for (const transaction of transactions) {
-    const key = format(transaction.createdAt, "yyyy-MM-dd")
-    const bucket = dailyMap.get(key) || { cashIn: 0, cashOut: 0 }
-    const amount = toNumber(transaction.amount)
-    if (["SALE", "RETURN", "CASH_IN", "OPENING_BALANCE"].includes(transaction.type)) {
-      bucket.cashIn += amount
-    } else if (["REFUND", "PAYOUT", "CASH_OUT", "CLOSING_BALANCE"].includes(transaction.type)) {
-      bucket.cashOut += amount
-    }
-    dailyMap.set(key, bucket)
-  }
-
-  let runningBalance = 0
-  const dailyBreakdown = Array.from(dailyMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, bucket]) => {
-      const netFlow = bucket.cashIn - bucket.cashOut
-      runningBalance += netFlow
-      return { date, cashIn: bucket.cashIn, cashOut: bucket.cashOut, netFlow, runningBalance }
+    let cumulative: Prisma.Decimal | null = zero
+    const dailyBreakdown = [...daily].sort(([a], [b]) => a.localeCompare(b)).map(([date, bucket]) => {
+      const net = bucket.incoming.minus(bucket.outgoing)
+      cumulative = bucket.inconsistent || cumulative === null ? null : cumulative.plus(net)
+      return { date, cashIn: bucket.inconsistent ? null : bucket.incoming.toNumber(), cashOut: bucket.inconsistent ? null : bucket.outgoing.toNumber(), netFlow: bucket.inconsistent ? null : net.toNumber(), cumulativeNetMovement: cumulative?.toNumber() ?? null }
     })
-
-  const sessions = await db.pOSSession.findMany({
-    where: {
-      organizationId,
-      ...(locationScope ? { locationId: locationScope } : {}),
-      startTime: { gte: start, lte: end },
-    },
-    include: {
-      terminal: { select: { name: true, terminalNumber: true } },
-      user: { select: { firstName: true, lastName: true, email: true } },
-    },
-    orderBy: { startTime: "asc" },
-  })
-
-  return {
-    period: periodLabel(start, end),
-    provenance: buildReportProvenance({
-      organizationId,
-      locationId,
-      start,
-      end,
-      currency,
-      sourceTables: ["cashDrawerTransaction", "pOSSession", "terminal", "user"],
-      rowCount: transactions.length + sessions.length,
-    }),
-    totalCashSales,
-    cashFromReturns,
-    otherCashIn,
-    totalCashIn,
-    cashRefunds,
-    cashPayouts,
-    otherCashOut,
-    totalCashOut,
-    netCashFlow,
-    dailyBreakdown,
-    drawerReconciliation: sessions.map((session) => ({
-      sessionId: session.id,
-      sessionNumber: session.sessionNumber,
-      stationName: session.terminal.name || session.terminal.terminalNumber,
-      cashierName: displayUser(session.user),
-      openingBalance: toNumber(session.openingBalance),
-      expectedClosing: toNumber(session.expectedBalance),
-      actualClosing: session.closingBalance === null ? null : toNumber(session.closingBalance),
-      variance: session.variance === null ? null : toNumber(session.variance),
-      status: session.status,
-    })),
-  }
+    return { period: periodLabel(scope.start, scope.end), provenance: buildReportProvenance({ ...scope, sourceTables: ["cashDrawerTransaction", "pOSSession", "terminal", "user"], rowCount: transactions.length + sessions.length }),
+      totalCashSales: amount("SALE"), otherCashIn: amount("CASH_IN"), totalCashIn: inconsistentMovements ? null : cashIn.toNumber(), cashReturns: amount("RETURN"), cashRefunds: amount("REFUND"), cashPayouts: amount("PAYOUT"), otherCashOut: amount("CASH_OUT"), totalCashOut: inconsistentMovements ? null : cashOut.toNumber(), netCashFlow: inconsistentMovements ? null : cashIn.minus(cashOut).toNumber(), inconsistentMovements,
+      excludedCounts: { opening: classified.filter(row => row.kind === "OPENING_COUNT").length, closing: classified.filter(row => row.kind === "CLOSING_COUNT").length, reconciliation: classified.filter(row => row.kind === "RECONCILIATION").length }, dailyBreakdown,
+      drawerReconciliation: sessions.map(session => { const count = reportSessionCount(session, scope); return { sessionId: session.id, sessionNumber: session.sessionNumber, stationName: session.terminal.name || session.terminal.terminalNumber, cashierName: displayUser(session.user), openingBalance: reportDecimal(session.openingBalance).toNumber(), expectedClosing: count.expected, actualClosing: count.counted, variance: count.variance, countStatus: count.status, endTime: session.endTime } }),
+    }
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead })
 }

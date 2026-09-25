@@ -1,3 +1,4 @@
+import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
 import Link from "next/link"
 import { ArrowUpRight, Banknote, EyeOff, ShieldAlert, TimerReset } from "lucide-react"
 
@@ -13,10 +14,10 @@ import {
   dashboardToneClass,
 } from "@/components/finance/finance-dashboard-theme"
 import { cn } from "@/lib/utils"
-import type { BIActionLink, BIRiskRank } from "@/services/bi/bi-contracts"
+import type { BIActionLink, BIRiskRank, BIUnassessedObservation } from "@/services/bi/bi-contracts"
 
 type BIRiskOpportunityRadarProps = {
-  risks: BIRiskRank[]
+  risks: (BIRiskRank | BIUnassessedObservation)[]
   title?: string
   detail?: string
   locale?: string
@@ -27,8 +28,8 @@ type BIRiskOpportunityRadarProps = {
 
 export function BIRiskOpportunityRadar({
   risks,
-  title = "Risk and opportunity radar",
-  detail = "Ranked signals that deserve attention before they become leakage, delay, or missed upside.",
+  title,
+  detail,
   locale = "en",
   currencyCode = "XAF",
   className,
@@ -37,14 +38,14 @@ export function BIRiskOpportunityRadar({
   const visible = [...risks].sort((left, right) => left.rank - right.rank).slice(0, maxItems)
 
   return (
-    <section className={cn(dashboardPanelClass, "p-4", className)}>
+    <section className={cn(dashboardPanelClass, "min-w-0 p-4", className)}>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-base font-semibold text-[var(--dash-text)]">{title}</h2>
-          <p className={cn("text-sm", dashboardMutedTextClass)}>{detail}</p>
+          <h2 className="text-base font-semibold text-[var(--dash-text)]">{title ?? biCopy[biLocale(locale)].radar}</h2>
+          <p className={cn("text-sm", dashboardMutedTextClass)}>{detail ?? biCopy[biLocale(locale)].radarDetail}</p>
         </div>
         <Badge variant="outline" className="w-fit rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
-          {risks.length} ranked
+          {risks.length} {locale.startsWith("fr") ? risks.length === 1 ? "signal" : "signaux" : risks.length === 1 ? "signal" : "signals"}
         </Badge>
       </div>
 
@@ -55,20 +56,21 @@ export function BIRiskOpportunityRadar({
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="outline" className={cn("border", dashboardToneClass(risk.rank <= 2 ? "danger" : "gold"))}>
+                    <Badge variant="outline" className={cn("border", dashboardToneClass(risk.severity === "high" || risk.severity === "critical" ? "danger" : risk.severity === "medium" ? "gold" : "info"))}>
                       #{risk.rank}
                     </Badge>
-                    <BISeverityBadge severity={risk.severity} />
-                    <BIStateBadge state={risk.state} />
+                    <BISeverityBadge severity={risk.severity} locale={locale} />
+                    <BIStateBadge state={risk.state} locale={locale} />
                     <span className="inline-flex items-center gap-1.5 rounded-md border border-[var(--dash-border-subtle)] px-2 py-1 text-xs text-[var(--dash-text-soft)]">
                       <TimerReset className="h-3.5 w-3.5" aria-hidden="true" />
-                      {risk.urgency}
+                      {(risk.urgency === "now" || risk.urgency === "today" || risk.urgency === "soon" ? biCopy[biLocale(locale)][risk.urgency] : risk.urgency) ?? (locale.startsWith("fr") ? "Urgence non évaluée" : "Urgency not assessed")}
                     </span>
                   </div>
                   <h3 className="mt-3 text-sm font-semibold text-[var(--dash-text)]">{risk.title}</h3>
-                  <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{risk.businessImpact || risk.detail}</p>
+                  <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{risk.detail}</p>
+                  {risk.businessImpact && risk.businessImpact !== risk.detail ? <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{risk.businessImpact}</p> : null}
                 </div>
-                <div className="flex shrink-0 flex-col items-start gap-2 lg:items-end">
+                <div className="flex min-w-0 flex-col items-start gap-2 lg:max-w-[50%] lg:items-end">
                   {risk.moneyImpact !== null ? (
                     <span className="inline-flex items-center gap-1.5 rounded-md border border-[var(--dash-border-subtle)] px-2 py-1 text-xs font-medium text-[var(--dash-text)]">
                       <Banknote className="h-3.5 w-3.5" aria-hidden="true" />
@@ -79,7 +81,7 @@ export function BIRiskOpportunityRadar({
                 </div>
               </div>
 
-              <BIEvidenceBadgeRow
+              <BIEvidenceBadgeRow locale={locale}
                 className="mt-3"
                 evidenceGrade={risk.evidenceGrade}
                 trustState={risk.trustState}
@@ -108,8 +110,8 @@ export function BIRiskOpportunityRadar({
       ) : (
         <BIStateSurface
           state="empty"
-          title="No ranked risk is visible"
-          detail="When trusted signals detect leakage, delay, or opportunity, the radar will show the highest priority items here."
+          title={locale.startsWith("fr") ? "Aucun signal affiché" : "No signals displayed"}
+          detail={locale.startsWith("fr") ? "L’absence de signal ne prouve pas l’absence de risque. Consultez le périmètre et les limites des sources." : "An empty list does not establish absence of risk. Review the scope and source limitations."}
           className="mt-4"
         />
       )}
@@ -125,7 +127,7 @@ function RiskActionButton({ action }: { action: BIActionLink }) {
         variant="outline"
         disabled
         title={action.disabledReason ?? undefined}
-        className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]"
+        className="h-auto min-h-9 max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-start text-[var(--dash-text-soft)]"
       >
         <ShieldAlert className="h-4 w-4" aria-hidden="true" />
         {action.label}
@@ -134,7 +136,7 @@ function RiskActionButton({ action }: { action: BIActionLink }) {
   }
 
   return (
-    <Button asChild size="sm" variant="outline" className="rounded-lg border-[var(--dash-border-subtle)] text-[var(--dash-text)]">
+    <Button asChild size="sm" variant="outline" className="h-auto min-h-9 max-w-full whitespace-normal break-words rounded-lg border-[var(--dash-border-subtle)] text-start text-[var(--dash-text)]">
       <Link href={action.href}>
         <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
         {action.label}
@@ -147,6 +149,5 @@ function formatMoney(value: number, locale: string, currencyCode: string) {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: currencyCode,
-    maximumFractionDigits: 0,
   }).format(value)
 }

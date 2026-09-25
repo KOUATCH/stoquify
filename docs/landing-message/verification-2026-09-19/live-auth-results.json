@@ -1,0 +1,29 @@
+{
+  "started": "2026-09-19T15:23:41.990Z",
+  "baseURL": "http://127.0.0.1:3010",
+  "method": "APIRequestContext, matching tests/e2e/auth.setup.ts; existing synthetic fixture only",
+  "checks": [
+    {
+      "name": "Anonymous session is absent",
+      "status": "PASS",
+      "httpStatus": 200
+    },
+    {
+      "name": "Anonymous permission request is denied",
+      "status": "PASS",
+      "httpStatus": 401
+    },
+    {
+      "name": "Existing synthetic fixture sign-in",
+      "status": "BLOCKED",
+      "httpStatus": 401,
+      "errorCode": "INVALID_EMAIL_OR_PASSWORD",
+      "reason": "Fixture credentials, trusted-origin configuration or backend readiness did not allow sign-in; no seed or auth-policy changes were made."
+    }
+  ],
+  "limitations": [
+    "Not a new-account or real email-delivery test.",
+    "No business records are created or modified. Authentication may create and revoke a session."
+  ],
+  "finished": "2026-09-19T15:24:58.077Z"
+}

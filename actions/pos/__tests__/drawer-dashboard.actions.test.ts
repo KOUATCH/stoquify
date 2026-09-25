@@ -66,6 +66,7 @@ describe("cash drawer dashboard action", () => {
 
     expect(result).toEqual({
       success: true,
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
       data: {
         summary: {
           openingBalance: 10000,
@@ -96,6 +97,12 @@ describe("cash drawer dashboard action", () => {
       period: "today",
       organizationId: "org-1",
     })
+  })
+
+  it("returns authenticated scope and ignores client tenant and actor claims", async () => {
+    const result = await getCashDrawerDashboardAction({ organizationId: "foreign", userId: "foreign", period: "today" })
+    expect(result).toMatchObject({ success: true, scope: { organizationId: "org-1", actorId: "cashier-1" } })
+    expect(mockGetCashDrawerDashboard).toHaveBeenCalledWith({ organizationId: "org-1", period: "today" })
   })
 
   it("keeps POS module would-block decisions report-only for finance wildcard actors", async () => {

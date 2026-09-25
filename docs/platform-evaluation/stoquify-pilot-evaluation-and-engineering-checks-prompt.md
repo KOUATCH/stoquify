@@ -1,0 +1,3 @@
+# Evaluate the pilot and add justified engineering checks
+
+Independently review the offline admission pilot against the recorded pre-change behavior and current source. Verify all decision branches, precedence, timing, signature authority, dependency direction and financial/replay invariants. Measure the test setup and change surface. Add only justified scoped checks that reject new violations without weakening existing gates; report compiler/test coverage honestly. Reinspect the finance export contract dependency and propose its smallest compatibility-preserving extraction as a separate change. Save findings, exact commands and unresolved blockers.

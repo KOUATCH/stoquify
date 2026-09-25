@@ -1,3 +1,4 @@
+import { biLocale, biCopy } from "@/lib/dashboard/bi-presentation"
 import Link from "next/link"
 import { ArrowUpRight, EyeOff, LockKeyhole } from "lucide-react"
 
@@ -34,7 +35,7 @@ export function BIBusinessTruthZone({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <BIStateBadge state={zone.state} />
+            <BIStateBadge state={zone.state} locale={locale} />
             <Badge variant="outline" className="rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
               {zone.moduleSlug}
             </Badge>
@@ -43,7 +44,7 @@ export function BIBusinessTruthZone({
           <p className="mt-1 text-sm font-medium text-[var(--dash-text)]">{zone.businessQuestion}</p>
           <p className={cn("mt-1 text-sm leading-6", dashboardMutedTextClass)}>{zone.summary}</p>
         </div>
-        <BIEvidenceBadgeRow
+        <BIEvidenceBadgeRow locale={locale}
           evidenceGrade={zone.evidenceGrade}
           trustState={zone.trustState}
           freshness={zone.freshness}
@@ -55,11 +56,11 @@ export function BIBusinessTruthZone({
           <MetricInline metric={zone.primaryMetric} locale={locale} currencyCode={currencyCode} />
         </div>
       ) : (
-        <BIStateSurface state={zone.state} className="mt-4" />
+        <BIStateSurface state={zone.state} locale={locale} className="mt-4" />
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {zone.drillThrough ? <BIDrillThroughButton drillThrough={zone.drillThrough} /> : null}
+        {zone.drillThrough ? <BIDrillThroughButton drillThrough={zone.drillThrough} locale={locale} /> : null}
         {zone.actions.slice(0, 3).map((action) =>
           action.disabled ? (
             <Button
@@ -132,7 +133,7 @@ function formatBIValue(
   locale: string,
   currencyCode: string,
 ) {
-  if (value === null || value === undefined || value === "") return "No value"
+  if (value === null || value === undefined || value === "") return biCopy[biLocale(locale)].noValue
   if (typeof value === "string") return value
 
   if (format === "currency") {

@@ -1,0 +1,10 @@
+const fs = require("node:fs");
+const path = require("node:path");
+const crypto = require("node:crypto");
+const root = path.resolve(__dirname, "../../..");
+const files = ["components/modules/ModuleCompositionWorkbench.tsx", "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx", "services/modules/module-composition-contracts.ts", "services/modules/module-composition.service.ts", "services/modules/__tests__/module-composition.service.test.ts", "messages/en.json", "messages/fr.json", "tsconfig.json"];
+const jest = JSON.parse(fs.readFileSync(path.join(__dirname, "evidence/history-refresh-full.json"), "utf8"));
+if (!jest.success || jest.numPassedTests !== 79) throw new Error("Expected the actual completed 79-test result");
+const receipt = { recordedAt: new Date().toISOString(), tests: { toolSession: 4363, exitCode: 0, passed: jest.numPassedTests, failed: jest.numFailedTests, suites: jest.numPassedTestSuites, seconds: 42.059, report: "history-refresh-full.json" }, typecheck: { toolSession: 89090, exitCode: 0, command: "node node_modules/typescript/bin/tsc --noEmit" }, lint: { toolSession: 15146, exitCode: 0, paths: files.slice(0, 5) }, sourceBindingTiming: "Captured after commands completed; application sources stayed frozen during those commands. Later browser evidence has its own binding.", sourceHashes: files.map(file => ({ path: file, sha256: crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file))).digest("hex") })), productionReleaseEvidence: false };
+fs.writeFileSync(path.join(__dirname, "evidence/HISTORY_REFRESH_VERIFICATION.json"), JSON.stringify(receipt, null, 2) + "\n", { flag: "wx" });
+console.log(JSON.stringify({ passed: receipt.tests.passed, typecheckExitCode: 0, lintExitCode: 0, sourceCount: files.length }));

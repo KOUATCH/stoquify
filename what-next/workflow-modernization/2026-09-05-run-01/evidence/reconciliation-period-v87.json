@@ -1,0 +1,101 @@
+{
+  "at": "2026-09-09T01:18:15.344Z",
+  "sourceBaseline": "evidence/source-baseline-v87.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "009-aqstoqflow-payment-reconciliation-moat",
+  "sources": {
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "8669f6deb779d0472338decdb233d87299fb2e91ec57ce759ba2b9fa2595b05a",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "98f7e381ffce294c901eab54cd1ec928bc65c22c1d171c5505a509c0c313d50f",
+    "services/reconciliation/__tests__/payment-reconciliation-sign-off-command-state.service.test.ts": "b35514fca0793d1d3e9f267994452098cb299118736d68f1b2b3ee644fc92251",
+    "services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts": "c692855a8e5c6298ce20302b268280580eaf38785654ff7eeb2718d9a198bb19",
+    "actions/payments/__tests__/reconciliation-workbench.actions.test.ts": "87204d279ac9ec8581a68872091eebc5bb506b82597e8d4f8c699c251a466a0a",
+    "services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts": "e0f80ceb280dc22447c532da626ba0a8cf12f1e08cb9cb64bb1368dcb711b59e",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "41832c491673908ecd1a44d88d9d512a0ec9e91a4f25ddafaedb15e450115c7f",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "c940fc92e41945b6b0eff4612729910d235aabc62ae4398615f22347ee1603b4",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "d520896b17cf7839cc35149039764566875986144ded55cd6eaeb4b17fa43ae6",
+    "services/accounting/__tests__/periods.service.test.ts": "ab1cf6c7427067e837ed9bf4383ccc8994cd08a9640e187805578467b42b488d",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts": "ea5f299ed09a4c0dafd4f3ecc435eac23008c1aab0c2df147eddff6fc1ca1823",
+    "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts": "759ea25c4b6197cc3bb59c293659c7d9e448568e1104371da5075f55e776308b",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "cb00e984bdafc3d1f8e16a271db9bb203c61f92a85efb1266a21c9dc24c154bf",
+    "services/reconciliation/__tests__/payment-reconciliation-manual-candidates.test.ts": "51101dd63c712bd3a18c753bec7f5914cecaa2777bcae0670a9197e849922248",
+    "actions/payments/reconciliation.actions.ts": "1d1253a4321bbdcdecd30ed2eb9de5c7ad15510f18ab4d9002adcd375ebfc97e",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "945f52356a85512f80d7d790240a2e846cd066487aa06b721b9e2198fedc4a30",
+    "components/manager-action-center/PaymentReconciliationSignOffCommand.tsx": "67822c0731318195da91b5224edd3f3b6864fbc169b3e210fba33e7af730d00e"
+  },
+  "tests": {
+    "file": "evidence/reconciliation-period-final-v87.json",
+    "passed": 175,
+    "suites": 12,
+    "session": 47216,
+    "exitCode": 0
+  },
+  "database": {
+    "file": "lanes/environment/reconciliation-period-f39eb842-09f.json",
+    "checks": 9,
+    "session": 80155,
+    "exitCode": 0,
+    "sourceStable": true,
+    "originalUnchanged": true,
+    "publicAuthorityVerified": false,
+    "lockContender": "Synthetic exclusive period update; actual close/preflight was separately tested in v86"
+  },
+  "commands": [
+    {
+      "command": "Full typecheck; exact command in verification guide",
+      "session": 58773,
+      "exitCode": 0
+    },
+    {
+      "command": "Six changed files ESLint; exact list in verification guide",
+      "terminalChunk": "9a87e5",
+      "exitCode": 0
+    }
+  ],
+  "sourceBaselineCapture": {
+    "session": 93043,
+    "exitCode": 0
+  },
+  "failedAttempts": [
+    {
+      "session": 45897,
+      "passedTests": 20,
+      "failedTests": 7,
+      "observedReceipt": "evidence/reconciliation-period-before-v87-observed.json",
+      "rawJestReceipt": "Not saved: sandbox EPERM"
+    }
+  ],
+  "browser": "Not run; no changed UI. Public journeys incomplete.",
+  "fullBuild": "Not run; no UI/schema change.",
+  "coverage": {
+    "discoveredWorkflows": 226,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2760,
+      "tests": 969,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2357,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "remaining": [
+    "Current assignee/tenant authority, concurrent reassignment, delivery and full EN/FR browser lifecycle remain unverified.",
+    "Current account eligibility, stale proposal overwrite, permission and full browser/recovery paths require verification.",
+    "Public session/module authority and verified fresh-auth forwarding require review.",
+    "Full EN/FR, keyboard, responsive and failure/recovery lifecycle remains incomplete.",
+    "Approval retry after terminal status, standalone suspense close obligations and notification delivery remain open.",
+    "Successful real-provider database sign-off and all concurrent interleavings remain unverified in v87.",
+    "Full public authorization and accessible EN/FR command/workbench journeys remain incomplete."
+  ],
+  "nextRecommendedSkill": "010-aqstoqflow-inventory-valuation-kernel after outstanding reconciliation priorities"
+}

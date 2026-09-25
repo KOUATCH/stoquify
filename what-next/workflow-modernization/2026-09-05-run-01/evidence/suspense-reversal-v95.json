@@ -1,0 +1,86 @@
+{
+  "at": "2026-09-09T08:43:31.751Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v95.json",
+  "sources": {
+    "services/accounting/posting.service.ts": "f426c9c00125f4db4d256e782129e511aa51ec6e3e0e226efe9defa118b1abcf",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "6a85e9b2fd864c2e74e78abeffd8a0383046c65fd549a551110375d916345f59",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "messages/en.json": "1505eae9425cc69e78f6037932fec4796582cd37642da37dcd56636e2f73becd",
+    "messages/fr.json": "4351b35713e7f42520917b6e8153b4bc72e3b4b004ff0e95ccd6f1acf59c347f",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/__tests__/page.test.tsx": "3acdb8d2f988d2553076e10e78fca2870ef96d04b19863fe086a294c349007bf",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "41832c491673908ecd1a44d88d9d512a0ec9e91a4f25ddafaedb15e450115c7f",
+    "services/accounting/__tests__/posting.service.test.ts": "a889b931cc8590897f1f9fe5e2dc60eefe5d608f7001ff2470678bd6ed35c7d1",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "edd7b4055b86a4c5dee2413a1b506027d912016ece253cc63912bb1114cc673c",
+    "services/accounting/__tests__/journal-close-invalidation.service.test.ts": "3d7eeac7ec0fd53b73b4eef4a9b472f7e1186490f28bed20485c8492229d39e5"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"app/[locale]/(dashboard)/dashboard/accounting/journals/__tests__/page.test.tsx\" \"services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts\" \"services/accounting/__tests__/posting.service.test.ts\" \"services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts\" \"services/accounting/__tests__/journal-close-invalidation.service.test.ts\" --json --outputFile=\"what-next/workflow-modernization/2026-09-05-run-01/evidence/suspense-reversal-final-v95.json\"",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+    "before": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-suspense-reversal-boundary-v95.cjs before",
+    "after": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-suspense-reversal-boundary-v95.cjs after",
+    "browser": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-suspense-reversal-browser-v95.cjs",
+    "baseline": "node what-next/workflow-modernization/2026-09-05-run-01/capture-source-baseline.cjs",
+    "lint": "node node_modules/eslint/bin/eslint.js services/accounting/posting.service.ts services/accounting/__tests__/posting.service.test.ts \"app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx\" \"app/[locale]/(dashboard)/dashboard/accounting/journals/__tests__/page.test.tsx\""
+  },
+  "tests": {
+    "file": "evidence/suspense-reversal-final-v95.json",
+    "session": 84602,
+    "passed": 29,
+    "suites": 5,
+    "exitCode": 0
+  },
+  "before": {
+    "file": "lanes/environment/suspense-reversal-v95-before-a5a4aa0c-68f.json",
+    "defectReproduced": true,
+    "financialInvariantPassed": false
+  },
+  "after": {
+    "file": "lanes/environment/suspense-reversal-v95-after-931aa4ee-b5f.json",
+    "checks": 4,
+    "exitCode": 0,
+    "sourceStable": true,
+    "originalUnchanged": true
+  },
+  "browser": {
+    "file": "lanes/environment/suspense-reversal-v95-browser-065520f3-2d1.json",
+    "session": 95957,
+    "exitCode": 0,
+    "screenshots": "evidence/suspense-reversal-v95-screenshots",
+    "sourceStable": true,
+    "originalUnchanged": true
+  },
+  "typecheck": {
+    "session": 34054,
+    "exitCode": 0
+  },
+  "lint": {
+    "session": 45905,
+    "exitCode": 0,
+    "files": 4
+  },
+  "previousGoalTurn": "progress: v94 staged resumable alert worker; cutover held",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 229,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2781,
+      "tests": 981,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2374,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

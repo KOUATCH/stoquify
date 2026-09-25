@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-19T13:01:06.877Z",
+  "receipt": "digest-finance-3f8b4e6e-ebb2-4726-bc08-a99d4f8caa63.json",
+  "sourceHashes": {
+    "services/daily-habit/daily-habit-digest.service.ts": "6076866b86f93ecb7690ed3daf3b542cd044a3240baa28720350f609eff08593",
+    "services/daily-habit/daily-habit-source-visibility.ts": "b4505ef4f38ae4d6d50b1ba21ee163b640e7208b81af4f895d66ec3648143bc4",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e"
+  },
+  "focusedTests": [
+    "services/daily-habit/__tests__/daily-habit-digest.service.test.ts",
+    "services/daily-habit/__tests__/daily-habit-source-visibility.test.ts",
+    "services/modules/__tests__/module-entitlement.service.test.ts",
+    "services/agents/__tests__/command-tool-adapters.test.ts"
+  ],
+  "commands": {
+    "focused": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/daily-habit/__tests__/daily-habit-digest.service.test.ts services/daily-habit/__tests__/daily-habit-source-visibility.test.ts services/modules/__tests__/module-entitlement.service.test.ts services/agents/__tests__/command-tool-adapters.test.ts",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "lint": "node node_modules/eslint/bin/eslint.js services/daily-habit/daily-habit-digest.service.ts services/daily-habit/daily-habit-source-visibility.ts services/daily-habit/__tests__/daily-habit-digest.service.test.ts services/daily-habit/__tests__/daily-habit-source-visibility.test.ts",
+    "runtime": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-digest-finance-access.cjs"
+  },
+  "before": "9c18cb: explicit-empty grant still exposed Finance Digest; receipt 961a535d-d5ca-405b-8010-7c31f3d44e92",
+  "after": "a3bba0: 92 passed, 4 suites",
+  "lint": "b97d98 passed",
+  "diff": "071528 passed",
+  "typecheck": "332728 passed",
+  "runtime": "a42ef9 passed: 11 EN/FR service cases and 6 EN/FR browser cases",
+  "failedAttempts": [
+    "f2606b: Windows EPERM prevented baseline receipt; scoped approved rerun reproduced the defect",
+    "7ff142: 19 historical composition fixtures omitted the newly explicit read decisions; 41 passed",
+    "5d584c: localization fixture lacked payment permission; 64 passed",
+    "b8a1ca: wrong agent test path, 76 tests passed; correct path subsequently passed",
+    "34355463-dcac-441c-968e-7b73f035573f: browser used page title instead of Finance selector",
+    "bdd36e89-cf02-45ba-8d3f-da130276e0bf: verifier looked for Command links while Brief mode was selected"
+  ],
+  "completeWorkflowVerified": false
+}

@@ -15,6 +15,8 @@ jest.mock("@/services/modules/module-entitlement.service", () => ({
 jest.mock("@/services/operating-access/operating-access-scope.service", () => ({
   resolveOperatingAccessScope: jest.fn(),
 }))
+jest.mock("../reconciliation-run-preparation-evidence", () => ({ loadRunPreparationReceiptInTx: jest.fn() }))
+import { loadRunPreparationReceiptInTx } from "../reconciliation-run-preparation-evidence"
 
 import { readFileSync } from "fs"
 import { join } from "path"
@@ -139,6 +141,24 @@ describe("payment reconciliation sign-off command state service", () => {
     expect(query.select.providerAccount.select).not.toHaveProperty(
       "externalAccountId",
     )
+  })
+
+  it("withholds the signing command from an independently recorded preparer", async () => {
+    mockDb.reconciliationRun.findFirst.mockResolvedValue(readyRun({ metadata: { preparationReceiptId: "receipt" } }))
+    ;(loadRunPreparationReceiptInTx as jest.Mock).mockResolvedValue({ data: { preparedById: "checker-1" } })
+    expect(await getPaymentReconciliationSignOffCommandState(defaultInput())).toMatchObject({ state: "READ_ONLY", commandAllowed: false, reason: "PREPARER_CHECKER_REQUIRED" })
+    expect(loadRunPreparationReceiptInTx).toHaveBeenCalledWith(db, "org-1", "run-1", "receipt")
+  })
+  it("requires authentic retained preparation evidence before offering its command", async () => {
+    mockDb.reconciliationRun.findFirst.mockResolvedValue(readyRun({ metadata: { preparationReceiptId: "receipt" } }))
+    ;(loadRunPreparationReceiptInTx as jest.Mock).mockRejectedValue(new Error("Retained audit missing"))
+    await expect(getPaymentReconciliationSignOffCommandState(defaultInput())).rejects.toThrow("Retained audit missing")
+  })
+  it("allows an independent reviewer while keeping private preparation proof out of the candidate", async () => {
+    mockDb.reconciliationRun.findFirst.mockResolvedValue(readyRun({ metadata: { preparationReceiptId: "private-receipt" } }))
+    ;(loadRunPreparationReceiptInTx as jest.Mock).mockResolvedValue({ data: { preparedById: "another-preparer" } })
+    const state = await getPaymentReconciliationSignOffCommandState(defaultInput())
+    expect(state.commandAllowed).toBe(true); expect(JSON.stringify(state)).not.toContain("private-receipt")
   })
 
   it("establishes authority and read/write entitlement before source access", async () => {

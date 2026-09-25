@@ -1,0 +1,435 @@
+{
+  "recordedAt": "2026-09-05T12:12:27.805Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "dirtyTree": true,
+  "scope": "Final integration sources and supporting configuration; includes reused files and pre-existing edits. Not a whole-repository certification.",
+  "sources": [
+    {
+      "path": "package.json",
+      "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "f0fb757a153323532442459d44a34681a7f4c81c6c4324cf3bad4350bf627eb8"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "fdc54c81f7aeb4c266d8a0c3597d28a529dccddbade9a2a1317bf721df208827"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "99ba27d7fd62b78cc1e646e42c0d4d1d3dff7e53a7522947a3701f59db97f544"
+    },
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "d06d49f52e2752225c2388904d3146fa2f3d4b82d9b15f52fc2fb2cbfdfe269a"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "b3eb9fc17d973dfc7b70c3f3505ac81f54c0833a0484394710be1d4864dd9f79"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "324d6ad5fa0ec28329c68dcdd3c029ea4a03f76a46b932308c39c4ec0ece60d9"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "sha256": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc"
+    },
+    {
+      "path": "services/modules/__tests__/module-access-regressions.test.ts",
+      "sha256": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "8386932ec21e2fa1d2624d36cc012864457464589e087b6266b7f520f0f08372"
+    },
+    {
+      "path": "services/modules/__tests__/module-navigation.test.ts",
+      "sha256": "0b354d84a14420c1fe67b7ed9eec394260eb89329445c96fffe871a53d50991a"
+    },
+    {
+      "path": "services/modules/__tests__/module-transport.integration.test.ts",
+      "sha256": "b429064df5453dac57bc67178afe7a5cb3a4c05fa77eb05b9040c3b1a6fe661d"
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "09018a67087c32df2a1d99aa5487c8f3b2d5a44b90b9523d3a7918c7bdc0868b"
+    },
+    {
+      "path": "actions/modules/__tests__/module-control.actions.test.ts",
+      "sha256": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "41487885c6c4a80793a5723ec23585018150a1ef9883619775f5cfabec7b650d"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "67dabb7449dfb97c656a4f87df54a15034534f7b490056be6cc341a701721762"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "ef49055909595c84c5a16ffb2de43bed257e96fbe35092e6a122597f0b1c67f4"
+    },
+    {
+      "path": "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+      "sha256": "9b2740a4cec8a5a7a992c6cff0c0bd72d4d9aa3b101847195873092c4e21ce39"
+    },
+    {
+      "path": "components/modules/__tests__/TenantModuleActivationButton.test.tsx",
+      "sha256": "720915f30107842f0daea2998a7f211e1fab1bff242681a3818a90e6a8bd17a4"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "sha256": "09ba3c156ed0d00f27bc964671fee2b20e85edd0d7269dd903c0a22138831c13"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "87b4ceeec07f61dbf4d0e7daf2438371f908b227227dd2040b3a7bdd95ef27f2"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "4b998875ef69a4f3a635c2902fddd431c131219e1b00c30af5f0435256ee0bc0"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "ca426baa0072391a390550c735546c6fe5d031d415c9d2430a6ac2cab81401a0"
+    },
+    {
+      "path": "lib/modules/navigation.ts",
+      "sha256": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "sha256": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/loading.tsx",
+      "sha256": "137d531237b9399ad95c6fab981074bc3a1cb102acf718ae56faa69b98c65342"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/error.tsx",
+      "sha256": "67f27e55eb0c53f061bb515a19a3d35f76928ecae0fe87bafdd76fb8c3984c54"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "f52782b0edd2690de24cd72a954db64aa8eef459a9faac7c9d1c4763ca5a66cb"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "fd91930b5147ace040409c8f8f531c92d5929f1f0322b51772f06c363ea85377"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "e66b9f5b9ce3b6cf399d5beb272f2292ca9e3ee45710fb73ec8f5a805a101422"
+    },
+    {
+      "path": "scripts/run-modern-modules-postgres-smoke.js",
+      "sha256": "4f109a6b7ff551855f48295e5551cb0843c415fe67c29a4d0568248a6c590eca"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "8efee24a443cfabd6f778981a33195332d6aff8a71f401e6a6d45a6517156d82"
+    },
+    {
+      "path": "playwright.modern-modules.config.ts",
+      "sha256": "2fa1a8375fbf336079e7ceb1ee18ea83029474733ae131c4db89d7bf82777e7a"
+    },
+    {
+      "path": "tests/e2e/modern-modules.spec.ts",
+      "sha256": "f23007d4843d6291fabf37599500dade982b1de82f0419ef5de3a4aa0053031b"
+    },
+    {
+      "path": "what-next/module-system/execution-status.md",
+      "sha256": "c39d28f3fe705de6d1bce9fc19d4d71c0b6d3adf1613a891f5eb25d74bf49856"
+    }
+  ],
+  "documents": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md",
+      "sha256": "efb3e28b1494eb1007a7fa942ee40baed9454659733a59257ff37e3cadbf9074"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/DESIGN_SYSTEM_MAPPING.md",
+      "sha256": "7c2631cbbd71586d34fdf6616b00e72214013226629b0646b7eb9a5f3b593c4b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/FEATURE_STATUS.md",
+      "sha256": "c42153d41c53f26f9bc7f7358c0c4623428a62dc448ee48d60d575f201560054"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/VERIFICATION.md",
+      "sha256": "142e6540ced5b56ac37241c5339988ba3668527ead83cf9d7e8c45c60c4dff94"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/ROLLOUT_AND_RECOVERY.md",
+      "sha256": "5f8153e61052657d02a57c0cf2ee5844efba4f984a17c94bd1ab4b9a55d0fd21"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/USER_GUIDE.md",
+      "sha256": "7f4dffd2ae1b6f1ae55d043898c9a73314343a590b5dd3c2c983575366874235"
+    }
+  ],
+  "results": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/check-completion.json",
+      "sha256": "31ba6a201e180ecf6743764f526c47207de3895141eae6fb29047f6cb6614792"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/final-tests.json",
+      "sha256": "013d8f0fc4e19683d0ac059303eadbd7c24ab18c31aa02e15b6475756f323499"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/workbench-final-retry.json",
+      "sha256": "54af6eb16d14a5cb206a9dee42bd4fe0780c78b5e4e08799198df2a4e9a41f3b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-attempt-02.json",
+      "sha256": "f9f976cf38a539cea4ac36f4fa712daba14f5bfc9985383a2efc708fb1e3b1a7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-mobile-final.json",
+      "sha256": "e6db8d75c3909b4a3b016f5bee5220fe0cfd12882fd943e7f4fff38c5b4d3d3a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/modern-modules-postgres-smoke-46729149d363.json",
+      "sha256": "ea2391e9d54a26e9182957263fc818acb35a79f85cbb68f865b3bb95c2c0532b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/typecheck-final.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/changed-file-lint-final.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/migration-catalog.json",
+      "sha256": "fadc7f7c68d92e3ba5cee84c05dde162fa7082ee181db8e7c015fdf945add88b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/generated-client.json",
+      "sha256": "3a0444cefb200b1b1e3df63735553f43a8bf0ea18b95cb5a49dcfcd1bcfd643f"
+    }
+  ],
+  "screenshotEvidence": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-legacy-preservation.json",
+      "sha256": "fea0a53b31ac7212be73c8b2e6a48c9beae9bf5a58e43fa32ba88080723518a5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-legacy-preservation.png",
+      "sha256": "af3a180c1846326f557c48725ff60a2a5f14c344dc453ea50342eb924d7772f7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-permission-denied.json",
+      "sha256": "b390cceff78a1f90aec14277ead367564a95005686467d6d4bfe049f36f29b75"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-permission-denied.png",
+      "sha256": "20e0b682c2ce9d90c999f16e5db64339a38d327e1bfbdc4aa90a3c237df357d5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-builder.json",
+      "sha256": "436e2b7aaa1faeb6458588482f862b116ff7594cfa8eaed5edd20556ee2850f8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-builder.png",
+      "sha256": "4836922cf49b7d4c09a4b709fb5a0de005a2e66e5aeedbed2fc6ea058ed54158"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-history.json",
+      "sha256": "cbda68c1d0a35249a4aea0e92962586b8b4693267186d9b0ee3e084f36cb412b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-history.png",
+      "sha256": "060e1b2e4e67b2f5c2fb931d46c1659c8c9853f4f8b58f49cfb78ae6a6af94a0"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-review.json",
+      "sha256": "2d9240c2d67f4433ef7c43fa449e04f3d3d44fc2084dcb6da4a20c994810a3d1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-review.png",
+      "sha256": "5323a0741091f422af3969e6791074478077951b7222c1837d56e5b12e69bd6b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-workspace.json",
+      "sha256": "d4f96c7029fed754e1709219fea4101af2a28714826a6498ebaf8dcce18e7396"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-workspace.png",
+      "sha256": "e6e875f2222f4d71b9fed4266068968ebc34c998c64a31e3587bf7443b165e94"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-builder.json",
+      "sha256": "eb6a1f8050922b31d9f427001c4943d59d86df4b38a56265832d7e6c5f4f9ed6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-builder.png",
+      "sha256": "96808675db2510a6d9771a272533bf48f0e73cd08c8ed644635fb0f0b310bdb5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-history.json",
+      "sha256": "82a603207534f7e23d60bfe6b2fdde63e5940ca42e4bba0e6ff4e515e5b2d775"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-history.png",
+      "sha256": "15145855946267a7b80a1611aef9801078c08f0abcbb5b288034fd21906c05c2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-review.json",
+      "sha256": "942aae59e0a3bc7920fe88e66fe004c2afd7de6d2104a97350ce7c0c24398e78"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-review.png",
+      "sha256": "e9736fea498ffc9ecd9537f4762bfc4176f3697f22e4ce2e25040feef3d94a7a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-workspace.json",
+      "sha256": "b2496802e5d414ea679b9a7bb87ed1f2c27f20b798bb6fe5b578acaed656c5a0"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-workspace.png",
+      "sha256": "377b66039cdb318070975e29f56b91f5a0458aa1d159a15596120cfe2b4275fa"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-permission-denied.json",
+      "sha256": "3d9719a31069b64577826b93d2f2e9ef20654aa5d866adb231af4db6da40aa9f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-permission-denied.png",
+      "sha256": "10dd0221dc36ab0a59e1be020b8036cd4b0e96fadb5e98f94aaeb71d104a5e9b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-builder.json",
+      "sha256": "3ed9d0e8d36afafb3f4c476be8d0c55c4b564016dcf87919bfad0bb5fb28f727"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-builder.png",
+      "sha256": "086ee823fc3bba416a0f778513cb5ffd831f207885b6210088671aa9fdc9a513"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-history.json",
+      "sha256": "97daaa4153e984c351f6a8118450a407d19e0ee5f551444056fd42aded00ce8b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-history.png",
+      "sha256": "e3b51250abc4b233e9c2c1d3d2d868eb3313a73d3f2e5b13cb3e17952c61e2ec"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-review.json",
+      "sha256": "6b257413b1d3d56a49b90b57caff0988623f7b10dd5e85e6b172436e5197d512"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-review.png",
+      "sha256": "1216c1155382bfc64cab1fd7ec7cafbf6666a1270c3856b824abefd8b8683a36"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-workspace.json",
+      "sha256": "e376623a0c5f44bd98995c3396357c302ed6a0bcbac853ab3e479c37dcfe30bd"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-workspace.png",
+      "sha256": "0cb829793376b56233da5d627059bd33bb006c5c6fa7b604f747300a32ac062a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-builder.json",
+      "sha256": "de535b6afe86be39cadc13139969e4a69e2f9c0fc2b0fc54b8c12d43cdb1e723"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-builder.png",
+      "sha256": "e5871812308cf4179c0c404eb5dc38cea30487321154fc68c8a691f1693bcce9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-history.json",
+      "sha256": "d259f0c6dae3e3cbda5750f5f801d5db22e0d22f71c06f83680bd618f304c7da"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-history.png",
+      "sha256": "cd89cc8a0b50e22209a3969bcd96eb2e847aa2112bf3548f8700856ca0a183c4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-320.json",
+      "sha256": "73862895c9b9bb7a90bdfa1ab7a2e2952400c0327b03c8d866724702563cb99f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-320.png",
+      "sha256": "bb11faedf0b6e13d0c1a3c7efe5b8d3ce00803b58d572303593a420dfcf01e30"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-834.json",
+      "sha256": "55e79a6582db480299bbe66de28d68a7376a74dabcec28569914426715374197"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-834.png",
+      "sha256": "6308f91b87d06886b43615df02508521041f74fc0df9947c06919e0eb2c64a96"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-320.json",
+      "sha256": "7ad55af6c8d9fadd7d7b844f09dfe098749ec36d099cff714d03b4bd884fd02a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-320.png",
+      "sha256": "e5617cc2392c4366056e7860b8cf7d1305a346ae413ab129cd4e80407174a98a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-834.json",
+      "sha256": "e17eaac534c254aed878b764ae3594828b7210d1f2b9dc2d0d60a4ebee249f72"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-834.png",
+      "sha256": "df7cbe1c5d7a9ff7d7e54768157cb6e003566e445da8fb4ed017c1e7d2aa0d3e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review.json",
+      "sha256": "984eeeed8b77f603f9ca55dd165ae6da92d870522e0255cbb5f2c380f049ddfe"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review.png",
+      "sha256": "5f4223b38432404496ad6fa73f52d79f2fd3f0e9e80dcebf78b9d72494370507"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-workspace.json",
+      "sha256": "6ef5260977e44a7fd41fbc19f9916dd9338ed28d25a8bf9c3cfe2e3f5b63c733"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-workspace.png",
+      "sha256": "b4581a9d18a1d3f7a00811f5c3190d18c518de61e958ea3014845a542e17623b"
+    }
+  ]
+}

@@ -210,6 +210,18 @@ describe("customer dashboard server pages", () => {
     mockObserveModuleAccess.mockResolvedValue({ allowed: true });
   });
 
+  it.each([
+    ["FORBIDDEN", "Ce parcours n’est pas disponible pour ce rôle", "permission_denied"],
+    ["NO_ACTIVE_ORG", "Ce parcours nécessite une organisation active", "no_active_org"],
+  ])("explains %s in French before loading customer data", async (code, title, kind) => {
+    mockRequireAllPermissions.mockRejectedValue(new RbacError("Unavailable", code, 403));
+    render(await CustomersPage({ params: Promise.resolve({ locale: "fr" }) }));
+    expect(screen.getByRole("heading", { name: title })).toBeInTheDocument();
+    expect(screen.getByRole("main")).toHaveAttribute("data-kind", kind);
+    expect(mockObserveModuleAccess).not.toHaveBeenCalled();
+    expect(mockCustomerManagementDashboard).not.toHaveBeenCalled();
+  });
+
   it.each(routeCases)(
     "requires the complete permission set before rendering the tenant-scoped $name page",
     async ({ permissions, renderPage, expectedProps }) => {

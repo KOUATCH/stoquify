@@ -5,7 +5,13 @@ import { routeByKey, withInventorySurfaceAccess } from "../inventory-route-acces
 async function MovementsPageImpl() {
   await checkPermission("inventory.levels.read")
 
-  return <InventoryMovementHistoryWorkbench />
+  return (
+    <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+      <div className="dashboard-landing-content">
+        <InventoryMovementHistoryWorkbench />
+      </div>
+    </div>
+  )
 }
 
 

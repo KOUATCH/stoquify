@@ -1,0 +1,21 @@
+/* Keep compact white labels readable over both ends of the brand gradient. */
+.root :global(.dashboard-button-primary) {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dash-brand) 74%, black),
+    color-mix(in srgb, var(--dash-brand-strong) 74%, black)
+  );
+}
+
+.root :global(.dashboard-button-primary):hover {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dash-brand) 68%, black),
+    color-mix(in srgb, var(--dash-brand-strong) 68%, black)
+  );
+}
+
+.root :global(.dashboard-button-primary):focus-visible {
+  outline: 2px solid var(--dash-text);
+  outline-offset: 3px;
+}

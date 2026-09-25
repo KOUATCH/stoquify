@@ -1,0 +1,32 @@
+{
+  "generatedAt": "2026-09-06T10:50:42.568Z",
+  "boundary": "isolated source execution; synthetic DB and RBAC; no network or database",
+  "sources": {
+    "services/analytics/sales-analytics.service.ts": "16042faff16c1e2fcacc86a9f3d14dabb129d879a0fa0f6bbdbc7d0b4856a772",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-data-access.ts": "1cb4f0988020dab4b9499d228310f0ad014196ad22bd573dece37fab54148bb1",
+    "app/[locale]/(dashboard)/dashboard/analytics/analytics-route-access.tsx": "6d18c4adb03de5150eedd9d983c778d842cfe85ab794133377f0f4480c5342bb"
+  },
+  "unfinishedCartCountedAsSale": {
+    "predicate": {
+      "not": "CANCELLED"
+    },
+    "expectedFinalizedSales": 100,
+    "observedSales": 1000,
+    "expectedFinalizedTransactions": 1,
+    "observedTransactions": 2,
+    "reproduced": true
+  },
+  "businessPulseDefaults": {
+    "observedCurrency": "XAF",
+    "observedPeriodStart": "2026-09-06T00:00:00.000Z",
+    "configuredHarnessTimezone": "UTC",
+    "intendedDoualaPeriodStart": "2026-09-05T23:00:00.000Z",
+    "boundary": "Composer receives no organization currency or timezone; production wrapper also supplies neither."
+  },
+  "analyticsRouteEntitlementOmission": {
+    "rbacPermissionGranted": true,
+    "syntheticTenantAnalyticsEntitlement": "DISABLED",
+    "downstreamReadInvoked": true,
+    "boundary": "Wrapper-level reproduction; not an authenticated browser or deployed middleware test."
+  }
+}

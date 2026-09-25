@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-09-07",
+  "workspace": "E:/ohada saas/Focused projects/stoquify",
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false --incremental false",
+    "exitCode": 0,
+    "terminalReceipt": "4408b3",
+    "scope": "Existing tsconfig and its pre-existing exclusions. Final rerun after owned app startup; no full-build claim."
+  },
+  "lint": {
+    "command": "node node_modules/eslint/bin/eslint.js --no-cache <files>",
+    "exitCode": 0,
+    "terminalReceipt": "fa7f7c",
+    "files": [
+      "services/accounting/customer-statement-history.service.ts",
+      "actions/accounting/customer-statement-history.actions.ts",
+      "components/customers/CustomerStatementHistory.tsx",
+      "components/customers/CustomerStatementWorkflow.tsx",
+      "hooks/customer-statement-request.ts",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx",
+      "app/[locale]/(dashboard)/dashboard/customers/customers-route-data-access.ts",
+      "services/accounting/__tests__/customer-statement-history.service.test.ts",
+      "actions/accounting/__tests__/customer-statement-history.actions.test.ts",
+      "components/customers/__tests__/CustomerStatementHistory.test.tsx",
+      "components/customers/__tests__/CustomerStatementWorkflow.test.tsx",
+      "hooks/__tests__/customer-statement-request.test.ts",
+      "app/[locale]/(dashboard)/dashboard/customers/[id]/statement/__tests__/page.test.tsx"
+    ]
+  },
+  "tests": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath <seven paths recorded in result> --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-history-tests-03.json",
+    "exitCode": 0,
+    "terminalReceipt": "09163f",
+    "file": "evidence/statement-history-tests-03.json",
+    "passed": 48,
+    "suites": 7
+  },
+  "accessRegression": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath app/[locale]/(dashboard)/dashboard/customers/__tests__/route-audit.test.ts app/[locale]/(dashboard)/dashboard/customers/__tests__/pages.test.tsx services/modules/__tests__/module-entitlement.service.test.ts actions/modules/__tests__/module-control.actions.test.ts --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/statement-history-access-regression-01.json",
+    "exitCode": 0,
+    "terminalReceipt": "aca28b",
+    "passed": 29,
+    "suites": 4
+  },
+  "postgres": {
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-history-postgres.cjs",
+    "file": "lanes/environment/statement-history-postgres-cef5d114-085.json",
+    "exitCode": 0,
+    "terminalReceipt": "558051",
+    "checks": 5
+  },
+  "browser": {
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-statement-history-browser.cjs statement-history-postgres-cef5d114-085.json",
+    "exitCode": 0,
+    "terminalReceipt": "bde72e",
+    "file": "lanes/environment/statement-history-browser-ea4be3e4-82f.json",
+    "journeys": 2,
+    "widthTextCases": 16,
+    "screenshots": 32,
+    "visualReview": "Inspected actual FR 320px/200% action wrapping, EN read-only history and FR revocation screenshot. Revocation screenshot captures the retained old list while its successful follow-up refresh is loading; current database status and subsequent read-only screenshot provide final state evidence. Native zoom and screen readers not exercised. Existing header fragments run together ('puispartagez'); record for a subsequent wording correction."
+  },
+  "baseline": {
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/capture-source-baseline.cjs",
+    "exitCode": 0,
+    "terminalReceipt": "c044a2",
+    "file": "evidence/source-baseline-v41.json"
+  }
+}

@@ -1,0 +1,1514 @@
+{
+  "recordedAt": "2026-09-05T14:14:01.661Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "dirtyTree": true,
+  "scope": "Native module composition/lifecycle sources and their verification inputs. Includes retained pre-existing edits; no whole-repository or production certification. Earlier groups predate the targeted localization extension, which has separate focused verification.",
+  "sources": [
+    {
+      "path": ".gitignore",
+      "sha256": "fdc54c81f7aeb4c266d8a0c3597d28a529dccddbade9a2a1317bf721df208827"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "2ae12d7a4b2d95f1c5b5100678cfc8dff50575d3ee8d9be53ed054d74de9249d"
+    },
+    {
+      "path": "actions/modules/__tests__/module-control.actions.test.ts",
+      "sha256": "6cf8ad060c8b3ab18a0a0da10c5b4723ad3190ba978e76f3f6d23ab7d328b6bf"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "eecb236e32167fedb1dacd27151599fc42590823078fe4d5cb62a2d5cbcb2aff"
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/__tests__/purchaseOrderSystemAction.test.ts",
+      "sha256": "f119bbcfb3112d7771b940870baaf17ab2c9b12e9424dbb95274191852f77c33"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "ad2f77b1b50648dd6329d481ed59a3aa494b115ceaf888e97d73bdcc04b4cd20"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/layout.tsx",
+      "sha256": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/__tests__/page.test.tsx",
+      "sha256": "b853a62aecc8eab8b933247f80f9a0277a66b6be491930ebcd57c8d41e4d407f"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx",
+      "sha256": "733ad820495ce389ca99266826f3a702b9725b81ec2eb16634468c5c322f8a48"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/error.tsx",
+      "sha256": "67f27e55eb0c53f061bb515a19a3d35f76928ecae0fe87bafdd76fb8c3984c54"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/loading.tsx",
+      "sha256": "137d531237b9399ad95c6fab981074bc3a1cb102acf718ae56faa69b98c65342"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "components/dashboard/Navbar.tsx",
+      "sha256": "4b998875ef69a4f3a635c2902fddd431c131219e1b00c30af5f0435256ee0bc0"
+    },
+    {
+      "path": "components/dashboard/Sidebar.tsx",
+      "sha256": "87b4ceeec07f61dbf4d0e7daf2438371f908b227227dd2040b3a7bdd95ef27f2"
+    },
+    {
+      "path": "components/inventory/transfers/CreateTransferModal.tsx",
+      "sha256": "3f3d38a53337d4d4823305f759cc7ea9554f235185bcb5290dc2c5cf1e9834fb"
+    },
+    {
+      "path": "components/inventory/transfers/__tests__/CreateTransferModal.module-stop.test.tsx",
+      "sha256": "0aea85d176a01294958a0cc958b0facc78126045a07408003193c414b93fd81a"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "22dc997434afc2d7f5d2332e226e7fe3a41887f9ecad7b3bcbf3e03d0d96fc06"
+    },
+    {
+      "path": "components/modules/TenantModuleActivationButton.tsx",
+      "sha256": "5c7512eae51f34bf1162c666d46fffed8fcf5eabecb1da5a03913c450ccf65ca"
+    },
+    {
+      "path": "components/modules/__tests__/ModuleCompositionWorkbench.test.tsx",
+      "sha256": "6318a743f0db6bdc3f7232c2d714e99a0910c6d9c638ebd4af416f155461b718"
+    },
+    {
+      "path": "components/modules/__tests__/TenantModuleActivationButton.test.tsx",
+      "sha256": "720915f30107842f0daea2998a7f211e1fab1bff242681a3818a90e6a8bd17a4"
+    },
+    {
+      "path": "components/modules/module-composition.module.css",
+      "sha256": "8766c25d759076bcd8d2de7d150e671dbb7dfb46bd66568c3833260a637552a0"
+    },
+    {
+      "path": "components/payroll/PayrollRunActionPanel.tsx",
+      "sha256": "ddd0859c93420bee1467c5f554352d32bb7b31393d34c1c3c63bf5fa13ead800"
+    },
+    {
+      "path": "components/payroll/__tests__/PayrollRunWorkbench.test.tsx",
+      "sha256": "82885b770d6c78cbb3be84db357824ec19ed90264e3744e10206b3844c7ec392"
+    },
+    {
+      "path": "components/purchase-orders/ModernCreatePurchaseOrderForm.tsx",
+      "sha256": "08408c0a9e955b98ea8d8f040bea48eccc0e005d826937dfdc4398127506094b"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "sha256": "09ba3c156ed0d00f27bc964671fee2b20e85edd0d7269dd903c0a22138831c13"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "ca426baa0072391a390550c735546c6fe5d031d415c9d2430a6ac2cab81401a0"
+    },
+    {
+      "path": "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+      "sha256": "0dae15f305540da7e5694265cb85a4bada6d06d881dad4f289f644a812539a6e"
+    },
+    {
+      "path": "hooks/__tests__/useTransferQueries.module-stop.test.tsx",
+      "sha256": "4e49af9d1a92dfbafad354ae8d31c9b265abc3325f86f262816e0284316bf244"
+    },
+    {
+      "path": "hooks/payroll/usePayrollWorkbench.ts",
+      "sha256": "6fc19e3dafe74f4960e439519bf06a115befcab5fc743a7e7ef85888b975206e"
+    },
+    {
+      "path": "hooks/useRecentPurchaseOrderQueries.ts",
+      "sha256": "d2fc29309b0387a133d19f8e00f76e556dc3b6908c86c9f25279c1057aca076f"
+    },
+    {
+      "path": "hooks/useTransferQueries.ts",
+      "sha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1"
+    },
+    {
+      "path": "lib/error-handling/server-action-wrapper.ts",
+      "sha256": "0d3c4b992cbdbf944459c2af6c7f415f0379a154e70b86b127002583a6a4fe7d"
+    },
+    {
+      "path": "lib/error-handling/types.ts",
+      "sha256": "93e12bdd1e2c8b190459d13d522bdc80988b7534767dcea0a3dfad2efeb91b5b"
+    },
+    {
+      "path": "lib/modules/__tests__/module-operation-error.test.ts",
+      "sha256": "f5b1d81ef1d2f184ece213f0af982fda26a4bf9c6ab35aec370d6225f931d506"
+    },
+    {
+      "path": "lib/modules/module-operation-error.ts",
+      "sha256": "b61ed2a4d548d8808c851af2f05bd3712c947fa47ead7d837227cfdd7071c06f"
+    },
+    {
+      "path": "lib/modules/navigation.ts",
+      "sha256": "d56682d69ea392f2b219e089e6a435271cddb847d387a80e22789f4769ef4932"
+    },
+    {
+      "path": "lib/security/__tests__/rbac-permissions.test.ts",
+      "sha256": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca"
+    },
+    {
+      "path": "lib/security/rbac-permissions.ts",
+      "sha256": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "1cb547f672147aa69733eb753e9e6e6d4d099b1488ad7de66c18357527385d01"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "529dc6fb533505c65474c1b54386e9c3c2c261146dd15618a7cdec57a37e4d7c"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde"
+    },
+    {
+      "path": "playwright.modern-modules.config.ts",
+      "sha256": "8dcdd148e8b0a77f9a982ab2e3a91a20df5dda38810e2a691139777516bb6e63"
+    },
+    {
+      "path": "prisma/migration-catalog-manifest.json",
+      "sha256": "c931a56edbcd535c812e1442aa1261917e4ccf8442025c160a9a9940b17acc30"
+    },
+    {
+      "path": "prisma/migrations/20260905170000_add_tenant_module_composition/migration.sql",
+      "sha256": "4629a05806b3df4e44edaef9dd182fe61d0fdae22e03c1dd8774794695efa9bb"
+    },
+    {
+      "path": "prisma/migrations/20260905173000_protect_module_configuration_authority/migration.sql",
+      "sha256": "92e3735d7c6062492835acde0ea0dc95b208d0774d2bb35d0b5f5faa6698bb66"
+    },
+    {
+      "path": "prisma/migrations/20260905200000_add_module_lifecycle_command_state/migration.sql",
+      "sha256": "dab4268f138e4d42f8650e850c79252fd9cce4cf5dc0628829bd0d410c439e73"
+    },
+    {
+      "path": "prisma/migrations/20260905200100_add_module_lifecycle/migration.sql",
+      "sha256": "142eea7ace855f18c05de41486bf94c5702aa6179106a7874e33a2613be81d3c"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "scripts/__tests__/module-surface-inventory.test.js",
+      "sha256": "55e96fdaaa6bf423a8209130b034ca9084cf40433472c1a08cf6fde26472031b"
+    },
+    {
+      "path": "scripts/modern-modules-lifecycle-fixture.ts",
+      "sha256": "a5bd229bb1e487938c3befa3edb2f24a793e2cf1925f16466c85ec546f4905d2"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+    },
+    {
+      "path": "scripts/modern-modules-postgres-smoke.ts",
+      "sha256": "1261cf312e5200a71a0131cf67e7e1409315cf33d8d470f0cc1e308e56d06bfb"
+    },
+    {
+      "path": "scripts/module-surface-inventory.js",
+      "sha256": "75e43fb85fc74535473a52811037a099dff27a125d061c90a3469dddf368d2e2"
+    },
+    {
+      "path": "scripts/run-modern-modules-postgres-smoke.js",
+      "sha256": "c3bfcb88b36b85034c248a6818ae64df527a11644f8821f02f00a08edff06fb6"
+    },
+    {
+      "path": "services/_shared/__tests__/protect.test.ts",
+      "sha256": "d6bf7d5a69aba6f2ea6b4b8b31ec52a0509155718fb312bf531ecc86c364fc4d"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+    },
+    {
+      "path": "services/accounting/__tests__/manual-journal.test.ts",
+      "sha256": "2077478a0ceb2ba413f4d378f7f7f3c57eb3479fc1c0112823f94e40a2357d5a"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-adjustment.service.test.ts",
+      "sha256": "1b52254495fb3194360da684f3facba764045a669ac6318b43d20c5a924bae26"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-count.service.test.ts",
+      "sha256": "00396afa26bd9de41d039cbcdd11379c1b35fb20c271d654f7d019370754ea55"
+    },
+    {
+      "path": "services/inventory/__tests__/inventory-transfer.service.test.ts",
+      "sha256": "8d9bc16786160c7ab00039564f792dc1268bd88056dfd9667ac51ec200f221bf"
+    },
+    {
+      "path": "services/inventory/inventory-adjustment.service.ts",
+      "sha256": "b2b99b3b868ca33ba13b3f9e6610c21a8a879ddcf7beb0ecac766153e8b6d6fb"
+    },
+    {
+      "path": "services/inventory/inventory-count.service.ts",
+      "sha256": "0476fbb5691b41a0965a4186842b88fdc3f801c34ea94cbc7a32d1d0bc70517e"
+    },
+    {
+      "path": "services/inventory/inventory-transfer.service.ts",
+      "sha256": "ad1aee0a3cb2deb570581600eaf19125962f1ffd89835845a20937b8310015d3"
+    },
+    {
+      "path": "services/modules/__tests__/module-access-regressions.test.ts",
+      "sha256": "fc6885eec3004794fd89859735f708f43c2c79667121c80b4c87f1b0aca7422b"
+    },
+    {
+      "path": "services/modules/__tests__/module-admission.service.test.ts",
+      "sha256": "7166ff54e9379e3aefdc17ba1cafd853707e327de54c53b8c955268bb87f1879"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "9189fe3acf416afff975c5f39947c23668f724521cfc3627fc212719b5737724"
+    },
+    {
+      "path": "services/modules/__tests__/module-entitlement.service.test.ts",
+      "sha256": "1b7f6ab415060b995d0dcd34bc128edee83ee992a40514e88cb324c7e0918ffc"
+    },
+    {
+      "path": "services/modules/__tests__/module-inventory-continuation.service.test.ts",
+      "sha256": "8d674e95b459d9422bccb9e0183825f56569a5e1b7dcd7cbbef2ff3a9fb467bd"
+    },
+    {
+      "path": "services/modules/__tests__/module-lifecycle-readiness.service.test.ts",
+      "sha256": "77caaf6191a54a4b861387871c62d1a2c0d1705650b2aac720f96c8506967999"
+    },
+    {
+      "path": "services/modules/__tests__/module-navigation.test.ts",
+      "sha256": "0b354d84a14420c1fe67b7ed9eec394260eb89329445c96fffe871a53d50991a"
+    },
+    {
+      "path": "services/modules/__tests__/module-reconciliation-obligations.postgres.test.ts",
+      "sha256": "9468fdd9949a1ed8e392181c455a4b70e38956bc16c7a4c55496aa559ed52e7a"
+    },
+    {
+      "path": "services/modules/__tests__/module-reconciliation-obligations.service.test.ts",
+      "sha256": "1d9862e6dca138a3b326014acc2e234227a11535ec7611db86ee010685817a9a"
+    },
+    {
+      "path": "services/modules/__tests__/module-stop-policy.service.test.ts",
+      "sha256": "ed650eeee3123ae1c95047cf49fd83c8307f30b47a92cf049365fae4fec75a5c"
+    },
+    {
+      "path": "services/modules/__tests__/module-transport.integration.test.ts",
+      "sha256": "b429064df5453dac57bc67178afe7a5cb3a4c05fa77eb05b9040c3b1a6fe661d"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "2dd910be6c62d976487e8f5e7ee1e6a3685b39ed9fb0fbc22f65cb19ffebe8a1"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "a16a5913ad9fd1f09a7958b12df2cea95cc0f358ef253afb654ae154d495263b"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04"
+    },
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/modules/module-inventory-continuation.service.ts",
+      "sha256": "f0b8de285912fcea9c566bd09f55eecb5fa6cf8c0d418d0cfc9c3ffc8e908820"
+    },
+    {
+      "path": "services/modules/module-lifecycle-readiness.service.ts",
+      "sha256": "96e7c9931d48548c9d70fcebc0a89cc86d2e66a00f0a2edf9d762b993936ca01"
+    },
+    {
+      "path": "services/modules/module-lifecycle.service.ts",
+      "sha256": "3a5aeec79fa21f6ba15e122f74f139c6040d05deaabf684855450d5ebb2cd19b"
+    },
+    {
+      "path": "services/modules/module-navigation.service.ts",
+      "sha256": "58edab16ef358ee155b70c70d91b7ef98dc1fd4ac6ed38aca202c4494909cfdf"
+    },
+    {
+      "path": "services/modules/module-reconciliation-obligations.service.ts",
+      "sha256": "38ce6fe4b3f74ab85199227eb7235177e0733a17e1ce1faf672ca8b40f82d0d6"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "4cf58a614082f79135a55bdad0dc7f090c7a47517b0a8aa4262f53d6e6560439"
+    },
+    {
+      "path": "services/order-to-cash/__tests__/delivery-order.service.test.ts",
+      "sha256": "3849ac48a555292ddccdd425d1988a4d6fa0d30dece8e3ef2bc675c18127e61e"
+    },
+    {
+      "path": "services/order-to-cash/delivery-order.service.ts",
+      "sha256": "f7529c1f9c3acd0080c3a8190a57bbfebf477622861e4415f7a9a45f8e71a4ec"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-control.service.test.ts",
+      "sha256": "8f60aeee129132419a0da707d9843ffcfa6594b06d16a065b0653ffa389eb472"
+    },
+    {
+      "path": "services/payroll/__tests__/payroll-setup-readiness.service.test.ts",
+      "sha256": "b8f7960b12e9087852e91a42e5f7b2ce9220165aec8d0c0bc3af90066efedb58"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9"
+    },
+    {
+      "path": "services/payroll/payroll-setup-readiness.service.ts",
+      "sha256": "28c53d5da7ea67f5171846189109edac2164812ef8bea1c3cc1d192bccebc292"
+    },
+    {
+      "path": "services/pos/__tests__/offline-sync.service.test.ts",
+      "sha256": "337b9259c5931f9c3b3f9a7ded70f83012c9cf5ae53d84a3361432ed40672584"
+    },
+    {
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "sha256": "0f02fb15f53cb9a3c6e8d0525426a13dba81d7dab4055988618874f2da55c47d"
+    },
+    {
+      "path": "services/pos/pos.service.ts",
+      "sha256": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22"
+    },
+    {
+      "path": "services/purchase-order/__tests__/purchase-order.service.test.ts",
+      "sha256": "1aa833a4040c08f733b0ee6139a16ce615a338d884e114cf8d7b7f167dbcb115"
+    },
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "7c6c366c1b6c0fda87feba20d905adebe6f9d5bbeb5ab8d39242abaa9ca56108"
+    },
+    {
+      "path": "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "sha256": "ce3b9ad0a82153d8c06ebf5ee807a053ecdd367d0460632e72423c4686bcde90"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-run.service.ts",
+      "sha256": "0d8c80ef828dd406ade1632f4d250bda1a8906d7118340465c0d22cd42e64a15"
+    },
+    {
+      "path": "tests/e2e/modern-modules.spec.ts",
+      "sha256": "d47af5e915e254fc888a7f45438481dea5be90882ec3c2feff41fe8b0ab61ba8"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "f0fb757a153323532442459d44a34681a7f4c81c6c4324cf3bad4350bf627eb8"
+    },
+    {
+      "path": "types/purchase-orders-system-types.ts",
+      "sha256": "869eb5d3192c645ceedd160d7089735777dd42a146f810b4066783389a859806"
+    },
+    {
+      "path": "what-next/module-system/execution-status.md",
+      "sha256": "c39d28f3fe705de6d1bce9fc19d4d71c0b6d3adf1613a891f5eb25d74bf49856"
+    }
+  ],
+  "documents": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/IMPLEMENTATION_REPORT.md",
+      "sha256": "c2fd26de0316d1cec654e862706d5b4f88303e6be28f45ac592a87233a9dadad"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/DESIGN_SYSTEM_MAPPING.md",
+      "sha256": "6e85f7c0f062f170fc1bea6f00f4640a32d34e2198b195ebb67352d8764876eb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/FEATURE_STATUS.md",
+      "sha256": "12400bfda26f7aa651cf11c2f591fa7edb6ca58ad5b988089734e569b05f603b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/VERIFICATION.md",
+      "sha256": "7156512f075c5d230dd206507d06aff8b185dfd322b663352f0fefc3b75f59aa"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/ROLLOUT_AND_RECOVERY.md",
+      "sha256": "158b13ea21dfbf6f1b49a5a94737bbad409c3f01d4f7502adeb689fe72765e19"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/USER_GUIDE.md",
+      "sha256": "92a72052cae829180b0fa12ac0b322cc7f468f908b5e7c84a89c6435eebbfbd5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/COMPLETION_AUDIT.md",
+      "sha256": "0698fdd09289d9f3b5a9c072bb8127b8dcdb79c27ae2019ce6f36d54354fc19d"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/baseline-commit.txt",
+      "sha256": "9aec675e30e5ccc22b68c606efaca754a7cd2804ecc836e9f139e5f442e63aa3"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/baseline-time.txt",
+      "sha256": "65be2af9e510f763043ac8a7fc47a37e11c811e389d96e70efb0a78535f29350"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/baseline-working-tree.txt",
+      "sha256": "74da5946d55eeddca16bb1b72143b42559623fc4c7230227fa74c444cc6f749d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-attempt-01.json",
+      "sha256": "5c9bef7f8ec916d77e620860c99a192a5cdda2bfc3148588b5083cd2542dcd7e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-attempt-02.json",
+      "sha256": "f9f976cf38a539cea4ac36f4fa712daba14f5bfc9985383a2efc708fb1e3b1a7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-mobile-final.json",
+      "sha256": "e6db8d75c3909b4a3b016f5bee5220fe0cfd12882fd943e7f4fff38c5b4d3d3a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-before-scroll-capture-fix.json",
+      "sha256": "8b59b717693c421a90caeb863f52bf75905f27522ab2f50f5bdbbb997d77ab5f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-disclosure-test-omission.json",
+      "sha256": "2096589c1c94f7d67ff21e659a1053cfae223cc42e322912297ca2cab9036465"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-lifecycle-full.json",
+      "sha256": "acb7c6ecbbee4ef0a0bc036ffeed65f5d86210d053ecdc62f005e3a9fc74f922"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-mobile-capture-final.json",
+      "sha256": "9d0d314587c4ac3b3970244b77e23058b39b4e845dfe623c8c7515c0be7cecc5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-stopped-work-fr-before-capture-timing.json",
+      "sha256": "eadd975c855566cec976e9c954637dae836c09360329890ddebc910d32ab7f48"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-stopped-work-fr-dev-hydration-error.json",
+      "sha256": "24f123f4ed70770f7924e1f0bcefa6e327a936c716e81c3e1024cae571b466eb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-stopped-work-fr-first-load-timeout.json",
+      "sha256": "2ae742eb7aa39db88b5852a102d743559748740a381f5eec47aea4a990f89990"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-stopped-work-fr-notice-occluded.json",
+      "sha256": "5fb9bffd918241887e46e75046430516bdcda6ae04644f5e361b2c9fd95988b8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-stopped-work-fr-unknown-route-permission.json",
+      "sha256": "0df163ad431855b62634fb3120da9cdf3c2dfe0847a921754d78d58d8c6d6ce2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results-stopped-work-fr.json",
+      "sha256": "54f30dd51339ab3485e1f63a839349d7059c5eb685ee5d5f0569ccb1a44bed4c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/browser-results.json",
+      "sha256": "54f30dd51339ab3485e1f63a839349d7059c5eb685ee5d5f0569ccb1a44bed4c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/changed-file-lint-final.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/changed-file-lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/check-completion.json",
+      "sha256": "31ba6a201e180ecf6743764f526c47207de3895141eae6fb29047f6cb6614792"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/controls-migration-replay.txt",
+      "sha256": "331f552ea6326ac80cb3dc26a8d039444e814cff1ee095b0a9ef3b47d3e6a4a9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/final-tests.json",
+      "sha256": "013d8f0fc4e19683d0ac059303eadbd7c24ab18c31aa02e15b6475756f323499"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/final-working-tree.txt",
+      "sha256": "e4e37430dd5475ed2482af0151abb1ab8a726202a3f2d90be91ea18489bf092b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/generated-client.json",
+      "sha256": "3a0444cefb200b1b1e3df63735553f43a8bf0ea18b95cb5a49dcfcd1bcfd643f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/isolated-authority-migration.txt",
+      "sha256": "f246ac6862892be48f2397b21da988a5ba34fae16f0d61527931a3d7d1b01309"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/isolated-migration-replay.txt",
+      "sha256": "7c37f95e7c29d75d2d99e414c36c1779f5f5b9471adfd089503c501bc87304a3"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/isolated-seed.txt",
+      "sha256": "8ec71827210bfd4f2accabd640cc463fccdcd2aeee8f858f3aa91d01d34c97dc"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/capture-driver-checks.json",
+      "sha256": "02b702aa6d64045f6d61bbe04bd26e984b36b34831fb89a7cb739d187a4589f5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/capture-driver-lint-receipt.json",
+      "sha256": "e5d76b6d3b6e4cf9ca39f9d2f4cbce581f5b45e427d8478347e43f63b1eff0ac"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/capture-driver-lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/capture-driver-typecheck-receipt.json",
+      "sha256": "15c650d92ff68a9c92b589233c902d8acd73b3219159ea160ffbeb2c83d12d19"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/capture-driver-typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/changed-source-lint-receipt.json",
+      "sha256": "d4a11fdc47ca65f426733cbeeed726e9f3e79cbfea07d614e48ef4392d554a1f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/changed-source-lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/core-tests-receipt.json",
+      "sha256": "e8ffe4968de65d4cdbae6342ff486410b681d82212bdc97764309c27cf475baf"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/core-tests.json",
+      "sha256": "9f339aab87a1b7912b2c5128cb8f989d7c7f87d203b1df49b467910a557a2d8f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/core-tests.txt",
+      "sha256": "4a5bd716f36fa159cedebedaab993b035b16bc3259cda0db3f14e28fdb7d942d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/domain-admission-tests.json",
+      "sha256": "10c458f087b6fd9354c1cf781b3e37b1f941603afe7c2179e90c284297e48531"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/final-checks.json",
+      "sha256": "32bd0cd6e34c66e59ac5b15d4302bcb1377329fbecc8b039a0724d086d6e17a8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/final-localized-typecheck-receipt.json",
+      "sha256": "0d1949947e28437c70f3d03329e05346db04474f99c4ab607768884a238440c1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/final-localized-typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/FINAL_VERIFICATION_BINDINGS.json",
+      "sha256": "852f2c1d4d674d5c625d5b1db69de30e5c3ace64c904f0c1f207e8811a931f0f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/inline-feedback-typecheck-receipt.json",
+      "sha256": "c9dbe3df3c8aecbf291b717317d77e5901ef53c399ece9f70d975494dcdad392"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/inline-feedback-typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/inventory-admission-tests-final.json",
+      "sha256": "aa0d174dacef7bbc8ced73bc05ebfc4cccc2590b760c9da414240ff3b20faf79"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/isolated-migrations.json",
+      "sha256": "0eb7d1d89af08a54926cb84ed18ba4bdf4fc8ba5adb65ab230a25eeaa4a02ea5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/module-surfaces-final.json",
+      "sha256": "6e717925fd30f856d25c1f9e33dcdb44ce9c286bfc3279fe02a3cf86c80710c7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/module-surfaces-final.md",
+      "sha256": "aa0f602fa891961bbc8a6b653323e2d51ebe047ac5580825474c8e732c76cf4a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/module-surfaces.json",
+      "sha256": "d204955ef7c056a54dec7489305dfc08ca9ea9105a2fed696db64c8457d79764"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/module-surfaces.md",
+      "sha256": "af6f7f407b4c68f2c5739f23c1e9d434d1dc6f3b1c7958843f9b34dacaf1e363"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-continuation-proposed.patch",
+      "sha256": "ec1436549425a8e06e232d7684af14e1184ce23d4861bd1148ad8e278224bdcc"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/BASE_SOURCE_HASHES.json",
+      "sha256": "f0405d061a9b91fdc4fe0a8f26aee661c52846cee62c43cbab57b937e16caa7f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/CANDIDATE_MANIFEST.json",
+      "sha256": "6824143c4bd7e96e14d013bc13fc629416a684520f5f1d3dc6cec76f37b8e902"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/FINAL_TEXT_CHECK.json",
+      "sha256": "efc9dba793c5f7a23b22ba2608ad5bd7a3ddf042969b83b29b334e0e2a86db17"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/offline-continuation-candidate.patch",
+      "sha256": "ea5faa4087e2759e84bd179ab4528b7f0901f735007d66bfd1be87733981bb87"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/prisma__migrations__20260905210000_protect_offline_acceptance__migration.sql.txt",
+      "sha256": "17a0c8dc0f9c275ad76d9b500775377cc35c9998602b37067b0576c01b8278f8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/REVIEW.md",
+      "sha256": "875e87b4bc32fdf89f8e3399ff0591952b988530d792347ad0bdff81fd944c5b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/services__pos__offline-continuation.service.ts.txt",
+      "sha256": "4fb899e8fafef36e96e6169eee2ab5d3ec7641d6966a1cf625ce4944f3671694"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/services__pos__offline-sync.service.ts.txt",
+      "sha256": "bff76be08cf4fae5a1afb322e8efd2b7881f29813211b6d399e386b1ff3afe7a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/services__pos__pos.service.ts.txt",
+      "sha256": "3c0d44efa3b5a3a2a910ccf1b7230ccf16e4a53f2506b6ebaf50103fba597ceb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/services__pos____tests____offline-continuation.service.test.ts.txt",
+      "sha256": "198a2caa739902b9ac01f3d44f8c4d548cb17fa26044b328b0a78f759f98fd5e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/offline-review-candidate/TEST_PLAN.md",
+      "sha256": "7ddf076ac97277709277cfcb78f19a980f638b25a50496d1d8690ec90b637e79"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/OFFLINE_CONTINUATION_APPROVAL.md",
+      "sha256": "92b4cc8f26762278b06e57fa815bf44d1b05c8c9f28a325feede65b836426048"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/reconciliation-obligations-tests.json",
+      "sha256": "fe04d8ed09c93b7e2bced1ff73de5323c929e8b75f3dd5da3a5a08dcfa8ca056"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/RECONCILIATION_CONTINUATION_LIMIT.md",
+      "sha256": "b3e631cd785545c9896dd671a6932ae104e7f3a4af7ebc930657d35abf60fc0b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/scoped-surface-comparison.json",
+      "sha256": "cd27fb447bd52b721f23d7822585e90116ad65eaafd7fee6dffb0befd6c726d2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/settings-surfaces.json",
+      "sha256": "aa71f351ceeb554d9f7b8de4cf0ed30ea4e825ae7d35e80a534073a54cde00a6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/settings-surfaces.md",
+      "sha256": "e2131202e97973ed8c0d72ad12223fd151d4d9f07013c4a1db63b68fa7b9f954"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stop-policy-tests.json",
+      "sha256": "68b8944fc9db84c9330a9b19a0d7380de2270296529e30aaba7e6ed5293ebf34"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-final-lint.json",
+      "sha256": "cec40218726e53d5dd04c110d61384b28f35d86985786f2d399200e68165ff30"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-final-tests.json",
+      "sha256": "a7dd524c659c4bea12b0d5f277597c734a5c6e2388cdd5aa1de15e75ac990544"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-lint.json",
+      "sha256": "cec40218726e53d5dd04c110d61384b28f35d86985786f2d399200e68165ff30"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-modal-rerun.json",
+      "sha256": "2768102d6ac868456c4a0dc66a57280a95d7fb8356fb565cf928bd62b9238326"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-receipt.json",
+      "sha256": "19ce2e848a58ed7ec04748e32742026e8c426561ad3f41f09d7035833abb5729"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-inline-feedback-tests.json",
+      "sha256": "bb63d66c668009d4f88c860d24eafadf09ca6cfca9d0427889bdad37f1cb1201"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-localization-boundary-rerun.json",
+      "sha256": "874719c4c6b0793bbd342379be5368fa29279905852cba236e323f85e19cea21"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-localization-lint.json",
+      "sha256": "eab19e349efc8cb39630525badfaa0eb53ab488ad9b744a1973120a05309b951"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-localization-notification-lint.json",
+      "sha256": "1a5665ccfe2751b1ee423d5dcc8a0e6e612c293d90ec788e7afcc5370d4b29a3"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-localization-notification-rerun.json",
+      "sha256": "fa530559f92659f0c0d6135557185b9bcbffe5c9cad6a54319366ec6956c9160"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-localization-receipt.json",
+      "sha256": "35d472cb1de4fde856de74b5580e4d519a0ade6d97886a0c6f39f2f2c316d065"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/stopped-work-localization-tests.json",
+      "sha256": "1b73997d6aa16882ccd138535768ebbeb60dc31990372a1189b77f14b8da9b7b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-checks.json",
+      "sha256": "879dab140069b3a31f6a3448dc84a9f6f515654c11116955ef871e533466fc33"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-lint-receipt.json",
+      "sha256": "8beae018cc7455b6e8ef7a730dab061fa98a635cbcbeafac008d0d614f7657b2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-lint.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-tests-receipt.json",
+      "sha256": "c4f6cf3d9118947d1d93d16f6206489ceda1608fee6dd0dd63bd5b415d061572"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-tests.json",
+      "sha256": "a13941092b9d859d49b4b5dd904d204948faa3b4986260104c4b12122d2374e0"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-tests.txt",
+      "sha256": "419281b2b2cfe4380990fe1eddda7de24f7f80a2a3b1449b4763e8c11df38a26"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-typecheck-receipt.json",
+      "sha256": "7952d5e8b98524b973de3ddded701ffb180935a9b389e4e7efa158f99d90d3fe"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/transfer-read-typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/typecheck-receipt.json",
+      "sha256": "f3c6e76dcce4d0ecadb6d3735fa3e29c876429857aeaa8802f133e29a4fadaa5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-continuation/VERIFICATION_HANDOFF.md",
+      "sha256": "e0757e479a48209afe3261d964d7f2fc42666943a7b67660377de37bf3d76cdd"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/lifecycle-services-unit-and-lint-20260905-final.json",
+      "sha256": "35670dc98c5e565ef259f7280efdb2a5234877c5a14716105612224591390f5f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/migration-catalog.json",
+      "sha256": "fadc7f7c68d92e3ba5cee84c05dde162fa7082ee181db8e7c015fdf945add88b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/modern-modules-postgres-smoke-46729149d363.json",
+      "sha256": "ea2391e9d54a26e9182957263fc818acb35a79f85cbb68f865b3bb95c2c0532b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/modern-modules-postgres-smoke-74fab03e7849.json",
+      "sha256": "2347e2fb7afb88f45c38979a9631e3b307e207f3d84f50a6290e9e9ea4ca52f4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/modern-modules-postgres-smoke-77a89fd35f46.json",
+      "sha256": "f4a527425da19173ee82026eb68cd107000243a0668aaec43adbbc3096ff3966"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/modern-modules-postgres-smoke-b3c4a2958253.json",
+      "sha256": "574974d1c145b40fd94d291adff7bc39550d80ef91cd3a62cfd480f18944ff62"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/modern-modules-postgres-smoke-ef62c8104fbb.json",
+      "sha256": "22ec215845cd872c147ec67d19345aa74fd87b3baad9aca2fdad8a6d79b7dcf4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/module-surface-inventory.json",
+      "sha256": "948500ebda06676722ca8a7ee3093d85a985d90d0704452b32f36e67145af7fc"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/module-surface-inventory.md",
+      "sha256": "986ca215d83e3869cd7eea390ac4470e34415fe748d7b6d20c95d8936d0c7dbb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/module-transport-tests.json",
+      "sha256": "6945d6853657bc70e230bbf31b0734cd3f20f4b07bfe67973f3e655a22d4a576"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/prisma-generate-final.txt",
+      "sha256": "304b4c1df5b554b760aa1abd391e936704b70d3912f56ce4811ab9410d48ed27"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-legacy-preservation.json",
+      "sha256": "249f61b52f5d1a847264f7b8f28901a986b1c95d202071e59e1c19b40fb50c7f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-permission-denied.json",
+      "sha256": "cea5188ca3fe78d0d4acdb2fe0cf4acb402af31248399c306de06c19b09edcc2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-builder.json",
+      "sha256": "ca00d83bb51734aa018e6b13f50d8e0391d93ad74817ce419ad94926faa914b7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-history.json",
+      "sha256": "8e90079e20903ecdbc11d580bd6f90fdf2c34ea0420dd8e2d1200513231b2e1b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-preparation-active.json",
+      "sha256": "1c30684bb7e1fa960417b84d0bad3c3867e41ac5ed704bab5f4cca0f7f89d28c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-preparation-waiting.json",
+      "sha256": "caa197321bd9f52db66cebba0623b7587d9a3b9942840b2bbd838591c05bfd35"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-retained-history.json",
+      "sha256": "539f5ae73c07e1005c3d40c99f8dcabadbdb6db863a1e2f30478442730360988"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-retained-workspace.json",
+      "sha256": "25e52749fbad9fab5784556dd2d93a930c835be7e295755f379b544cb0459610"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-review.json",
+      "sha256": "a60fb9d34f491b8ec34a46ff9724171418da1027730c70d1736880b4bdd5f23d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-workspace.json",
+      "sha256": "b0468be2ef7759a3cf8fd1b129c840415c70ebbec192a7e8b1f9a0d65573a473"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-builder.json",
+      "sha256": "41224b87d65be4ae33972670dbd667531483a8b9b2917e1c206176587c5463ec"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-builder.json",
+      "sha256": "8f78076ae2025b9fb47501cb477e4806fa916cf8f31a524e5f183485777cfc97"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-history.json",
+      "sha256": "330e6737b87ad48dfb89956234ec1713d0ac925a20db087fb04b5bad6157a449"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-preparation-active.json",
+      "sha256": "68d537a1f61ccf1930a7ab9829f6c6507c23ed4f2842a99df90ff49083c0939b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-preparation-waiting.json",
+      "sha256": "f462a667e2c4b37664002bc3b8c3f472d9a2fe6c038445132ce68d460a69f9b4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-review.json",
+      "sha256": "7b676f0c29365cbbff2793849038b32b21ae7d8456a2485cf57d948af0ea6676"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-workspace.json",
+      "sha256": "33b763d8145c610dd2432da8a453de7101cb1e5e3826ea2a4afd8175986f872d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-history.json",
+      "sha256": "e6da97fec4d6bcb20a9c766b29520a288f4d6a770512da52dd98ae1c8f923b72"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-preparation-active.json",
+      "sha256": "b6cf0c24510606131f35948f03a7f8b920227d0c535f379b56dd7c3b59c882f0"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-preparation-waiting.json",
+      "sha256": "cc834df4d405c185508c395b037209bee0c6c1e6e83fa1da63442df9092b9e0c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-review.json",
+      "sha256": "c54503c01f868e94f90f4c3c53d275fbcb4b5c331dca884fb7d6cf7363570ec8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-workspace.json",
+      "sha256": "b866f032fa2d801719876c6a0290c12086014c445b2ecda0cefbedec9e18377d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-inventory-new-work-denied.json",
+      "sha256": "2fc9e9d090faf07d7d02c4d753631d3983e6ed2008fa744704c6eb25f3c093b4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-permission-denied.json",
+      "sha256": "025306b853cf110f5fe7fcfd64eac2676dc4ee1eb1185a186bfa15305a9b4784"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-builder.json",
+      "sha256": "43ce9b10a15a1c815a4d1622879b8f2f0826acd8c4a96f4c4485145a2ad64720"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-builder.json",
+      "sha256": "3dde56950039f1a2388841a8dbda5caad832a0c9a27b46d41f857addb90e34b4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-history.json",
+      "sha256": "52e2f2799fce1f1696d67c1e6879d618d5a4715f2244852ed4aedece795bcdc2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-preparation-active.json",
+      "sha256": "cea0a56481168b5b9a1e516cc0c1197e8a9cfd9eee53bb5fa4b6409564c47ea6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-preparation-waiting.json",
+      "sha256": "175bd71f71e2bcbbed58319de3bea2314c7f9f7f4b0d9fe9309907a61fe4cff4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-retained-history.json",
+      "sha256": "38ed001ad005ddc05032548b0832d2acb8d7fef5429ece9580402ea493b109e7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-retained-workspace.json",
+      "sha256": "9bb43e8d562440139ede072a21fd1253a8ede08f18869ee297e579acb0f38f16"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-review.json",
+      "sha256": "9f91d10e98e9ba17636ca931787917bc3f6724ceff2a4b9fc1826d23b3a92a4d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-workspace.json",
+      "sha256": "9fce4cd28de8e9e0bc69e4a105f9f338213ce89828a646fd29fe4cb60e4d4789"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-history.json",
+      "sha256": "1cec4543dba0ca07f4615b67886dda23502127d9ff6467527df4e5c9670d8257"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-preparation-active.json",
+      "sha256": "7e688e995f6b75fc88b929c9ffb72b8a791fb0c6f1f8a2d6c2e04050d0d7efcf"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-preparation-waiting.json",
+      "sha256": "b7b9950cf5aeeaaeee106f9a1d1101ee9db58b93ff319e447ad15d4451a8f171"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-retained-history.json",
+      "sha256": "b4a746085b634828a91531a5f7fff6f83600d171aaffe270fe001656a163dc8a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-retained-workspace.json",
+      "sha256": "eee1067592d525c41976d94feb5b067cd02d9a461d60a001e09fbe483c9e1620"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-review.json",
+      "sha256": "bd7eaa29fc3f6b783136d29d8d503c1297f38393b9c477999a58152675cf9f71"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-workspace.json",
+      "sha256": "851c018fd177f567c5ca4e04f831b1b7a16c6583e3635a5c87d952b8c169bd23"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-builder.json",
+      "sha256": "5583883e32a779bba0c75f05572532fdfc0b26e3a41f6ea3574b818f773a401c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-history.json",
+      "sha256": "ed96a7340fd214e32e974538945707f785e7df14fecc45c8dcfdb3567738f6c8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-preparation-active.json",
+      "sha256": "c5d8ee3d926ac275facc08e2518353547235febc11aea297033f6a265dda5cef"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-preparation-waiting.json",
+      "sha256": "88a0faa0f637200eda0a33e635644065ab575e996819841165329a02e1fcfcf9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-320.json",
+      "sha256": "41fa337ede83940c707d633bd4da07116219520688f0d92b30e29ff989935833"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-834.json",
+      "sha256": "60311f199cd865b7f0b2299868612f776a80c8c8c530044292adf3bde9fc4356"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-320.json",
+      "sha256": "f08c622348e443e926f55901645926148d69c6ec347bf14c26d57da96562e076"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-834.json",
+      "sha256": "58ddd43b1a2540d560300c2386a70ddd7f767cd3f96443825783978bac78af65"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review.json",
+      "sha256": "d09ffdb0bc935f63e3c6bd205f6ef7622d42f3dadf5d4e4eedadc57356c794df"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-workspace.json",
+      "sha256": "c7f0a1f79f502e95880cbe2d29a9da66e915d922cb2d52fdb6f04965969942d3"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-denial-capture-timing/mobile-fr-inventory-new-work-denied-occluded.json",
+      "sha256": "247ea57debeb71974b291a148a3ca551053a9f33a4401d6a6153d314bf79c2ac"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-denial-capture-timing/mobile-fr-inventory-new-work-denied.json",
+      "sha256": "1fafc53e81e7d24d00ff1530aba57f1c3e17b6ebcd5e2c75268c81bc0da13712"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-legacy-preservation.json",
+      "sha256": "82b0bd5e19a571efe0e7e590354002cb7ffa84b6267a91d14f5f04cd569ac15d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-permission-denied.json",
+      "sha256": "3ebdf7c5ee73f3b2ba7d75405384babcf55ede2e3f9524f0f90f6408bc1cefd0"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-retailer-builder.json",
+      "sha256": "4a7123224604b230c69f3f4850c89d1c2c93cae1d99cd46d53e77e51f10b56a9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-retailer-history.json",
+      "sha256": "578b5a43fd7b20f14f58ee885e15a4f87f12ff3904812e913ca79f8526e8256d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-retailer-preparation-active.json",
+      "sha256": "43db824af6fb956c379168bb6e2a8072de1b85110b0bc7dd4c464035ca1a029f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-retailer-preparation-waiting.json",
+      "sha256": "aae99ef2144706241decbf85e93285db12a3aadfd5a172a96f128abbd7c160e8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-retailer-review.json",
+      "sha256": "f4c98c7239bca586590426583ca6ce975852ef19370567dbb154174c822f39e7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-retailer-workspace.json",
+      "sha256": "03fd3ce084e2f0ba4314bc4f549462950c02b086261cfadeb98381ada9866fe2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-service-builder.json",
+      "sha256": "5d30798b6d00bbfe9890bf530bb8fd4c985ad5c18105857157ac2a92f1ef2293"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-service-history.json",
+      "sha256": "733312ee003beab75e81ca96fddd39db46ae164d5338d8e1eb27b6eb7c509f13"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-service-preparation-active.json",
+      "sha256": "8875ccad516ed15beaeb755aa763d368f9701dc62a9314f9abb9036d3823e1f8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-service-preparation-waiting.json",
+      "sha256": "42cbf06336789e3cb3738db85c15f3279b4456aa62b0646f0d3030c451b2f982"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-service-review.json",
+      "sha256": "ac460c64bc38c9deb795eae778263258c148e0e086eb83c20852dc6823769bcb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/desktop-en-service-workspace.json",
+      "sha256": "7cecc15d3f11eb98bc756e7750055a59cf56c44872187bd7a19fdc3794ebce5c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-permission-denied.json",
+      "sha256": "aecbd2f2eb35fcec9adeb034826739099830359ee940ab543eb3f72fefbf977c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-retailer-builder.json",
+      "sha256": "8fc4158452dd76280bd2546180974fce8c11f3fde65ec958fe8a7feb0df0d08a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-retailer-history.json",
+      "sha256": "eeb49bd332b8a2af9a415bdab45b93b6d8a2df7eb754052ba62d29ccd8f51288"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-retailer-preparation-active.json",
+      "sha256": "b12925a5feecdcc38b77b97b55b2819e7cb2842c48103b049eb291fe91ab518a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-retailer-preparation-waiting.json",
+      "sha256": "ff60a67a421bf8dfa88078f0e17c661dbf1e05d38935b1893c59f32768841f07"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-retailer-review.json",
+      "sha256": "6cae729c185894800d0b1f728d01b1fa4190e447e18d6dd442ba62899d4f9195"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-retailer-workspace.json",
+      "sha256": "ccc3b65da2d180e67f5fd66913ff4594a5ec1ff2f68a2fcd4cfe08c3770ca320"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-builder.json",
+      "sha256": "fbef5eb755aa1a3333d29a1783fe46f78edc12fac3168068e3c425ff61271b8f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-history.json",
+      "sha256": "f2c3152d3a654b211507ca787b76c8554ad8a66c651b7a37c2e1b75202b48fa2"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-preparation-active.json",
+      "sha256": "5974cde005372d73e9ea0d1387d271d5362de35507961e85151ab203ced28fca"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-preparation-waiting.json",
+      "sha256": "107c22d93635471c014e676aa4f8576fd3577145107d0b37989585e9baf5b7b4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-reflow-320.json",
+      "sha256": "0034c80715a1f8f17ae779d22d2bc41f378cec3ea28f5cd5a8d236d088ddaa6c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-reflow-834.json",
+      "sha256": "3532e40ced2665e38e963d195214f4422941c2ae0f96ea1868167c1d3cf2f1d5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-review-reachable-320.json",
+      "sha256": "d62fdaf2e3732dfe9280045a10cc4a4abbaa023890b767400e6e7ce90cbbf7d8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-review-reachable-834.json",
+      "sha256": "2c4a9e8660c15ed0d9df40573ca62c637f6578003cde11a86b6a2026e8703742"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-review.json",
+      "sha256": "5ec76a561f1d19c1319c1128f3126146da6d48a47de07b92db1971aae3a17a0c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-scroll-capture-fix/mobile-fr-service-workspace.json",
+      "sha256": "9c88831e9cbbba1fa47ac9eb8b04eeb66601692b03506a1849fa7beb6e62a56b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-ui-active-settle/mobile-fr-retailer-en-mobile-preparation-active.json",
+      "sha256": "258b708d68eb1df8163a1e8625e93a4682e7ca936e3dcbb541a2adc6efc93ce9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-ui-active-settle/mobile-fr-retailer-preparation-active.json",
+      "sha256": "c1fe0bc845e48d4b690755a84c8c949f170c1f81b78f6f0c031c5cf82da23b4e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots-before-ui-active-settle/mobile-fr-service-preparation-active.json",
+      "sha256": "4f19f3970f188ba74996947ee4a96cf746eb582d60f0587f12de0986f6fdb087"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/service-tests.json",
+      "sha256": "125bed36b6df688a095e4cf223e900505fa01584067eb2c7c5c37d302c7fd19a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/typecheck-final.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/typecheck.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/workbench-final-retry.json",
+      "sha256": "54af6eb16d14a5cb206a9dee42bd4fe0780c78b5e4e08799198df2a4e9a41f3b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/workbench-lifecycle-checks.md",
+      "sha256": "c7986f389978ceeb11608043a278114255fc4c628d1bf3a7b839f4c38750f489"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/workbench-lifecycle-final.json",
+      "sha256": "7e7f0d40810afa0d2c9bcd031d1483a99f22fd8fa3c9ddfda7ad8a9f7d5796aa"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/workbench-lifecycle-review.json",
+      "sha256": "7a2f701b9aebc56cdf04f7201f2d52abd53ac06888a1732c08430991dcff60df"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/workbench-lifecycle-sandbox-card.json",
+      "sha256": "947eb7070082d3892d5e74d51e66cb8ee2307b3558c34d9730b36b5fa921cced"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-legacy-preservation.png",
+      "sha256": "f6985e45246f2317b70acbb715d94f36aed28460672739df313b05274f64c64b"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-permission-denied.png",
+      "sha256": "20e0b682c2ce9d90c999f16e5db64339a38d327e1bfbdc4aa90a3c237df357d5"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-builder.png",
+      "sha256": "706486040e2febe72ccad76f93dedfbeadea6b261f380bc29b420bb2db7a9da4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-history.png",
+      "sha256": "249358b93952507f4e60446d678e57383667207916b4b1aa6661527215091e19"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-preparation-active.png",
+      "sha256": "b0f6290764826914048f54ab5b74b88b71fa885f2669a60005e740d89325f29a"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-preparation-waiting.png",
+      "sha256": "b47e287c530a2526b48d22ab3ac497c69faafa519c6f68587f69005987204170"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-retained-history.png",
+      "sha256": "0bed889a227db4d2cbfa8526594539c126df6472bec85e5059a04c623dcd4b94"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-retained-workspace.png",
+      "sha256": "dfda8972d71ce0fc61ca8628fa9e86c388270bcf0e67ea0012e2bb4961ee435f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-review.png",
+      "sha256": "ec087f6c72a3089838e8f56d5381e4982931410b0510dc78ccdeaa44928ad1ed"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-retailer-workspace.png",
+      "sha256": "dc69e0cf220434ca2daa2dd36e30928ce89a33cf664b04bae4c00e59eb513b42"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-builder.png",
+      "sha256": "861d7352d4084221e84fc31d24f157f9cd7da9a8e40443f2bce020adc061c3f1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-builder.png",
+      "sha256": "d7edb8abda7281912f40cdcd16dc2fe117144e79968f3a8b5b42650b39a60daa"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-history.png",
+      "sha256": "d0d486207a14073580df4116b7ef65bd3959daed8dd61e170c835d24c4525e50"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-preparation-active.png",
+      "sha256": "646db060097bb2976c547b3401ee28f7af572ffc64187074156be36a25edaa04"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-preparation-waiting.png",
+      "sha256": "8772cb778bdf1393b500c349cc32c41568600dfeace1b4335e8672fd4d96a841"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-review.png",
+      "sha256": "e805576456b61922d10914a3e946944c8b2f16a00f21378b56e3cf3f18458d1e"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-fr-desktop-workspace.png",
+      "sha256": "825f5b159591cc5e636c6ba09b4c215141084fd0791dd6150124d4a0cb47d905"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-history.png",
+      "sha256": "098c10948d0e2c40b9b83847f5e283ce58113d400f403e0eeec5c7f336bb8c59"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-preparation-active.png",
+      "sha256": "5018b4ca4b1ae244773d4fe73b0771ab9c19a7bca121bd1f2a24fdaae7763ae3"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-preparation-waiting.png",
+      "sha256": "75f960a5ba155358615f22ed6ee7403c6c84fc905cf68b944f5b5d4188d49460"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-review.png",
+      "sha256": "41e2c2a83321f1a6f69bd595d49c3bff5ec511f521e4d2dcee52cec761ba94e1"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/desktop-en-service-workspace.png",
+      "sha256": "75248145688a576d67b553b56fca9672ae51b1b41098e1a1343c15fe829d746d"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-inventory-new-work-denied.png",
+      "sha256": "b3efe5d09ee765039b165d750ea385f1faae42671fe101a2d7fa22faa2638246"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-permission-denied.png",
+      "sha256": "9d1648b775b0f3a24eaeab0ebeb8d62597e7981104992e63d817a82b19ee1eb4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-builder.png",
+      "sha256": "e74fba9fd4d47e68740b8187111ead7d443142e3e4578e79b50e8c1e73dd8034"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-builder.png",
+      "sha256": "ca22d8fc115ad3107923f9ed9ed65fd2fd8c6b3938bab1857f841b16fd63ebf6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-history.png",
+      "sha256": "8798e3f445739fcac3351b84b8aad1b62355e68622d4319e73a5b7b62e821a63"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-preparation-active.png",
+      "sha256": "f4f5f9d567793da6065493610da3065404bfe7674f39cb11a7f644fcee3bbc16"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-preparation-waiting.png",
+      "sha256": "73452c39a193cdd5a18984afe2408da6702c0ee6c680a842e962b435bc3007e6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-retained-history.png",
+      "sha256": "3ccda978f6c67f9abb0ffcce873357eea2d09610af78adb520bda0d4bbb6c562"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-retained-workspace.png",
+      "sha256": "1dc557ff81abd2aaa9b64bc8c5a440421b387b779965e7e55f167baa851ec9c6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-review.png",
+      "sha256": "07f1a8d158e6c326b3f151ac16156bf32f914263d98e84ff508d9e1e77bd1d47"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-en-mobile-workspace.png",
+      "sha256": "db5bf6e52cec593c6e126e335bef708fd066f11bd3655e9af9b8d2e83d53add8"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-history.png",
+      "sha256": "feec7a7651706b1d0b3d38d4438417103e596ef2cf26600f9780a1eb5d3efad6"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-preparation-active.png",
+      "sha256": "dd0e78056d10ccad41bb008eb731f8c9ea70ab78a06f12f8cfb626e91fa3682c"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-preparation-waiting.png",
+      "sha256": "0d043865dfb0cab9737d4d5152e63e2ddde14d5727e974ac5b16a9a3cf324223"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-retained-history.png",
+      "sha256": "dec6a1a7bacff4ce3c50c4298e04328ad471d67aec9b593b31f2023aa18bf324"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-retained-workspace.png",
+      "sha256": "e6d0d7cf0ab47663c7fc0ca6f81c422d1fe59072fc54e996e70fec35e92396db"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-review.png",
+      "sha256": "d03476e0303e442a155ea362171fa948a6adb1fa40277af68315283cafd94780"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-retailer-workspace.png",
+      "sha256": "37f80d3c4c91d282ac16dda9171b334a4d293e97afe464d9b6b24ad4b13b50fb"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-builder.png",
+      "sha256": "1c2e84610120196f783b6a09be35b70f6e8b857fac496cd1928364951821d30f"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-history.png",
+      "sha256": "7810a1f4c07f2079facdc8ee240a4a7c9c0c84084a4b382ab654c1031b617f29"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-preparation-active.png",
+      "sha256": "ff942c686df67e94b240a5ab81f6d16580ba09ddc8c4db55bef3cd4801a7beb4"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-preparation-waiting.png",
+      "sha256": "bca2bf2678a4a52abfb59c62f81754c2b504c661e0a68e544c72c6c4b9d065e9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-320.png",
+      "sha256": "f50ebe6b410c97da14ff5e4c2e3ed7c5fe4ea64deec73d51d0dcd4e109e50e90"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-reflow-834.png",
+      "sha256": "d812bc3ffb8bd7d38e2d7380190b9c345e80e209fa2735bb7f8558532354f3a7"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-320.png",
+      "sha256": "f659945f74ccc551f0e44ec06c9a65c8fab2067710b2ffbb11695a5ccc8bec07"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review-reachable-834.png",
+      "sha256": "c84bd558b4147dd127eddeefc8216ba3fcf466182674f70952f844ef76c35e26"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-review.png",
+      "sha256": "73c8fdc5022e812dd00be666d3e798a6d9f42024f5cd4cf628663747fb9b03e9"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-01/evidence/screenshots/mobile-fr-service-workspace.png",
+      "sha256": "46b4815bafe27b171700584fb27b59df15e5daa2abc5c74efe92deba4539fffa"
+    }
+  ],
+  "verification": {
+    "backendHashMatch": true,
+    "postgresProductionHashMatch": true,
+    "postgresFixtureChanges": [
+      {
+        "path": "scripts/modern-modules-lifecycle-fixture.ts",
+        "verifiedSha256": "ae73103abf21a1bad42b1f5d328b3089f6b2ff43973a3141d4b8d398c52de199",
+        "currentSha256": "a5bd229bb1e487938c3befa3edb2f24a793e2cf1925f16466c85ec546f4905d2",
+        "reason": "Browser-only inventory-denial fixture stage added after the PostgreSQL run; exercised by the separate French denial browser result. PostgreSQL production sources remain unchanged."
+      }
+    ],
+    "postgresPassed": 18,
+    "postgresFailed": 0,
+    "browserStats": {
+      "startTime": "2026-09-05T13:28:23.765Z",
+      "duration": 491383.642,
+      "expected": 10,
+      "skipped": 2,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "browserFollowups": [
+      {
+        "file": "browser-results-mobile-capture-final.json",
+        "stats": {
+          "startTime": "2026-09-05T13:38:42.247Z",
+          "duration": 234511.35,
+          "expected": 3,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      {
+        "file": "browser-results-stopped-work-fr.json",
+        "stats": {
+          "startTime": "2026-09-05T14:09:36.082Z",
+          "duration": 68108.545,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    ],
+    "finalTypecheckExitCode": 0,
+    "privateFixtureValuesAbsent": true,
+    "secretValuesPrinted": false,
+    "verifiedSourceTransitions": [
+      {
+        "path": "hooks/useTransferQueries.ts",
+        "previousSha256": "6bf73bf3980a41602c5d9f77895b10fb01c735d5075a3a0282503cac1395f698",
+        "finalSha256": "3fd0fa305bee8b7edeb0f9e0693a2fe8a7db6df22cee6bb22309132cf8988ae1",
+        "evidence": "stopped-work-inline-feedback-receipt.json",
+        "reason": "Inline stopped-work feedback replaces the occluded toast for this dialog only."
+      }
+    ],
+    "inlineFeedbackEvidence": "lifecycle-continuation/stopped-work-inline-feedback-receipt.json"
+  }
+}

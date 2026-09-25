@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-13T12:42:52.626Z",
+  "phase": "before",
+  "sourcesBefore": {
+    "services/pos/terminal-management.service.ts": "f755f033a9b1385dc8e7a95378a26cd54a401e891b993b4fba00372633259235",
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56"
+  },
+  "checks": [
+    {
+      "name": "Reproduced inactive terminal with newly opened active shift",
+      "passed": true
+    }
+  ],
+  "scope": "Owned PostgreSQL; actual openPOSShift interleaved after archive availability read. No checkout, payment or external operation.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/pos/terminal-management.service.ts": "f755f033a9b1385dc8e7a95378a26cd54a401e891b993b4fba00372633259235",
+    "services/pos/pos.service.ts": "36137605b8cf2d77557968049a9cee61d42673f6e4283ad159959f8a6c45ab56"
+  },
+  "sourceStable": true
+}

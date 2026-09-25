@@ -1,4 +1,6 @@
 import type { ReactNode } from "react"
+jest.mock("@/actions/pos/commit-recovery.actions", () => ({}))
+jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", permissionState: "ready", hasPermission: () => true }) }))
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { act, renderHook, waitFor } from "@testing-library/react"
 
@@ -80,6 +82,7 @@ describe("POS receipt token hooks", () => {
 
   it("queries receipt-token management capability once for POS visibility", async () => {
     mockGetPublicReceiptTokenManagementCapabilityAction.mockResolvedValue({
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
       success: true,
       data: {
         canManageReceiptTokens: true,
@@ -102,6 +105,7 @@ describe("POS receipt token hooks", () => {
 
   it("queries receipt token metadata only when a sale id is available", async () => {
     mockGetPublicReceiptAccessTokensAction.mockResolvedValue({
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
       success: true,
       data: [{ id: "token-row-1", tokenIdSuffix: "row-1", isActive: true }],
       error: null,
@@ -128,6 +132,7 @@ describe("POS receipt token hooks", () => {
 
   it("searches receipt sale candidates only after a query is activated", async () => {
     mockSearchPublicReceiptSalesAction.mockResolvedValue({
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
       success: true,
       data: [{ salesOrderId: "sale-1", orderNumber: "POS-20260703-0001" }],
       error: null,
@@ -183,6 +188,7 @@ describe("POS receipt token hooks", () => {
       success: true,
       data: { customers: [], total: 0 },
       error: null,
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
     })
     const queryClient = createQueryClient()
 

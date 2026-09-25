@@ -1,3 +1,4 @@
+import { AccountingSourceType } from "@prisma/client"
 import { z } from "zod"
 
 export const businessEventSourceSchema = z.enum([
@@ -55,12 +56,28 @@ export const recordBusinessEventInputSchema = z.object({
   locationId: z.string().trim().min(1).optional(),
   registerId: z.string().trim().min(1).optional(),
   deviceId: z.string().trim().min(1).optional(),
-  sourceType: z.string().trim().min(1).optional(),
+  // Accounting classifications and non-accounting entity names are separate contracts.
+  sourceType: z.nativeEnum(AccountingSourceType).optional(),
+  sourceEntityType: z.string().trim().min(1).max(128).optional(),
   sourceId: z.string().trim().min(1).optional(),
   postingBatchId: z.string().trim().min(1).optional(),
   documentHash: z.string().trim().min(1).optional(),
   metadata: z.unknown().optional(),
   outboxMessages: z.array(businessOutboxMessageInputSchema).default([]),
+}).superRefine((input, ctx) => {
+  if (!input.sourceEntityType || input.metadata == null) return
+  if (
+    typeof input.metadata !== "object" ||
+    Array.isArray(input.metadata) ||
+    ![Object.prototype, null].includes(Object.getPrototypeOf(input.metadata))
+  ) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["metadata"], message: "Domain source metadata must be an object." })
+    return
+  }
+  const existing = (input.metadata as Record<string, unknown>).sourceEntityType
+  if (existing !== undefined && existing !== input.sourceEntityType) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["metadata"], message: "Domain source metadata conflicts with sourceEntityType." })
+  }
 })
 
 export type RecordBusinessEventInput = z.input<typeof recordBusinessEventInputSchema>

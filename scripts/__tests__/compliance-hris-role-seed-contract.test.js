@@ -7,12 +7,17 @@ const realisticSeedPath = path.join(root, "prisma", "realistic-development-seed.
 const gitignorePath = path.join(root, ".gitignore")
 
 const requiredRoles = [
+  "owner",
   "super_admin",
   "admin",
   "cashier_pos_user",
   "inventory_manager",
   "purchaser",
   "accountant",
+  "external_accountant",
+  "support",
+  "hris_user",
+  "pos_user",
   "hr_manager",
   "payroll_administrator",
   "payroll_processor",
@@ -72,9 +77,17 @@ describe("compliance HRIS role seed contract", () => {
   const roleCodes = [...catalogSource.matchAll(/code: "([^"]+)"/g)].map((match) => match[1])
 
   test("defines one unique persona for every required system and governance role", () => {
-    expect(roleCodes).toHaveLength(42)
+    expect(roleCodes).toHaveLength(47)
     expect(new Set(roleCodes).size).toBe(roleCodes.length)
     expect(roleCodes).toEqual(expect.arrayContaining(requiredRoles))
+  })
+
+  test("defines external accountant as an exact read-only finance role with controlled export", () => {
+    expect(roleSeed).toContain('code: "external_accountant"')
+    expect(roleSeed).toContain('nameEn: "External Accountant"')
+    expect(roleSeed).toContain('nameFr: "Comptable externe"')
+    expect(roleSeed).toContain("PERMISSIONS.FINANCIAL_REPORTS_EXPORT")
+    expect(roleSeed).toContain("Posting, editing, approving, deleting, reversing and period close or reopen are prohibited")
   })
 
   test("maps supplied identities without claiming signatures or qualifications", () => {

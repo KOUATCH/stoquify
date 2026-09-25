@@ -1,4 +1,7 @@
 const mockRevalidateTag = jest.fn()
+jest.mock("@/services/pos/checkout.service", () => ({ preparePOSCheckout: jest.fn() }))
+import { preparePOSCheckout } from "@/services/pos/checkout.service"
+import { logger } from "@/lib/logger"
 
 jest.mock("next/cache", () => ({
   revalidateTag: (...args: unknown[]) => mockRevalidateTag(...args),
@@ -63,6 +66,7 @@ const mockRefundPOSSale = refundPOSSale as jest.Mock
 const mockVoidPOSSale = voidPOSSale as jest.Mock
 
 const saleInput = {
+  checkoutLeaseId: "00000000-0000-4000-8000-000000000001",
   clientCommitId: "pos-commit-1",
   salesOrderId: "sale-1",
   locationId: "loc-1",
@@ -166,6 +170,31 @@ describe("POS tender actions", () => {
       userId: "cashier-1",
     })
     expect(mockRevalidateTag).toHaveBeenCalledWith("pos-cart")
+    expect(preparePOSCheckout).toHaveBeenCalledWith({ ...saleInput, organizationId: "org-1", userId: "cashier-1" })
+    expect((preparePOSCheckout as jest.Mock).mock.invocationCallOrder[0]).toBeLessThan(mockCommitPOSSale.mock.invocationCallOrder[0])
+  })
+
+  it("preserves a saved sale when both cache and logging fail", async () => {
+    mockRevalidateTag.mockImplementationOnce(() => { throw new Error("cache unavailable") })
+    const warn = jest.spyOn(logger, "warn").mockImplementation(() => { throw new Error("logger unavailable") })
+    try {
+      const result = await commitPOSSaleAction(saleInput)
+      expect(result).toMatchObject({ success: true, data: { saleId: "sale-1" } })
+      expect(mockCommitPOSSale).toHaveBeenCalledTimes(1)
+      expect(mockRevalidateTag).toHaveBeenCalledWith("customer-ar")
+    } finally { warn.mockRestore() }
+  })
+
+  it("does not submit if durable request retention fails", async () => {
+    ;(preparePOSCheckout as jest.Mock).mockRejectedValueOnce(new Error("checkout journal unavailable"))
+    expect((await commitPOSSaleAction(saleInput)).success).toBe(false)
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
+  })
+
+  it("rejects a browser submission without checkout ownership", async () => {
+    expect((await commitPOSSaleAction({ ...saleInput, checkoutLeaseId: undefined })).success).toBe(false)
+    expect(preparePOSCheckout).not.toHaveBeenCalled()
+    expect(mockCommitPOSSale).not.toHaveBeenCalled()
   })
 
   it("denies POS sale commit when the POS module is not entitled", async () => {

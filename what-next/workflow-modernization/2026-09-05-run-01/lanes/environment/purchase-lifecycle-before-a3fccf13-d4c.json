@@ -1,0 +1,41 @@
+{
+  "run": "a3fccf13-d4c",
+  "at": "2026-09-07T15:27:06.648Z",
+  "sourceBefore": {
+    "services/purchase-order/purchase-order.service.ts": "3cb09762507d74edeff596cbf197cb0e5362235494e94164d238eba1a0c3694b",
+    "services/purchasing/ap-control.service.ts": "63cee6e6a06dfac4ebcf978deb00cc95177d95a8a2533511d6f0167b39cdb084",
+    "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts": "dcd984b9e0bf5902cf372676d61ae695e148486c3ff853b26cf1071d29e0ea63",
+    "hooks/useRecentPurchaseOrderQueries.ts": "69a911830403ff129803de9c9bd5a796da63e2724353321003fbf7cb09dfa9fa"
+  },
+  "checks": [
+    {
+      "kind": "submit",
+      "revokedActorAndSessionAccepted": true,
+      "status": "SUBMITTED",
+      "archived": false,
+      "audits": 0
+    },
+    {
+      "kind": "cancel",
+      "revokedActorAndSessionAccepted": true,
+      "status": "CANCELLED",
+      "archived": false,
+      "audits": 0
+    },
+    {
+      "kind": "complete",
+      "revokedActorAndSessionAccepted": true,
+      "status": "COMPLETED",
+      "archived": false,
+      "audits": 0
+    },
+    {
+      "kind": "archive",
+      "revokedActorAndSessionAccepted": true,
+      "status": "CANCELLED",
+      "archived": true,
+      "audits": 1
+    }
+  ],
+  "error": "\nInvalid `db.organization.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\supplier-ack-fixtures.cjs:11:24\n\n   8 files.push('services/purchase-order/supplier-po-proposal-evidence.ts');\n   9 async function fixture(locale,run,options={}){\n  10  const organizationId='workflow_supplier_ack_'+locale+'_'+run;\n→ 11  await db.organization.create(\nUnique constraint failed on the fields: (`id`)"
+}

@@ -1,0 +1,123 @@
+{
+  "run": "584fe315-a13",
+  "at": "2026-09-08T08:50:24.871Z",
+  "checks": [
+    {
+      "name": "Recover approved invoice and replay exact command without another liability",
+      "status": "passed",
+      "journalCount": 1,
+      "liabilityCount": 1,
+      "balance": "2500.00"
+    },
+    {
+      "name": "Concurrent exact recovery converges to one decision",
+      "status": "passed"
+    },
+    {
+      "name": "Changed configuration rejects stale review",
+      "status": "passed"
+    },
+    {
+      "name": "Revoked permission denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Expired session denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Stale fresh authentication denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Maker cannot recover own invoice",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign invoice is unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign session cannot supply current authority",
+      "status": "passed"
+    },
+    {
+      "name": "Changed approval payload fails evidence validation",
+      "status": "passed"
+    },
+    {
+      "name": "Duplicate supplier liability prevents recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Missing rules are displayed as a setup condition",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module missing denies recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module expired denies recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module suspended denies recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module read_only denies recovery",
+      "status": "passed"
+    },
+    {
+      "name": "Decision failure rolls back posting and exact retry succeeds",
+      "status": "failed",
+      "message": "The input did not match the regular expression /Owned recovery decision fault/. Input:\n\n'ApplicationError: Business event could not be recorded.'\n"
+    },
+    {
+      "name": "Revoked permission denies even an exact committed replay",
+      "status": "passed"
+    },
+    {
+      "name": "Tampered retained decision cannot claim success",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned local PostgreSQL, actual receipt/preparation/approval kernels and session-aware ledger recovery service. New synthetic organizations, users and journals only; no browser or statutory approval claim.",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "3790d882b41bc64b12e20cf9bde9317a51ba1d9b64fb2b883f2ae410ad8d304f",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "b92f3b6eb42f7e5d6c9b79b57b26dcc1bad5590105db1333c56cb58dcfc0f300"
+  },
+  "originalUnchanged": true,
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-success",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-concurrent",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-stale",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-role",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-session",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-fresh",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-maker",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-tenant",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-other",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-foreign-session",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-foreign-session-owner",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-approval",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-duplicate-liability",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-rules",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-module-missing",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-module-expired",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-module-suspended",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-module-read_only",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-atomic",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-replay-authority",
+    "workflow_supplier_ack_en_invoice-recovery-584fe315-a13-decision-proof"
+  ],
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "3790d882b41bc64b12e20cf9bde9317a51ba1d9b64fb2b883f2ae410ad8d304f",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "b92f3b6eb42f7e5d6c9b79b57b26dcc1bad5590105db1333c56cb58dcfc0f300"
+  }
+}

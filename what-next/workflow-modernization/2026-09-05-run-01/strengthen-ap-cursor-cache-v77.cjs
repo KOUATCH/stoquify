@@ -1,0 +1,7 @@
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const file=path.join(__dirname,'lanes/environment/verify-ap-history-cursor-browser.cjs');let text=fs.readFileSync(file,'utf8');
+function replace(old,value){assert.equal(text.split(old).length,2);text=text.replace(old,value)}
+replace("await db.supplierInvoice.update({where:{id:'cursor-ui-'+run+'-'+locale+'-29'},data:{invoiceDate:new Date('2026-09-01')}});await page.reload();", "await page.goto(url);await expect(page.getByRole('row')).toHaveCount(26);await db.supplierInvoice.update({where:{id:'cursor-ui-'+run+'-'+locale+'-29'},data:{invoiceDate:new Date('2026-09-01')}});await page.getByRole('button',{name:t.table.nextPage,exact:true}).click();");
+replace("await shot('recovered');r.stages.push", "await expect(page.getByText('CURSOR-'+run+'-'+locale+'-29',{exact:true})).toHaveCount(0);await page.getByRole('button',{name:t.table.nextPage,exact:true}).click();await expect(page.getByRole('row')).toHaveCount(6);await page.goto(url);await expect(page.getByRole('row')).toHaveCount(26);await shot('recovered');r.stages.push");
+replace("A source moving outside the date filter invalidates the old view; first-page recovery retains supplier/date/page-size filters", "A source moving outside the date filter invalidates continuation without reloading; recovery discards the cached first page, excludes the changed invoice, reads 30 current rows and retains supplier/date/page-size filters");
+fs.writeFileSync(file,text);

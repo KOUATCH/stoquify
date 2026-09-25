@@ -1,5 +1,5 @@
 import type { SVGProps } from "react"
-import { fireEvent, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 import { RegisterV2Form } from "../RegisterV2Form"
 
@@ -33,6 +33,7 @@ jest.mock("next/navigation", () => ({
 }))
 
 jest.mock("@/hooks/useRegisterWorkflow", () => ({
+  RegistrationWorkflowError: class extends Error {},
   useRegisterWorkflow: () => ({
     isPending: false,
     mutateAsync: mockMutateAsync,
@@ -57,6 +58,38 @@ describe("RegisterV2Form referral handoff", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockSearchParams = new URLSearchParams()
+  })
+
+  it("uses labeled controls and a POST form while keeping French choices canonical", async () => {
+    const { container } = render(<RegisterV2Form locale="fr" />)
+    expect(container.querySelector("form")).toHaveAttribute("method", "post")
+    expect(screen.getByLabelText("Pays de l’entreprise")).toHaveValue("Cameroon")
+    expect(screen.getByRole("option", { name: "Commerce de détail" })).toHaveValue("Retail")
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1")
+    const buttons = screen.getAllByRole("button")
+    expect(buttons.some(button => button.getAttribute("aria-current") === "step")).toBe(true)
+  })
+
+  it("preserves the account draft after a lost response and prevents duplicate pending creation", async () => {
+    let reject!: (value: Error) => void
+    mockMutateAsync.mockReturnValue(new Promise((_, failure) => { reject = failure }))
+    const { container } = render(<RegisterV2Form locale="en" />)
+    fireEvent.click(screen.getByRole("button", { name: "Continue", exact: true })); await screen.findByText("Owner / manager")
+    fireEvent.click(screen.getByRole("button", { name: "Continue", exact: true })); await screen.findByLabelText("Company name")
+    fireEvent.change(screen.getByLabelText("Company name"), { target: { value: "Synthetic Retail" } })
+    fireEvent.click(screen.getByRole("button", { name: "Continue", exact: true })); await screen.findByLabelText("First name")
+    for (const [label, value] of [["First name", "Synthetic"], ["Last name", "Owner"], ["Work email", "synthetic@example.invalid"], ["Phone number", "+237600000039"], ["Password", "Local!Credential-79"], ["Confirm password", "Local!Credential-79"]]) fireEvent.change(screen.getByLabelText(label, { exact: true }), { target: { value } })
+    fireEvent.click(screen.getByLabelText("I agree to the terms and privacy policy"))
+    fireEvent.click(screen.getByRole("button", { name: "Continue", exact: true })); await screen.findByText("Recommended setup")
+    expect(mockMutateAsync).not.toHaveBeenCalled()
+    fireEvent.submit(container.querySelector("form")!); fireEvent.submit(container.querySelector("form")!)
+    await waitFor(() => expect(mockMutateAsync).toHaveBeenCalledTimes(1))
+    await act(async () => reject(new Error("lost response")))
+    expect(screen.getByRole("alert")).toHaveTextContent("outcome could not be confirmed")
+    expect(screen.getByRole("alert")).toHaveFocus(); expect(mockPush).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole("button", { name: "Admin", exact: true }))
+    expect(screen.getByLabelText("Password", { exact: true })).toHaveValue("Local!Credential-79")
+    expect(screen.getByLabelText("Password", { exact: true })).toHaveAttribute("autocomplete", "new-password")
   })
 
   it("preserves a customer-statement referral code in the submitted form", () => {

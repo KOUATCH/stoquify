@@ -1,0 +1,62 @@
+{
+  "run": "250f4702-95c",
+  "at": "2026-09-08T09:20:57.598Z",
+  "checks": [
+    {
+      "name": "Changed invoice total cannot create a liability",
+      "status": "passed"
+    },
+    {
+      "name": "Changed line tax cannot create a liability",
+      "status": "passed"
+    },
+    {
+      "name": "Missing received-goods state cannot approve an old match",
+      "status": "passed"
+    },
+    {
+      "name": "Cross-organization invoice line cannot be approved",
+      "status": "passed"
+    },
+    {
+      "name": "Changed match variance cannot be trusted as matched",
+      "status": "passed"
+    },
+    {
+      "name": "Ambiguous match evidence requires reconciliation",
+      "status": "passed"
+    },
+    {
+      "name": "Previously created liability cannot be created again",
+      "status": "passed"
+    },
+    {
+      "name": "Exception approval must cover the actual variance",
+      "status": "passed"
+    },
+    {
+      "name": "Valid source remains approvable and exact replay creates one liability",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned isolated PostgreSQL, actual receiving and invoice preparation/approval kernel; synthetic source-corruption fixtures, no current-session approval UI or professional certification.",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "abcd5f7d5cf2af8db80acda5d44d2dd9ea0a81df09e3a4c150cec94049c8196f"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "abcd5f7d5cf2af8db80acda5d44d2dd9ea0a81df09e3a4c150cec94049c8196f"
+  },
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-total",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-tax",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-receipt",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-line-scope",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-foreign",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-variance",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-ambiguous",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-liability",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-exception",
+    "workflow_supplier_ack_en_approval-source-250f4702-95c-valid"
+  ]
+}

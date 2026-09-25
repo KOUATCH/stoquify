@@ -38,11 +38,11 @@ export function AccountingPageShell({
 }) {
   return (
     <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
-      <div className="dashboard-landing-content mx-auto w-full max-w-[88rem] min-w-0 px-4 py-6 sm:px-6 sm:py-8">
-        <div className="mb-6 flex min-w-0 flex-col gap-5 sm:mb-8 xl:flex-row xl:items-end xl:justify-between">
+      <div className="dashboard-landing-content mx-auto w-full max-w-[1920px] min-w-0 space-y-6 px-4 py-4 sm:px-6 sm:py-6">
+        <header className="dashboard-glass-panel flex min-w-0 flex-col gap-5 rounded-lg p-5 sm:p-6">
           <div className="min-w-0 max-w-3xl">
-            <div className="dashboard-eyebrow mb-4">
-              <span className="dashboard-live-dot" />
+            <div className="dashboard-eyebrow mb-3">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[var(--dash-brand)]" />
               {eyebrow}
             </div>
             <div className="flex min-w-0 items-start gap-4">
@@ -50,7 +50,7 @@ export function AccountingPageShell({
                 <Icon className="h-6 w-6 text-[var(--dash-brand-strong)]" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-3xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-4xl">
+                <h1 className="text-2xl font-semibold tracking-tight text-[var(--dash-text)] sm:text-3xl">
                   {title}
                 </h1>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--dash-text-soft)] sm:text-base">
@@ -59,9 +59,9 @@ export function AccountingPageShell({
               </div>
             </div>
           </div>
-          {actions ? <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">{actions}</div> : null}
-        </div>
-        {children}
+          {actions ? <div className="flex min-w-0 flex-wrap items-center gap-2 border-t border-[var(--dash-border-subtle)] pt-4 [&>a]:max-w-full [&>a]:whitespace-normal">{actions}</div> : null}
+        </header>
+        <div className="min-w-0 space-y-6">{children}</div>
       </div>
     </div>
   )
@@ -97,7 +97,7 @@ export function AccountingStatCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="relative z-10 pe-4">
-        <div className="mb-1 break-words text-2xl font-semibold leading-tight text-[var(--dash-text)]">{value}</div>
+        <div className="mb-1 break-words text-2xl font-semibold leading-tight tabular-nums text-[var(--dash-text)]">{value}</div>
         <p className="text-xs leading-5 text-[var(--dash-text-soft)]">{sub}</p>
       </CardContent>
     </Card>
@@ -105,21 +105,23 @@ export function AccountingStatCard({
 }
 
 export function AccountingPanel({
+  id,
   title,
   description,
   children,
   actions,
 }: {
+  id?: string
   title: string
   description?: string
   children: ReactNode
   actions?: ReactNode
 }) {
   return (
-    <Card className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg text-[var(--dash-text)]">
+    <Card id={id} className="dashboard-glass-panel min-w-0 scroll-mt-24 overflow-hidden rounded-lg text-[var(--dash-text)]">
       <CardHeader className="flex flex-col gap-3 border-b border-[var(--dash-border-subtle)] sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <CardTitle className="text-base font-semibold text-[var(--dash-text)]">{title}</CardTitle>
+          <CardTitle className="text-base font-semibold text-[var(--dash-text)]"><h2>{title}</h2></CardTitle>
           {description ? <p className="mt-1 text-sm text-[var(--dash-text-soft)]">{description}</p> : null}
         </div>
         {actions}
@@ -174,4 +176,3 @@ export function AccountingLinkButton({
     </Button>
   )
 }
-

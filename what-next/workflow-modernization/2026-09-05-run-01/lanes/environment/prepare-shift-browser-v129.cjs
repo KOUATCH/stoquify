@@ -1,0 +1,11 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+let source=fs.readFileSync(path.join(__dirname,'verify-pos-stop-browser-v128.cjs'),'utf8');
+function change(before,after){assert.equal(source.split(before).length-1,1,before);source=source.replace(before,after);}
+change("newWorkStoppedModules:[locale==='en'?'pos':'sales']","newWorkStoppedModules:[]");
+change("status:'active',source:'manual_override'","status:locale==='fr'&&moduleSlug==='sales'?'suspended':'active',source:'manual_override',readOnly:locale==='en'&&moduleSlug==='pos'");
+change("await db.tenantModuleConfiguration.update({where:{organizationId},data:{newWorkStoppedModules:[]}})","await db.tenantModuleGrant.updateMany({where:{organizationId},data:{status:'active',readOnly:false}})");
+change("await db.tenantModuleConfiguration.update({where:{organizationId},data:{newWorkStoppedModules:['pos']}})","await db.tenantModuleGrant.update({where:{organizationId_moduleSlug:{organizationId,moduleSlug:'pos'}},data:{readOnly:true}})");
+change("'actions/pos/session.actions.ts','hooks/posHooks/usePosOperations.ts'","'services/pos/pos.service.ts','services/pos/shift-opening-access.ts','actions/pos/session.actions.ts','hooks/posHooks/usePosOperations.ts'");
+change("scope:'Owned local credentials and actual server actions. Stop-policy fixture changes use local DB only. No commercial grant activation, sale, payment or external operation.'","scope:'Owned local credentials and real shift actions. EN read-only POS and FR suspended sales grant fixtures. Local grant restoration is synthetic test setup, not live customer activation. No sale, payment or external operation.'");
+source=source.replaceAll('v128','v129').replaceAll('pos-stop','shift-access').replaceAll('workflow_pos_stop_browser_','workflow_shift_access_browser_').replaceAll('openShiftStopped','openShiftEntitlementUnavailable').replaceAll('stoppedWithAmountRetainedAndNoShift','commercialDenialWithAmountRetainedAndNoShift').replaceAll('policyChangeDoesNotAutoSubmit','fixtureGrantChangeDoesNotAutoSubmit');
+const file=path.join(__dirname,'verify-shift-access-browser-v129.cjs');fs.writeFileSync(file,source,{flag:'wx'});console.log(JSON.stringify({file,bytes:Buffer.byteLength(source)}));

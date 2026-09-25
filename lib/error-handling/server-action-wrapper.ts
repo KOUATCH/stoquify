@@ -13,6 +13,7 @@ import {
 } from './types'
 import { errorHandler } from './error-handler'
 import { canonicalErrorToServerActionError, normalizeToCanonicalError } from './canonical'
+import { getModuleOperationErrorReason } from '@/lib/modules/module-operation-error'
 
 /**
  * Wrapper configuration for server actions
@@ -166,7 +167,7 @@ export function withErrorHandling<TInput = unknown, TOutput = unknown>(
 
         return {
           ...result,
-          error: errorHandler.toServerActionError(errorData),
+          error: { ...errorHandler.toServerActionError(errorData), ...(getModuleOperationErrorReason(actionError) ? { reason: getModuleOperationErrorReason(actionError) } : {}) },
           metadata: {
             timestamp: new Date(),
             requestId,
@@ -207,6 +208,16 @@ export function withErrorHandling<TInput = unknown, TOutput = unknown>(
         errorData.userMessage = config.customUserMessages[errorData.category]
       }
 
+      // Preserve this expected admission denial through the older inventory
+      // wrapper without exposing the exception's other metadata.
+      const operationReason = getModuleOperationErrorReason(error)
+      if (operationReason) {
+        const canonical = normalizeToCanonicalError(error)
+        errorData.code = "FORBIDDEN"
+        errorData.userMessage = canonical.userMessage
+        errorData.recoveryStrategy = RecoveryStrategy.USER_ACTION
+      }
+
       // Handle the error through the centralized system
       const handlingResult = await errorHandler.handle(
         errorData,
@@ -228,6 +239,7 @@ export function withErrorHandling<TInput = unknown, TOutput = unknown>(
         success: false,
         error: {
           ...errorHandler.toServerActionError(errorData),
+          ...(operationReason ? { reason: operationReason, status: 403, retryable: false } : {}),
           context: {
             ...errorHandler.toServerActionError(errorData).context,
             handled: handlingResult.handled

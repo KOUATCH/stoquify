@@ -1,0 +1,49 @@
+{
+  "at": "2026-09-09T15:09:49.483Z",
+  "baseline": "evidence/source-baseline-v107-localization.json",
+  "parentVerification": "evidence/suspense-resolution-export-v107.json",
+  "changed": [
+    "messages/en.json",
+    "messages/fr.json"
+  ],
+  "notificationKeysPerLocale": 23,
+  "diagnostic": "lanes/environment/suspense-resolution-export-v107-console-browser-a089742a-602.json",
+  "journeys": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "consoleIssues": [],
+      "strictConsolePass": true
+    },
+    {
+      "locale": "fr",
+      "pageErrors": [],
+      "consoleIssues": [
+        "The resource http://127.0.0.1:3110/_next/static/css/app/layout.css?v=1788966489274 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+      ],
+      "strictConsolePass": false
+    }
+  ],
+  "sourceStable": true,
+  "financialUnchanged": true,
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 232,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2825,
+      "tests": 997,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 169,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2435,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "remainingPerformanceObservation": "Development CSS preload warning in FR; production impact unmeasured"
+}

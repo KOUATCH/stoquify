@@ -16,12 +16,15 @@ import { assertPaymentSuspenseLedgerTruthInTx } from "../payment-suspense-ledger
 import {
   exportReconciliationCertificate,
   signReconciliationRun,
+  previewReconciliationSignOff,
   type SignReconciliationRunInput,
 } from "../payment-reconciliation-certification.service"
 
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
+    user: { findFirst: jest.fn() },
     reconciliationRun: {
       findFirst: jest.fn(),
       findUnique: jest.fn(),
@@ -61,6 +64,7 @@ jest.mock("@/prisma/db", () => ({
     },
     paymentReconciliationInboxItem: {
       upsert: jest.fn(),
+      findFirst: jest.fn(), create: jest.fn(),
     },
     closeRun: {
       findMany: jest.fn(),
@@ -86,6 +90,8 @@ const mockBuildEvidenceManifest = buildReconciliationEvidenceManifestInTx as jes
 const mockAssertSuspenseLedgerTruth = assertPaymentSuspenseLedgerTruthInTx as jest.Mock
 const mockedDb = db as unknown as {
   $transaction: jest.Mock
+  $queryRaw: jest.Mock
+  user: { findFirst: jest.Mock }
   reconciliationRun: {
     findFirst: jest.Mock
     findUnique: jest.Mock
@@ -100,7 +106,7 @@ const mockedDb = db as unknown as {
   auditLog: { create: jest.Mock }
   ledgerAuditEvent: { create: jest.Mock }
   businessEvent: { findUnique: jest.Mock; create: jest.Mock; update: jest.Mock }
-  paymentReconciliationInboxItem: { upsert: jest.Mock }
+  paymentReconciliationInboxItem: { upsert: jest.Mock; findFirst: jest.Mock; create: jest.Mock }
   closeRun: { findMany: jest.Mock; findFirst: jest.Mock; update: jest.Mock }
   closePackExport: { findFirst: jest.Mock; update: jest.Mock }
 }
@@ -256,8 +262,16 @@ let committedSignedRun: Record<string, unknown> | null = null
 describe("payment reconciliation certification service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockedDb.user.findFirst.mockResolvedValue({ id: "exporter-1" })
+    mockedDb.paymentReconciliationInboxItem.findFirst.mockResolvedValue(null)
+    mockedDb.paymentReconciliationInboxItem.create.mockImplementation(async ({ data }) => data)
     committedSignedRun = null
-    mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
+    mockedDb.$transaction.mockImplementation(async (callback) => {
+      const tx: Partial<typeof mockedDb> = { ...mockedDb }
+      delete tx.$transaction
+      return callback(tx)
+    })
+    mockedDb.$queryRaw.mockResolvedValue([{ ...readyRun().accountingPeriod, organizationId: "org-1" }])
     mockedDb.reconciliationRun.findFirst.mockResolvedValue(readyRun())
     mockedDb.reconciliationRun.updateMany.mockImplementation(async ({ data }) => {
       committedSignedRun = readyRun({
@@ -305,6 +319,64 @@ describe("payment reconciliation certification service", () => {
     mockedDb.closePackExport.update.mockResolvedValue({ id: "close-pack-export-1" })
   })
 
+  const reviewInput = { organizationId: "org-1", runId: "run-1", actorId: "signer-1", actorPermissions: ["payments.reconciliation.read", "payments.reconciliation.sign"] }
+  it("binds a review to full source evidence and rejects drift without any signature", async () => {
+    const review = await previewReconciliationSignOff(reviewInput)
+    expect(review.canSign).toBe(true)
+    expect(review.totals.matched).toBe("10000.00")
+    const manifest = await mockBuildEvidenceManifest.mock.results[0].value
+    mockBuildEvidenceManifest.mockResolvedValue({ ...manifest, sourceHash: "changed-source-with-unchanged-counts" })
+    await expect(signReconciliationRun(signInput({ expectedEvidenceRevision: review.expectedEvidenceRevision! }))).rejects.toMatchObject({ code: "CONFLICT" })
+    expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  })
+  it("retains the reviewed revision and recovers the exact completed signature", async () => {
+    const review = await previewReconciliationSignOff(reviewInput)
+    const input = signInput({ expectedEvidenceRevision: review.expectedEvidenceRevision! })
+    const signed = await signReconciliationRun(input)
+    expect(committedSignedRun?.certificatePayload).toMatchObject({ reviewedEvidenceRevision: review.expectedEvidenceRevision })
+    mockedDb.reconciliationRun.findFirst.mockResolvedValue(committedSignedRun)
+    expect(await signReconciliationRun(input)).toMatchObject({ certificateHash: signed.certificateHash, replayed: true })
+    expect(mockedDb.reconciliationRun.updateMany).toHaveBeenCalledTimes(1)
+    await expect(signReconciliationRun({ ...input, expectedEvidenceRevision: "sha256:" + "b".repeat(64) })).rejects.toMatchObject({ code: "CONFLICT" })
+  })
+  it("returns an actionable maker denial without offering a signable revision", async () => {
+    expect(await previewReconciliationSignOff({ ...reviewInput, actorId: "runner-1" })).toMatchObject({ canSign: false, blocker: "INDEPENDENT_SIGNER", expectedEvidenceRevision: null })
+    expect(mockBuildEvidenceManifest).not.toHaveBeenCalled()
+  })
+  it("requires active scoped read and sign authority for review", async () => {
+    await expect(previewReconciliationSignOff({ ...reviewInput, actorPermissions: ["payments.reconciliation.sign"] })).rejects.toMatchObject({ code: "FORBIDDEN" })
+    expect(mockedDb.reconciliationRun.findFirst).not.toHaveBeenCalled()
+    mockedDb.user.findFirst.mockResolvedValue(null)
+    await expect(previewReconciliationSignOff(reviewInput)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  })
+  it("does not turn an evidence query failure into an empty review", async () => {
+    mockBuildEvidenceManifest.mockRejectedValueOnce(new Error("database unavailable"))
+    await expect(previewReconciliationSignOff(reviewInput)).rejects.toThrow("database unavailable")
+    expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  })
+  it("explains a missing accounting period without offering a signature", async () => {
+    mockedDb.$queryRaw.mockResolvedValue([])
+    expect(await previewReconciliationSignOff(reviewInput)).toMatchObject({ canSign: false, blocker: "ACCOUNTING_PERIOD_REQUIRED", expectedEvidenceRevision: null })
+    expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  })
+  it("preserves accounting query failure instead of reporting missing setup", async () => {
+    mockedDb.$queryRaw.mockRejectedValueOnce(new Error("period database unavailable"))
+    await expect(previewReconciliationSignOff(reviewInput)).rejects.toThrow("period database unavailable")
+    expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  })
+  it.each(["CLOSED", "LOCKED"])("rejects a freshly %s period even when the loaded run says open", async (status) => {
+    mockedDb.$queryRaw.mockResolvedValue([{ ...readyRun().accountingPeriod, organizationId: "org-1", status }])
+    await expect(signReconciliationRun(signInput())).rejects.toThrow(/not open/i)
+    expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+    expect(mockedDb.businessEvent.create).not.toHaveBeenCalled()
+  })
+
+  it("rejects a run assigned to a different period than its current business date", async () => {
+    mockedDb.$queryRaw.mockResolvedValue([{ ...readyRun().accountingPeriod, organizationId: "org-1", id: "other-period" }])
+    await expect(signReconciliationRun(signInput())).rejects.toThrow(/period.*changed/i)
+    expect(mockedDb.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  })
+
   it("signs a ready run with maker-checker, fresh-auth, evidence, and period controls", async () => {
     const result = await signReconciliationRun(signInput())
 
@@ -319,7 +391,7 @@ describe("payment reconciliation certification service", () => {
     })
     expect(result.certificateHash).toHaveLength(64)
     expect(mockAssertSuspenseLedgerTruth).toHaveBeenCalledWith(
-      mockedDb,
+      expect.objectContaining({ reconciliationRun: mockedDb.reconciliationRun }),
       { organizationId: "org-1", reconciliationRunId: "run-1" },
     )
     expect(mockedDb.reconciliationRun.updateMany).toHaveBeenCalledWith(
@@ -520,6 +592,15 @@ describe("payment reconciliation certification service", () => {
     )
   })
 
+  it("uses the manifest's occurrence-or-receipt window when counting sign-off evidence", async () => {
+    await signReconciliationRun(signInput())
+    const run = readyRun()
+    expect(mockedDb.providerEvent.count).toHaveBeenCalledWith(expect.objectContaining({ where: expect.objectContaining({
+      organizationId: "org-1", providerAccountId: run.providerAccountId,
+      OR: [{ occurredAt: { gte: run.periodStart, lt: run.periodEnd } }, { receivedAt: { gte: run.periodStart, lt: run.periodEnd } }],
+    }) }))
+  })
+
   it("exports signed certificates with watermark, audit trail, and inbox record", async () => {
     const certificatePayload = { version: 1, runId: "run-1", evidence: { sourceHash: "source-evidence-hash-1" } }
     const certificateHash = stableTestCertificateHash(certificatePayload)
@@ -538,11 +619,12 @@ describe("payment reconciliation certification service", () => {
     mockAssertSuspenseLedgerTruth.mockResolvedValue({ itemCount: 0, totals: [] })
 
     const result = await exportReconciliationCertificate({
+      idempotencyKey: "abcde123-1234-4123-8123-abcdef123456", expectedCertificateHash: certificateHash,
       organizationId: "org-1",
       runId: "run-1",
       exportedById: "exporter-1",
       control: {
-        actorPermissions: ["payments.reconciliation.certificate.export"],
+        actorPermissions: ["payments.reconciliation.read", "payments.reconciliation.certificate.export"],
         lastAuthAt: new Date("2026-06-14T13:00:00Z"),
         now: new Date("2026-06-14T13:00:00Z"),
       },
@@ -554,7 +636,7 @@ describe("payment reconciliation certification service", () => {
       mimeType: "application/json",
       certificateHash,
       rowCount: 3,
-      inboxItemId: "inbox-1",
+      inboxItemId: expect.any(String),
       correlationId: "corr-export",
     })
     expect(result.watermarkId).toContain("recon-cert-run-1")
@@ -565,7 +647,9 @@ describe("payment reconciliation certification service", () => {
         watermarkId: result.watermarkId,
       },
     })
-    expect(mockedDb.paymentReconciliationInboxItem.upsert).toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.upsert).not.toHaveBeenCalled()
+    expect(mockedDb.paymentReconciliationInboxItem.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ id: result.inboxItemId, payloadSummary: expect.objectContaining({ kind: "RECONCILIATION_CERTIFICATE_EXPORT_V2", result: expect.objectContaining({ content: result.content, sha256: result.sha256 }) }) }) }))
+    expect(createHash("sha256").update(result.content).digest("hex")).toBe(result.sha256)
     expect(mockedDb.auditLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -600,11 +684,12 @@ describe("payment reconciliation certification service", () => {
 
     await expect(
       exportReconciliationCertificate({
+        idempotencyKey: "abcde123-1234-4123-8123-abcdef123456", expectedCertificateHash: currentHash,
         organizationId: "org-1",
         runId: "run-1",
         exportedById: "exporter-1",
         control: {
-          actorPermissions: ["payments.reconciliation.certificate.export"],
+          actorPermissions: ["payments.reconciliation.read", "payments.reconciliation.certificate.export"],
           lastAuthAt: new Date("2026-06-14T13:00:00Z"),
           now: new Date("2026-06-14T13:00:00Z"),
         },
@@ -700,11 +785,12 @@ describe("payment reconciliation certification service", () => {
     })
 
     await expect(exportReconciliationCertificate({
+      idempotencyKey: "abcde123-1234-4123-8123-abcdef123456", expectedCertificateHash: "a".repeat(64),
       organizationId: "org-1",
       runId: "run-1",
       exportedById: "exporter-1",
       control: {
-        actorPermissions: ["payments.reconciliation.certificate.export"],
+        actorPermissions: ["payments.reconciliation.read", "payments.reconciliation.certificate.export"],
         lastAuthAt: new Date("2026-06-14T13:00:00Z"),
         now: new Date("2026-06-14T13:00:00Z"),
       },

@@ -1,0 +1,59 @@
+{
+  "at": "2026-09-12T18:51:22.971Z",
+  "run": "59fe5256-f8c",
+  "sourcesBefore": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed"
+  },
+  "checks": [
+    {
+      "denial": "missing-write",
+      "unchanged": true
+    },
+    {
+      "denial": "stale-auth",
+      "unchanged": true
+    },
+    {
+      "denial": "foreign-actor",
+      "unchanged": true
+    },
+    {
+      "denial": "foreign-org",
+      "unchanged": true
+    },
+    {
+      "repairAndExactReplay": true,
+      "receiptId": "4c0ad7d3-d1f0-474b-83ae-53bc045df8a4",
+      "exceptionStatusUnchanged": true
+    },
+    {
+      "staleReviewDoesNotOverwriteWinner": true
+    },
+    {
+      "syntheticCertificateRetainedAndCurrentRunCloseInvalidated": true,
+      "historicalExportFlagRetainedWithExplicitStaleEvidence": true,
+      "notGenuineSignOffProof": true
+    },
+    {
+      "lateAuditFailureRollsBackAllRepairEffects": true
+    },
+    {
+      "ambiguousDuplicateRefused": true
+    }
+  ],
+  "scope": "Owned isolated automatic-run fixtures with the historical missing link reproduced. Synthetic current SIGNED/CERTIFIED labels test invalidation/retention only and are not genuine approvals or sign-off proof. No financial posting or external delivery.",
+  "originalBefore": "905912a3d9ad7b08dbc0d9571ba09de74c2c18c8d9879b900e83d974438f37c0",
+  "financialBefore": "ffe38ccb67a462d03b465acaf20e8411fc39e31854e741febb0888681a0d42da",
+  "originalUnchanged": true,
+  "financialUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,66 @@
+{
+  "at": "2026-09-08T19:16:31.084Z",
+  "run": "0ea3505f-a57",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-coverage-en-covered-desktop-0ea3505f-a57.png",
+        "invoice-coverage-en-failure-0ea3505f-a57.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 64596
+        }
+      ],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('dialog')\nExpected substring: \"Covered by payments/credits\"\nReceived string:    \"CloseREVIEWED-coverage-ui-0ea3505f-a57-enVerification supplier / SUPPLIER_INVOICEEffective atAug 10, 2026, 1:00 AMRecorded atSep 8, 2026, 8:16 PMSupplierVerification supplierBusiness identityLaneInvoiceSourceSUPPLIER_INVOICE / cmtt1w4nc001wmam4k81bhvpnAmountFCFA 2,500Recognized movementFCFA 2,500Accounting proofBusiness statePAIDLedger batchcmtt1w571002imam48honh3vwBusiness eventcmtt1w57u002mmam41p0ay7tfDocument hashsha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaEvidence hashsha256:37b1f56709dbca1f01f51232712c51dd680b0a847a126329c1c2ee2652da53b5Source attributionSupplierVerification supplierPurchase order-Due date-Bank destinationProof pendingEffective atAug 10, 2026, 1:00 AMRecorded atSep 8, 2026, 8:16 PM\"\nTimeout: 60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('dialog')\n    113 × locator resolved to <div role=\"dialog\" tabindex=\"-1\" data-state=\"open\" id=\"radix-_R_iklritpesnel5ritqbn9lb_\" aria-labelledby=\"radix-_R_iklritpesnel5ritqbn9lbH1_\" aria-describedby=\"radix-_R_iklritpesnel5ritqbn9lbH2_\" class=\"fixed z-50 gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out inset-y-0 right-0 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right enterprise-floating-s…>…</div>\n        - unexpected value \"CloseREVIEWED-coverage-ui-0ea"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-coverage-fr-covered-desktop-0ea3505f-a57.png",
+        "invoice-coverage-fr-failure-0ea3505f-a57.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 6745
+        }
+      ],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('dialog')\nExpected substring: \"Couverte par paiements/avoirs\"\nReceived string:    \"CloseREVIEWED-coverage-ui-0ea3505f-a57-frVerification supplier / SUPPLIER_INVOICEDate effet10 août 2026, 01:00Date enregistrement8 sept. 2026, 20:18FournisseurVerification supplierIdentite metierFluxFactureSourceSUPPLIER_INVOICE / cmtt1z61i00a3mam4me9wwl9pMontant2 500 FCFAMouvement reconnu2 500 FCFAPreuve comptableEtat metierPAIDLot comptablecmtt1z6hg00apmam4w7a2arpwEvenement metiercmtt1z6i100atmam44iofbsehEmpreinte documentsha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaEmpreinte preuvesha256:99f8feff914b918b01e3fb65d6a429724ab39525af5b933c7dfe531ce8e09415Attribution sourceFournisseurVerification supplierCommande achat-Echeance-Destination bancairePreuve en attenteDate effet10 août 2026, 01:00Date enregistrement8 sept. 2026, 20:18\"\nTimeout: 60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('dialog')\n    113 × locator resolved to <div role=\"dialog\" tabindex=\"-1\" data-state=\"open\" id=\"radix-_R_iklritpesnel5ritqbn9lb_\" aria-labelledby=\"radix-_R_iklritpesnel5ritqbn9lbH1_\" aria-describedby=\"radix-_R_iklritpesnel5ritqbn9lbH2_\" class=\"fixed z-50 gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out inset-y-0 right-0 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right enterprise-floating-s…>…</div>\n        - unexpected value \"Cl"
+    }
+  ],
+  "scope": "Owned localhost invoice/payment/credit service fixtures; actual authenticated EN/FR history and financial read models. Credit/return calls use trusted domain fixture scope, not public-action authority proof. No real bank rail or notification delivery.",
+  "originalBefore": "dd9a21983a1e2cdb9dff4323a2f0976117cd89f47e5f7e7798fddcfe4b118f96",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "sourceStable": true
+}

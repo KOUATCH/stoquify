@@ -1,0 +1,54 @@
+{
+  "at": "2026-09-15T12:58:08.822Z",
+  "sourceBefore": {
+    "services/snapshots/snapshot-contracts.ts": "8ecd42f44328133582cc6853202f1feb33a92d5f9ff29bca353e4a91175cb894",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "services/snapshots/branch-operating-snapshot.service.ts": "bbc4cd9c9026fe81184d2f927249b61201b92b1cdcb9c291de8e6318028d2f85",
+    "services/signals/business-signal-rules.service.ts": "36b904d7056e7c62a0b690680dbc73c09d74de44b3fd074a1809967ef5504197",
+    "services/daily-habit/daily-habit-digest.service.ts": "0992e4d1019dab7a40b1bdea472e36c71386d4cbed93b6b389a4ba4afe35d414",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "c0fefb35efd2c6902b9c700159c4f0f4d0d96b4d7d1e9135ced337819c7fa9ab"
+  },
+  "checks": [
+    "Actual PostgreSQL timestamp boundary: null/future/equal excluded; past included only for three pending statuses; deleted/closed/cancelled/draft excluded; tenant and branch isolation; severity based on overdue count.",
+    "Actual digest composes localized overdue evidence, filters revoked source permission, and rejects failed source reads rather than returning zero."
+  ],
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "digest-overdue-v161-56ec12ca-a09e-4070-b95c-267dce75da10-en-1440.png",
+        "digest-overdue-v161-56ec12ca-a09e-4070-b95c-267dce75da10-en-768.png",
+        "digest-overdue-v161-56ec12ca-a09e-4070-b95c-267dce75da10-en-320.png"
+      ],
+      "errors": [],
+      "keyboardSourceHandoff": true,
+      "handoffMs": 3585,
+      "sourceCorrectionAndRecovery": true,
+      "currentPermission": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "digest-overdue-v161-56ec12ca-a09e-4070-b95c-267dce75da10-fr-1440.png",
+        "digest-overdue-v161-56ec12ca-a09e-4070-b95c-267dce75da10-fr-768.png",
+        "digest-overdue-v161-56ec12ca-a09e-4070-b95c-267dce75da10-fr-320.png"
+      ],
+      "errors": [],
+      "keyboardSourceHandoff": true,
+      "handoffMs": 3187,
+      "sourceCorrectionAndRecovery": true,
+      "currentPermission": true
+    }
+  ],
+  "noFinancialEffects": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/snapshots/snapshot-contracts.ts": "8ecd42f44328133582cc6853202f1feb33a92d5f9ff29bca353e4a91175cb894",
+    "services/snapshots/tenant-operating-snapshot.service.ts": "6174b8852784c352d706729e6a6288efcf1c79b222e54cbe28ccbb3adf531d65",
+    "services/snapshots/branch-operating-snapshot.service.ts": "bbc4cd9c9026fe81184d2f927249b61201b92b1cdcb9c291de8e6318028d2f85",
+    "services/signals/business-signal-rules.service.ts": "36b904d7056e7c62a0b690680dbc73c09d74de44b3fd074a1809967ef5504197",
+    "services/daily-habit/daily-habit-digest.service.ts": "0992e4d1019dab7a40b1bdea472e36c71386d4cbed93b6b389a4ba4afe35d414",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "c0fefb35efd2c6902b9c700159c4f0f4d0d96b4d7d1e9135ced337819c7fa9ab"
+  },
+  "sourceStable": true
+}

@@ -265,9 +265,9 @@ describe("FinancePaymentsSurface layout", () => {
 
     render(<FinancePaymentsSurface />)
 
-    const mixTitle = screen.getByText("sections.methods")
+    const mixTitle = screen.getByRole("heading", { name: "sections.methods" })
     const assuranceTitle = screen.getByText("payments.assuranceTitle")
-    const ledgerTitle = screen.getByText("payments.sections.ledger")
+    const ledgerTitle = screen.getByRole("heading", { name: "payments.sections.ledger" })
     const workflowTitle = screen.getByText("payments.sections.workflows")
 
     const mixSection = mixTitle.closest("section")
@@ -317,7 +317,7 @@ describe("FinanceReceivablesSurface layout", () => {
     render(<FinanceReceivablesSurface />)
 
     const workflowTitle = screen.getByText("receivables.sections.workflows")
-    const receiptsTitle = screen.getByText("receivables.sections.receipts")
+    const receiptsTitle = screen.getByRole("heading", { name: "receivables.sections.receipts" })
     const receiptsSection = receiptsTitle.closest("section")
     const workflowSection = workflowTitle.closest("section")
     const workflowCard = workflowTitle.parentElement?.parentElement
@@ -345,13 +345,61 @@ describe("FinanceReceivablesSurface layout", () => {
 
     render(<FinanceReceivablesSurface />)
 
-    const receiptsSection = screen.getByText("receivables.sections.receipts").closest("section")
+    const receiptsSection = screen.getByRole("heading", { name: "receivables.sections.receipts" }).closest("section")
     const workflowSection = screen.getByText("receivables.sections.workflows").closest("section")
 
     expect(within(receiptsSection!).getByText("empty.receipts")).toBeInTheDocument()
     expect(receiptsSection!.nextElementSibling).toBe(workflowSection)
     expect(workflowSection!.nextElementSibling).toBeNull()
     expect(within(workflowSection!).getAllByRole("link")).toHaveLength(5)
+  })
+})
+
+describe("Finance cash-flow table controls", () => {
+  it("gives the statement, receivables, payables, and payments independent search and pagination", () => {
+    const data = dashboardData()
+    data.trend = [{ key: "2026-09-01", label: "September 1", inflow: 100, outflow: 20, revenue: 100, expenses: 20, purchases: 0, net: 80 }]
+    data.topReceivables = Array.from({ length: 12 }, (_, index) => ({ id: `customer-${index}`, name: `Customer ${index}`, balance: 100 + index, terms: 30, severity: "warning" }))
+    data.topPayables = Array.from({ length: 12 }, (_, index) => ({ id: `supplier-${index}`, name: `Supplier ${index}`, balance: 200 + index, terms: 15, severity: "warning" }))
+    mockedUseFinanceDashboard.mockReturnValue({
+      data: { success: true, data }, isLoading: false, isFetching: false, error: null, refetch: jest.fn(),
+    } as unknown as ReturnType<typeof useFinanceDashboard>)
+
+    render(<FinanceCommandCenterDashboard initialView="cash-flow" />)
+
+    expect(screen.getAllByRole("table")).toHaveLength(4)
+    expect(screen.getAllByRole("searchbox")).toHaveLength(4)
+    expect(screen.getByRole("searchbox", { name: "Search cash-flow rows" })).toBeInTheDocument()
+    expect(screen.getByRole("searchbox", { name: "payments.ledger.searchLabel" })).toBeInTheDocument()
+    expect(screen.getByRole("heading", { name: "sections.movement" }).closest("section")).not.toHaveClass("xl:grid-cols-[minmax(0,1fr)_420px]")
+
+    const navigation = screen.getByRole("navigation", { name: "navigation" })
+    const targets = within(navigation).getAllByRole("link").map((link) => link.getAttribute("href"))
+    expect(targets).toEqual(["#cash-flow-overview", "#cash-flow-movement", "#cash-flow-aging", "#cash-flow-payments"])
+    for (const target of targets) expect(document.querySelector(target!)).toBeInTheDocument()
+    const agingSection = document.getElementById("cash-flow-aging")!
+    const paymentsSection = document.getElementById("cash-flow-payments")!
+    expect(within(agingSection).getAllByRole("table")).toHaveLength(2)
+    expect(agingSection.compareDocumentPosition(paymentsSection) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(within(paymentsSection).getByRole("heading", { name: "command.evidenceTitle" })).toBeInTheDocument()
+    expect(screen.getByText("sections.payments").compareDocumentPosition(screen.getByText("command.evidenceTitle")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(screen.getByRole("img", { name: "chartDescription" })).toBeInTheDocument()
+
+    for (const [title, prefix] of [["sections.receivables", "Customer"], ["sections.payables", "Supplier"]]) {
+      const table = () => within(screen.getByRole("table", { name: title }))
+      const pagination = within(screen.getByRole("navigation", { name: `${title} pagination` }))
+      expect(pagination.getByRole("combobox", { name: "Rows per page" })).toBeInTheDocument()
+      expect(table().queryByText(`${prefix} 11`)).not.toBeInTheDocument()
+      fireEvent.click(pagination.getByRole("button", { name: "Go to next page" }))
+      expect(table().getByText(`${prefix} 11`)).toBeInTheDocument()
+      fireEvent.change(screen.getByRole("searchbox", { name: `Search: ${title}` }), { target: { value: `${prefix} 0` } })
+      expect(table().getByText(`${prefix} 0`)).toBeInTheDocument()
+      expect(pagination.getByText("Page 1 of 1")).toBeInTheDocument()
+      fireEvent.change(screen.getByRole("searchbox", { name: `Search: ${title}` }), { target: { value: "missing counterparty" } })
+      expect(table().getByText("No results.")).toBeInTheDocument()
+      expect(pagination.getByRole("button", { name: "Go to next page" })).toBeDisabled()
+    }
+    expect(screen.getByText("PAY-001")).toBeInTheDocument()
   })
 })
 
@@ -379,17 +427,19 @@ describe("Finance command-center closing-section layout", () => {
 
     render(<FinanceCommandCenterDashboard initialView={initialView} layout={layout} />)
 
-    const methodsTitle = screen.getByText("sections.methods")
+    const sectionLinks = within(screen.getByRole("navigation", { name: initialView === "cash-flow" ? "navigation" : "presentation.navigation" })).getAllByRole("link")
+    for (const link of sectionLinks) expect(document.getElementById(link.getAttribute("href")!.slice(1))).toBeInTheDocument()
+    const methodsTitle = screen.getByRole("heading", { name: "sections.methods" })
     const workflowTitle = screen.getByText("sections.workflows")
     const methodsSection = methodsTitle.closest("section")
     const workflowSection = workflowTitle.closest("section")
     const actionGrid = workflowSection?.querySelector("[data-finance-workflow-actions]") as HTMLElement
     const paymentMixGrid = within(methodsSection!).getByTestId("payment-mix-grid")
-    const commandHeader = screen.getByText("command.eyebrow").closest("section")
+    const commandHeader = screen.getByText(initialView === "cash-flow" ? "cashFlow.eyebrow" : "command.eyebrow").closest("section")
     const commandActionLinks = [
       within(commandHeader!).getByRole("link", { name: "actions.reconciliation" }),
       within(commandHeader!).getByRole("link", { name: "actions.orderPayments" }),
-      within(commandHeader!).getByRole("link", { name: "actions.cashFlow" }),
+      within(commandHeader!).getByRole("link", { name: initialView === "cash-flow" ? "actions.cashDrawers" : "actions.cashFlow" }),
     ]
     const commandActionGrid = commandActionLinks[0].parentElement
 
@@ -451,12 +501,12 @@ describe("Finance Retail and Sales recent-payment ledgers", () => {
     fireEvent.click(ledger.getByRole("button", { name: "payments.ledger.nextPage" }))
     expect(ledger.getByText("PAY-011")).toBeInTheDocument()
     expect(ledger.getByText("PAY-012")).toBeInTheDocument()
-    expect(ledger.queryByText("PAY-001")).not.toBeInTheDocument()
+    expect(within(ledger.getByRole("table")).queryByText("PAY-001")).not.toBeInTheDocument()
   })
 })
 
 describe("Finance costs layout", () => {
-  it("stacks full-width status, movement, payments, and mix around a paired action and evidence row", () => {
+  it("groups full-width activity and actions, with evidence following the payment ledger", () => {
     mockedUseFinanceDashboard.mockReturnValue({
       data: {
         success: true,
@@ -471,11 +521,11 @@ describe("Finance costs layout", () => {
     render(<FinanceCommandCenterDashboard initialView="costs" layout="costs" />)
 
     const statusTitle = screen.getByText("command.statusTitle")
-    const movementTitle = screen.getByText("sections.movement")
+    const movementTitle = screen.getByRole("heading", { name: "sections.movement" })
     const actionTitle = screen.getByText("command.actionTitle")
     const evidenceTitle = screen.getByText("command.evidenceTitle")
     const paymentsTitle = screen.getByText("sections.payments")
-    const mixTitle = screen.getByText("sections.methods")
+    const mixTitle = screen.getByRole("heading", { name: "sections.methods" })
 
     const statusSection = screen.getByTestId("costs-operating-status")
     const movementSection = screen.getByTestId("costs-financial-movements")
@@ -485,8 +535,9 @@ describe("Finance costs layout", () => {
     const workflowSection = screen.getByText("sections.workflows").closest("section")
 
     expect(within(actionEvidenceRow).getByText("command.actionTitle")).toBe(actionTitle)
-    expect(within(actionEvidenceRow).getByText("command.evidenceTitle")).toBe(evidenceTitle)
-    expect(actionEvidenceRow).toHaveClass("xl:grid-cols-2")
+    expect(within(paymentsSection).getByText("command.evidenceTitle")).toBe(evidenceTitle)
+    expect(paymentsTitle.compareDocumentPosition(evidenceTitle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(actionEvidenceRow).not.toHaveClass("xl:grid-cols-2")
     expect(statusSection).not.toHaveClass("xl:grid-cols-[minmax(0,1fr)_420px]")
     expect(movementSection).not.toHaveClass("xl:grid-cols-[minmax(0,1fr)_420px]")
     expect(within(paymentsSection).getByText("sections.payments")).toBe(paymentsTitle)
@@ -516,7 +567,7 @@ describe("FinancePayablesSurface navigation", () => {
 
     render(<FinancePayablesSurface />)
 
-    const disbursementsTitle = screen.getByText("payables.sections.disbursements")
+    const disbursementsTitle = screen.getByRole("heading", { name: "payables.sections.disbursements" })
     const workflowsTitle = screen.getByText("payables.sections.workflows")
     const disbursementsSection = disbursementsTitle.closest("section")
     const workflowSection = workflowsTitle.closest("section")

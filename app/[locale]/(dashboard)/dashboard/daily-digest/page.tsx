@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { DailyHabitDigestDashboard } from "@/components/daily-habit/DailyHabitDigestDashboard"
 import { getDailyHabitDigestData } from "@/services/daily-habit/daily-habit-digest.service"
 import { resolveCommandAgentRollout } from "@/services/agents/agent-rollout.service"
+import { isCopilotProposalReleaseAvailable } from "@/services/ai/copilot-proposal-release.service"
 import { routeByKey, withDailyDigestSurfaceAccess } from "./daily-digest-route-access"
 
 export const metadata: Metadata = {
@@ -26,6 +27,8 @@ export default async function DailyHabitDigestPage({
     surface,
     onAllowed: async (ctx, locale) => {
       const data = await getDailyHabitDigestData({
+        operatingAccessContext: ctx,
+        locale,
         organizationId: ctx.orgId,
         actorId: ctx.userId,
         actorPermissions: ctx.permissions,
@@ -39,11 +42,18 @@ export default async function DailyHabitDigestPage({
         permissions: ctx.permissions,
       })
 
+      const proposalDraftsEnabled = commandAgentAccess.canRun && commandAgentAccess.canRender
+        && await isCopilotProposalReleaseAvailable({
+          organizationId: ctx.orgId,
+          roleCodes: ctx.roles.map((role) => role.code),
+        })
+
       return (
         <DailyHabitDigestDashboard
           data={data}
           locale={locale}
           commandAgentAccess={commandAgentAccess}
+          proposalDraftsEnabled={proposalDraftsEnabled}
         />
       )
     },

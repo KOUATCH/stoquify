@@ -1,0 +1,236 @@
+
+ROUTE /en/dashboard/accounting/accountant-access
+FILE app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/accountant-access/page.tsx; components/accounting/AccountantAccessManager.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/accountant-access.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx; services/accounting/accountant-access.service.ts
+REDIRECTS []
+HEADINGS Invite an accountant
+PROPS Accountant Access | Manage explicit accountant mandates, roles, expiry, evidence, and revocation. | accountantEmail | accountantFirmName | accountantFirmRegistrationNumber | role | effectiveFrom | expiresAt | consentEvidenceHash | sha256:…
+CONTROLS Accountant email (input, {"name":"\"accountantEmail\"","type":"\"email\"","required":"true"}, components/accounting/AccountantAccessManager.tsx:93)
+Firm name (input, {"name":"\"accountantFirmName\"","required":"true"}, components/accounting/AccountantAccessManager.tsx:97)
+Firm registration number (input, {"name":"\"accountantFirmRegistrationNumber\""}, components/accounting/AccountantAccessManager.tsx:101)
+Read only Reviewer Preparer (select, {"name":"\"role\""}, components/accounting/AccountantAccessManager.tsx:105)
+Effective from (input, {"name":"\"effectiveFrom\"","type":"\"datetime-local\""}, components/accounting/AccountantAccessManager.tsx:113)
+Expires at (input, {"name":"\"expiresAt\"","type":"\"datetime-local\"","required":"true"}, components/accounting/AccountantAccessManager.tsx:117)
+Signed consent evidence hash (input, {"name":"\"consentEvidenceHash\"","required":"true"}, components/accounting/AccountantAccessManager.tsx:121)
+Saving… / Invite or grant access (button, {"disabled":"isPending"}, components/accounting/AccountantAccessManager.tsx:129)
+Revoke (button, {"disabled":"isPending","onClick":"() => revoke(grant.id)","type":"\"button\""}, components/accounting/AccountantAccessManager.tsx:159)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/accountant-portal
+FILE app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/accountant-portal/page.tsx; components/accounting/AccountantPortal.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/data-trust.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx; hooks/useAccountantPortal.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS 
+PROPS Accountant Portal | Ledger-backed reporting, source-link evidence, audit trail, and certified trust-pack export controls. | Loading accountant evidence | Checking ledger provenance, source links, audit events, and certification blockers. | Accountant portal unavailable | Trust level | Posted entries | Source coverage | Blockers | Posted figures | Financial figures render only when critical data-trust blockers are clear. | Activity debit | Activity credit | Evidence modules | Close blockers | Recent source links | Audit and control trail
+CONTROLS Refresh (Button, {"type":"\"button\"","onClick":"() => query.refetch()"}, components/accounting/AccountantPortal.tsx:275)
+Exporting / Export trust pack (Button, {"type":"\"button\"","disabled":"!data.exportReadiness.canExportCertifiedPack || exportMutation.isPending","onClick":"handleExport"}, components/accounting/AccountantPortal.tsx:335)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/accountant-portfolio
+FILE app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/accountant-portfolio/page.tsx; components/accounting/AccountantPortfolio.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/accountant-access.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx; services/accounting/accountant-access.service.ts
+REDIRECTS []
+HEADINGS No active client mandates
+PROPS Accountant Client Portfolio | Only clients with active, unexpired consent mandates are visible.
+CONTROLS Open ledger evidence (Link, {"href":"`/dashboard/accounting/accountant-portal?clientOrganizationId=${encodeURIComponent(client.organizationId)}`"}, components/accounting/AccountantPortfolio.tsx:60)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/accounts
+FILE app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/accounts.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+REDIRECTS [{"name":"redirect","line":77,"args":"resultPath(locale, result.success, result.success ? \"Account created\" : result.error)"},{"name":"redirect","line":86,"args":"resultPath(locale, result.success, result.success ? \"Account archived\" : result.error)"}]
+HEADINGS 
+PROPS Accounting Accounts | Create and maintain postable OHADA/SYSCOHADA account nodes before journal automation. | Total accounts | Postable | Archived | Create account | Use leaf accounts for manual journal posting. | code | syscohadaClass | nameEn | nameFr | type | normalBalance | currency | XAF | mappingKey | allowManualPost | isControlAccount | Account list | Active and archived account nodes. | accountId
+CONTROLS Code (input, {"name":"\"code\"","required":"true"}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:131)
+SYSCOHADA class (input, {"name":"\"syscohadaClass\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:135)
+English name (input, {"name":"\"nameEn\"","required":"true"}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:140)
+French name (input, {"name":"\"nameFr\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:144)
+type (select, {"name":"\"type\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:149)
+DEBIT CREDIT (select, {"name":"\"normalBalance\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:157)
+Currency (input, {"name":"\"currency\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:166)
+Mapping key (input, {"name":"\"mappingKey\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:170)
+Allow manual posting (input, {"name":"\"allowManualPost\"","type":"\"checkbox\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:174)
+Control account (input, {"name":"\"isControlAccount\"","type":"\"checkbox\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:178)
+Create account (button, {}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:181)
+Archive (input, {"type":"\"hidden\"","name":"\"accountId\""}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:212)
+Archive (button, {}, app/[locale]/(dashboard)/dashboard/accounting/accounts/page.tsx:213)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/close
+FILE app/[locale]/(dashboard)/dashboard/accounting/close/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/close/page.tsx; components/accounting/CloseAssuranceCenter.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/accounting/CloseReadinessJourneyPanel.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/close-assurance.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx; services/accounting/close-assurance-pack.service.ts; hooks/accounting/useCloseAssurance.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS Close readiness journey | Close readiness journey | Journey blockers
+PROPS Centre De Cloture / Close & Assurance Center | Readiness de cloture fondee sur le ledger, la reconciliation, le suspense et les preuves de confiance. / Close readiness from the ledger, reconciliation, suspense, and data-trust evidence already in the accounting backbone. | Loading close assurance | Checking period close, ledger reconciliation, payment suspense, and data-trust evidence. | Close assurance unavailable | Status | Readiness | Evidence coverage | Critical blockers | Open findings | Trust level | Period | Close readiness checklist | Service-backed gates from period close, ledger, payment reconciliation, suspense, inventory, AP, payroll, tax, and data-trust sources. | Blockers and findings | Open issues must be resolved, assigned, or waived through segregation-of-duties controls before certification. | Add source-linked review notes for this finding. | Document the compensating control or management-approved reason for this waiver request. | Evidence coverage | Source-linked proof gathered by the close engine. Missing domains stay visible as unavailable evidence. | Provenance | Which service produced each part of the close picture, and whether it is posted, operational, or unavailable. | Evidence graph | Nodes and edges generated from the current close run evidence. | Nodes | Edges | Accountant review | Record an accountant decision against this close run without changing source evidence or posted ledger entries. | Review status | Document reviewer decision, requested changes, or close-readiness rationale. | Close pack export | Generate deterministic JSON snapshots with a watermark, SHA-256 content hash, and close-run audit trail. | Certification controls | Assign to me | Waiver approval requires fresh authentication. | Certified export gate | Draft export gate
+CONTROLS Refresh (Button, {"type":"\"button\"","onClick":"() => query.refetch()"}, components/accounting/CloseAssuranceCenter.tsx:532)
+[dynamic or icon-only label] (Select, {"onValueChange":"setSelectedPeriodId"}, components/accounting/CloseAssuranceCenter.tsx:621)
+Running / Run assessment (Button, {"type":"\"button\"","onClick":"handleRun","disabled":"!canRun || runMutation.isPending"}, components/accounting/CloseAssuranceCenter.tsx:639)
+Refresh (Button, {"type":"\"button\"","onClick":"() => query.refetch()","disabled":"query.isFetching"}, components/accounting/CloseAssuranceCenter.tsx:648)
+Assign to me (Button, {"type":"\"button\"","disabled":"!finding.id || isAssigning || [\"RESOLVED\", \"WAIVED_WITH_APPROVAL\"].includes(finding.status)","onClick":"() => finding.id && onAssign(finding.id)"}, components/accounting/CloseAssuranceCenter.tsx:902)
+Add comment (Button, {"type":"\"button\"","disabled":"!finding.id","onClick":"() => onSelectFinding(finding.id)"}, components/accounting/CloseAssuranceCenter.tsx:913)
+Accountant comments Persisted run / Live preview Add comment (Textarea, {"onChange":"(event) => onCommentBodyChange(event.target.value)","disabled":"!selectedFinding?.id || !data.run.id"}, components/accounting/CloseAssuranceCenter.tsx:947)
+Add comment (Button, {"type":"\"button\"","onClick":"onComment","disabled":"!canComment"}, components/accounting/CloseAssuranceCenter.tsx:954)
+Request waiver SoD Request waiver (Textarea, {"onChange":"(event) => onWaiverReasonChange(event.target.value)","disabled":"!selectedFinding?.id || [\"RESOLVED\", \"WAIVED_WITH_APPROVAL\"].includes(selectedFinding.status)"}, components/accounting/CloseAssuranceCenter.tsx:975)
+Request waiver (Button, {"type":"\"button\"","onClick":"onRequestWaiver","disabled":"!canRequestWaiver"}, components/accounting/CloseAssuranceCenter.tsx:982)
+Ready to close Changes requested (Select, {"onValueChange":"(value) => onStatusChange(value as PortalReviewStatus)","disabled":"!data.run.id || isSaving"}, components/accounting/CloseAssuranceCenter.tsx:1194)
+Latest review Run close readiness before recording an accountant review. Review status Ready to close Changes requested Saving review / Save review (Textarea, {"onChange":"(event) => onNotesChange(event.target.value)","disabled":"!data.run.id || isSaving"}, components/accounting/CloseAssuranceCenter.tsx:1205)
+Saving review / Save review (Button, {"type":"\"button\"","onClick":"onSave","disabled":"!canUpdate"}, components/accounting/CloseAssuranceCenter.tsx:1213)
+Exporting / Export draft JSON (Button, {"type":"\"button\"","onClick":"onDraftExport","disabled":"!canExportDraft"}, components/accounting/CloseAssuranceCenter.tsx:1275)
+Exporting / Export certified JSON (Button, {"type":"\"button\"","onClick":"onCertifiedExport","disabled":"!canExportCertified"}, components/accounting/CloseAssuranceCenter.tsx:1284)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/close/[periodId]
+FILE app/[locale]/(dashboard)/dashboard/accounting/close/[periodId]/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/close/[periodId]/page.tsx; components/accounting/CloseAssuranceCenter.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/close-assurance.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx; services/accounting/close-assurance-pack.service.ts; hooks/accounting/useCloseAssurance.ts; lib/utils.ts
+REDIRECTS []
+HEADINGS 
+PROPS Centre De Cloture / Close & Assurance Center | Readiness de cloture fondee sur le ledger, la reconciliation, le suspense et les preuves de confiance. / Close readiness from the ledger, reconciliation, suspense, and data-trust evidence already in the accounting backbone. | Loading close assurance | Checking period close, ledger reconciliation, payment suspense, and data-trust evidence. | Close assurance unavailable | Status | Readiness | Evidence coverage | Critical blockers | Open findings | Trust level | Period | Close readiness checklist | Service-backed gates from period close, ledger, payment reconciliation, suspense, inventory, AP, payroll, tax, and data-trust sources. | Blockers and findings | Open issues must be resolved, assigned, or waived through segregation-of-duties controls before certification. | Add source-linked review notes for this finding. | Document the compensating control or management-approved reason for this waiver request. | Evidence coverage | Source-linked proof gathered by the close engine. Missing domains stay visible as unavailable evidence. | Provenance | Which service produced each part of the close picture, and whether it is posted, operational, or unavailable. | Evidence graph | Nodes and edges generated from the current close run evidence. | Nodes | Edges | Accountant review | Record an accountant decision against this close run without changing source evidence or posted ledger entries. | Review status | Document reviewer decision, requested changes, or close-readiness rationale. | Close pack export | Generate deterministic JSON snapshots with a watermark, SHA-256 content hash, and close-run audit trail. | Certification controls | Assign to me | Waiver approval requires fresh authentication. | Certified export gate | Draft export gate
+CONTROLS Refresh (Button, {"type":"\"button\"","onClick":"() => query.refetch()"}, components/accounting/CloseAssuranceCenter.tsx:532)
+[dynamic or icon-only label] (Select, {"onValueChange":"setSelectedPeriodId"}, components/accounting/CloseAssuranceCenter.tsx:621)
+Running / Run assessment (Button, {"type":"\"button\"","onClick":"handleRun","disabled":"!canRun || runMutation.isPending"}, components/accounting/CloseAssuranceCenter.tsx:639)
+Refresh (Button, {"type":"\"button\"","onClick":"() => query.refetch()","disabled":"query.isFetching"}, components/accounting/CloseAssuranceCenter.tsx:648)
+Assign to me (Button, {"type":"\"button\"","disabled":"!finding.id || isAssigning || [\"RESOLVED\", \"WAIVED_WITH_APPROVAL\"].includes(finding.status)","onClick":"() => finding.id && onAssign(finding.id)"}, components/accounting/CloseAssuranceCenter.tsx:902)
+Add comment (Button, {"type":"\"button\"","disabled":"!finding.id","onClick":"() => onSelectFinding(finding.id)"}, components/accounting/CloseAssuranceCenter.tsx:913)
+Accountant comments Persisted run / Live preview Add comment (Textarea, {"onChange":"(event) => onCommentBodyChange(event.target.value)","disabled":"!selectedFinding?.id || !data.run.id"}, components/accounting/CloseAssuranceCenter.tsx:947)
+Add comment (Button, {"type":"\"button\"","onClick":"onComment","disabled":"!canComment"}, components/accounting/CloseAssuranceCenter.tsx:954)
+Request waiver SoD Request waiver (Textarea, {"onChange":"(event) => onWaiverReasonChange(event.target.value)","disabled":"!selectedFinding?.id || [\"RESOLVED\", \"WAIVED_WITH_APPROVAL\"].includes(selectedFinding.status)"}, components/accounting/CloseAssuranceCenter.tsx:975)
+Request waiver (Button, {"type":"\"button\"","onClick":"onRequestWaiver","disabled":"!canRequestWaiver"}, components/accounting/CloseAssuranceCenter.tsx:982)
+Ready to close Changes requested (Select, {"onValueChange":"(value) => onStatusChange(value as PortalReviewStatus)","disabled":"!data.run.id || isSaving"}, components/accounting/CloseAssuranceCenter.tsx:1194)
+Latest review Run close readiness before recording an accountant review. Review status Ready to close Changes requested Saving review / Save review (Textarea, {"onChange":"(event) => onNotesChange(event.target.value)","disabled":"!data.run.id || isSaving"}, components/accounting/CloseAssuranceCenter.tsx:1205)
+Saving review / Save review (Button, {"type":"\"button\"","onClick":"onSave","disabled":"!canUpdate"}, components/accounting/CloseAssuranceCenter.tsx:1213)
+Exporting / Export draft JSON (Button, {"type":"\"button\"","onClick":"onDraftExport","disabled":"!canExportDraft"}, components/accounting/CloseAssuranceCenter.tsx:1275)
+Exporting / Export certified JSON (Button, {"type":"\"button\"","onClick":"onCertifiedExport","disabled":"!canExportCertified"}, components/accounting/CloseAssuranceCenter.tsx:1284)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/control-center
+FILE app/[locale]/(dashboard)/dashboard/accounting/control-center/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/control-center/page.tsx; components/accounting/AccountingControlCenter.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/settings.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx; lib/utils.ts; hooks/useAccountingControlCenter.ts
+REDIRECTS []
+HEADINGS Lock accounting setup?
+PROPS Centre De Controle Comptable / Accounting Control Center | Vue operationnelle des blocages comptables, mappages, journaux, regles d'ecriture, periodes et controle de verrouillage. / Operational readiness view for accounting blockers, mappings, journals, posting rules, periods, and setup-lock control. | Loading accounting control center | Checking mappings, journals, posting rules, periods, and setup-lock controls. | Accounting readiness unavailable | Settings | Mappings | Journals | Posting rules | Open periods | Blockers | Business event outbox | Operational delivery health for evidence-producing business events. | Control plane status | Latest ledger audit and sensitive-action decisions for accounting operations. | Readiness checklist | Service-backed setup gates by blocker category. | Setup lock control | Critical action governed by the sensitive-action control plane. | Permission | Assurance | Risk | Fresh auth | Account mappings | Required operational accounts with SYSCOHADA controls. | Default journals | Books required before automated and manual postings. | Posting rules status | Active effective rule scaffolds for operational posting purposes.
+CONTROLS Refresh (Button, {"type":"\"button\"","onClick":"() => query.refetch()"}, components/accounting/AccountingControlCenter.tsx:438)
+Lock setup (Button, {"type":"\"button\"","disabled":"!canSubmit"}, components/accounting/AccountingControlCenter.tsx:819)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/journals/new
+FILE app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx; app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/accounts.actions.ts; actions/accounting/journals.actions.ts; config/useAuth.ts; lib/modules/module-operation-error.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+REDIRECTS []
+HEADINGS 
+PROPS New Journal Entry | Enter a balanced debit and credit draft before posting it to the ledger. | Manual entry | Only postable leaf accounts and manual journals are shown. / The account or journal lookup failed. Retry loading before entering a new draft. | journalId | entryDate | currency | reference | memo
+CONTROLS Select journal (select, {"name":"\"journalId\"","required":"true"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:114)
+Entry date (input, {"name":"\"entryDate\"","type":"\"date\"","required":"true"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:123)
+Currency (input, {"name":"\"currency\""}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:127)
+Reference (input, {"name":"\"reference\""}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:134)
+Memo (input, {"name":"\"memo\""}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:138)
+Select account (select, {"name":"`accountId-${index}`"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:156)
+[dynamic or icon-only label] (input, {"name":"`description-${index}`"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:164)
+[dynamic or icon-only label] (input, {"name":"`debit-${index}`"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:167)
+[dynamic or icon-only label] (input, {"name":"`credit-${index}`"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/page.tsx:170)
+[dynamic or icon-only label] (a, {"href":"queueHref"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx:62)
+[dynamic or icon-only label] (button, {"type":"\"submit\"","disabled":"pending || !ready"}, app/[locale]/(dashboard)/dashboard/accounting/journals/new/ManualJournalDraftForm.tsx:64)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/journals
+FILE app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx; components/DataTableComponents/index.ts; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/journals.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+REDIRECTS [{"name":"redirect","line":177,"args":"resultPath(locale, result.success, result.success ? \"Journal entry posted\" : result.error)"},{"name":"redirect","line":187,"args":"resultPath(locale, result.success, result.success ? \"Journal entry reversed\" : result.error)"}]
+HEADINGS 
+PROPS journalEntryId | journalEntryId | reason | Journal Entries | Create balanced drafts, post them to the ledger, and reverse posted entries with an audit trail. | Journals | Drafts | Posted | Draft journal entries | Editable drafts awaiting controlled post. | Posted journal evidence | Posted and reversed entries remain evidence-backed; reversal is a protected action.
+CONTROLS Post (input, {"type":"\"hidden\"","name":"\"journalEntryId\""}, app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx:127)
+Post (button, {}, app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx:128)
+Reverse (input, {"type":"\"hidden\"","name":"\"journalEntryId\""}, app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx:133)
+Reverse (input, {"type":"\"hidden\"","name":"\"reason\""}, app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx:134)
+Reverse (button, {}, app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx:135)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting
+FILE app/[locale]/(dashboard)/dashboard/accounting/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/page.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/reports.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+REDIRECTS []
+HEADINGS 
+PROPS Accounting Ledger | Manual journal control, posting discipline, and financial reporting from the double-entry kernel. | Accounting access | Setup status | Accounts | Open periods | Draft entries | Posted entries | Latest journal entries | Recent activity from draft and posted journals.
+CONTROLS [dynamic or icon-only label] (Link, {"href":"item.href"}, app/[locale]/(dashboard)/dashboard/accounting/page.tsx:135)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+
+ROUTE /en/dashboard/accounting/reports/financial-statements
+FILE app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx; app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx
+DEPENDENCIES actions/accounting/reports.actions.ts; config/useAuth.ts; services/accounting/financial-statements.service.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+REDIRECTS []
+HEADINGS 
+PROPS Performance bridge | A compact path from revenue to net income. | Net revenue | Cost of sales | Gross profit | Operating expenses | Management EBITDA | Net income | EBITDA reconciliation | Transparent management measure; not a statutory subtotal. | Net income | Add: income tax | Add: finance costs | Add: depreciation & amortization | Management EBITDA | Position snapshot | Assets | Liabilities | Equity | Accumulated earnings | Liabilities + equity | Profit & Loss statement | Revenue | Cost of sales | Gross profit | Operating expenses | Management EBITDA | Depreciation & amortization | Operating profit | Finance costs | Profit before tax | Income tax | Net income | Management EBITDA | Formula and account-classification control. | Classification review | Accounts that need finance-team confirmation. | Assets | Asset accounts | Total assets | Liabilities & equity | Obligations, contributed equity, and accumulated ledger earnings. | Liabilities | Equity | Accumulated earnings | Total liabilities & equity | Financial Reports | Decision-ready Profit & Loss, management EBITDA, and Balance Sheet views from the posted ledger. | Financial reports unavailable | view | periodId | Net revenue | Management EBITDA | Net income | Balance check | Account code | Account | Amount
+CONTROLS active account / accounts   · select to review (summary, {}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx:120)
+Accounting period Apply period (input, {"type":"\"hidden\"","name":"\"view\""}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx:621)
+periodId (select, {"name":"\"periodId\""}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx:624)
+Apply period (button, {"type":"\"submit\""}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx:636)
+[dynamic or icon-only label] (Link, {"href":"reportHref(report.period.id, value)"}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx:655)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+ ↑ /  ↓ (button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx:52)
+Previous (button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx:157)
+Next (button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx:157)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+
+ROUTE /en/dashboard/accounting/reports/trial-balance
+FILE app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx; app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx; components/DataTableComponents/CanonicalTableBoundary.tsx; components/DataTableComponents/CanonicalTableDensityControl.tsx
+DEPENDENCIES actions/accounting/reports.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+REDIRECTS []
+HEADINGS 
+PROPS Trial Balance | A ledger-first report generated from posted and reversed journal entry lines. | Trial balance access | Activity debit | Activity credit | Balance check | Account balances | Search, filter, and review the canonical report without losing full-report totals. | Account code | Account | Type | Normal | Search by account code or name
+CONTROLS [dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)
+ ↑ /  ↓ (button, {"type":"\"button\"","onClick":"() => column.toggleSorting(sorted === \"asc\")"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:147)
+Search accounts (input, {"type":"\"search\"","onChange":"(event) => { setQuery(event.target.value); resetPage() }"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:280)
+All types (select, {"onChange":"(event) => { setAccountType(event.target.value); resetPage() }"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:281)
+All accounts With activity only (select, {"onChange":"(event) => { setActivityFilter(event.target.value as ActivityFilter); resetPage() }"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:282)
+[dynamic or icon-only label] (select, {"onChange":"(event) => { table.setPageSize(Number(event.target.value)); resetPage() }"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:283)
+Clear filters (button, {"type":"\"button\"","onClick":"clearFilters"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:286)
+Previous (button, {"type":"\"button\"","onClick":"() => table.previousPage()","disabled":"!table.getCanPreviousPage()"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:302)
+Next (button, {"type":"\"button\"","onClick":"() => table.nextPage()","disabled":"!table.getCanNextPage()"}, app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx:302)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => onDensityChange(value)"}, components/DataTableComponents/CanonicalTableDensityControl.tsx:27)
+
+ROUTE /en/dashboard/accounting/setup
+FILE app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx; app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx
+DEPENDENCIES actions/accounting/settings.actions.ts; config/useAuth.ts; app/[locale]/(dashboard)/dashboard/accounting/accounting-route-access.tsx
+REDIRECTS [{"name":"redirect","line":66,"args":"resultPath(locale, result.success, result.success ? \"Accounting settings saved\" : result.error)"},{"name":"redirect","line":72,"args":"resultPath(locale, result.success, result.success ? \"Default journals ensured\" : result.error)"},{"name":"redirect","line":84,"args":"resultPath(locale, result.success, result.success ? \"Fiscal year created\" : result.error)"},{"name":"redirect","line":93,"args":"resultPath(locale, result.success, result.success ? \"Accounting period closed\" : result.error)"},{"name":"redirect","line":99,"args":"resultPath(locale, result.success, result.success ? \"Accounting setup marked ready\" : result.error)"}]
+HEADINGS 
+PROPS Ledger Setup | Prepare the organization accounting settings, journals, fiscal year, and open periods before posting. | Accounting setup access | Status | Currency | Journals | Open periods | Organization accounting settings | These values anchor currency and fiscal-period behavior. | countryPack | baseCurrency | fiscalYearStartMonth | fiscalYearStartDay | Fiscal year | Creates monthly accounting periods for manual posting. | name | startDate | endDate | Journals | Default books for manual setup and future automated posting. | Accounting periods | Only open periods can receive postings. | periodId
+CONTROLS Country pack (input, {"name":"\"countryPack\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:157)
+Base currency (input, {"name":"\"baseCurrency\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:161)
+Fiscal start month (input, {"name":"\"fiscalYearStartMonth\"","type":"\"number\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:165)
+Fiscal start day (input, {"name":"\"fiscalYearStartDay\"","type":"\"number\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:169)
+Save settings (button, {}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:171)
+Name (input, {"name":"\"name\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:181)
+Start date (input, {"name":"\"startDate\"","type":"\"date\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:185)
+End date (input, {"name":"\"endDate\"","type":"\"date\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:189)
+Create fiscal year (button, {}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:191)
+Ensure defaults (button, {}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:204)
+Mark ready (button, {}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:237)
+Close (input, {"type":"\"hidden\"","name":"\"periodId\""}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:262)
+Close (button, {}, app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx:263)
+[dynamic or icon-only label] (Button, {}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"href"}, app/[locale]/(dashboard)/dashboard/accounting/_components/accounting-ui.tsx:173)

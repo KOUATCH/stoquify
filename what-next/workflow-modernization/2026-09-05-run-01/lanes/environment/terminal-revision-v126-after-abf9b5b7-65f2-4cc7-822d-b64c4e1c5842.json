@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-13T13:03:58.094Z",
+  "phase": "after",
+  "sourceBefore": "0af5619883b0214447820ad966ecf470b9b60bfd79336f1a192d278a657e5553",
+  "checks": [
+    {
+      "name": "Stale form rejected without overwriting newer configuration",
+      "passed": true
+    },
+    {
+      "name": "Missing revision denied; explicit reviewed save works; one of two same-revision concurrent submissions wins",
+      "passed": true
+    }
+  ],
+  "scope": "Owned local PostgreSQL actual terminal edits; no checkout/provider operation.",
+  "passed": true,
+  "sourceAfter": "0af5619883b0214447820ad966ecf470b9b60bfd79336f1a192d278a657e5553",
+  "sourceStable": true
+}

@@ -1,0 +1,35 @@
+{
+  "at": "2026-09-08T15:07:37.666Z",
+  "mode": "before",
+  "run": "5f81bc81-b0e",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "c5ae0394931bb15e72f87bcb60c071d9243da2a152e684aa9fa865b7d743c966",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d"
+  },
+  "checks": [
+    "Reproduced skipped payment sharing an invoice ID at the page boundary",
+    "Reproduced changed-out-of-filter invoice accepted by old cursor without stale rejection"
+  ],
+  "originalBefore": "682979ef4dcdd0348df6494c51393b02cfec1469fea2362f9286192c13181f78",
+  "pagination": {
+    "expected": 29,
+    "received": 28,
+    "unique": 28,
+    "paymentWithSharedIdIncluded": false
+  },
+  "acceptedChangedSummary": {
+    "before": 27,
+    "after": 26
+  },
+  "changedOutOfFilter": {
+    "staleRejected": false,
+    "staleCode": null
+  },
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "c5ae0394931bb15e72f87bcb60c071d9243da2a152e684aa9fa865b7d743c966",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d"
+  },
+  "sourceStable": true
+}

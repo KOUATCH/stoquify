@@ -1,0 +1,180 @@
+{
+  "at": "2026-09-08T13:19:32.223Z",
+  "sourceBaseline": "evidence/source-baseline-v72.json",
+  "records": [
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/approve/page.tsx",
+      "surface": "/dashboard/purchases/payables/approve",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.invoice.post",
+      "guard": "withPurchasesSurfaceAccess",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "evidenceKind": "reviewed-wrapper-and-static-catalog",
+        "routeKey": "purchases-invoice-approve",
+        "permissionMode": "single",
+        "permissions": [
+          "purchasing.ap.invoice.post"
+        ],
+        "wrapperFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx",
+        "wrapperSha256": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+        "catalogFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+        "catalogPlumbingSha256": "c7d27d3dd244b837c1059d62310d76e55c24467c99a9c308a2275d9fb45a2b9f",
+        "runtimeCertification": false
+      },
+      "classification": "mapped"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/correct/page.tsx",
+      "surface": "/dashboard/purchases/payables/correct",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.invoice.post",
+      "guard": "withPurchasesSurfaceAccess",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "evidenceKind": "reviewed-wrapper-and-static-catalog",
+        "routeKey": "purchases-invoice-correct",
+        "permissionMode": "single",
+        "permissions": [
+          "purchasing.ap.invoice.post"
+        ],
+        "wrapperFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx",
+        "wrapperSha256": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+        "catalogFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+        "catalogPlumbingSha256": "c7d27d3dd244b837c1059d62310d76e55c24467c99a9c308a2275d9fb45a2b9f",
+        "runtimeCertification": false
+      },
+      "classification": "mapped"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/request/page.tsx",
+      "surface": "/dashboard/purchases/payables/exceptions/request",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.invoice.post",
+      "guard": "withPurchasesSurfaceAccess",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "evidenceKind": "reviewed-wrapper-and-static-catalog",
+        "routeKey": "purchases-exception-request",
+        "permissionMode": "single",
+        "permissions": [
+          "purchasing.ap.invoice.post"
+        ],
+        "wrapperFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx",
+        "wrapperSha256": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+        "catalogFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+        "catalogPlumbingSha256": "c7d27d3dd244b837c1059d62310d76e55c24467c99a9c308a2275d9fb45a2b9f",
+        "runtimeCertification": false
+      },
+      "classification": "mapped"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/exceptions/review/page.tsx",
+      "surface": "/dashboard/purchases/payables/exceptions/review",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.match.review",
+      "guard": "withPurchasesSurfaceAccess",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "evidenceKind": "reviewed-wrapper-and-static-catalog",
+        "routeKey": "purchases-exception-review",
+        "permissionMode": "single",
+        "permissions": [
+          "purchasing.ap.match.review"
+        ],
+        "wrapperFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx",
+        "wrapperSha256": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+        "catalogFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+        "catalogPlumbingSha256": "c7d27d3dd244b837c1059d62310d76e55c24467c99a9c308a2275d9fb45a2b9f",
+        "runtimeCertification": false
+      },
+      "classification": "mapped"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx",
+      "surface": "/dashboard/purchases/payables/prepare",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.invoice.post",
+      "guard": "withPurchasesSurfaceAccess",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "evidenceKind": "reviewed-wrapper-and-static-catalog",
+        "routeKey": "purchases-invoice-prepare",
+        "permissionMode": "single",
+        "permissions": [
+          "purchasing.ap.invoice.post"
+        ],
+        "wrapperFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx",
+        "wrapperSha256": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+        "catalogFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+        "catalogPlumbingSha256": "c7d27d3dd244b837c1059d62310d76e55c24467c99a9c308a2275d9fb45a2b9f",
+        "runtimeCertification": false
+      },
+      "classification": "mapped"
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/page.tsx",
+      "surface": "/dashboard/purchases/payables/recovery",
+      "surfaceType": "page",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.invoice.post",
+      "guard": "withPurchasesSurfaceAccess",
+      "observeOrEnforce": "enforce",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {
+        "evidenceKind": "reviewed-wrapper-and-static-catalog",
+        "routeKey": "purchases-invoice-recovery",
+        "permissionMode": "single",
+        "permissions": [
+          "purchasing.ap.invoice.post"
+        ],
+        "wrapperFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-access.tsx",
+        "wrapperSha256": "198d94a29295679470fb2292adc24f6dc632fc48a78dd594e2dc4102046cd94e",
+        "catalogFile": "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts",
+        "catalogPlumbingSha256": "c7d27d3dd244b837c1059d62310d76e55c24467c99a9c308a2275d9fb45a2b9f",
+        "runtimeCertification": false
+      },
+      "classification": "mapped"
+    }
+  ],
+  "remainingCorrectionActions": [
+    {
+      "file": "actions/purchasing/invoice-correction.actions.ts",
+      "surface": "purchasing/invoice-correction.actions.ts",
+      "surfaceType": "action",
+      "moduleApplicability": "required",
+      "moduleSlug": "purchasing",
+      "permission": "purchasing.ap.invoice.post",
+      "guard": "requirePermission",
+      "observeOrEnforce": "report-only",
+      "dependencyGaps": [],
+      "delegatedTo": [],
+      "metadata": {},
+      "classification": "mapped, enforcement candidate"
+    }
+  ],
+  "findings": [],
+  "runtimeCertification": false
+}

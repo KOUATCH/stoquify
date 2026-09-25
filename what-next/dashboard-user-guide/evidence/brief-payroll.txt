@@ -1,0 +1,309 @@
+
+ROUTE /en/dashboard/payroll/attendance
+FILE app/[locale]/(dashboard)/dashboard/payroll/attendance/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/attendance/page.tsx; components/payroll/PayrollPaymentAttendanceReadinessWorkbench.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/payroll/PayrollProofDrawerButton.tsx
+DEPENDENCIES actions/payroll/payroll-payment-evidence.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Payroll payment and attendance readiness unavailable | Payroll payment and attendance readiness | Payment and attendance readiness | Employee readiness queue | Blockers | Redactions
+PROPS Employees | Approved destinations | Pending destinations | Missing destinations | Attendance ready | Blockers | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS Compensation (Link, {"href":"localizePath(\"/dashboard/payroll/compensation\", locale)"}, components/payroll/PayrollPaymentAttendanceReadinessWorkbench.tsx:334)
+Setup (Link, {"href":"localizePath(\"/dashboard/payroll/setup\", locale)"}, components/payroll/PayrollPaymentAttendanceReadinessWorkbench.tsx:340)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+Proof drawer (button, {"type":"\"button\"","onClick":"() => setOpen(true)"}, components/payroll/PayrollProofDrawerButton.tsx:96)
+Open (Link, {"href":"subject.href"}, components/payroll/PayrollProofDrawerButton.tsx:124)
+
+ROUTE /en/dashboard/payroll/compensation
+FILE app/[locale]/(dashboard)/dashboard/payroll/compensation/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/compensation/page.tsx; components/payroll/PayrollCompensationWorkbench.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES actions/payroll/payroll-compensation.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Payroll compensation unavailable | Payroll compensation | Compensation approval readiness | Rubrique catalog | Employee assignments | Salary change queue
+PROPS Rubriques | Active rubriques | Assignments | Requested changes | Approved changes | Redacted changes | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS Contracts (Link, {"href":"localizePath(\"/dashboard/payroll/contracts\", locale)"}, components/payroll/PayrollCompensationWorkbench.tsx:165)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/payroll/contracts
+FILE app/[locale]/(dashboard)/dashboard/payroll/contracts/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/contracts/page.tsx; components/payroll/PayrollContractLifecycleWorkbench.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES actions/payroll/payroll-contract.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Payroll contracts unavailable | Payroll contracts | Contract lifecycle readiness | Employee readiness | Contract rows
+PROPS Employees | Linked users | Active contracts | Payroll eligible | Redacted contracts | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS Employees (Link, {"href":"localizePath(\"/dashboard/payroll/employees\", locale)"}, components/payroll/PayrollContractLifecycleWorkbench.tsx:151)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/payroll/declarations
+FILE app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx; components/payroll/PayrollDeclarationWorkbench.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx; components/payroll/PayrollProofDrawerButton.tsx
+DEPENDENCIES actions/payroll/payroll-control.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Payroll declarations unavailable | Payroll declarations | Declaration evidence workbench | Declaration lifecycle | Source scope | Blockers | Redactions
+PROPS Declarations | Active | Rejected | Missing register | Evidence | Amount | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS Register (Link, {"href":"localizePath(\"/dashboard/payroll/register\", locale)"}, components/payroll/PayrollDeclarationWorkbench.tsx:439)
+Payments (Link, {"href":"localizePath(\"/dashboard/payroll/payments\", locale)"}, components/payroll/PayrollDeclarationWorkbench.tsx:445)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+Queue adapter execution (button, {"type":"\"submit\"","disabled":"isPending"}, components/payroll/PayrollDeclarationAuthorityExecutionPanel.tsx:197)
+Proof drawer (button, {"type":"\"button\"","onClick":"() => setOpen(true)"}, components/payroll/PayrollProofDrawerButton.tsx:96)
+Open (Link, {"href":"subject.href"}, components/payroll/PayrollProofDrawerButton.tsx:124)
+
+ROUTE /en/dashboard/payroll/employees
+FILE app/[locale]/(dashboard)/dashboard/payroll/employees/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/employees/page.tsx; components/payroll/PayrollEmployeeSourceWorkbench.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES actions/payroll/payroll-employee.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Payroll employees unavailable | Payroll employees | Employee source-data readiness | Readiness rows
+PROPS Employees | Linked users | Active contract ready | Frozen attendance | Ready candidates | Unmapped | Orphaned mappings | Source records | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS Setup (Link, {"href":"localizePath(\"/dashboard/payroll/setup\", locale)"}, components/payroll/PayrollEmployeeSourceWorkbench.tsx:134)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/payroll
+FILE app/[locale]/(dashboard)/dashboard/payroll/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/page.tsx; components/payroll/PayrollCommandCenter.tsx; components/payroll/PayrollPilotCertificationPanel.tsx
+DEPENDENCIES actions/payroll/payroll-command-read-model.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; actions/payroll/payroll-country-pack-review-intake.actions.ts; actions/payroll/payroll-pilot-certification.actions.ts
+REDIRECTS []
+HEADINGS Adapter operations | Provider health | Chaos release gate | Authority executions | Payment adapter gaps | Action board | Blocker flow | Run review | Payment state | Declaration state | Close state | Country-pack review intake | Final release readiness | Freshness | Payroll command unavailable | HR, payroll, evidence, and close control | Pilot certification gate
+PROPS Open proof | Provider blocked | Callback lag | Inbox stale | Authority dead-letter | Certification gaps | Chaos gate | Provider | Currency | Statement | Statement hash | Latest event | Reconciliation | Run guard | Run dedupe key | Dead letters | Failed inbox | Processing inbox | Retry due | Stale processing | Replay/tamper | Exceptions | Duplicate risk | Settlement worker | Worker source | Worker action at | Worker next retry | Worker error | Worker evidence | Authority claims | Provider claims | Authority missing | Provider missing | Authority proof | Provider proof | Adapter | Harness hash | Proof hash | Chaos hash | Attempts | Next attempt | Error code | Method | Harness hash | Proof hash | Chaos hash | Contract hash | Exception | Action board | Blocker flow | Passing gates | Blockers | Critical | Statutory families | Review hashes | Review topics | Pack approval | Payroll command | Active employees | Attendance ready | Payment approved | Ledger blockers | Current runs | Open declarations | Next actions | Pilot cert | Final release | Proof subjects
+CONTROLS Proof (button, {"type":"\"button\"","onClick":"() => onClick(subject)"}, components/payroll/PayrollCommandCenter.tsx:452)
+Open (Link, {"href":"subject.href"}, components/payroll/PayrollCommandCenter.tsx:478)
+Open (Link, {"href":"localizePath(route, locale)"}, components/payroll/PayrollCommandCenter.tsx:719)
+Proposed country-pack JSON (textarea, {"onChange":"(event) => setProposedPackJson(event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1059)
+Country code (input, {"onChange":"(event) => setCountryCode(event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1070)
+Base pack version (input, {"onChange":"(event) => setBasePackVersion(event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1080)
+[dynamic or icon-only label] (input, {"type":"\"checkbox\"","onChange":"() => toggleTargetFamily(option.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1096)
+Topic (input, {"onChange":"(event) => updateEvidence(index, \"topic\", event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1116)
+Legal reference (input, {"onChange":"(event) => updateEvidence(index, \"legalRef\", event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1126)
+Evidence hash (input, {"onChange":"(event) => updateEvidence(index, \"sourceEvidenceHash\", event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1136)
+Reviewer (input, {"onChange":"(event) => updateEvidence(index, \"reviewedBy\", event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1146)
+Reviewed on (input, {"onChange":"(event) => updateEvidence(index, \"reviewedOn\", event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1156)
+Review certificate hash (input, {"onChange":"(event) => setCertificateHash(event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1172)
+Approval evidence hash (input, {"onChange":"(event) => setApprovalEvidenceHash(event.target.value)","disabled":"isPending"}, components/payroll/PayrollCommandCenter.tsx:1182)
+Evaluate pack (button, {"type":"\"button\"","disabled":"isPending || !proposedPackJson.trim()","onClick":"evaluateIntake"}, components/payroll/PayrollCommandCenter.tsx:1191)
+Record certificate (button, {"type":"\"button\"","disabled":"isPending || !proposedPackJson.trim()","onClick":"recordIntake"}, components/payroll/PayrollCommandCenter.tsx:1200)
+Approve certificate (button, {"type":"\"button\"","disabled":"isPending || !certificateHash.trim() || !approvalEvidenceHash.trim()","onClick":"approveIntake"}, components/payroll/PayrollCommandCenter.tsx:1209)
+Approver (input, {"onChange":"(event) => updateSignoff(role, \"approvedById\", event.target.value)"}, components/payroll/PayrollPilotCertificationPanel.tsx:157)
+Approved at (input, {"onChange":"(event) => updateSignoff(role, \"approvedAt\", event.target.value)"}, components/payroll/PayrollPilotCertificationPanel.tsx:165)
+Evidence hash (input, {"onChange":"(event) => updateSignoff(role, \"evidenceHash\", event.target.value)"}, components/payroll/PayrollPilotCertificationPanel.tsx:173)
+Evaluate pilot (button, {"type":"\"submit\"","disabled":"isPending || !certificationInput.payrollRunId"}, components/payroll/PayrollPilotCertificationPanel.tsx:186)
+Persist certificate (button, {"type":"\"button\"","disabled":"isPending || !certificationInput.inputComplete","onClick":"() => submit(true)"}, components/payroll/PayrollPilotCertificationPanel.tsx:194)
+
+ROUTE /en/dashboard/payroll/payments
+FILE app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx; components/payroll/PayrollEmployeeBalanceWorkbench.tsx; components/payroll/PayrollEmployeeBalanceSettlementForm.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/payroll/PayrollPaymentReconciliationWorkbench.tsx; components/payroll/PayrollPaymentSettlementForm.tsx; components/payroll/PayrollProofDrawerButton.tsx
+DEPENDENCIES actions/payroll/payroll-control.actions.ts; actions/payroll/payroll-payment-reconciliation.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Payroll employee balance workbench unavailable | Payroll employee balance workbench | Employee balance recovery | Recovery cases | Source scope | Payroll payment reconciliation unavailable | Payroll payment reconciliation | Payment reconciliation | Payment batches | Evidence policy | Blockers | Redactions
+PROPS Active cases | Open cases | Partial settlements | Returned cases | Outstanding | Coverage | sha256:... | optional | optional | Date range | Ascending / Descending | First page | Previous | Next | Last page | Batches | Awaiting proof | Exceptions | Ready | Partial | Settled | sha256:... | sha256:... | optional | optional | optional | optional | optional
+CONTROLS Register (Link, {"href":"localizePath(\"/dashboard/payroll/register\", locale)"}, components/payroll/PayrollEmployeeBalanceWorkbench.tsx:169)
+Attendance (Link, {"href":"localizePath(\"/dashboard/payroll/attendance\", locale)"}, components/payroll/PayrollEmployeeBalanceWorkbench.tsx:175)
+Settlement amount (input, {"onChange":"(event) => setAmount(event.target.value)","required":"true","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:124)
+Settlement date (input, {"type":"\"date\"","onChange":"(event) => setSettlementDate(event.target.value)","required":"true","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:136)
+[dynamic or icon-only label] (select, {"onChange":"(event) => setSettlementMethod(event.target.value as SettlementMethod)","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:150)
+Settled by ID (input, {"onChange":"(event) => setSettledById(event.target.value)","required":"true","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:163)
+Evidence hash (input, {"onChange":"(event) => setSettlementEvidenceHash(event.target.value)","required":"true","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:175)
+Document hash (input, {"onChange":"(event) => setDocumentHash(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:188)
+Reference (input, {"onChange":"(event) => setReference(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:198)
+Notes (textarea, {"onChange":"(event) => setNotes(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:211)
+Record settlement (button, {"type":"\"submit\"","disabled":"disabled || isPending"}, components/payroll/PayrollEmployeeBalanceSettlementForm.tsx:233)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+Finance recon (Link, {"href":"localizePath(\"/dashboard/finance/reconciliation\", locale)"}, components/payroll/PayrollPaymentReconciliationWorkbench.tsx:511)
+Register (Link, {"href":"localizePath(\"/dashboard/payroll/register\", locale)"}, components/payroll/PayrollPaymentReconciliationWorkbench.tsx:517)
+Settled Partially settled (select, {"onChange":"(event) => setSettlementStatus(event.target.value as SettlementStatus)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:132)
+Settlement amount (input, {"onChange":"(event) => setSettlementAmount(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:144)
+Source register hash (input, {"onChange":"(event) => setSourceRegisterHash(event.target.value)","required":"true","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:157)
+Evidence hash (input, {"onChange":"(event) => setEvidenceHash(event.target.value)","required":"true","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:169)
+Provider event ID (input, {"onChange":"(event) => setProviderEventId(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:182)
+Statement line ID (input, {"onChange":"(event) => setStatementLineId(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:186)
+Statement file hash (input, {"onChange":"(event) => setStatementFileHash(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:193)
+Match record ID (input, {"onChange":"(event) => setMatchRecordId(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:197)
+Provider account ID (input, {"onChange":"(event) => setProviderAccountId(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:204)
+Provider transaction ID (input, {"onChange":"(event) => setProviderTransactionId(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:208)
+Provider reference (input, {"onChange":"(event) => setProviderReference(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:214)
+Notes (textarea, {"onChange":"(event) => setNotes(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:219)
+Record settlement proof (button, {"type":"\"submit\"","disabled":"disabled || isPending"}, components/payroll/PayrollPaymentSettlementForm.tsx:241)
+Proof drawer (button, {"type":"\"button\"","onClick":"() => setOpen(true)"}, components/payroll/PayrollProofDrawerButton.tsx:96)
+Open (Link, {"href":"subject.href"}, components/payroll/PayrollProofDrawerButton.tsx:124)
+
+ROUTE /en/dashboard/payroll/payslips
+FILE app/[locale]/(dashboard)/dashboard/payroll/payslips/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/payslips/page.tsx; components/payroll/PayrollPayslipSelfService.tsx; components/payroll/PayrollProofDrawerButton.tsx
+DEPENDENCIES actions/payroll/payroll-payslip-self-service.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx
+REDIRECTS []
+HEADINGS Payslips unavailable | My payslips | Lines | Proof | Blockers | Redactions
+PROPS Payslips | Payslips | Latest issue | Payment evidence | Proof state | Payslips
+CONTROLS Payroll (Link, {"href":"localizePath(\"/dashboard/payroll\", locale)"}, components/payroll/PayrollPayslipSelfService.tsx:295)
+Proof drawer (button, {"type":"\"button\"","onClick":"() => setOpen(true)"}, components/payroll/PayrollProofDrawerButton.tsx:96)
+Open (Link, {"href":"subject.href"}, components/payroll/PayrollProofDrawerButton.tsx:124)
+
+ROUTE /en/dashboard/payroll/register
+FILE app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx; components/payroll/PayrollRegisterTieOut.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES actions/payroll/payroll-register.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Payroll register unavailable | Payroll register | Tie-out | Proof | Blockers | Register rows | Payment batches | Declarations
+PROPS Payroll register | Employees | Net payable | Paid | Blockers | Run lines | Payslips | Payments | Declarations | Ledger source links | Close evidence | Register hash | Run document | Run evidence | Calculation | Ledger batch | Close run | Payment batches | Declarations | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS Payroll (Link, {"href":"localizePath(\"/dashboard/payroll\", locale)"}, components/payroll/PayrollRegisterTieOut.tsx:174)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+
+ROUTE /en/dashboard/payroll/runs
+FILE app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx; components/payroll/PayrollRunWorkbench.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx; components/payroll/PayrollProofDrawerButton.tsx; components/payroll/PayrollRunActionPanel.tsx
+DEPENDENCIES actions/payroll/payroll-control.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts; lib/modules/module-operation-error.ts
+REDIRECTS []
+HEADINGS Payroll runs unavailable | Payroll runs | Run lifecycle workbench | Run lifecycle | Source scope | Blockers | Redactions
+PROPS Runs | Active | Posted | Corrections | Blocked | Net payable | Date range | Ascending / Descending | First page | Previous | Next | Last page | Calculate run | optional sha256:... | optional sha256:... | Review calculated run / Approve reviewed run / Emit approved payslips / Post emitted run | optional comma-separated list | Prepare declarations | optional | optional | Request payments | Approve payments / Release payments
+CONTROLS Register (Link, {"href":"localizePath(\"/dashboard/payroll/register\", locale)"}, components/payroll/PayrollRunWorkbench.tsx:322)
+Declarations (Link, {"href":"localizePath(\"/dashboard/payroll/declarations\", locale)"}, components/payroll/PayrollRunWorkbench.tsx:328)
+Payments (Link, {"href":"localizePath(\"/dashboard/payroll/payments\", locale)"}, components/payroll/PayrollRunWorkbench.tsx:334)
+Close (Link, {"href":"localizePath(\"/dashboard/accounting/close\", locale)"}, components/payroll/PayrollRunWorkbench.tsx:340)
+Open (Link, {"href":"localizePath(action.href, locale)"}, components/payroll/PayrollRunWorkbench.tsx:403)
+Register (Link, {"href":"localizePath(\"/dashboard/payroll/register\", locale)"}, components/payroll/PayrollRunWorkbench.tsx:517)
+Declarations (Link, {"href":"localizePath(\"/dashboard/payroll/declarations\", locale)"}, components/payroll/PayrollRunWorkbench.tsx:523)
+Payments (Link, {"href":"localizePath(\"/dashboard/payroll/payments\", locale)"}, components/payroll/PayrollRunWorkbench.tsx:529)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)
+Proof drawer (button, {"type":"\"button\"","onClick":"() => setOpen(true)"}, components/payroll/PayrollProofDrawerButton.tsx:96)
+Open (Link, {"href":"subject.href"}, components/payroll/PayrollProofDrawerButton.tsx:124)
+[dynamic or icon-only label] (button, {"type":"\"submit\"","disabled":"disabled || pending"}, components/payroll/PayrollRunActionPanel.tsx:152)
+[dynamic or icon-only label] (button, {"type":"\"button\"","disabled":"disabled","onClick":"() => onOpenChange(true)"}, components/payroll/PayrollRunActionPanel.tsx:225)
+Run date (input, {"type":"\"date\"","onChange":"(event) => setRunDate(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollRunActionPanel.tsx:417)
+Evidence hash (input, {"onChange":"(event) => setEvidenceHash(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollRunActionPanel.tsx:441)
+Document hash (input, {"onChange":"(event) => setDocumentHash(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollRunActionPanel.tsx:445)
+Declaration types (input, {"onChange":"(event) => setDeclarationTypes(event.target.value)","disabled":"disabled || isPending"}, components/payroll/PayrollRunActionPanel.tsx:461)
+Payment date (input, {"type":"\"date\"","onChange":"(event) => setPaymentDate(event.target.value)","required":"true","disabled":"paymentDisabled"}, components/payroll/PayrollRunActionPanel.tsx:482)
+[dynamic or icon-only label] (select, {"onChange":"(event) => setPaymentMethod(event.target.value as PaymentMethodValue)","disabled":"paymentDisabled"}, components/payroll/PayrollRunActionPanel.tsx:486)
+Bank file hash (input, {"onChange":"(event) => setBankFileHash(event.target.value)","disabled":"paymentDisabled"}, components/payroll/PayrollRunActionPanel.tsx:494)
+Document hash (input, {"onChange":"(event) => setPaymentDocumentHash(event.target.value)","disabled":"paymentDisabled"}, components/payroll/PayrollRunActionPanel.tsx:498)
+Notes (textarea, {"onChange":"(event) => setNotes(event.target.value)","disabled":"paymentDisabled"}, components/payroll/PayrollRunActionPanel.tsx:503)
+
+ROUTE /en/dashboard/payroll/setup
+FILE app/[locale]/(dashboard)/dashboard/payroll/setup/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/payroll/setup/page.tsx; components/payroll/PayrollSetupControlPlane.tsx; components/payroll/PayrollProofBackfillExecutionPanel.tsx; components/hr-payroll/HrPayrollTableControls.tsx; components/DataTableComponents/TableDateRangePicker.tsx
+DEPENDENCIES actions/payroll/payroll-setup.actions.ts; app/[locale]/(dashboard)/dashboard/payroll/payroll-route-access.tsx; lib/utils.ts
+REDIRECTS []
+HEADINGS Historical proof backfill | Seed/backfill dry-run plan | Proof certificate trail | Setup readiness and dry-run control plane | Proof execution
+PROPS Payroll setup readiness unavailable | Payroll setup readiness unavailable | No setup readiness data is available. | Readiness blockers | Setup warnings | Seed/backfill dry-run unavailable | Proof certificate trail unavailable | Date range | Ascending / Descending | First page | Previous | Next | Last page
+CONTROLS Correction strategy (summary, {}, components/payroll/PayrollSetupControlPlane.tsx:436)
+Reconciliation checks (summary, {}, components/payroll/PayrollSetupControlPlane.tsx:448)
+Execution certificate / Reconciliation certificate (summary, {}, components/payroll/PayrollSetupControlPlane.tsx:616)
+Dry-run hash (input, {"onChange":"(event) => setDryRunEvidenceHash(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:165)
+Adapter chaos hash (input, {"onChange":"(event) =>\n                setAdapterChaosReleaseGateHash(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:173)
+Idempotency key (input, {"onChange":"(event) => setIdempotencyKey(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:183)
+Approval token hash (input, {"onChange":"(event) => setApprovalTokenHash(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:194)
+Payroll admin (input, {"onChange":"(event) =>\n                setPayrollAdminApprovedById(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:202)
+Accounting controller (input, {"onChange":"(event) =>\n                setAccountingControllerApprovedById(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:212)
+Security/privacy (input, {"onChange":"(event) =>\n                setSecurityPrivacyApprovedById(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:222)
+Operations owner (input, {"onChange":"(event) =>\n                setOperationsOwnerApprovedById(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:235)
+Approved at (input, {"onChange":"(event) => setApprovedAt(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:245)
+Approval notes (input, {"onChange":"(event) => setApprovalNotes(event.target.value)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:253)
+Persist certificate (input, {"type":"\"checkbox\"","onChange":"(event) =>\n                  setPersistCertificate(event.target.checked)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:264)
+Approve execution (input, {"type":"\"checkbox\"","onChange":"(event) => setExecutionApproved(event.target.checked)"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:275)
+Validate proof (button, {"type":"\"submit\"","disabled":"isPending"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:285)
+Execute backfill (button, {"type":"\"button\"","disabled":"isPending","onClick":"() => submit(\"execute\")"}, components/payroll/PayrollProofBackfillExecutionPanel.tsx:297)
+Search (input, {"type":"\"search\"","onChange":"(event) => table.setQuery(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:237)
+[dynamic or icon-only label] (button, {"type":"\"button\"","onClick":"() => table.setQuery(\"\")"}, components/hr-payroll/HrPayrollTableControls.tsx:245)
+Original order (select, {"onChange":"(event) => table.setSortKey(event.target.value)"}, components/hr-payroll/HrPayrollTableControls.tsx:272)
+Ascending / Descending (Button, {"type":"\"button\"","onClick":"() => table.setSortDirection(table.sortDirection === \"asc\" ? \"desc\" : \"asc\")","disabled":"!table.sortKey"}, components/hr-payroll/HrPayrollTableControls.tsx:281)
+Clear table filters (Button, {"type":"\"button\"","onClick":"table.clear","disabled":"!hasActiveFilters"}, components/hr-payroll/HrPayrollTableControls.tsx:293)
+Rows per page (select, {"onChange":"(event) => table.setPageSize(Number(event.target.value))"}, components/hr-payroll/HrPayrollTableControls.tsx:326)
+First page (Button, {"type":"\"button\"","onClick":"table.firstPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:337)
+Previous (Button, {"type":"\"button\"","onClick":"table.previousPage","disabled":"!table.canPreviousPage"}, components/hr-payroll/HrPayrollTableControls.tsx:340)
+Next (Button, {"type":"\"button\"","onClick":"table.nextPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:343)
+Last page (Button, {"type":"\"button\"","onClick":"table.lastPage","disabled":"!table.canNextPage"}, components/hr-payroll/HrPayrollTableControls.tsx:346)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"fromName"}, components/DataTableComponents/TableDateRangePicker.tsx:93)
+[dynamic or icon-only label] (input, {"type":"\"hidden\"","name":"toName"}, components/DataTableComponents/TableDateRangePicker.tsx:94)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"disabled"}, components/DataTableComponents/TableDateRangePicker.tsx:97)

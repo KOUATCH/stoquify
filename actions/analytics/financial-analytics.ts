@@ -1,5 +1,6 @@
 "use server"
 
+import { z } from "zod"
 import { assertCanUseOrganization, requirePermission } from "@/lib/security/rbac"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import {
@@ -18,8 +19,11 @@ async function financialAnalyticsInput(
   endDate: Date,
 ): Promise<FinancialAnalyticsReadModelInput> {
   const ctx = await requirePermission("reports.read", { resource: "FinancialAnalytics" })
-  await assertCanUseOrganization(ctx, organizationId)
-  const scopedOrganizationId = ctx.isSuperUser ? organizationId : ctx.orgId
+  const scope = z.object({ organizationId: z.string().trim().min(1), locationId: z.string().trim().min(1), startDate: z.date(), endDate: z.date() })
+    .refine(value => value.endDate >= value.startDate, { message: "Choose an ordered date range.", path: ["endDate"] })
+    .parse({ organizationId, locationId, startDate, endDate })
+  await assertCanUseOrganization(ctx, scope.organizationId)
+  const scopedOrganizationId = ctx.isSuperUser ? scope.organizationId : ctx.orgId
   const payrollModuleDecision = await observeModuleAccess({
     organizationId: scopedOrganizationId,
     userId: ctx.userId,
@@ -32,9 +36,9 @@ async function financialAnalyticsInput(
 
   return {
     organizationId: scopedOrganizationId,
-    locationId,
-    startDate,
-    endDate,
+    locationId: scope.locationId,
+    startDate: scope.startDate,
+    endDate: scope.endDate,
     actorPermissions: ctx.permissions,
     payrollModuleDecision,
   }
@@ -46,6 +50,7 @@ async function dailyReportInput(
   date: Date,
 ): Promise<DailyReportReadModelInput> {
   const ctx = await requirePermission("reports.read", { resource: "DailyFinancialReport" })
+  await requirePermission("sales.read", { resource: "DailyFinancialReport" })
   await assertCanUseOrganization(ctx, organizationId)
 
   return {

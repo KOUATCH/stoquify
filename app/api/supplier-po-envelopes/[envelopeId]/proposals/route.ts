@@ -4,6 +4,8 @@ import { jsonErrorEnvelopeResponse } from "@/lib/error-handling/route-response"
 import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
 import { submitSupplierPoProposalInputSchema } from "@/services/purchase-order/supplier-po-acknowledgement.schemas"
 import { submitSupplierPoProposal } from "@/services/purchase-order/supplier-po-acknowledgement.service"
+import { supplierProposalCommandSchema } from "@/services/purchase-order/supplier-po-response-contracts"
+import { privateSupplierPoResponse } from "@/services/purchase-order/supplier-po-http"
 
 const ENDPOINT = "POST /api/supplier-po-envelopes/[envelopeId]/proposals"
 
@@ -33,7 +35,7 @@ export async function POST(
       throw new BusinessRuleError("Request body must be valid JSON")
     }
     const parsed = submitSupplierPoProposalInputSchema.parse({
-      ...(body && typeof body === "object" ? body : {}),
+      ...supplierProposalCommandSchema.parse(body),
       envelopeId,
       token,
       ipAddress: requestIpAddress(request),
@@ -44,15 +46,12 @@ export async function POST(
       { success: true, data: result },
       { status: result.replayed ? 200 : 201 },
     )
-    response.headers.set("Cache-Control", "private, no-store, max-age=0")
-    response.headers.set("Referrer-Policy", "no-referrer")
-    response.headers.set("X-Content-Type-Options", "nosniff")
-    return response
+    return privateSupplierPoResponse(response)
   } catch (error) {
-    return jsonErrorEnvelopeResponse(
+    return privateSupplierPoResponse(jsonErrorEnvelopeResponse(
       error,
       { endpoint: ENDPOINT },
       { success: false },
-    )
+    ))
   }
 }

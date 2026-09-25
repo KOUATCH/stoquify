@@ -1,0 +1,32 @@
+{
+  "run": "adf5ac2f-7aa",
+  "startedAt": "2026-09-07T07:56:32.694Z",
+  "sourcesBefore": {
+    "services/accounting/customer-statement-retry.service.ts": "c975f8ae3ecd0fc11861c02edada66a6d911198c0e08de86036052016f2fbb80",
+    "services/accounting/customer-statement-history.service.ts": "337acd530edfd0a9922173cad7231bf50809b43d7df065e7cd8c5ee04a0ae7ba",
+    "services/accounting/customer-statement-delivery-recovery.ts": "4953a59aee97b05b003dba4c168093afc875895678bd8330b782c8f71f3ad97c",
+    "services/accounting/customer-statement.schemas.ts": "7fb4d93d60b164b94d8b71d074c6547db50aee34ee1c1a1fece78274398649cb",
+    "services/communication/customer-statement-delivery-worker.service.ts": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": "Owned local PostgreSQL, synthetic fixtures and injected provider outcomes; no external sends.",
+  "checks": [],
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "error": "Business event could not be recorded.",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T07:56:33.286Z",
+  "sourcesAfter": {
+    "services/accounting/customer-statement-retry.service.ts": "c975f8ae3ecd0fc11861c02edada66a6d911198c0e08de86036052016f2fbb80",
+    "services/accounting/customer-statement-history.service.ts": "337acd530edfd0a9922173cad7231bf50809b43d7df065e7cd8c5ee04a0ae7ba",
+    "services/accounting/customer-statement-delivery-recovery.ts": "4953a59aee97b05b003dba4c168093afc875895678bd8330b782c8f71f3ad97c",
+    "services/accounting/customer-statement.schemas.ts": "7fb4d93d60b164b94d8b71d074c6547db50aee34ee1c1a1fece78274398649cb",
+    "services/communication/customer-statement-delivery-worker.service.ts": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

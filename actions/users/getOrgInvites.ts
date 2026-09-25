@@ -1,6 +1,6 @@
 "use server";
 
-import { logSafeActionWarning } from "@/actions/_shared/safe-action-responses";
+import { safeStatusActionErrorResult } from "@/actions/_shared/safe-action-responses";
 import { assertCanUseOrganization, requireAnyPermission } from "@/lib/security/rbac";
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { listOrganizationInvites } from "@/services/users/user-identity.service";
@@ -22,12 +22,11 @@ export async function getOrgInvites(organizationId?: string | null) {
       mode: "observe",
     });
 
-    return await listOrganizationInvites(ctx.orgId);
+    return { status: 200 as const, error: null, data: await listOrganizationInvites(ctx.orgId) };
   } catch (error) {
-    logSafeActionWarning("Error fetching organization invites", error, {
+    return safeStatusActionErrorResult(error, {
       action: "users.invite",
       component: "User",
     });
-    return [];
   }
 }

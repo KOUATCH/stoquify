@@ -16,10 +16,14 @@ import {
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
   label?: string;
+  columnLabels?: Record<string, string>;
+  className?: string;
 }
 export function DataTableViewOptions<TData>({
   table,
   label = "View columns",
+  columnLabels,
+  className = "ml-auto hidden h-8 lg:flex",
 }: DataTablePaginationProps<TData>) {
   return (
     <DropdownMenu>
@@ -27,7 +31,7 @@ export function DataTableViewOptions<TData>({
         <Button
           variant="outline"
           size="sm"
-          className="ml-auto hidden h-8 lg:flex"
+          className={className}
           aria-label={label}
         >
           <MixerHorizontalIcon className="mr-2 h-4 w-4" />
@@ -51,7 +55,7 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {columnLabels?.[column.id] ?? column.id}
               </DropdownMenuCheckboxItem>
             );
           })}

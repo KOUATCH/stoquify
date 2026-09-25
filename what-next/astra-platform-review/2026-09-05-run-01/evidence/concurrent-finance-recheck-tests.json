@@ -1,0 +1,279 @@
+{
+  "suites": 8,
+  "passedSuites": 5,
+  "failedSuites": 3,
+  "tests": 53,
+  "passedTests": 49,
+  "failedTests": 4,
+  "pendingTests": 0,
+  "results": [
+    {
+      "file": "components/finance/__tests__/finance-final-two-section-route-matrix.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "finance final-two-section route matrix classifies every Finance route exactly once",
+          "status": "passed"
+        },
+        {
+          "title": "finance final-two-section route matrix defines a measurable closing-section contract for every applicable route",
+          "status": "passed"
+        },
+        {
+          "title": "finance final-two-section route matrix keeps every exclusion evidence-backed and free of invented workflow links",
+          "status": "passed"
+        },
+        {
+          "title": "finance final-two-section route matrix extracts workflows for every Finance command-center consumer",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+      "status": "failed",
+      "assertions": [
+        {
+          "title": "TransactionHistoryWorkbenchShell renders server-scope rows and opens details from an explicit action",
+          "status": "passed"
+        },
+        {
+          "title": "TransactionHistoryWorkbenchShell does not offer client-visible-row export when the safe states block export",
+          "status": "passed"
+        },
+        {
+          "title": "TransactionHistoryWorkbenchShell supports the compact three-dot row action used by normalized tables",
+          "status": "passed"
+        },
+        {
+          "title": "TransactionHistoryWorkbenchShell matches the normalized items toolbar, selection, column controls, and cursor pagination",
+          "status": "failed"
+        }
+      ],
+      "message": "  ● TransactionHistoryWorkbenchShell › matches the normalized items toolbar, selection, column controls, and cursor pagination\n\n    TestingLibraryElementError: Found multiple elements with the role \"checkbox\" and name \"Select Rice\"\n\n    Here are the matching elements:\n\n    Ignored nodes: comments, script, style\n    \u001b[36m<button\u001b[39m\n      \u001b[33maria-checked\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Select Rice\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground\"\u001b[39m\n      \u001b[33mdata-state\u001b[39m=\u001b[32m\"unchecked\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"checkbox\"\u001b[39m\n      \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n      \u001b[33mvalue\u001b[39m=\u001b[32m\"on\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n\n    Ignored nodes: comments, script, style\n    \u001b[36m<button\u001b[39m\n      \u001b[33maria-checked\u001b[39m=\u001b[32m\"false\"\u001b[39m\n      \u001b[33maria-label\u001b[39m=\u001b[32m\"Select Rice\"\u001b[39m\n      \u001b[33mclass\u001b[39m=\u001b[32m\"peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground mt-0.5\"\u001b[39m\n      \u001b[33mdata-state\u001b[39m=\u001b[32m\"unchecked\"\u001b[39m\n      \u001b[33mrole\u001b[39m=\u001b[32m\"checkbox\"\u001b[39m\n      \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n      \u001b[33mvalue\u001b[39m=\u001b[32m\"on\"\u001b[39m\n    \u001b[36m/>\u001b[39m\n\n    (If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).\n\n    Ignored nodes: comments, script, style\n    \u001b[36m<body>\u001b[39m\n      \u001b[36m<div>\u001b[39m\n        \u001b[36m<div\u001b[39m\n          \u001b[33mclass\u001b[39m=\u001b[32m\"mx-auto flex w-full flex-col px-3 py-4 sm:px-4 lg:px-6 max-w-[88rem] gap-6 sm:py-6\"\u001b[39m\n        \u001b[36m>\u001b[39m\n          \u001b[36m<section\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"dashboard-glass-panel rounded-lg text-[var(--dash-text)] p-4 md:p-5\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<div\u001b[39m\n              \u001b[33mclass\u001b[39m=\u001b[32m\"flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<div\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"min-w-0 max-w-5xl space-y-3\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<div\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex flex-wrap items-center gap-2\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<div\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"inline-flex items-center border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 gap-1.5 rounded-md border-[var(--dash-brand)] bg-[var(--dash-brand-soft)] text-[var(--dash-text)]\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<svg\u001b[39m\n                      \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                      \u001b[33mclass\u001b[39m=\u001b[32m\"h-3.5 w-3.5\"\u001b[39m\n                      \u001b[33mdata-testid\u001b[39m=\u001b[32m\"icon-ShieldCheck\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[0mInventory history\u001b[0m\n                  \u001b[36m</div>\u001b[39m\n                  \u001b[36m<div\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"inline-flex items-center border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 gap-1.5 rounded-md border-[var(--dash-success)] bg-[var(--dash-success-soft)] text-[var(--dash-text)]\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<svg\u001b[39m\n                      \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                      \u001b[33mclass\u001b[39m=\u001b[32m\"h-3.5 w-3.5\"\u001b[39m\n                      \u001b[33mdata-testid\u001b[39m=\u001b[32m\"icon-CalendarClock\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[0mComplete server history\u001b[0m\n                  \u001b[36m</div>\u001b[39m\n                \u001b[36m</div>\u001b[39m\n                \u001b[36m<div\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"min-w-0\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<h1\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"text-2xl font-semibold tracking-normal text-[var(--dash-text)] md:text-3xl\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[0mInventory movement history\u001b[0m\n                  \u001b[36m</h1>\u001b[39m\n                  \u001b[36m<p\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"mt-2 max-w-4xl text-sm leading-6 text-[var(--dash-text-soft)]\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[0mServer-owned complete history\u001b[0m\n                  \u001b[36m</p>\u001b[39m\n                \u001b[36m</div>\u001b[39m\n                \u001b[36m<div\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"rounded-lg border border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] flex flex-wrap items-center gap-2 p-3\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<div\u001b[39m\n                    \u001b[33maria-label\u001b[39m=\u001b[32m\"No proof badge\"\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 inline-flex min-h-7 max-w-full items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)] border-[var(--dash-border-subtle)] bg-[rgba(37,57,67,0.34)] text-[var(--dash-text-soft)]\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<svg\u001b[39m\n                      \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                      \u001b[33mclass\u001b[39m=\u001b[32m\"h-3.5 w-3.5 shrink-0\"\u001b[39m\n                      \u001b[33mdata-testid\u001b[39m=\u001b[32m\"icon-ShieldCheck\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<span\u001b[39m\n                      \u001b[33mclass\u001b[39m=\u001b[32m\"truncate\"\u001b[39m\n                    \u001b[36m>\u001b[39m\n                      \u001b[0mProof unavailable\u001b[0m\n                    \u001b[36m</span>\u001b[39m\n                    \u001b[36m<span\u001b[39m\n                      \u001b[33mclass\u001b[39m=\u001b[32m\"truncate text-[var(--dash-text-soft)]\"\u001b[39m\n                    \u001b[36m>\u001b[39m\n                      \u001b[0m/ \u001b[0m\n                      \u001b[0mNo proof badge\u001b[0m\n                    \u001b[36m</span>\u001b[39m\n                  \u001b[36m</div>\u001b[39m\n                \u001b[36m</div>\u001b[39m\n              \u001b[36m</div>\u001b[39m\n              \u001b[36m<aside\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex w-full flex-col gap-3 xl:w-[420px]\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<div\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"flex flex-col gap-2 sm:flex-row sm:flex-wrap xl:flex-col\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<button\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 py-2 dashboard-button-primary rounded-lg h-10 px-4\"\u001b[39m\n                    \u001b[33mtype\u001b[39m=\u001b[32m\"button\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[36m<svg\u001b[39m\n                      \u001b[33maria-hidden\u001b[39m=\u001b[32m\"true\"\u001b[39m\n                      \u001b[33mclass\u001b[39m=\u001b[32m\"h-4 w-4\"\u001b[39m\n                      \u001b[33mdata-testid\u001b[39m=\u001b[32m\"icon-Download\"\u001b[39m\n                    \u001b[36m/>\u001b[39m\n                    \u001b[36m<span\u001b[39m\n                      \u001b[33mclass\u001b[39m=\u001b[32m\"truncate\"\u001b[39m\n                    \u001b[36m>\u001b[39m\n                      \u001b[0mExport server history\u001b[0m\n                    \u001b[36m</span>\u001b[39m\n                  \u001b[36m</button>\u001b[39m\n                \u001b[36m</div>\u001b[39m\n              \u001b[36m</aside>\u001b[39m\n            \u001b[36m</div>\u001b[39m\n          \u001b[36m</section>\u001b[39m\n          \u001b[36m<section\u001b[39m\n            \u001b[33maria-label\u001b[39m=\u001b[32m\"1 visible rows\"\u001b[39m\n            \u001b[33mclass\u001b[39m=\u001b[32m\"grid gap-3 md:grid-cols-2 xl:grid-cols-4\"\u001b[39m\n          \u001b[36m>\u001b[39m\n            \u001b[36m<article\u001b[39m\n              \u001b[33mclass\u001b[39m=\u001b[32m\"dashboard-stat-card group relative min-h-[132px] min-w-0 overflow-hidden p-4\"\u001b[39m\n              \u001b[33mstyle\u001b[39m=\u001b[32m\"--stat-accent: var(--dash-brand); --stat-soft: var(--dash-brand-soft);\"\u001b[39m\n            \u001b[36m>\u001b[39m\n              \u001b[36m<div\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"flex min-w-0 items-start justify-between gap-3\"\u001b[39m\n              \u001b[36m>\u001b[39m\n                \u001b[36m<div\u001b[39m\n                  \u001b[33mclass\u001b[39m=\u001b[32m\"min-w-0\"\u001b[39m\n                \u001b[36m>\u001b[39m\n                  \u001b[36m<p\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"truncate text-xs font-semibold uppercase tracking-normal text-[var(--dash-text-soft)]\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[0mTransactions\u001b[0m\n                  \u001b[36m</p>\u001b[39m\n                  \u001b[36m<div\u001b[39m\n                    \u001b[33mclass\u001b[39m=\u001b[32m\"mt-2 break-words text-2xl font-semibold tracking-normal text-[var(--dash-text)]\"\u001b[39m\n                  \u001b[36m>\u001b[39m\n                    \u001b[0m1\u001b[0m\n                  \u001b[36m</div>\u001b[39m\n                \u001b[36m</div>\u001b[39m\n              \u001b[36m</div>\u001b[39m\n              \u001b[36m<div\u001b[39m\n                \u001b[33mclass\u001b[39m=\u001b[32m\"mt-4 flex flex-wrap items-center justify-between gap-2\"\u001b[39m\n              \u001b[36m>\u001b[39m...\n\n      88 |     expect(screen.getByText(\"0 of 1 row(s) selected.\")).toBeInTheDocument()\n      89 |     expect(screen.getByText(\"Page 1\")).toBeInTheDocument()\n    > 90 |     fireEvent.click(screen.getByRole(\"checkbox\", { name: \"Select Rice\" }))\n         |                            ^\n      91 |     expect(screen.getByText(\"1 of 1 row(s) selected.\")).toBeInTheDocument()\n      92 |   })\n      93 | })\n\n      at Object.getElementError (node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/config.js:37:19)\n      at getElementError (node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:20:35)\n      at getMultipleElementsFoundError (node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:23:10)\n      at node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:55:13\n      at node_modules/.pnpm/@testing-library+dom@10.4.1/node_modules/@testing-library/dom/dist/query-helpers.js:95:19\n      at Object.getByRole (components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx:90:28)\n"
+    },
+    {
+      "file": "components/finance/__tests__/FinancePaymentsTable.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "PaymentsTable paginates the complete payment ledger instead of slicing the rows",
+          "status": "passed"
+        },
+        {
+          "title": "PaymentsTable filters by searchable payment fields and an explicit date range",
+          "status": "passed"
+        },
+        {
+          "title": "PaymentsTable sorts ledger rows from the column headers",
+          "status": "passed"
+        },
+        {
+          "title": "FinancePaymentsSurface layout places payment mix before assurance and gives workflows a full-width action row",
+          "status": "passed"
+        },
+        {
+          "title": "FinanceReceivablesSurface layout renders every bottom workflow action in the responsive row grid",
+          "status": "passed"
+        },
+        {
+          "title": "FinanceReceivablesSurface layout keeps the same closing-section structure when the receipts ledger is empty",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/analytics through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/cash-flow through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/costs through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/profit-loss through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/profitability through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/retail through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance command-center closing-section layout normalizes /dashboard/finance/sales through the shared footer contract",
+          "status": "passed"
+        },
+        {
+          "title": "Finance Retail and Sales recent-payment ledgers gives /dashboard/finance/retail the Receivables-grade sorting, filtering, and pagination controls",
+          "status": "passed"
+        },
+        {
+          "title": "Finance Retail and Sales recent-payment ledgers gives /dashboard/finance/sales the Receivables-grade sorting, filtering, and pagination controls",
+          "status": "passed"
+        },
+        {
+          "title": "Finance costs layout stacks full-width status, movement, payments, and mix around a paired action and evidence row",
+          "status": "passed"
+        },
+        {
+          "title": "FinancePayablesSurface navigation stacks full-width disbursements before workflows and preserves the canonical AP history",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/finance/__tests__/CashFlowStatementTable.test.tsx",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "CashFlowStatementTable renders bounded cash-flow rows with entity, period, currency, and evidence context",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "does not equate a loading skeleton or absent data surface with an empty result",
+          "status": "passed"
+        },
+        {
+          "title": "waits through refreshes even with old rows present",
+          "status": "passed"
+        },
+        {
+          "title": "rejects error instead of recording a successful zero",
+          "status": "passed"
+        },
+        {
+          "title": "rejects forbidden instead of recording a successful zero",
+          "status": "passed"
+        },
+        {
+          "title": "rejects not-entitled instead of recording a successful zero",
+          "status": "passed"
+        },
+        {
+          "title": "counts data rows while excluding headers, hidden copies, and empty placeholders",
+          "status": "passed"
+        },
+        {
+          "title": "counts visible canonical mobile cards when responsive desktop rows are hidden",
+          "status": "passed"
+        },
+        {
+          "title": "accepts an explicitly empty table with no fabricated data row",
+          "status": "passed"
+        },
+        {
+          "title": "does not accept ready state before its data rows are rendered",
+          "status": "passed"
+        },
+        {
+          "title": "recognizes a populated summary without requiring a table",
+          "status": "passed"
+        },
+        {
+          "title": "requires both journal tables and successful source responses",
+          "status": "passed"
+        },
+        {
+          "title": "stops the useful-result timer at readiness before audits or screenshots",
+          "status": "passed"
+        },
+        {
+          "title": "a background dashboard refresh prevents capturing its stale table",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts",
+      "status": "failed",
+      "assertions": [
+        {
+          "title": "table date-range adoption contract uses one shared picker instead of paired native date inputs on query surfaces",
+          "status": "failed"
+        }
+      ],
+      "message": "  ● table date-range adoption contract › uses one shared picker instead of paired native date inputs on query surfaces\n\n    expect(received).toBe(expected) // Object.is equality\n\n    Expected: 11\n    Received: 12\n\n      24 |     }\n      25 |\n    > 26 |     expect(pickerCount).toBe(11)\n         |                         ^\n      27 |   })\n      28 | })\n      29 |\n\n      at Object.toBe (components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts:26:25)\n"
+    },
+    {
+      "file": "scripts/__tests__/x1-approval-automation-orchestrator.test.js",
+      "status": "passed",
+      "assertions": [
+        {
+          "title": "X1 approval decision validity at synchronization accepts complete currently valid decisions",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"2026-09-02T11:59:59Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"2026-09-02T12:00:00Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"not-a-date\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"decidedAt\":\"not-a-date\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"decidedAt\":\"2026-09-02T12:00:01Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization rejects expired, malformed, future or empty decision windows: {\"expiresAt\":\"2026-09-01T12:00:00Z\"}",
+          "status": "passed"
+        },
+        {
+          "title": "X1 approval decision validity at synchronization still requires real decision fields and all three records",
+          "status": "passed"
+        }
+      ],
+      "message": ""
+    },
+    {
+      "file": "components/DataTableComponents/__tests__/SystemTablePresentation.contract.test.ts",
+      "status": "failed",
+      "assertions": [
+        {
+          "title": "system table presentation contract keeps every active application table inside the shared presentation shell",
+          "status": "passed"
+        },
+        {
+          "title": "system table presentation contract gives every interactive grid the shared toolbar semantic",
+          "status": "failed"
+        },
+        {
+          "title": "system table presentation contract gives every paginated grid the shared pagination semantic",
+          "status": "failed"
+        },
+        {
+          "title": "system table presentation contract keeps the shared data table on the one-row desktop toolbar baseline",
+          "status": "passed"
+        }
+      ],
+      "message": "  ● system table presentation contract › gives every interactive grid the shared toolbar semantic\n\n    expect(received).toBe(expected) // Object.is equality\n\n    Expected: \"\"\n    Received: \"app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx\"\n\n      75 |       && !TOOLBAR_SEMANTIC.test(source)\n      76 |     ))\n    > 77 |     expect(formatMissing(missing)).toBe(\"\")\n         |                                    ^\n      78 |   })\n      79 |\n      80 |   it(\"gives every paginated grid the shared pagination semantic\", () => {\n\n      at Object.toBe (components/DataTableComponents/__tests__/SystemTablePresentation.contract.test.ts:77:36)\n\n  ● system table presentation contract › gives every paginated grid the shared pagination semantic\n\n    expect(received).toBe(expected) // Object.is equality\n\n    Expected: \"\"\n    Received: \"app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx\n    components/finance/FinanceCommandCenterDashboard.tsx\"\n\n      80 |   it(\"gives every paginated grid the shared pagination semantic\", () => {\n      81 |     const missing = tableSources.filter(({ source }) => PAGINATION_LOGIC.test(source) && !PAGINATION_SEMANTIC.test(source))\n    > 82 |     expect(formatMissing(missing)).toBe(\"\")\n         |                                    ^\n      83 |   })\n      84 |\n      85 |   it(\"keeps the shared data table on the one-row desktop toolbar baseline\", () => {\n\n      at Object.toBe (components/DataTableComponents/__tests__/SystemTablePresentation.contract.test.ts:82:36)\n"
+    }
+  ]
+}

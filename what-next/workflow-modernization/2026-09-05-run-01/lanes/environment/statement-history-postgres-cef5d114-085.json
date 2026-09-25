@@ -1,0 +1,110 @@
+{
+  "run": "cef5d114-085",
+  "startedAt": "2026-09-07T07:14:31.526Z",
+  "sourcesBefore": {
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "stable pagination returns every saved snapshot once",
+      "passed": true,
+      "records": 3
+    },
+    {
+      "name": "foreign customer statement and cursors cannot cross tenant or object scope",
+      "passed": true,
+      "negativeCases": 4
+    },
+    {
+      "name": "history preserves recorded totals and active expired revoked link truth without secrets",
+      "passed": true,
+      "deliveries": 3,
+      "emptySource": true
+    },
+    {
+      "name": "delivery pagination returns each record once",
+      "passed": true,
+      "records": 3
+    },
+    {
+      "name": "repeat revocation reuses the existing result without deleting history",
+      "passed": true,
+      "singleRevocationAudit": true
+    }
+  ],
+  "fixtures": [
+    {
+      "locale": "en",
+      "organizationId": "workflow_self_profile_80057a5e-514_en",
+      "customerId": "workflow_statement_history_en_cef5d114-085",
+      "statementIds": [
+        "cmtqwnpew0005mar00uhp5idx",
+        "cmtqwnpgz000fmar0xcfbciby",
+        "cmtqwnpi3000pmar093cmttea"
+      ],
+      "statementId": "cmtqwnpi3000pmar093cmttea",
+      "deliveries": [
+        {
+          "kind": "expired",
+          "id": "be64efff-bde0-4355-bef1-80af23aa37a2",
+          "tokenId": "cmtqwnpjl000vmar0nka4idy0"
+        },
+        {
+          "kind": "revoked",
+          "id": "80a3bb7a-68aa-4c68-95b6-73bfae09a324",
+          "tokenId": "cmtqwnpl5001bmar044lk2893"
+        },
+        {
+          "kind": "active",
+          "id": "8e561f5e-8542-4cc9-8e5a-c0adbc8c2711",
+          "tokenId": "cmtqwnpml001tmar0a6z0bsop"
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "organizationId": "workflow_self_profile_80057a5e-514_fr",
+      "customerId": "workflow_statement_history_fr_cef5d114-085",
+      "statementIds": [
+        "cmtqwnpo7002dmar0cdlfk5lo",
+        "cmtqwnppc002nmar0xm3o3mb3",
+        "cmtqwnpqb002xmar0ae62d7p0"
+      ],
+      "statementId": "cmtqwnpqb002xmar0ae62d7p0",
+      "deliveries": [
+        {
+          "kind": "expired",
+          "id": "615263e6-fbd1-4407-a7ed-27001ae07c14",
+          "tokenId": "cmtqwnpr10033mar0wg6v28qj"
+        },
+        {
+          "kind": "revoked",
+          "id": "50c5075b-a3c3-41b8-8293-8330204cf942",
+          "tokenId": "cmtqwnps1003jmar05mdpn9om"
+        },
+        {
+          "kind": "active",
+          "id": "04dc28b5-b991-4009-b89c-9c2947521a5b",
+          "tokenId": "cmtqwnpta0041mar0wgx396z3"
+        }
+      ]
+    }
+  ],
+  "scope": "Owned real PostgreSQL history reads, legitimate empty-source snapshots, consented queue and revocation. Past test command time produces a genuinely expired token; no machine clock change, worker or external send.",
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T07:14:32.851Z",
+  "sourcesAfter": {
+    "services/accounting/customer-statement-history.service.ts": "0c0f3441dbb686b800aa19d4271de6b89e4456827323ac8d0512f8f39fa0d2e3",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

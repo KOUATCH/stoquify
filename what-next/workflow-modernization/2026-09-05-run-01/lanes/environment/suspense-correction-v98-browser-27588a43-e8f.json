@@ -1,0 +1,52 @@
+{
+  "at": "2026-09-09T10:02:44.040Z",
+  "run": "27588a43-e8f",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "4d61b7d9721ff64bc500c0adbcce939979cf2d6b21d7cd53a439274f5f3c2790",
+    "components/finance/PaymentSuspenseQueue.tsx": "72600ec5f083fd9d5221bc77558ef64575992800fb509d5d818ed0b62a52b032",
+    "services/reconciliation/payment-suspense-correction.service.ts": "d03d1b1bab1d8b0550606d082c92fbb23e2abb054a81b6879e2099d95c56f59b",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "72e73a681c81f3273855aa8d21d7931a36bcdc86dd6570eae07491e206607ebf",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "actions/payments/reconciliation.actions.ts": "8b0566cb0ada11a294f78283d8b75d11f52a7987dcee5c5ec351e1f6cd225563",
+    "messages/en.json": "5de398febf8c411416df9c670759d004dc0b9a89773bea3eb2e66989eb401f6f",
+    "messages/fr.json": "30d7cd511ad90ecf49d5ef3a1c89a6b93302d64cb22fbf66d31ce45be93a5575"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [],
+      "screenshots": [
+        "suspense-correction-v98-en-failure-27588a43-e8f.png"
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator: getByRole('region', { name: 'Correct a suspense posting', exact: true })\nExpected: focused\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Correct a suspense posting', exact: true })\n"
+    },
+    {
+      "locale": "fr",
+      "stages": [],
+      "screenshots": [
+        "suspense-correction-v98-fr-failure-27588a43-e8f.png"
+      ],
+      "pageErrors": [],
+      "passed": false,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator: getByRole('region', { name: 'Corriger une écriture d’attente', exact: true })\nExpected: focused\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Corriger une écriture d’attente', exact: true })\n"
+    }
+  ],
+  "scope": "Owned local app; real server actions and normal password sessions, synthetic initial accounting setup. No provider operation or certification issuance.",
+  "originalBefore": "c47957c1054e61ab6648955ce6f427e2dfd4356384008883dc1fadb846e398d6",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "4d61b7d9721ff64bc500c0adbcce939979cf2d6b21d7cd53a439274f5f3c2790",
+    "components/finance/PaymentSuspenseQueue.tsx": "72600ec5f083fd9d5221bc77558ef64575992800fb509d5d818ed0b62a52b032",
+    "services/reconciliation/payment-suspense-correction.service.ts": "d03d1b1bab1d8b0550606d082c92fbb23e2abb054a81b6879e2099d95c56f59b",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "72e73a681c81f3273855aa8d21d7931a36bcdc86dd6570eae07491e206607ebf",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "actions/payments/reconciliation.actions.ts": "8b0566cb0ada11a294f78283d8b75d11f52a7987dcee5c5ec351e1f6cd225563",
+    "messages/en.json": "5de398febf8c411416df9c670759d004dc0b9a89773bea3eb2e66989eb401f6f",
+    "messages/fr.json": "30d7cd511ad90ecf49d5ef3a1c89a6b93302d64cb22fbf66d31ce45be93a5575"
+  },
+  "sourceStable": true
+}

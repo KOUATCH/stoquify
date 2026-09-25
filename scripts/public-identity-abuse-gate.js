@@ -62,6 +62,7 @@ function buildPublicIdentityAbuseReadiness(root = process.cwd(), options = {}) {
     "actions/users/sendResetLink.ts",
     "actions/users/updateUserPassword.ts",
     "actions/users/verifyOtp.ts",
+    "actions/users/resendVerificationCode.ts",
   ]
   const actionSources = actionFiles.map((file) => ({ file, source: read(root, file) }))
   const configuredSecret =
@@ -84,6 +85,7 @@ function buildPublicIdentityAbuseReadiness(root = process.cwd(), options = {}) {
     { id: "reset_request_limit", ready: identityService.includes('operation: "password_reset_request"') },
     { id: "reset_completion_limit", ready: identityService.includes('operation: "password_reset_completion"') },
     { id: "otp_limit", ready: identityService.includes('operation: "email_otp_verification"') },
+    { id: "otp_resend_limit", ready: identityService.includes('operation: "email_otp_resend"') },
     {
       id: "server_derived_request_context",
       ready: actionSources.every(({ source }) => source.includes("getPublicIdentityRequestContext")),

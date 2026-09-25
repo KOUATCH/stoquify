@@ -1,4 +1,5 @@
 const mockRevalidateTag = jest.fn()
+jest.mock("@/services/pos/checkout.service", () => ({ preparePOSCheckout: jest.fn() }))
 
 jest.mock("next/cache", () => ({
   revalidateTag: (...args: unknown[]) => mockRevalidateTag(...args),
@@ -49,6 +50,7 @@ const mockObserveModuleAccess = observeModuleAccess as jest.Mock
 const mockCommitPOSSale = commitPOSSale as jest.Mock
 
 const saleInput = {
+  checkoutLeaseId: "00000000-0000-4000-8000-000000000001",
   clientCommitId: "pos-commit-electronic-1",
   salesOrderId: "sale-1",
   locationId: "loc-1",

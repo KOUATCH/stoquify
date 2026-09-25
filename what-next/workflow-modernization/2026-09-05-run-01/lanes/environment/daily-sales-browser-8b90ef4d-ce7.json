@@ -1,0 +1,83 @@
+{
+  "mode": "browser",
+  "attempt": "8b90ef4d-ce7",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T04:22:47.507Z",
+  "sourcesBefore": {
+    "services/analytics/daily-sales-read.service.ts": "c2ad4e433263fddb91a1735ee81335c87df92d0a84473e9209640d2a9272381c",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a",
+    "services/analytics/financial-analytics.service.ts": "9a27a12c5bee7730a83771e5c2bfc4b57b11159ba8d32955d8b8263d5d0d5017",
+    "services/analytics/analytical-context-contracts.ts": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+    "actions/analytics/daily-sales.actions.ts": "fcf19bda57e84e71acc56e8fbce00164f8d1b68fd13ebfa976ab80850c1b59cf",
+    "hooks/analytics/useDailySalesReport.ts": "d67dac61ef9ec84c3218e3958e8f2a2ddc3d66c6a8dcc3f977712260e81958cf",
+    "components/analytics/CompleteIntegratedDailySalesDashboard.tsx": "da044c6c425730fcd5a6808d66bc5c835fe95834c54adde36f4738da66898efd",
+    "messages/en.json": "20e995bf7d1d1e4784dce4f61326521794f16b3f36e01e3c6ba1914a66ff00e3",
+    "messages/fr.json": "666bd1d460245454b778ad1a818f0ba9a157d9d267a8134a823ba1bc147bee62",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "en actual daily orders, saved report, empty scope, failed read recovery and denied reporting",
+      "passed": true,
+      "screenshots": [
+        "en-daily-sales-orders-8b90ef4d-ce7.png",
+        "en-daily-sales-saved-8b90ef4d-ce7.png",
+        "en-daily-sales-empty-8b90ef4d-ce7.png",
+        "en-daily-sales-denied-8b90ef4d-ce7.png"
+      ],
+      "errors": [],
+      "lastRouteReadyMs": 2029,
+      "overflow": {
+        "viewport": 1440,
+        "content": 1440
+      },
+      "abortedReadRequests": 1,
+      "scopePreserved": true,
+      "keyboardRetry": true
+    },
+    {
+      "name": "fr actual daily orders, saved report, empty scope, failed read recovery and denied reporting",
+      "passed": true,
+      "screenshots": [
+        "fr-daily-sales-orders-8b90ef4d-ce7.png",
+        "fr-daily-sales-saved-8b90ef4d-ce7.png",
+        "fr-daily-sales-empty-8b90ef4d-ce7.png",
+        "fr-daily-sales-denied-8b90ef4d-ce7.png"
+      ],
+      "errors": [],
+      "lastRouteReadyMs": 2976,
+      "overflow": {
+        "viewport": 390,
+        "content": 390
+      },
+      "abortedReadRequests": 1,
+      "scopePreserved": true,
+      "keyboardRetry": true
+    }
+  ],
+  "externalOrigins": [],
+  "limitations": [
+    "Synthetic orders and saved daily reports are local read-model fixtures, not actual sales, payments, approvals or ledger postings.",
+    "No reset, migration, production deployment or external messages. Browser sign-in uses actual local credential authentication."
+  ],
+  "originalAuthorityHashBefore": "f7a6033dc7815a42c060bc372d88a304b8f3d4709ad9ccd94f4275e55815e1ce",
+  "originalAuthorityHashAfter": "f7a6033dc7815a42c060bc372d88a304b8f3d4709ad9ccd94f4275e55815e1ce",
+  "existingAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T04:23:46.782Z",
+  "sourcesAfter": {
+    "services/analytics/daily-sales-read.service.ts": "c2ad4e433263fddb91a1735ee81335c87df92d0a84473e9209640d2a9272381c",
+    "services/analytics/daily-sales-period.ts": "2087ca2c3068ac96c02539f5d822a1575d1555b5b5c191fb7fa6106d43241e3a",
+    "services/analytics/financial-analytics.service.ts": "9a27a12c5bee7730a83771e5c2bfc4b57b11159ba8d32955d8b8263d5d0d5017",
+    "services/analytics/analytical-context-contracts.ts": "7cf2bfc2139dcdc60f2c1cbb26fc4d6512a0de5f0ee4922eb0e3b3b33fca8eab",
+    "actions/analytics/daily-sales.actions.ts": "fcf19bda57e84e71acc56e8fbce00164f8d1b68fd13ebfa976ab80850c1b59cf",
+    "hooks/analytics/useDailySalesReport.ts": "d67dac61ef9ec84c3218e3958e8f2a2ddc3d66c6a8dcc3f977712260e81958cf",
+    "components/analytics/CompleteIntegratedDailySalesDashboard.tsx": "da044c6c425730fcd5a6808d66bc5c835fe95834c54adde36f4738da66898efd",
+    "messages/en.json": "20e995bf7d1d1e4784dce4f61326521794f16b3f36e01e3c6ba1914a66ff00e3",
+    "messages/fr.json": "666bd1d460245454b778ad1a818f0ba9a157d9d267a8134a823ba1bc147bee62",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "06a2c0d4f13a43582586601b40d7a63c29bc12216dc2ed5940e839ce2361c1c6",
+  "passed": 2,
+  "failed": 0
+}

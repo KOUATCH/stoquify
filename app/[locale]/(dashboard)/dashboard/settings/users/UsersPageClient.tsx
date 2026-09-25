@@ -1,6 +1,7 @@
 "use client"
 
-import { type CSSProperties, useMemo, useState } from "react"
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react"
+import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import {
   Activity,
@@ -16,7 +17,8 @@ import {
 } from "lucide-react"
 
 import DataTable from "@/components/DataTableComponents/DataTable"
-import InviteTableWithSearch, { type InviteDataProps } from "@/components/dashboard/Tables/Invites"
+import InviteTableWithSearch, { type InviteDataProps, type InvitationManagementOptions } from "@/components/dashboard/Tables/Invites"
+import { getOrgInvites } from "@/actions/users/getOrgInvites"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -29,28 +31,41 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Locale } from "@/types/bilingual"
-import { columns, type UserTableRow } from "./columns"
+import { getUserColumns, type UserTableRow } from "./columns"
+import { userDirectoryCopy } from "@/components/settings/user-directory-copy"
+import { UserDeactivation } from "@/components/settings/UserDeactivation"
 
 type UsersPageClientProps = {
   users: UserTableRow[]
-  invites: InviteDataProps[]
+  actorId: string
+  canDeactivate: boolean
+  asOf: string
+  invites: InviteDataProps[] | null
+  invitationAsOf: string | null
+  invitationErrorCode?: string
+  invitationManagement?: InvitationManagementOptions
   locale?: Locale
 }
 
-function downloadCsv(users: UserTableRow[]) {
-  const headers = ["Name", "Email", "Roles", "Status", "Verified", "Created", "Updated"]
+function downloadCsv(users: UserTableRow[], locale: Locale) {
+  const t = userDirectoryCopy[locale]
+  const headers = [t.name, t.email, t.roles, t.status, t.verification, t.created, t.updated]
   const rows = users.map((user) => [
     user.name,
     user.email,
     user.roleNames,
-    user.isActive ? "Active" : "Inactive",
-    user.isVerified || user.emailVerified ? "Verified" : "Unverified",
+    user.isActive ? t.active : t.inactive,
+    user.isVerified || user.emailVerified ? t.verified : t.unverified,
     new Date(user.createdAt).toISOString(),
     new Date(user.updatedAt).toISOString(),
   ])
 
   const csv = [headers, ...rows]
-    .map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(","))
+    .map((row) => row.map((cell) => {
+      const value = String(cell ?? "")
+      const literal = /^[\s\uFEFF]*[=+@-]/.test(value) ? "'" + value : value
+      return `"${literal.replace(/"/g, '""')}"`
+    }).join(","))
     .join("\n")
 
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
@@ -62,17 +77,42 @@ function downloadCsv(users: UserTableRow[]) {
   URL.revokeObjectURL(url)
 }
 
-export default function UsersPageClient({ users, invites, locale = "en" }: UsersPageClientProps) {
+export default function UsersPageClient({ users, actorId, canDeactivate, asOf, invites: initialInvites, invitationAsOf: initialAsOf, invitationErrorCode: initialErrorCode, invitationManagement, locale = "en" }: UsersPageClientProps) {
+  const t = useTranslations("userInvitations")
+  const copy = userDirectoryCopy[locale]
   const router = useRouter()
+  const [interactive, setInteractive] = useState(false)
+  useEffect(() => { setInteractive(true) }, [])
+  const [reviewMember, setReviewMember] = useState<UserTableRow | null>(null)
+  const returnFocus = useRef<HTMLButtonElement | null>(null), directory = useRef<HTMLFieldSetElement>(null)
+  const review = useCallback((member: UserTableRow, trigger: HTMLButtonElement) => { returnFocus.current = trigger; setReviewMember(member) }, [])
+  const columns = useMemo(() => getUserColumns(locale, actorId, canDeactivate, review), [locale, actorId, canDeactivate, review])
+  const dismissReview = () => { setReviewMember(null); requestAnimationFrame(() => { if (returnFocus.current?.isConnected) returnFocus.current.focus(); else directory.current?.querySelector<HTMLInputElement>('input[name="search"]')?.focus() }) }
+  const [refreshing, startRefresh] = useTransition()
+  const [invites, setInvites] = useState(initialInvites)
+  const [invitationAsOf, setInvitationAsOf] = useState(initialAsOf)
+  const [invitationErrorCode, setInvitationErrorCode] = useState(initialErrorCode)
+  const [invitationSearch, setInvitationSearch] = useState("")
+  useEffect(() => { setInvites(initialInvites); setInvitationAsOf(initialAsOf); setInvitationErrorCode(initialErrorCode) }, [initialInvites, initialAsOf, initialErrorCode])
+  const readInvites = async () => {
+    try {
+      const result = await getOrgInvites()
+      setInvites(result.data?.rows ?? null)
+      setInvitationAsOf(result.data?.asOf ?? null)
+      setInvitationErrorCode("code" in result ? result.code : undefined)
+    } catch { setInvites(null); setInvitationAsOf(null); setInvitationErrorCode(undefined) }
+  }
+  const refreshInvites = () => startRefresh(readInvites)
   const [statusFilter, setStatusFilter] = useState("all")
   const [verificationFilter, setVerificationFilter] = useState("all")
+  const [visibleUsers, setVisibleUsers] = useState(users)
 
   const stats = useMemo(() => {
     const active = users.filter((user) => user.isActive).length
     const inactive = users.length - active
     const verified = users.filter((user) => user.isVerified || user.emailVerified).length
     const assignedRoles = users.reduce((total, user) => total + user.roles.length, 0)
-    const pendingInvites = invites.filter((invite) => invite.status === "PENDING").length
+    const pendingInvites = invites?.filter((invite) => invite.status === "PENDING").length ?? null
 
     return {
       total: users.length,
@@ -104,59 +144,61 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
   const statsCards = useMemo(
     () => [
       {
-        label: "Total Users",
+        label: copy.total,
         value: stats.total.toLocaleString(),
         Icon: UsersRound,
         accent: "var(--dash-brand)",
         soft: "var(--dash-brand-soft)",
-        sub: "Workspace accounts",
+        sub: copy.accounts,
       },
       {
-        label: "Active",
+        label: copy.active,
         value: stats.active.toLocaleString(),
         Icon: UserCheck,
         accent: "var(--dash-success)",
         soft: "var(--dash-success-soft)",
-        sub: `${stats.inactive.toLocaleString()} inactive`,
+        sub: `${stats.inactive.toLocaleString(locale)} ${copy.inactive.toLocaleLowerCase()}`,
       },
       {
-        label: "Verified",
+        label: copy.verified,
         value: stats.verified.toLocaleString(),
         Icon: CheckCircle2,
         accent: "var(--dash-info)",
         soft: "var(--dash-info-soft)",
-        sub: "Email or identity checked",
+        sub: copy.checked,
       },
       {
-        label: "Role Links",
+        label: copy.roleLinks,
         value: stats.assignedRoles.toLocaleString(),
         Icon: ShieldCheck,
         accent: "var(--dash-gold)",
         soft: "var(--dash-gold-soft)",
-        sub: "Assigned permissions",
+        sub: copy.assigned,
       },
       {
-        label: "Pending Invites",
-        value: stats.pendingInvites.toLocaleString(),
+        label: t("pendingTitle"),
+        value: stats.pendingInvites?.toLocaleString(locale) ?? t("unavailable"),
         Icon: Send,
         accent: "var(--dash-spruce)",
         soft: "var(--dash-spruce-soft)",
-        sub: "Awaiting acceptance",
+        sub: stats.pendingInvites === null ? t("readFailed") : t("pendingHelp"),
       },
       {
-        label: "Filtered View",
-        value: filteredUsers.length.toLocaleString(),
+        label: copy.filtered,
+        value: visibleUsers.length.toLocaleString(locale),
         Icon: Activity,
         accent: "var(--dash-warm)",
         soft: "var(--dash-warm-soft)",
-        sub: "Visible records",
+        sub: copy.visible,
       },
     ],
-    [filteredUsers.length, stats],
+    [visibleUsers.length, stats, t, locale, copy],
   )
 
   return (
-    <div className="space-y-6">
+    <fieldset ref={directory} disabled={!interactive} aria-busy={!interactive} className="min-w-0 space-y-6">
+      {reviewMember && <UserDeactivation user={reviewMember} locale={locale} initiallyOpen onDismiss={dismissReview} onRecorded={() => router.refresh()} />}
+      <p className="text-xs text-[var(--dash-text-soft)]">{copy.asOf}: {new Date(asOf).toLocaleString(locale, { timeZone: "UTC" })} UTC</p>
       <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
         {statsCards.map(({ label, value, Icon, accent, soft, sub }) => (
           <Card
@@ -193,16 +235,16 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
                   <KeyRound className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
-                  <CardTitle className="text-lg font-semibold text-[var(--dash-text)]">User Management</CardTitle>
+                  <CardTitle className="text-lg font-semibold text-[var(--dash-text)]">{copy.management}</CardTitle>
                   <p className="mt-1 break-words text-sm text-[var(--dash-text-soft)]">
-                    Showing {filteredUsers.length} of {users.length} users and {invites.length} invites
+                    {copy.showing} {visibleUsers.length} {copy.of} {users.length} · {invites ? t("count", { count: invites.length }) : t("countUnavailable")}
                   </p>
                 </div>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline" className="dashboard-filter-chip h-9 w-fit rounded-lg">
                   <Sparkles className="me-1 h-3 w-3 text-[var(--dash-spruce)]" />
-                  Live Data
+                  {t("snapshot")}
                 </Badge>
                 <Button
                   variant="outline"
@@ -211,16 +253,16 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
                   className="dashboard-button-secondary h-9 rounded-lg"
                 >
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Refresh
+                  {copy.refresh}
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => downloadCsv(filteredUsers)}
+                  onClick={() => downloadCsv(visibleUsers, locale)}
                   className="dashboard-button-secondary h-9 rounded-lg"
                 >
                   <Download className="mr-2 h-4 w-4" />
-                  Export
+                  {copy.export}
                 </Button>
               </div>
             </div>
@@ -229,13 +271,13 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
                 value="users"
                 className="rounded-md px-4 py-2 text-[var(--dash-text-soft)] data-[state=active]:bg-[var(--dash-brand-soft)] data-[state=active]:text-[var(--dash-brand-strong)]"
               >
-                Users
+                {copy.users}
               </TabsTrigger>
               <TabsTrigger
                 value="invites"
                 className="rounded-md px-4 py-2 text-[var(--dash-text-soft)] data-[state=active]:bg-[var(--dash-brand-soft)] data-[state=active]:text-[var(--dash-brand-strong)]"
               >
-                Invites
+                {t("listTab")}
               </TabsTrigger>
             </TabsList>
           </CardHeader>
@@ -244,8 +286,8 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
             <TabsContent value="users" className="mt-0 space-y-4">
               {(statusFilter !== "all" || verificationFilter !== "all") && (
                 <div className="flex flex-wrap items-center gap-2">
-                  {statusFilter !== "all" ? <Badge variant="outline" className="dashboard-filter-chip rounded-lg">{statusFilter}</Badge> : null}
-                  {verificationFilter !== "all" ? <Badge variant="outline" className="dashboard-filter-chip rounded-lg">{verificationFilter}</Badge> : null}
+                  {statusFilter !== "all" ? <Badge variant="outline" className="dashboard-filter-chip rounded-lg">{statusFilter === "active" ? copy.active : copy.inactive}</Badge> : null}
+                  {verificationFilter !== "all" ? <Badge variant="outline" className="dashboard-filter-chip rounded-lg">{verificationFilter === "verified" ? copy.verified : copy.unverified}</Badge> : null}
                   <Button
                     type="button"
                     variant="ghost"
@@ -256,7 +298,7 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
                       setVerificationFilter("all")
                     }}
                   >
-                    Clear
+                    {copy.clear}
                   </Button>
                 </div>
               )}
@@ -264,31 +306,32 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
               <DataTable
                 data={filteredUsers}
                 columns={columns}
+                onVisibleDataChange={setVisibleUsers}
                 locale={locale}
-                searchPlaceholder="Search users, emails, roles, or status"
+                searchPlaceholder={copy.search}
                 showToolbar={false}
                 variant="landing"
                 filters={{
                   additionalFilters: (
                     <>
                       <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]">
-                          <SelectValue placeholder="Status" />
+                        <SelectTrigger aria-label={copy.status} className="dashboard-control h-9 w-full rounded-lg sm:w-[160px]">
+                          <SelectValue placeholder={copy.status} />
                         </SelectTrigger>
                         <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                          <SelectItem value="all">All Status</SelectItem>
-                          <SelectItem value="active">Active</SelectItem>
-                          <SelectItem value="inactive">Inactive</SelectItem>
+                          <SelectItem value="all">{copy.allStatus}</SelectItem>
+                          <SelectItem value="active">{copy.active}</SelectItem>
+                          <SelectItem value="inactive">{copy.inactive}</SelectItem>
                         </SelectContent>
                       </Select>
                       <Select value={verificationFilter} onValueChange={setVerificationFilter}>
-                        <SelectTrigger className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
-                          <SelectValue placeholder="Verification" />
+                        <SelectTrigger aria-label={copy.verification} className="dashboard-control h-9 w-full rounded-lg sm:w-[170px]">
+                          <SelectValue placeholder={copy.verification} />
                         </SelectTrigger>
                         <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
-                          <SelectItem value="all">All Verification</SelectItem>
-                          <SelectItem value="verified">Verified</SelectItem>
-                          <SelectItem value="unverified">Unverified</SelectItem>
+                          <SelectItem value="all">{copy.allVerification}</SelectItem>
+                          <SelectItem value="verified">{copy.verified}</SelectItem>
+                          <SelectItem value="unverified">{copy.unverified}</SelectItem>
                         </SelectContent>
                       </Select>
                     </>
@@ -297,11 +340,14 @@ export default function UsersPageClient({ users, invites, locale = "en" }: Users
               />
             </TabsContent>
             <TabsContent value="invites" className="mt-0">
-              <InviteTableWithSearch data={invites} />
+              <div className="space-y-4" aria-busy={refreshing}>
+                <Button type="button" variant="outline" disabled={refreshing} onClick={refreshInvites} className="dashboard-button-secondary w-full sm:w-auto">{refreshing ? t("refreshing") : t("retry")}</Button>
+                {invites ? <InviteTableWithSearch data={invites} asOf={invitationAsOf} searchTerm={invitationSearch} onSearchChange={setInvitationSearch} management={invitationManagement} onRecorded={readInvites} /> : <p role="alert" className="rounded-lg border border-[var(--dash-danger)] bg-[var(--dash-danger-soft)] p-4 text-sm">{invitationErrorCode === "FORBIDDEN" || invitationErrorCode === "TENANT_SCOPE_VIOLATION" ? t("readDenied") : t("readFailed")}</p>}
+              </div>
             </TabsContent>
           </CardContent>
         </Tabs>
       </Card>
-    </div>
+    </fieldset>
   )
 }

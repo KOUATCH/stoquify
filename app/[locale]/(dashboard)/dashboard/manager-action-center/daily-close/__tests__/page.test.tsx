@@ -1,4 +1,7 @@
 import { render, screen } from "@testing-library/react"
+jest.mock("@/components/dashboard/DashboardRouteState", () => ({ DashboardRouteState: () => null }))
+jest.mock("next-intl/server", () => ({ getTranslations: jest.fn() }))
+jest.mock("@/services/modules/module-entitlement.service", () => ({ observeModuleAccess: jest.fn(async () => ({ allowed: true })) }))
 
 import { getBranchDailyCloseCompletionAction } from "@/actions/end-of-day-close/branch-daily-close-completion.actions"
 import { BranchDailyCloseWorkspace } from "@/components/manager-action-center/BranchDailyCloseWorkspace"

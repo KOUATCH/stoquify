@@ -1,7 +1,8 @@
 import { db } from "@/prisma/db"
-import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
-import { LocationType, POSSessionStatus } from "@prisma/client"
-import type { TerminalManagementInput } from "./terminal-management.schemas"
+import { BusinessRuleError, ConflictError, NotFoundError, getPrismaKnownRequest } from "@/services/_shared/action-errors"
+import { LocationType, POSSessionStatus, Prisma } from "@prisma/client"
+import type { TerminalManagementInput, TerminalManagementUpdateInput } from "./terminal-management.schemas"
+import { terminalConfigurationRevision } from "./terminal-configuration-revision"
 
 type DecimalLike = { toNumber?: () => number; toString: () => string } | number | string | null | undefined
 
@@ -13,6 +14,7 @@ export type TerminalLocationOption = {
 }
 
 export type TerminalManagementRow = {
+  configurationRevision: string
   id: string
   terminalNumber: string
   name: string
@@ -69,8 +71,8 @@ function getUserDisplayName(user: { firstName: string | null; lastName: string |
   return [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email
 }
 
-async function assertLocationBelongsToOrg(organizationId: string, locationId: string) {
-  const location = await db.location.findFirst({
+async function assertLocationBelongsToOrg(organizationId: string, locationId: string, client: Prisma.TransactionClient = db) {
+  const location = await client.location.findFirst({
     where: {
       id: locationId,
       organizationId,
@@ -91,7 +93,7 @@ async function assertLocationBelongsToOrg(organizationId: string, locationId: st
   return location
 }
 
-async function resolveTerminalNumber(organizationId: string, input: string | null | undefined, locationCode: string, ignoreTerminalId?: string) {
+async function resolveTerminalNumber(organizationId: string, input: string | null | undefined, locationCode: string, ignoreTerminalId?: string, client: Prisma.TransactionClient = db) {
   if (input) {
     const terminalNumber = normalizeTerminalNumber(input)
 
@@ -99,7 +101,7 @@ async function resolveTerminalNumber(organizationId: string, input: string | nul
       throw new BusinessRuleError("Terminal number is required")
     }
 
-    const duplicate = await db.pOSStation.findFirst({
+    const duplicate = await client.pOSStation.findFirst({
       where: {
         organizationId,
         terminalNumber,
@@ -120,7 +122,7 @@ async function resolveTerminalNumber(organizationId: string, input: string | nul
 
   while (index < 1000) {
     const terminalNumber = `${prefix}-POS-${String(index).padStart(3, "0")}`
-    const duplicate = await db.pOSStation.findFirst({
+    const duplicate = await client.pOSStation.findFirst({
       where: {
         organizationId,
         terminalNumber,
@@ -144,15 +146,15 @@ async function ensureDefaultCashDrawer(terminal: {
   name: string
   terminalNumber: string
   locationId: string
-}) {
-  const existing = await db.cashDrawer.findFirst({
+}, client: Prisma.TransactionClient) {
+  const existing = await client.cashDrawer.findFirst({
     where: { terminalId: terminal.id },
     select: { id: true },
   })
 
   if (existing) return
 
-  await db.cashDrawer.create({
+  await client.cashDrawer.create({
     data: {
       name: `Cash Drawer - ${terminal.name}`,
       drawerNumber: `DRAWER-${terminal.terminalNumber}`,
@@ -164,6 +166,7 @@ async function ensureDefaultCashDrawer(terminal: {
 
 function mapTerminalRow(terminal: Awaited<ReturnType<typeof getTerminalRecords>>[number]): TerminalManagementRow {
   return {
+    configurationRevision: terminalConfigurationRevision(terminal),
     id: terminal.id,
     terminalNumber: terminal.terminalNumber,
     name: terminal.name,
@@ -196,9 +199,9 @@ function mapTerminalRow(terminal: Awaited<ReturnType<typeof getTerminalRecords>>
   }
 }
 
-async function getTerminalRecords(organizationId: string) {
-  return db.pOSStation.findMany({
-    where: { organizationId },
+async function getTerminalRecords(organizationId: string, client: Prisma.TransactionClient = db, terminalId?: string) {
+  return client.pOSStation.findMany({
+    where: { organizationId, ...(terminalId ? { id: terminalId } : {}) },
     orderBy: [
       { isActive: "desc" },
       { terminalNumber: "asc" },
@@ -290,7 +293,7 @@ export async function createTerminalForManagement(
   const terminalNumber = await resolveTerminalNumber(organizationId, input.terminalNumber, location.code)
   const name = input.name.trim()
 
-  const terminal = await db.$transaction(async (tx) => {
+  return db.$transaction(async (tx) => {
     const created = await tx.pOSStation.create({
       data: {
         terminalNumber,
@@ -320,94 +323,89 @@ export async function createTerminalForManagement(
       })
     }
 
-    return created
+    const [refreshed] = await getTerminalRecords(organizationId, tx, created.id)
+    if (!refreshed) throw new BusinessRuleError("Terminal was created but could not be reloaded")
+    return mapTerminalRow(refreshed)
   })
-
-  const refreshed = await getTerminalManagementDataForOrg(organizationId)
-  const row = refreshed.terminals.find((item) => item.id === terminal.id)
-
-  if (!row) {
-    throw new BusinessRuleError("Terminal was created but could not be reloaded")
-  }
-
-  return row
 }
 
 export async function updateTerminalForManagement(
   organizationId: string,
   terminalId: string,
-  input: TerminalManagementInput,
+  input: TerminalManagementUpdateInput,
 ): Promise<TerminalManagementRow> {
-  const existingTerminal = await db.pOSStation.findFirst({
-    where: { id: terminalId, organizationId },
-    select: {
-      id: true,
-      currentSessionId: true,
-      hasCashDrawer: true,
-      terminalNumber: true,
-      cashDrawers: {
+  try {
+    return await db.$transaction(async (tx) => {
+      const existingTerminal = await tx.pOSStation.findFirst({
+        where: { id: terminalId, organizationId },
         select: {
-          isOpen: true,
+          id: true, organizationId: true, name: true, updatedAt: true, locationId: true, isActive: true, currentSessionId: true,
+          hasCashDrawer: true, terminalNumber: true,
+          cashDrawers: { select: { isOpen: true, _count: { select: { transactions: true } } } },
+          _count: { select: { sessions: true, salesOrders: true } },
         },
-      },
-    },
-  })
+      })
+      if (!existingTerminal) throw new NotFoundError("Terminal not found")
+      if (input.expectedRevision !== terminalConfigurationRevision(existingTerminal)) {
+        throw new ConflictError("Terminal changed since this form was opened; review the latest configuration")
+      }
 
-  if (!existingTerminal) {
-    throw new NotFoundError("Terminal not found")
+      const moving = existingTerminal.locationId !== input.locationId
+      const isActive = input.isActive ?? existingTerminal.isActive
+      const hasCashDrawer = input.hasCashDrawer ?? existingTerminal.hasCashDrawer
+      if (existingTerminal.currentSessionId && !isActive) {
+        throw new BusinessRuleError("Cannot deactivate terminal with an active session")
+      }
+      if (moving && (existingTerminal.currentSessionId || existingTerminal.cashDrawers.some(drawer => drawer.isOpen))) {
+        throw new BusinessRuleError("Cannot move terminal with an active session or open drawer")
+      }
+      if (!hasCashDrawer && existingTerminal.cashDrawers.some(drawer => drawer.isOpen)) {
+        throw new BusinessRuleError("Cannot disable cash drawer while a drawer is open")
+      }
+      if (moving && (existingTerminal._count.sessions > 0 || existingTerminal._count.salesOrders > 0 || existingTerminal.cashDrawers.some(drawer => drawer._count.transactions > 0))) {
+        throw new BusinessRuleError("Cannot move terminal with operating history; create a terminal at the new location")
+      }
+
+      const location = await assertLocationBelongsToOrg(organizationId, input.locationId, tx)
+      const terminalNumber = input.terminalNumber
+        ? await resolveTerminalNumber(organizationId, input.terminalNumber, location.code, terminalId, tx)
+        : existingTerminal.terminalNumber
+      await tx.pOSStation.update({
+        where: { id: terminalId, organizationId },
+        data: { terminalNumber, name: input.name.trim(), locationId: location.id, isActive, hasCashDrawer },
+      })
+      // Only unused drawers can move. Their historical locations are never rewritten.
+      if (moving) await tx.cashDrawer.updateMany({ where: { terminalId }, data: { locationId: location.id } })
+      if (hasCashDrawer) await ensureDefaultCashDrawer({ id: terminalId, name: input.name.trim(), terminalNumber, locationId: location.id }, tx)
+      const [refreshed] = await getTerminalRecords(organizationId, tx, terminalId)
+      if (!refreshed) throw new BusinessRuleError("Terminal was updated but could not be reloaded")
+      return mapTerminalRow(refreshed)
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+  } catch (error) {
+    if (getPrismaKnownRequest(error)?.code === "P2034") {
+      throw new ConflictError("Terminal changed during editing; review its current session and try again")
+    }
+    throw error
   }
 
-  if (existingTerminal.currentSessionId && input.isActive === false) {
-    throw new BusinessRuleError("Cannot deactivate terminal with an active session")
-  }
-
-  if (input.hasCashDrawer === false && existingTerminal.cashDrawers.some((drawer) => drawer.isOpen)) {
-    throw new BusinessRuleError("Cannot disable cash drawer while a drawer is open")
-  }
-
-  const location = await assertLocationBelongsToOrg(organizationId, input.locationId)
-  const terminalNumber = input.terminalNumber
-    ? await resolveTerminalNumber(organizationId, input.terminalNumber, location.code, terminalId)
-    : existingTerminal.terminalNumber
-
-  await db.pOSStation.update({
-    where: { id: terminalId },
-    data: {
-      terminalNumber,
-      name: input.name.trim(),
-      locationId: location.id,
-      isActive: input.isActive ?? true,
-      hasCashDrawer: input.hasCashDrawer ?? true,
-    },
-  })
-
-  if (input.hasCashDrawer ?? true) {
-    await ensureDefaultCashDrawer({
-      id: terminalId,
-      name: input.name.trim(),
-      terminalNumber,
-      locationId: location.id,
-    })
-  }
-
-  const refreshed = await getTerminalManagementDataForOrg(organizationId)
-  const row = refreshed.terminals.find((item) => item.id === terminalId)
-
-  if (!row) {
-    throw new BusinessRuleError("Terminal was updated but could not be reloaded")
-  }
-
-  return row
 }
 
 export async function archiveTerminalForManagement(
   organizationId: string,
   terminalId: string,
+  expectedRevision: string,
 ): Promise<{ id: string }> {
   const terminal = await db.pOSStation.findFirst({
     where: { id: terminalId, organizationId },
     select: {
       id: true,
+      organizationId: true,
+      name: true,
+      terminalNumber: true,
+      locationId: true,
+      isActive: true,
+      hasCashDrawer: true,
+      updatedAt: true,
       currentSessionId: true,
       currentSession: {
         select: {
@@ -425,13 +423,27 @@ export async function archiveTerminalForManagement(
     throw new BusinessRuleError("Cannot deactivate terminal with an active session")
   }
 
-  await db.pOSStation.update({
-    where: { id: terminalId },
+  if (expectedRevision !== terminalConfigurationRevision(terminal)) {
+    throw new ConflictError("Terminal changed since this confirmation was opened; review the latest configuration")
+  }
+
+  const archived = await db.pOSStation.updateMany({
+    // Competes atomically with openPOSShift's claim of the same station row.
+    where: {
+      id: terminalId, organizationId, currentSessionId: null,
+      name: terminal.name, terminalNumber: terminal.terminalNumber,
+      locationId: terminal.locationId, isActive: terminal.isActive,
+      hasCashDrawer: terminal.hasCashDrawer, updatedAt: terminal.updatedAt,
+    },
     data: {
       isActive: false,
       updatedAt: new Date(),
     },
   })
+
+  if (archived.count !== 1) {
+    throw new ConflictError("Terminal changed since this confirmation was opened; review the latest configuration")
+  }
 
   return { id: terminalId }
 }

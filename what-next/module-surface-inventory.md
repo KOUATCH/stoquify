@@ -1,22 +1,22 @@
 # Module Surface Inventory
 
-Warn mode: this inventory compares against the saved baseline and does not enforce module entitlements.
+Report mode: this inventory is read-only and does not enforce module entitlements.
 
 ## Summary
 
-- Generated at: 2026-08-10T15:54:22.066Z
+- Generated at: 2026-08-30T13:36:34.696Z
 - Catalog modules: 19
-- Surfaces inventoried: 400
+- Surfaces inventoried: 414
 - Source coverage: sidebar=present, moduleCatalog=present, dashboardRoot=present, actionsRoot=present, reportExportSurfaces=present, apiRoutes=present, apiGuardInventory=present
 
 ## Classification Counts
 
-- dashboard-only risk: 5
+- dashboard-only risk: 77
 - delegated re-export: 7
 - delegated_uploadthing_core: 1
-- enforcement candidate: 256
-- mapped: 361
-- missing permission: 10
+- enforcement candidate: 293
+- mapped: 371
+- missing permission: 79
 - not applicable: cross-module session assurance: 1
 - not applicable: internal action response helper: 1
 - not applicable: internal display helper: 1
@@ -29,40 +29,9 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 - not_applicable_public: 4
 - not_applicable_public_service: 1
 - not_applicable_session_claims: 1
-- review_required: 4
-- source_inherited_service: 14
+- review_required: 6
+- source_inherited_service: 16
 - unmapped: 5
-
-## Baseline Ratchet
-
-- Ratchet status: failed
-- Baseline active gaps: 55
-- Current active gaps: 20
-- Active gap delta: -35
-- New gaps: 13
-- Resolved gaps: 48
-
-### Worsened Categories
-
-- MODULE_SURFACE_PAGE_GUARD_NONE: 0 -> 5 (+5)
-
-### New Gaps
-
-| Category | Surface Type | Surface | File | Reason |
-|---|---|---|---|---|
-| MODULE_SURFACE_UNMAPPED | action | agents/agent-release-control.actions.ts | actions/agents/agent-release-control.actions.ts | Module-required surface has no canonical module owner. |
-| MODULE_SURFACE_UNMAPPED | action | referrals/referral-funnel.actions.ts | actions/referrals/referral-funnel.actions.ts | Module-required surface has no canonical module owner. |
-| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/analytics/referrals | app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
-| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/analytics/referrals | app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx | Dashboard page has no detected server-side guard. |
-| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id]/edit | app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
-| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/[id]/edit | app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx | Dashboard page has no detected server-side guard. |
-| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id]/orders | app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
-| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/[id]/orders | app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx | Dashboard page has no detected server-side guard. |
-| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id] | app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
-| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/[id] | app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx | Dashboard page has no detected server-side guard. |
-| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/[id]/statement | app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
-| MODULE_SURFACE_MISSING_PERMISSION | page | /dashboard/customers/new | app/[locale]/(dashboard)/dashboard/customers/new/page.tsx | Protected user-facing surface has no RBAC permission evidence. |
-| MODULE_SURFACE_PAGE_GUARD_NONE | page | /dashboard/customers/new | app/[locale]/(dashboard)/dashboard/customers/new/page.tsx | Dashboard page has no detected server-side guard. |
 
 ## Surfaces
 
@@ -74,6 +43,7 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | action | accounting/close-assurance.actions.ts | accounting | accounting.close.read | protect | mapped, enforcement candidate | actions/accounting/close-assurance.actions.ts |
 | action | accounting/customer-statement.actions.ts | accounting | accounting.exports.create | protect | mapped | actions/accounting/customer-statement.actions.ts |
 | action | accounting/data-trust.actions.ts | accounting | accounting.audit.read | protect | mapped, enforcement candidate | actions/accounting/data-trust.actions.ts |
+| action | accounting/finance-statement-export.actions.ts | accounting | accounting.exports.create | protect | mapped | actions/accounting/finance-statement-export.actions.ts |
 | action | accounting/journals.actions.ts | accounting | accounting.journal.read | protect | mapped, enforcement candidate | actions/accounting/journals.actions.ts |
 | action | accounting/reports.actions.ts | accounting | accounting.reports.read | protect | mapped, enforcement candidate | actions/accounting/reports.actions.ts |
 | action | accounting/settings.actions.ts | accounting | accounting.setup.manage | protect | mapped, enforcement candidate | actions/accounting/settings.actions.ts |
@@ -148,6 +118,8 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | action | locations/updateLocationById.ts | settings | locations.update | requirePermission | mapped | actions/locations/updateLocationById.ts |
 | action | manager-action-center/manager-action-center.actions.ts | dashboard | dashboard.read | protect | mapped | actions/manager-action-center/manager-action-center.actions.ts |
 | action | modules/module-control.actions.ts | settings | MANAGE_SYSTEM_SETTINGS | protect | mapped, enforcement candidate | actions/modules/module-control.actions.ts |
+| action | onboarding/master-data-onboarding.actions.ts | settings | MASTER_DATA_ONBOARDING_READ_PERMISSIONS | requireAnyPermission | mapped | actions/onboarding/master-data-onboarding.actions.ts |
+| action | order-to-cash/delivery-order.actions.ts | sales | sales.orders.create | protect | mapped | actions/order-to-cash/delivery-order.actions.ts |
 | action | organization/organization-settings-actions.ts | settings | system.organization.read | requirePermission | mapped | actions/organization/organization-settings-actions.ts |
 | action | owner-war-room/owner-war-room.actions.ts | dashboard | dashboard.read | protect | mapped | actions/owner-war-room/owner-war-room.actions.ts |
 | action | payments/reconciliation-workbench.actions.ts | payment_reconciliation | payments.reconciliation.read | protect | mapped | actions/payments/reconciliation-workbench.actions.ts |
@@ -176,8 +148,10 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | action | purchaseOrderWorkflow/GoodsReceiptAndSummary.ts | purchasing | purchases.orders.read | requirePermission | mapped, enforcement candidate | actions/purchaseOrderWorkflow/GoodsReceiptAndSummary.ts |
 | action | purchaseOrderWorkflow/newPOActions.ts | purchasing | purchases.orders.read | purchases.orders.create | purchases.orders.update | purchases.delete | purchases.orders.approve | purchases.orders.cancel | purchases.orders.receive | delegated-re-export | mapped, delegated re-export, enforcement candidate | actions/purchaseOrderWorkflow/newPOActions.ts |
 | action | purchaseOrderWorkflow/purchaseOrderSystemAction.ts | purchasing | purchases.orders.read | purchases.orders.create | purchases.orders.update | purchases.delete | purchases.orders.approve | purchases.orders.cancel | purchases.orders.receive | requirePermission | mapped, enforcement candidate | actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts |
+| action | purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts | purchasing | purchases.orders.update | protect | mapped | actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts |
 | action | purchasing/ap-control.actions.ts | purchasing | purchasing.ap.invoice.view | protect | mapped, enforcement candidate | actions/purchasing/ap-control.actions.ts |
 | action | purchasing/ap-history.actions.ts | purchasing | finance.reports.export | reports.export | requireAnyPermission | mapped | actions/purchasing/ap-history.actions.ts |
+| action | purchasing/purchase-return-credit.actions.ts | purchasing | purchasing.returns.post | protect | mapped, enforcement candidate | actions/purchasing/purchase-return-credit.actions.ts |
 | action | referrals/referral-funnel.actions.ts |  | analytics.read | requirePermission | unmapped, enforcement candidate | actions/referrals/referral-funnel.actions.ts |
 | action | roles/createRole.ts | settings | roles.create | requirePermission | mapped | actions/roles/createRole.ts |
 | action | roles/getOrgRoles.ts | settings | roles.read | requirePermission | mapped | actions/roles/getOrgRoles.ts |
@@ -220,6 +194,8 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | api | /api/receipts/[receiptId] |  |  | none | not_applicable_public | app/api/receipts/[receiptId]/route.ts |
 | api | /api/referrals/[referralCode] |  |  | none | review_required | app/api/referrals/[referralCode]/route.ts |
 | api | /api/security-txt |  |  | none | not_applicable_public | app/api/security-txt/route.ts |
+| api | /api/supplier-po-envelopes/[envelopeId]/proposals |  |  | none | review_required | app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts |
+| api | /api/supplier-po-envelopes/[envelopeId] |  |  | none | review_required | app/api/supplier-po-envelopes/[envelopeId]/route.ts |
 | api | /api/uploads/[...path] | dashboard | dashboard.read | requireApiSessionForCurrentOrg | mapped, enforcement candidate | app/api/uploads/[...path]/route.ts |
 | api | /api/uploadthing |  |  | none | delegated_uploadthing_core | app/api/uploadthing/route.ts |
 | api | /api/v1/organisations/[id]/briefItems | inventory | inventory.items.read | requireApiSessionForOrg | mapped, enforcement candidate | app/api/v1/organisations/[id]/briefItems/route.ts |
@@ -228,6 +204,8 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | export_evidence | accounting/ar-open-item-export.service.ts | accounting |  | none | source_inherited_service | services/accounting/ar-open-item-export.service.ts |
 | export_evidence | accounting/control-center.service.ts | accounting |  | none | source_inherited_service | services/accounting/control-center.service.ts |
 | export_evidence | accounting/data-trust.service.ts | accounting | accounting.exports.create | none | source_inherited_service | services/accounting/data-trust.service.ts |
+| export_evidence | accounting/finance-statement-export-operations.service.ts | accounting |  | none | source_inherited_service | services/accounting/finance-statement-export-operations.service.ts |
+| export_evidence | accounting/finance-statement-export.service.ts | accounting |  | none | source_inherited_service | services/accounting/finance-statement-export.service.ts |
 | export_evidence | accounting/reports.service.ts | accounting |  | none | source_inherited_service | services/accounting/reports.service.ts |
 | export_evidence | controls/sensitive-action.service.ts |  | pos.use | none | source_inherited_service | services/controls/sensitive-action.service.ts |
 | export_evidence | customer/customer-export.service.ts |  |  | none | source_inherited_service | services/customer/customer-export.service.ts |
@@ -238,10 +216,11 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | export_evidence | supplier/supplier-export.service.ts |  |  | none | source_inherited_service | services/supplier/supplier-export.service.ts |
 | export | accounting/customer-statement.actions.ts | accounting | accounting.exports.create | protect | mapped | actions/accounting/customer-statement.actions.ts |
 | export | accounting/data-trust.actions.ts | accounting | accounting.exports.create | protect | mapped, enforcement candidate | actions/accounting/data-trust.actions.ts |
+| export | accounting/finance-statement-export.actions.ts | accounting | accounting.exports.create | protect | mapped | actions/accounting/finance-statement-export.actions.ts |
 | export | accounting/reports.actions.ts | accounting | accounting.exports.create | protect | mapped, enforcement candidate | actions/accounting/reports.actions.ts |
 | export | inventory/inventoryMovementHistoryBackgroundExportActions.ts | inventory | reports.export | protect | mapped | actions/inventory/inventoryMovementHistoryBackgroundExportActions.ts |
 | export | payroll/payroll-register.actions.ts | payroll | payroll.exports.create | protect | mapped | actions/payroll/payroll-register.actions.ts |
-| layout | /dashboard/customers | sales | customers.read | checkPermission | mapped | app/[locale]/(dashboard)/dashboard/customers/layout.tsx |
+| layout | /dashboard/customers | sales |  | none | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/layout.tsx |
 | layout | /dashboard/inventory/brands | inventory |  | none | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/brands/layout.tsx |
 | layout | /dashboard/inventory/categories | inventory |  | none | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/categories/layout.tsx |
 | layout | /dashboard/inventory/units | inventory |  | none | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/units/layout.tsx |
@@ -319,6 +298,7 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | navigation | /dashboard/people/team | payroll | hris.people.read | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/pos | sales | OPERATE_POS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/purchase-orders | purchasing | READ_PURCHASE_ORDERS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
+| navigation | /dashboard/purchase-orders/analytics | purchasing | READ_PURCHASE_ORDERS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/purchase-orders/new | purchasing | CREATE_PURCHASE_ORDERS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/purchases | purchasing | READ_PURCHASE_ORDERS | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
 | navigation | /dashboard/purchases/payables | purchasing | finance.payables.read | sidebar-permission-filter | mapped, enforcement candidate | config/sidebar.ts |
@@ -349,39 +329,39 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | page | /dashboard/accounting/reports/financial-statements | accounting | accounting.reports.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx |
 | page | /dashboard/accounting/reports/trial-balance | accounting | accounting.reports.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/page.tsx |
 | page | /dashboard/accounting/setup | accounting | accounting.setup.manage | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/accounting/setup/page.tsx |
-| page | /dashboard/analytics | analytics | reports.read | dashboard.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/page.tsx |
+| page | /dashboard/analytics | analytics |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/page.tsx |
 | page | /dashboard/analytics/referrals | analytics |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/referrals/page.tsx |
-| page | /dashboard/analytics/reports | analytics | reports.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx |
-| page | /dashboard/assurance/control-tower/incidents/[incidentId] | dashboard | controls.audit.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx |
-| page | /dashboard/assurance/control-tower | dashboard | controls.audit.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx |
-| page | /dashboard/cashDrawer | cash_drawer | finance.cash-drawer.read | finance.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/cashDrawer/page.tsx |
-| page | /dashboard/change-password | settings | PASSWORD_READ | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/change-password/page.tsx |
-| page | /dashboard/compliance | compliance | compliance.documents.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/compliance/page.tsx |
+| page | /dashboard/analytics/reports | analytics |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx |
+| page | /dashboard/assurance/control-tower/incidents/[incidentId] | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/assurance/control-tower/incidents/[incidentId]/page.tsx |
+| page | /dashboard/assurance/control-tower | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/assurance/control-tower/page.tsx |
+| page | /dashboard/cashDrawer | cash_drawer |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/cashDrawer/page.tsx |
+| page | /dashboard/change-password | settings |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/change-password/page.tsx |
+| page | /dashboard/compliance | compliance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/compliance/page.tsx |
 | page | /dashboard/customers/[id]/edit | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/edit/page.tsx |
 | page | /dashboard/customers/[id]/orders | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/orders/page.tsx |
 | page | /dashboard/customers/[id] | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/page.tsx |
-| page | /dashboard/customers/[id]/statement | sales |  | module-observe | mapped, missing permission | app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx |
+| page | /dashboard/customers/[id]/statement | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/[id]/statement/page.tsx |
 | page | /dashboard/customers/new | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/new/page.tsx |
-| page | /dashboard/customers | sales | customers.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/page.tsx |
-| page | /dashboard/daily-digest | dashboard | dashboard.read | finance.read | accounting.close.read | inventory.read | analytics.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx |
-| page | /dashboard/finance/analytics | finance | financeViewPermissions(analytics) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx |
-| page | /dashboard/finance/cash-command | finance | finance.read | dashboard.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx |
-| page | /dashboard/finance/cash-drawer | cash_drawer | finance.cash-drawer.read | finance.read | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx |
-| page | /dashboard/finance/cash-flow | finance | financeViewPermissions(cash-flow) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx |
-| page | /dashboard/finance/cash-payment-history | finance | cashPaymentHistoryPermissions | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx |
-| page | /dashboard/finance/costs | finance | financeViewPermissions(costs) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/costs/page.tsx |
-| page | /dashboard/finance | finance | financeViewPermissions(overview) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/page.tsx |
-| page | /dashboard/finance/payables | finance | financeViewPermissions(payables) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx |
-| page | /dashboard/finance/payments | finance | financeViewPermissions(payments) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx |
-| page | /dashboard/finance/profit-loss | finance | financeViewPermissions(profitability) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/profit-loss/page.tsx |
-| page | /dashboard/finance/profitability | finance | financeViewPermissions(profitability) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/profitability/page.tsx |
-| page | /dashboard/finance/receivables/history | finance | financeViewPermissions(receivables) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx |
-| page | /dashboard/finance/receivables | finance | financeViewPermissions(receivables) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx |
-| page | /dashboard/finance/reconciliation | payment_reconciliation | payments.reconciliation.read | FinanceRouteAccess | mapped | app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx |
-| page | /dashboard/finance/retail | finance | financeViewPermissions(retail) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx |
-| page | /dashboard/finance/sales | finance | financeViewPermissions(sales) | FinanceRouteAccess | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/sales/page.tsx |
-| page | /dashboard/finance/stock-to-cash | finance | finance.read | dashboard.read | inventory.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx |
-| page | /dashboard/finance/tax-rates/create | finance | taxes.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx |
+| page | /dashboard/customers | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/customers/page.tsx |
+| page | /dashboard/daily-digest | dashboard | ctx.permissions | none | mapped, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx |
+| page | /dashboard/finance/analytics | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/analytics/page.tsx |
+| page | /dashboard/finance/cash-command | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-command/page.tsx |
+| page | /dashboard/finance/cash-drawer | cash_drawer |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-drawer/page.tsx |
+| page | /dashboard/finance/cash-flow | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-flow/page.tsx |
+| page | /dashboard/finance/cash-payment-history | finance | cashPaymentHistoryPermissions | none | mapped, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/cash-payment-history/page.tsx |
+| page | /dashboard/finance/costs | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/costs/page.tsx |
+| page | /dashboard/finance | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/page.tsx |
+| page | /dashboard/finance/payables | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/payables/page.tsx |
+| page | /dashboard/finance/payments | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/payments/page.tsx |
+| page | /dashboard/finance/profit-loss | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/profit-loss/page.tsx |
+| page | /dashboard/finance/profitability | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/profitability/page.tsx |
+| page | /dashboard/finance/receivables/history | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/receivables/history/page.tsx |
+| page | /dashboard/finance/receivables | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/receivables/page.tsx |
+| page | /dashboard/finance/reconciliation | payment_reconciliation |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/reconciliation/page.tsx |
+| page | /dashboard/finance/retail | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/retail/page.tsx |
+| page | /dashboard/finance/sales | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/sales/page.tsx |
+| page | /dashboard/finance/stock-to-cash | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/stock-to-cash/page.tsx |
+| page | /dashboard/finance/tax-rates/create | finance |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx |
 | page | /dashboard/inventory/brands/[id]/edit | inventory | inventory.brands.update | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx |
 | page | /dashboard/inventory/brands/create | inventory | inventory.brands.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx |
 | page | /dashboard/inventory/brands | inventory | inventory.brands.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx |
@@ -402,46 +382,49 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | page | /dashboard/inventory/units/[id]/edit | inventory | inventory.units.update | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx |
 | page | /dashboard/inventory/units/create | inventory | inventory.units.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx |
 | page | /dashboard/inventory/units | inventory | inventory.units.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx |
-| page | /dashboard/items/new | inventory | inventory.items.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/items/new/page.tsx |
-| page | /dashboard/items | inventory | inventory.items.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/items/page.tsx |
-| page | /dashboard/manager-action-center/daily-close | dashboard | dashboard.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx |
-| page | /dashboard/manager-action-center | dashboard | dashboard.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx |
-| page | /dashboard/notifications-demo | settings | communication.notifications.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx |
-| page | /dashboard/owner-war-room | dashboard | dashboard.read | requirePermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx |
+| page | /dashboard/items/new | inventory |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/items/new/page.tsx |
+| page | /dashboard/items | inventory |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/items/page.tsx |
+| page | /dashboard/manager-action-center/daily-close | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/manager-action-center/daily-close/page.tsx |
+| page | /dashboard/manager-action-center | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/manager-action-center/page.tsx |
+| page | /dashboard/notifications-demo | settings |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/notifications-demo/page.tsx |
+| page | /dashboard/owner-war-room | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx |
 | page | /dashboard | dashboard |  | requireRbacContext | mapped, missing permission, enforcement candidate | app/[locale]/(dashboard)/dashboard/page.tsx |
-| page | /dashboard/payroll/attendance | payroll | payroll.payment_destination.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/attendance/page.tsx |
-| page | /dashboard/payroll/compensation | payroll | payroll.compensation.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/compensation/page.tsx |
-| page | /dashboard/payroll/contracts | payroll | payroll.contracts.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/contracts/page.tsx |
-| page | /dashboard/payroll/declarations | payroll | payroll.command.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx |
-| page | /dashboard/payroll/employees | payroll | payroll.employees.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/employees/page.tsx |
-| page | /dashboard/payroll | payroll | payroll.command.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/page.tsx |
-| page | /dashboard/payroll/payments | payroll | payments.reconciliation.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx |
-| page | /dashboard/payroll/payslips | payroll | payroll.payslips.self.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/payslips/page.tsx |
-| page | /dashboard/payroll/register | payroll | payroll.reports.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx |
-| page | /dashboard/payroll/runs | payroll | payroll.command.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx |
-| page | /dashboard/payroll/setup | payroll | payroll.runs.calculate | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/payroll/setup/page.tsx |
-| page | /dashboard/people/[employeeId] | dashboard | hris.people.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx |
-| page | /dashboard/people/approvals | dashboard | hris.people.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/approvals/page.tsx |
-| page | /dashboard/people/history | dashboard | hris.people.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/history/page.tsx |
-| page | /dashboard/people/me | dashboard | hris.self_service.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/me/page.tsx |
-| page | /dashboard/people | dashboard | hris.people.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/page.tsx |
-| page | /dashboard/people/team | dashboard | hris.people.read | requireAnyPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/team/page.tsx |
-| page | /dashboard/pos | pos | OPERATE_POS | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/pos/page.tsx |
-| page | /dashboard/purchase-orders/[id]/edit | purchasing | purchases.orders.update | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx |
-| page | /dashboard/purchase-orders/[id] | purchasing | purchases.orders.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx |
-| page | /dashboard/purchase-orders/new | purchasing | purchases.orders.create | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx |
-| page | /dashboard/purchase-orders | purchasing | purchases.orders.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx |
-| page | /dashboard/purchases/[id] | purchasing | purchases.orders.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx |
-| page | /dashboard/purchases | purchasing | purchases.orders.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/page.tsx |
-| page | /dashboard/purchases/payables/history | purchasing | purchasing.ap.invoice.view | finance.payables.read | purchases.suppliers.read | requireAnyPermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx |
-| page | /dashboard/purchases/payables | purchasing | purchasing.ap.invoice.view | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx |
-| page | /dashboard/purchases/suppliers/[id]/edit | purchasing | purchases.suppliers.update | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx |
-| page | /dashboard/purchases/suppliers/[id] | purchasing | purchases.suppliers.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx |
-| page | /dashboard/purchases/suppliers/create | purchasing | purchases.suppliers.create | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/suppliers/create/page.tsx |
-| page | /dashboard/purchases/suppliers | purchasing | purchases.suppliers.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx |
-| page | /dashboard/sales | sales | sales.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/sales/page.tsx |
+| page | /dashboard/payroll/attendance | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/attendance/page.tsx |
+| page | /dashboard/payroll/compensation | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/compensation/page.tsx |
+| page | /dashboard/payroll/contracts | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/contracts/page.tsx |
+| page | /dashboard/payroll/declarations | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/declarations/page.tsx |
+| page | /dashboard/payroll/employees | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/employees/page.tsx |
+| page | /dashboard/payroll | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/page.tsx |
+| page | /dashboard/payroll/payments | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/payments/page.tsx |
+| page | /dashboard/payroll/payslips | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/payslips/page.tsx |
+| page | /dashboard/payroll/register | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/register/page.tsx |
+| page | /dashboard/payroll/runs | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/runs/page.tsx |
+| page | /dashboard/payroll/setup | payroll |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/payroll/setup/page.tsx |
+| page | /dashboard/people/[employeeId] | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/[employeeId]/page.tsx |
+| page | /dashboard/people/approvals | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/approvals/page.tsx |
+| page | /dashboard/people/history | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/history/page.tsx |
+| page | /dashboard/people/me | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/me/page.tsx |
+| page | /dashboard/people | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/page.tsx |
+| page | /dashboard/people/team | dashboard |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/people/team/page.tsx |
+| page | /dashboard/pos | pos |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/pos/page.tsx |
+| page | /dashboard/purchase-orders/[id]/edit | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx |
+| page | /dashboard/purchase-orders/[id] | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/page.tsx |
+| page | /dashboard/purchase-orders/[id]/supplier-acknowledgement | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/supplier-acknowledgement/page.tsx |
+| page | /dashboard/purchase-orders/analytics | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchase-orders/analytics/page.tsx |
+| page | /dashboard/purchase-orders/new | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchase-orders/new/page.tsx |
+| page | /dashboard/purchase-orders | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchase-orders/page.tsx |
+| page | /dashboard/purchases/[id] | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/[id]/page.tsx |
+| page | /dashboard/purchases | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/page.tsx |
+| page | /dashboard/purchases/payables/history | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx |
+| page | /dashboard/purchases/payables | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx |
+| page | /dashboard/purchases/suppliers/[id]/edit | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/edit/page.tsx |
+| page | /dashboard/purchases/suppliers/[id] | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/suppliers/[id]/page.tsx |
+| page | /dashboard/purchases/suppliers/create | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/suppliers/create/page.tsx |
+| page | /dashboard/purchases/suppliers | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/purchases/suppliers/page.tsx |
+| page | /dashboard/sales | sales |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/sales/page.tsx |
 | page | /dashboard/settings/appearance | settings | DASHBOARD_READ | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/appearance/page.tsx |
 | page | /dashboard/settings/company | settings | COMPANY_READ | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/company/page.tsx |
+| page | /dashboard/settings/data-onboarding | settings |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/data-onboarding/page.tsx |
 | page | /dashboard/settings/locations/[id]/edit | settings | locations.update | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx |
 | page | /dashboard/settings/locations/create | settings | locations.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx |
 | page | /dashboard/settings/locations/new | settings | locations.create | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx |
@@ -458,10 +441,10 @@ Warn mode: this inventory compares against the saved baseline and does not enfor
 | page | /dashboard/settings/tax-rates | settings | taxes.read | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx |
 | page | /dashboard/settings/terminals | settings | POS_STATION_READ | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/terminals/page.tsx |
 | page | /dashboard/settings/users | settings | READ_USERS | checkPermission | mapped, enforcement candidate | app/[locale]/(dashboard)/dashboard/settings/users/page.tsx |
-| page | /dashboard/suppliersSystem/[id]/edit | purchasing | purchases.suppliers.update | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/edit/page.tsx |
-| page | /dashboard/suppliersSystem/[id] | purchasing | purchases.suppliers.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/page.tsx |
-| page | /dashboard/suppliersSystem/new | purchasing | purchases.suppliers.create | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/suppliersSystem/new/page.tsx |
-| page | /dashboard/suppliersSystem | purchasing | purchases.suppliers.read | requirePermission | mapped | app/[locale]/(dashboard)/dashboard/suppliersSystem/page.tsx |
+| page | /dashboard/suppliersSystem/[id]/edit | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/edit/page.tsx |
+| page | /dashboard/suppliersSystem/[id] | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/suppliersSystem/[id]/page.tsx |
+| page | /dashboard/suppliersSystem/new | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/suppliersSystem/new/page.tsx |
+| page | /dashboard/suppliersSystem | purchasing |  | none | mapped, missing permission, dashboard-only risk, enforcement candidate | app/[locale]/(dashboard)/dashboard/suppliersSystem/page.tsx |
 | report_evidence | accounting/close-assurance.service.ts | accounting |  | none | source_inherited_service | services/accounting/close-assurance.service.ts |
 | report_evidence | accounting/reports.service.ts | accounting |  | none | source_inherited_service | services/accounting/reports.service.ts |
 | report_evidence | analytics/financial-reports.service.ts | analytics |  | none | source_inherited_service | services/analytics/financial-reports.service.ts |

@@ -8,6 +8,7 @@ import {
   getSupplierAnalyticsData,
   getSupplierManagementData,
   updateManagedSupplier,
+  type SupplierCreationResult,
   type SupplierDetailAnalytics,
   type SupplierManagementInput,
   type SupplierManagementRow,
@@ -29,6 +30,7 @@ const copy = {
   en: {
     createTitle: "Supplier created",
     createBody: "The supplier is ready for item links, purchase orders, and payable workflows.",
+    createRefreshBody: "The supplier was saved, but some views could not refresh. Refresh the supplier list before creating another record.",
     updateTitle: "Supplier updated",
     updateBody: "The supplier record and dependent purchasing views were refreshed.",
     archiveTitle: "Supplier archived",
@@ -40,6 +42,7 @@ const copy = {
   fr: {
     createTitle: "Fournisseur cree",
     createBody: "Le fournisseur est pret pour les articles, commandes d'achat et dettes.",
+    createRefreshBody: "Le fournisseur a été enregistré, mais certaines vues n’ont pas pu être actualisées. Actualisez la liste des fournisseurs avant de créer une autre fiche.",
     updateTitle: "Fournisseur mis a jour",
     updateBody: "La fiche fournisseur et les vues d'achat dependantes ont ete actualisees.",
     archiveTitle: "Fournisseur archive",
@@ -50,24 +53,29 @@ const copy = {
   },
 } as const
 
-function invalidateSupplierQueries(queryClient: QueryClient, organizationId: string, supplierId?: string) {
-  queryClient.invalidateQueries({ queryKey: supplierManagementKeys.dashboard(organizationId) })
-  queryClient.invalidateQueries({ queryKey: SupplierKeys.lists() })
-  queryClient.invalidateQueries({ queryKey: SupplierKeys.orgSuppliers(organizationId) })
-  queryClient.invalidateQueries({ queryKey: SupplierKeys.briefOrgSuppliers(organizationId) })
-  queryClient.invalidateQueries({ queryKey: SupplierKeys.completeOrgSuppliers(organizationId) })
-  queryClient.invalidateQueries({ queryKey: ItemKeys.orgItems(organizationId) })
-  queryClient.invalidateQueries({ queryKey: ItemKeys.briefOrgItems(organizationId) })
-  queryClient.invalidateQueries({ queryKey: ItemKeys.completeOrgItems(organizationId) })
-  queryClient.invalidateQueries({ queryKey: ["suppliers"] })
-  queryClient.invalidateQueries({ queryKey: ["orgSuppliers"] })
-  queryClient.invalidateQueries({ queryKey: ["orgSuppliers", organizationId] })
+async function invalidateSupplierQueries(queryClient: QueryClient, organizationId: string, supplierId?: string, reportErrors = false) {
+  const keys: ReadonlyArray<unknown>[] = [
+    supplierManagementKeys.dashboard(organizationId),
+    SupplierKeys.lists(),
+    SupplierKeys.orgSuppliers(organizationId),
+    SupplierKeys.briefOrgSuppliers(organizationId),
+    SupplierKeys.completeOrgSuppliers(organizationId),
+    ItemKeys.orgItems(organizationId),
+    ItemKeys.briefOrgItems(organizationId),
+    ItemKeys.completeOrgItems(organizationId),
+    ["suppliers"],
+    ["orgSuppliers"],
+    ["orgSuppliers", organizationId],
+  ]
 
   if (supplierId) {
-    queryClient.invalidateQueries({ queryKey: SupplierKeys.detail(supplierId) })
-    queryClient.invalidateQueries({ queryKey: supplierManagementKeys.analytics(organizationId, supplierId) })
-    queryClient.invalidateQueries({ queryKey: ["supplier", supplierId] })
+    keys.push(SupplierKeys.detail(supplierId), supplierManagementKeys.analytics(organizationId, supplierId), ["supplier", supplierId])
   }
+
+  const results = await Promise.allSettled(keys.map(async queryKey =>
+    queryClient.invalidateQueries({ queryKey }, { throwOnError: reportErrors }),
+  ))
+  return results.every(result => result.status === "fulfilled")
 }
 
 export function useSupplierManagementData(organizationId: string) {
@@ -125,9 +133,13 @@ export function useCreateManagedSupplier(organizationId: string, locale: Locale 
 
       return result.data
     },
-    onSuccess: (supplier?: SupplierManagementRow) => {
-      invalidateSupplierQueries(queryClient, organizationId, supplier?.id)
-      notifications.success(t.createTitle, t.createBody)
+    onSuccess: async (supplier: SupplierCreationResult) => {
+      const refreshed = await invalidateSupplierQueries(queryClient, organizationId, supplier.id, true)
+      if (!refreshed || supplier.cacheStatus === "deferred") {
+        notifications.warning(t.createTitle, t.createRefreshBody)
+      } else {
+        notifications.success(t.createTitle, t.createBody)
+      }
     },
     onError: (error: Error) => {
       notifications.error(t.errorTitle, error.message || t.errorTitle)

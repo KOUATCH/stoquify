@@ -29,6 +29,8 @@ import {
   type PaymentReconciliationSignOffCommandStateResult,
 } from "./payment-reconciliation-sign-off-command-state-contracts"
 import { buildPaymentReconciliationSignOffSourceVersionHash } from "./payment-reconciliation-sign-off-source-version"
+import { loadRunPreparationReceiptInTx } from "./reconciliation-run-preparation-evidence"
+import { suspenseMetadata } from "./payment-suspense-evidence"
 
 const MODULE_SURFACE =
   "services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts"
@@ -60,6 +62,7 @@ const READY_RUN_SELECT = {
   exceptionCount: true,
   matchCount: true,
   runById: true,
+  metadata: true,
   createdAt: true,
   updatedAt: true,
   providerAccount: {
@@ -211,6 +214,14 @@ export async function getPaymentReconciliationSignOffCommandState(
       commandAllowed: false,
       candidate,
     })
+  }
+
+  const preparationId = suspenseMetadata(run.metadata).preparationReceiptId
+  if (preparationId !== undefined) {
+    if (typeof preparationId !== "string" || !preparationId.trim()) throw inconsistentEvidence()
+    const receipt = await loadRunPreparationReceiptInTx(db, access.organizationId, run.id, preparationId)
+    if (receipt.data.preparedById === input.accessContext.userId) return buildResult({ access, now,
+      state: "READ_ONLY", reason: "PREPARER_CHECKER_REQUIRED", commandAllowed: false, candidate })
   }
 
   return buildResult({

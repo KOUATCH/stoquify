@@ -1,0 +1,35 @@
+
+ROUTE /en/dashboard/owner-war-room
+FILE app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/owner-war-room/page.tsx; components/dashboard/DashboardRouteState.tsx; components/owner-war-room/OwnerWarRoomDashboard.tsx; components/evidence/EvidenceGradeBadge.tsx; components/bi/index.ts; components/bi/BIActionPriorityBoard.tsx; components/bi/BIEvidenceBadgeRow.tsx; components/bi/BIStateBadge.tsx; components/bi/BIStateSurface.tsx; components/bi/BIEmptyState.tsx; components/bi/BICommandBriefHeader.tsx; components/bi/BICommandModeTabs.tsx; components/bi/BIBusinessTruthZone.tsx; components/bi/BIKpiCard.tsx; components/bi/BIProofDrawerHost.tsx; components/evidence/ProofTrailDrawer.tsx; components/bi/BIRiskOpportunityRadar.tsx; components/bi/BITrustLegend.tsx; components/bi/BIWhatChangedStrip.tsx
+DEPENDENCIES services/owner-war-room/owner-war-room.service.ts; app/[locale]/(dashboard)/dashboard/owner-war-room/owner-war-room-route-access.tsx; lib/utils.ts; actions/evidence/proof-trail.actions.ts; services/bi/bi-contracts.ts; services/evidence/evidence-contracts.ts; services/owner-war-room/owner-war-room-contracts.ts
+REDIRECTS []
+HEADINGS Brief proof | Control strips | Owner action queue | Proof trail | Module state | Proof Trail
+PROPS Owner War Room | Since yesterday | Owner risks | Top proof-linked actions | Critical | High | Redacted | Upgrade prompts | Freshness | Required permission | Source modules | Catalog | Entitled | Would block | Trials | Read-only | Dependency gaps | No visible action is due | Period | Generated | Sources | Review | Proof-only drill-through needs a proof drawer host. | No proof subject was supplied. | Evidence Nodes | Evidence Edges | Blockers | Redactions | No ranked risk is visible | No important changes yet
+CONTROLS [dynamic or icon-only label] (Link, {"href":"primaryHref"}, components/dashboard/DashboardRouteState.tsx:150)
+[dynamic or icon-only label] (Link, {"href":"secondaryHref"}, components/dashboard/DashboardRouteState.tsx:157)
+Acknowledged / Acknowledge brief (Button, {"type":"\"button\"","disabled":"briefAcknowledged","onClick":"() => setBriefAcknowledged(true)"}, components/owner-war-room/OwnerWarRoomDashboard.tsx:304)
+Open (Link, {"href":"item.actionPath"}, components/owner-war-room/OwnerWarRoomDashboard.tsx:540)
+Loading proof / Open proof / Unavailable (button, {"type":"\"button\"","disabled":"!subject.enabled || isPending","onClick":"() => openProofTrail(subject)"}, components/owner-war-room/OwnerWarRoomDashboard.tsx:576)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:139)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIActionPriorityBoard.tsx:154)
+[dynamic or icon-only label] (Button, {}, components/bi/BIActionPriorityBoard.tsx:167)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIActionPriorityBoard.tsx:168)
+[dynamic or icon-only label] (Button, {}, components/bi/BICommandBriefHeader.tsx:90)
+[dynamic or icon-only label] (Link, {"href":"brief.primaryAction.href"}, components/bi/BICommandBriefHeader.tsx:91)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","onClick":"() => onValueChange?.(mode)"}, components/bi/BICommandModeTabs.tsx:41)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIBusinessTruthZone.tsx:65)
+[dynamic or icon-only label] (Button, {}, components/bi/BIBusinessTruthZone.tsx:77)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIBusinessTruthZone.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"card.actionLink.disabled"}, components/bi/BIKpiCard.tsx:67)
+[dynamic or icon-only label] (Link, {"href":"card.actionLink.href"}, components/bi/BIKpiCard.tsx:81)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:96)
+Proof-only drill-through needs a proof drawer host. (Button, {"disabled":"true"}, components/bi/BIKpiCard.tsx:111)
+[dynamic or icon-only label] (Button, {}, components/bi/BIKpiCard.tsx:125)
+[dynamic or icon-only label] (Link, {"href":"drillThrough.href"}, components/bi/BIKpiCard.tsx:131)
+No proof subject was supplied. (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:46)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"true"}, components/bi/BIProofDrawerHost.tsx:62)
+[dynamic or icon-only label] (Button, {"type":"\"button\"","disabled":"isLoading","onClick":"() => {\n          onOpenSubject?.(subject)\n          setOpen(true)\n        }"}, components/bi/BIProofDrawerHost.tsx:78)
+[dynamic or icon-only label] (Button, {"disabled":"true"}, components/bi/BIRiskOpportunityRadar.tsx:123)
+[dynamic or icon-only label] (Button, {}, components/bi/BIRiskOpportunityRadar.tsx:137)
+[dynamic or icon-only label] (Link, {"href":"action.href"}, components/bi/BIRiskOpportunityRadar.tsx:138)

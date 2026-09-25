@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-19T09:53:27.350Z",
+  "sourceBefore": {
+    "services/signals/business-signal-rules.service.ts": "59e3c87facb43b42736bd08d58c3c8cc7719d7d915b12be03619354cacec172d",
+    "services/daily-habit/daily-habit-digest.service.ts": "ff7448c615dacd3a809d632c4080ae644e298d1aef4fd51167cd999396fa59c6",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "2cdac4830a8bfddeb676ede05e4cc5903579cee1562d70874aed068949696dec"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "errors": [],
+      "screenshot": "digest-inventory-95b72010-0820-4f02-a161-15e76ce6f639-en.png",
+      "handoff": true,
+      "revocationDenied": true,
+      "summaryRetained": true
+    },
+    {
+      "locale": "fr",
+      "errors": [],
+      "screenshot": "digest-inventory-95b72010-0820-4f02-a161-15e76ce6f639-fr.png"
+    }
+  ],
+  "snapshotContract": true,
+  "passed": false,
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Article du digest de test', { exact: true }).first()\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByText('Article du digest de test', { exact: true }).first()\n",
+  "failureState": "INVENTORY WORKSPACE\nInventory Items\n\nManage your product catalog, pricing, stock health, and item workflows from one focused table.\n\nAdd Item\nTOTAL ITEMS\n1\n\nActive products\n\nTOTAL VALUE\n0 FCFA\n\nInventory worth\n\nLOW STOCK\n0\n\nNeed attention\n\nOUT OF STOCK\n0\n\nUnavailable\n\nCATEGORIES\n0\n\nProduct groups\n\nPROFIT POTENTIAL\n0 FCFA\n\nTotal potential\n\nItems\n\nShowing 1 of 1 items\n\nLive Data\nRefresh\nExport\nPériode\nToutes les dates\nAll stock\nView\nConfortable\nCompacte\n\nTableau pret. 0 lignes selectionnees\n\n\tName\tCost\tPrice\tStock\tTotal Value\tDate Added\t\n\t\nOwned Digest Item\nDIGEST-95b72010-0820-4f02-a161-15e76ce6f639\n\tFCFA 0\tFCFA 0\t10 in stock\tFCFA 0\tSep 19, 2026\t\nOpen menu\n0 sur 1 lignes sélectionnées.\n\nLignes par page\n\n10\nPage 1 sur 1\nAller à la page précédente\nAller à la page suivante",
+  "sourceAfter": {
+    "services/signals/business-signal-rules.service.ts": "59e3c87facb43b42736bd08d58c3c8cc7719d7d915b12be03619354cacec172d",
+    "services/daily-habit/daily-habit-digest.service.ts": "ff7448c615dacd3a809d632c4080ae644e298d1aef4fd51167cd999396fa59c6",
+    "services/daily-habit/daily-habit-signal-presentation.ts": "2cdac4830a8bfddeb676ede05e4cc5903579cee1562d70874aed068949696dec"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,123 @@
+{
+  "at": "2026-09-09T01:07:02.479Z",
+  "sourceBaseline": "evidence/source-baseline-v86.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/accounting/posting.service.ts": "6978d887319fc82384075de1fa1946eef538ad40762a5577a1ae1da61cfa1df1",
+    "services/accounting/invariants.ts": "82e82da6b167d957636f7122bbafb6452b74268c69fbb6b0bcc05e51c073eb58",
+    "services/inventory/inventory-stock-event.service.ts": "142fa04b3294b6cd2951544ecbdde9cc3f9ba16b358690ffcefb28b2deb77c84",
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060",
+    "services/accounting/postings/post-payment.test.ts": "154b2793020c54b0badc9d0966f65b45fc1f628f10c83b43ba9eb4fec27b8ee2",
+    "services/accounting/postings/post-reversal.test.ts": "69aa138346bec88dc88323fb6e470a4a7fd0bb7c6809edfe1fea774c870f963e",
+    "services/accounting/postings/post-sale.test.ts": "de58c3c9a9f2b39a13f9d20904894390038680004d2db2470fd2c48ec8403ab6",
+    "services/payroll/__tests__/payroll-control.service.test.ts": "8f60aeee129132419a0da707d9843ffcfa6594b06d16a065b0653ffa389eb472",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+    "services/accounting/__tests__/posting.service.test.ts": "7f6968901b1058b153bfef19fd73ca2dc43d4ef2bc40c3e4185ba55917916b99",
+    "services/inventory/__tests__/inventory-stock-event.service.test.ts": "d0a69a7b17dc7e07f68f85dfcb3ab34a5b0a433234134e4c844b9410e10a867a",
+    "services/accounting/__tests__/customer-settlement-reversal.service.test.ts": "dea70554e133517287873a0ea767b5033a299ebef7c6f980ee6ee2f8dcfa90e9",
+    "services/accounting/__tests__/customer-settlement.service.test.ts": "f1dfc30ba58d3e229d7dec19a66785d5c959597896ab31b8903e1826fd071e46",
+    "services/inventory/__tests__/inventory-transfer.service.test.ts": "8d9bc16786160c7ab00039564f792dc1268bd88056dfd9667ac51ec200f221bf",
+    "services/purchasing/__tests__/purchase-correction-ledger.service.test.ts": "0ecdee3cedd072ab8a24538b6a0879defb6095fa645b9ec0bdf6d5e5dfec6e7c",
+    "services/payroll/__tests__/payroll-employee-balance.service.test.ts": "e74464e0c9e253d8a2f44d796376e0e20f2a6cc0338d0a095235cec2299c3a21",
+    "services/inventory/__tests__/inventory-count.service.test.ts": "00396afa26bd9de41d039cbcdd11379c1b35fb20c271d654f7d019370754ea55",
+    "services/inventory/__tests__/inventory-adjustment.service.test.ts": "1b52254495fb3194360da684f3facba764045a669ac6318b43d20c5a924bae26",
+    "actions/accounting/__tests__/settings.actions.test.ts": "5a8df63327cb8acc9a098595a22dd7dccc4f971aeaab22d72b2c6125d8f944a2",
+    "services/accounting/__tests__/periods.service.test.ts": "ab1cf6c7427067e837ed9bf4383ccc8994cd08a9640e187805578467b42b488d",
+    "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts": "e8ae92da3ebfe5af661c81cc5666e7fd10925dc71e0e3e41e2906ef4762ff0fa"
+  },
+  "tests": {
+    "file": "evidence/period-concurrency-final-v86.json",
+    "passed": 205,
+    "suites": 17,
+    "session": 67357,
+    "exitCode": 0
+  },
+  "database": [
+    {
+      "file": "lanes/environment/period-concurrency-b80977cf-a6a.json",
+      "session": 11374,
+      "checks": 5,
+      "exitCode": 0,
+      "sourceStable": true,
+      "originalUnchanged": true,
+      "publicAuthorityRuntimeVerified": false
+    },
+    {
+      "file": "lanes/environment/correction-reversal-320d501d-192.json",
+      "session": 63691,
+      "checks": 17,
+      "exitCode": 0,
+      "sourceStable": true,
+      "originalUnchanged": true,
+      "publicAuthorityRuntimeVerified": false
+    }
+  ],
+  "census": "evidence/period-writer-coverage-v86-final.json",
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 36132,
+      "exitCode": 0,
+      "binding": "Final production code, before final test-only changes"
+    },
+    {
+      "command": "Changed-file ESLint; exact files in verification document",
+      "session": 10648,
+      "exitCode": 0
+    }
+  ],
+  "baselineCapture": {
+    "session": 88875,
+    "exitCode": 0
+  },
+  "failedAttempts": [
+    {
+      "session": 7323,
+      "file": "evidence/period-concurrency-before-v86.json",
+      "passed": 4,
+      "failed": 3
+    },
+    {
+      "session": 79695,
+      "file": "evidence/period-concurrency-focused-v86.json",
+      "passed": 9,
+      "failed": 3
+    },
+    {
+      "session": 15878,
+      "file": "evidence/period-concurrency-regression-v86.json",
+      "passed": 196,
+      "failed": 7
+    }
+  ],
+  "browser": "Not run; no UI change. Complete public journeys remain open.",
+  "fullBuild": "Not run; no schema or UI change.",
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2760,
+      "tests": 969,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2357,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "remaining": [
+    "Shared helper/close interleavings verified in v86; independent suspense and reconciliation writers still require review.",
+    "Full action/session/role and EN/FR setup journeys remain incomplete.",
+    "Period overlaps and low-level/null-period batches require classification.",
+    "Period closure is distinct from close-pack certification."
+  ]
+}

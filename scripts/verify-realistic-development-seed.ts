@@ -43,7 +43,7 @@ function assertDisposableTarget() {
     !["localhost", "127.0.0.1", "::1", "[::1]"].includes(
       target.hostname.toLowerCase(),
     ) ||
-    !/(?:dev|test|local|reconcile)/i.test(databaseName)
+    !/(?:dev|test|local|reconcile|replay|disposable)/i.test(databaseName)
   ) {
     throw new Error(
       "The realistic seed smoke test is restricted to an explicitly named local development/test database.",

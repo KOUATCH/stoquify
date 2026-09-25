@@ -18,6 +18,7 @@ export type DailyHabitDigestData = {
   periodStart: string
   periodEnd: string
   currency: string
+  timezone?: string
   digests: BIDailyDigest[]
   actionQueue: Pick<ActionQueueResult, "summary" | "filteredOutCount">
   summary: DailyHabitDigestSummary

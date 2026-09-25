@@ -1,0 +1,30 @@
+{
+  "ids": [
+    "pos.tender.commit",
+    "pos.tender.refund",
+    "pos.tender.void"
+  ],
+  "version": "2026-09-13.1",
+  "owner": "POS domain services",
+  "source": "services/pos/tender-write-access.ts",
+  "sourceHash": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4",
+  "permissions": {
+    "commit": "pos.use",
+    "refund": "pos.transactions.refund",
+    "void": "pos.transactions.void"
+  },
+  "freshAuth": "Refund/void keep existing maximum 300 seconds",
+  "moduleSlug": "pos",
+  "accessIntent": "write",
+  "effectiveMode": "enforce",
+  "scope": "Recheck existing action policy inside financial transactions; exact existing commit result precedes new-sale admission.",
+  "denial": "Rollback and separate POS_TENDER_WRITE_ENTITLEMENT_DENIED audit. Current action gates remain.",
+  "remaining": "Action-level exact-result recovery after restriction and retained-obligation refund/void policy are unfinished. No new permission or approval.",
+  "rollout": "Local implementation, no live deployment, schema or activation.",
+  "recovery": "Forward correction or presentation rollback retaining transaction authority. Production recovery rehearsal outstanding.",
+  "evidence": [
+    "lanes/environment/tender-access-v131-after-dc3bf273-44b8-4b1b-af15-1314128509c9.json",
+    "lanes/environment/tender-browser-v131-b45e5db1-5702-46cc-8f34-6cd32daa6c20.json",
+    "TENDER_ACCESS_V131.md"
+  ]
+}

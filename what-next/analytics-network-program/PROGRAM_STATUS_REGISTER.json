@@ -1,0 +1,565 @@
+{
+  "schemaVersion": "1.0.0",
+  "programId": "STOQUIFY-ANALYTICS-CONTROLLED-NETWORK",
+  "capturedAt": "2026-08-30T00:00:00.000Z",
+  "lastUpdatedAt": "2026-09-02T12:46:03.921Z",
+  "status": "PHASE_0_ACCEPTANCE_RECONCILED_PRECISE_BLOCKERS_REMAIN",
+  "currentPhase": "P0",
+  "currentMilestone": "M1",
+  "currentSkill": "001-aqstoqflow-program-orchestrator",
+  "activeWorkPackages": [
+    "P0-02",
+    "P0-03"
+  ],
+  "wipLimit": 2,
+  "authority": {
+    "roadmap": {
+      "path": "what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md",
+      "sha256": "598e0e69b60bd4e9d35a77a75ac7f8f134f553d71c2bf7ef727d843f918f6014"
+    },
+    "workPackageRegistry": {
+      "path": "what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_WORK_PACKAGE_REGISTRY_2026-08-30.json",
+      "sha256": "f5d74b032ba345e1330c868e05be88d427d8ff87ee01f88abe64d20a40ec318c"
+    },
+    "executionInstruction": {
+      "receivedOn": "2026-08-30",
+      "source": "Direct user instruction in the active Codex task",
+      "instruction": "Execute the Stoquify Analytics and Controlled-Network Execution Roadmap: Phases 0–3"
+    },
+    "latestExecutionInstruction": {
+      "receivedOn": "2026-09-02",
+      "source": "Direct user instruction in this task",
+      "instruction": "Recheck TypeScript; reconcile P0-02/P0-03 acceptance and owner decisions; then advance P0-04/P0-06 within two-package WIP; queue AR-history capture fix first when capacity is available."
+    }
+  },
+  "candidate": {
+    "branch": "codex/migration-control-plane-release-2026-08-29",
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "dirty": true,
+    "changedPathCountAtBaseline": 123,
+    "modifiedPathCountAtBaseline": 61,
+    "untrackedPathCountAtBaseline": 62,
+    "sourceHashes": {
+      "package.json": "36ca2b80e26939a2865e8163a8a5594a185662e6ae7e12c58cde04c0c1722299",
+      "prisma/schema.prisma": "e7fb0b6195946077eca67e18829826021f3637fbb1967af5e52dc132f3e9e143"
+    },
+    "attributionRule": "All pre-existing modified and untracked paths are user-owned. This program edits only its named program artifacts and active work-package implementation paths, and does not revert or absorb unrelated changes."
+  },
+  "executionAuthorization": {
+    "planningAndReadOnlyVerification": true,
+    "additiveGovernanceArtifacts": true,
+    "applicationMutation": true,
+    "applicationMutationScope": "P0-02 ownership/navigation verification and P0-03 context contracts/tests/design, plus direct verification dependencies. P0-04/P0-06 authorized after their package entry criteria pass, within WIP limit two.",
+    "databaseSchemaChange": false,
+    "databaseMigrationCreation": false,
+    "databaseMigrationExecution": false,
+    "providerActivation": false,
+    "externalOutreach": false,
+    "productionDeployment": false,
+    "marketplaceLaunch": false,
+    "legalAccountingPrivacySecurityCertification": false
+  },
+  "baseline": {
+    "moduleSurfaceInventory": {
+      "generatedAt": "2026-08-30T13:36:34.696Z",
+      "records": 414,
+      "mapped": 371,
+      "unmapped": 5,
+      "missingPermission": 79,
+      "dashboardOnlyRisk": 77,
+      "enforcementCandidates": 293,
+      "reviewRequired": 6
+    },
+    "semanticGaps": [
+      "Business Pulse uses a hard-coded XAF default instead of the organization currency contract.",
+      "Business Pulse day boundaries are derived from server-local date helpers instead of the organization IANA timezone.",
+      "Referral Funnel is aggregate-only but ALL_TIME and lacks delivery, cohort, first-trusted-value, and retained-activation stages.",
+      "Supplier PO acknowledgement preserves the proposal boundary but supplier invitation delivery is not connected to an outbox dispatch path."
+    ],
+    "controlPosture": "Schema validation passes; production and external pilot readiness remain blocked by fresh environment, provider, consent, tenant-isolation, abuse, support, and expert evidence."
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "status": "IN_PROGRESS",
+      "gate": "G0",
+      "active": true
+    },
+    {
+      "id": "P1",
+      "status": "BLOCKED_DEPENDENCY",
+      "gate": "G1",
+      "active": false
+    },
+    {
+      "id": "P2",
+      "status": "BLOCKED_DEPENDENCY",
+      "gate": "G2",
+      "active": false
+    },
+    {
+      "id": "P3",
+      "status": "BLOCKED_DEPENDENCY",
+      "gate": "G3_G4",
+      "active": false
+    }
+  ],
+  "workPackages": [
+    {
+      "id": "P0-01",
+      "status": "COMPLETE",
+      "classification": "READY",
+      "evidence": "what-next/analytics-network-program/PROGRAM_BASELINE_AND_EXECUTION_REPORT.md"
+    },
+    {
+      "id": "P0-02",
+      "status": "TECHNICALLY_VERIFIED_OWNER_ACCEPTANCE_PENDING",
+      "classification": "REQUIRES_OWNER_ACCEPTANCE",
+      "evidence": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+      "blockedBy": [
+        "AN-D03",
+        "AN-HOLD-TYPECHECK"
+      ]
+    },
+    {
+      "id": "P0-03",
+      "status": "CONTRACT_VERIFIED_RUNTIME_AND_OWNER_BLOCKED",
+      "classification": "BLOCKED",
+      "evidence": "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md",
+      "acceptanceEvidence": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+      "blockedBy": [
+        "AN-D04",
+        "AN-D11",
+        "AN-D12",
+        "P0-03_RUNTIME_INTEGRATION",
+        "AN-HOLD-TYPECHECK"
+      ]
+    },
+    {
+      "id": "P0-04",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-02",
+        "P0-03"
+      ],
+      "preparedHandoff": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+      "activated": false
+    },
+    {
+      "id": "P0-05",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-04"
+      ]
+    },
+    {
+      "id": "P0-06",
+      "status": "BLOCKED_WIP_AND_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-02",
+        "WIP_LIMIT"
+      ],
+      "preparedHandoff": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+      "activated": false
+    },
+    {
+      "id": "P0-07",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-03",
+        "P0-04",
+        "P0-06"
+      ]
+    },
+    {
+      "id": "P0-08",
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "classification": "REQUIRES_EXPERT_REVIEW",
+      "blockedBy": [
+        "P0-05",
+        "P0-06",
+        "NAMED_PROVIDER_PRIVACY_SECURITY_SUPPORT_APPROVALS"
+      ]
+    },
+    {
+      "id": "P0-09",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-02",
+        "P0-03",
+        "P0-04",
+        "P0-05",
+        "P0-06",
+        "P0-07",
+        "P0-08"
+      ]
+    },
+    {
+      "id": "P1-01",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-09"
+      ]
+    },
+    {
+      "id": "P1-02",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-01"
+      ]
+    },
+    {
+      "id": "P1-03",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-02"
+      ]
+    },
+    {
+      "id": "P1-04",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-01"
+      ]
+    },
+    {
+      "id": "P1-05",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-04"
+      ]
+    },
+    {
+      "id": "P1-06",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-01",
+        "P1-02",
+        "P1-04"
+      ]
+    },
+    {
+      "id": "P1-07",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-06"
+      ]
+    },
+    {
+      "id": "P1-08",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-03",
+        "P1-05",
+        "P1-07"
+      ]
+    },
+    {
+      "id": "P2-01",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-05",
+        "P1-08"
+      ]
+    },
+    {
+      "id": "P2-02",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P0-08",
+        "P1-08"
+      ]
+    },
+    {
+      "id": "P2-03",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P1-08",
+        "P2-01"
+      ]
+    },
+    {
+      "id": "P2-04",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P2-01"
+      ]
+    },
+    {
+      "id": "P2-05",
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "classification": "REQUIRES_EXPERT_REVIEW",
+      "blockedBy": [
+        "P0-08",
+        "P2-01",
+        "P2-02",
+        "PRIVACY_SECURITY_APPROVAL"
+      ]
+    },
+    {
+      "id": "P2-06",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P2-02",
+        "P2-05"
+      ]
+    },
+    {
+      "id": "P2-07",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P2-01",
+        "P2-02",
+        "P2-03",
+        "P2-04",
+        "P2-05",
+        "P2-06"
+      ]
+    },
+    {
+      "id": "P2-08",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P2-07"
+      ]
+    },
+    {
+      "id": "P3-01",
+      "status": "REQUIRES_EXPERT_REVIEW",
+      "classification": "REQUIRES_EXPERT_REVIEW",
+      "blockedBy": [
+        "P2-08",
+        "NAMED_REAL_COHORT_AND_SIGNED_APPROVALS"
+      ]
+    },
+    {
+      "id": "P3-02",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P3-01"
+      ]
+    },
+    {
+      "id": "P3-03",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P2-02",
+        "P3-01"
+      ]
+    },
+    {
+      "id": "P3-04",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P2-02",
+        "P3-01"
+      ]
+    },
+    {
+      "id": "P3-05",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P2-03",
+        "P3-01"
+      ]
+    },
+    {
+      "id": "P3-06",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P3-02",
+        "P3-03",
+        "P3-04",
+        "P3-05"
+      ]
+    },
+    {
+      "id": "P3-07",
+      "status": "BLOCKED_DEPENDENCY",
+      "classification": "BLOCKED",
+      "blockedBy": [
+        "P3-06",
+        "MINIMUM_EIGHT_WEEK_OBSERVATION"
+      ]
+    }
+  ],
+  "activeHolds": [
+    {
+      "id": "AN-HOLD-PRODUCTION",
+      "severity": "CRITICAL",
+      "condition": "The roadmap and local checks are not production certification. Production deployment remains blocked."
+    },
+    {
+      "id": "AN-HOLD-EXTERNAL",
+      "severity": "CRITICAL",
+      "condition": "No provider activation, outbound campaign, external invitation, or real-cohort pilot is authorized before G2."
+    },
+    {
+      "id": "AN-HOLD-ACCESS",
+      "severity": "HIGH",
+      "condition": "Pilot-scope route-wrapper, action, export, token API, and entitlement truth must be reconciled before G0."
+    },
+    {
+      "id": "AN-HOLD-PRIVACY",
+      "severity": "HIGH",
+      "condition": "Purpose-bound consent, retention, abuse, wrong-recipient, and privacy-threshold decisions require named accountable review."
+    },
+    {
+      "id": "AN-HOLD-COUNTRY",
+      "severity": "HIGH",
+      "condition": "Any country-specific legal, statutory, currency-rounding, or communications claim requires qualified review before production use."
+    },
+    {
+      "id": "AN-HOLD-TYPECHECK",
+      "severity": "HIGH",
+      "condition": "2026-09-02 npm run typecheck fails with the same four diagnostics: PaymentReconciliationWorkbench.tsx:513/563 TS2322, finance-statement-export.service.ts:188 TS2741 and :322 TS7053. Zero resolved and zero new diagnostics. Exact output and scoped repair actions are in the acceptance evidence.",
+      "evidence": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_EVIDENCE_2026-09-02.json"
+    },
+    {
+      "id": "AN-HOLD-DIRTY-WORKTREE",
+      "severity": "MEDIUM",
+      "condition": "The repository contains substantial unrelated user changes; execution must remain path-scoped and non-destructive."
+    },
+    {
+      "id": "AN-HOLD-P0-02-ACCEPTANCE",
+      "severity": "HIGH",
+      "condition": "AN-D03 accountable acceptance of the 12-surface / 53-KPI ownership design remains pending.",
+      "appliesTo": [
+        "P0-02 completion",
+        "P0-04 entry",
+        "P0-06 entry"
+      ],
+      "evidence": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md"
+    },
+    {
+      "id": "AN-HOLD-P0-03-ACCEPTANCE",
+      "severity": "HIGH",
+      "condition": "AN-D04 context design, AN-D11 strict-runtime versus design-only scope and AN-D12 supported-currency/calendar/rounding policies need accountable decisions.",
+      "appliesTo": [
+        "P0-03 completion",
+        "P0-04 entry"
+      ],
+      "evidence": "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md"
+    },
+    {
+      "id": "AN-HOLD-P0-03-RUNTIME",
+      "severity": "HIGH",
+      "condition": "Under the current work-package registry, Business Pulse XAF fallback, server-local boundaries and number-based monetary aggregation prevent P0-03 completion. Design-only acceptance requires an explicit scope amendment; none is recorded.",
+      "appliesTo": [
+        "P0-03 completion",
+        "P0-04 entry",
+        "new analytical runtime release"
+      ],
+      "evidence": "what-next/analytics-network-program/P0_03_ANALYTICAL_CONTEXT_REMEDIATION_DESIGN_2026-09-02.md"
+    }
+  ],
+  "nextPermittedActions": [
+    "Record accountable decisions AN-D03, AN-D04, AN-D11 and AN-D12 using the concrete acceptance packet; do not repeat broad discovery.",
+    "Resolve the four named TypeScript diagnostics in their existing financial workstreams and rerun the affected tests/typecheck without weakening export or query contracts.",
+    "Implement and verify P0-03 runtime criteria under the approved money/calendar policy, or record the explicit design-only scope amendment before accepting that package.",
+    "Once accepted inputs and relevant gates are green, replace completed packages with P0-04/P0-06 without exceeding two active packages.",
+    "Take P0-VERIFY-AR-01 first when verification capacity becomes available: verify the concurrently added readiness/timing helper and produce replacement AR captures; preserve local-only classification.",
+    "Keep Phase 1, external delivery and production behind their respective phase gates."
+  ],
+  "currentVerification": {
+    "capturedAt": "2026-09-02T12:38:43.576Z",
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "dirty": true,
+    "statusEntryCountAtRefresh": 176,
+    "evidence": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_EVIDENCE_2026-09-02.json",
+    "acceptancePacket": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+    "typecheck": {
+      "status": "FAIL",
+      "previousErrorsStillPresent": 4,
+      "resolvedErrors": 0,
+      "newDiagnostics": 0,
+      "rerunAfterConcurrentCaptureChanges": "FAIL_SAME_FOUR_DIAGNOSTICS_ZERO_NEW"
+    },
+    "focusedTests": {
+      "status": "PASS_AFTER_TARGETED_SIDEBAR_FIX",
+      "context": 18,
+      "routeAudit": 8,
+      "sidebar": 23,
+      "totalUnique": 49
+    },
+    "ownership": {
+      "surfaces": 12,
+      "declaredMetrics": 53,
+      "explicitCanonicalOwners": 53
+    },
+    "historicalBaselinePolicy": "candidate and baseline fields above remain the August 30 snapshot; use this currentVerification and its evidence for the September 2 refresh.",
+    "lateEvidenceReconciliation": {
+      "observedAt": "2026-09-02T12:44:44.232Z",
+      "evidence": "what-next/analytics-network-program/P0_02_P0_03_ACCEPTANCE_PACKET_2026-09-02.md",
+      "arCaptureImplementation": "CONCURRENT_IMPLEMENTATION_OBSERVED_VERIFICATION_PENDING",
+      "historicalImagesReplaced": false,
+      "typecheckRechecked": true
+    }
+  },
+  "advancementContract": {
+    "maximumActivePackages": 2,
+    "fullG0RequiredToStartP0_04OrP0_06": false,
+    "rule": "Use the declared package dependencies, owner acceptance and relevant verification gate. Full G0 depends on P0-04/P0-06 and is required before Phase 1, not before starting them. Unrelated production/external signature holds remain in force for their own scopes.",
+    "nextPackages": [
+      "P0-04",
+      "P0-06"
+    ],
+    "currentlyPermitted": false,
+    "reason": "Both current packages remain unaccepted, WIP is full, TypeScript is red and P0-03 runtime/scope conditions are unresolved."
+  },
+  "verificationQueue": [
+    {
+      "id": "P0-VERIFY-AR-01",
+      "priority": 1,
+      "status": "IMPLEMENTATION_OBSERVED_VERIFICATION_QUEUED",
+      "ownerRole": "D02 Independent Workflow Verification Engineer / Finance UI verification",
+      "activateWhen": "First verification capacity after current package acceptance, attached to the active package that consumes X1 evidence; no third major package.",
+      "scope": [
+        "tests/e2e/finance-x1-local-authenticated-evidence.spec.ts",
+        "tests/e2e/finance-x1-authenticated-evidence.spec.ts",
+        "components/finance/AROpenItemsHistoryWorkbench.tsx",
+        "tests/e2e/finance-x1-route-observation.ts"
+      ],
+      "finding": "The historical September 1 AR image remains a loading screenshot. Concurrent edits now wait for route-specific ready/empty states and measure useful-result time before accessibility/screenshots; behavior and new artifacts still need verification by the responsible workstream.",
+      "deliverable": "Wait for a route-specific terminal business state before screenshot. Require populated rows for a seeded-populated scenario, separately verify legitimate empty and denied states, and fail on persistent loading/error.",
+      "verification": [
+        "Delayed response cannot produce a ready screenshot",
+        "Expected seeded rows are visible",
+        "Valid empty and denied states are distinct",
+        "Persistent loading/error fails",
+        "usefulResultMs is recorded when useful content becomes ready, excluding later axe/screenshot work",
+        "Re-capture affected AR locale/viewport matrix with new run IDs and hashes; preserve local-only classification"
+      ],
+      "notExecuted": true,
+      "implementationObservedAt": "2026-09-02T12:44:44.232Z",
+      "implementationSource": "tests/e2e/finance-x1-route-observation.ts",
+      "implementationOwnership": "Concurrent workspace work, not authored in this refresh",
+      "nextAction": "Verify the existing shared readiness/timing helper and both updated capture tests; require seeded-row expectations and replacement AR captures before closing this item."
+    }
+  ]
+}

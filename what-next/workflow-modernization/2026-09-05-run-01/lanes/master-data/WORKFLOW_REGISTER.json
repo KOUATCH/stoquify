@@ -1,0 +1,1872 @@
+{
+  "updatedAt": "2026-09-05T19:35:38.866Z",
+  "discoveryComplete": false,
+  "workflows": [
+    {
+      "id": "MD-CAT-01",
+      "name": "Browse category catalogue and detail",
+      "purpose": "Find classifications and their item counts.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "inventory.categories read/create/update/delete permission from server RBAC; inventory module observation",
+      "entryPoints": [
+        "actions/categories/getCategoriesAction.ts",
+        "actions/categories/createBulkCategories.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/category/category.service.ts#listCategories",
+        "services/category/category.service.ts#getCategoryById"
+      ],
+      "records": [
+        "Category",
+        "Item.categoryId"
+      ],
+      "transitions": [
+        "Filter/page",
+        "Open scoped record",
+        "Not-found/error recovery"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Parent validation checks immediate tenant ownership/self-parent only; multi-level cycles are not rejected.",
+        "Action cache revalidation occurs after writes inside the same success/error wrapper.",
+        "Deleted-parent and retained-child behavior requires a complete runtime trace."
+      ]
+    },
+    {
+      "id": "MD-CAT-02",
+      "name": "Create a category",
+      "purpose": "Save a named bilingual classification for item selection.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "inventory.categories read/create/update/delete permission from server RBAC; inventory module observation",
+      "entryPoints": [
+        "actions/categories/getCategoriesAction.ts",
+        "actions/categories/createBulkCategories.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/category/category.service.ts#createCategory"
+      ],
+      "records": [
+        "Category",
+        "Item.categoryId"
+      ],
+      "transitions": [
+        "Validate names and parent",
+        "Check name/slug uniqueness",
+        "Insert",
+        "Return saved record"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Parent validation checks immediate tenant ownership/self-parent only; multi-level cycles are not rejected.",
+        "Action cache revalidation occurs after writes inside the same success/error wrapper.",
+        "Deleted-parent and retained-child behavior requires a complete runtime trace."
+      ]
+    },
+    {
+      "id": "MD-CAT-03",
+      "name": "Revise category identity and status",
+      "purpose": "Change names, descriptions, image or activity without losing linked items.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "inventory.categories read/create/update/delete permission from server RBAC; inventory module observation",
+      "entryPoints": [
+        "actions/categories/getCategoriesAction.ts",
+        "actions/categories/createBulkCategories.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/category/category.service.ts#updateCategory"
+      ],
+      "records": [
+        "Category",
+        "Item.categoryId"
+      ],
+      "transitions": [
+        "Load current scoped category",
+        "Validate edits",
+        "Save",
+        "Refresh detail"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Parent validation checks immediate tenant ownership/self-parent only; multi-level cycles are not rejected.",
+        "Action cache revalidation occurs after writes inside the same success/error wrapper.",
+        "Deleted-parent and retained-child behavior requires a complete runtime trace."
+      ]
+    },
+    {
+      "id": "MD-CAT-04",
+      "name": "Reparent a category",
+      "purpose": "Move a classification within an acyclic same-organization hierarchy.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "inventory.categories read/create/update/delete permission from server RBAC; inventory module observation",
+      "entryPoints": [
+        "actions/categories/getCategoriesAction.ts",
+        "actions/categories/createBulkCategories.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/category/category.service.ts#updateCategory"
+      ],
+      "records": [
+        "Category",
+        "Item.categoryId"
+      ],
+      "transitions": [
+        "Select parent or root",
+        "Validate relationship",
+        "Persist parentId",
+        "Review hierarchy"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Parent validation checks immediate tenant ownership/self-parent only; multi-level cycles are not rejected.",
+        "Action cache revalidation occurs after writes inside the same success/error wrapper.",
+        "Deleted-parent and retained-child behavior requires a complete runtime trace."
+      ]
+    },
+    {
+      "id": "MD-CAT-05",
+      "name": "Archive a category",
+      "purpose": "Stop ordinary catalogue use while retaining its record and item references.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "inventory.categories read/create/update/delete permission from server RBAC; inventory module observation",
+      "entryPoints": [
+        "actions/categories/getCategoriesAction.ts",
+        "actions/categories/createBulkCategories.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/category/category.service.ts#deleteCategory"
+      ],
+      "records": [
+        "Category",
+        "Item.categoryId"
+      ],
+      "transitions": [
+        "Resolve scoped category",
+        "Set inactive/deletedAt",
+        "Refresh catalogue",
+        "Retained-reference review"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Parent validation checks immediate tenant ownership/self-parent only; multi-level cycles are not rejected.",
+        "Action cache revalidation occurs after writes inside the same success/error wrapper.",
+        "Deleted-parent and retained-child behavior requires a complete runtime trace."
+      ]
+    },
+    {
+      "id": "MD-CAT-06",
+      "name": "Import categories in a bounded batch",
+      "purpose": "Create valid rows and report exact individual failures.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "inventory.categories read/create/update/delete permission from server RBAC; inventory module observation",
+      "entryPoints": [
+        "actions/categories/getCategoriesAction.ts",
+        "actions/categories/createBulkCategories.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/category/category.service.ts#createCategory"
+      ],
+      "records": [
+        "Category",
+        "Item.categoryId"
+      ],
+      "transitions": [
+        "Authorize one organization",
+        "Validate up to 100 rows",
+        "Attempt each row",
+        "Summarize partial completion and retry needs"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Parent validation checks immediate tenant ownership/self-parent only; multi-level cycles are not rejected.",
+        "Action cache revalidation occurs after writes inside the same success/error wrapper.",
+        "Deleted-parent and retained-child behavior requires a complete runtime trace."
+      ]
+    },
+    {
+      "id": "MD-BRAND-01",
+      "name": "Find brands for catalogue work",
+      "purpose": "Browse bilingual brands and their item counts.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory brand permissions from server RBAC; module checks in action",
+      "entryPoints": [
+        "actions/brands/getBrandsAction.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/brand/brand.service.ts#listBrands",
+        "services/brand/brand.service.ts#getBrandById"
+      ],
+      "records": [
+        "Brand",
+        "Item.brandId"
+      ],
+      "transitions": [
+        "Search/page",
+        "Resolve scoped brand",
+        "Open editor"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Archived-record edit behavior and slug collision recovery need runtime verification.",
+        "Post-write cache failure and retry outcomes are not yet corrected."
+      ]
+    },
+    {
+      "id": "MD-BRAND-02",
+      "name": "Create a brand",
+      "purpose": "Create a unique brand identity for items.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory brand permissions from server RBAC; module checks in action",
+      "entryPoints": [
+        "actions/brands/getBrandsAction.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/brand/brand.service.ts#createBrand"
+      ],
+      "records": [
+        "Brand",
+        "Item.brandId"
+      ],
+      "transitions": [
+        "Validate input",
+        "Check name and slug",
+        "Save",
+        "Refresh list"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Archived-record edit behavior and slug collision recovery need runtime verification.",
+        "Post-write cache failure and retry outcomes are not yet corrected."
+      ]
+    },
+    {
+      "id": "MD-BRAND-03",
+      "name": "Edit or reactivate a brand",
+      "purpose": "Revise brand details and explicitly requested activity.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory brand permissions from server RBAC; module checks in action",
+      "entryPoints": [
+        "actions/brands/getBrandsAction.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/brand/brand.service.ts#updateBrand"
+      ],
+      "records": [
+        "Brand",
+        "Item.brandId"
+      ],
+      "transitions": [
+        "Load",
+        "Validate unique identity",
+        "Save fields/activity",
+        "Review result"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Archived-record edit behavior and slug collision recovery need runtime verification.",
+        "Post-write cache failure and retry outcomes are not yet corrected."
+      ]
+    },
+    {
+      "id": "MD-BRAND-04",
+      "name": "Archive a brand",
+      "purpose": "Retain brand history while removing it from ordinary selection.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory brand permissions from server RBAC; module checks in action",
+      "entryPoints": [
+        "actions/brands/getBrandsAction.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/brand/brand.service.ts#deleteBrand"
+      ],
+      "records": [
+        "Brand",
+        "Item.brandId"
+      ],
+      "transitions": [
+        "Resolve scoped record",
+        "Set deletedAt and inactive",
+        "Refresh"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Archived-record edit behavior and slug collision recovery need runtime verification.",
+        "Post-write cache failure and retry outcomes are not yet corrected."
+      ]
+    },
+    {
+      "id": "MD-UNIT-01",
+      "name": "Browse units and item usage",
+      "purpose": "Understand available measurement units and current use.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Unit-management/read/write permissions resolved by action; per-branch proof pending",
+      "entryPoints": [
+        "actions/units/unit-management-actions.ts",
+        "actions/units/deleteUnit.ts",
+        "actions/units/getOrgUnits.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/unit/unit.service.ts#listUnits",
+        "services/unit/unit.service.ts#getUnitManagementDataForOrg"
+      ],
+      "records": [
+        "Unit",
+        "Item.unitId"
+      ],
+      "transitions": [
+        "Load tenant units",
+        "Aggregate usage",
+        "Filter/display"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management create/update reload all rows after commit and can report a failed operation after a successful save.",
+        "Whitespace validation order can accept empty normalized names/symbols.",
+        "Conversion meaning, downstream historical effects and inactive-unit admission need tracing."
+      ]
+    },
+    {
+      "id": "MD-UNIT-02",
+      "name": "Create a measurement unit",
+      "purpose": "Save unit name, symbol and optional conversion.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Unit-management/read/write permissions resolved by action; per-branch proof pending",
+      "entryPoints": [
+        "actions/units/unit-management-actions.ts",
+        "actions/units/deleteUnit.ts",
+        "actions/units/getOrgUnits.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/unit/unit.service.ts#createUnitForManagement"
+      ],
+      "records": [
+        "Unit",
+        "Item.unitId"
+      ],
+      "transitions": [
+        "Validate",
+        "Check identity",
+        "Create unit",
+        "Reload management row"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management create/update reload all rows after commit and can report a failed operation after a successful save.",
+        "Whitespace validation order can accept empty normalized names/symbols.",
+        "Conversion meaning, downstream historical effects and inactive-unit admission need tracing."
+      ]
+    },
+    {
+      "id": "MD-UNIT-03",
+      "name": "Edit a unit and conversion",
+      "purpose": "Revise measurement metadata without silently changing past quantities.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Unit-management/read/write permissions resolved by action; per-branch proof pending",
+      "entryPoints": [
+        "actions/units/unit-management-actions.ts",
+        "actions/units/deleteUnit.ts",
+        "actions/units/getOrgUnits.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/unit/unit.service.ts#updateUnitForManagement"
+      ],
+      "records": [
+        "Unit",
+        "Item.unitId"
+      ],
+      "transitions": [
+        "Load scoped unit",
+        "Validate identity/conversion",
+        "Update",
+        "Reload"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management create/update reload all rows after commit and can report a failed operation after a successful save.",
+        "Whitespace validation order can accept empty normalized names/symbols.",
+        "Conversion meaning, downstream historical effects and inactive-unit admission need tracing."
+      ]
+    },
+    {
+      "id": "MD-UNIT-04",
+      "name": "Deactivate a unit",
+      "purpose": "Stop new use while retaining item references.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Unit-management/read/write permissions resolved by action; per-branch proof pending",
+      "entryPoints": [
+        "actions/units/unit-management-actions.ts",
+        "actions/units/deleteUnit.ts",
+        "actions/units/getOrgUnits.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/unit/unit.service.ts#deleteUnit",
+        "services/unit/unit.service.ts#removeUnitForManagement"
+      ],
+      "records": [
+        "Unit",
+        "Item.unitId"
+      ],
+      "transitions": [
+        "Resolve scoped unit",
+        "Set inactive",
+        "Return deactivated outcome"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management create/update reload all rows after commit and can report a failed operation after a successful save.",
+        "Whitespace validation order can accept empty normalized names/symbols.",
+        "Conversion meaning, downstream historical effects and inactive-unit admission need tracing."
+      ]
+    },
+    {
+      "id": "MD-UNIT-05",
+      "name": "Reactivate a unit",
+      "purpose": "Explicitly restore a retained unit to eligible selection.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Unit-management/read/write permissions resolved by action; per-branch proof pending",
+      "entryPoints": [
+        "actions/units/unit-management-actions.ts",
+        "actions/units/deleteUnit.ts",
+        "actions/units/getOrgUnits.ts",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/unit/unit.service.ts#updateUnitForManagement"
+      ],
+      "records": [
+        "Unit",
+        "Item.unitId"
+      ],
+      "transitions": [
+        "Review retained definition",
+        "Set active",
+        "Recheck downstream eligibility"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management create/update reload all rows after commit and can report a failed operation after a successful save.",
+        "Whitespace validation order can accept empty normalized names/symbols.",
+        "Conversion meaning, downstream historical effects and inactive-unit admission need tracing."
+      ]
+    },
+    {
+      "id": "MD-TAX-01",
+      "name": "Browse tax-rate settings and usage",
+      "purpose": "Find configured rates and linked active items.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Tax-rate management/read/create/update/delete permissions; configured values are not statutory approval",
+      "entryPoints": [
+        "actions/taxRate/tax-rate-management-actions.ts",
+        "actions/taxRate/createActionTaxRate.ts",
+        "actions/taxRate/getOrgTaxRates.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx"
+      ],
+      "services": [
+        "services/tax-rate/tax-rate.service.ts#listTaxRates",
+        "services/tax-rate/tax-rate.service.ts#getTaxRateManagementDataForOrg"
+      ],
+      "records": [
+        "TaxRate",
+        "Item.taxRateId"
+      ],
+      "transitions": [
+        "Load scoped configuration",
+        "Aggregate item usage",
+        "Display rates"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management save then aggregate reload can misreport committed writes.",
+        "Current item/transaction rate snapshot and historical-report behavior require downstream verification.",
+        "No legal/tax applicability certification is implied by successful entry."
+      ]
+    },
+    {
+      "id": "MD-TAX-02",
+      "name": "Create a tax-rate setting",
+      "purpose": "Persist a validated named percentage/type.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Tax-rate management/read/create/update/delete permissions; configured values are not statutory approval",
+      "entryPoints": [
+        "actions/taxRate/tax-rate-management-actions.ts",
+        "actions/taxRate/createActionTaxRate.ts",
+        "actions/taxRate/getOrgTaxRates.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx"
+      ],
+      "services": [
+        "services/tax-rate/tax-rate.service.ts#createTaxRate",
+        "services/tax-rate/tax-rate.service.ts#createTaxRateForManagement"
+      ],
+      "records": [
+        "TaxRate",
+        "Item.taxRateId"
+      ],
+      "transitions": [
+        "Validate configured rate",
+        "Check unique name",
+        "Save",
+        "Refresh"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management save then aggregate reload can misreport committed writes.",
+        "Current item/transaction rate snapshot and historical-report behavior require downstream verification.",
+        "No legal/tax applicability certification is implied by successful entry."
+      ]
+    },
+    {
+      "id": "MD-TAX-03",
+      "name": "Revise a tax-rate setting",
+      "purpose": "Change configuration with understood effects on future and historical work.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Tax-rate management/read/create/update/delete permissions; configured values are not statutory approval",
+      "entryPoints": [
+        "actions/taxRate/tax-rate-management-actions.ts",
+        "actions/taxRate/createActionTaxRate.ts",
+        "actions/taxRate/getOrgTaxRates.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx"
+      ],
+      "services": [
+        "services/tax-rate/tax-rate.service.ts#updateTaxRate",
+        "services/tax-rate/tax-rate.service.ts#updateTaxRateForManagement"
+      ],
+      "records": [
+        "TaxRate",
+        "Item.taxRateId"
+      ],
+      "transitions": [
+        "Load",
+        "Validate value/type",
+        "Update",
+        "Inspect downstream effects"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management save then aggregate reload can misreport committed writes.",
+        "Current item/transaction rate snapshot and historical-report behavior require downstream verification.",
+        "No legal/tax applicability certification is implied by successful entry."
+      ]
+    },
+    {
+      "id": "MD-TAX-04",
+      "name": "Deactivate a tax-rate setting",
+      "purpose": "Retain definition while stopping new selection.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Tax-rate management/read/create/update/delete permissions; configured values are not statutory approval",
+      "entryPoints": [
+        "actions/taxRate/tax-rate-management-actions.ts",
+        "actions/taxRate/createActionTaxRate.ts",
+        "actions/taxRate/getOrgTaxRates.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx"
+      ],
+      "services": [
+        "services/tax-rate/tax-rate.service.ts#deleteTaxRate",
+        "services/tax-rate/tax-rate.service.ts#removeTaxRateForManagement"
+      ],
+      "records": [
+        "TaxRate",
+        "Item.taxRateId"
+      ],
+      "transitions": [
+        "Resolve same-tenant rate",
+        "Set inactive",
+        "Return retained outcome"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management save then aggregate reload can misreport committed writes.",
+        "Current item/transaction rate snapshot and historical-report behavior require downstream verification.",
+        "No legal/tax applicability certification is implied by successful entry."
+      ]
+    },
+    {
+      "id": "MD-TAX-05",
+      "name": "Reactivate a tax-rate setting",
+      "purpose": "Restore an explicitly reviewed configured rate.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Tax-rate management/read/create/update/delete permissions; configured values are not statutory approval",
+      "entryPoints": [
+        "actions/taxRate/tax-rate-management-actions.ts",
+        "actions/taxRate/createActionTaxRate.ts",
+        "actions/taxRate/getOrgTaxRates.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx"
+      ],
+      "services": [
+        "services/tax-rate/tax-rate.service.ts#updateTaxRateForManagement"
+      ],
+      "records": [
+        "TaxRate",
+        "Item.taxRateId"
+      ],
+      "transitions": [
+        "Review rate",
+        "Set active",
+        "Revalidate use"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Management save then aggregate reload can misreport committed writes.",
+        "Current item/transaction rate snapshot and historical-report behavior require downstream verification.",
+        "No legal/tax applicability certification is implied by successful entry."
+      ]
+    },
+    {
+      "id": "MD-LOC-01",
+      "name": "Browse operating locations and usage",
+      "purpose": "Understand location activity, stock and linked operating records.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Location management permissions and trusted organization; legacy field parity requires review",
+      "entryPoints": [
+        "actions/locations/location-management-actions.ts",
+        "actions/locations/createLocation.ts",
+        "actions/locations/updateLocationById.ts",
+        "actions/locations/deleteLocation.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/location/location.service.ts#listLocations",
+        "services/location/location.service.ts#getLocationManagementDataForOrg"
+      ],
+      "records": [
+        "Location",
+        "User manager",
+        "InventoryLevel",
+        "POSSession",
+        "SalesOrder",
+        "PurchaseOrder"
+      ],
+      "transitions": [
+        "Load scoped locations",
+        "Aggregate operating data",
+        "Inspect statuses"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Legacy manager assignment now uses same-tenant active-manager validation within its transaction; 11 focused service/action tests passed. Actual database/browser and identity-state concurrency remain unverified.",
+        "Legacy default toggles do not clear the prior default; concurrent management defaults need constraint/transaction proof.",
+        "Save then aggregate reload can misreport a committed change.",
+        "Deactivation with active sessions and retained obligations needs domain verification."
+      ]
+    },
+    {
+      "id": "MD-LOC-02",
+      "name": "Create an operating location",
+      "purpose": "Create an identified location with validated optional manager.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Location management permissions and trusted organization; legacy field parity requires review",
+      "entryPoints": [
+        "actions/locations/location-management-actions.ts",
+        "actions/locations/createLocation.ts",
+        "actions/locations/updateLocationById.ts",
+        "actions/locations/deleteLocation.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/location/location.service.ts#createLocationForManagement"
+      ],
+      "records": [
+        "Location",
+        "User manager",
+        "InventoryLevel",
+        "POSSession",
+        "SalesOrder",
+        "PurchaseOrder"
+      ],
+      "transitions": [
+        "Validate",
+        "Resolve code and manager",
+        "Create transaction",
+        "Reload"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Legacy manager assignment now uses same-tenant active-manager validation within its transaction; 11 focused service/action tests passed. Actual database/browser and identity-state concurrency remain unverified.",
+        "Legacy default toggles do not clear the prior default; concurrent management defaults need constraint/transaction proof.",
+        "Save then aggregate reload can misreport a committed change.",
+        "Deactivation with active sessions and retained obligations needs domain verification."
+      ]
+    },
+    {
+      "id": "MD-LOC-03",
+      "name": "Revise location details",
+      "purpose": "Update operating contacts and configuration consistently across entry points.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Location management permissions and trusted organization; legacy field parity requires review",
+      "entryPoints": [
+        "actions/locations/location-management-actions.ts",
+        "actions/locations/createLocation.ts",
+        "actions/locations/updateLocationById.ts",
+        "actions/locations/deleteLocation.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/location/location.service.ts#updateLocationForManagement",
+        "services/location/location.service.ts#updateLegacyLocationByIdForOrg"
+      ],
+      "records": [
+        "Location",
+        "User manager",
+        "InventoryLevel",
+        "POSSession",
+        "SalesOrder",
+        "PurchaseOrder"
+      ],
+      "transitions": [
+        "Resolve scoped location",
+        "Validate changes",
+        "Save",
+        "Refresh"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "manager_boundary_corrected_other_review_open",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md",
+        "evidence/location-manager-before.json",
+        "evidence/location-manager-after.json",
+        "lanes/master-data/LOCATION_MANAGER_REMEDIATION.md",
+        "lanes/environment/retained-reports-location-run-f8f6da4962c5.json"
+      ],
+      "remaining": [
+        "Legacy manager assignment now uses same-tenant active-manager validation within its transaction; 11 focused service/action tests passed. Actual database/browser and identity-state concurrency remain unverified.",
+        "Legacy default toggles do not clear the prior default; concurrent management defaults need constraint/transaction proof.",
+        "Save then aggregate reload can misreport a committed change.",
+        "Deactivation with active sessions and retained obligations needs domain verification.",
+        "Real PostgreSQL manager assignment/denial/clearing now passes. Actual browser authority and concurrent identity-state changes remain unverified."
+      ]
+    },
+    {
+      "id": "MD-LOC-04",
+      "name": "Assign a location manager",
+      "purpose": "Associate a currently permitted same-organization manager.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Location management permissions and trusted organization; legacy field parity requires review",
+      "entryPoints": [
+        "actions/locations/location-management-actions.ts",
+        "actions/locations/createLocation.ts",
+        "actions/locations/updateLocationById.ts",
+        "actions/locations/deleteLocation.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/location/location.service.ts#updateLocationForManagement",
+        "services/location/location.service.ts#updateLegacyLocationByIdForOrg"
+      ],
+      "records": [
+        "Location",
+        "User manager",
+        "InventoryLevel",
+        "POSSession",
+        "SalesOrder",
+        "PurchaseOrder"
+      ],
+      "transitions": [
+        "Choose manager",
+        "Validate organization/activity",
+        "Persist assignment"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "manager_boundary_corrected_other_review_open",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "partial_real_postgres_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md",
+        "evidence/location-manager-before.json",
+        "evidence/location-manager-after.json",
+        "lanes/master-data/LOCATION_MANAGER_REMEDIATION.md",
+        "lanes/environment/retained-reports-location-run-f8f6da4962c5.json"
+      ],
+      "remaining": [
+        "Legacy manager assignment now uses same-tenant active-manager validation within its transaction; 11 focused service/action tests passed. Actual database/browser and identity-state concurrency remain unverified.",
+        "Legacy default toggles do not clear the prior default; concurrent management defaults need constraint/transaction proof.",
+        "Save then aggregate reload can misreport a committed change.",
+        "Deactivation with active sessions and retained obligations needs domain verification.",
+        "Real PostgreSQL manager assignment/denial/clearing now passes. Actual browser authority and concurrent identity-state changes remain unverified."
+      ]
+    },
+    {
+      "id": "MD-LOC-05",
+      "name": "Select the default location",
+      "purpose": "Maintain a coherent default for future operations.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Location management permissions and trusted organization; legacy field parity requires review",
+      "entryPoints": [
+        "actions/locations/location-management-actions.ts",
+        "actions/locations/createLocation.ts",
+        "actions/locations/updateLocationById.ts",
+        "actions/locations/deleteLocation.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/location/location.service.ts#createLocationForManagement",
+        "services/location/location.service.ts#updateLocationForManagement",
+        "services/location/location.service.ts#updateLegacyLocationByIdForOrg"
+      ],
+      "records": [
+        "Location",
+        "User manager",
+        "InventoryLevel",
+        "POSSession",
+        "SalesOrder",
+        "PurchaseOrder"
+      ],
+      "transitions": [
+        "Choose default",
+        "Clear competing default",
+        "Persist",
+        "Resolve concurrent changes"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Legacy manager assignment now uses same-tenant active-manager validation within its transaction; 11 focused service/action tests passed. Actual database/browser and identity-state concurrency remain unverified.",
+        "Legacy default toggles do not clear the prior default; concurrent management defaults need constraint/transaction proof.",
+        "Save then aggregate reload can misreport a committed change.",
+        "Deactivation with active sessions and retained obligations needs domain verification."
+      ]
+    },
+    {
+      "id": "MD-LOC-06",
+      "name": "Deactivate or reactivate a location",
+      "purpose": "Control new operations while respecting ongoing sessions and records.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Location management permissions and trusted organization; legacy field parity requires review",
+      "entryPoints": [
+        "actions/locations/location-management-actions.ts",
+        "actions/locations/createLocation.ts",
+        "actions/locations/updateLocationById.ts",
+        "actions/locations/deleteLocation.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/location/location.service.ts#updateLocationForManagement",
+        "services/location/location.service.ts#updateLegacyLocationByIdForOrg"
+      ],
+      "records": [
+        "Location",
+        "User manager",
+        "InventoryLevel",
+        "POSSession",
+        "SalesOrder",
+        "PurchaseOrder"
+      ],
+      "transitions": [
+        "Inspect obligations",
+        "Change activity",
+        "Verify downstream admission"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Legacy manager assignment now uses same-tenant active-manager validation within its transaction; 11 focused service/action tests passed. Actual database/browser and identity-state concurrency remain unverified.",
+        "Legacy default toggles do not clear the prior default; concurrent management defaults need constraint/transaction proof.",
+        "Save then aggregate reload can misreport a committed change.",
+        "Deactivation with active sessions and retained obligations needs domain verification."
+      ]
+    },
+    {
+      "id": "MD-LOC-07",
+      "name": "Archive an unused location",
+      "purpose": "Remove only a location with no protected operational history.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Location management permissions and trusted organization; legacy field parity requires review",
+      "entryPoints": [
+        "actions/locations/location-management-actions.ts",
+        "actions/locations/createLocation.ts",
+        "actions/locations/updateLocationById.ts",
+        "actions/locations/deleteLocation.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx"
+      ],
+      "services": [
+        "services/location/location.service.ts#archiveLocationForManagement"
+      ],
+      "records": [
+        "Location",
+        "User manager",
+        "InventoryLevel",
+        "POSSession",
+        "SalesOrder",
+        "PurchaseOrder"
+      ],
+      "transitions": [
+        "Check scoped location/history",
+        "Deny history-bearing archive",
+        "Archive unused record"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Legacy manager assignment now uses same-tenant active-manager validation within its transaction; 11 focused service/action tests passed. Actual database/browser and identity-state concurrency remain unverified.",
+        "Legacy default toggles do not clear the prior default; concurrent management defaults need constraint/transaction proof.",
+        "Save then aggregate reload can misreport a committed change.",
+        "Deactivation with active sessions and retained obligations needs domain verification."
+      ]
+    },
+    {
+      "id": "MD-ITEM-01",
+      "name": "Browse items and stock views",
+      "purpose": "Find scoped item and stock information through UI and API read models.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#listItems",
+        "services/item/item.service.ts#listItemsWithRelations",
+        "services/item/item.service.ts#listItemsWithInventoryLevels"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Filter/page/scope",
+        "Load relations and quantities",
+        "Open item"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "en_fr_inventory_module_read_and_query_recovery_verified_full_localization_incomplete",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md",
+        "../../DAILY_DIGEST_SOURCE_TRUTH_VERIFICATION.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification.",
+        "Live French item destination still shows English names and page labels; source item nameFr exists. Complete full page localization and broader lifecycle/accessibility checks. Module/permission denial and query-failure/retry copy are localized and runtime verified; failed item reads no longer become successful empty inventory."
+      ]
+    },
+    {
+      "id": "MD-ITEM-02",
+      "name": "Create an item with optional opening stock",
+      "purpose": "Create catalogue identity and authorized initial inventory effects.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#createItem",
+        "services/item/item.service.ts#createItemFromForm"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Validate relations",
+        "Create item",
+        "Request opening-stock effects",
+        "Return saved identity"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification."
+      ]
+    },
+    {
+      "id": "MD-ITEM-03",
+      "name": "Edit item identity and descriptive fields",
+      "purpose": "Revise one current catalogue item without stale overwrites.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#updateItemFromForm",
+        "services/item/item.service.ts#updateItemBasicInfoWithRelations",
+        "services/item/item.service.ts#updateItemDetailsWithRelations"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Load versioned item",
+        "Validate fields",
+        "Save",
+        "Handle conflict/recovery"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification."
+      ]
+    },
+    {
+      "id": "MD-ITEM-04",
+      "name": "Change item prices",
+      "purpose": "Update pricing configuration while preserving historical transaction amounts.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#updateItemPricingWithRelations"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Check scoped item",
+        "Validate monetary fields",
+        "Save prices",
+        "Inspect downstream snapshots"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification."
+      ]
+    },
+    {
+      "id": "MD-ITEM-05",
+      "name": "Change item classifications",
+      "purpose": "Use valid same-tenant category, brand, unit and tax relationships.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#updateItemRelationsWithRelations"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Select related records",
+        "Validate relationship eligibility",
+        "Save"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification."
+      ]
+    },
+    {
+      "id": "MD-ITEM-06",
+      "name": "Configure item tracking and replenishment",
+      "purpose": "Set tracking/stock policies without silently rewriting physical stock.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#updateItemTrackingWithRelations",
+        "services/item/item.service.ts#updateItemStockPolicy"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Review current item/history",
+        "Validate policy",
+        "Save policy"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification."
+      ]
+    },
+    {
+      "id": "MD-ITEM-07",
+      "name": "Request manual stock adjustment from item form",
+      "purpose": "Submit an authorized stock correction through the inventory owner.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#updateItemStockFromForm"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Resolve item/location/actor",
+        "Update permitted policy",
+        "Request adjustment in transaction",
+        "Follow controlled completion"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification."
+      ]
+    },
+    {
+      "id": "MD-ITEM-08",
+      "name": "Archive an item",
+      "purpose": "Retain evidence-bearing item identity and stop new catalogue work.",
+      "domain": "master_data",
+      "personas": [
+        "Authorized catalogue or organization administrator; read-only operators where permitted"
+      ],
+      "authority": "Inventory item permissions, server tenant/actor and stock domain controls; full transport matrix pending",
+      "entryPoints": [
+        "actions/item/items.ts",
+        "actions/itemsShow/updateItemStockById.ts",
+        "actions/itemsShow/deleteItem.ts"
+      ],
+      "services": [
+        "services/item/item.service.ts#archiveItem",
+        "services/item/item.service.ts#deleteItem"
+      ],
+      "records": [
+        "Item",
+        "Item relations",
+        "InventoryAdjustment",
+        "InventoryTransaction",
+        "Business events"
+      ],
+      "transitions": [
+        "Resolve item",
+        "Inspect evidence counts",
+        "Set archive/activity/discontinued state",
+        "Verify retained obligations"
+      ],
+      "sideEffects": [
+        "Database reads/writes and cache refresh as applicable; connected financial effects only through existing domain owners"
+      ],
+      "implementationStatus": "existing_with_open_review",
+      "reviewStatus": "partially_reviewed",
+      "runtimeStatus": "not_visited",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "evidence/source-baseline-v2.json",
+        "lanes/master-data/SOURCE_REVIEW.md"
+      ],
+      "remaining": [
+        "Large service reviewed only at entry/schema/selected edit and archive boundaries; remaining branches require tracing.",
+        "Historical item archive sets deletedAt even with evidence; obligation/read consumers require review.",
+        "Opening stock/manual adjustment require full producer-to-ledger and concurrency verification."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "actions/categories/getCategoriesAction.ts",
+      "sha256": "279cfcff555fcb0e8222ccac1b94dc744141083ddb1f4b27796f335ca01329ed"
+    },
+    {
+      "path": "actions/categories/createBulkCategories.ts",
+      "sha256": "4dcbd69618a5756847e7ea326158f83282af7fc2d27c07c1f08efd13e5e9a416"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/page.tsx",
+      "sha256": "1847fec5554cdf731c66728df3a945300394e06537c73da1899d29f12f8ab50b"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/create/page.tsx",
+      "sha256": "b9e827ca582e229c8dc7757e35c92b7848f0553b13705afcd9b10a1d2e361da0"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/page.tsx",
+      "sha256": "9b45adf511e54832f0899350934f92a85265e8d6f612941f2547d1fa99eb9c9d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/categories/[id]/edit/page.tsx",
+      "sha256": "b02d6d16abb0f558a784ff44e4eafe0666f4f36b3131f7b58284495975c0fed1"
+    },
+    {
+      "path": "services/category/category.service.ts",
+      "sha256": "2a342e7ba838b1db58cee496eeb1f002dcea3cd5250f6dcd5fa494b8d95658c7"
+    },
+    {
+      "path": "actions/brands/getBrandsAction.ts",
+      "sha256": "53607263a880ca45f21d3ce8ae18260da6794b763e3afe6756b8330ec168e7a3"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/brands/page.tsx",
+      "sha256": "8f4f094537896105a3ed62da2dd8b09fbad131e498b507466f70718b8678f5be"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/brands/create/page.tsx",
+      "sha256": "f276afa1d508c81c5f7934856a2906670e8c8d69281ec8486f3a96d3b5258b00"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/brands/[id]/edit/page.tsx",
+      "sha256": "74ea2bde396784f70f1cb6d9bc191d95565867b3aaa7f6f99479f9e81d352818"
+    },
+    {
+      "path": "services/brand/brand.service.ts",
+      "sha256": "ce76490c87bc1f458682dfb8e806775edce5bd00052f632071f664d825d61723"
+    },
+    {
+      "path": "actions/units/unit-management-actions.ts",
+      "sha256": "b0c8f94382e5df48ece5f04bea946ef24baad815f2eada32b68a74048b0e935c"
+    },
+    {
+      "path": "actions/units/deleteUnit.ts",
+      "sha256": "54fdb0b194900dd11a0dc3b6e6818a97f39491d039f81a9e80d2f156ac2ea6e7"
+    },
+    {
+      "path": "actions/units/getOrgUnits.ts",
+      "sha256": "650b1e4702ce338e0afb9a0be0b878262962d8e03ec0a2248869a6c1899fb66b"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/units/page.tsx",
+      "sha256": "deaeda3f0b7ad9f70d6298df4f4f529d5c8bad3647b15dba6a340a5981a466a2"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/units/create/page.tsx",
+      "sha256": "d7bc3eb6e5666d9ea219c59933e6717f0ac9455ff177dde03cf96853cfc1923b"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/inventory/units/[id]/edit/page.tsx",
+      "sha256": "9c1a2826c8d9f46f3d765835ced582a4cfb5f22d922f03ad61759a2326686073"
+    },
+    {
+      "path": "services/unit/unit.service.ts",
+      "sha256": "920338891361f874d1b10777838b6752a379c0e9617fb0eed841f486a8231ca6"
+    },
+    {
+      "path": "actions/taxRate/tax-rate-management-actions.ts",
+      "sha256": "1b0a2bf2fe2ba09dedacd625a5a54bf35330201bf42abebae740767fb8b571c8"
+    },
+    {
+      "path": "actions/taxRate/createActionTaxRate.ts",
+      "sha256": "46883004b8dff22c2023896463b998194b985295f430909cdd830ccfce0e14c1"
+    },
+    {
+      "path": "actions/taxRate/getOrgTaxRates.ts",
+      "sha256": "31f5c8a70b46cede4a69a47f13b4099a20e52e8955ee5f8588f5c479d76aba19"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/tax-rates/page.tsx",
+      "sha256": "83cc7cab15678fee2b4c5dc1ac118b666bd0f95d38796c4ea3bd16e7243efb5d"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/tax-rates/create/page.tsx",
+      "sha256": "7a220aea98143d331f924d8d1d98dba9176ff0ba4de02dd1cbf195fdd63d86d6"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/tax-rates/[id]/edit/page.tsx",
+      "sha256": "31a3a3af573ffe2df844be9316bb53c5c97459a0ed3b746499a13583ba259bce"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/finance/tax-rates/create/page.tsx",
+      "sha256": "2556d03da4b503625b708af89a081140aff5a42349f9e615bd76d38c26e29dfd"
+    },
+    {
+      "path": "services/tax-rate/tax-rate.service.ts",
+      "sha256": "2eda08814105e1320c200609158ad0f59af45e3fa948dae2d184cb4245b86c87"
+    },
+    {
+      "path": "actions/locations/location-management-actions.ts",
+      "sha256": "6b284b3e4ea6728343b30b694706d2f8359bb627d432d5a571ea4986d1de582b"
+    },
+    {
+      "path": "actions/locations/createLocation.ts",
+      "sha256": "d361438fccb992556a622c4117734cf0dd65a9d6d5e692265a1425a554b2ac2c"
+    },
+    {
+      "path": "actions/locations/updateLocationById.ts",
+      "sha256": "51c68f5354ef0dc142e6b454c7178e33fb238b5c64275d0e9fb56ab415927139"
+    },
+    {
+      "path": "actions/locations/deleteLocation.ts",
+      "sha256": "59fe7c56cef8e6ec013fd0b11cfd354632bbd7f051441942aba5255c9032ef6a"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/locations/page.tsx",
+      "sha256": "6fecf5655b3d2568bcdba6a0f61bd15d4869a66c0e1333c945cd0bce47ec084c"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/locations/create/page.tsx",
+      "sha256": "d3cad742d1b9a43b9b83ccb1f158e345fa3d72694e7b886f72b7a8bb041f0a4c"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/locations/new/page.tsx",
+      "sha256": "7e7a72343bded49525e83843e7788def676a032d23d6de80062ae9c199141894"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/locations/[id]/edit/page.tsx",
+      "sha256": "48d3c2bfa4aa970b6b5839f3799d54daa477841888c65aa43cd73a45a3463f13"
+    },
+    {
+      "path": "services/location/location.service.ts",
+      "sha256": "8ea6c4d6c1b7b7837f252c76e5658c0b63918219148f90cc6b66b125fbbb3de2"
+    },
+    {
+      "path": "actions/item/items.ts",
+      "sha256": "91ead0b338bf4d19f7425459f4449388ff7d362c8ba690171433dd4ad0110eeb"
+    },
+    {
+      "path": "actions/itemsShow/updateItemStockById.ts",
+      "sha256": "7aacebc8f21e722d1880174aa3ea37ed5cfe56ef365ad6b66817a2787dc192d3"
+    },
+    {
+      "path": "actions/itemsShow/deleteItem.ts",
+      "sha256": "b264a762de6ed30eeeed0dd02b9bf9a97b1645ee6650421eeaaea1f63fcd0f44"
+    },
+    {
+      "path": "services/item/item.service.ts",
+      "sha256": "6d82a9c0ef0595e652deadba112f65586489f1736bdb78cd543eef302d4d7dfa"
+    }
+  ]
+}

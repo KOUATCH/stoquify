@@ -1,0 +1,187 @@
+import { defineCanonicalTableContract } from "./table-system-contract"
+
+export const inventoryItemsTableContract = defineCanonicalTableContract({
+  id: "inventory.items",
+  version: 1,
+  route: "/dashboard/inventory/items",
+  module: "inventory",
+  archetype: "master-reference",
+  dataOwnership: "hybrid-server-seed",
+  rowId: "id",
+  labels: { en: "Inventory items", fr: "Articles de stock" },
+  access: {
+    readPermission: "inventory.items.read",
+    requiredModule: "inventory",
+    tenantScoped: true,
+    redactionPolicy: "inventory-item-operational-v1",
+  },
+  query: {
+    searchParam: "q",
+    defaultPageSize: 10,
+    maxPageSize: 100,
+    allowedPageSizes: [10, 20, 30, 50, 100],
+    allowedSorts: ["name", "costPrice", "sellingPrice", "inventoryLevels", "value", "createdAt"],
+    allowedFilters: [
+      { id: "stock", values: ["in-stock", "low-stock", "out-of-stock", "overstock", "reorder", "available", "reserved"] },
+      { id: "createdFrom" },
+      { id: "createdTo" },
+    ],
+  },
+  columns: {
+    allowed: [
+      { id: "select", label: { en: "Select", fr: "Selectionner" }, defaultVisible: true, hideable: false, exportable: false },
+      { id: "name", label: { en: "Item", fr: "Article" }, defaultVisible: true, sortable: true, filterable: true },
+      { id: "costPrice", label: { en: "Cost price", fr: "Prix de revient" }, defaultVisible: true, sortable: true },
+      { id: "sellingPrice", label: { en: "Selling price", fr: "Prix de vente" }, defaultVisible: true, sortable: true },
+      { id: "inventoryLevels", label: { en: "Stock", fr: "Stock" }, defaultVisible: true, sortable: true },
+      { id: "value", label: { en: "Value", fr: "Valeur" }, defaultVisible: true, sortable: true },
+      { id: "createdAt", label: { en: "Created", fr: "Cree" }, defaultVisible: true, sortable: true },
+      { id: "actions", label: { en: "Actions", fr: "Actions" }, defaultVisible: true, hideable: false, exportable: false },
+    ],
+  },
+  selection: { enabled: true, allowedScopes: ["page", "explicit"], clearOnQueryChange: true },
+  actions: [
+    { id: "create", requiredPermission: "inventory.items.create", requiredModule: "inventory", protectedAction: true, mutatesBusinessTruth: true },
+    { id: "edit", requiredPermission: "inventory.items.update", requiredModule: "inventory", protectedAction: true, mutatesBusinessTruth: true },
+    { id: "delete", requiredPermission: "inventory.items.delete", requiredModule: "inventory", protectedAction: true, mutatesBusinessTruth: true },
+  ],
+  export: {
+    enabled: true,
+    requiredPermission: "inventory.items.read",
+    requiredModule: "inventory",
+    sourceReadModel: "inventory-item-management",
+    serverFinalized: true,
+    formats: ["xlsx"],
+  },
+  builtInViews: [
+    { id: "low-stock", labels: { en: "Low stock", fr: "Stock faible" }, filters: { stock: ["low-stock"] } },
+    { id: "out-of-stock", labels: { en: "Out of stock", fr: "Rupture de stock" }, filters: { stock: ["out-of-stock"] } },
+    { id: "reorder", labels: { en: "Reorder", fr: "A commander" }, filters: { stock: ["reorder"] } },
+  ],
+})
+
+export const purchaseOrdersTableContract = defineCanonicalTableContract({
+  id: "purchasing.purchase-orders",
+  version: 1,
+  route: "/dashboard/purchase-orders",
+  module: "purchasing",
+  archetype: "work-queue",
+  dataOwnership: "client-bounded",
+  rowId: "id",
+  labels: { en: "Purchase orders", fr: "Bons de commande" },
+  access: {
+    readPermission: "purchase_orders.read",
+    requiredModule: "purchasing",
+    tenantScoped: true,
+    redactionPolicy: "purchase-order-operational-v1",
+  },
+  query: {
+    searchParam: "q",
+    defaultPageSize: 10,
+    maxPageSize: 100,
+    allowedPageSizes: [10, 20, 30, 50, 100],
+    allowedSorts: ["orderNumber", "supplier", "location", "status", "orderDate", "expectedDeliveryDate", "total", "lines"],
+    allowedFilters: [
+      { id: "status", values: ["DRAFT", "SUBMITTED", "APPROVED", "PARTIALLY_RECEIVED", "RECEIVED", "CANCELLED", "ARCHIVED"] },
+      { id: "orderDateFrom" },
+      { id: "orderDateTo" },
+    ],
+  },
+  columns: {
+    allowed: [
+      { id: "select", label: { en: "Select", fr: "Selectionner" }, defaultVisible: true, hideable: false, exportable: false },
+      { id: "orderNumber", label: { en: "Order", fr: "Commande" }, defaultVisible: true, sortable: true, filterable: true },
+      { id: "supplier", label: { en: "Supplier", fr: "Fournisseur" }, defaultVisible: true, sortable: true },
+      { id: "location", label: { en: "Location", fr: "Site" }, defaultVisible: true, sortable: true },
+      { id: "status", label: { en: "Status", fr: "Statut" }, defaultVisible: true, sortable: true, filterable: true },
+      { id: "orderDate", label: { en: "Order date", fr: "Date de commande" }, defaultVisible: true, sortable: true },
+      { id: "expectedDeliveryDate", label: { en: "Expected", fr: "Livraison prevue" }, defaultVisible: true, sortable: true },
+      { id: "total", label: { en: "Total", fr: "Total" }, defaultVisible: true, sortable: true },
+      { id: "lines", label: { en: "Lines", fr: "Lignes" }, defaultVisible: true, sortable: true },
+      { id: "actions", label: { en: "Actions", fr: "Actions" }, defaultVisible: true, hideable: false, exportable: false },
+    ],
+  },
+  selection: { enabled: true, allowedScopes: ["page", "explicit"], clearOnQueryChange: true },
+  actions: [
+    { id: "edit", requiredPermission: "purchase_orders.update", requiredModule: "purchasing", protectedAction: true, mutatesBusinessTruth: true },
+    { id: "approve", requiredPermission: "purchase_orders.approve", requiredModule: "purchasing", protectedAction: true, mutatesBusinessTruth: true },
+    { id: "receive", requiredPermission: "purchase_orders.receive", requiredModule: "purchasing", protectedAction: true, mutatesBusinessTruth: true },
+    { id: "cancel", requiredPermission: "purchase_orders.cancel", requiredModule: "purchasing", protectedAction: true, mutatesBusinessTruth: true },
+    { id: "archive", requiredPermission: "purchase_orders.archive", requiredModule: "purchasing", protectedAction: true, mutatesBusinessTruth: true },
+  ],
+  export: {
+    enabled: true,
+    requiredPermission: "purchase_orders.read",
+    requiredModule: "purchasing",
+    sourceReadModel: "purchase-order-management",
+    serverFinalized: true,
+    formats: ["xlsx"],
+  },
+  builtInViews: [
+    { id: "draft", labels: { en: "Draft", fr: "Brouillon" }, filters: { status: ["DRAFT"] } },
+    { id: "awaiting-approval", labels: { en: "Awaiting approval", fr: "En attente d'approbation" }, filters: { status: ["SUBMITTED"] } },
+    { id: "receiving", labels: { en: "Receiving", fr: "Reception" }, filters: { status: ["APPROVED", "PARTIALLY_RECEIVED"] } },
+  ],
+})
+
+export const paymentReconciliationTableContract = defineCanonicalTableContract({
+  id: "finance.payment-reconciliation",
+  version: 1,
+  route: "/dashboard/finance/payment-reconciliation",
+  module: "payment_reconciliation",
+  archetype: "evidence",
+  dataOwnership: "immutable-evidence",
+  rowId: "runId",
+  labels: { en: "Payment reconciliation", fr: "Rapprochement des paiements" },
+  access: {
+    readPermission: "payments.reconciliation.read",
+    requiredModule: "payment_reconciliation",
+    tenantScoped: true,
+    redactionPolicy: "payment-reconciliation-proof-v1",
+  },
+  query: {
+    searchParam: "q",
+    defaultPageSize: 25,
+    maxPageSize: 100,
+    allowedPageSizes: [25, 50, 100],
+    allowedSorts: ["runId", "rail", "status", "exceptionCount", "generatedAt"],
+    allowedFilters: [
+      { id: "locationId" },
+      { id: "period" },
+      { id: "startDate" },
+      { id: "endDate" },
+    ],
+  },
+  columns: {
+    allowed: [
+      { id: "rail", label: { en: "Payment rail", fr: "Rail de paiement" }, defaultVisible: true, sortable: true },
+      { id: "status", label: { en: "Status", fr: "Statut" }, defaultVisible: true, sortable: true },
+      { id: "matched", label: { en: "Matched", fr: "Rapproches" }, defaultVisible: true },
+      { id: "exceptions", label: { en: "Exceptions", fr: "Exceptions" }, defaultVisible: true, sortable: true },
+      { id: "suspense", label: { en: "Suspense", fr: "Attente" }, defaultVisible: true },
+      { id: "generatedAt", label: { en: "Generated", fr: "Genere" }, defaultVisible: true, sortable: true },
+      { id: "actions", label: { en: "Evidence actions", fr: "Actions de preuve" }, defaultVisible: true, hideable: false, exportable: false },
+    ],
+  },
+  selection: { enabled: false, allowedScopes: [], clearOnQueryChange: true },
+  actions: [
+    { id: "view-proof", requiredPermission: "payments.reconciliation.read", requiredModule: "payment_reconciliation", protectedAction: true, mutatesBusinessTruth: false },
+    { id: "export-certificate", requiredPermission: "payments.reconciliation.certificate.export", requiredModule: "payment_reconciliation", protectedAction: true, mutatesBusinessTruth: false, requiresFreshAuth: true },
+    { id: "manual-match", requiredPermission: "payments.reconciliation.match", requiredModule: "payment_reconciliation", protectedAction: true, mutatesBusinessTruth: true },
+  ],
+  export: {
+    enabled: true,
+    requiredPermission: "payments.reconciliation.certificate.export",
+    requiredModule: "payment_reconciliation",
+    sourceReadModel: "payment-reconciliation-certificate",
+    serverFinalized: true,
+    formats: ["pdf", "json"],
+  },
+  builtInViews: [],
+})
+
+export const pilotTableContracts = [
+  inventoryItemsTableContract,
+  purchaseOrdersTableContract,
+  paymentReconciliationTableContract,
+] as const

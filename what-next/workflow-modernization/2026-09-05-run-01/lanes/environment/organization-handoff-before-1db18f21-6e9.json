@@ -1,0 +1,36 @@
+{
+  "run": "1db18f21-6e9",
+  "database": "stoquify_local_registration_20260906_01",
+  "recordedAt": "2026-09-06T14:27:32.333Z",
+  "sourcesBefore": {
+    "services/organization/organization-settings.service.ts": "1e5ca31bcb23cdda3ba0a48e2399972bb3e528716deba7db9b7d243e0f36c9bb",
+    "actions/organization/organization-settings-actions.ts": "7fad736216e08d456329f9e5b5749a477a48cc81fac62ddbbcb56fe85ff2103b",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/settings/OrganizationManagementTable.tsx": "fc24d3784180981938063326d8e8695a0a466b4d6d94cf2ddd5c57f97c2f2dfa",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+  },
+  "workflowPassed": false,
+  "originalAuthorityBefore": "3a7e8da132ebf0dfb374f6238c8921a10975d7036f5879b556452347a6e8446f",
+  "reproduced": {
+    "createdOrganization": "b86e4164-568c-4778-9c23-9e804a775417",
+    "ownerCount": 0,
+    "roleCount": 1,
+    "auditCount": 0,
+    "returnedActive": true,
+    "visibleToCurrentOrganization": false
+  },
+  "originalAuthorityAfter": "3a7e8da132ebf0dfb374f6238c8921a10975d7036f5879b556452347a6e8446f",
+  "originalAuthorityUnchanged": true,
+  "defectReproduced": true,
+  "sourcesAfter": {
+    "services/organization/organization-settings.service.ts": "1e5ca31bcb23cdda3ba0a48e2399972bb3e528716deba7db9b7d243e0f36c9bb",
+    "actions/organization/organization-settings-actions.ts": "7fad736216e08d456329f9e5b5749a477a48cc81fac62ddbbcb56fe85ff2103b",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/settings/OrganizationManagementTable.tsx": "fc24d3784180981938063326d8e8695a0a466b4d6d94cf2ddd5c57f97c2f2dfa",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec"
+  },
+  "sourceStable": true,
+  "driverSha256": "8ff270b4aed371203d965d60e64862b29dcbf2626ee4aacf98ec5163d81fccae"
+}

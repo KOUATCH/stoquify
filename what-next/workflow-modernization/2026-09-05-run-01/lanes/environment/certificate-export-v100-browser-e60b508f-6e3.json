@@ -1,0 +1,56 @@
+{
+  "at": "2026-09-09T11:57:08.119Z",
+  "run": "e60b508f-6e3",
+  "sourcesBefore": {
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "cea9edaad072f0c587300ba2a8395d5624f53dc165309888d129970347cde9e7",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "57bee3423fa67e1ae33555ff9564c533b80ba124763817c86e2abf455f510746",
+    "hooks/payments/verified-evidence-download.ts": "88a9129d0927e86fe3f08d2a03121216eabb85313cb82f41c8aabf035ea4dd8f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "9bfc26687e655c51dca11c47b6a164a4cb4e75bdcdd941b7413c049aed980807",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "actions/payments/reconciliation.actions.ts": "07fb0f5332589b437e63297ef12e41fcef800c234c7ce53fefe93161c854d4dc",
+    "messages/en.json": "b6a0b8651c0163a2419fe54a7b77cf707b40b7b0bad8bc00c230a6c3c52edec6",
+    "messages/fr.json": "9d58dd8b4e6dcd3a3fcac463c0977384548d275447534bbacade13b8cd5b0725"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [],
+      "screenshots": [
+        "certificate-export-v100-en-failure-e60b508f-6e3.png"
+      ],
+      "downloads": [],
+      "layout": [],
+      "pageErrors": [],
+      "passed": false,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('region', { name: 'Review certificate export', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Review certificate export', exact: true })\n    118 × locator resolved to <div role=\"region\" tabindex=\"-1\" aria-label=\"Review certificate export\" class=\"min-w-0 space-y-3 rounded-lg border border-[var(--dash-gold)] bg-[var(--dash-surface)] p-3 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)] [&_button]:h-auto [&_button]:min-h-10 [&_button]:max-w-full [&_button]:whitespace-normal\">…</div>\n        - unexpected value \"inactive\"\n"
+    },
+    {
+      "locale": "fr",
+      "stages": [],
+      "screenshots": [
+        "certificate-export-v100-fr-failure-e60b508f-6e3.png"
+      ],
+      "downloads": [],
+      "layout": [],
+      "pageErrors": [],
+      "passed": false,
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('region', { name: 'Vérifier l’export du certificat', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Vérifier l’export du certificat', exact: true })\n    119 × locator resolved to <div role=\"region\" tabindex=\"-1\" aria-label=\"Vérifier l’export du certificat\" class=\"min-w-0 space-y-3 rounded-lg border border-[var(--dash-gold)] bg-[var(--dash-surface)] p-3 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--dash-brand)] [&_button]:h-auto [&_button]:min-h-10 [&_button]:max-w-full [&_button]:whitespace-normal\">…</div>\n        - unexpected value \"inactive\"\n"
+    }
+  ],
+  "scope": "Owned loopback app, normal password session and real reconciliation certificate actions. Actual capture/match/sign service fixture; synthetic provider setup, no external effects.",
+  "originalBefore": "bbf6c90310726eb04f453e833c200f420665626f04374f861f27e9f1628bf418",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "cea9edaad072f0c587300ba2a8395d5624f53dc165309888d129970347cde9e7",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "57bee3423fa67e1ae33555ff9564c533b80ba124763817c86e2abf455f510746",
+    "hooks/payments/verified-evidence-download.ts": "88a9129d0927e86fe3f08d2a03121216eabb85313cb82f41c8aabf035ea4dd8f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "9bfc26687e655c51dca11c47b6a164a4cb4e75bdcdd941b7413c049aed980807",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "actions/payments/reconciliation.actions.ts": "07fb0f5332589b437e63297ef12e41fcef800c234c7ce53fefe93161c854d4dc",
+    "messages/en.json": "b6a0b8651c0163a2419fe54a7b77cf707b40b7b0bad8bc00c230a6c3c52edec6",
+    "messages/fr.json": "9d58dd8b4e6dcd3a3fcac463c0977384548d275447534bbacade13b8cd5b0725"
+  },
+  "sourceStable": true
+}

@@ -136,7 +136,7 @@ export async function exportInventoryMovementHistory(
   input: InventoryHistoryExportInput,
   options: InventoryHistoryExportServiceOptions = {},
 ): Promise<InventoryHistoryExportResult> {
-  if (input.filters?.cursor) {
+  if (input.filters?.cursor || input.filters?.direction === "previous") {
     throw new BusinessRuleError("Inventory history exports must start from a fresh snapshot.")
   }
 

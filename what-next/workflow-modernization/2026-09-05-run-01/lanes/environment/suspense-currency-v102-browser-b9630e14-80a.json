@@ -1,0 +1,48 @@
+{
+  "at": "2026-09-09T12:47:41.750Z",
+  "run": "b9630e14-80a",
+  "sourcesBefore": {
+    "components/finance/PaymentSuspenseQueue.tsx": "d1c96b9527a8c0ccd0f39932c019f8de65ca59991f2bc585148b9d4f047b25e8",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "services/_shared/action-errors.ts": "c5b3cc54a453d880208a183964ad0473c35f6ce5e22978817664d8ceea5ba7ab",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "6848a9066df6e367716e76c38fab41c1a5132e0e694ae7d8b912b650b1cb656f",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "messages/en.json": "19012a49dc2733e27bf590b6c12fa1aca98cd241c9ab11f934e1e23a81e8da30",
+    "messages/fr.json": "b6a4486b364fd9c1d24f84e233495c74129fb5027a86832b8aedbb405cc230f6"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "suspense-currency-v102-en-failure-b9630e14-80a.png"
+      ],
+      "stages": [],
+      "pageErrors": [],
+      "routeLoadMs": 29831,
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('region', { name: 'Suspense approval lane', exact: true }).getByRole('alert')\nExpected substring: \"Posting is paused: the source currency must match the configured accounting currency. Ask your accountant to verify the setup. Foreign-currency conversion is not supported here yet; keep the original amount and currency unchanged. Your review is retained.\"\nReceived string:    \"Confirm your password for this organization before approval. Your review is retained.\"\nTimeout: 60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'Suspense approval lane', exact: true }).getByRole('alert')\n    112 × locator resolved to <p role=\"alert\" class=\"flex gap-2 text-sm text-[var(--dash-danger)]\">…</p>\n        - unexpected value \"Confirm your password for this organization before approval. Your review is retained.\"\n"
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "suspense-currency-v102-fr-failure-b9630e14-80a.png"
+      ],
+      "stages": [],
+      "pageErrors": [],
+      "routeLoadMs": 14124,
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('region', { name: 'File approbation suspense', exact: true }).getByRole('alert')\nExpected substring: \"La comptabilisation est suspendue : la devise d’origine doit correspondre à la devise comptable configurée. Demandez à votre comptable de vérifier le paramétrage. La conversion de devises n’est pas encore prise en charge ici ; conservez le montant et la devise d’origine. Votre vérification est conservée.\"\nReceived string:    \"Confirmez votre mot de passe pour cette organisation avant l’approbation. Votre vérification est conservée.\"\nTimeout: 60000ms\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('region', { name: 'File approbation suspense', exact: true }).getByRole('alert')\n    113 × locator resolved to <p role=\"alert\" class=\"flex gap-2 text-sm text-[var(--dash-danger)]\">…</p>\n        - unexpected value \"Confirmez votre mot de passe pour cette organisation avant l’approbation. Votre vérification est conservée.\"\n"
+    }
+  ],
+  "scope": "Actual owned application, normal password sessions and synthetic accounting setup only. No production currency change or financial approval.",
+  "originalBefore": "82d70c9af4e5f601adcb577feb9e1a13b7cf13b123e8f00940b2b7baff0ea35c",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentSuspenseQueue.tsx": "d1c96b9527a8c0ccd0f39932c019f8de65ca59991f2bc585148b9d4f047b25e8",
+    "actions/payments/reconciliation.actions.ts": "8db8352a9b4fefa546fb27b3ad93ce79c6a13fa18a5cc457676ddbefe73438da",
+    "services/_shared/action-errors.ts": "33430b1a7ad6bdfe11f40f61a0f034b82c0f68aa35756757aa54bd1a2d2414b8",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "6848a9066df6e367716e76c38fab41c1a5132e0e694ae7d8b912b650b1cb656f",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "messages/en.json": "19012a49dc2733e27bf590b6c12fa1aca98cd241c9ab11f934e1e23a81e8da30",
+    "messages/fr.json": "b6a4486b364fd9c1d24f84e233495c74129fb5027a86832b8aedbb405cc230f6"
+  },
+  "sourceStable": false
+}

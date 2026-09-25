@@ -95,7 +95,7 @@ export const customersRouteCatalog: CustomersRouteSurface[] = [
     module: {
       moduleSlug: "accounting",
       surface: "/dashboard/customers/[id]/statement",
-      accessIntent: "export",
+      accessIntent: "read",
       mode: "enforce",
     },
   },

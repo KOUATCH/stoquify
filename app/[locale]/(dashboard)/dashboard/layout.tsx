@@ -5,6 +5,9 @@ import { localizePath, pickLocale } from "@/i18n/routing";
 import { RbacError, requireRbacContext } from "@/lib/security/rbac";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
+import { getModuleNavigationSnapshot } from "@/services/modules/module-navigation.service";
+import { headers } from "next/headers";
+import { DASHBOARD_REQUEST_PATH_HEADER, dashboardLoginRecoveryHref } from "@/lib/security/dashboard-session-recovery";
 
 export default async function DashboardLayout({
   children,
@@ -15,9 +18,10 @@ export default async function DashboardLayout({
 }) {
   const { locale: rawLocale } = await params
   const locale = pickLocale(rawLocale)
+  const loginHref = async () => dashboardLoginRecoveryHref((await headers()).get(DASHBOARD_REQUEST_PATH_HEADER), locale)
   const session = await getSession()
   if (!session?.user) {
-    redirect(localizePath("/login", locale))
+    redirect(await loginHref())
   }
 
   let rbacContext: Awaited<ReturnType<typeof requireRbacContext>>
@@ -26,7 +30,7 @@ export default async function DashboardLayout({
   } catch (error) {
     if (error instanceof RbacError) {
       if (error.code === "UNAUTHENTICATED") {
-        redirect(localizePath("/login", locale))
+        redirect(await loginHref())
       }
       if (error.code === "EMAIL_NOT_VERIFIED") {
         redirect(localizePath("/login?error=email-not-verified", locale))
@@ -48,6 +52,7 @@ export default async function DashboardLayout({
       permissions: rbacContext.permissions,
       organizationId: rbacContext.orgId,
       organizationName: rbacContext.organizationName ?? rbacContext.user.organizationName,
+      moduleNavigation: await getModuleNavigationSnapshot(rbacContext.orgId),
     },
   }
 

@@ -1,11 +1,13 @@
 import "server-only"
 
+import type { Prisma } from "@prisma/client"
 import { db } from "@/prisma/db"
 import {
   BusinessRuleError,
   ConflictError,
   ForbiddenError,
   NotFoundError,
+  getPrismaKnownRequest,
 } from "@/services/_shared/action-errors"
 import {
   hasRbacPermission,
@@ -20,6 +22,7 @@ import {
   createCopilotProposalSchema,
   decideCopilotProposalSchema,
   listCopilotProposalsSchema,
+  copilotEvidenceRefSchema,
   type CreateCopilotProposalInput,
   type DecideCopilotProposalInput,
 } from "./copilot-proposal.schemas"
@@ -110,37 +113,6 @@ export async function createCopilotProposal(
     )
   }
 
-  const run = await db.agentRun.findFirst({
-    where: {
-      id: input.runId,
-      organizationId,
-      actorId,
-      status: "COMPLETED",
-    },
-    select: {
-      id: true,
-      periodStart: true,
-      periodEnd: true,
-      completedAt: true,
-      evidenceLinks: {
-        select: {
-          subjectType: true,
-          subjectId: true,
-          sourceModule: true,
-          sourceHash: true,
-          evidenceGrade: true,
-          freshness: true,
-          available: true,
-        },
-      },
-    },
-  })
-  if (!run) {
-    throw new NotFoundError("A completed tenant-scoped copilot run was not found.")
-  }
-  assertRunProvenance(input, run, now)
-  assertEvidenceBound(input, run.evidenceLinks)
-
   const evidenceRefs = input.evidence.map((item) => ({
     ...item,
     sourceHash: item.sourceHash || null,
@@ -168,6 +140,7 @@ export async function createCopilotProposal(
   })
 
   const proposal = await db.$transaction(async (tx) => {
+    await assertCurrentProposalEvidence(tx, organizationId, actorId, input, now)
     const existing = await tx.aiActionProposal.findUnique({
       where: {
         organizationId_idempotencyKey: {
@@ -212,7 +185,7 @@ export async function createCopilotProposal(
       eventSource: "INTERNAL",
       idempotencyKey: `ai-action-proposal-created:${created.id}`,
       actorId,
-      sourceType: "AiActionProposal",
+      sourceEntityType: "AiActionProposal",
       sourceId: created.id,
       documentHash: sourceHash,
       payload: {
@@ -237,7 +210,7 @@ export async function createCopilotProposal(
       ],
     })
     return created
-  })
+  }, { isolationLevel: "Serializable" }).catch(rethrowProposalWriteError)
 
   return toDto(proposal)
 }
@@ -257,11 +230,29 @@ export async function decideCopilotProposal(
     })
     if (!current) throw new NotFoundError("Copilot proposal was not found.")
     assertPermission(actorPermissions, current.requiredPermission)
+    if (current.status === input.decision && current.decidedById === actorId
+      && current.decisionReason === input.reason) {
+      // A lost response does not turn an already recorded decision into a new one.
+      return toDto(current)
+    }
     if (current.status !== "DRAFT") {
       throw new ConflictError("Copilot proposal has already been decided.")
     }
     if (current.expiresAt <= now) {
       throw new BusinessRuleError("Copilot proposal has expired.")
+    }
+
+    if (input.decision === "ACCEPTED") {
+      const evidence = copilotEvidenceRefSchema.array().min(1).max(12).safeParse(current.evidenceRefs)
+      if (!evidence.success) {
+        throw new BusinessRuleError("Copilot proposal evidence is unavailable. Refresh the analysis before accepting.")
+      }
+      // Revalidate the creator's run, not the reviewer's own run. Rejection stays
+      // available when evidence was withdrawn or downgraded after drafting.
+      await assertCurrentProposalEvidence(tx, organizationId, current.createdById, {
+        runId: current.runId, evidence: evidence.data, periodStart: current.periodStart,
+        periodEnd: current.periodEnd, asOf: current.asOf, expiresAt: current.expiresAt,
+      }, now)
     }
 
     const transitioned = await tx.aiActionProposal.updateMany({
@@ -296,7 +287,7 @@ export async function decideCopilotProposal(
       eventSource: "INTERNAL",
       idempotencyKey: `${eventType.toLowerCase()}:${decided.id}`,
       actorId,
-      sourceType: "AiActionProposal",
+      sourceEntityType: "AiActionProposal",
       sourceId: decided.id,
       documentHash: decided.sourceHash,
       payload: {
@@ -322,7 +313,7 @@ export async function decideCopilotProposal(
 
     // Acceptance records human intent only. It never invokes the target workflow.
     return toDto(decided)
-  })
+  }, { isolationLevel: "Serializable" }).catch(rethrowProposalWriteError)
 }
 
 export async function listCopilotProposals(
@@ -339,6 +330,14 @@ export async function listCopilotProposals(
     take: input.limit,
   })
   return rows.map(toDto)
+}
+
+function rethrowProposalWriteError(error: unknown): never {
+  const code = getPrismaKnownRequest(error)?.code
+  if (code === "P2034" || code === "P2002") {
+    throw new ConflictError("The proposal or its evidence changed concurrently. Refresh and review before retrying.")
+  }
+  throw error
 }
 
 function assertPermission(
@@ -397,8 +396,33 @@ async function recordUnsafeProposalAttempt(input: {
   })
 }
 
+type ProposalEvidenceInput = Pick<CreateCopilotProposalInput,
+  "runId" | "evidence" | "periodStart" | "periodEnd" | "asOf" | "expiresAt">
+
+async function assertCurrentProposalEvidence(
+  client: Pick<Prisma.TransactionClient, "agentRun">,
+  organizationId: string,
+  actorId: string,
+  input: ProposalEvidenceInput,
+  now: Date,
+) {
+  const run = await client.agentRun.findFirst({
+    where: { id: input.runId, organizationId, actorId, status: "COMPLETED" },
+    select: {
+      periodStart: true, periodEnd: true, completedAt: true,
+      evidenceLinks: { select: {
+        subjectType: true, subjectId: true, sourceModule: true, sourceHash: true,
+        evidenceGrade: true, freshness: true, available: true,
+      } },
+    },
+  })
+  if (!run) throw new NotFoundError("A completed tenant-scoped copilot run was not found.")
+  assertRunProvenance(input, run, now)
+  assertEvidenceBound(input, run.evidenceLinks)
+}
+
 function assertEvidenceBound(
-  input: CreateCopilotProposalInput,
+  input: ProposalEvidenceInput,
   stored: Array<{
     subjectType: string
     subjectId: string
@@ -420,15 +444,17 @@ function assertEvidenceBound(
         "Copilot proposals require available, non-blocked source evidence.",
       )
     }
-    const match = stored.some(
+    const matches = stored.filter(
       (item) =>
         item.subjectType === evidence.subjectType &&
         item.subjectId === evidence.subjectId &&
         item.sourceModule === evidence.sourceModule &&
-        (item.sourceHash || null) === (evidence.sourceHash || null) &&
-        item.available,
+        (item.sourceHash || null) === (evidence.sourceHash || null),
     )
-    if (!match) {
+    if (!matches.length || matches.some((item) =>
+      item.evidenceGrade !== evidence.evidenceGrade ||
+      item.freshness.toLowerCase() !== evidence.freshness || !item.available,
+    )) {
       throw new BusinessRuleError(
         "Copilot proposal evidence is not bound to the selected run.",
       )
@@ -437,7 +463,7 @@ function assertEvidenceBound(
 }
 
 function assertRunProvenance(
-  input: CreateCopilotProposalInput,
+  input: ProposalEvidenceInput,
   run: {
     periodStart: Date | null
     periodEnd: Date | null

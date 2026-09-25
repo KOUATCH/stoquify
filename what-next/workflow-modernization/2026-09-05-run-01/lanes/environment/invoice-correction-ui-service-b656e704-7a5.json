@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-08T12:46:03.536Z",
+  "run": "b656e704-7a5",
+  "checks": [
+    {
+      "name": "prefill is maker and tenant scoped, serializable and preserves own receipt capacity",
+      "status": "passed"
+    },
+    {
+      "name": "stale evidence is not prefilled as verified document identity",
+      "status": "passed"
+    },
+    {
+      "name": "preview binds before and after source, independent approver sees correction reason",
+      "status": "passed"
+    },
+    {
+      "name": "replaying earlier correction after second correction and posting is explicitly historical",
+      "status": "passed"
+    },
+    {
+      "name": "prefill query rejects client authority and invalid cursor fields",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e"
+  },
+  "originalBefore": "d3222543b0f77839d95eaf8644d7b9a7457b88353668597a80fa362054610f97",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/invoice-correction.service.ts": "e6bd178e14e04af651979b051b319fc1e99100d598eaf54f071d8d9ec399fd60",
+    "services/purchasing/invoice-correction-contracts.ts": "6fd9ab610273137d0cbb345af003af0a8dc52257c822213920a8513148d0c6da",
+    "services/purchasing/invoice-correction-authority.ts": "e0ffade5b59761235cfd2bf77f602ecbb4ae6fc33c4cd7fab47acf9cc957bbee",
+    "services/purchasing/invoice-approval.service.ts": "62c4a6d8b6fb052081f3ae28a2e19053fdfb55e33aa905b354bb73d86c7507d6",
+    "services/purchasing/invoice-approval-contracts.ts": "30b0391aae9be56486b66f48ed9593195d49b7f97aded3e5a180d8740e8fe963",
+    "services/purchasing/invoice-preparation-evidence.ts": "7689d2595ba658265a72678e4b0244c5345c26e1a19f659c73f9b3d925f52495",
+    "actions/purchasing/invoice-correction.actions.ts": "2db23421d2a779dd8641a9218eada90e5afcf5448cbcc0fe62d9825f25e4fa2e"
+  },
+  "sourceStable": true
+}

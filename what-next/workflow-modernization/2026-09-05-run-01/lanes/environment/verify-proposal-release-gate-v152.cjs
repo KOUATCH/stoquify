@@ -1,0 +1,5 @@
+const f=require('./statement-recipient-fixtures.cjs'),{db,fs,path,assert}=f;
+const {authorizeCopilotProposalRelease}=require(path.join(f.root,'services/ai/copilot-proposal-release.service.ts'));
+const result={at:new Date().toISOString(),scope:'Read-only owned database; no activation package or governance evidence written.'};
+async function main(){await f.helper.withClient(f.target,f.helper.assertOwned);const org=await db.organization.findUniqueOrThrow({where:{slug:'proposal-evidence-036abd66-57c2-4387-b3f6-646a7800046d'}});result.activationPackages=await db.agentActivationPackage.count({where:{organizationId:org.id,agentKey:'cash-reconciliation-agent'}});assert.equal(result.activationPackages,0);await assert.rejects(authorizeCopilotProposalRelease({organizationId:org.id,roleCodes:['finance_manager']}),e=>e.code==='FORBIDDEN');result.releaseGateDenied=true;result.passed=true}
+main().catch(e=>{result.error=f.safe(e);result.passed=false;process.exitCode=1}).finally(async()=>{fs.writeFileSync(path.join(__dirname,'proposal-release-gate-v152.json'),JSON.stringify(result,null,2),{flag:'wx'});console.log(JSON.stringify(result));await db.$disconnect()});

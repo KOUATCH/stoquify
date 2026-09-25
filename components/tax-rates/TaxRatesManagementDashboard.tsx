@@ -1,5 +1,7 @@
 "use client"
 
+import { DataTableSearch } from "@/components/DataTableComponents/DataTableSearch"
+
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import {
   type ColumnDef,
@@ -29,7 +31,6 @@ import {
   Power,
   ReceiptText,
   RefreshCw,
-  Search,
   ShieldCheck,
   Trash2,
   XCircle,
@@ -809,18 +810,10 @@ export default function TaxRatesManagementDashboard({
         </div>
 
         <div className="dashboard-glass-panel rounded-lg border border-[var(--dash-border-subtle)] p-4">
-          <div className="dashboard-table-toolbar mb-4 grid gap-3 xl:grid-cols-[minmax(0,1fr)_10rem_10rem_10rem_auto]">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--dash-text-faint)]" />
-              <Input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder={t.search}
-                className="dashboard-control h-11 rounded-lg pl-10"
-              />
-            </div>
+          <div className="dashboard-table-toolbar mb-4 flex flex-nowrap items-center gap-3 overflow-x-auto pb-1">
+            <div className="min-w-48 flex-1"><DataTableSearch value={search} onChange={(value) => { setSearch(value); table.setPageIndex(0) }} placeholder={t.search} clearButtonLabel={locale === "fr" ? "Effacer la recherche" : "Clear table search"} /></div>
             <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as TaxType | "all")}>
-              <SelectTrigger className="dashboard-control h-11 rounded-lg">
+              <SelectTrigger className="dashboard-control h-9 w-40 shrink-0 rounded-lg">
                 <SelectValue placeholder={t.type} />
               </SelectTrigger>
               <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -831,7 +824,7 @@ export default function TaxRatesManagementDashboard({
               </SelectContent>
             </Select>
             <Select value={rateFilter} onValueChange={(value) => setRateFilter(value as RateFilter)}>
-              <SelectTrigger className="dashboard-control h-11 rounded-lg">
+              <SelectTrigger className="dashboard-control h-9 w-40 shrink-0 rounded-lg">
                 <SelectValue placeholder={t.rateBand} />
               </SelectTrigger>
               <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -843,7 +836,7 @@ export default function TaxRatesManagementDashboard({
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)}>
-              <SelectTrigger className="dashboard-control h-11 rounded-lg">
+              <SelectTrigger className="dashboard-control h-9 w-40 shrink-0 rounded-lg">
                 <SelectValue placeholder={t.status} />
               </SelectTrigger>
               <SelectContent className="border-[var(--dash-border-subtle)] bg-[var(--dash-surface-raised)] text-[var(--dash-text)]">
@@ -852,7 +845,7 @@ export default function TaxRatesManagementDashboard({
                 <SelectItem value="inactive">{t.inactive}</SelectItem>
               </SelectContent>
             </Select>
-            <Button type="button" variant="outline" onClick={exportTaxRates} className="dashboard-button-secondary h-11 rounded-lg">
+            <Button type="button" variant="outline" onClick={exportTaxRates} className="dashboard-button-secondary h-9 shrink-0 rounded-lg">
               <Download className="h-4 w-4" />
               {t.export}
             </Button>

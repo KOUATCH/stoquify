@@ -7,6 +7,7 @@ import {
   BadgeCheck,
   BriefcaseBusiness,
   CheckCircle2,
+  ChevronDown,
   ClipboardCheck,
   FileCheck2,
   Landmark,
@@ -20,10 +21,11 @@ import {
   Users,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { useMemo, useState } from "react"
 
 import { Link } from "@/i18n/navigation"
+import { productCommunicationCopy, workflowGuidance } from "./public-product-copy"
 import {
   getWorkflowAtlasOutcomesForRole,
   getWorkflowAtlasWorkflowsForSelection,
@@ -59,6 +61,8 @@ function classNames(...values: Array<string | false | null | undefined>) {
 
 export function WorkflowAtlas() {
   const t = useTranslations("landing.workflowAtlas")
+  const locale = useLocale() === "fr" ? "fr" : "en"
+  const copy = productCommunicationCopy[locale]
   const [activeRole, setActiveRole] = useState<ActiveRole>("all")
   const [activeOutcome, setActiveOutcome] = useState<ActiveOutcome>("all")
 
@@ -108,13 +112,14 @@ export function WorkflowAtlas() {
         <div className="relative mx-auto max-w-7xl">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(24rem,0.85fr)] lg:items-stretch">
             <div className="flex min-h-[24rem] flex-col justify-center">
-              <div className="eyebrow mb-4">{t("eyebrow")}</div>
+              <div className="eyebrow mb-4">{copy.guideEyebrow}</div>
               <h1 className="display max-w-3xl text-4xl text-[var(--text-hi)] sm:text-5xl lg:text-6xl">
-                {t("title")}
+                {copy.guideTitle}
               </h1>
               <p className="mt-6 max-w-2xl body-text text-lg leading-8 text-[var(--text-lo)]">
-                {t("description")}
+                {copy.guideIntro}
               </p>
+              <p className="mt-4 max-w-2xl body-text text-sm leading-6 text-[var(--text-faint)]">{copy.guideNote}</p>
               <div className="mt-7 grid gap-3 sm:grid-cols-3" data-workflow-hero-metrics>
                 <div className="rounded-lg border border-[var(--rule-1)] px-3 py-3">
                   <div className="data-text text-[0.68rem] font-semibold uppercase text-[var(--accent-hi)]">
@@ -212,7 +217,7 @@ export function WorkflowAtlas() {
                 href="/login"
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent-hi)] px-4 py-3 body-text text-sm font-semibold text-[var(--ink-0)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-hi)]"
               >
-                {t("openProtected", { route: t("routeLabels.dailyDigest") })}
+                {copy.signIn}
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
             </aside>
@@ -234,7 +239,7 @@ export function WorkflowAtlas() {
                   {t("roleHubLabel")}
                 </div>
                 <div
-                  className="mt-3 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
+                  className="mt-3 flex flex-wrap gap-2"
                   role="group"
                   aria-labelledby="workflow-role-label"
                   aria-label={t("roleLensLabel")}
@@ -282,7 +287,7 @@ export function WorkflowAtlas() {
                   })}
                 </p>
                 <div
-                  className="mt-3 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
+                  className="mt-3 flex flex-wrap gap-2"
                   role="group"
                   aria-labelledby="workflow-outcome-label"
                   aria-describedby="workflow-outcome-context"
@@ -333,14 +338,14 @@ export function WorkflowAtlas() {
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-6 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
             <div>
-              <div className="eyebrow mb-4 !text-[var(--accent)]">{t("dailyHubEyebrow")}</div>
+              <div className="eyebrow mb-4 !text-[var(--accent-hi)]">{t("dailyHubEyebrow")}</div>
               <h2 className="display text-4xl sm:text-5xl">{t("dailyHubTitle")}</h2>
               <p className="mt-4 body-text text-base leading-7 text-[var(--color-text-on-paper-muted)]">
                 {t("dailyHubBody")}
               </p>
             </div>
             <div className="rounded-lg border border-[var(--paper-rule)] bg-[var(--paper-1)] px-5 py-5">
-              <div className="data-text text-xs font-semibold uppercase text-[var(--accent)]">
+              <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">
                 {t("selectionLabel")}
               </div>
               <p
@@ -432,11 +437,17 @@ export function WorkflowAtlas() {
             <h2 className="display text-4xl text-[var(--text-hi)] sm:text-5xl">{t("libraryTitle")}</h2>
             <p className="mt-4 body-text text-base leading-7 text-[var(--text-lo)]">{t("libraryBody")}</p>
           </div>
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+          <div className="mt-8 grid items-start gap-4 lg:grid-cols-2">
             {visibleWorkflows.map((workflow, index) => (
               <WorkflowPlaybookCard key={workflow.key} workflow={workflow} index={index} />
             ))}
           </div>
+        </div>
+      </section>
+      <section className="section-divider bg-[var(--paper-0)] px-6 py-14 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div><h2 className="display text-3xl text-[var(--text-hi)]">{copy.readyTitle}</h2><p className="body-text mt-3 max-w-2xl text-sm leading-7 text-[var(--text-lo)]">{copy.readyBody}</p></div>
+          <Link href="/register" className="body-text inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-[var(--color-brand-action)] px-5 py-3 text-sm font-semibold text-white">{copy.create}<ArrowRight className="size-4" aria-hidden="true" /></Link>
         </div>
       </section>
     </main>
@@ -444,6 +455,7 @@ export function WorkflowAtlas() {
 
   function WorkflowPlaybookCard({ workflow, index, featured = false }: { workflow: WorkflowAtlasWorkflow; index: number; featured?: boolean }) {
     const Icon = iconMap[workflow.icon]
+    const guide = workflowGuidance[locale][workflow.key]
     const firstControl = workflow.controlKeys[0]
     const firstEvidence = workflow.evidenceKeys[0]
     const mapNodes = [
@@ -453,12 +465,20 @@ export function WorkflowAtlas() {
       { key: "destination", label: t("destinationLabel"), value: t(`workflows.${workflow.key}.destination`) },
     ]
 
+    if (featured) return (
+      <article data-workflow-atlas-section={workflow.key} className="flex flex-col rounded-xl border border-[var(--paper-rule)] bg-[var(--paper-1)] p-5">
+        <div className="flex items-center gap-3"><Icon className="size-5 shrink-0 text-[var(--accent-hi)]" aria-hidden="true" /><h3 className="body-text text-lg font-semibold text-[var(--text-hi)]">{t(`workflows.${workflow.key}.shortTitle`)}</h3></div>
+        <p className="body-text mt-4 flex-1 text-sm leading-7 text-[var(--text-lo)]">{guide.result}</p>
+        <a href={`#workflow-${workflow.key}`} className="body-text mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-[var(--accent-hi)] underline underline-offset-4">{copy.details}<ArrowRight className="size-4" aria-hidden="true" /></a>
+      </article>
+    )
+
     return (
       <article
         id={featured ? undefined : `workflow-${workflow.key}`}
         data-workflow-atlas-section={workflow.key}
         className={classNames(
-          "rounded-lg border p-5",
+          "scroll-mt-24 rounded-xl border p-5",
           featured
             ? "border-[var(--paper-rule)] bg-[var(--paper-1)]"
             : "border-[var(--rule-1)] bg-[var(--ink-2)] text-[var(--text-hi)]",
@@ -492,8 +512,25 @@ export function WorkflowAtlas() {
         </div>
 
         <p className={classNames("mt-4 body-text text-sm leading-7", featured ? "text-[var(--color-text-on-paper-muted)]" : "text-[var(--text-lo)]")}>
-          {t(`workflows.${workflow.key}.dailyUse`)}
+          {guide.result}
         </p>
+
+        <div className="mt-4 flex flex-wrap gap-2" aria-label={t("roleLabel")}>
+          {workflow.roles.map(role => <span key={role} className="body-text rounded-full border border-[var(--rule-2)] px-2.5 py-1 text-xs text-[var(--text-lo)]">{t(`roles.${role}`)}</span>)}
+        </div>
+        <div data-workflow-prerequisites className="mt-5 border-l-2 border-[var(--color-spruce)] pl-4">
+          <h4 className="body-text text-sm font-semibold text-[var(--text-hi)]">{copy.prerequisites}</h4>
+          <p className="body-text mt-1 text-sm leading-6 text-[var(--text-lo)]">{guide.prerequisites}</p>
+        </div>
+
+        <details className="group mt-5 border-t border-[var(--rule-2)]">
+          <summary className="body-text flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 py-3 text-sm font-semibold text-[var(--accent-hi)] [&::-webkit-details-marker]:hidden">{copy.details}<ChevronDown className="size-4 shrink-0 group-open:rotate-180" aria-hidden="true" /></summary>
+          <div data-workflow-handoff className="mt-2">
+            <h4 className="body-text font-semibold">{copy.handoff}</h4>
+            <p className="body-text mt-2 text-sm leading-7 text-[var(--text-lo)]">{guide.handoff}</p>
+            <h4 className="body-text mt-4 font-semibold">{copy.execution}</h4>
+            <p className="body-text mt-2 text-sm leading-7 text-[var(--text-lo)]">{guide.execution}</p>
+          </div>
 
         <div className="mt-5 border-y border-current/15 py-4" data-workflow-best-next-action>
           <div className="flex items-center gap-2 data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">
@@ -505,26 +542,26 @@ export function WorkflowAtlas() {
 
         <div className="mt-5" data-workflow-visual-map>
           <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">{t("mapLabel")}</div>
-          <div className="mt-3 grid gap-2 md:grid-cols-4">
+          <ol className="mt-3 grid gap-2 sm:grid-cols-2">
             {mapNodes.map((node) => (
-              <div key={node.key} className="min-h-[7rem] rounded-md border border-current/15 p-3">
+              <li key={node.key} className="min-h-[7rem] rounded-md border border-current/15 p-3">
                 <div className="data-text text-[0.68rem] font-semibold uppercase text-[var(--accent-hi)]">{node.label}</div>
                 <p className="mt-2 body-text text-sm font-semibold leading-6">{node.value}</p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
 
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           <div>
-            <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">{t("fastPathLabel")}</div>
+            <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">{copy.ownership}</div>
             <ol className="mt-3 grid gap-2">
-              {workflow.stepKeys.slice(0, 4).map((stepKey, stepIndex) => (
+              {workflow.stepKeys.map((stepKey, stepIndex) => (
                 <li key={stepKey} data-workflow-atlas-step={stepKey} className="flex items-start gap-2 body-text text-sm leading-6">
                   <span className="data-text mt-0.5 text-[0.68rem] font-semibold text-[var(--accent-hi)]">
                     {String(stepIndex + 1).padStart(2, "0")}
                   </span>
-                  <span>{t(`workflows.${workflow.key}.steps.${stepKey}`)}</span>
+                  <span><span className="mb-1 block text-xs font-semibold text-[var(--color-spruce)]">{guide.owners[stepIndex]}</span>{t(`workflows.${workflow.key}.steps.${stepKey}`)}</span>
                 </li>
               ))}
             </ol>
@@ -533,7 +570,7 @@ export function WorkflowAtlas() {
           <div>
             <div className="data-text text-xs font-semibold uppercase text-[var(--accent-hi)]">{t("controlLabel")}</div>
             <ul className="mt-3 grid gap-2">
-              {workflow.controlKeys.slice(0, 3).map((controlKey) => (
+              {workflow.controlKeys.map((controlKey) => (
                 <li key={controlKey} data-workflow-atlas-control={controlKey} className="flex items-start gap-2 body-text text-sm leading-6">
                   <BadgeCheck className="mt-1 size-4 shrink-0 text-[var(--signal-up)]" aria-hidden="true" />
                   <span>{t(`workflows.${workflow.key}.controls.${controlKey}`)}</span>
@@ -541,6 +578,11 @@ export function WorkflowAtlas() {
               ))}
             </ul>
           </div>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-[var(--rule-2)] p-4">
+          <h4 className="body-text text-sm font-semibold">{copy.records}</h4>
+          <ul className="body-text mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--text-lo)]">{workflow.evidenceKeys.map(key => <li key={key}>{t(`workflows.${workflow.key}.evidence.${key}`)}</li>)}</ul>
         </div>
 
         <div className="mt-5 border-t border-current/15 pt-5">
@@ -573,6 +615,7 @@ export function WorkflowAtlas() {
               ))}
           </div>
         </div>
+        </details>
       </article>
     )
   }
@@ -586,5 +629,3 @@ function SummaryMetric({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
-
-

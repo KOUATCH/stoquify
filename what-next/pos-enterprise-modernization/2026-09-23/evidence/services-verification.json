@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-09-24T03:35:04.4798815Z",
+  "revision": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": [
+    {
+      "path": "services/pos/pos.service.ts",
+      "sha256": "F20894CE31EB92C9F99610102F768386A6A780E6EBC99239EE27B9632F972470"
+    },
+    {
+      "path": "services/pos/__tests__/pos.service.test.ts",
+      "sha256": "3C57CE6B16598379A6B5D091EBD80E412F9273949ED3928664C27FF29289EBD8"
+    },
+    {
+      "path": "services/pos/__tests__/pos-shift-close.postgres.test.ts",
+      "sha256": "35A565916316D6AF1645B95337DCC4EF4E1B0999A9A08302B0E996E674EDCF6C"
+    },
+    {
+      "path": "services/pos/__tests__/pos-commit-result.postgres.test.ts",
+      "sha256": "D681CD7191934446DE0DC8F429B58BF73A930763E1CCDCA7C784326AF0E6FCB3"
+    },
+    {
+      "path": "services/pos/__tests__/pos-corrections.postgres.test.ts",
+      "sha256": "37080458898B77FBE30F26387ED2CC06DEA7C2ECEF1A0F0BDFAD97C8A0290655"
+    },
+    {
+      "path": "services/pos/__tests__/checkout-lifecycle.postgres.test.ts",
+      "sha256": "868CD3710F81042BF2B27C9A141E58E547EE4FAA449F310DC6BB31F88A760E57"
+    },
+    {
+      "path": "services/pos/__tests__/pos-full-commit.postgres.test.ts",
+      "sha256": "2965BEA2BFD2A34708DA81F35E19A8C00B29DBB8B62DB259EC2520DCC1CEF9AA"
+    },
+    {
+      "path": "what-next/pos-enterprise-modernization/2026-09-23/evidence/run-pos-postgres-existing.cjs",
+      "sha256": "E2C75ADE989EC55672617EA326A238018B3E7DB38B9DA4E004AAE7391E06A39E"
+    },
+    {
+      "path": "what-next/pos-enterprise-modernization/2026-09-23/evidence/apply-approved-posting-cycle-disposable.cjs",
+      "sha256": "9FE99075A5951F527E299DC57AC9F9E0B43D4CB3E51733492F13CA29E78EE112"
+    },
+    {
+      "path": "what-next/pos-enterprise-modernization/2026-09-23/evidence/audit-pos-schema.cjs",
+      "sha256": "0B8CA9A657EE5DCA710403280C20CC59C9D9DCB95BB202B84BA5982CDB30EC68"
+    }
+  ],
+  "serviceRegression": {
+    "exit": 0,
+    "tests": 109,
+    "log": "services-regression-final.log",
+    "suites": 6
+  },
+  "eslint": {
+    "exit": 0,
+    "log": "services-eslint-final.log"
+  },
+  "diffCheck": {
+    "exit": 0,
+    "note": "CRLF normalization warnings only"
+  },
+  "postgres": {
+    "corrections": 4,
+    "lifecycle": 5,
+    "commit": 3,
+    "distinctTests": 21,
+    "close": 7,
+    "scope": "See services-review.md for mocks, cloned schema boundaries and integration limitations",
+    "database": "stoquify_pos_audit_20260923_d1532fb1",
+    "fullCommit": 2,
+    "fullCommitEvidence": "services-postgres-exits-full-commit.json"
+  },
+  "fullCommitEslint": {
+    "exit": 0,
+    "log": "services-full-commit-eslint-final.log"
+  },
+  "approvedDisposableMigration": {
+    "exit": 0,
+    "evidence": "postgres-approved-posting-cycle.json",
+    "applicationDatabaseExcluded": true
+  },
+  "applicationSchemaBlocker": {
+    "column": "ledger_posting_batches.postingCycle",
+    "status": "MISSING IN APPLICATION; PRESENT IN APPROVED DISPOSABLE",
+    "evidence": "pos-schema-column-audit.json"
+  }
+}

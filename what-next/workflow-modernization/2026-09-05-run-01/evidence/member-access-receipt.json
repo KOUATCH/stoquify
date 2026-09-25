@@ -1,0 +1,210 @@
+{
+  "recordedAt": "2026-09-06T13:44:21.863Z",
+  "baseline": "evidence/source-baseline-v29.json",
+  "sources": {
+    "services/users/member-access.service.ts": "877484c8a61443da6d5e90052c71b02aaebce7655ea2a0a525c55db8e43d9863",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "services/users/member-access-policy.ts": "89bc640e260d2c55912708ba7746925eb92667a7ad51ac36060ecd7646030947",
+    "services/users/member-access-input.ts": "30c52c5944c8db3155fa63d71edc922f67961114bac968f979b3506c89754047",
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/roles/role-write.service.ts": "986e554af046c1c86064c129c8e48d00d07ee8f3f5e899dc922eb2d7b7a162fb",
+    "services/roles/role-permission-policy.ts": "d5926f6022512d8ad3bcf6b58d27dd4a245a0884a7bd8b1a5bd17b475a05b267",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "hooks/useMemberAccess.ts": "b8fbd52fd866b8ba52abd1b1ad6b69dd17564748fabd3a0ec9072e79b2288082",
+    "components/settings/MemberAccessEditor.tsx": "acbdc649fa3d44a66f962ff9b8f3c0bfe5953e9f13f51dfa36d5486530bb43f1",
+    "components/settings/member-access-copy.ts": "32224403e66b520862e3caa7e9ee76e2cd7da6fd171c7838c92ca61e71b6ae95",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "25085e83405e70c638bbbee69018012608b40bf8cc439140189ae1237982ad84",
+    "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "components/settings/__tests__/MemberReceiptContinuity.test.tsx": "8f3d9195fe75d23dda5ed1d1bed9d7699ded44004eb797eb53b27222217b9ccc",
+    "components/settings/__tests__/MemberAccessEditor.workflow.test.tsx": "412e9080da1d105fe1549c1bcb73bec523ce3c54ba1712b63a39e24156493759",
+    "lib/security/__tests__/rbac.test.ts": "b655eaef01e12a83f047d1ca402be324f77c6e3b30eb2230ef79706c74bd299c",
+    "components/settings/__tests__/UserDirectory.workflow.test.tsx": "4b6659e661868d372aec2797de7e543940902597d3039db3400b2aaad6e5fd46",
+    "lib/security/__tests__/rbac-permissions.test.ts": "d82dde80875fba2b6f5ac12f3193ecb09a544b30ff74a43a0f2612605d60bcca",
+    "services/users/__tests__/member-access.service.test.ts": "045d649259d96d92d546ec5d99ac9f98c959be3d20d7777b7faeb640f5dce406",
+    "services/users/__tests__/user-invitation-history.service.test.ts": "f881aef02a69325eac7f80f639d59c95950aad82d83d6e357d43ca438bc42a63",
+    "services/users/__tests__/user-invitation-redemption-authority.service.test.ts": "c38b1c359bb66f4eab393b1e4d1913a80523401373b882ac60856fa5f2383d59",
+    "services/roles/__tests__/role.service.test.ts": "47947e2f4f0db4bc7d38e8a101a7f3873c4ff3f5bd029d3ffeb5f1d62dc478e4",
+    "services/users/__tests__/user-lifecycle.service.test.ts": "e5d89a58a5e59ab105ac0a7284df5a1d633260b88996ac29ff85ef5e39606ea4",
+    "actions/roles/__tests__/role-actions.test.ts": "7509ec4e6c27f5063424b8b81f3b02a626378523796f1f7635ee839756233f06",
+    "services/users/__tests__/user-invitation-issuance.service.test.ts": "8e4600e54830bfc73be63750b1cb0caf3efd7617107396fe02a3e4cd8bf0b58f",
+    "actions/users/__tests__/member-access.actions.test.ts": "a2f964d5c68a069caccc5cd3f05e9f3960e448c4d5fd8ec17eb50e7a4f63e1de",
+    "services/users/__tests__/user-invitation-options.service.test.ts": "d7781e25fa3dc0b6f776db51efa97ce54cdbd2bbb73f2543f2656c9badbbf3d5",
+    "services/security/__tests__/role-grant-policy.service.test.ts": "38b36bbad554a1983a1c7ce2d3c56b10131578e2216fff98f898d976562d7b7c",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "57619f0b4f8b3364b316009c9ba755451ed4f0087e56aa15d0e447addad0e276",
+    "app/[locale]/(dashboard)/dashboard/settings/users/layout.tsx": "c61f797c8344236a238b9de9749552ae7a92e4e09024b1c3b19889ed7eaf1b9d",
+    "config/useAuth.ts": "44d0310db7016117716c04dde047ab0493449e86de843f7624117c49151497ce"
+  },
+  "scope": [
+    "OA-USER-EDIT",
+    "OA-MEMBER-ROLES",
+    "OA-REACTIVATE",
+    "OA-MEMBER-HISTORY",
+    "OA-USERS",
+    "OA-DEACTIVATE",
+    "OA-ROLE-UPDATE"
+  ],
+  "tests": {
+    "nativeReport": "evidence/member-access-tests-02.json",
+    "passed": 259,
+    "failed": 0,
+    "suites": 15,
+    "chunk": "dfb344",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/settings/__tests__/MemberReceiptContinuity.test.tsx\" \"components/settings/__tests__/MemberAccessEditor.workflow.test.tsx\" \"lib/security/__tests__/rbac.test.ts\" \"components/settings/__tests__/UserDirectory.workflow.test.tsx\" \"lib/security/__tests__/rbac-permissions.test.ts\" \"services/users/__tests__/member-access.service.test.ts\" \"services/users/__tests__/user-invitation-history.service.test.ts\" \"services/users/__tests__/user-invitation-redemption-authority.service.test.ts\" \"services/roles/__tests__/role.service.test.ts\" \"services/users/__tests__/user-lifecycle.service.test.ts\" \"actions/roles/__tests__/role-actions.test.ts\" \"services/users/__tests__/user-invitation-issuance.service.test.ts\" \"actions/users/__tests__/member-access.actions.test.ts\" \"services/users/__tests__/user-invitation-options.service.test.ts\" \"services/security/__tests__/role-grant-policy.service.test.ts\" --json --outputFile=evidence/member-access-tests-02.json"
+  },
+  "postgres": {
+    "file": "lanes/environment/member-access-postgres-3c70fd34-53a.json",
+    "passed": 8,
+    "failed": 0,
+    "chunk": "7f6c6b",
+    "command": "node lanes/environment/verify-member-access.cjs"
+  },
+  "browser": {
+    "file": "lanes/environment/member-access-browser-67c765b7-040.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "4ed42f",
+    "command": "node lanes/environment/verify-member-access-browser.cjs",
+    "screenshots": [
+      {
+        "file": "evidence/member-access/en-member-access-reader-67c765b7-040.png",
+        "sha256": "f22680d220bc261faf57114fabeea51009c02e7232eef8d05340aa743a2c8ee8"
+      },
+      {
+        "file": "evidence/member-access/en-member-access-review-mobile-67c765b7-040.png",
+        "sha256": "5163fae57fcdfee303f369edeb495ea5a97185a19e0178faad306e200cbb3443"
+      },
+      {
+        "file": "evidence/member-access/en-member-access-review-desktop-67c765b7-040.png",
+        "sha256": "4299b47897cad878c11749c86fec67d211787e72af314d7f0b5aaa3a9574cbb7"
+      },
+      {
+        "file": "evidence/member-access/en-member-access-roles-receipt-67c765b7-040.png",
+        "sha256": "1af207a2398909e5e7106d9469a70b19269ec88711e944666738905dd77c5b5e"
+      },
+      {
+        "file": "evidence/member-access/en-member-access-reactivation-receipt-67c765b7-040.png",
+        "sha256": "1167ed42563fbd04f1b3c4985f1641a2de56332158eb87a8a2349f2eee1d44ed"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-reader-67c765b7-040.png",
+        "sha256": "b0c8df72c630bc46cd1c790df0877f4448686223f8d77ff372eaa73979ff51da"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-review-mobile-67c765b7-040.png",
+        "sha256": "201d1fcb54b3f494cc7e1beeec226de02be5312288eda922ad98c601d8ab01c4"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-review-desktop-67c765b7-040.png",
+        "sha256": "a5495f44a54db78d568655dfb0a0f0d2f806f0a57e24c237b1918ecd4688b3e4"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-roles-receipt-67c765b7-040.png",
+        "sha256": "173d0ed773aacea237a0e00f255ef675c60a4057e7ee79b0e347627486974a8a"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-reactivation-receipt-67c765b7-040.png",
+        "sha256": "6196f36e6a3ac6b5090951b9c9519da4e2cf4f239abe131d467a76c304b8198a"
+      },
+      {
+        "file": "evidence/member-access/en-member-access-denied-c0e97318-47e.png",
+        "sha256": "84e349f6892f327be2b03614d93aa0ae719a3cfbfd769b12b1df6e869cdcc9e0"
+      },
+      {
+        "file": "evidence/member-access/en-member-access-foreign-c0e97318-47e.png",
+        "sha256": "8559f96223c651e37d63aa6326f9c28d395fbaa4f9a93fa7cb8aca2a5acaebb5"
+      },
+      {
+        "file": "evidence/member-access/en-member-access-history-verified-c0e97318-47e.png",
+        "sha256": "fd490d5103d27a13cba26e0ae0280c9a0d97b2f6ce3bc081dc59bd2754e51af5"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-denied-c0e97318-47e.png",
+        "sha256": "d974794ccff0c707b79409c98578d24558b1d376d34fe121768b92c91c41fc88"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-foreign-c0e97318-47e.png",
+        "sha256": "181307f764ed9fdce1051e02bb50e15370252038d4b7cddca37f3c7dd08213d9"
+      },
+      {
+        "file": "evidence/member-access/fr-member-access-history-verified-c0e97318-47e.png",
+        "sha256": "0bfe1ef0cadc3a208075a722fa53c587a957619c2d4a1e2884910f10885ad32b"
+      }
+    ]
+  },
+  "denialAndHistory": {
+    "file": "lanes/environment/member-access-denials-c0e97318-47e.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "1f8744",
+    "command": "node lanes/environment/verify-member-access-denials.cjs"
+  },
+  "boundaries": {
+    "file": "evidence/member-access-boundaries.json",
+    "passed": 5,
+    "failed": 0,
+    "chunk": "4b8e99"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "8599ec"
+  },
+  "lint": {
+    "exitCode": 0,
+    "chunks": [
+      "7ff5e6",
+      "fb2beb"
+    ]
+  },
+  "failedAttempts": [
+    {
+      "file": "lanes/environment/member-access-browser-7b28f44e-321.json",
+      "result": "Both role changes committed correctly; duplicate accessible Close names stopped the browser checks. Corrected close naming and receipt reload handoff; existing authority unchanged."
+    },
+    {
+      "file": "lanes/environment/member-access-denials-33e8fdf1-0dc.json",
+      "result": "Test expected a page-level denial but the existing Users layout redirected to /unauthorized. Both expected-element checks failed. Its whole-database comparison overlapped another owned browser fixture run, so authorityUnchanged was false; it is not counted as a pass. Corrected to the observed redirect and reran sequentially with unchanged authority."
+    },
+    {
+      "chunk": "e91a57",
+      "result": "A local verification-script write was denied by the filesystem sandbox; the same exact write succeeded after escalation in 38c67a."
+    }
+  ],
+  "supersededCaptures": [
+    {
+      "file": "lanes/environment/member-access-browser-9f2a4f8a-59b.json",
+      "result": "Two complete service/browser journeys passed; history-labelled screenshots caught closing UI rather than history. Not used as history evidence."
+    },
+    {
+      "file": "lanes/environment/member-access-browser-67c765b7-040.json",
+      "result": "Final closure assertions passed. History-labelled screenshots were shifted by viewport reflow; excluded from the curated evidence. Read-only denial/history follow-up captures the actual records after reflow."
+    }
+  ],
+  "performance": {
+    "kind": "local development observations, no approved-budget comparison",
+    "values": [
+      {
+        "locale": "en",
+        "routeReadyMs": 5420,
+        "receiptMs": 2181
+      },
+      {
+        "locale": "fr",
+        "routeReadyMs": 9613,
+        "receiptMs": 3107
+      }
+    ]
+  },
+  "remaining": [
+    "History pagination/export and full retention analysis.",
+    "Draft/retry continuity across refresh or tab closure.",
+    "Actual native screen reader, browser zoom and comprehensive contrast checks.",
+    "Global cached identity/provider session behavior remains in its separate rejected-change review.",
+    "Personal-identity administration, organization handoffs and the full remaining platform workflow register."
+  ],
+  "migration": false,
+  "deployment": false,
+  "externalEmail": false,
+  "completeWorkflowVerified": false
+}

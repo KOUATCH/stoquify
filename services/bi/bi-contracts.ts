@@ -66,12 +66,14 @@ export type BIDrillThrough =
       subjectType?: ProofTrailSubjectType
       subjectId?: string
       requiredPermission: string
+      additionalRequiredPermissions?: readonly string[]
     }
   | {
       available: false
       type: "route" | "proof" | "route_and_proof"
       label: string
       requiredPermission: string
+      additionalRequiredPermissions?: readonly string[]
       unavailableReason: string
     }
 
@@ -92,6 +94,7 @@ export type BIActionLink = {
   label: string
   href: string
   requiredPermission: string
+  additionalRequiredPermissions?: readonly string[]
   moduleSlug: CommercialModuleSlug
   disabled: boolean
   disabledReason: string | null
@@ -223,13 +226,15 @@ export type BICommandZone = {
   drillThrough: BIDrillThrough | null
 }
 
-export type BIChangeDirection = "improved" | "worsened" | "changed" | "new" | "resolved" | "unchanged"
+// "observed" carries a current source observation without a historical comparison.
+export type BIChangeDirection = "improved" | "worsened" | "changed" | "new" | "resolved" | "unchanged" | "observed"
 
 export type BIChangeEvent = {
   id: string
   organizationId: string
   moduleSlug: CommercialModuleSlug
   requiredPermission: string
+  additionalRequiredPermissions?: readonly string[]
   title: string
   detail: string
   businessImpact: string
@@ -314,7 +319,8 @@ export type BIRiskRank = {
   severity: BISeverity
   severityScore: number
   moneyImpact: number | null
-  urgency: "now" | "today" | "soon" | "watch"
+  /** Null when the source provides no assessed urgency; severity alone is not a deadline. */
+  urgency: "now" | "today" | "soon" | "watch" | null
   state: BIKpiState
   evidenceGrade: EvidenceGrade
   trustState: BITrustState
@@ -324,6 +330,13 @@ export type BIRiskRank = {
   redactions: BIRedaction[]
   drillThrough: BIDrillThrough
   actionLink: BIActionLink | null
+}
+
+/** An observed condition without an approved scoring or urgency assessment. */
+export type BIUnassessedObservation = Omit<BIRiskRank, "severityScore" | "urgency" | "severity"> & {
+  severityScore: null
+  urgency: null
+  severity: "info"
 }
 
 export type BIProofDrawerSubject =

@@ -1,0 +1,380 @@
+{
+  "generated": "2026-09-19T15:57:58.465Z",
+  "scope": "Local, dirty working tree. Source hashes identify the evidence snapshot; this is not production certification.",
+  "tests": [
+    {
+      "file": "capability-tests-2026-09-19.json",
+      "passed": 107,
+      "failed": 0,
+      "suites": 4,
+      "success": true
+    },
+    {
+      "file": "verification-2026-09-19/purchasing-reconciliation-tests.json",
+      "passed": 42,
+      "failed": 0,
+      "suites": 2,
+      "success": true
+    },
+    {
+      "file": "verification-2026-09-19/unit-tests.json",
+      "passed": 64,
+      "failed": 0,
+      "suites": 11,
+      "success": true
+    }
+  ],
+  "totalPassedTests": 213,
+  "lint": {
+    "check": "lint",
+    "started": "2026-09-19T14:53:21.374Z",
+    "finished": "2026-09-19T15:06:37.472Z",
+    "command": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "app",
+      "actions",
+      "components",
+      "config",
+      "hooks",
+      "lib",
+      "services",
+      "--ext",
+      ".js,.jsx,.ts,.tsx"
+    ],
+    "exitCode": 0
+  },
+  "authLint": {
+    "check": "authLint",
+    "started": "2026-09-19T15:39:34.077Z",
+    "finished": "2026-09-19T15:39:56.341Z",
+    "command": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "components/auth/AuthLayout.tsx",
+      "components/auth/BeautifulRegisterForm.tsx"
+    ],
+    "exitCode": 0
+  },
+  "typecheck": {
+    "check": "typecheck",
+    "started": "2026-09-19T15:41:00.591Z",
+    "finished": "2026-09-19T15:55:22.684Z",
+    "command": [
+      "node",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--pretty",
+      "false"
+    ],
+    "exitCode": 0
+  },
+  "browser": {
+    "finished": "2026-09-19T15:46:41.938Z",
+    "passed": 35,
+    "failed": [
+      {
+        "name": "Public destination /en/terms",
+        "status": "FAIL",
+        "error": "expect(received).toBe(expected) // Object.is equality\n\nExpected: 200\nReceived: 404"
+      },
+      {
+        "name": "Public destination /en/privacy",
+        "status": "FAIL",
+        "error": "expect(received).toBe(expected) // Object.is equality\n\nExpected: 200\nReceived: 404"
+      },
+      {
+        "name": "Public destination /fr/terms",
+        "status": "FAIL",
+        "error": "expect(received).toBe(expected) // Object.is equality\n\nExpected: 200\nReceived: 404"
+      },
+      {
+        "name": "Public destination /fr/privacy",
+        "status": "FAIL",
+        "error": "expect(received).toBe(expected) // Object.is equality\n\nExpected: 200\nReceived: 404"
+      }
+    ],
+    "pageCount": 12
+  },
+  "liveAuth": {
+    "started": "2026-09-19T15:23:41.990Z",
+    "baseURL": "http://127.0.0.1:3010",
+    "method": "APIRequestContext, matching tests/e2e/auth.setup.ts; existing synthetic fixture only",
+    "checks": [
+      {
+        "name": "Anonymous session is absent",
+        "status": "PASS",
+        "httpStatus": 200
+      },
+      {
+        "name": "Anonymous permission request is denied",
+        "status": "PASS",
+        "httpStatus": 401
+      },
+      {
+        "name": "Existing synthetic fixture sign-in",
+        "status": "BLOCKED",
+        "httpStatus": 401,
+        "errorCode": "INVALID_EMAIL_OR_PASSWORD",
+        "reason": "Fixture credentials, trusted-origin configuration or backend readiness did not allow sign-in; no seed or auth-policy changes were made."
+      }
+    ],
+    "limitations": [
+      "Not a new-account or real email-delivery test.",
+      "No business records are created or modified. Authentication may create and revoke a session."
+    ],
+    "finished": "2026-09-19T15:24:58.077Z"
+  },
+  "screenshots": [
+    {
+      "file": "login-desktop.png",
+      "before": {
+        "path": "screenshots/before/login-desktop.png",
+        "width": 1440,
+        "height": 1257,
+        "sha256": "80ecf2571443b5073d7c1223ab0aec68df69404d4bdca273fb52e8b8ab821d9f"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/login-desktop.png",
+        "width": 1440,
+        "height": 1100,
+        "sha256": "9ad1d2c88438e71aeed56415caaf4c5e30a69c9ed09868c38525fb6285491217"
+      }
+    },
+    {
+      "file": "login-fr-desktop.png",
+      "before": {
+        "path": "screenshots/before/login-fr-desktop.png",
+        "width": 1440,
+        "height": 1325,
+        "sha256": "acfe1124eb1d2b14ed026171177f5adbce6d65f17888afe148547d3cf59e554d"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/login-fr-desktop.png",
+        "width": 1440,
+        "height": 1100,
+        "sha256": "3bd4fd635e6a5464270b1939f866250502667584ff13f8ba008e280b334fd6e2"
+      }
+    },
+    {
+      "file": "login-fr-mobile.png",
+      "before": {
+        "path": "screenshots/before/login-fr-mobile.png",
+        "width": 390,
+        "height": 2547,
+        "sha256": "d942ef52fe42ac4af3b022f09bf4abc6b62f3682a16cc05ca0749b91844c5a45"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/login-fr-mobile.png",
+        "width": 390,
+        "height": 844,
+        "sha256": "0cfaef7720e96956485e4d4b0db119c81b35b511c3e40983bdd8a4e72e20deaf"
+      }
+    },
+    {
+      "file": "login-mobile.png",
+      "before": {
+        "path": "screenshots/before/login-mobile.png",
+        "width": 390,
+        "height": 2467,
+        "sha256": "e12bb9117a43350278b5828ca88e391a1dea57da9c294c9c3998a6d608675089"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/login-mobile.png",
+        "width": 390,
+        "height": 844,
+        "sha256": "3431d11982ed4cac1d5ae9548fb6d4d440a9d209623867787c930a1db95f556e"
+      }
+    },
+    {
+      "file": "public-home-desktop.png",
+      "before": {
+        "path": "screenshots/before/public-home-desktop.png",
+        "width": 1440,
+        "height": 11994,
+        "sha256": "e8661aa6def041d2aaa7b0f807a1ae77263c02dacd1ffc00ae5ff047d8bc6f45"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/public-home-desktop.png",
+        "width": 1440,
+        "height": 3701,
+        "sha256": "ca2c40042a5a7d0b254f210bd3610fcfbbad1439dd63e511a69a981f78761fbd"
+      }
+    },
+    {
+      "file": "public-home-fr-desktop.png",
+      "before": {
+        "path": "screenshots/before/public-home-fr-desktop.png",
+        "width": 1440,
+        "height": 12363,
+        "sha256": "9dc1912a00a92e28c4d9b2b958702a31bdd9ea787d40a9b52cce294688c55157"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/public-home-fr-desktop.png",
+        "width": 1440,
+        "height": 3850,
+        "sha256": "3b7c7afd3101cc3b8fab6a0f6799c408071b25adce8875a39cd8a6f872e1b7e2"
+      }
+    },
+    {
+      "file": "public-home-fr-mobile.png",
+      "before": {
+        "path": "screenshots/before/public-home-fr-mobile.png",
+        "width": 390,
+        "height": 25626,
+        "sha256": "eee9862c52afaaf7f44f1cb2464346f94a6718ff19015b8217a7b7d7334e55be"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/public-home-fr-mobile.png",
+        "width": 390,
+        "height": 6171,
+        "sha256": "8ec5afe5081b066d3018b32566db629f809ee6b8dbf4a366347f9395aeacb31c"
+      }
+    },
+    {
+      "file": "public-home-mobile.png",
+      "before": {
+        "path": "screenshots/before/public-home-mobile.png",
+        "width": 390,
+        "height": 24731,
+        "sha256": "d947b9fb8a432fe477ec79191da0cc437610d26dc374329d3d6c2f787a182829"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/public-home-mobile.png",
+        "width": 390,
+        "height": 5873,
+        "sha256": "313987b2a6aed846eaae621ffd8fb88af678f5a29700f97710518fb8ce02b9db"
+      }
+    },
+    {
+      "file": "register-desktop.png",
+      "before": {
+        "path": "screenshots/before/register-desktop.png",
+        "width": 1440,
+        "height": 1447,
+        "sha256": "216ab3742051854cf080c752fa66d41b00b4ac9898acf62497768fba1f66ecbf"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/register-desktop.png",
+        "width": 1440,
+        "height": 1100,
+        "sha256": "ae4478fed230ec1f47339d9cf636684cdb3d75404f803d04ab40cbfd498aa23b"
+      }
+    },
+    {
+      "file": "register-fr-desktop.png",
+      "before": {
+        "path": "screenshots/before/register-fr-desktop.png",
+        "width": 1440,
+        "height": 1467,
+        "sha256": "aab090cd8b354ff3040c631104e739044183bca9e8db45a8cf02d9562f93d5fc"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/register-fr-desktop.png",
+        "width": 1440,
+        "height": 1100,
+        "sha256": "3237629bb535767f8d42bc54b7b5a12f980f50cc478cc2619d8560558a892a4e"
+      }
+    },
+    {
+      "file": "register-fr-mobile.png",
+      "before": {
+        "path": "screenshots/before/register-fr-mobile.png",
+        "width": 390,
+        "height": 2941,
+        "sha256": "f1c9b40bc3a7ce8f17d2c723ce1cd9d2ed3de5e71e42932b85f4be5b3379e6f2"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/register-fr-mobile.png",
+        "width": 390,
+        "height": 1319,
+        "sha256": "4b5990a365a2fb7c0a54451de605795d34e7e02f7c4647cda65818e53f5c4758"
+      }
+    },
+    {
+      "file": "register-mobile.png",
+      "before": {
+        "path": "screenshots/before/register-mobile.png",
+        "width": 390,
+        "height": 2817,
+        "sha256": "c8e84bea117d5d2ebd393813dea638e3d9dfd1162124e9f66e41e4f7fdbdd463"
+      },
+      "after": {
+        "path": "screenshots/after-2026-09-19/register-mobile.png",
+        "width": 390,
+        "height": 1295,
+        "sha256": "816c4b265172d48575944660bc51369d8ee1cadfb69276d96f57f3bd8a619ab1"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "file": "app/[locale]/(home)/page.tsx",
+      "sha256": "22f10fdedf36257133ba1f895994145efa55e7db5c081e301a25b6ec264fc006"
+    },
+    {
+      "file": "app/[locale]/(home)/landing.css",
+      "sha256": "677b5466afef1524cd79c04bd134900429c2051dcc550df8f5f3a384d46af79f"
+    },
+    {
+      "file": "components/landing/hero.tsx",
+      "sha256": "26314bf6342daa3cc8f2b23ed467a2ef5adb80e34f32ce9c584bc6f0c77719f8"
+    },
+    {
+      "file": "components/landing/landing-message-copy.ts",
+      "sha256": "90bdc3586020d1275db485373ca6e4f71faa1e03c4e90cc911408037a519707d"
+    },
+    {
+      "file": "components/landing/landing-message-sections.tsx",
+      "sha256": "5ecc3327fdf338086185b66a17ab65e4f03bc54aff23917827292101bcbceb84"
+    },
+    {
+      "file": "components/landing/product-gallery.tsx",
+      "sha256": "ac86003e81dae438c6198467d9c9138421e326ea6824836eedf92ce4aa070e26"
+    },
+    {
+      "file": "components/landing/final-cta.tsx",
+      "sha256": "e6ecfd01322d5c6c6b09be816cb4e086d055bc227c844df47a6bd489ce49813a"
+    },
+    {
+      "file": "components/landing/landing-header.tsx",
+      "sha256": "98a8e8bb5df821b14cef9273539dec0dce84651e75f8ebc9e0e887055202ceeb"
+    },
+    {
+      "file": "components/landing/landing-footer.tsx",
+      "sha256": "057a5997c60105c679e2f56056337f63a1aabaf6284f59e38914bf7b117eb330"
+    },
+    {
+      "file": "components/landing/landing-section-navigation.tsx",
+      "sha256": "eb5b6d41200a6f9ccf3f1456d9d6d968517dec60d764e726ecd3ded607ef23f6"
+    },
+    {
+      "file": "components/landing/pricing-section.tsx",
+      "sha256": "c79db0d36cced9e18e27f78b01cf015c3f01fa0ebc7839496b13c13acb91bca4"
+    },
+    {
+      "file": "components/auth/AuthLayout.tsx",
+      "sha256": "11ecdc27c5e5540b9283bb21fa2ff9441ad4171b363a983993ee428c14feba0d"
+    },
+    {
+      "file": "components/auth/EnhancedLoginForm.tsx",
+      "sha256": "6f161b9d0cc71eca10d7bc85503e765181c176a29adf660708a28599e6b1ec5a"
+    },
+    {
+      "file": "components/auth/BeautifulRegisterForm.tsx",
+      "sha256": "66babc9e000d8c58548b40cd4abe54032e63d598c0fc32961de65a14d8ac8b6d"
+    },
+    {
+      "file": "components/auth/public-auth-copy.ts",
+      "sha256": "1e2e64d27b66fad50c320f76511d5ea4c4284c4166071dac0dd3dad5c24e09e9"
+    },
+    {
+      "file": "messages/en.json",
+      "sha256": "d741e5ce50bff6e694c4497a99cf05a431711db1abd18d00b33439380a5688c6"
+    },
+    {
+      "file": "messages/fr.json",
+      "sha256": "18108ce13ac0a3be91c662cc99e8f0e6af27e0bea44c1aa1bbf031e59071d6d7"
+    }
+  ]
+}

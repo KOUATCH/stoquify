@@ -330,7 +330,7 @@ export async function configureCountryAdapterPilot(
       eventSource: "INTERNAL",
       idempotencyKey: `authority-adapter:${config.id}:configured:${configHash}`,
       actorId: parsed.actorId,
-      sourceType: "COMPLIANCE_ADAPTER_CONFIG",
+      sourceEntityType: "COMPLIANCE_ADAPTER_CONFIG",
       sourceId: config.id,
       documentHash: configHash,
       payload: {
@@ -430,7 +430,7 @@ export async function rotateCountryAdapterCredential(
       eventSource: "INTERNAL",
       idempotencyKey: `authority-adapter:${config.id}:credential-rotated:${configHash}`,
       actorId: parsed.actorId,
-      sourceType: "COMPLIANCE_ADAPTER_CONFIG",
+      sourceEntityType: "COMPLIANCE_ADAPTER_CONFIG",
       sourceId: config.id,
       documentHash: configHash,
       payload: {
@@ -528,7 +528,7 @@ export async function recordCountryAdapterReview(
       eventSource: "INTERNAL",
       idempotencyKey: `authority-adapter:${config.id}:review:${parsed.reviewEvidenceHash}`,
       actorId: parsed.actorId,
-      sourceType: "COMPLIANCE_ADAPTER_CONFIG",
+      sourceEntityType: "COMPLIANCE_ADAPTER_CONFIG",
       sourceId: config.id,
       documentHash: parsed.reviewEvidenceHash,
       payload: {
@@ -602,7 +602,7 @@ export async function disableCountryAdapter(
       eventSource: "INTERNAL",
       idempotencyKey: `authority-adapter:${config.id}:disabled:${disabledAt.toISOString()}`,
       actorId: parsed.actorId,
-      sourceType: "COMPLIANCE_ADAPTER_CONFIG",
+      sourceEntityType: "COMPLIANCE_ADAPTER_CONFIG",
       sourceId: config.id,
       payload: {
         adapterConfigId: config.id,

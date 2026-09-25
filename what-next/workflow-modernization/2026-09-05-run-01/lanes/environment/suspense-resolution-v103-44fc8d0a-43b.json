@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-09T13:28:21.338Z",
+  "run": "44fc8d0a-43b",
+  "sourcesBefore": {
+    "services/reconciliation/payment-suspense-resolution.service.ts": "72bc6e939346df14828f85a8d91473350d688e3e9d09ac500dc88389e3b27833",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "33a6069362511b0fec4cd3d0e04a87e2dcc174dd4b3590222ab848380cd90779",
+    "services/reconciliation/payment-suspense-correction.service.ts": "44da08ea210f9ebc3f204e0b1b3ea51838183668d10a2c85a6c561d0db974d6f",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "f890155ba02e3566fe2fcbefb3443e65e5a8c32b8e9cbe680626f7e653a67c1d",
+    "services/accounting/posting.service.ts": "d7d646801ae1779b2b006954d682ccdc7c04f57d6d2fe37232021f872e53b8c7",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "a44c79bfc0e43265ed9429c7d95ac79da2f1042b7dd3278f55f81fa40390fb4f",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "1803962e3dfb14f416e24750bafadc553463138386bd94f93349276cd4fa94bc"
+  },
+  "checks": [
+    "RESOLVED: missing clearing reference and balanced-but-partial clearing refused; expense clearance cannot be mislabeled as ordinary resolution",
+    "RESOLVED: stale preview refused; rejection retains original postings and close state, exact rejection retry is unchanged, changed decision conflicts, pending correction prevents resolution, fresh proposal can proceed",
+    "RESOLVED: injected final audit failure rolls back allocation, decision, suspense status and close-side effects",
+    "RESOLVED: certificate evidence includes verified decision/allocation and current financial hashes; changed clearing rate refuses verification",
+    "RESOLVED: actual original/clearing postings, pure preview, scope/permission/actor denials, idempotent proposal, independent fresh decision, no new journal, retained exact retry and generic clearing reversal refusal",
+    "WRITTEN_OFF: missing clearing reference and balanced-but-partial clearing refused; expense clearance cannot be mislabeled as ordinary resolution",
+    "WRITTEN_OFF: stale preview refused; rejection retains original postings and close state, exact rejection retry is unchanged, changed decision conflicts, pending correction prevents resolution, fresh proposal can proceed",
+    "WRITTEN_OFF: injected final audit failure rolls back allocation, decision, suspense status and close-side effects",
+    "WRITTEN_OFF: certificate evidence includes verified decision/allocation and current financial hashes; changed clearing rate refuses verification",
+    "WRITTEN_OFF: actual original/clearing postings, pure preview, scope/permission/actor denials, idempotent proposal, independent fresh decision, no new journal, retained exact retry and generic clearing reversal refusal",
+    "A legacy final status without resolution proof cannot establish certificate readiness"
+  ],
+  "scope": "Owned synthetic actual suspense posting, independently posted manual clearing and final resolution. No live financial operation or statutory write-off approval.",
+  "originalBefore": "04f20e82a05e5dfff429a01bc748d5488051ac4f432ab95ce00ce14f0d241fb0",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-suspense-resolution.service.ts": "72bc6e939346df14828f85a8d91473350d688e3e9d09ac500dc88389e3b27833",
+    "services/reconciliation/payment-suspense-resolution-evidence.service.ts": "8ef312468a02ce376a7f888e18d459505e5c3b5f1e2f92d87ab4bb7b4d4eac37",
+    "services/reconciliation/payment-suspense-resolution.contracts.ts": "33a6069362511b0fec4cd3d0e04a87e2dcc174dd4b3590222ab848380cd90779",
+    "services/reconciliation/payment-suspense-correction.service.ts": "44da08ea210f9ebc3f204e0b1b3ea51838183668d10a2c85a6c561d0db974d6f",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "f890155ba02e3566fe2fcbefb3443e65e5a8c32b8e9cbe680626f7e653a67c1d",
+    "services/accounting/posting.service.ts": "d7d646801ae1779b2b006954d682ccdc7c04f57d6d2fe37232021f872e53b8c7",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "a44c79bfc0e43265ed9429c7d95ac79da2f1042b7dd3278f55f81fa40390fb4f",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "1803962e3dfb14f416e24750bafadc553463138386bd94f93349276cd4fa94bc"
+  },
+  "sourceStable": true
+}

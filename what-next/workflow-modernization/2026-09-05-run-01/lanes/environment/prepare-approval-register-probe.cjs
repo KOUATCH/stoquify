@@ -1,0 +1,10 @@
+const fs=require('fs'),path=require('path');const source=fs.readFileSync(path.join(__dirname,'verify-purchase-approval-browser.cjs'),'utf8');
+const start=source.indexOf('  const start=Date.now();'),end=source.indexOf('  const original=await order',start);if(start<0||end<0)throw Error('Probe anchors missing');
+let code=source.slice(0,start)+source.slice(end);
+code=code.replace('const result={locale,passed:false,','const result={locale,passed:false,actionRequests:[],');
+code=code.replace("page.on('pageerror',e=>result.pageErrors.push(f.safe(e,secrets)));","page.on('pageerror',e=>result.pageErrors.push(f.safe(e.stack||e,secrets)));page.on('request',r=>{if(r.headers()['next-action'])result.actionRequests.push({at:new Date().toISOString(),state:'sent'})});await page.addInitScript(()=>{window.__approvalDialogs=[];let last=-1;new MutationObserver(()=>{const count=document.querySelectorAll('[role=dialog]').length;if(count!==last){window.__approvalDialogs.push({at:Date.now(),count});last=count}}).observe(document,{childList:true,subtree:true})});");
+code=code.replace("await ready();await shot('register-review');","await new Promise(r=>setTimeout(r,500));result.afterMenu={dialogs:await page.getByRole('dialog').count(),title:await page.title()};await ready();await shot('register-review');");
+code=code.replace("}catch(e){result.error=f.safe(e,secrets);","}catch(e){result.error=f.safe(e,secrets);result.dialogObservations=await page.evaluate(()=>window.__approvalDialogs);const sessionResponse=await context.request.get(base+'/api/auth/get-session');result.sessionMatches=Boolean((await sessionResponse.json())?.user?.id===x.actorId);");
+code=code.replace('window.__approvalDialogs=[];','window.__approvalDialogs=[];document.addEventListener("owned-approval-debug",e=>window.__approvalDialogs.push({at:Date.now(),...e.detail}));');
+code=code.replace("file='purchase-approval-browser-'","file='purchase-approval-register-probe-'");
+fs.writeFileSync(path.join(__dirname,'verify-purchase-approval-register-debug.cjs'),code,{flag:'wx'});console.log('Prepared focused register diagnosis with session-match and dialog lifecycle observations.');

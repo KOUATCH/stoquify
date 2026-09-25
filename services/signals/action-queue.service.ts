@@ -1,6 +1,5 @@
 import "server-only"
 
-import { hasRbacPermission } from "@/lib/security/rbac-permissions"
 import { BusinessRuleError } from "@/services/_shared/action-errors"
 
 import {
@@ -15,6 +14,7 @@ import {
 } from "./business-signal-rules.service"
 import {
   filterBusinessSignalsForPermissions,
+  hasSignalAccess,
   markExpiredBusinessSignals,
 } from "./business-signal.service"
 
@@ -56,7 +56,7 @@ export function assignActionItem(input: {
     if (!input.candidate.active && input.candidate.active !== undefined) {
       throw new BusinessRuleError("Cannot assign an action item to an inactive user.")
     }
-    if (!hasRbacPermission(input.candidate.permissions, input.item.requiredPermission)) {
+    if (!hasSignalAccess(input.candidate.permissions, input.item)) {
       throw new BusinessRuleError("Assignee does not have the permission required for this action.")
     }
   }
@@ -146,13 +146,14 @@ export function dismissActionItem(input: {
 export function filterAssignmentCandidates(input: {
   organizationId: string
   requiredPermission: string
+  additionalRequiredPermissions?: readonly string[]
   candidates: readonly AssignmentCandidate[]
 }) {
   return input.candidates.filter(
     (candidate) =>
       candidate.organizationId === input.organizationId &&
       candidate.active !== false &&
-      hasRbacPermission(candidate.permissions, input.requiredPermission),
+      hasSignalAccess(candidate.permissions, input),
   )
 }
 
@@ -167,6 +168,7 @@ function actionItemFromSignal(signal: BusinessSignal, now: Date): ActionItem {
     nextStep: signal.suggestedAction,
     actionPath: signal.actionPath,
     requiredPermission: signal.requiredPermission,
+    ...(signal.additionalRequiredPermissions ? { additionalRequiredPermissions: signal.additionalRequiredPermissions } : {}),
     status: signal.status === "expired" ? "expired" : signal.assigneeId ? "assigned" : "open",
     severity: signal.severity,
     severityScore: signal.severityScore,

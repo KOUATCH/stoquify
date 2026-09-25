@@ -1,13 +1,13 @@
 # Payroll Trust Spine Readiness Gate
 
-Generated: 2026-08-22T15:56:10.235Z
+Generated: 2026-08-28T12:36:42.232Z
 Mode: fail
-Status: ready
+Status: blocked
 
 ## Summary
 
-- Checks ready: 6/6
-- Blockers: 0
+- Checks ready: 5/6
+- Blockers: 1
 
 ## Checks
 
@@ -15,12 +15,12 @@ Status: ready
 - ready: collapsed_transition_shortcut_fails_closed
 - ready: canonical_transition_events_are_transactional
 - ready: fresh_auth_and_server_derived_trust_context
-- ready: cas_idempotency_and_partial_commit_regressions_covered
+- blocked: cas_idempotency_and_partial_commit_regressions_covered
 - ready: postgres_concurrency_and_failure_injection_wired
 
 ## Blockers
 
-- None
+- cas_idempotency_and_partial_commit_regressions_covered
 
 ## Safety
 

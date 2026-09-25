@@ -77,6 +77,7 @@ describe("POS catalog actions", () => {
       success: true,
       data: [{ id: "loc-1", name: "Main shop" }],
       error: null,
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
     })
     expect(mockRequirePermission).toHaveBeenCalledWith("pos.use", {
       resource: "POSCatalog",
@@ -102,6 +103,7 @@ describe("POS catalog actions", () => {
       success: true,
       data: [{ id: "terminal-1", locationId: "loc-1" }],
       error: null,
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
     })
     expect(mockRequirePermission).toHaveBeenCalledWith("pos.use", {
       resource: "POSTerminal",
@@ -196,6 +198,7 @@ describe("POS catalog actions", () => {
       success: true,
       data: { customers: [{ id: "customer-1", name: "Alice" }], total: 1 },
       error: null,
+      scope: { organizationId: "org-1", actorId: "cashier-1" },
     })
     expect(mockRequirePermission).toHaveBeenCalledWith("pos.use", {
       resource: "POSCustomer",

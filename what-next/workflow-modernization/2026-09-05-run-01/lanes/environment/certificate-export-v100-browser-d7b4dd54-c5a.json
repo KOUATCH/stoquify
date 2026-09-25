@@ -1,0 +1,152 @@
+{
+  "at": "2026-09-09T12:01:04.663Z",
+  "run": "d7b4dd54-c5a",
+  "sourcesBefore": {
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "364ff524b6b50af2b1234927dc64734fcd14652d15f332f052ab7b0484973700",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "57bee3423fa67e1ae33555ff9564c533b80ba124763817c86e2abf455f510746",
+    "hooks/payments/verified-evidence-download.ts": "88a9129d0927e86fe3f08d2a03121216eabb85313cb82f41c8aabf035ea4dd8f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "9bfc26687e655c51dca11c47b6a164a4cb4e75bdcdd941b7413c049aed980807",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "actions/payments/reconciliation.actions.ts": "07fb0f5332589b437e63297ef12e41fcef800c234c7ce53fefe93161c854d4dc",
+    "messages/en.json": "b6a0b8651c0163a2419fe54a7b77cf707b40b7b0bad8bc00c230a6c3c52edec6",
+    "messages/fr.json": "9d58dd8b4e6dcd3a3fcac463c0977384548d275447534bbacade13b8cd5b0725"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Selected certificate reviewed; real fresh password authentication required; step-up does not automatically issue export",
+        "Lost committed response survives reload; exact retry downloads original retained bytes and one receipt",
+        "Keyboard download and focus return; 320/390/768 and 200 percent text fit viewport in current language",
+        "Read-only user can review signed evidence but cannot issue another export"
+      ],
+      "screenshots": [
+        "certificate-export-v100-en-fresh-auth-d7b4dd54-c5a.png",
+        "certificate-export-v100-en-lost-response-d7b4dd54-c5a.png",
+        "certificate-export-v100-en-recovered-desktop-d7b4dd54-c5a.png",
+        "certificate-export-v100-en-review-320-d7b4dd54-c5a.png",
+        "certificate-export-v100-en-review-390-d7b4dd54-c5a.png",
+        "certificate-export-v100-en-review-768-d7b4dd54-c5a.png",
+        "certificate-export-v100-en-review-text200-d7b4dd54-c5a.png",
+        "certificate-export-v100-en-denied-d7b4dd54-c5a.png"
+      ],
+      "downloads": [
+        {
+          "filename": "certificate-export-v100-en-recovered-d7b4dd54-c5a.json",
+          "receiptId": "63af4df7-e232-4513-a0b8-591c28d77bb0",
+          "sha256": "59e8cb358c1e03e5f0fe0bf534f74d8c3b2bb0eed10dbc96970c82823c1c9ee9"
+        },
+        {
+          "filename": "certificate-export-v100-en-keyboard-d7b4dd54-c5a.json",
+          "receiptId": "a0aa0736-f81b-4f84-908e-00ab550fd5e5",
+          "sha256": "e17d7d9f8062e7b7dbcb6bc96ae0b46635eb6727e0581f9519a24bcaf395a70f"
+        }
+      ],
+      "layout": [
+        {
+          "width": 320,
+          "left": 41,
+          "right": 279,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 41,
+          "right": 349,
+          "violations": []
+        },
+        {
+          "width": 768,
+          "left": 261,
+          "right": 727,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 81,
+          "right": 309,
+          "violations": []
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 27067
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Selected certificate reviewed; real fresh password authentication required; step-up does not automatically issue export",
+        "Lost committed response survives reload; exact retry downloads original retained bytes and one receipt",
+        "Keyboard download and focus return; 320/390/768 and 200 percent text fit viewport in current language",
+        "Read-only user can review signed evidence but cannot issue another export"
+      ],
+      "screenshots": [
+        "certificate-export-v100-fr-fresh-auth-d7b4dd54-c5a.png",
+        "certificate-export-v100-fr-lost-response-d7b4dd54-c5a.png",
+        "certificate-export-v100-fr-recovered-desktop-d7b4dd54-c5a.png",
+        "certificate-export-v100-fr-review-320-d7b4dd54-c5a.png",
+        "certificate-export-v100-fr-review-390-d7b4dd54-c5a.png",
+        "certificate-export-v100-fr-review-768-d7b4dd54-c5a.png",
+        "certificate-export-v100-fr-review-text200-d7b4dd54-c5a.png",
+        "certificate-export-v100-fr-denied-d7b4dd54-c5a.png"
+      ],
+      "downloads": [
+        {
+          "filename": "certificate-export-v100-fr-recovered-d7b4dd54-c5a.json",
+          "receiptId": "94b06251-8898-468f-a82f-3d39c0fd69a6",
+          "sha256": "e6e45d31c9c3414c93370a3b01dbda57e4e730692becb4fa9861bd02ddf5b548"
+        },
+        {
+          "filename": "certificate-export-v100-fr-keyboard-d7b4dd54-c5a.json",
+          "receiptId": "cace85cb-a545-4f7a-be88-fec1715c95f8",
+          "sha256": "640d32452bf26e28e1f16e99e7db7b11465087ef3b8ad2c655bb20ee00a380b0"
+        }
+      ],
+      "layout": [
+        {
+          "width": 320,
+          "left": 41,
+          "right": 279,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 41,
+          "right": 349,
+          "violations": []
+        },
+        {
+          "width": 768,
+          "left": 261,
+          "right": 727,
+          "violations": []
+        },
+        {
+          "width": 390,
+          "left": 81,
+          "right": 309,
+          "violations": []
+        }
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 14335
+    }
+  ],
+  "scope": "Owned loopback app, normal password session and real reconciliation certificate actions. Actual capture/match/sign service fixture; synthetic provider setup, no external effects.",
+  "originalBefore": "e96610e2df348328db739c33aa74111d41406dafe0bdda033fcb3e80903ea715",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/ReconciliationCertificateExportPanel.tsx": "364ff524b6b50af2b1234927dc64734fcd14652d15f332f052ab7b0484973700",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "57bee3423fa67e1ae33555ff9564c533b80ba124763817c86e2abf455f510746",
+    "hooks/payments/verified-evidence-download.ts": "88a9129d0927e86fe3f08d2a03121216eabb85313cb82f41c8aabf035ea4dd8f",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "c0e329c0d29578b3427640b67317e1823452ba7a933925a4e806ca1584f31f11",
+    "services/reconciliation/payment-reconciliation-certification.service.ts": "9bfc26687e655c51dca11c47b6a164a4cb4e75bdcdd941b7413c049aed980807",
+    "services/reconciliation/reconciliation-certificate-export.contracts.ts": "1ff48861944bc04cbcde758f8b3e7dce9bb55208663f920a4e00a12b51f15363",
+    "actions/payments/reconciliation.actions.ts": "07fb0f5332589b437e63297ef12e41fcef800c234c7ce53fefe93161c854d4dc",
+    "messages/en.json": "b6a0b8651c0163a2419fe54a7b77cf707b40b7b0bad8bc00c230a6c3c52edec6",
+    "messages/fr.json": "9d58dd8b4e6dcd3a3fcac463c0977384548d275447534bbacade13b8cd5b0725"
+  },
+  "sourceStable": true
+}

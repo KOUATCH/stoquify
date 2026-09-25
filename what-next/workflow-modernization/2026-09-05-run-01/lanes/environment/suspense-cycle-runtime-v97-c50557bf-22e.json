@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-09T09:12:16.647Z",
+  "run": "c50557bf-22e",
+  "checks": [
+    "Actual independent initial approval posts cycle 1 with balanced, source-linked ledger truth",
+    "Original approval retry retains its receipt and financial rows after migration",
+    "Legacy source helper selects only cycle 1 and refuses a key belonging to cycle 2",
+    "Unactivated future batch cannot replace the original approved posting or alter retry truth",
+    "Source-owned reversal guard remains effective with the expanded schema"
+  ],
+  "sourcesBefore": {
+    "services/accounting/posting.service.ts": "9a4ca1019d85480a4178b40ed37a275e17e03d94b9c88b8e6db82cc8f1bdfa3b",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+  },
+  "scope": "Owned local database after exact cycle migration; initial suspense posting/retry and cycle isolation, not a completed correction workflow.",
+  "originalBefore": "546db69180f92f19f75dfcd28cfe7ca0510bcf8c87fd15412c103efd63038a6d",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/posting.service.ts": "9a4ca1019d85480a4178b40ed37a275e17e03d94b9c88b8e6db82cc8f1bdfa3b",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8"
+  },
+  "sourceStable": true
+}

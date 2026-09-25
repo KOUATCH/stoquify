@@ -28,6 +28,30 @@
 //          ON items (organization_id) WHERE deleted_at IS NULL;
 //      Prisma's @@index doesn't support partial indexes yet (as of 5.x).
 
+// Encrypted online objects; entity records retain stable /api/media/<id> references.
+// Keep tombstones so cleanup retries never lose the provider identity.
+model PictureAsset {
+  id             String   @id @default(uuid())
+  organizationId String
+  createdById    String
+  entityType     String   @default("item")
+  providerKey    String?  @unique
+  providerUrl    String?
+  encryptionKey  String
+  encryptionIv   String
+  encryptionTag  String
+  mimeType       String
+  byteLength     Int
+  sha256         String
+  status         String   @default("uploading")
+  attachedAt     DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId, status, createdAt])
+  @@map("picture_assets")
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -268,6 +292,9 @@ model Organization {
   updatedAt              DateTime  @updatedAt
 
   // Relationships
+  moduleConfiguration               TenantModuleConfiguration?
+  moduleGrants                      TenantModuleGrant[]
+  moduleConfigurationCommands       TenantModuleConfigurationCommand[]
   users                             User[]
   invites                           Invite[]
   roles                             Role[]
@@ -4018,6 +4045,7 @@ model SalesOrder {
   status               SalesOrderStatus  @default(DRAFT)
   channel              SalesOrderChannel @default(POS)
   version              Int               @default(0)
+  posCartState         POSCartState      @default(ACTIVE)
   orderDate            DateTime          @default(now())
   dueDate              DateTime?
   notes                String?
@@ -4083,6 +4111,12 @@ model SalesOrder {
 enum SalesOrderChannel {
   POS
   DELIVERY
+}
+
+enum POSCartState {
+  ACTIVE
+  PARKED
+  RETIRED
 }
 
 enum SalesOrderStatus {
@@ -4806,6 +4840,7 @@ model POSSession {
   posCommitResults       POSCommitResult[]
   cashDrawerTransactions CashDrawerTransaction[]
   offlineEvents          POSOfflineEvent[]
+  checkoutWorkspace      POSCheckoutWorkspace?
 
   notes String?
 
@@ -4818,6 +4853,21 @@ model POSSession {
   @@index([locationId])
   @@index([status, startTime])
   @@map("pos_sessions")
+}
+
+// Recoverable checkout control state; financial results remain in POSCommitResult.
+model POSCheckoutWorkspace {
+  sessionId      String     @id
+  session        POSSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+  organizationId String
+  actorId        String
+  leaseId        String?
+  leaseExpiresAt DateTime?
+  pendingRequest Json?
+  updatedAt      DateTime   @updatedAt
+
+  @@index([organizationId, actorId])
+  @@map("pos_checkout_workspaces")
 }
 
 enum POSSessionStatus {
@@ -7776,6 +7826,9 @@ model LedgerPostingBatch {
   postingPurpose AccountingPostingPurpose
   idempotencyKey String
   sourceVersion  Int?
+  // Distinct financial correction cycle; sourceVersion remains the source revision.
+  // SQL restricts cycles > 1 to payment suspense reclassification/reversal.
+  postingCycle   Int @default(1)
   status         LedgerPostingBatchStatus @default(PENDING)
 
   errorMessage String?
@@ -7794,7 +7847,7 @@ model LedgerPostingBatch {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([organizationId, sourceType, sourceId, postingPurpose])
+  @@unique([organizationId, sourceType, sourceId, postingPurpose, postingCycle], map: "ledger_posting_batches_source_cycle_key")
   @@unique([organizationId, idempotencyKey])
   @@index([organizationId, status, createdAt])
   @@index([periodId])
@@ -9089,6 +9142,168 @@ enum WorkflowAssuranceWaiverStatus {
 // ============================================================
 // AUDIT LOG
 // ============================================================
+
+/// Tenant workspace selection is separate from durable access authority.
+model TenantModuleConfiguration {
+  organizationId String @id
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  revision Int @default(0)
+  activeRevision Int @default(0)
+  newWorkStoppedModules String[] @default([])
+  newWorkStoppedAt Json @default("{}")
+  selectedModules String[] @default([])
+  activeModules String[] @default([])
+  legacyUnknownValues String[] @default([])
+  manifestHash String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  grants TenantModuleGrant[]
+  commands TenantModuleConfigurationCommand[]
+  lifecycleOperations TenantModuleLifecycleOperation[]
+  @@map("tenant_module_configurations")
+}
+
+/// Explicit authority snapshot. Configuration commands never sell or create additional grants.
+model TenantModuleGrant {
+  id String @id @default(cuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  configuration TenantModuleConfiguration @relation(fields: [organizationId], references: [organizationId], onDelete: Restrict, map: "tenant_module_grants_configuration_fkey")
+  moduleSlug String
+  status String
+  source String
+  startsAt DateTime?
+  endsAt DateTime?
+  readOnly Boolean @default(false)
+  trial Boolean @default(false)
+  revision Int @default(1)
+  metadata Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([organizationId, moduleSlug])
+  @@index([organizationId, status])
+  @@map("tenant_module_grants")
+}
+
+enum TenantModuleConfigurationCommandState {
+  DRAFT
+  REQUESTED
+  ACTIVE
+  FAILED
+}
+
+/// Submitted payloads and outcomes are retained; reopening produces a new draft.
+model TenantModuleConfigurationCommand {
+  id String @id @default(cuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  configuration TenantModuleConfiguration @relation(fields: [organizationId], references: [organizationId], onDelete: Restrict, map: "tenant_module_commands_configuration_fkey")
+  idempotencyKey String
+  payloadHash String
+  expectedRevision Int
+  resultRevision Int?
+  state TenantModuleConfigurationCommandState
+  selectedModules String[] @default([])
+  previousModules String[] @default([])
+  previewHash String?
+  reviewSnapshot Json?
+  errorCode String?
+  actorId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lifecycleOperation TenantModuleLifecycleOperation?
+  @@unique([organizationId, idempotencyKey], map: "tenant_module_commands_org_idempotency_key")
+  @@unique([organizationId, id])
+  @@index([organizationId, state, createdAt], map: "tenant_module_commands_org_state_created_idx")
+  @@map("tenant_module_configuration_commands")
+}
+
+enum TenantModuleLifecycleState {
+  REQUESTED
+  PREPARING
+  ACTIVE
+  FAILED
+  RETAINED
+}
+
+enum TenantModuleLifecycleStepState {
+  PENDING
+  RUNNING
+  WAITING_INPUT
+  SUCCEEDED
+  FAILED
+}
+
+/// Mutable projection; each change appends immutable, tenant-scoped evidence.
+model TenantModuleLifecycleOperation {
+  id String @id @default(cuid())
+  organizationId String
+  configuration TenantModuleConfiguration @relation(fields: [organizationId], references: [organizationId], onDelete: Restrict, map: "module_lifecycle_configuration_fk")
+  commandId String @unique
+  command TenantModuleConfigurationCommand @relation(fields: [organizationId, commandId], references: [organizationId, id], onDelete: Restrict, map: "module_lifecycle_command_fk")
+  desiredRevision Int
+  baseActiveRevision Int
+  desiredModules String[]
+  stopNewWorkModules String[] @default([])
+  authorityHash String
+  setupInputs Json @default("{}")
+  state TenantModuleLifecycleState @default(REQUESTED)
+  version Int @default(0)
+  leaseToken String?
+  leaseUntil DateTime?
+  errorCode String?
+  actorId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  completedAt DateTime?
+  steps TenantModuleLifecycleStep[]
+  events TenantModuleLifecycleEvent[]
+  @@unique([organizationId, commandId])
+  @@unique([organizationId, id])
+  @@unique([organizationId, desiredRevision], map: "tenant_module_lifecycle_operations_organizationId_desiredRevisi")
+  @@index([organizationId, state, createdAt], map: "tenant_module_lifecycle_operations_organizationId_state_created")
+  @@map("tenant_module_lifecycle_operations")
+}
+
+model TenantModuleLifecycleStep {
+  id String @id @default(cuid())
+  organizationId String
+  operationId String
+  operation TenantModuleLifecycleOperation @relation(fields: [organizationId, operationId], references: [organizationId, id], onDelete: Restrict, map: "module_lifecycle_step_operation_fk")
+  moduleSlug String
+  stepKey String
+  inputHash String
+  state TenantModuleLifecycleStepState @default(PENDING)
+  code String
+  href String?
+  attempts Int @default(0)
+  evidence Json?
+  evidenceHash String?
+  checkedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([organizationId, operationId, moduleSlug, stepKey], map: "module_lifecycle_step_identity")
+  @@map("tenant_module_lifecycle_steps")
+}
+
+/// Retained request/attempt/step/state evidence. SQL rejects UPDATE and DELETE.
+model TenantModuleLifecycleEvent {
+  id String @id @default(cuid())
+  organizationId String
+  operationId String
+  operation TenantModuleLifecycleOperation @relation(fields: [organizationId, operationId], references: [organizationId, id], onDelete: Restrict, map: "module_lifecycle_event_operation_fk")
+  sequence Int
+  eventKey String
+  eventType String
+  state TenantModuleLifecycleState
+  actorId String
+  evidence Json
+  evidenceHash String
+  createdAt DateTime @default(now())
+  @@unique([organizationId, operationId, sequence], map: "module_lifecycle_event_sequence")
+  @@unique([organizationId, operationId, eventKey], map: "module_lifecycle_event_key")
+  @@map("tenant_module_lifecycle_events")
+}
 
 model AuditLog {
   id String @id @default(cuid())

@@ -1,0 +1,93 @@
+{
+  "at": "2026-09-12T19:45:01.472Z",
+  "baseline": "evidence/source-baseline-v111.json",
+  "sources": {
+    "services/reconciliation/payment-exception-closure.service.ts": "933dd5ab0f2cbf41a73002b5f52e09088d78668234def1e146961d8a7010856a",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts": "28ac4d449560675932e82098d0cf529148d5198fc6b9f379ee6c757ad8e97015",
+    "services/reconciliation/payment-exception-closure.contracts.ts": "bc470b257b98d6d3f6d340b20fb7ec6057b2a55792d4f0487f72f5adeb0924ea",
+    "services/reconciliation/payment-exception-source-evidence.ts": "08492d66f11f481511d832517cadc8e0894e359874373cffcc3602167ba45896",
+    "services/reconciliation/payment-exception-link.service.ts": "71f5f14d8ce9772993969bc9ceba45aa00f97c2da1aaf6de9d1760e7156199f5",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts": "8ef8bc71cb31a11bdbd9a2613889cb2d6829dcdaa31bddeb1d682220292268cd",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "67327d4e8a166730c68bde930d3cc0899f6ccacdf335f18c5a4b26b4d6cebbeb",
+    "services/accounting/close-assurance-pack.service.ts": "6bd4400725922dde466faf6e5dc7aa3d203d22e1ffe2c3e58780658c80fff7ae",
+    "actions/payments/exception-closure.actions.ts": "804618f1652fac0058850ad0612b18c6d22159d05826cbe2c4e609bc7591b0de",
+    "messages/en.json": "402cef3447561a68d275c2c0f342b3e7df429bae9c2018dff58ed967a7202ada",
+    "messages/fr.json": "60ae7f4a9c0df7a8ddab268ac45d4fe731f800e3fed7f554bdf26e7c951fc4fd",
+    "services/reconciliation/__tests__/payment-reconciliation-run-detail.test.ts": "ceb4a6fe5722da5ef65c44b048c3e181a901d6cb89cc58a27f8a6a2d99e13270",
+    "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts": "9b28da1e6749129ca94e0b42aaaf67d5d3df1efc46a02656504403536e8cb7c7",
+    "actions/payments/__tests__/exception-closure.actions.test.ts": "54f634aa93f1a118b1c25d59dde315333788620b65d76ef077d15e5042bd5597",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts": "2bbab49bbda9c7f125a457950d78b94314be56b925fba0e44d16afd82f8dab1d",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "3c57f12034975eac0de77a63232be658b766cfa3816f9018226876d8b4b3b932",
+    "services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts": "729d7f8b92dda05d932174c106c86192b6871e10bc841d497645c7a31522553e",
+    "services/reconciliation/__tests__/payment-exception-link.service.test.ts": "3aa2f710fd441270d863b572d877b974b45841c11d76128970a520231bec793f",
+    "services/reconciliation/__tests__/payment-exception-closure.service.test.ts": "ed64ac01beefcb9e185b442ee7c42f92c6a2694856f3db791ce143c7e661371b",
+    "services/accounting/__tests__/close-assurance-pack.service.test.ts": "f8a57c996aa50a436cdc9bd05d3ad02df7151873dfffc83ca120804b42c5493b",
+    "services/reconciliation/__tests__/payment-reconciliation-evidence.service.test.ts": "c692855a8e5c6298ce20302b268280580eaf38785654ff7eeb2718d9a198bb19"
+  },
+  "productionFiles": [
+    "services/reconciliation/payment-exception-closure.service.ts",
+    "services/reconciliation/payment-exception-closure-evidence.service.ts",
+    "services/reconciliation/payment-exception-closure.contracts.ts",
+    "services/reconciliation/payment-exception-source-evidence.ts",
+    "services/reconciliation/payment-exception-link.service.ts",
+    "services/reconciliation/payment-reconciliation-evidence.service.ts",
+    "services/reconciliation/payment-reconciliation-notifications.ts",
+    "services/accounting/close-assurance-pack.service.ts",
+    "actions/payments/exception-closure.actions.ts",
+    "messages/en.json",
+    "messages/fr.json"
+  ],
+  "tests": {
+    "file": "evidence/exception-closure-v111-tests-bound.json",
+    "passed": 129,
+    "suites": 10,
+    "receipt": "c34aff"
+  },
+  "lint": {
+    "files": 11,
+    "exitCode": 0,
+    "receipt": "283fd4"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "receipt": "7fcdb2"
+  },
+  "runtime": {
+    "file": "lanes/environment/exception-closure-v111-4d54c95b-37a.json",
+    "checks": 4,
+    "receipt": "135e5e",
+    "actualSourceOwnedReopening": true,
+    "closurePostsNoMoney": true,
+    "directServiceControlOnly": true
+  },
+  "browser": {
+    "status": "pending_operator_ui_implementation",
+    "passed": false
+  },
+  "coverage": {
+    "discoveredWorkflows": 234,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2855,
+      "tests": 1008,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 172,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2465,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 212,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "remaining": [
+    "Implement complete EN/FR operator navigation, case/decision history, draft recovery and real browser role/authentication/responsive/accessibility journeys.",
+    "Implement other investigation types with genuine source/security evidence and assess terminal legacy/domain compatibility.",
+    "Implement reviewed-run preparation and verify genuine independent sign-off/export after closure and subsequent reopening.",
+    "Continue all remaining platform workflows; no full workflow completion claim."
+  ],
+  "selectedSkill": "009-aqstoqflow-payment-reconciliation-moat"
+}

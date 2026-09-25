@@ -6,9 +6,11 @@ import {
 
 const TOKEN_VERSION = "v1"
 const TOKEN_SCOPE = "supplier_po_acknowledgement"
-const DEFAULT_TTL_SECONDS = 7 * 24 * 60 * 60
-const MIN_TTL_SECONDS = 5 * 60
-const MAX_TTL_SECONDS = 30 * 24 * 60 * 60
+import { supplierPoTokenLifetime } from "./supplier-po-buyer-contracts"
+export { supplierPoTokenLifetime } from "./supplier-po-buyer-contracts"
+const DEFAULT_TTL_SECONDS = supplierPoTokenLifetime.defaultSeconds
+const MIN_TTL_SECONDS = supplierPoTokenLifetime.minSeconds
+const MAX_TTL_SECONDS = supplierPoTokenLifetime.maxSeconds
 
 export type SupplierPoTokenPermission = "view" | "respond"
 
@@ -142,9 +144,3 @@ export function verifySupplierPoAccessToken(input: {
   }
   return { ok: true, payload }
 }
-
-export const supplierPoTokenLifetime = {
-  defaultSeconds: DEFAULT_TTL_SECONDS,
-  minSeconds: MIN_TTL_SECONDS,
-  maxSeconds: MAX_TTL_SECONDS,
-} as const

@@ -1,5 +1,7 @@
 "use client"
 
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 
@@ -81,28 +83,28 @@ export function AccountantAccessManager({
 
   return (
     <div className="space-y-6">
-      <form action={grant} className="grid gap-4 rounded-xl border bg-card p-5 md:grid-cols-2">
+      <form action={grant} className="dashboard-glass-panel grid min-w-0 gap-4 rounded-lg p-5 md:grid-cols-2">
         <div className="md:col-span-2">
           <h2 className="font-semibold">Invite an accountant</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-[var(--dash-text-soft)]">
             Existing users receive access immediately. New accountants receive a consent-bound invitation and referral onboarding link.
           </p>
         </div>
         <label className="text-sm">
           Accountant email
-          <input className="mt-1 w-full rounded-md border bg-background p-2" name="accountantEmail" type="email" required />
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantEmail" type="email" required />
         </label>
         <label className="text-sm">
           Firm name
-          <input className="mt-1 w-full rounded-md border bg-background p-2" name="accountantFirmName" required />
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantFirmName" required />
         </label>
         <label className="text-sm">
           Firm registration number
-          <input className="mt-1 w-full rounded-md border bg-background p-2" name="accountantFirmRegistrationNumber" />
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="accountantFirmRegistrationNumber" />
         </label>
         <label className="text-sm">
           Role
-          <select className="mt-1 w-full rounded-md border bg-background p-2" name="role" defaultValue="READ_ONLY">
+          <select className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="role" defaultValue="READ_ONLY">
             <option value="READ_ONLY">Read only</option>
             <option value="REVIEWER">Reviewer</option>
             <option value="PREPARER">Preparer</option>
@@ -110,66 +112,77 @@ export function AccountantAccessManager({
         </label>
         <label className="text-sm">
           Effective from
-          <input className="mt-1 w-full rounded-md border bg-background p-2" name="effectiveFrom" type="datetime-local" />
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="effectiveFrom" type="datetime-local" />
         </label>
         <label className="text-sm">
           Expires at
-          <input className="mt-1 w-full rounded-md border bg-background p-2" name="expiresAt" type="datetime-local" required />
+          <input className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3" name="expiresAt" type="datetime-local" required />
         </label>
         <label className="text-sm md:col-span-2">
           Signed consent evidence hash
           <input
-            className="mt-1 w-full rounded-md border bg-background p-2 font-mono text-xs"
+            className="dashboard-control mt-1 h-10 w-full min-w-0 rounded-lg px-3 font-mono text-xs"
             name="consentEvidenceHash"
             placeholder="sha256:…"
             pattern="sha256:[A-Fa-f0-9]{64}"
             required
           />
         </label>
-        <button className="w-fit rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50" disabled={isPending}>
+        <button className="dashboard-button-create min-h-10 w-fit rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50" disabled={isPending}>
           {isPending ? "Saving…" : "Invite or grant access"}
         </button>
         {message ? <p className="self-center text-sm md:col-span-2">{message}</p> : null}
       </form>
 
-      <div className="overflow-hidden rounded-xl border">
-        <table className="dashboard-table-base w-full text-left text-sm">
-          <thead className="bg-muted/60">
-            <tr>
-              <th className="p-3">Firm</th>
-              <th className="p-3">Role</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Expiry</th>
-              <th className="p-3">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {initialGrants.map((grant) => (
-              <tr className="border-t" key={grant.id}>
-                <td className="p-3">{grant.accountantFirmName}</td>
-                <td className="p-3">{grant.role.replace("_", " ")}</td>
-                <td className="p-3">{grant.status}</td>
-                <td className="p-3">
+      <div className="dashboard-glass-panel min-w-0 overflow-hidden rounded-lg">
+        <AccountingDataTable
+          caption={"Accountant access grants"}
+          emptyMessage={"No accountant access grants."}
+          columns={[
+            { label: "Firm" },
+            { label: "Role" },
+            { label: "Status" },
+            { label: "Expiry" },
+            { label: "Action" },
+          ]}
+          rows={initialGrants.map((grant) => {
+            return {
+              id: grant.id,
+              searchText: [
+                grant.accountantFirmName,
+                grant.role.replace("_", " "),
+                grant.status,
+                formatConsentInstant(grant.expiresAt),
+              ]
+                .filter((value) => value !== null && value !== undefined)
+                .join(" "),
+              cells: [
+                <div key="cell-0">{grant.accountantFirmName}</div>,
+                <div key="cell-1">{grant.role.replace("_", " ")}</div>,
+                <div key="cell-2">{grant.status}</div>,
+                <div key="cell-3">
                   <time dateTime={grant.expiresAt} title={grant.expiresAt}>
                     {formatConsentInstant(grant.expiresAt)}
                   </time>
-                </td>
-                <td className="p-3">
+                </div>,
+                <div key="cell-4">
                   {["ACTIVE", "SCHEDULED"].includes(grant.status) ? (
-                    <button className="text-destructive underline" disabled={isPending} onClick={() => revoke(grant.id)} type="button">
+                    <button
+                      className="min-h-10 rounded-md px-2 text-[var(--dash-danger)] underline focus-visible:ring-2 focus-visible:ring-[var(--dash-brand)]"
+                      disabled={isPending}
+                      onClick={() => revoke(grant.id)}
+                      type="button"
+                    >
                       Revoke
                     </button>
                   ) : (
                     "—"
                   )}
-                </td>
-              </tr>
-            ))}
-            {initialGrants.length === 0 ? (
-              <tr><td className="p-6 text-center text-muted-foreground" colSpan={5}>No accountant access grants.</td></tr>
-            ) : null}
-          </tbody>
-        </table>
+                </div>,
+              ],
+            }
+          })}
+        />
       </div>
     </div>
   )

@@ -1,0 +1,165 @@
+{
+  "run": "0dde6783-144",
+  "startedAt": "2026-09-07T10:02:39.546Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "89ea39c3a2dc54a352414be3faa06e9fdfefc88b76c4719a2d579146814e5dee",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "ea965a8d8c5565f0c2aca8c8c83eddbf3615aa2365e832cfbaf7db065593938d",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ad146b7ea0a3015badb5c4f9d3a50403a2230c1f02d29af9dbdaae94ecc3597b",
+    "messages/fr.json": "5cd4d422a2977fe3381d6a576154a942391858d3d6c93fe9ebebf7890532b4ce",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "supplier-ack-en-draft-1440-1-0dde6783-144.png",
+        "supplier-ack-en-draft-768-1-0dde6783-144.png",
+        "supplier-ack-en-draft-390-1-0dde6783-144.png",
+        "supplier-ack-en-draft-320-1-0dde6783-144.png",
+        "supplier-ack-en-draft-320-2-0dde6783-144.png",
+        "supplier-ack-en-read-failure-0dde6783-144.png",
+        "supplier-ack-en-failed-0dde6783-144.png"
+      ],
+      "layouts": [
+        {
+          "width": 1440,
+          "textScale": 1,
+          "viewport": 1440,
+          "document": 1440,
+          "body": 1440
+        },
+        {
+          "width": 768,
+          "textScale": 1,
+          "viewport": 768,
+          "document": 768,
+          "body": 768
+        },
+        {
+          "width": 390,
+          "textScale": 1,
+          "viewport": 390,
+          "document": 390,
+          "body": 390
+        },
+        {
+          "width": 320,
+          "textScale": 1,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        },
+        {
+          "width": 320,
+          "textScale": 2,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        }
+      ],
+      "pageErrors": [],
+      "requestHashes": [
+        "38a8682bdf57ac453f56af21cd8ca3a8f0df54047c9e8f282485095d2bf65ccc"
+      ],
+      "routeReadyMs": 4582,
+      "error": "expect(locator).toHaveText(expected) failed\n\nLocator: getByRole('alert')\nExpected: \"The result is unconfirmed. Do not create another request. Use Verify or retry this response, or refresh the recorded response.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 210000ms\n  - waiting for getByRole('alert')\n",
+      "passed": false,
+      "routeError": "Expected values to be strictly equal:\n\n201 !== 200\n"
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "supplier-ack-fr-draft-1440-1-0dde6783-144.png",
+        "supplier-ack-fr-draft-768-1-0dde6783-144.png",
+        "supplier-ack-fr-draft-390-1-0dde6783-144.png",
+        "supplier-ack-fr-draft-320-1-0dde6783-144.png",
+        "supplier-ack-fr-draft-320-2-0dde6783-144.png",
+        "supplier-ack-fr-read-failure-0dde6783-144.png",
+        "supplier-ack-fr-failed-0dde6783-144.png"
+      ],
+      "layouts": [
+        {
+          "width": 1440,
+          "textScale": 1,
+          "viewport": 1440,
+          "document": 1440,
+          "body": 1440
+        },
+        {
+          "width": 768,
+          "textScale": 1,
+          "viewport": 768,
+          "document": 768,
+          "body": 768
+        },
+        {
+          "width": 390,
+          "textScale": 1,
+          "viewport": 390,
+          "document": 390,
+          "body": 390
+        },
+        {
+          "width": 320,
+          "textScale": 1,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        },
+        {
+          "width": 320,
+          "textScale": 2,
+          "viewport": 320,
+          "document": 320,
+          "body": 320
+        }
+      ],
+      "pageErrors": [],
+      "requestHashes": [
+        "0ee800954ff9c6c1741e9b958a5ace2250c5df56f7496a476c97177fc9e42ec1"
+      ],
+      "routeReadyMs": 4908,
+      "error": "expect(locator).toHaveText(expected) failed\n\nLocator: getByRole('alert')\nExpected: \"Le résultat n’est pas confirmé. Ne créez pas une autre demande. Vérifiez ou réessayez cette réponse, ou actualisez la réponse enregistrée.\"\nError: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').first()\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 210000ms\n  - waiting for getByRole('alert')\n",
+      "passed": false,
+      "routeError": "Expected values to be strictly equal:\n\n201 !== 200\n"
+    }
+  ],
+  "scope": "Actual owned local Next application and PostgreSQL. Network loss injected after real POST commit; query outage injected. Synthetic approved orders. CSS text resize is not native zoom or assistive-technology certification.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "68fec0a6f8ace0f65bd3f2e7c2cfc2d332ccf31d2d13b18091f81207e5471cee",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "74a552aa63a0403202c26aa1b67c5da179eb5393d3bd1a5ab4c3592395f05b54",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "239963b0f21d03b275d6af25eda25964966cd07ff5c9f299c407fc5359a3ffef",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "89ea39c3a2dc54a352414be3faa06e9fdfefc88b76c4719a2d579146814e5dee",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "ea965a8d8c5565f0c2aca8c8c83eddbf3615aa2365e832cfbaf7db065593938d",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "9a4ec2b74a977f332548c4e996a88b2c54088ce34ed6c41a68299746008f0698",
+    "messages/en.json": "ad146b7ea0a3015badb5c4f9d3a50403a2230c1f02d29af9dbdaae94ecc3597b",
+    "messages/fr.json": "5cd4d422a2977fe3381d6a576154a942391858d3d6c93fe9ebebf7890532b4ce",
+    "services/purchase-order/supplier-po-response-contracts.ts": "0990e092d597eab46e141e2ac8213dea708a718331302310f979d52caedd3f09",
+    "services/purchase-order/supplier-po-http.ts": "d97dae9812291065abbf0da69f048e8e41727a7441f0d4027ef95abe37ebc02a",
+    "hooks/supplier-po-response-request.ts": "769b9dadc9eb07a8c1e6cbd11f5581c213eed1d403e3559193b076f16fff78a2",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "next.config.mjs": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+  },
+  "sourceStable": true,
+  "completedAt": "2026-09-07T10:03:06.947Z"
+}

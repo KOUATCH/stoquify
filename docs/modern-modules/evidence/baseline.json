@@ -1,0 +1,106 @@
+{
+  "recordedAt": "2026-09-05T10:11:34.752Z",
+  "root": "E:\\ohada saas\\Focused projects\\stoquify",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "dirtyWorktree": "M app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx\n M app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/page.tsx\n M app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/__tests__/trial-balance-table.test.tsx\n M app/[locale]/(dashboard)/dashboard/accounting/reports/trial-balance/trial-balance-table.tsx\n M app/api/uploads/[...path]/__tests__/route.test.ts\n M app/api/uploads/[...path]/route.ts\n M components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts\n M components/accounting/AccountantPortal.tsx\n M components/accounting/CloseAssuranceCenter.tsx\n M components/accounting/__tests__/CloseAssuranceCenter.test.tsx\n M components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx\n M components/dashboard/history/TransactionHistoryWorkbenchShell.tsx\n M components/finance/AROpenItemsHistoryWorkbench.tsx\n M components/finance/CashPaymentHistoryWorkbench.tsx\n M components/finance/FinanceCommandCenterDashboard.tsx\n M components/finance/FinanceSpecializedLedgerSurfaces.tsx\n M components/finance/PaymentReconciliationWorkbench.tsx\n M components/inventory/movements/InventoryMovementHistoryWorkbench.tsx\n M components/inventory/movements/__tests__/InventoryMovementHistoryWorkbench.test.tsx\n M components/purchasing/APHistoryWorkbench.tsx\n M components/ui/groups/inventory/ItemManagement.tsx\n M components/ui/groups/purchase-orders/PurchaseOrderManagement.tsx\n M components/ui/scroll-area.tsx\n M config/sidebar.ts\n M docs/migrations/MIGRATION_CONTROL_PLANE_DECISION_RECORD_2026-08-28.pdf\n M docs/migrations/STOQUIFY_MIGRATION_CONTROL_PLANE_IMPLEMENTATION_REPORT_2026-08-28.pdf\n M docs/migrations/STOQUIFY_MIGRATION_CONTROL_PLANE_REMEDIATION_PROMPT_2026-08-28.pdf\n M docs/migrations/STOQUIFY_MIGRATION_ISSUES_DIAGNOSIS_AND_PERMANENT_ROUTE_2026-08-28.pdf\n M docs/migrations/STOQUIFY_STAGING_PRIMARY_MIGRATION_CLOSURE_REPORT_2026-08-29.pdf\n M lib/security/__tests__/rbac.test.ts\n M lib/security/rbac.ts\n M messages/en.json\n M messages/fr.json\n M middleware.ts\n M package.json\n M prisma/complete-realistic-seed-coverage.ts\n M prisma/compliance-hris-role-seed.ts\n M prisma/comprehensive-seed.ts\n M prisma/realistic-development-seed.ts\n M scripts/__tests__/api-route-guard-inventory.test.js\n M scripts/__tests__/compliance-hris-role-seed-contract.test.js\n M scripts/api-route-guard-inventory.js\n M scripts/verify-realistic-development-seed.ts\n M services/events/business-event-outbox.service.ts\n M tmp-protocol-check.js\n M what-next/ai-copilot-guardrails-readiness.json\n M what-next/ai-copilot-guardrails-readiness.md\n M what-next/ap-fraud-control-readiness.json\n M what-next/ap-fraud-control-readiness.md\n M what-next/api-route-guard-inventory.json\n M what-next/api-route-guard-inventory.md\n M what-next/ci-release-readiness.json\n M what-next/ci-release-readiness.md\n M what-next/country-adapter-pilot-readiness.json\n M what-next/country-adapter-pilot-readiness.md\n M what-next/enterprise-release-blocker-status.json\n M what-next/enterprise-release-blocker-status.md\n M what-next/enterprise-release-external-evidence-intake-readiness.json\n M what-next/enterprise-release-external-evidence-intake-readiness.md\n M what-next/inventory-valuation-truth-readiness.md\n M what-next/ledger-close-truth-readiness.json\n M what-next/ledger-close-truth-readiness.md\n M what-next/module-surface-inventory.json\n M what-next/module-surface-inventory.md\n M what-next/offline-pos-fiscal-replay-readiness.json\n M what-next/offline-pos-fiscal-replay-readiness.md\n M what-next/payment-cash-truth-readiness.json\n M what-next/payment-cash-truth-readiness.md\n M what-next/payroll/payroll-trust-spine-readiness.json\n M what-next/payroll/payroll-trust-spine-readiness.md\n M what-next/prisma-migration-deployment-readiness.json\n M what-next/prisma-migration-deployment-readiness.md\n M what-next/public-identity-abuse-readiness.json\n M what-next/public-identity-abuse-readiness.md\n M what-next/purchasing-ap-consolidation-readiness.json\n M what-next/purchasing-ap-consolidation-readiness.md\n M what-next/release-secret-preflight.json\n M what-next/release-secret-preflight.md\n M what-next/statutory-country-pack-production-readiness.json\n M what-next/statutory-country-pack-production-readiness.md\n?? .agents/skills/docs-report-publisher/\n?? actions/accounting/__tests__/finance-statement-export.actions.test.ts\n?? actions/accounting/finance-statement-export.actions.ts\n?? app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/__tests__/financial-statement-lines-table.test.tsx\n?? app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx\n?? app/api/auth/permissions/\n?? artifacts/\n?? components/DataTableComponents/CanonicalTableBoundary.tsx\n?? components/DataTableComponents/CanonicalTableDensityControl.tsx\n?? components/DataTableComponents/__tests__/CanonicalTableContract.test.ts\n?? components/DataTableComponents/__tests__/FinanceAccountingContract.test.ts\n?? components/DataTableComponents/__tests__/FinanceHistoryCanonicalContract.test.ts\n?? components/DataTableComponents/__tests__/FinanceX1EvidenceBinding.test.ts\n?? components/DataTableComponents/__tests__/FinanceX1RouteObservation.test.ts\n?? components/DataTableComponents/__tests__/NextPhaseContracts.test.ts\n?? components/DataTableComponents/__tests__/TableSystemRegistry.contract.test.ts\n?? components/DataTableComponents/finance-accounting-contracts.ts\n?? components/DataTableComponents/finance-x1-evidence-binding.ts\n?? components/DataTableComponents/index.ts\n?? components/DataTableComponents/next-phase-contracts.ts\n?? components/DataTableComponents/pilot-table-contracts.ts\n?? components/DataTableComponents/table-system-contract.ts\n?? components/DataTableComponents/table-system-registry.ts\n?? components/DataTableComponents/useCanonicalTablePreferences.ts\n?? components/DataTableComponents/useCanonicalTableUrlState.ts\n?? components/finance/__tests__/CashFlowStatementContract.test.ts\n?? components/finance/__tests__/CashFlowStatementTable.test.tsx\n?? components/finance/__tests__/CashPaymentHistoryCanonicalContract.test.ts\n?? docs/Astra/\n?? docs/Compliance/\n?? docs/X1/\n?? docs/approval-register/\n?? docs/blockers-and-gates/hris-payroll-compliance-prefill/~$MPLIANCE_AUTHORIZATION_G1_EVIDENCE_SEEDED_RECONCILIATION_REFRESHED_WORKING_COPY_2026-08-22.docx\n?? docs/blockers-and-gates/~$MPLIANCE_AUTHORIZATION_G1_PREFILLED_WORKING_COPY_2026-08-19.docx\n?? \"docs/blockers-and-gates/~$mpliance authorization validation.docx\"\n?? docs/blockers-docs/\n?? docs/credentials-blockers/\n?? docs/gates-and-blockers/STOQUIFY_ENTERPRISE_UI_UX_REMEDIATION_BLOCKERS_ELIMINATION_GUIDE_2026-08-27.md\n?? docs/gates-and-blockers/STOQUIFY_ENTERPRISE_UI_UX_REMEDIATION_BLOCKERS_ELIMINATION_GUIDE_2026-08-27.pdf\n?? \"docs/migrations/Database Migration Info.docx\"\n?? \"docs/migrations/Exact Recipe.docx\"\n?? docs/migrations/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md\n?? docs/migrations/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.pdf\n?? \"docs/migrations/Table remediation blockers - final-verified.docx\"\n?? \"docs/migrations/Table remediation blockers - verified.docx\"\n?? \"docs/migrations/Table remediation blockers.docx\"\n?? \"docs/migrations/Tables remediation to proceed safely.docx\"\n?? docs/network/\n?? docs/password_DB/\n?? docs/remediations/\n?? docs/system-evaluation-and-redirection/\n?? docs/table-harmonization/\n?? lib/security/__tests__/middleware-routing.test.ts\n?? playwright.finance-x1-evidence.config.ts\n?? playwright.finance-x1-local-evidence.config.ts\n?? scripts/__tests__/development-progression-agent.test.js\n?? scripts/__tests__/finance-x1-evidence-preflight.test.ts\n?? scripts/__tests__/realistic-seed-blocker-remediation.test.js\n?? scripts/__tests__/validate-finance-x1-evidence.test.ts\n?? scripts/__tests__/x1-approval-automation-orchestrator.test.js\n?? scripts/build-x1-approval-intake-docx.py\n?? scripts/build-x1-product-approval.py\n?? scripts/create-finance-x1-local-storage-state.js\n?? scripts/development-progression-agent.js\n?? scripts/finance-x1-evidence-preflight.ts\n?? scripts/finance-x1-local-evidence-preflight.js\n?? scripts/inspect-finance-x1-fixtures.js\n?? scripts/prepare-finance-x1-local-auth.js\n?? scripts/render-x1-product-approval.ps1\n?? scripts/validate-finance-x1-evidence.ts\n?? scripts/verify-realistic-development-seed-readonly.ts\n?? scripts/x1-approval-automation-entry.js\n?? scripts/x1-approval-automation-orchestrator.js\n?? services/accounting/__tests__/finance-statement-export-operations.service.test.ts\n?? services/accounting/__tests__/finance-statement-export.service.test.ts\n?? services/accounting/finance-statement-export-operations.service.ts\n?? services/accounting/finance-statement-export.service.ts\n?? services/analytics/__tests__/analytical-context-contracts.test.ts\n?? services/analytics/analytical-context-contracts.ts\n?? services/governance/\n?? tests/e2e/finance-x1-authenticated-evidence.spec.ts\n?? tests/e2e/finance-x1-evidence-aggregate.setup.ts\n?? tests/e2e/finance-x1-local-authenticated-evidence.spec.ts\n?? tests/e2e/finance-x1-local-evidence-aggregate.setup.ts\n?? tests/e2e/finance-x1-route-observation.ts\n?? what-next/STOQUIFY_ANALYTICS_MARKETPLACE_NETWORK_EFFECT_STRATEGY_2026-08-29.md\n?? what-next/STOQUIFY_ANALYTICS_MARKETPLACE_OPPORTUNITY_REGISTRY_2026-08-29.json\n?? what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_EXECUTION_ROADMAP_2026-08-30.md\n?? what-next/STOQUIFY_ANALYTICS_NETWORK_PHASES_0_TO_3_WORK_PACKAGE_REGISTRY_2026-08-30.json\n?? what-next/agents-skills/STOQUIFY_DEVELOPMENT_AGENT_SKILL_PLAYBOOK_2026-09-02.md\n?? what-next/agents-skills/STOQUIFY_DEVELOPMENT_AGENT_SKILL_RECOMMENDATIONS_2026-09-02.md\n?? what-next/agents-skills/STOQUIFY_DEVELOPMENT_AGENT_SKILL_REGISTRY_2026-09-02.json\n?? what-next/analytics-network-program/\n?? what-next/astra-platform-review/\n?? what-next/development-progression-agent/\n?? what-next/evidence/finance-x1/\n?? what-next/migrations/isolated-next-level-blocker-register-20260830.json\n?? what-next/migrations/isolated-next-level-blocker-register-20260830.md\n?? what-next/migrations/isolated-next-level-fresh-replay-20260830.json\n?? what-next/migrations/isolated-next-level-fresh-replay-20260830.md\n?? what-next/module-composition-blueprint/\n?? what-next/system-evaluation-2026-08-28-action-plan.md\n?? what-next/system-evaluation-2026-08-28-blocker-matrix.json\n?? what-next/system-evaluation-2026-08-28-comprehensive-report.md\n?? what-next/system-evaluation-2026-08-28-risk-register.md\n?? what-next/table-harmonization-x1-finance-execution-2026-08-31.json\n?? what-next/table-harmonization-x1-finance-execution-2026-08-31.md\n?? what-next/table-remediation-reseed-readiness-2026-08-30.json\n?? what-next/table-remediation-reseed-readiness-2026-08-30.md\n?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_FINANCE_ACCOUNTING_NORMALIZATION_REPORT_2026-08-31.md\n?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_FINANCE_ACCOUNTING_TABLE_NORMALIZATION_REPORT_2026-08-28.md\n?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_INVENTORY_ITEMS_TABLE_NORMALIZATION_REPORT_2026-08-28.md\n?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_INVENTORY_MOVEMENTS_TABLE_NORMALIZATION_REPORT_2026-08-27.md\n?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_PAYMENT_RECONCILIATION_TABLE_NORMALIZATION_REPORT_2026-08-28.md\n?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_06_PURCHASE_ORDERS_TABLE_NORMALIZATION_REPORT_2026-08-28.md\n?? what-next/ui-ux/AQSTOQFLOW_UIUX_PHASE_09_TABLE_GOVERNANCE_REPORT_2026-08-28.md\n?? what-next/ui-ux/STOQUIFY_ENTERPRISE_TABLE_BENCHMARK_AND_AUDIT_REPORT_2026-08-28.md\n?? what-next/ui-ux/STOQUIFY_TABLE_SYSTEM_HARMONIZATION_ROADMAP_2026-08-28.md\n?? what-next/ui-ux/evidence/",
+  "scope": "Design and isolated prototype only; no application source edits or live database operations.",
+  "files": [
+    {
+      "path": "services/modules/module-control-contracts.ts",
+      "sha256": "5e0ba17183252742da2e8e746b39d08a6cad2f75864268e48cb95b7101e3392c"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "137108e7b599d4bc6b8caa7d9d05838696940ffc2e4dc88b467248495ae7f9d2"
+    },
+    {
+      "path": "actions/modules/module-control.actions.ts",
+      "sha256": "41cdb7cca286fe18ea7407bb1739da63af0d89d35881c365d6d48f4e431c5fb4"
+    },
+    {
+      "path": "components/modules/TenantModuleActivationButton.tsx",
+      "sha256": "5c7512eae51f34bf1162c666d46fffed8fcf5eabecb1da5a03913c450ccf65ca"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "7897b968d88039ad16b5be1d6617b87949aea3b3ea6c5d61675bb01cdd894742"
+    },
+    {
+      "path": "lib/security/auth-session.ts",
+      "sha256": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae"
+    },
+    {
+      "path": "lib/security/server-authz.ts",
+      "sha256": "0fe28bc31098e8112e9a8ca98a68914edd83761ff2acd39719d99386aaec20d5"
+    },
+    {
+      "path": "services/_shared/protect.ts",
+      "sha256": "99b35157477444da109683770f78965720e3f0151ea9450bfa3910d54f07d200"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "f4b0b0d62933a0e4f29d86d96743eda7c6941a0a4dc8224c842cd83be8635f20"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "e7fb0b6195946077eca67e18829826021f3637fbb1967af5e52dc132f3e9e143"
+    },
+    {
+      "path": "package.json",
+      "sha256": "6f97fdb07e7f4dd934a7c12cfef2793ee88d28c85c9b3b643305bccc9ef7bcde"
+    },
+    {
+      "path": "scripts/module-surface-inventory.js",
+      "sha256": "30a34339263b766e64d25ec7b78503b87b7291e02606ea9a38b432f62b855d93"
+    },
+    {
+      "path": "scripts/api-route-guard-inventory.js",
+      "sha256": "f39b0ae02ec4e26085d670a39e45f31611086aa6b08688e8b1c4097de1e47c75"
+    },
+    {
+      "path": "services/events/business-event-outbox.service.ts",
+      "sha256": "3a5aaab6861498ad3782a864cd2acdb6284acba2f8bddfd9e98dca224a1578c1"
+    },
+    {
+      "path": "services/accounting/posting.service.ts",
+      "sha256": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2"
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "8d2b1e4f2453202fa3d96c95f087cd46638518331c1817f5bacdb4a075169f46"
+    },
+    {
+      "path": "services/pos/offline-sync.service.ts",
+      "sha256": "1f145c236c445cea8ea34c37f49e0bcd9a1aed4dcc5a24c5c8503b1aa6bd0eb4"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "7734ddb412e80dc9fc100c6f3256d20a5e1c73b1f9ce3711219cf95bde57a0b8"
+    },
+    {
+      "path": "services/agents/agent-policy.service.ts",
+      "sha256": "b9c4bf645f1a7805df82389b7d6b6433ee41e43668ce42f5664b8bb31244991f"
+    },
+    {
+      "path": "services/agents/agent-tool-registry.service.ts",
+      "sha256": "a3ed573fdc3bda492db632ca9dd5b03717bcdd96597de123a0c8e2238ce702a5"
+    },
+    {
+      "path": "services/hris/self-service.service.ts",
+      "sha256": "cd9cab82d3e146e88ecc73b2edff41ee25dc3ce537e824de7a4ff46f767dcdc9"
+    },
+    {
+      "path": "services/regulatory/country-packs/resolve.ts",
+      "sha256": "419d0ccce13d81e5e250a214c8d02c97f24e87ffe6765e8d70a7256351bffeac"
+    },
+    {
+      "path": "services/security/export-safety.service.ts",
+      "sha256": "ec19538e6277c4cb047e935b5a74828143c884c978c3bd5866015cf0334dda8a"
+    }
+  ]
+}

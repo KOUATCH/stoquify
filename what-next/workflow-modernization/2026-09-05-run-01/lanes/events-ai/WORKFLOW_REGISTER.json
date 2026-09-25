@@ -1,0 +1,683 @@
+{
+  "schemaVersion": 1,
+  "lane": "events-ai",
+  "evidenceDate": "2026-09-15T11:36:33.057Z",
+  "workflows": [
+    {
+      "id": "EV-GATEWAY",
+      "name": "Record and replay a scoped business event",
+      "purpose": "Record and replay a scoped business event",
+      "domain": "events",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/events/business-event.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Validate → scoped replay check → atomic event/audit/outbox → domain application → retry/conflict evidence"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/events/business-event.service.ts",
+        "services/events/business-event.service.ts#recordBusinessEvent",
+        "services/events/business-event.service.ts#recordBusinessEventInTx",
+        "services/events/business-event.service.ts#markBusinessEventAppliedInTx",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "partial_owned_service_database_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "AI-PROPOSAL",
+      "name": "Create, review and decide a copilot proposal",
+      "purpose": "Create, review and decide a copilot proposal",
+      "domain": "ai",
+      "personas": [
+        "Authorized employee or reviewer"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/ai/copilot-proposal.service.ts",
+        "actions/ai/copilot-proposal.actions.ts",
+        "components/copilot/CopilotProposalControls.tsx",
+        "components/agents/AgentCommandPanel.tsx",
+        "components/daily-habit/DailyHabitDigestDashboard.tsx",
+        "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Check permission and run evidence → draft → human decision → durable event; execution authority remains NONE"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/ai/copilot-proposal.service.ts",
+        "services/ai/copilot-proposal.service.ts#createCopilotProposal",
+        "services/ai/copilot-proposal.service.ts#decideCopilotProposal",
+        "services/events/business-event.service.ts",
+        "services/ai/copilot-proposal-release.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "governed_display_hint_and_mounted_request_decision_recovery_integrated",
+      "reviewStatus": "partial_source_service_transaction_and_component_review",
+      "runtimeStatus": "owned_service_replay_and_default_disabled_en_fr_browser_verified_enabled_journey_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json",
+        "../../PROPOSAL_EVIDENCE_V152.md",
+        "../../evidence/proposal-evidence-v152.json",
+        "../../PROPOSAL_RECOVERY_V153.md",
+        "../../evidence/proposal-recovery-v153.json"
+      ],
+      "remaining": [
+        "Full authorized enabled proposal browser journey remains unverified; owned tenant has no governed activation package.",
+        "Creation payload is retained during mounted retries, but reload/unmount recovery and durable history need completion.",
+        "Expiry/history, underlying source freshness, complete keyboard/zoom/screen-reader and all authority transports remain open."
+      ]
+    },
+    {
+      "id": "AI-COMMAND",
+      "name": "Request governed command-agent analysis",
+      "purpose": "Request governed command-agent analysis",
+      "domain": "agents",
+      "personas": [
+        "Authorized employee or reviewer"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "actions/agents/command-agent.actions.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Authenticated request → guarded agent run → receipt event → safe read-only result"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "actions/agents/command-agent.actions.ts",
+        "actions/agents/command-agent.actions.ts#runCommandAgentAction",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "CMP-ADAPTER-PILOT",
+      "name": "Configure, review, rotate and disable a country adapter",
+      "purpose": "Configure, review, rotate and disable a country adapter",
+      "domain": "compliance",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/compliance/country-adapter-pilot.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Configuration → credential rotation/review evidence → readiness checks → disable/recovery"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/compliance/country-adapter-pilot.service.ts",
+        "services/compliance/country-adapter-pilot.service.ts#configureCountryAdapterPilot",
+        "services/compliance/country-adapter-pilot.service.ts#rotateCountryAdapterCredential",
+        "services/compliance/country-adapter-pilot.service.ts#recordCountryAdapterReview",
+        "services/compliance/country-adapter-pilot.service.ts#disableCountryAdapter",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "HRIS-DOCUMENT-EVIDENCE",
+      "name": "Request and approve contract document evidence",
+      "purpose": "Request and approve contract document evidence",
+      "domain": "hris",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/hris/document-evidence.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Scoped draft contract → evidence request → separate review → retained hash and audit"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/hris/document-evidence.service.ts",
+        "services/hris/document-evidence.service.ts#requestHrisContractDocumentEvidence",
+        "services/hris/document-evidence.service.ts#approveHrisContractDocumentEvidence",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "PY-COMPENSATION",
+      "name": "Configure rubriques and approve compensation changes",
+      "purpose": "Configure rubriques and approve compensation changes",
+      "domain": "payroll",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/payroll/compensation.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Provenance/setup → request/assignment → approve or reject → controlled application → history"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/payroll/compensation.service.ts",
+        "services/payroll/compensation.service.ts#upsertPayrollRubrique",
+        "services/payroll/compensation.service.ts#assignEmployeeRubrique",
+        "services/payroll/compensation.service.ts#approveEmployeeRubriqueAssignment",
+        "services/payroll/compensation.service.ts#requestSalaryChange",
+        "services/payroll/compensation.service.ts#approveSalaryChange",
+        "services/payroll/compensation.service.ts#rejectSalaryChange",
+        "services/payroll/compensation.service.ts#applyApprovedSalaryChange",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "PY-PAYMENT-DESTINATION",
+      "name": "Review and apply employee payment destination changes",
+      "purpose": "Review and apply employee payment destination changes",
+      "domain": "payroll",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/payroll/payment-evidence.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Private destination request → separate decision → application → readiness evidence"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/payroll/payment-evidence.service.ts",
+        "services/payroll/payment-evidence.service.ts#requestPaymentDestinationChange",
+        "services/payroll/payment-evidence.service.ts#approvePaymentDestinationChange",
+        "services/payroll/payment-evidence.service.ts#rejectPaymentDestinationChange",
+        "services/payroll/payment-evidence.service.ts#applyApprovedPaymentDestinationChange",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "PY-CONTRACT",
+      "name": "Create, revise, activate and terminate payroll contracts",
+      "purpose": "Create, revise, activate and terminate payroll contracts",
+      "domain": "payroll",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/payroll/contract.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Draft → revision/document evidence → activation request/approval → termination/history"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/payroll/contract.service.ts",
+        "services/payroll/contract.service.ts#createPayrollContract",
+        "services/payroll/contract.service.ts#updatePayrollContract",
+        "services/payroll/contract.service.ts#terminatePayrollContract",
+        "services/payroll/contract.service.ts#requestPayrollContractActivationFromHris",
+        "services/payroll/contract.service.ts#approvePayrollContractActivationFromHris",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "PY-DECLARATION-EVIDENCE",
+      "name": "Record payroll declaration lifecycle evidence",
+      "purpose": "Record payroll declaration lifecycle evidence",
+      "domain": "payroll",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/payroll/declaration-lifecycle.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Current declaration and controls → evidence transition → event/audit → stale dependent close evidence"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/payroll/declaration-lifecycle.service.ts",
+        "services/payroll/declaration-lifecycle.service.ts#recordPayrollDeclarationEvidence",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "PY-AUTHORITY-EXECUTION",
+      "name": "Queue and process payroll authority adapter execution",
+      "purpose": "Queue and process payroll authority adapter execution",
+      "domain": "payroll",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/payroll/authority-adapter-execution.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Certified evidence → queue/lease → guarded adapter execution → durable outcome and recovery"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/payroll/authority-adapter-execution.service.ts",
+        "services/payroll/authority-adapter-execution.service.ts#enqueuePayrollAuthorityAdapterExecution",
+        "services/payroll/authority-adapter-execution.service.ts#leasePayrollAuthorityAdapterExecutions",
+        "services/payroll/authority-adapter-execution.service.ts#processPayrollAuthorityAdapterExecution",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "PY-PAYSLIP-EXPORT",
+      "name": "Prepare a controlled self-service payslip export",
+      "purpose": "Prepare a controlled self-service payslip export",
+      "domain": "payroll",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/payroll/payslip-self-service.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Linked employee → authorized archive → controlled export → event/audit → artifact"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/payroll/payslip-self-service.service.ts",
+        "services/payroll/payslip-self-service.service.ts#getPayrollPayslipSelfService",
+        "services/payroll/payslip-self-service.service.ts#preparePayrollPayslipExport",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    },
+    {
+      "id": "PY-REGISTER-EXPORT",
+      "name": "Read and export payroll register tie-out",
+      "purpose": "Read and export payroll register tie-out",
+      "domain": "payroll",
+      "personas": [
+        "Authorized domain operator or internal worker"
+      ],
+      "authority": "Existing server-derived identity/tenant and domain permissions remain required; complete transport and fresh-auth coverage is not established by this batch.",
+      "entryPoints": [
+        "services/payroll/payroll-register.service.ts"
+      ],
+      "prerequisites": [
+        "Current domain records and authorized actor/context",
+        "Existing domain gates; no synthetic live approval"
+      ],
+      "transitions": [
+        "Authorized run → source/ledger/close tie-out → redaction and export controls → event/audit"
+      ],
+      "completionConditions": [
+        "Actual intended domain outcome, linked records and recovery verified; not yet established for entire workflow"
+      ],
+      "services": [
+        "services/payroll/payroll-register.service.ts",
+        "services/payroll/payroll-register.service.ts#getPayrollRegister",
+        "services/payroll/payroll-register.service.ts#preparePayrollRegisterExport",
+        "services/events/business-event.service.ts"
+      ],
+      "records": [
+        "Domain records",
+        "BusinessEvent",
+        "BusinessEventAudit",
+        "BusinessEventOutbox where requested"
+      ],
+      "sideEffects": [
+        "Existing domain mutation and event evidence",
+        "Existing queued output where applicable; no dispatch proved"
+      ],
+      "downstream": [
+        "Domain consumers and applicable close/evidence/notification queues"
+      ],
+      "implementationStatus": "domain_event_reference_contract_corrected",
+      "reviewStatus": "partial_source_and_focused_tests",
+      "runtimeStatus": "gateway_values_verified_domain_runtime_unverified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "../../EVENT_SOURCE_CONTRACT_V151.md",
+        "../../evidence/event-source-contract-v151.json"
+      ],
+      "remaining": [
+        "Complete workflow authority, lifecycle, failure/concurrency and downstream review remains open.",
+        "EN/FR browser, keyboard, responsive and operator recovery visits remain open."
+      ]
+    }
+  ],
+  "coverage": {
+    "discoveredWorkflows": 12,
+    "completeWorkflowVerified": 0,
+    "denominatorStatus": "Provisional grouped lifecycles, not a complete domain inventory"
+  }
+}

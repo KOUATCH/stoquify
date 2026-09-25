@@ -1,0 +1,45 @@
+{
+  "at": "2026-09-09T15:16:04.217Z",
+  "run": "402eb323-b61",
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "e8c1ca1f576e8c6558d15c56ff4d4fa4ee8e09fac9d08262d4e5fbbe42b1d95e",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "282e5f3c51bc78751cc041d535e576c10e0afe2e1fee362ce47c0639b06fcef5"
+  },
+  "checks": [
+    {
+      "type": "MISSING_PROVIDER_EVENT",
+      "bidirectionalLink": true,
+      "assignmentReachedException": true,
+      "proposalReachedException": true
+    },
+    {
+      "type": "MISSING_INTERNAL_PAYMENT",
+      "bidirectionalLink": true,
+      "assignmentReachedException": true,
+      "proposalReachedException": true
+    },
+    {
+      "type": "MISSING_INTERNAL_PAYMENT",
+      "bidirectionalLink": true,
+      "assignmentReachedException": true,
+      "proposalReachedException": true
+    },
+    {
+      "duplicateRunRefusedWithoutDuplicatePairs": true,
+      "runStillNeedsReview": true
+    },
+    {
+      "failedLinkRollsBackRunExceptionSuspenseAndNotifications": true
+    }
+  ],
+  "scope": "Owned isolated database; real HMAC event capture, statement import, automatic run, assignment and proposal. Internal payment and settlement setup are synthetic preconditions, not real approvals. No sign-off, live payment or external delivery.",
+  "originalBefore": "a219a0d36afc9cd12d599a38a966a50dfae3322f0e3eabcd442b9f98f4f71503",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "e8c1ca1f576e8c6558d15c56ff4d4fa4ee8e09fac9d08262d4e5fbbe42b1d95e",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "113c250fb2c4aa244ccc1386031243be9a6ad789eccdbc922ff2e4419b004312",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "282e5f3c51bc78751cc041d535e576c10e0afe2e1fee362ce47c0639b06fcef5"
+  },
+  "sourceStable": true
+}

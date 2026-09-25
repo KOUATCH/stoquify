@@ -131,20 +131,17 @@ describe("legacy customer service boundary", () => {
   })
 
   it("archives legacy customers through an organization-scoped service mutation", async () => {
-    await archiveLegacyCustomerForOrg("org-1", "customer-1")
+    mockDb.customer.findFirst.mockResolvedValue({ id: "customer-1", _count: { salesOrders: 0, ledgerEntries: 0, receivableDocuments: 0, statementSnapshots: 0, settlements: 0 } })
+    expect(await archiveLegacyCustomerForOrg("org-1", "customer-1")).toEqual({ id: "customer-1", mode: "archived" })
 
-    expect(mockDb.customer.updateMany).toHaveBeenCalledWith({
-      where: {
-        id: "customer-1",
-        organizationId: "org-1",
-        deletedAt: null,
-      },
+    expect(mockDb.customer.update).toHaveBeenCalledWith({
+      where: { id: "customer-1" },
       data: expect.objectContaining({
         deletedAt: expect.any(Date),
         isActive: false,
-        updatedAt: expect.any(Date),
       }),
     })
+    expect(mockDb.customer.updateMany).not.toHaveBeenCalled()
   })
 
   it.each([

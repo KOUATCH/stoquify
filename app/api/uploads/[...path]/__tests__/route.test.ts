@@ -200,5 +200,6 @@ describe("GET /api/uploads/[...path]", () => {
     expect(mockReadFile).toHaveBeenCalledTimes(1)
     expect(response.headers.get("Content-Type")).toBe("image/webp")
     expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff")
+    expect(response.headers.get("Cache-Control")).toBe("private, no-store")
   })
 })

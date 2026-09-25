@@ -1,8 +1,10 @@
 "use client";
+import { approvePurchaseOrder } from "@/actions/purchaseOrderWorkflow/purchaseOrderSystemAction";
+import type { PurchaseLifecycleRequest } from "@/services/purchase-order/purchase-order-lifecycle-contracts";
+import type { PurchaseApprovalRequest } from "@/services/purchase-order/purchase-order-approval-contracts";
 
 import { notify } from "@/lib/notifications/notify"
 import {
-  approvePurchaseOrder,
   bulkUpdatePurchaseOrderStatus,
   cancelPurchaseOrder,
   closePurchaseOrder,
@@ -26,11 +28,14 @@ import type { PurchaseOrderPresentation } from "@/services/purchase-order/purcha
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error";
 // Types
 interface BulkDeletePurchaseOrdersResponseData {
   deletedCount: number;
   failedCount?: number;
   errors?: string[];
+  archivedIds?: string[];
 }
 
 interface BaseMutationVariables {
@@ -289,6 +294,7 @@ const getBaseMutationOptions = <TData extends { data?: any; message?: string }>(
  */
 export function useCreatePurchaseOrder() {
   const queryClient = useQueryClient();
+  const t = useTranslations("moduleComposition.stop");
 
   return useMutation<
     PurchaseOrderResponse<PurchaseOrderWithRelations>,
@@ -300,66 +306,38 @@ export function useCreatePurchaseOrder() {
       if (!payload.organizationId) {
         throw new Error("Organization ID is required");
       }
-      return await createPurchaseOrder(payload);
+      const result = await createPurchaseOrder(payload);
+      return getModuleOperationErrorReason(result) ? { ...result, error: t("deniedMessage") } : result;
     },
     ...getBaseMutationOptions(queryClient),
   });
 }
 
 /**
- * Hook to update an existing purchase order with optimistic updates
+ * Save through the protected action. Draft input is not authoritative order data.
  */
-export function useUpdatePurchaseOrder() {
+export function useUpdatePurchaseOrder(options: { handlesFeedbackLocally?: boolean } = {}) {
   const queryClient = useQueryClient();
-
   return useMutation<
     PurchaseOrderResponse<PurchaseOrderWithRelations>,
     QueryError,
     UpdatePurchaseOrderDTO & BaseMutationVariables
   >({
-    meta: { operation: 'update', entity: 'Purchase Order' },
+    meta: { operation: 'update', entity: 'Purchase Order', ...(options.handlesFeedbackLocally ? { suppressErrorNotification: true, suppressSuccessNotification: true } : {}) },
+    retry: false,
     mutationFn: async (payload) => {
       if (!payload.id || !payload.organizationId) {
         throw new Error("Purchase order ID and organization ID are required");
       }
-      return await updatePurchaseOrder(payload);
+      return updatePurchaseOrder(payload);
     },
-    onMutate: async (variables) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({
-        queryKey: purchaseOrderKeys.detail(variables.id),
-      });
-
-      // Snapshot previous value
-      const previousPO = queryClient.getQueryData(
-        purchaseOrderKeys.detail(variables.id),
-      );
-
-      // Optimistically update
-      if (previousPO) {
-        queryClient.setQueryData(
-          purchaseOrderKeys.detail(variables.id),
-          (old: any) => ({ ...old, ...variables }),
-        );
-      }
-
-      return { previousPO };
-    },
-    onError: (error, variables, context) => {
-      // Rollback on error
-      if (context && typeof context === 'object' && 'previousPO' in context && context.previousPO) {
-        queryClient.setQueryData(
-          purchaseOrderKeys.detail(variables.id),
-          context.previousPO,
-        );
-      }
-      handleMutationError(error);
-    },
-    onSettled: (_data, _error, variables) => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries({
-        queryKey: purchaseOrderKeys.detail(variables.id),
-      });
+    onSuccess: (result, variables) => {
+      if (!result.success || !result.data) return;
+      // Detail has a separate actor-specific presentation shape. Refetch it
+      // instead of merging write DTOs into that cached read model.
+      void queryClient.invalidateQueries({ queryKey: purchaseOrderKeys.detail(variables.id) });
+      void queryClient.invalidateQueries({ queryKey: purchaseOrderKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: purchaseOrderKeys.summary(variables.organizationId) });
     },
   });
 }
@@ -369,37 +347,13 @@ export function useUpdatePurchaseOrder() {
  */
 export function useDeletePurchaseOrder() {
   const queryClient = useQueryClient();
-
-  return useMutation<
-    PurchaseOrderResponse<null>,
-    QueryError,
-    { id: string; organizationId: string }
-  >({
-    mutationFn: async ({ id, organizationId }) => {
-      if (!id || !organizationId) {
-        throw new Error("Purchase order ID and organization ID are required");
-      }
-      return await deletePurchaseOrder(id, organizationId);
+  return useMutation<Awaited<ReturnType<typeof deletePurchaseOrder>>, QueryError, { id: string; organizationId: string; request?: PurchaseLifecycleRequest; reason?: string }>({
+    mutationFn: async ({ id, organizationId, request }) => {
+      const result = await deletePurchaseOrder(id, organizationId, request);
+      if (!result.success || !result.data) throw Object.assign(new Error(result.error || "Purchase-order decision was not confirmed"), { code: result.code });
+      return result;
     },
-    onSuccess: (data, variables) => {
-      // Remove from cache immediately
-      queryClient.removeQueries({
-        queryKey: purchaseOrderKeys.detail(variables.id),
-      });
-      queryClient.removeQueries({
-        queryKey: purchaseOrderKeys.goodsReceipts(variables.id),
-      });
-
-      // Show success message
-      notify.success(data?.message || "Purchase order deleted successfully");
-
-      // Invalidate lists
-      queryClient.invalidateQueries({ queryKey: purchaseOrderKeys.lists() });
-      queryClient.invalidateQueries({
-        queryKey: purchaseOrderKeys.summary(variables.organizationId),
-      });
-    },
-    onError: handleMutationError,
+    ...getBaseMutationOptions(queryClient),
   });
 }
 
@@ -408,38 +362,11 @@ export function useDeletePurchaseOrder() {
  */
 export function useSubmitPurchaseOrder() {
   const queryClient = useQueryClient();
-
-  return useMutation<
-    PurchaseOrderResponse<PurchaseOrderWithRelations>,
-    QueryError,
-    { id: string; organizationId: string }
-  >({
-    mutationFn: async ({ id, organizationId }) => {
-      if (!id || !organizationId) {
-        throw new Error("Purchase order ID and organization ID are required");
-      }
-      return await submitPurchaseOrder(id, organizationId);
-    },
-    ...getBaseMutationOptions(queryClient),
-  });
-}
-
-/**
- * Hook to approve a purchase order with enhanced validation
- */
-export function useApprovePurchaseOrder() {
-  const queryClient = useQueryClient();
-
-  return useMutation<
-    PurchaseOrderResponse<PurchaseOrderWithRelations>,
-    QueryError,
-    { id: string; organizationId: string; approvedBy?: string | null }
-  >({
-    mutationFn: async ({ id, organizationId, approvedBy }) => {
-      if (!id || !organizationId) {
-        throw new Error("Purchase order ID and organization ID are required");
-      }
-      return await approvePurchaseOrder(id, organizationId, approvedBy);
+  return useMutation<Awaited<ReturnType<typeof submitPurchaseOrder>>, QueryError, { id: string; organizationId: string; request?: PurchaseLifecycleRequest; reason?: string }>({
+    mutationFn: async ({ id, organizationId, request }) => {
+      const result = await submitPurchaseOrder(id, organizationId, request);
+      if (!result.success || !result.data) throw Object.assign(new Error(result.error || "Purchase-order decision was not confirmed"), { code: result.code });
+      return result;
     },
     ...getBaseMutationOptions(queryClient),
   });
@@ -448,19 +375,25 @@ export function useApprovePurchaseOrder() {
 /**
  * Hook to cancel a purchase order with reason tracking
  */
+export function useApprovePurchaseOrder() {
+  const queryClient = useQueryClient();
+  return useMutation<Awaited<ReturnType<typeof approvePurchaseOrder>>, QueryError, { id: string; organizationId: string; request: PurchaseApprovalRequest }>({
+    mutationFn: async ({ id, organizationId, request }) => {
+      const result = await approvePurchaseOrder(id, organizationId, request);
+      if (!result.success) throw Object.assign(new Error(result.error || "Approval was not confirmed"), { code: result.code });
+      return result;
+    },
+    ...getBaseMutationOptions(queryClient),
+  });
+}
+
 export function useCancelPurchaseOrder() {
   const queryClient = useQueryClient();
-
-  return useMutation<
-    PurchaseOrderResponse<Pick<PurchaseOrderWithRelations, "id" | "orderNumber" | "status">>,
-    QueryError,
-    { id: string; organizationId: string; reason?: string }
-  >({
-    mutationFn: async ({ id, organizationId, reason }) => {
-      if (!id || !organizationId) {
-        throw new Error("Purchase order ID and organization ID are required");
-      }
-      return await cancelPurchaseOrder(id, organizationId, reason);
+  return useMutation<Awaited<ReturnType<typeof cancelPurchaseOrder>>, QueryError, { id: string; organizationId: string; request?: PurchaseLifecycleRequest; reason?: string }>({
+    mutationFn: async ({ id, organizationId, request, reason }) => {
+      const result = await cancelPurchaseOrder(id, organizationId, reason, request);
+      if (!result.success || !result.data) throw Object.assign(new Error(result.error || "Purchase-order decision was not confirmed"), { code: result.code });
+      return result;
     },
     ...getBaseMutationOptions(queryClient),
   });
@@ -471,17 +404,11 @@ export function useCancelPurchaseOrder() {
  */
 export function useClosePurchaseOrder() {
   const queryClient = useQueryClient();
-
-  return useMutation<
-    PurchaseOrderResponse<Pick<PurchaseOrderWithRelations, "id" | "orderNumber" | "status">>,
-    QueryError,
-    { id: string; organizationId: string }
-  >({
-    mutationFn: async ({ id, organizationId }) => {
-      if (!id || !organizationId) {
-        throw new Error("Purchase order ID and organization ID are required");
-      }
-      return await closePurchaseOrder(id, organizationId);
+  return useMutation<Awaited<ReturnType<typeof closePurchaseOrder>>, QueryError, { id: string; organizationId: string; request?: PurchaseLifecycleRequest; reason?: string }>({
+    mutationFn: async ({ id, organizationId, request }) => {
+      const result = await closePurchaseOrder(id, organizationId, request);
+      if (!result.success || !result.data) throw Object.assign(new Error(result.error || "Purchase-order decision was not confirmed"), { code: result.code });
+      return result;
     },
     ...getBaseMutationOptions(queryClient),
   });
@@ -538,10 +465,11 @@ export function useBulkUpdatePurchaseOrderStatus() {
       ids: string[];
       organizationId: string;
       newStatus: PurchaseOrderStatus;
+      reviewedRequests?: Array<{ id: string; request: PurchaseLifecycleRequest }>;
       reason?: string;
     }
   >({
-    mutationFn: async ({ ids, organizationId, newStatus, reason }) => {
+    mutationFn: async ({ ids, organizationId, newStatus, reason, reviewedRequests }) => {
       if (!ids?.length || !organizationId || !newStatus) {
         throw new Error("IDs, organization ID, and new status are required");
       }
@@ -549,6 +477,7 @@ export function useBulkUpdatePurchaseOrderStatus() {
         organizationId,
         purchaseOrderIds: ids,
         toStatus: newStatus,
+        reviewedRequests,
         reason,
       });
     },
@@ -581,15 +510,20 @@ export function useBulkUpdatePurchaseOrderStatus() {
 const bulkDeletePurchaseOrders = async (
   ids: string[],
   organizationId: string,
+  reviewedRequests?: Array<{ id: string; request: PurchaseLifecycleRequest }>,
 ): Promise<PurchaseOrderResponse<BulkDeletePurchaseOrdersResponseData>> => {
   try {
+    if (!reviewedRequests || new Set(reviewedRequests.map(value => value.id)).size !== new Set(ids).size || ids.some(id => !reviewedRequests.some(value => value.id === id && value.request.kind === "archive"))) throw new Error("Review each selected archive request first.");
+    const archivedIds: string[] = [];
     let deletedCount = 0;
     let failedCount = 0;
     const errors: string[] = [];
 
     for (const id of ids) {
       try {
-        await deletePurchaseOrder(id, organizationId);
+        const result = await deletePurchaseOrder(id, organizationId, reviewedRequests.find(value => value.id === id)!.request);
+        if (!result.success || !result.data?.lifecycleReceipt.archived) throw new Error(result.error || "Archive was not confirmed");
+        archivedIds.push(id);
         deletedCount++;
       } catch (error) {
         failedCount++;
@@ -600,7 +534,7 @@ const bulkDeletePurchaseOrders = async (
     return {
       success: true,
       error: `Deleted ${deletedCount} purchase order(s)${failedCount > 0 ? `, ${failedCount} failed` : ''}`,
-      data: { deletedCount, failedCount, errors: errors.length > 0 ? errors : undefined },
+      data: { deletedCount, failedCount, archivedIds, errors: errors.length > 0 ? errors : undefined },
     };
   } catch (error) {
     return {
@@ -620,17 +554,19 @@ export function useBulkDeletePurchaseOrders() {
   return useMutation<
     PurchaseOrderResponse<BulkDeletePurchaseOrdersResponseData>,
     QueryError,
-    { ids: string[]; organizationId: string }
+    { ids: string[]; organizationId: string; reviewedRequests?: Array<{ id: string; request: PurchaseLifecycleRequest }> }
   >({
-    mutationFn: async ({ ids, organizationId }) => {
+    mutationFn: async ({ ids, organizationId, reviewedRequests }) => {
       if (!ids?.length || !organizationId) {
         throw new Error("IDs and organization ID are required");
       }
-      return await bulkDeletePurchaseOrders(ids, organizationId);
+      const result = await bulkDeletePurchaseOrders(ids, organizationId, reviewedRequests);
+      if (!result.success) throw new Error(result.error || "Archive was not confirmed");
+      return result;
     },
     onSuccess: (data, variables) => {
       // Remove deleted items from cache
-      variables.ids.forEach((id) => {
+      (data.data.archivedIds ?? []).forEach((id) => {
         queryClient.removeQueries({
           queryKey: purchaseOrderKeys.detail(id),
         });
@@ -642,7 +578,8 @@ export function useBulkDeletePurchaseOrders() {
       // Show detailed success message
       if (data?.data) {
         const { deletedCount, failedCount } = data.data;
-        notify.success(
+        const show = failedCount ? notify.warning : notify.success;
+        show(
           `Deleted ${deletedCount} purchase order(s)${
             failedCount ? `, ${failedCount} failed` : ""
           }`,

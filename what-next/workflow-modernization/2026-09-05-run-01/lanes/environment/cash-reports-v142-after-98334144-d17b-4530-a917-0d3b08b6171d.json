@@ -1,0 +1,57 @@
+{
+  "at": "2026-09-13T18:02:24.063Z",
+  "phase": "after",
+  "sourceBefore": {
+    "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+    "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+  },
+  "checks": [
+    {
+      "name": "uncounted_shift",
+      "status": "ACTIVE",
+      "variance": null,
+      "performanceScore": null
+    },
+    {
+      "name": "closing_count_is_not_outflow",
+      "cashIn": 100,
+      "cashOut": 0,
+      "net": 100,
+      "expectedOperationalNet": 100
+    },
+    {
+      "name": "void_return_is_outflow",
+      "cashIn": 100,
+      "cashOut": 100,
+      "net": 0,
+      "expectedOperationalNet": 0
+    },
+    {
+      "name": "foreign_location_denied",
+      "passed": true
+    },
+    {
+      "name": "missing_expected_count_stays_unknown",
+      "passed": true
+    },
+    {
+      "name": "inconsistent_direction_unavailable",
+      "passed": true
+    },
+    {
+      "name": "genuine_empty_period",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "scope": "Owned local database and actual synthetic POS sale, void and close services; report reads add no financial effects. Isolated count/movement corruption exercises missing evidence. No live payment, external provider, deployment or statutory approval.",
+  "sourceAfter": {
+    "services/analytics/financial-reports.service.ts": "d9ae441884579471778f7c25601ec96b28ef1783fc17f58b61da1e0999a928f7",
+    "services/analytics/cash-report-evidence.ts": "0f0f9b54fda3eda1c8b4fb2fc8b8a9e0d924bd220e4ff015bf23f988c7a95342",
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/pos/pos.service.ts": "51935afe890f30df6cee385beb2a5d3f071e43acf0796d974411a05e01efcc58"
+  },
+  "sourceStable": true
+}

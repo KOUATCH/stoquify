@@ -1,0 +1,56 @@
+{
+  "at": "2026-09-09T15:44:10.271Z",
+  "run": "753e21c5-511",
+  "sourcesBefore": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed"
+  },
+  "checks": [
+    {
+      "denial": "missing-write",
+      "unchanged": true
+    },
+    {
+      "denial": "stale-auth",
+      "unchanged": true
+    },
+    {
+      "denial": "foreign-actor",
+      "unchanged": true
+    },
+    {
+      "denial": "foreign-org",
+      "unchanged": true
+    },
+    {
+      "repairAndExactReplay": true,
+      "receiptId": "3f0454d6-aaa1-4c9e-b2e2-6dde517dfc98",
+      "exceptionStatusUnchanged": true
+    },
+    {
+      "staleReviewDoesNotOverwriteWinner": true
+    }
+  ],
+  "scope": "Owned isolated automatic-run fixtures with the historical missing link reproduced. Synthetic current SIGNED/CERTIFIED labels test invalidation/retention only and are not genuine approvals or sign-off proof. No financial posting or external delivery.",
+  "originalBefore": "161408db404de028b326b0728a0fd4d4c0218261e07fa91fc41ae07d79da6584",
+  "financialBefore": "6dc367c8205c89a64e7c72bf65291398701c1c8a0df86cd9aeb63a0ecd77dc42",
+  "error": "Expected values to be strictly equal:\n\ntrue !== false\n",
+  "stack": [
+    "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:",
+    "",
+    "true !== false",
+    "",
+    "    at E:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-exception-link-repair-v109.cjs:32:115"
+  ],
+  "originalUnchanged": true,
+  "financialUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-exception-link.service.ts": "32277bda3d79dedbf6ae759f242c1d3ffa32dd4c02c4cc428b4fef532038daad",
+    "services/reconciliation/payment-exception-link.contracts.ts": "28a4a61155c94fd12678241e36232c24bfed548050a3803a72c2382910660884",
+    "services/accounting/close-assurance-pack.service.ts": "35870dfbf6c826bfb68ab64441d22316964ad531cf9ce900a8c37810d380c1f1",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "3e228110f23850c338fc357e4899b8ffa23331321122e8b7480a5a925f58b2ed"
+  },
+  "sourceStable": true
+}

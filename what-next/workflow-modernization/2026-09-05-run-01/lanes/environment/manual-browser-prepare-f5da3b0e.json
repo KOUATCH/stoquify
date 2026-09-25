@@ -1,0 +1,46 @@
+{
+  "mode": "prepare",
+  "attempt": "f5da3b0e",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "organizationId": "org_modules_legacy_en_desktop",
+  "startedAt": "2026-09-05T20:33:07.589Z",
+  "sourcesBefore": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "746734d4614670ebd2a450cccaa8593cc83b078f40bf5f0d5441b936f5a2bf0e",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "eb5e97346f4ae349d4635359741fb914c7b6bc8082f332dd390d6cb8b11ddc10",
+    "actions/payments/reconciliation.actions.ts": "d2b66dba25ca896ebddcc03a322b1b504b9d7ab843ceb673288031e0718cf4a4",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "48ec09fc74321baa5d24d35bb132daaed6da7abb4bf1d5d238bf8b517d8c8bff",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "50333d251f63323c2862ffd4715d70a1c483cb8a45bbe9b6895dac84a41b12aa",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "b161b7887b0e70a8ef65b0d5044e4ad2c8bef36b63423ca0f74d71f480e1be13",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "4ffff0ca2bf75aca40979a115328bd2060caa8c2ee0c7c4f7bc6bf63bc26b38c",
+    "messages/en.json": "c0c4c0edb1dcaeed94602cea89886ed0bbeba9dbfda8c4f94bc858f301969b3b",
+    "messages/fr.json": "1dc4e1049bf7046acef1413913e894ce8323a9651b3a4e14652e8f03388e6ddf"
+  },
+  "checks": [],
+  "blockedExternalOrigins": [],
+  "limitations": [
+    "Provider setup and confirmed internal payments are synthetic preconditions in the existing owned browser database. No live authority, provider, payment or financial certification.",
+    "Browser identity uses genuine password sign-in and, where requested, the actual password confirmation action. No sessions or approval results are fabricated.",
+    "A deliberate lost response after the real proposal request tests uncertainty and retry. No application response data is substituted.",
+    "Checks cover manual proposal/approval recovery only; they do not establish complete reconciliation lifecycle or platform verification."
+  ],
+  "originalAuthorityHashBefore": "627e56ebfd91a0ffe0daa131a8b90522ab4ee7c0c47d2664eb15e65e1c3d622f",
+  "fatal": "\nInvalid `tx.providerAccount.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-manual-browser.cjs:62:49\n\n  59 const bank = await tx.chartOfAccount.create({ data: { organizationId, code: `512-${tag}`, nameEn: \"Synthetic manual bank\", type: \"ASSET\", normalBalance: \"DEBIT\" } });\n  60 const suspense = await tx.chartOfAccount.create({ data: { organizationId, code: `471-${tag}`, nameEn: \"Synthetic manual suspense\", type: \"ASSET\", normalBalance: \"DEBIT\" } });\n  61 const rail = await tx.paymentRail.create({ data: { organizationId, code: `MANUAL-${tag}`, name: `Manual test ${locale}`, type: \"MOBILE_MONEY\", metadata } });\n→ 62 const provider = await tx.providerAccount.create(\nUnique constraint failed on the fields: (`organizationId`,`providerCode`)",
+  "originalAuthorityHashAfter": "627e56ebfd91a0ffe0daa131a8b90522ab4ee7c0c47d2664eb15e65e1c3d622f",
+  "existingAuthorityUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "746734d4614670ebd2a450cccaa8593cc83b078f40bf5f0d5441b936f5a2bf0e",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "eb5e97346f4ae349d4635359741fb914c7b6bc8082f332dd390d6cb8b11ddc10",
+    "actions/payments/reconciliation.actions.ts": "d2b66dba25ca896ebddcc03a322b1b504b9d7ab843ceb673288031e0718cf4a4",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "48ec09fc74321baa5d24d35bb132daaed6da7abb4bf1d5d238bf8b517d8c8bff",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "50333d251f63323c2862ffd4715d70a1c483cb8a45bbe9b6895dac84a41b12aa",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "b161b7887b0e70a8ef65b0d5044e4ad2c8bef36b63423ca0f74d71f480e1be13",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "4ffff0ca2bf75aca40979a115328bd2060caa8c2ee0c7c4f7bc6bf63bc26b38c",
+    "messages/en.json": "c0c4c0edb1dcaeed94602cea89886ed0bbeba9dbfda8c4f94bc858f301969b3b",
+    "messages/fr.json": "1dc4e1049bf7046acef1413913e894ce8323a9651b3a4e14652e8f03388e6ddf"
+  },
+  "sourceStable": true,
+  "driverSha256": "230e8081a933ba2834a02f1487a27d1f6c9f46adfc5ffda5fd399c627e8ceac0",
+  "completedAt": "2026-09-05T20:33:08.888Z",
+  "passed": 0,
+  "failed": 1
+}

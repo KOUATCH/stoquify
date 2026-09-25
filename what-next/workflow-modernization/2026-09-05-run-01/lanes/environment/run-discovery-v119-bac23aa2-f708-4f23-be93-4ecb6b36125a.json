@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-13T11:28:33.864Z",
+  "organizationId": "workflow_run_discovery_bac23aa2-f708-4f23-be93-4ecb6b36125a",
+  "sourcesBefore": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "e874f4f12d9f6ac53d71b124e7625bc7c2eb23ea1d2a854179556cb471de02bf",
+    "actions/payments/reconciliation-preparation.actions.ts": "211057dacb08dae00c7388fd370e4dee1a96f0fce61bcb281322cef20002e4ce",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "b53cb72a07aa5ed9b1d1d6077f1ed70932074cfd8b0bd349e5c72e37f6608403",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "440925e59dfe4de01310c7a16d35daf5a2a34574022df143b6bc7c5b8c99160e",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "messages/en.json": "0da53f574504cfce68c2d6b083547b34ba2143f54b6571a365c810470a192553",
+    "messages/fr.json": "e5441d18c57e7510b80ab3a4d12204e4d2a4efcb3735a971078c7056609958cf"
+  },
+  "checks": [
+    {
+      "name": "22 real runs, stable two-page discovery/search/empty and private evidence/authority/tenant denial",
+      "passed": true
+    },
+    {
+      "name": "actual browser reader can discover but cannot sign or prepare",
+      "passed": true
+    }
+  ],
+  "journeys": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "run-discovery-v119-en-320-bac23aa2-f708-4f23-be93-4ecb6b36125a.png",
+        "run-discovery-v119-en-768-bac23aa2-f708-4f23-be93-4ecb6b36125a.png",
+        "run-discovery-v119-en-1440-bac23aa2-f708-4f23-be93-4ecb6b36125a.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ],
+      "routeReadyMs": 30304,
+      "paginationSearchFailureRetryAndReview": true,
+      "passed": true
+    },
+    {
+      "locale": "fr",
+      "screenshots": [
+        "run-discovery-v119-fr-320-bac23aa2-f708-4f23-be93-4ecb6b36125a.png",
+        "run-discovery-v119-fr-768-bac23aa2-f708-4f23-be93-4ecb6b36125a.png",
+        "run-discovery-v119-fr-1440-bac23aa2-f708-4f23-be93-4ecb6b36125a.png"
+      ],
+      "pageErrors": [],
+      "consoleIssues": [
+        "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+      ],
+      "routeReadyMs": 9712,
+      "paginationSearchFailureRetryAndReview": true,
+      "passed": true
+    }
+  ],
+  "scope": "Owned actual run creation and tenant-scoped discovery with synthetic empty-date provider setup. No signatures, readiness certification or financial postings. Actual EN/FR browser with explicit limited permissions.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/reconciliation/reconciliation-run-preparation.service.ts": "e874f4f12d9f6ac53d71b124e7625bc7c2eb23ea1d2a854179556cb471de02bf",
+    "actions/payments/reconciliation-preparation.actions.ts": "211057dacb08dae00c7388fd370e4dee1a96f0fce61bcb281322cef20002e4ce",
+    "components/finance/ReconciliationPreparationWorkbench.tsx": "b53cb72a07aa5ed9b1d1d6077f1ed70932074cfd8b0bd349e5c72e37f6608403",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "440925e59dfe4de01310c7a16d35daf5a2a34574022df143b6bc7c5b8c99160e",
+    "components/finance/ReconciliationSignReview.tsx": "d7d5d86a85c1dd9ad1e50b60cb745c71c70c2f4a90561ea18cbcb9914d96f464",
+    "messages/en.json": "0da53f574504cfce68c2d6b083547b34ba2143f54b6571a365c810470a192553",
+    "messages/fr.json": "e5441d18c57e7510b80ab3a4d12204e4d2a4efcb3735a971078c7056609958cf"
+  },
+  "sourceStable": true
+}

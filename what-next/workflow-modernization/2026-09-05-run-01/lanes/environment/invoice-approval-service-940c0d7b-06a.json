@@ -1,0 +1,131 @@
+{
+  "run": "940c0d7b-06a",
+  "at": "2026-09-08T09:39:23.801Z",
+  "checks": [
+    {
+      "name": "Reviewed approval records payable and honestly reports missing posting rules; exact replay is one liability",
+      "status": "passed"
+    },
+    {
+      "name": "Configured approval creates one posted journal and retained history",
+      "status": "passed"
+    },
+    {
+      "name": "Independent maker boundary denies review and submission",
+      "status": "passed"
+    },
+    {
+      "name": "Foreign invoice and foreign history remain unavailable",
+      "status": "passed"
+    },
+    {
+      "name": "Revoked role denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Expired session denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Old password assurance denies submission",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module missing denies approval",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module expired denies approval",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module suspended denies approval",
+      "status": "passed"
+    },
+    {
+      "name": "Managed module read_only denies approval",
+      "status": "passed"
+    },
+    {
+      "name": "Changed coherent invoice source fails maker proof and stale preview",
+      "status": "passed"
+    },
+    {
+      "name": "Legacy preparation without source proof requires reconciliation",
+      "status": "passed"
+    },
+    {
+      "name": "Accounting configuration changes reject the reviewed revision",
+      "status": "passed"
+    },
+    {
+      "name": "Concurrent exact commands converge on one decision and liability",
+      "status": "passed"
+    },
+    {
+      "name": "Different concurrent approval requests cannot both create effects",
+      "status": "passed"
+    },
+    {
+      "name": "Decision failure rolls back approval, payable and journal before exact retry",
+      "status": "passed"
+    },
+    {
+      "name": "Current authority is required even for committed replay",
+      "status": "passed"
+    },
+    {
+      "name": "Tampered retained decision is not a successful replay or valid history",
+      "status": "passed"
+    },
+    {
+      "name": "Approved exception requires its retained independent decision evidence",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned PostgreSQL, actual receiving, session-aware preparation and independent reviewed approval; test-only accounting rules, no browser approval or professional certification.",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "26c14bc3b1f102809d56d26b6f6c7f97f4d9956f1194cc640e33d9b597e7a3a7",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "services/purchasing/invoice-approval-contracts.ts": "0d6c74789d6df6ed676a72d923627fbebe4deac4a4e5587f25d3a1e5b5041d05",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/invoice-preparation.service.ts": "8af82bddd3ef11f02f9e3222660c2ce6b1cc6d92e7c33cc0f61da0f99e3c9a2a",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c",
+    "actions/purchasing/invoice-approval.actions.ts": "fd2d31f8260450fa7a815ac61006ab92f1359c2519f397cf0c1fbd2f8e30d95e",
+    "actions/purchasing/ap-control.actions.ts": "b615e5c811bcc8cc3f665975fa0156a020430dbf88c4ab4ec4d3ab4cfbbb6df3"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "26c14bc3b1f102809d56d26b6f6c7f97f4d9956f1194cc640e33d9b597e7a3a7",
+    "services/purchasing/invoice-approval.service.ts": "d099881fd0f639712110a872d4da6ba1f2b1c84f94921f1c214418609cf1df98",
+    "services/purchasing/invoice-approval-contracts.ts": "0d6c74789d6df6ed676a72d923627fbebe4deac4a4e5587f25d3a1e5b5041d05",
+    "services/purchasing/invoice-source-evidence.ts": "f7aec09114061cba55fd8b26118a0d44a99f4a3d8dec2947a59a9be0023591df",
+    "services/purchasing/invoice-preparation.service.ts": "8af82bddd3ef11f02f9e3222660c2ce6b1cc6d92e7c33cc0f61da0f99e3c9a2a",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "12850047d7e3bdf198967716a7718d095ce562c703977b716f43d649a8fceb9c",
+    "actions/purchasing/invoice-approval.actions.ts": "fd2d31f8260450fa7a815ac61006ab92f1359c2519f397cf0c1fbd2f8e30d95e",
+    "actions/purchasing/ap-control.actions.ts": "b615e5c811bcc8cc3f665975fa0156a020430dbf88c4ab4ec4d3ab4cfbbb6df3"
+  },
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-blocked",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-posted",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-maker",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-foreign-a",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-foreign-b",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-role",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-session",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-fresh",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-module-missing",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-module-expired",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-module-suspended",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-module-read_only",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-changed",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-legacy",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-configuration",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-concurrent",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-different",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-atomic",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-replay-revoked",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-tampered",
+    "workflow_supplier_ack_en_approval-service-940c0d7b-06a-exception"
+  ]
+}

@@ -71,6 +71,7 @@ export type ClaimBusinessEventOutboxInput = {
   organizationId: string
   workerId: string
   channels?: BusinessOutboxChannel[]
+  eventNames?: string[]
   limit?: number
   now?: Date
   staleAfterMs?: number
@@ -127,6 +128,7 @@ export async function claimBusinessEventOutboxMessages(
     where: {
       organizationId,
       channel: input.channels?.length ? { in: input.channels } : undefined,
+      eventName: input.eventNames?.length ? { in: input.eventNames } : undefined,
       OR: [
         {
           status: {

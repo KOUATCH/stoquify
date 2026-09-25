@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOCAL_SIMULATION_AUTHENTICATED_EVIDENCE_FRAGMENT",
+  "authoritative": false,
+  "approvedForReleaseEvidence": false,
+  "releaseGate": "BLOCKED_EXTERNAL_APPROVAL_REQUIRED",
+  "status": "FAIL",
+  "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+  "viewport": "mobile",
+  "artifacts": [
+    {
+      "artifactId": "LOCAL-X1-20260905091534-FIXCHECK-mobile-en-receivables-history",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534-FIXCHECK/screenshots/mobile/en/receivables-history.png",
+      "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "en",
+      "viewport": "mobile",
+      "route": "/en/dashboard/finance/receivables/history",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:30:18.960Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 390,
+        "measurementVersion": 2,
+        "renderedRowCount": 12,
+        "resultKind": "table-rows",
+        "navigationMs": 3710,
+        "usefulResultMs": 6955,
+        "authCheckMs": 663,
+        "accessibilityMs": 1019,
+        "screenshotMs": 3321,
+        "captureElapsedMs": 12188,
+        "bodyOverflowPx": 0
+      }
+    },
+    {
+      "artifactId": "LOCAL-X1-20260905091534-FIXCHECK-mobile-fr-receivables-history",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534-FIXCHECK/screenshots/mobile/fr/receivables-history.png",
+      "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "fr",
+      "viewport": "mobile",
+      "route": "/fr/dashboard/finance/receivables/history",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:30:33.046Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 390,
+        "measurementVersion": 2,
+        "renderedRowCount": 12,
+        "resultKind": "table-rows",
+        "navigationMs": 3053,
+        "usefulResultMs": 6948,
+        "authCheckMs": 1011,
+        "accessibilityMs": 1169,
+        "screenshotMs": 3221,
+        "captureElapsedMs": 12771,
+        "bodyOverflowPx": 0
+      }
+    }
+  ]
+}

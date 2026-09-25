@@ -1,0 +1,213 @@
+{
+  "recordedAt": "2026-09-05T14:40:05.303Z",
+  "sourceStatus": "FROZEN after final tests and lint; parent performs final coordinated typecheck/build",
+  "outcome": "Accounting stop supports only new manual journals; mandatory accounting controls remain available. Direct reconciliation/POS/Sales stops remain unsupported.",
+  "changedFiles": [
+    "services/modules/module-operational-dependencies.ts",
+    "services/modules/module-admission.service.ts",
+    "services/modules/module-stop-policy.service.ts",
+    "services/modules/__tests__/module-admission.service.test.ts",
+    "services/modules/__tests__/module-stop-policy.service.test.ts",
+    "services/accounting/__tests__/posting.service.test.ts",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts"
+  ],
+  "verification": {
+    "command": [
+      "node",
+      "node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--runTestsByPath",
+      "services/modules/__tests__/module-admission.service.test.ts",
+      "services/modules/__tests__/module-stop-policy.service.test.ts",
+      "services/accounting/__tests__/manual-journal.test.ts",
+      "services/accounting/__tests__/posting.service.test.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "services/modules/__tests__/module-composition.service.test.ts",
+      "services/modules/__tests__/module-lifecycle-readiness.service.test.ts",
+      "actions/modules/__tests__/module-composition.actions.test.ts"
+    ],
+    "exitCode": 0,
+    "suitesPassed": 8,
+    "suitesTotal": 8,
+    "testsPassed": 97,
+    "testsTotal": 97,
+    "jestDurationSeconds": 9.542,
+    "observedOutput": "Test Suites: 8 passed, 8 total; Tests: 97 passed, 97 total; Snapshots: 0 total; Time: 9.542 s, estimated 12 s",
+    "lintCommand": [
+      "node",
+      "node_modules/eslint/bin/eslint.js",
+      "services/modules/module-operational-dependencies.ts",
+      "services/modules/module-admission.service.ts",
+      "services/modules/module-stop-policy.service.ts",
+      "services/modules/__tests__/module-admission.service.test.ts",
+      "services/modules/__tests__/module-stop-policy.service.test.ts",
+      "services/accounting/__tests__/posting.service.test.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts"
+    ],
+    "lintExitCode": 0,
+    "lintDiagnostics": [],
+    "limitations": [
+      "Unit/service tests with database mocks; no new PostgreSQL/browser verification in this child task.",
+      "No release/security/accounting certification.",
+      "No candidate reconciliation API/schema executed."
+    ]
+  },
+  "earlierAttempts": [
+    {
+      "suites": 5,
+      "passedTests": 39,
+      "failedTests": 2,
+      "durationSeconds": 11.149,
+      "reason": "Test-only ESM export spy descriptor and missing $queryRaw fixture. JSON reporter also failed EPERM; results preserved from terminal."
+    },
+    {
+      "suites": 8,
+      "passedTests": 94,
+      "failedTests": 3,
+      "durationSeconds": 14.084,
+      "reason": "Mock restoration removed operational-dependency mock implementation in following tests; fixed beforeEach reset. No production source changed to satisfy test fixtures."
+    }
+  ],
+  "filesystemNotes": [
+    "Normal reconciliation test-file write failed EPERM; approved exact test-file adjacent write/rename succeeded.",
+    "Normal JSON reporter file write failed EPERM; this receipt records observed terminal results instead of claiming a Jest JSON report exists."
+  ],
+  "bindings": [
+    {
+      "path": "services/modules/module-operational-dependencies.ts",
+      "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    },
+    {
+      "path": "services/modules/__tests__/module-admission.service.test.ts",
+      "sha256": "182bbc671ba489bff1b732db5570ca2abaf3800a29c8912a31c698f099696f72"
+    },
+    {
+      "path": "services/modules/__tests__/module-stop-policy.service.test.ts",
+      "sha256": "e39cb5e35792ba35dea756c227bfd1d9b0da4c708bc411ab23eccea6dd527901"
+    },
+    {
+      "path": "services/accounting/__tests__/posting.service.test.ts",
+      "sha256": "2e6e3691b836b805911065b1a552822cf909cf037ac58d297be978cbf5221463"
+    },
+    {
+      "path": "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "sha256": "e19911b4ac24ef38b7099adc011d069e212e745675331c2a25b56dd4ef03ff95"
+    },
+    {
+      "path": "services/accounting/__tests__/manual-journal.test.ts",
+      "sha256": "2077478a0ceb2ba413f4d378f7f7f3c57eb3479fc1c0112823f94e40a2357d5a"
+    },
+    {
+      "path": "services/modules/__tests__/module-composition.service.test.ts",
+      "sha256": "9189fe3acf416afff975c5f39947c23668f724521cfc3627fc212719b5737724"
+    },
+    {
+      "path": "services/modules/__tests__/module-lifecycle-readiness.service.test.ts",
+      "sha256": "77caaf6191a54a4b861387871c62d1a2c0d1705650b2aac720f96c8506967999"
+    },
+    {
+      "path": "actions/modules/__tests__/module-composition.actions.test.ts",
+      "sha256": "2ae12d7a4b2d95f1c5b5100678cfc8dff50575d3ee8d9be53ed054d74de9249d"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-run.service.ts",
+      "sha256": "0d8c80ef828dd406ade1632f4d250bda1a8906d7118340465c0d22cd42e64a15"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-evidence.service.ts",
+      "sha256": "484ecc3ac320d7422f11c7cff58a4d1f24fd9cb8c3d286afc0a56ef75c23410b"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-certification.service.ts",
+      "sha256": "f2cf266ed4f53dbb473ee2de06f0f54f00b098aa9aa674593621b3a56f41894e"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-sign-off-source-version.ts",
+      "sha256": "34af4215d708969c244dfa987f70065e5cb3087dd9e357e764c283aacd591138"
+    },
+    {
+      "path": "services/reconciliation/payment-reconciliation-sign-off-command-state.service.ts",
+      "sha256": "d1eb3cf29cbbc33bf1c8d47259ee135a9c30f6024b085f2a3e7727533127ecaa"
+    },
+    {
+      "path": "services/reconciliation/payment-suspense-workflow.service.ts",
+      "sha256": "b9154e4a2042e067aac126ee106ce789e9b96ef8ca96006d93e2302b797e3fb7"
+    },
+    {
+      "path": "services/payments/provider-event.service.ts",
+      "sha256": "d3b69cc0f609bf966ed626b0ed635f93cbdd2fb79028fce18e4e17dd681e7778"
+    },
+    {
+      "path": "services/payments/statement-import.service.ts",
+      "sha256": "645915ee0a04405235bbfa38a3f130d63fb735c45decedd780580293d56e8a3e"
+    },
+    {
+      "path": "services/modules/module-reconciliation-obligations.service.ts",
+      "sha256": "38ce6fe4b3f74ab85199227eb7235177e0733a17e1ce1faf672ca8b40f82d0d6"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "1beb4baa777dc554cffcae8404fd99f77f30491d555514c9a5307df045c79f04"
+    },
+    {
+      "path": "services/modules/module-catalog.service.ts",
+      "sha256": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e"
+    },
+    {
+      "path": "services/modules/module-entitlement.service.ts",
+      "sha256": "94d9f36866e981129456b7934cdf125c314766a69dc77ad130e13ab03a1fc67d"
+    },
+    {
+      "path": "services/accounting/journals.service.ts",
+      "sha256": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c"
+    },
+    {
+      "path": "services/accounting/posting.service.ts",
+      "sha256": "c876ac235b58a917fd42287867c3c056abf8ea7041531be7168ccf39f4f725e2"
+    },
+    {
+      "path": "services/payroll/payroll-control.service.ts",
+      "sha256": "dbb45a8daf276bc6259a17f9323496483f56413445daf7b3f6b03b34b94f79f9"
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "8d2b1e4f2453202fa3d96c95f087cd46638518331c1817f5bacdb4a075169f46"
+    },
+    {
+      "path": "actions/payments/reconciliation.actions.ts",
+      "sha256": "a8f5a4e1a1c9d8f3850953239e312075c83437341e768ae0483d2106cbc1ffa5"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "prisma/migrations/20260815190000_payment_reconciliation_evidence_immutability/migration.sql",
+      "sha256": "317a58d31e5247b999c95cc27832891a8f10784f9ac79a2906ce13ce386d085e"
+    },
+    {
+      "path": "docs/modern-modules/CONTRACTS.md",
+      "sha256": "46af1e6ada48ddd3df6cdbd96cc046fc4d9aee616b23da24cc1eaa7c333d0c01"
+    },
+    {
+      "path": "docs/modern-modules/LIFECYCLE_AND_CONTROLS.md",
+      "sha256": "55a8c8a244c4693162cf2fb64eeba3686c3362c13942141ea6bdfec0d924ce90"
+    },
+    {
+      "path": "docs/modern-modules/BLUEPRINT.md",
+      "sha256": "6065fbc570c4b8100b94cca3f84e4859fd573bca400294e7cc38ee6836118e76"
+    },
+    {
+      "path": "what-next/modern-modules-integration/2026-09-05-run-02/RETAINED_RECONCILIATION_CONTRACT.md",
+      "sha256": "e150f0035359fad1eb0198eba0b6ce3fd22dd14c5a2bcbecb684c123eb1a09e9"
+    }
+  ]
+}

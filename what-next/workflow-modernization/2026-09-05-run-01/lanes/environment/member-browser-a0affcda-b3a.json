@@ -1,0 +1,80 @@
+{
+  "run": "a0affcda-b3a",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T12:36:31.342Z",
+  "sourcesBefore": {
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/users/user-deactivation-input.ts": "05608dcd80012423167e6794f3fb1177f35d005d13d19df408b9d12aab01b47b",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "actions/users/deleteUser.ts": "3ee1d29bc0e90a47e20adfc94c7efb10bc493c1e538bf0e117fc1f3ce34d618e",
+    "actions/users/getOrgUsers.ts": "fbf600c4f408f935b817fe73e09a8ced9c8fa28275508d2cf3ebfb3d07dfa716",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "d0acd9b750a709995bd8225d34ed51f6971219b789271932fdc756df348ee6e3",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "d308a18b8f6fe043dc96347715dec1d06651bfd9ed3db8e0d8f7aa76883b800d",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "0011560ede42debfd30daba77fe48e569eeda308c1b4fab117ef123edf22f7ad",
+    "components/settings/UserDeactivation.tsx": "6634eabf5f9ed70dd23b79d0ff1f6a0ceff3dc89ee02edbd9bc6c37ef62b84c7",
+    "components/settings/user-directory-copy.ts": "285611a1d96f3038f45e676d633d91e8871894262b7cb3f578ea155e69c051c3",
+    "lib/security/rbac-permissions.ts": "986f09b3f63ad522ef4a9e803fc96ff0d7b07a295c785cc6fb70ce3b23df02d5"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-member-reader-a0affcda-b3a.png",
+        "en-member-review-mobile-a0affcda-b3a.png",
+        "en-member-review-desktop-a0affcda-b3a.png",
+        "en-member-receipt-a0affcda-b3a.png",
+        "en-member-failure-a0affcda-b3a.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 15909,
+      "readerCannotDeactivate": true,
+      "deactivationReceiptMs": 1452,
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-member-reader-a0affcda-b3a.png",
+        "fr-member-review-mobile-a0affcda-b3a.png",
+        "fr-member-review-desktop-a0affcda-b3a.png",
+        "fr-member-receipt-a0affcda-b3a.png",
+        "fr-member-failure-a0affcda-b3a.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 14323,
+      "readerCannotDeactivate": true,
+      "deactivationReceiptMs": 1520,
+      "error": "The expression evaluated to a falsy value:\n\n  assert.ok(!body?.user)\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Only fresh synthetic member accounts are deactivated. Existing administrators and scoped directory readers are reused without changing their grants or credentials.",
+    "No email, migration, original member deactivation, production action or external call.",
+    "Keyboard, responsive and reduced-motion browser evidence is not native screen-reader certification."
+  ],
+  "originalAuthorityBefore": "096f0cbe5a423dbb3a88bf4e58485a4a919e2e72579d744371007a57d773ca15",
+  "originalAuthorityAfter": "bf19530ee52d10c3dc1deca3f929d0d8100bcbdf65966991ad3cb90d60d3fa39",
+  "originalAuthorityUnchanged": false,
+  "error": "Expected values to be strictly equal:\n\nfalse !== true\n",
+  "completedAt": "2026-09-06T12:38:21.427Z",
+  "sourcesAfter": {
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/users/user-deactivation-input.ts": "05608dcd80012423167e6794f3fb1177f35d005d13d19df408b9d12aab01b47b",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "actions/users/deleteUser.ts": "3ee1d29bc0e90a47e20adfc94c7efb10bc493c1e538bf0e117fc1f3ce34d618e",
+    "actions/users/getOrgUsers.ts": "fbf600c4f408f935b817fe73e09a8ced9c8fa28275508d2cf3ebfb3d07dfa716",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "d0acd9b750a709995bd8225d34ed51f6971219b789271932fdc756df348ee6e3",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "d308a18b8f6fe043dc96347715dec1d06651bfd9ed3db8e0d8f7aa76883b800d",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "0011560ede42debfd30daba77fe48e569eeda308c1b4fab117ef123edf22f7ad",
+    "components/settings/UserDeactivation.tsx": "6634eabf5f9ed70dd23b79d0ff1f6a0ceff3dc89ee02edbd9bc6c37ef62b84c7",
+    "components/settings/user-directory-copy.ts": "285611a1d96f3038f45e676d633d91e8871894262b7cb3f578ea155e69c051c3",
+    "lib/security/rbac-permissions.ts": "986f09b3f63ad522ef4a9e803fc96ff0d7b07a295c785cc6fb70ce3b23df02d5"
+  },
+  "sourceStable": true,
+  "driverSha256": "fe7cb0999eaad5af2f6446a8b13bc94b6565be28ed7c54a33dffadcf264897a7",
+  "passed": 0,
+  "failed": 3
+}

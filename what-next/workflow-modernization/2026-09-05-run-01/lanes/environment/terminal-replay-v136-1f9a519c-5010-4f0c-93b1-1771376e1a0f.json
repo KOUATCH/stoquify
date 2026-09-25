@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-13T15:28:41.794Z",
+  "checks": [
+    "Terminal duplicate verifies exact original request, replay event and posted entry without changing financial/event history",
+    "Different cashier cannot obtain terminal metadata as a successful replay",
+    "Altered stored terminal metadata is rejected and not auto-repaired or rewritten",
+    "Historical acknowledgement retained while current void status is returned without new effects"
+  ],
+  "scope": "Previously verified owned v135 replay fixtures; terminal evidence lookup only, with deliberate synthetic metadata corruption and real fixture void.",
+  "passed": true,
+  "sources": {
+    "services/pos/offline-sync.service.ts": "2ee9aa1514cdaee94434bc1ffa92a3ba64fce79d5f24ef2fd699f31ef7fb5d55",
+    "services/pos/pos.service.ts": "eb7d15d8a778794327661430f54c33d67510e5e4b3ec81df795462b536dcf1b8"
+  }
+}

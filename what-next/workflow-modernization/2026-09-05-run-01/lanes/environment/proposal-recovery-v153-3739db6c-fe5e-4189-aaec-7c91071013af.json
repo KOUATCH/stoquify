@@ -1,0 +1,54 @@
+{
+  "at": "2026-09-15T11:32:33.489Z",
+  "sourceBefore": {
+    "services/ai/copilot-proposal.service.ts": "db04968c2ff404c48ea770f4ee16ff5d92a69577de3de5197b0b350d794c8c6b",
+    "services/ai/copilot-proposal-release.service.ts": "7664e53690f374b7863b9b9feee90da8fb042da1ad485c489832217de4193d60",
+    "components/copilot/CopilotProposalControls.tsx": "1eefe402e2f8a187bfc1fbe555607a74b7dacb5fc1273e02e15d90d20153a381",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "e69c7008e6693c8afcd6426dddb40ef14327337c43d96d9619daf75e5471be31",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "f4ea2785cfb4a2c8333276524d037b2e11806f4d26516022dd33f026843f566a"
+  },
+  "checks": {
+    "creationReplayAndIdenticalDecisionRecovery": true,
+    "otherActorChangedReasonLostPermissionDenied": true,
+    "noReleaseDisplayDenied": true,
+    "browserReadsNoProposalOrFinancialEffects": true
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "route": "/en/dashboard/daily-digest",
+      "disabledAgent": true,
+      "proposalControlAbsent": true,
+      "loadMs": 24435,
+      "screenshots": [
+        "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-en-1440.png",
+        "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-en-768.png",
+        "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-en-320.png"
+      ],
+      "pageErrors": []
+    },
+    {
+      "locale": "fr",
+      "route": "/fr/dashboard/daily-digest",
+      "disabledAgent": true,
+      "proposalControlAbsent": true,
+      "loadMs": 4430,
+      "screenshots": [
+        "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-fr-1440.png",
+        "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-fr-768.png",
+        "proposal-recovery-v153-3739db6c-fe5e-4189-aaec-7c91071013af-fr-320.png"
+      ],
+      "pageErrors": []
+    }
+  ],
+  "scope": "Owned localhost database/application. Direct proposal service fixtures; actual browser visits cover disabled default agent only. No release approval fabricated, no live provider dispatch.",
+  "passed": true,
+  "sourceAfter": {
+    "services/ai/copilot-proposal.service.ts": "db04968c2ff404c48ea770f4ee16ff5d92a69577de3de5197b0b350d794c8c6b",
+    "services/ai/copilot-proposal-release.service.ts": "7664e53690f374b7863b9b9feee90da8fb042da1ad485c489832217de4193d60",
+    "components/copilot/CopilotProposalControls.tsx": "1eefe402e2f8a187bfc1fbe555607a74b7dacb5fc1273e02e15d90d20153a381",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "e69c7008e6693c8afcd6426dddb40ef14327337c43d96d9619daf75e5471be31",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/page.tsx": "f4ea2785cfb4a2c8333276524d037b2e11806f4d26516022dd33f026843f566a"
+  },
+  "sourceStable": true
+}

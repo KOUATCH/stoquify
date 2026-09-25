@@ -1,0 +1,68 @@
+{
+  "at": "2026-09-08T19:24:09.399Z",
+  "run": "ac8f19e0-acb",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/purchasing/APHistoryWorkbench.tsx": "2b441b13f756273719d93b1a449aec435e397a7271fd300540ea65520b50a528",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-coverage-en-covered-desktop-ac8f19e0-acb.png",
+        "invoice-coverage-en-covered-details-ac8f19e0-acb.png",
+        "invoice-coverage-en-failure-ac8f19e0-acb.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 14579
+        }
+      ],
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-ac8f19e0-acb-en' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-ac8f19e0-acb-en', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-ac8f19e0-acb-en' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-ac8f19e0-acb-en', exact: true })\n    113 × locator resolved to <button type=\"button\" aria-label=\"Details: REVIEWED-coverage-ui-ac8f19e0-acb-en\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-8 px-3 text-xs dashboard-button-secondary min-h-10 rounded-lg\">…</button>\n        - unexpected value \"inactive\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "invoice-coverage-fr-covered-desktop-ac8f19e0-acb.png",
+        "invoice-coverage-fr-covered-details-ac8f19e0-acb.png",
+        "invoice-coverage-fr-failure-ac8f19e0-acb.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development covered-invoice history load",
+          "milliseconds": 7600
+        }
+      ],
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-ac8f19e0-acb-fr' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-ac8f19e0-acb-fr', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('row').filter({ hasText: 'REVIEWED-coverage-ui-ac8f19e0-acb-fr' }).getByRole('button', { name: 'Details: REVIEWED-coverage-ui-ac8f19e0-acb-fr', exact: true })\n    113 × locator resolved to <button type=\"button\" aria-label=\"Details: REVIEWED-coverage-ui-ac8f19e0-acb-fr\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-8 px-3 text-xs dashboard-button-secondary min-h-10 rounded-lg\">…</button>\n        - unexpected value \"inactive\"\n"
+    }
+  ],
+  "scope": "Owned localhost invoice/payment/credit service fixtures; actual authenticated EN/FR history and financial read models. Credit/return calls use trusted domain fixture scope, not public-action authority proof. No real bank rail or notification delivery.",
+  "originalBefore": "dd4d39db599848330900dfa490a05efe010d18bd63b67982b5ecd80dc645dfbb",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "c744096062780f7060b41f88f11cb3df24c664b93d03ae88205b3f11354bd469",
+    "services/purchasing/purchase-return-credit.service.ts": "1dc0bda08593c3a07b5b1735d81f1f17fea29e4366870120824286c8b7358c2b",
+    "services/purchasing/supplier-payment-balance.ts": "e18fa0fc4c5f0cf44fd6a1df5dbf93a09c2337dab4a8502b9141843c6955a264",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "components/purchasing/APHistoryWorkbench.tsx": "2b441b13f756273719d93b1a449aec435e397a7271fd300540ea65520b50a528",
+    "components/purchasing/APControlWorkbench.tsx": "5d9b7c908e600545a98641436e5972b825e09ca25e820dea0ad0121894d93321",
+    "messages/en.json": "835457ec42c86c9cab9c53c04377e70917eb8b01bf3cecdfa40b0843b372df16",
+    "messages/fr.json": "1ca342ebf50ee85b5adf79bffd18cb2d83524f51027225c16cfe99a3f6a8bfa7"
+  },
+  "sourceStable": true
+}

@@ -1,4 +1,7 @@
+import type { CommercialModuleSlug } from "@/services/modules/module-control-contracts"
+
 export type AnalyticsRouteSurfaceModule = {
+  moduleSlug: CommercialModuleSlug
   moduleLockedTitle?: string
   moduleLockedMessage?: string
   moduleLockedPrimaryHref?: string
@@ -31,6 +34,7 @@ export const analyticsRouteCatalog: AnalyticsRouteSurface[] = [
     resource: "BusinessPulseAnalytics",
     permissions: ["reports.read", "dashboard.read"],
     permissionMode: "any",
+    module: { moduleSlug: "analytics" },
   },
   {
     key: "analytics-reports",

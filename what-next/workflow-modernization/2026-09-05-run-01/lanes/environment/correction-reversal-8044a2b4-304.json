@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-08T20:01:46.296Z",
+  "run": "8044a2b4-304",
+  "sourcesBefore": {
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060"
+  },
+  "checks": [
+    "Closed-period credit reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Locked-period credit reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Missing-period credit reversal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "An active credit still prevents return reversal; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Cross-tenant credit identifier rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Posted batch without original journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Batch for another source rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Concurrent duplicate credit reversal in a later open period commits once, reopens the payable and records unposted-reversal evidence without inventing cash or a journal",
+    "Closed-period return reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Locked-period return reversal without a journal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation",
+    "Missing-period return reversal rejected; no invoice, cash, supplier, stock, sequence, journal, batch, audit or outbox mutation"
+  ],
+  "scope": "Owned localhost database only; actual invoice/payment/return/credit domain services and persisted effects. Trusted fixture actors, not public-action RBAC or complete browser proof. Synthetic posting rules and bank evidence. No migrations, live payments or messages.",
+  "originalBefore": "bb2a2d0f3faa9641f5af4e85eb2977c46f605441254c8f69b73dcfcdc2546777",
+  "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '2250.00'\n- '-2250.00'\n",
+  "errorTail": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '2250.00'\n- '-2250.00'\n",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/purchase-correction-ledger.service.ts": "cf7f642cb76ef2f213a6ccbfb449cbbf9047ca4d559a78da5efb595f56daff07",
+    "services/purchasing/purchase-return-credit.service.ts": "3fab53db25733420b683c3f4aef56c96568d8ff375d1b81b43e2f2c02d23c060"
+  },
+  "sourceStable": true
+}

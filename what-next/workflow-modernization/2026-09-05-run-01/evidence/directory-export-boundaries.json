@@ -1,0 +1,166 @@
+{
+  "recordedAt": "2026-09-06T16:15:24.991Z",
+  "checks": [
+    {
+      "file": "services/organization/organization-directory-input.ts",
+      "sha256": "a3091cfa11d5404cf1732481fc0e547efff470f7876dbcc95e6b0fa7c9dde98e",
+      "findings": []
+    },
+    {
+      "file": "services/organization/organization-directory-export.service.ts",
+      "sha256": "20ac8eb07a632974307389cea64cc3bfce57b4ff741494f489618bd2fa4d64ac",
+      "findings": [
+        {
+          "file": "services/organization/organization-directory-export.service.ts",
+          "line": 3,
+          "category": "PRISMA_CLIENT_IMPORT",
+          "snippet": "import { Prisma, type Session } from \"@prisma/client\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/organization/organization-directory-export.service.ts",
+          "line": 5,
+          "category": "DIRECT_DB_IMPORT",
+          "snippet": "import { db } from \"@/prisma/db\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/organization/organization-directory-export.service.ts",
+          "line": 24,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const actor = await tx.user.findFirst({ where: { id: scope.actorId, organizationId: scope.organizationId, organization: { isActive: true, deletedAt: null } }, select: { isActive: true, isVerified: true, emailVerified: true, isLocked: true, lockedUntil: true, roles: { where: { organizationId: scope.organizationId }, select: { permissions: true } } } })",
+          "client": "tx",
+          "delegate": "user",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/organization/organization-directory-export.service.ts",
+          "line": 63,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "const prior = await tx.auditLog.findFirst({ where: { id: auditId, organizationId: scope.organizationId, userId: scope.actorId, entityType: \"OrganizationDirectory\", action: \"CONTROLLED_EXPORT_ALLOWED\" } })",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        }
+      ]
+    },
+    {
+      "file": "services/organization/organization-settings.service.ts",
+      "sha256": "f63eae1907bf75d2244bc3acb531c55eecfa373ed95dbd2cc89122f4f79d7ea1",
+      "findings": [
+        {
+          "file": "services/organization/organization-settings.service.ts",
+          "line": 5,
+          "category": "DIRECT_DB_IMPORT",
+          "snippet": "import { db } from \"@/prisma/db\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/organization/organization-settings.service.ts",
+          "line": 9,
+          "category": "PRISMA_CLIENT_IMPORT",
+          "snippet": "import { PaymentStatus, Prisma } from \"@prisma/client\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/organization/organization-settings.service.ts",
+          "line": 95,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "return db.organization.findFirst({",
+          "client": "db",
+          "delegate": "organization",
+          "operation": "findFirst",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        }
+      ]
+    },
+    {
+      "file": "services/security/export-safety.service.ts",
+      "sha256": "9ca809ce39b3ae1b94610143bad050afed3a8d961cf6b1afcabf0276fb6945f3",
+      "findings": [
+        {
+          "file": "services/security/export-safety.service.ts",
+          "line": 5,
+          "category": "PRISMA_CLIENT_IMPORT",
+          "snippet": "import type { Prisma } from \"@prisma/client\"",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        },
+        {
+          "file": "services/security/export-safety.service.ts",
+          "line": 154,
+          "category": "DIRECT_DB_CALL",
+          "snippet": "return tx.auditLog.create({",
+          "client": "tx",
+          "delegate": "auditLog",
+          "operation": "create",
+          "allowed": true,
+          "severity": "allowed",
+          "classification": "SERVICE_LAYER_OWNER",
+          "migrationOrder": 0,
+          "reason": "Services are the approved persistence boundary."
+        }
+      ]
+    },
+    {
+      "file": "actions/organization/organization-directory-export.actions.ts",
+      "sha256": "8600a2e0cb86bfb2d9d33857700fd89feea820ee0c86aa21f42fa5433b42561e",
+      "findings": []
+    },
+    {
+      "file": "hooks/useOrganizationDirectoryExport.ts",
+      "sha256": "f963b92baa1fcdcb9d1c7a57fcc11f35911fb65acf71e63cb68d629a3a8a3efb",
+      "findings": []
+    },
+    {
+      "file": "hooks/organization-directory-recovery.ts",
+      "sha256": "cf94f47cf9e3112fbc5f949d29ffea1bddbc0a29a38a1ba28a54c94b147936ee",
+      "findings": []
+    },
+    {
+      "file": "components/settings/OrganizationDirectoryExport.tsx",
+      "sha256": "6d06133fb1f9334ebcd7311ca8a9515af75b1aa2f087ae018596f36b3535266e",
+      "findings": []
+    },
+    {
+      "file": "components/settings/OrganizationManagementTable.tsx",
+      "sha256": "1f3097cd65ecaca67b9b10bb10b11ae0361071a49bf8b6bfdd8373b4425c6d08",
+      "findings": []
+    }
+  ],
+  "passed": 9,
+  "failed": 0
+}

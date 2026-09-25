@@ -1,0 +1,10 @@
+# Initial Profile verification attempts
+
+- Unit run 01 (tool receipt 76ccef): 19 passed, 1 failed across 3 suites. The failing audit-before assertion came from a mock returning the same mutable object across reads and writes; Prisma returns independent result objects. Corrected the mock to return copies. The real PostgreSQL audit/rollback tests subsequently passed (self-profile-postgres-e44127ad-b3a.json). Do not count the initial unit run as passed.
+- Unit run 01 could not write its requested JSON output because Windows returned EPERM. The counts above are retained from the terminal result.
+- Initial PostgreSQL verifier attempt 3c2e4e62-dc6 (receipt 109dd2) could not persist its report (EPERM). Its internal results are unavailable; no passing database claim is made for that attempt.
+- Account-menu ordinary write returned Windows access denied (d75d88). The exact saved workspace candidate was subsequently copied successfully with reviewed elevated filesystem access (ea4443). This was not an approval-review rejection.
+
+- Unit run 02 (02540f): 33 tests passed in five suites; two Node suites failed during shared setup because it accessed `window` unconditionally. The preserved JSON is `self-profile-tests-02.json`. Guarded browser-only setup calls; the unchanged browser mocks and new Node suites then passed together: 50/50, seven suites, run 03 (601f66).
+- A separate Node test configuration started at 18:49:07 local time produced no result within the focused-test budget. Its exact owned process 9632 was stopped (8251bc); terminal status 709498 was exit 1. No pass or test-case outcome is attributed to it. The cause of its lack of output was not established. The normal repository configuration supplied the final evidence.
+- Display-script root-width assertions passed with CSS text enlarged to 200%, but visual review of `fr-self-profile-display-text-200-percent-334a6bcf-9ba.png` found shared-header account-trigger clipping. Retain this as OA-F18 and incomplete accessibility/reflow coverage, not a full layout pass. Native zoom was not exercised.

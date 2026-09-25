@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 
 import { CashPaymentHistoryWorkbench } from "../CashPaymentHistoryWorkbench"
 
@@ -86,6 +86,30 @@ jest.mock("@/hooks/useCashPaymentHistoryWorkbench", () => ({
 }))
 
 describe("CashPaymentHistoryWorkbench", () => {
+  beforeEach(() => { jest.clearAllMocks(); mockWorkbench.hasMore = false })
+
+  it("filters the loaded page and keeps server export and filters intact", () => {
+    render(<CashPaymentHistoryWorkbench />)
+    fireEvent.change(screen.getByRole("textbox", { name: "Search loaded page" }), { target: { value: "unknown-payment" } })
+    expect(screen.getByText("states.emptyFilteredTitle")).toBeInTheDocument()
+    expect(mockWorkbench.updateFilters).not.toHaveBeenCalled()
+    fireEvent.change(screen.getByRole("textbox", { name: "Search loaded page" }), { target: { value: "Ada Cash" } })
+    expect(screen.getByRole("table", { name: "table.caption" })).toBeInTheDocument()
+    fireEvent.click(screen.getAllByRole("button", { name: "actions.export" })[0])
+    expect(mockWorkbench.exportHistory).toHaveBeenCalledTimes(1)
+  })
+
+  it("returns to the first server cursor after advancing", () => {
+    mockWorkbench.hasMore = true
+    render(<CashPaymentHistoryWorkbench />)
+    fireEvent.click(screen.getByRole("button", { name: "table.nextPage" }))
+    expect(mockWorkbench.nextPage).toHaveBeenCalledTimes(1)
+    expect(screen.getByText("Page 2")).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: "Go to previous page" }))
+    expect(mockWorkbench.updateFilters).toHaveBeenCalledWith({ cursor: undefined, selected: undefined })
+    expect(screen.getByText("Page 1")).toBeInTheDocument()
+  })
+
   it("renders server-owned cash/payment rows through the shared history shell", () => {
     render(<CashPaymentHistoryWorkbench />)
 

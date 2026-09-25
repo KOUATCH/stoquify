@@ -727,7 +727,13 @@ describe("manager action center service", () => {
         expect.objectContaining({ origin: "SOURCE_COMMAND" }),
       ]),
     )
-    expect(data.summary.hiddenByPermission).toBe(actionQueue().filteredOutCount)
+    // The real source queue with this role withholds payroll, stock-item and close actions.
+    // The unrelated synthetic actionQueue() fixture does not describe these sources.
+    expect(data.summary.hiddenByPermission).toBe(3)
+    expect(data.actionItems.some(item => item.actionPath.includes("/payroll"))).toBe(false)
+    expect(data.actionItems.some(item => item.actionPath.includes("/inventory/items"))).toBe(false)
+    expect(data.actionItems.some(item => item.actionPath.includes("/accounting/close"))).toBe(false)
+    expect(data.actionItems.some(item => item.actionPath.includes("/finance/reconciliation"))).toBe(true)
   })
   it("composes recipient-owned missing-proof requests after RBAC and entitlement", async () => {
     mockTenantReadSources()

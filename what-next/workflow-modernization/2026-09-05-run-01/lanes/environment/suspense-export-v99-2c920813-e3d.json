@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-09T10:42:50.026Z",
+  "run": "2c920813-e3d",
+  "checks": [
+    "Missing export/read permission, expired authentication and foreign tenant produce no export or financial effects",
+    "Record revision and object ownership checked before export",
+    "Proposed correction exports linked original journal/approval and exact amount with verified file bytes; no approval implied",
+    "Exact export replay returns identical retained bytes, receipt and one issuance audit",
+    "Rejected correction exports as rejection; reusing another request key is refused",
+    "Approved evidence includes exact compensating lines and reopening while excluding unrelated metadata, certificate payload and raw dimensions",
+    "Earlier correction can be exported after cycle-two posting; replay retains old snapshot and new export labels current observed status separately",
+    "Corrupted referenced journal blocks export until its real evidence is restored",
+    "Retained download corruption is refused on retry",
+    "Late export audit failure rolls back issued bytes and receipt",
+    "Concurrent duplicate export yields one durable request and safe replay",
+    "History pagination returns all 33 records exactly once across timestamp ties and excludes export receipts"
+  ],
+  "sourcesBefore": {
+    "services/reconciliation/payment-suspense-correction-export.service.ts": "e1b348c4134c2cf9f39361a8c97cd3ee7ade61edd0c6c59c8abe1570c155e9c3",
+    "services/reconciliation/payment-suspense-correction-record.ts": "33f0bf41936af45123921d1097fe38d82b4fc3f8f620f12db8916140ad614acc",
+    "services/reconciliation/payment-suspense-correction.service.ts": "1d71db7a73885a2751f3977743e65e5bce59a05bcd27b56fe0e0e61a4a2b9e41",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "ac0fd1f2bef44c07835c7047f456bafaf7b9636d15b70696b09b031f2f5176ff",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7"
+  },
+  "scope": "Owned synthetic source corrections and actual evidence export service; no external messages, payments, statutory approval or professional certification.",
+  "originalBefore": "e49418b5b6aa1bd3b16727a3aefd874c683b1ede075b2f1297eaf69ceece4ab6",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-suspense-correction-export.service.ts": "e1b348c4134c2cf9f39361a8c97cd3ee7ade61edd0c6c59c8abe1570c155e9c3",
+    "services/reconciliation/payment-suspense-correction-record.ts": "33f0bf41936af45123921d1097fe38d82b4fc3f8f620f12db8916140ad614acc",
+    "services/reconciliation/payment-suspense-correction.service.ts": "1d71db7a73885a2751f3977743e65e5bce59a05bcd27b56fe0e0e61a4a2b9e41",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "ac0fd1f2bef44c07835c7047f456bafaf7b9636d15b70696b09b031f2f5176ff",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7"
+  },
+  "sourceStable": true
+}

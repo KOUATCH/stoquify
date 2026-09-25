@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-09-06T10:24:14.541Z",
+  "baseline": "evidence/source-baseline-v23.json",
+  "sources": {
+    "actions/roles/role-auth.ts": "3722a7c7f5a8f665fd66e860a9f0d4cb6e81fc100e9891aa48764fcb97878d60",
+    "actions/roles/createRole.ts": "6888118bd4f0b907c6bdf23b4467ea5d0682773d4c324708625ef1ee4e7b256d",
+    "actions/roles/updateRole.ts": "9fd8a3dad1de609d9929a2c162ff4a9d295dfdb04d114a090a685551ecb3be57",
+    "actions/roles/__tests__/role-actions.test.ts": "798483a43bc1d77f83782b3cec3af484323c52c07ce2cf7b5fd64f43d700e733",
+    "services/roles/role.service.ts": "6300a75b9973c3c47477b107928d6b760179c3fdf888ccbef463cbbd67265715",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "config/permissions.ts": "40e31803297d9d801a0d8a79e2ee553701ad516be1d4122dfb33153e0181d152"
+  },
+  "scope": "Two action-layer assignment bypasses only. Full role service, removal policy, concurrency, audit and browser workflows remain open.",
+  "reproduction": {
+    "file": "evidence/role-assignment-authority-before.json",
+    "failed": 2,
+    "passed": 9,
+    "chunk": "fdc4c0"
+  },
+  "regression": {
+    "file": "evidence/role-assignment-authority-after.json",
+    "passed": 24,
+    "failed": 0,
+    "suites": 3,
+    "chunk": "630c1a"
+  },
+  "lintAndDiff": {
+    "exitCode": 0,
+    "chunk": "5a0a44"
+  },
+  "databaseWrites": 0,
+  "completeWorkflowVerified": false
+}

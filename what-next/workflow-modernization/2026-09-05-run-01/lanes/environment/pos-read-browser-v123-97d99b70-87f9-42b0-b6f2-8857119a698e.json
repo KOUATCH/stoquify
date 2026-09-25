@@ -1,0 +1,54 @@
+{
+  "at": "2026-09-13T12:35:54.675Z",
+  "sourcesBefore": {
+    "services/pos/pos-read-result.ts": "3180c6ed2f07c58c2a39138ec163d026e4d46da7b77571427bf121585c631bfc",
+    "actions/pos/cart.actions.ts": "96f76402be3acee7e6bcb4e2edcdab9b567bd5c9dc8ccee4e163db56279fc815",
+    "actions/pos/catalog.actions.ts": "38d343f7070c5b448bb81abe467384fde980fac4f7fbf6da104662cb0d1de245",
+    "actions/pos/session.actions.ts": "dde45e28d8c78b96acd3ae44fb8f36349f0d35080a0931f8d74d8bc76b9cd7b5",
+    "actions/pos/receipt-token.actions.ts": "736b902bb51cd395f1128f20505c208d6979d0fa60b1b0030b1f1474460ccb7b",
+    "hooks/posHooks/usePOSReadQuery.ts": "5a3e1467bd69f17c3ebd34be23bf58271073f3d62087a998697800837b987165",
+    "hooks/posHooks/usePosOperations.ts": "7ebecf8398677ff236efc57fe218bdfac854c618c157c16ac07126e7556773f0",
+    "components/pos/ProfessionalPOSSystem.tsx": "33036fd2d5fec211e9560a28b4b1a7f0a9c890fb9cf5f72ae22a2b9321cf067d",
+    "messages/en.json": "b67ac8ad91f2f7503d2214ec5ed8dd72afd977f6d09aa315897a3deecd87272a",
+    "messages/fr.json": "66389a3432df3a2e5ddaa3d3950e4eb901531fd99357734158a9ae85ec220189"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [
+        "pos-read-v123-en-97d99b70-87f9-42b0-b6f2-8857119a698e.png"
+      ],
+      "readyMs": 15983,
+      "failureDoesNotClaimEmptyOrClosed": true,
+      "retryPreservesUnsavedQuantity": true,
+      "explicitCorrectionSaved": true
+    },
+    {
+      "locale": "fr",
+      "pageErrors": [],
+      "screenshots": [
+        "pos-read-v123-fr-97d99b70-87f9-42b0-b6f2-8857119a698e.png"
+      ],
+      "readyMs": 6314,
+      "failureDoesNotClaimEmptyOrClosed": true,
+      "retryPreservesUnsavedQuantity": true,
+      "explicitCorrectionSaved": true
+    }
+  ],
+  "scope": "Owned local app and real server actions. HTTP503 injection proves UI transport recovery, not database-outage handling. No checkout or provider operation.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/pos/pos-read-result.ts": "3180c6ed2f07c58c2a39138ec163d026e4d46da7b77571427bf121585c631bfc",
+    "actions/pos/cart.actions.ts": "96f76402be3acee7e6bcb4e2edcdab9b567bd5c9dc8ccee4e163db56279fc815",
+    "actions/pos/catalog.actions.ts": "38d343f7070c5b448bb81abe467384fde980fac4f7fbf6da104662cb0d1de245",
+    "actions/pos/session.actions.ts": "dde45e28d8c78b96acd3ae44fb8f36349f0d35080a0931f8d74d8bc76b9cd7b5",
+    "actions/pos/receipt-token.actions.ts": "736b902bb51cd395f1128f20505c208d6979d0fa60b1b0030b1f1474460ccb7b",
+    "hooks/posHooks/usePOSReadQuery.ts": "5a3e1467bd69f17c3ebd34be23bf58271073f3d62087a998697800837b987165",
+    "hooks/posHooks/usePosOperations.ts": "7ebecf8398677ff236efc57fe218bdfac854c618c157c16ac07126e7556773f0",
+    "components/pos/ProfessionalPOSSystem.tsx": "33036fd2d5fec211e9560a28b4b1a7f0a9c890fb9cf5f72ae22a2b9321cf067d",
+    "messages/en.json": "b67ac8ad91f2f7503d2214ec5ed8dd72afd977f6d09aa315897a3deecd87272a",
+    "messages/fr.json": "66389a3432df3a2e5ddaa3d3950e4eb901531fd99357734158a9ae85ec220189"
+  },
+  "sourceStable": true
+}

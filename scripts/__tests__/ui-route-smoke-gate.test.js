@@ -1,6 +1,13 @@
 const { captureScreenshots, parseArgs, routeUrl, selectedRoutes, warmupRoutes } = require("../ui-route-smoke-gate")
 
 describe("ui-route-smoke-gate", () => {
+  it("includes both public workflow guides without authentication", () => {
+    const args = parseArgs(["node", "script", "--route", "workflows", "--route", "workflows-fr"])
+    expect(selectedRoutes(args).map(({ path, requiresAuth }) => ({ path, requiresAuth }))).toEqual([
+      { path: "/en/workflows", requiresAuth: false },
+      { path: "/fr/workflows", requiresAuth: false },
+    ])
+  })
   it("enables browser warmup by default with a production-safe timeout floor", () => {
     const args = parseArgs(["node", "script", "--timeout-ms", "1200"])
 

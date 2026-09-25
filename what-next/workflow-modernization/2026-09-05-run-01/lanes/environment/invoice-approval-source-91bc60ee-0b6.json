@@ -1,0 +1,70 @@
+{
+  "run": "91bc60ee-0b6",
+  "at": "2026-09-08T09:19:01.357Z",
+  "checks": [
+    {
+      "name": "Changed invoice total cannot create a liability",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Changed line tax cannot create a liability",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Missing received-goods state cannot approve an old match",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Cross-organization invoice line cannot be approved",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Changed match variance cannot be trusted as matched",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Ambiguous match evidence requires reconciliation",
+      "status": "failed",
+      "message": "Missing expected rejection."
+    },
+    {
+      "name": "Previously created liability cannot be created again",
+      "status": "failed",
+      "message": "\nInvalid `again',()=>denied('liability',x=>db.supplierLedgerEntry.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-invoice-approval-source.cjs:23:117\n\n  20 await check('Cross-organization invoice line cannot be approved',()=>denied('line-scope',async x=>{const other=await fixture('foreign');await db.supplierInvoiceLine.update({where:{id:x.invoice.lines[0].id},data:{organizationId:other.organizationId}})}));\n  21 await check('Changed match variance cannot be trusted as matched',()=>denied('variance',x=>db.threeWayMatch.update({where:{id:x.match.id},data:{varianceAmount:'10.00'}})));\n  22 await check('Ambiguous match evidence requires reconciliation',()=>denied('ambiguous',async x=>{const match=await db.threeWayMatch.findUniqueOrThrow({where:{id:x.match.id}}),{id,createdAt,updatedAt,...data}=match;await db.threeWayMatch.create({data})}));\n→ 23 await check('Previously created liability cannot be created again',()=>denied('liability',x=>db.supplierLedgerEntry.create({\n       data: {\n         organizationId: \"workflow_supplier_ack_en_approval-source-91bc60ee-0b6-liability\",\n         supplierId: \"cmtsgjpyf00hsmalkcd8zmn8b\",\n         entryDate: new Date(\"2026-08-10T00:00:00.000Z\"),\n         type: \"PURCHASE\",\n         debit: \"2500.00\",\n         credit: \"0.00\",\n         balanceAfter: \"2500.00\",\n         referenceType: \"SUPPLIER_INVOICE\",\n         referenceId: \"cmtsgjq4h00jnmalk7qipnznl\",\n     +   description: String\n       }\n     })\n\nArgument `description` is missing."
+    },
+    {
+      "name": "Exception approval must cover the actual variance",
+      "status": "failed",
+      "message": "\nInvalid `db.supplierInvoiceMatchException.update()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-invoice-approval-source.cjs:24:587\n\n  21 await check('Changed match variance cannot be trusted as matched',()=>denied('variance',x=>db.threeWayMatch.update({where:{id:x.match.id},data:{varianceAmount:'10.00'}})));\n  22 await check('Ambiguous match evidence requires reconciliation',()=>denied('ambiguous',async x=>{const match=await db.threeWayMatch.findUniqueOrThrow({where:{id:x.match.id}}),{id,createdAt,updatedAt,...data}=match;await db.threeWayMatch.create({data})}));\n  23 await check('Previously created liability cannot be created again',()=>denied('liability',x=>db.supplierLedgerEntry.create({data:{organizationId:x.organizationId,supplierId:x.supplierId,entryDate:x.invoice.invoiceDate,type:'PURCHASE',debit:'2500.00',credit:'0.00',balanceAfter:'2500.00',referenceType:'SUPPLIER_INVOICE',referenceId:x.invoice.id}})));\n→ 24 await check('Exception approval must cover the actual variance',()=>denied('exception',async x=>{const requested=await ap.requestSupplierInvoiceMatchException({organizationId:x.organizationId,supplierInvoiceId:x.invoice.id,requestedById:x.actorId,reason:'Owned price discrepancy',evidenceReference:'owned://supplier-price-review',expiresAt:new Date(Date.now()+86400000)},db);await ap.reviewSupplierInvoiceMatchException({organizationId:x.organizationId,matchExceptionId:requested.matchException.id,reviewedById:x.checkerId,decision:'APPROVE'},db);await db.supplierInvoiceMatchExcept"
+    },
+    {
+      "name": "Valid source remains approvable and exact replay creates one liability",
+      "status": "passed"
+    }
+  ],
+  "scope": "Owned isolated PostgreSQL, actual receiving and invoice preparation/approval kernel; synthetic source-corruption fixtures, no current-session approval UI or professional certification.",
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673"
+  },
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "be6da8dbaa4fc0b4912193f7dfd125de7bc67672cd8a64d579c74a42ec5b0673"
+  },
+  "newFixtureOrganizations": [
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-total",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-tax",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-receipt",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-line-scope",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-foreign",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-variance",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-ambiguous",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-liability",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-exception",
+    "workflow_supplier_ack_en_approval-source-91bc60ee-0b6-valid"
+  ]
+}

@@ -1,0 +1,582 @@
+{
+  "at": "2026-09-15T11:51:33.193Z",
+  "baseline": "evidence/source-baseline-v154.json",
+  "baselineReceipt": "a9863a",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+    "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+    "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+    "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a",
+    "services/daily-habit/daily-habit-digest.service.ts": "2da8a46e3e51fb355632403b515adaf30b4a15f98992df4576036a9f41d5f12b",
+    "services/daily-habit/daily-habit-digest-contracts.ts": "1ba159dbb05b4e6ddf5300d5195f96bd020223c86703273f5f4339b552bfd285",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "2d605dfe4d8520bc426d9ce7bc56c3ca14ffe5d7906a0a0788a0fc5cf91c6ded"
+  },
+  "tests": {
+    "passed": 32,
+    "suites": 6,
+    "receipt": "6f88aa",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/access-recovery.test.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/recovery.test.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/route-audit.test.ts\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/proposal-availability.test.tsx\" \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx\""
+  },
+  "lint": {
+    "passed": true,
+    "files": 11,
+    "receipt": "8f129b",
+    "updatedTestReceipt": "06ebbb",
+    "command": "node node_modules/eslint/bin/eslint.js \"app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts\" \"app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/access-recovery.test.tsx\" \"app/[locale]/(dashboard)/dashboard/daily-digest/__tests__/recovery.test.tsx\" \"services/daily-habit/daily-habit-digest.service.ts\" \"services/daily-habit/daily-habit-digest-contracts.ts\" \"services/daily-habit/__tests__/daily-habit-digest.service.test.ts\" \"components/daily-habit/DailyHabitDigestDashboard.tsx\" \"components/daily-habit/__tests__/DailyHabitDigestDashboard.test.tsx\""
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "cc0772",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "runtime": {
+    "file": "lanes/environment/digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2.json",
+    "receipt": "b744cd",
+    "at": "2026-09-15T11:47:51.171Z",
+    "sourceBefore": {
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+      "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+      "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a",
+      "services/daily-habit/daily-habit-digest.service.ts": "2da8a46e3e51fb355632403b515adaf30b4a15f98992df4576036a9f41d5f12b",
+      "services/daily-habit/daily-habit-digest-contracts.ts": "1ba159dbb05b4e6ddf5300d5195f96bd020223c86703273f5f4339b552bfd285",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "2d605dfe4d8520bc426d9ce7bc56c3ca14ffe5d7906a0a0788a0fc5cf91c6ded"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-en-1440-loaded.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-en-768-loaded.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-en-320-loaded.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-en-320-error.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-en-320-denied.png"
+        ],
+        "layouts": [
+          {
+            "width": 1440,
+            "scrollWidth": 1440,
+            "scrollHeight": 1856,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 280,
+                  "y": 68,
+                  "width": 1160,
+                  "height": 1788,
+                  "top": 68,
+                  "right": 1440,
+                  "bottom": 1856,
+                  "left": 280
+                },
+                "scrollHeight": 1788,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 280,
+                      "y": 68,
+                      "width": 1160,
+                      "height": 1788,
+                      "top": 68,
+                      "right": 1440,
+                      "bottom": 1856,
+                      "left": 280
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 280,
+                  "y": 68,
+                  "width": 1160,
+                  "height": 1788,
+                  "top": 68,
+                  "right": 1440,
+                  "bottom": 1856,
+                  "left": 280
+                },
+                "scrollHeight": 1788,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 280,
+                      "y": 68,
+                      "width": 1160,
+                      "height": 1788,
+                      "top": 68,
+                      "right": 1440,
+                      "bottom": 1856,
+                      "left": 280
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 768,
+            "scrollWidth": 768,
+            "scrollHeight": 2733,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 220,
+                  "y": 67,
+                  "width": 548,
+                  "height": 2666,
+                  "top": 67,
+                  "right": 768,
+                  "bottom": 2733,
+                  "left": 220
+                },
+                "scrollHeight": 2666,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 220,
+                      "y": 67,
+                      "width": 548,
+                      "height": 2666,
+                      "top": 67,
+                      "right": 768,
+                      "bottom": 2733,
+                      "left": 220
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 220,
+                  "y": 67,
+                  "width": 548,
+                  "height": 2666,
+                  "top": 67,
+                  "right": 768,
+                  "bottom": 2733,
+                  "left": 220
+                },
+                "scrollHeight": 2666,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 220,
+                      "y": 67,
+                      "width": 548,
+                      "height": 2666,
+                      "top": 67,
+                      "right": 768,
+                      "bottom": 2733,
+                      "left": 220
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 320,
+            "scrollWidth": 320,
+            "scrollHeight": 3366,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 0,
+                  "y": 64,
+                  "width": 320,
+                  "height": 3302,
+                  "top": 64,
+                  "right": 320,
+                  "bottom": 3366,
+                  "left": 0
+                },
+                "scrollHeight": 3302,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 0,
+                      "y": 64,
+                      "width": 320,
+                      "height": 3302,
+                      "top": 64,
+                      "right": 320,
+                      "bottom": 3366,
+                      "left": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 0,
+                  "y": 64,
+                  "width": 320,
+                  "height": 3302,
+                  "top": 64,
+                  "right": 320,
+                  "bottom": 3366,
+                  "left": 0
+                },
+                "scrollHeight": 3302,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 0,
+                      "y": 64,
+                      "width": 320,
+                      "height": 3302,
+                      "top": 64,
+                      "right": 320,
+                      "bottom": 3366,
+                      "left": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "consoleErrors": [
+          "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/en/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Dashboard ...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               ",
+          "%o\n\n%s RangeError: Invalid currency code : INVALID\n    at new NumberFormat (<anonymous>)\n    at formatBIValue (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:281:16)\n    at BIKpiCard (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:93:27)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23584:20)\n    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:6793:22)\n    at updateFunctionComponent (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:9247:19)\n    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:10858:18)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3",
+          "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/en/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/en/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Dashboard ...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               "
+        ],
+        "pageErrors": [],
+        "rscRequests": 1,
+        "initialLoadMs": 8329,
+        "timezoneStable": true,
+        "failedReadHasNoDigest": true,
+        "keyboardRetryFreshServer": true,
+        "currentPermissionDenied": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-fr-1440-loaded.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-fr-768-loaded.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-fr-320-loaded.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-fr-320-error.png",
+          "digest-recovery-v154-0276ee5e-e3c4-4971-826f-0798d03351c2-fr-320-denied.png"
+        ],
+        "layouts": [
+          {
+            "width": 1440,
+            "scrollWidth": 1440,
+            "scrollHeight": 1856,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 280,
+                  "y": 68,
+                  "width": 1160,
+                  "height": 1788,
+                  "top": 68,
+                  "right": 1440,
+                  "bottom": 1856,
+                  "left": 280
+                },
+                "scrollHeight": 1788,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 280,
+                      "y": 68,
+                      "width": 1160,
+                      "height": 1788,
+                      "top": 68,
+                      "right": 1440,
+                      "bottom": 1856,
+                      "left": 280
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 280,
+                  "y": 68,
+                  "width": 1160,
+                  "height": 1788,
+                  "top": 68,
+                  "right": 1440,
+                  "bottom": 1856,
+                  "left": 280
+                },
+                "scrollHeight": 1788,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 280,
+                      "y": 68,
+                      "width": 1160,
+                      "height": 1788,
+                      "top": 68,
+                      "right": 1440,
+                      "bottom": 1856,
+                      "left": 280
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 768,
+            "scrollWidth": 768,
+            "scrollHeight": 2733,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 220,
+                  "y": 67,
+                  "width": 548,
+                  "height": 2666,
+                  "top": 67,
+                  "right": 768,
+                  "bottom": 2733,
+                  "left": 220
+                },
+                "scrollHeight": 2666,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 220,
+                      "y": 67,
+                      "width": 548,
+                      "height": 2666,
+                      "top": 67,
+                      "right": 768,
+                      "bottom": 2733,
+                      "left": 220
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 220,
+                  "y": 67,
+                  "width": 548,
+                  "height": 2666,
+                  "top": 67,
+                  "right": 768,
+                  "bottom": 2733,
+                  "left": 220
+                },
+                "scrollHeight": 2666,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 220,
+                      "y": 67,
+                      "width": 548,
+                      "height": 2666,
+                      "top": 67,
+                      "right": 768,
+                      "bottom": 2733,
+                      "left": 220
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "width": 320,
+            "scrollWidth": 320,
+            "scrollHeight": 3450,
+            "mains": [
+              {
+                "class": "min-w-0 flex-1 overflow-x-hidden",
+                "rect": {
+                  "x": 0,
+                  "y": 64,
+                  "width": 320,
+                  "height": 3386,
+                  "top": 64,
+                  "right": 320,
+                  "bottom": 3450,
+                  "left": 0
+                },
+                "scrollHeight": 3386,
+                "children": [
+                  {
+                    "tag": "MAIN",
+                    "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                    "rect": {
+                      "x": 0,
+                      "y": 64,
+                      "width": 320,
+                      "height": 3386,
+                      "top": 64,
+                      "right": 320,
+                      "bottom": 3450,
+                      "left": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "class": "dashboard-landing-theme dark min-h-screen bg-[var(--dash-canvas)]",
+                "rect": {
+                  "x": 0,
+                  "y": 64,
+                  "width": 320,
+                  "height": 3386,
+                  "top": 64,
+                  "right": 320,
+                  "bottom": 3450,
+                  "left": 0
+                },
+                "scrollHeight": 3386,
+                "children": [
+                  {
+                    "tag": "DIV",
+                    "class": "dashboard-landing-content mx-auto w-full max-w-[1920px] space-y-4 px-4 py-4 text-[var(--dash-text)] md:px-6 lg:px-8",
+                    "rect": {
+                      "x": 0,
+                      "y": 64,
+                      "width": 320,
+                      "height": 3386,
+                      "top": 64,
+                      "right": 320,
+                      "bottom": 3450,
+                      "left": 0
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "consoleErrors": [
+          "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/fr/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/fr/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Navigation...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               ",
+          "%o\n\n%s RangeError: Invalid currency code : INVALID\n    at new NumberFormat (<anonymous>)\n    at formatBIValue (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:281:16)\n    at BIKpiCard (webpack-internal:///(app-pages-browser)/./components/bi/BIKpiCard.tsx:93:27)\n    at Object.react_stack_bottom_frame (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:23584:20)\n    at renderWithHooks (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:6793:22)\n    at updateFunctionComponent (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:9247:19)\n    at beginWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:10858:18)\n    at runWithFiberInDEV (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3bf027ff9111b32a12/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:872:30)\n    at performUnitOfWork (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@15.5.23_@babel+core@7._dc4baac3ef98eb3",
+          "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <HTTPAccessFallbackBoundary notFound={<SegmentViewNode>} forbidden={undefined} unauthorized={undefined}>\n      <HTTPAccessFallbackErrorBoundary pathname=\"/fr/dashbo...\" notFound={<SegmentViewNode>} forbidden={undefined} ...>\n        <RedirectBoundary>\n          <RedirectErrorBoundary router={{...}}>\n            <InnerLayoutRouter url=\"/fr/dashbo...\" tree={[...]} cacheNode={{lazyData:null, ...}} segmentPath={[...]}>\n              <SegmentViewNode type=\"layout\" pagePath=\"[locale]/(...\">\n                <SegmentTrieNode>\n                <DashboardLayout>\n                  <div className=\"min-h-scre...\">\n                    <Sidebar session={{session:{...}, ...}}>\n                      <aside aria-label=\"Navigation...\" className=\"dashboard-...\">\n                        <div className=\"relative z...\">\n                          <div>\n                          <div className=\"px-4 py-4 ...\">\n               "
+        ],
+        "pageErrors": [],
+        "rscRequests": 1,
+        "initialLoadMs": 5311,
+        "timezoneStable": true,
+        "failedReadHasNoDigest": true,
+        "keyboardRetryFreshServer": true,
+        "currentPermissionDenied": true
+      }
+    ],
+    "scope": "Owned localhost database and credential login only. Invalid currency deliberately triggers rendering failure; no live provider, approval, proposal or financial operation.",
+    "noProposalOrFinancialEffects": true,
+    "passed": true,
+    "sourceAfter": {
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-access.tsx": "35e1a9628116872d63122d0bb0191360a5ae41d8ccb4096fe0e7d6ad5da0cfd7",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/daily-digest-route-data-access.ts": "2ec59d365be2acfc88bc46356a1797c0f3b18496bf52bdd17dd107fc85160ebd",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/error.tsx": "ff667ce00ab9607ab83d30d1b05c40bd5e126ebddb124d173f41f7e463fa7d6e",
+      "app/[locale]/(dashboard)/dashboard/daily-digest/loading.tsx": "cf7a792922a181e56e2dc68205a47c024bedf173c8827d9413e42c829a7e6dd4",
+      "messages/en.json": "c30434799169b4486d080760c3fa41a183fa8abeea284a958fb8776206d36522",
+      "messages/fr.json": "d98341595dbad0b324abf32df911ef5f6b801e3ff66648da922a946d20b0374a",
+      "services/daily-habit/daily-habit-digest.service.ts": "2da8a46e3e51fb355632403b515adaf30b4a15f98992df4576036a9f41d5f12b",
+      "services/daily-habit/daily-habit-digest-contracts.ts": "1ba159dbb05b4e6ddf5300d5195f96bd020223c86703273f5f4339b552bfd285",
+      "components/daily-habit/DailyHabitDigestDashboard.tsx": "2d605dfe4d8520bc426d9ce7bc56c3ca14ffe5d7906a0a0788a0fc5cf91c6ded"
+    },
+    "sourceStable": true
+  },
+  "intermediate": {
+    "routeTests": {
+      "passed": 22,
+      "receipt": "485a7b"
+    },
+    "expectedQueryShapeFailure": {
+      "failed": 1,
+      "passed": 31,
+      "receipt": "2446a8",
+      "resolution": "Service test now asserts timezone selected and returned."
+    },
+    "timezoneMismatch": {
+      "file": "lanes/environment/digest-recovery-v154-f03f1e74-407e-4e71-aa29-2ef8b062f6af.json",
+      "receipt": "f578cf"
+    },
+    "server": {
+      "session": 32685,
+      "liveReceipt": "b7fac6",
+      "restarted": false
+    },
+    "patchAttempts": [
+      "Initial patch validation failed before application due to duplicate loading.tsx target; corrected to single update.",
+      "French message write initially failed and succeeded on ordinary apply_patch retry; no automatic-review denial."
+    ]
+  },
+  "visualReview": {
+    "inspected": [
+      "French 320px loaded intermediate",
+      "French 320px final error"
+    ],
+    "screenshots": 10,
+    "open": [
+      "Loaded digest mixed English/French",
+      "Sidebar attribute hydration warning"
+    ],
+    "blankArea": "Not reproduced; full-page content extends through page and document widths equal viewports."
+  },
+  "limitations": [
+    "Runtime injection is invalid-currency rendering failure, not a database outage.",
+    "Five RBAC reasons covered by unit tests; actual browser covers permission removal.",
+    "Full lifecycle and platform verification remain incomplete."
+  ],
+  "migrations": false,
+  "wholeWorkflowComplete": false,
+  "guide": "DAILY_DIGEST_RECOVERY_V154.md",
+  "coverage": {
+    "discoveredWorkflows": 270,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2929,
+      "tests": 1047,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2543,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 191,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "at": "2026-09-09T10:32:08.065Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v98.json",
+  "sources": {
+    "services/reconciliation/payment-suspense-correction.service.ts": "53b814abfff84d9a9c1a456c94bd62ea346a8fa9220cd20a5b4e42fddb889636",
+    "services/reconciliation/payment-suspense-correction.contracts.ts": "72e73a681c81f3273855aa8d21d7931a36bcdc86dd6570eae07491e206607ebf",
+    "services/reconciliation/payment-suspense-cycle-ledger.service.ts": "dc02af0b325934ca7760d43a854eee9dd79c153d7613415532a1ca8e45e7e5c0",
+    "services/reconciliation/payment-suspense-evidence.ts": "f41b88ec5eaf8c26281da5a5dfb2acbb962c82a5bdd9a1a302f5670933be77c7",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "b230e17295dec9df766174240f898defb0222e0e78da2960504ec0d2faf6c1bc",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "329d8eebe7bbfb6e2d8b55ccd5303e75076664e1a8e4d6e5c217365e17060139",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "9ed6f44807e2efb76ca0555a086cd4589ca41c7c1bc7a31c97edbbb4497303e8",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8",
+    "components/finance/PaymentSuspenseCorrectionPanel.tsx": "fd734ca76d69653456296cfa0d4694d878a00d821ba7704b8b815062815dc12e",
+    "components/finance/PaymentSuspenseQueue.tsx": "5e46159572928c02721253f8fcbe3d005383baafd7ea94728dfbaedcd6e3a93f",
+    "services/reconciliation/payment-suspense-read.service.ts": "19aa7eb7e37a151ebad5ddddb9275d2d3cfa79dcf199d6f2d242940ee25c3523",
+    "actions/payments/reconciliation.actions.ts": "8b0566cb0ada11a294f78283d8b75d11f52a7987dcee5c5ec351e1f6cd225563",
+    "messages/en.json": "8d456c821901e955a1602c5d06edad561b4e0ed080ab362c28771a3292f38a68",
+    "messages/fr.json": "43a9a1b17a2b45a0f165995378e076579cea99ecc7f1e599c40f2d991f7bb1e8",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "e5f3aa07268343deb512dd7ba9f01a3821b154109c8e9413ab25fc187f29f582",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "components/finance/__tests__/PaymentSuspenseCorrectionPanel.test.tsx": "4516087894b12bd698cc4b4b24a2350ab2caf753455b096a29665874d1c2d786",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "9a3ddb010df80c2bc93b1edce391711219f8c84ce547bb2f528ce26521c6ce28",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "35bebedfc1ec14c8b26faaf145e71ad8ee3cdd102ffd59ff10b6b51e06501f9d",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "a08ab717f55d3c1b183617e0b18a68b74bafa92e7b2dcaa89e86561a8ddc8415",
+    "services/reconciliation/__tests__/payment-suspense-correction.contracts.test.ts": "535d38447c62d5f6637df7be47e8e7e1e431d2008535ca13d5ee8555ea2e57ea",
+    "services/accounting/__tests__/posting-batch-identity.test.ts": "6472c843d0ef071cfb3497de1b26fa2e57641d238edba9546fed7eda3b4e7d60",
+    "services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts": "c940fc92e41945b6b0eff4612729910d235aabc62ae4398615f22347ee1603b4",
+    "services/reconciliation/__tests__/payment-reconciliation-notifications.test.ts": "729d7f8b92dda05d932174c106c86192b6871e10bc841d497645c7a31522553e",
+    "services/accounting/__tests__/posting.service.test.ts": "a889b931cc8590897f1f9fe5e2dc60eefe5d608f7001ff2470678bd6ed35c7d1"
+  },
+  "tests": {
+    "file": "evidence/suspense-correction-tests-v98-final.json",
+    "session": 57432,
+    "passed": 101,
+    "suites": 9
+  },
+  "runtime": {
+    "file": "lanes/environment/suspense-correction-v98-770dbf69-16c.json",
+    "checks": 14
+  },
+  "browser": {
+    "file": "lanes/environment/suspense-correction-v98-browser-c25d67bf-38d.json",
+    "screenshots": "evidence/suspense-correction-v98-screenshots"
+  },
+  "typecheck": {
+    "session": 29568,
+    "exitCode": 0
+  },
+  "lint": {
+    "session": 42823,
+    "exitCode": 0,
+    "files": 17
+  },
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 229,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2789,
+      "tests": 984,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2390,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "previousGoalTurn": "progress: v97 posting-cycle schema and initial-post isolation"
+}

@@ -1,0 +1,9 @@
+# Public password recovery — ID-06 / ID-07
+
+2026-09-06, source v19. Existing routes use `components/Forms/ForgotPasswordForm.tsx` and `ResetPasswordForm.tsx`; the similarly named component under `components/auth` is an exported historical simulated form with no current direct route caller. Graph searches have no matching current form symbols; source imports establish ownership.
+
+Observed source defects: both public forms lack a POST/hydration guard; the reset form treats 400/429/503 as success, redirects and discards the draft. The request form claims email delivery for the generic privacy-preserving server response, logs the email, ignores resend results and leaks its cooldown timer after unmount. Fixed 400-pixel form layout can overflow a narrow screen. Both forms are English-only and use the older shell.
+
+The existing reset completion conditionally consumes a current token with credentials/session revocation but records its audit after commit. Current organization/user eligibility, duplicate/misbound credentials and bounded input need explicit checks. Request delivery is an existing inline provider call with no durable delivery outcome; no new provider integration or live email is authorized. Unknown-account request browser verification and isolated injected transport/service tests remain possible. Full delivery is explicitly separate.
+
+Acceptance: generic request acknowledgement without an account/delivery claim; bounded input and preserved drafts; localized policy/rate-limit/expired-link/uncertain states; masked hydrated POST; true completion only after authoritative transaction; single-use token, session revocation and mandatory audit together; actual EN/FR mobile/desktop public reset/sign-in and retained failures. Reuse AuthV2Shell and current public form controls. Retain the existing password policy and abuse controls. Do not alter counters, real users, provider settings or deployment targets.

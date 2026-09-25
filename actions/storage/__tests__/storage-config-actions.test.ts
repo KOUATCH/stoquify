@@ -100,7 +100,7 @@ describe("storage configuration action authorization", () => {
   })
 
   it("requires fresh auth and canonical permission before updating storage configuration", async () => {
-    const result = await updateStorageConfiguration("org-session", "local", undefined, 4096, ["image/png"])
+    const result = await updateStorageConfiguration("org-session", "online")
 
     expect(result.success).toBe(true)
     expect(mockRequireFreshAuth).toHaveBeenCalledWith(300)
@@ -119,11 +119,11 @@ describe("storage configuration action authorization", () => {
       surface: "actions/storage/storage-config-actions.ts#updateStorageConfiguration",
       mode: "observe",
     }))
-    expect(mockMkdir).toHaveBeenCalledTimes(1)
+    expect(mockMkdir).not.toHaveBeenCalled()
     expect(result.data).toMatchObject({
       organizationId: "org-session",
-      maxFileSize: 4096,
-      allowedFileTypes: ["image/png"],
+      maxFileSize: 4 * 1024 * 1024,
+      storageType: "online",
     })
   })
 
@@ -138,7 +138,7 @@ describe("storage configuration action authorization", () => {
       auditAllowed: true,
     })
     expect(mockAssertActiveOrganization).toHaveBeenCalledWith("org-session")
-    expect(mockMkdir).toHaveBeenCalledTimes(1)
+    expect(mockMkdir).not.toHaveBeenCalled()
   })
 
   it("fails closed before tenant, module, or filesystem access when write permission is denied", async () => {
@@ -151,4 +151,8 @@ describe("storage configuration action authorization", () => {
     expect(mockObserveModuleAccess).not.toHaveBeenCalled()
     expect(mockMkdir).not.toHaveBeenCalled()
   })
+})
+
+it("rejects local writes instead of acknowledging an unpersisted choice", async () => {
+  expect((await updateStorageConfiguration("org-session", "local")).success).toBe(false)
 })

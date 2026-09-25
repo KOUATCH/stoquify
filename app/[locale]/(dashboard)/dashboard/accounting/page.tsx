@@ -1,3 +1,5 @@
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+
 import { BookOpenCheck, ClipboardCheck, FilePlus2, FileSearch, Landmark, ListTree, Scale, Settings2, ShieldCheck } from "lucide-react"
 
 import { getAccountingDashboardSummaryAction } from "@/actions/accounting/reports.actions"
@@ -78,7 +80,7 @@ async function AccountingDashboardPageImpl() {
         </AccountingPanel>
       ) : (
         <div className="space-y-6">
-          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
             <AccountingStatCard
               label="Setup status"
               value={summary.settings?.setupStatus || "Not started"}
@@ -145,40 +147,58 @@ async function AccountingDashboardPageImpl() {
 
           <AccountingPanel title="Latest journal entries" description="Recent activity from draft and posted journals.">
             <div className="overflow-x-auto">
-              <table className="dashboard-table-base w-full min-w-[760px] text-sm">
-                <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-                  <tr>
-                    <th className="px-4 py-3">Entry</th>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Journal</th>
-                    <th className="px-4 py-3">Period</th>
-                    <th className="px-4 py-3 text-right">Debit</th>
-                    <th className="px-4 py-3 text-right">Credit</th>
-                    <th className="px-4 py-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {summary.latestEntries.length ? (
-                    summary.latestEntries.map((entry) => (
-                      <tr key={entry.id} className="border-b border-[var(--dash-border-subtle)]">
-                        <td className="px-4 py-3 font-medium text-[var(--dash-text)]">{entry.entryNumber}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{accountingDate(entry.entryDate)}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{entry.journalCode}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{entry.periodName}</td>
-                        <td className="px-4 py-3 text-right text-[var(--dash-text)]">{formatAccountingMoney(entry.debit, currency)}</td>
-                        <td className="px-4 py-3 text-right text-[var(--dash-text)]">{formatAccountingMoney(entry.credit, currency)}</td>
-                        <td className="px-4 py-3 text-[var(--dash-text-soft)]">{entry.status}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-[var(--dash-text-soft)]">
-                        No journal entries yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <AccountingDataTable
+                caption={"Latest journal entries"}
+                emptyMessage={"No journal entries yet."}
+                columns={[
+                  { label: "Entry" },
+                  { label: "Date" },
+                  { label: "Journal" },
+                  { label: "Period" },
+                  { label: "Debit", className: "text-right" },
+                  { label: "Credit", className: "text-right" },
+                  { label: "Status" },
+                ]}
+                rows={summary.latestEntries.map((entry) => {
+                  return {
+                    id: entry.id,
+                    searchText: [
+                      entry.entryNumber,
+                      accountingDate(entry.entryDate),
+                      entry.journalCode,
+                      entry.periodName,
+                      entry.debit,
+                      entry.credit,
+                      entry.status,
+                    ]
+                      .filter((value) => value !== null && value !== undefined)
+                      .join(" "),
+                    cells: [
+                      <div key="cell-0" className="font-medium text-[var(--dash-text)]">
+                        {entry.entryNumber}
+                      </div>,
+                      <div key="cell-1" className="text-[var(--dash-text-soft)]">
+                        {accountingDate(entry.entryDate)}
+                      </div>,
+                      <div key="cell-2" className="text-[var(--dash-text-soft)]">
+                        {entry.journalCode}
+                      </div>,
+                      <div key="cell-3" className="text-[var(--dash-text-soft)]">
+                        {entry.periodName}
+                      </div>,
+                      <div key="cell-4" className="text-right text-[var(--dash-text)]">
+                        {formatAccountingMoney(entry.debit, currency)}
+                      </div>,
+                      <div key="cell-5" className="text-right text-[var(--dash-text)]">
+                        {formatAccountingMoney(entry.credit, currency)}
+                      </div>,
+                      <div key="cell-6" className="text-[var(--dash-text-soft)]">
+                        {entry.status}
+                      </div>,
+                    ],
+                  }
+                })}
+              />
             </div>
           </AccountingPanel>
         </div>

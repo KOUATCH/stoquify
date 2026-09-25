@@ -1,0 +1,96 @@
+{
+  "mode": "precision",
+  "attempt": "926e63c2",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "organizationId": "org_modules_legacy_en_desktop",
+  "startedAt": "2026-09-05T21:16:33.991Z",
+  "sourcesBefore": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "3a57c26a0540f775176a5791ceb6a5f910081ae25867592ef430db7de8e65274",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "945f52356a85512f80d7d790240a2e846cd066487aa06b721b9e2198fedc4a30",
+    "actions/payments/reconciliation.actions.ts": "1d1253a4321bbdcdecd30ed2eb9de5c7ad15510f18ab4d9002adcd375ebfc97e",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "3a0aa1c9ea06275dd94c076f31854e2740da22437b0c22d2679c1a99a7fe46bb",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "83598e664a230127bb5afae1d1e38fa05c34e075e93ddaaa7e29551ec0fbe284",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "b161b7887b0e70a8ef65b0d5044e4ad2c8bef36b63423ca0f74d71f480e1be13",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "4ffff0ca2bf75aca40979a115328bd2060caa8c2ee0c7c4f7bc6bf63bc26b38c",
+    "messages/en.json": "ea6e0806916ef3083bdccf269b0b56948035604c972f522be26e58df742b4fa9",
+    "messages/fr.json": "c06debbf46e9439fa5df2211fa48629651031ebb658802ddfc924dad3be51cee",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+  },
+  "checks": [
+    {
+      "name": "en exact fractional review amount, current currency and guarded approval",
+      "passed": true,
+      "screenshots": [
+        "en-manual-access-reader-926e63c2.png",
+        "en-manual-access-approved-926e63c2.png"
+      ],
+      "errors": [],
+      "lastRouteReadyMs": 5426,
+      "resumedProposalId": null,
+      "passwordConfirmationUsed": true,
+      "overflow": {
+        "viewport": 1440,
+        "content": 1440
+      },
+      "proposalId": "cmtovv5fw00d3mabovsl3bvmz",
+      "approvedTotal": "86.75",
+      "retainedPriorRecords": 7,
+      "exactDisplayedAmount": "0.25 XAF",
+      "readerMutationsDisabled": true,
+      "originalRunStillNeedsReview": true
+    },
+    {
+      "name": "fr exact fractional review amount, current currency and guarded approval",
+      "passed": true,
+      "screenshots": [
+        "fr-manual-access-reader-926e63c2.png",
+        "fr-manual-access-approved-926e63c2.png"
+      ],
+      "errors": [],
+      "lastRouteReadyMs": 8966,
+      "resumedProposalId": null,
+      "passwordConfirmationUsed": true,
+      "overflow": {
+        "viewport": 390,
+        "content": 390
+      },
+      "proposalId": "cmtovvtkk00elmaborv47ks2e",
+      "approvedTotal": "86.75",
+      "retainedPriorRecords": 7,
+      "exactDisplayedAmount": "0,25 XAF",
+      "readerMutationsDisabled": true,
+      "originalRunStillNeedsReview": true
+    }
+  ],
+  "blockedExternalOrigins": [],
+  "limitations": [
+    "Provider setup and confirmed internal payments are synthetic preconditions in the existing owned browser database. No live authority, provider, payment or financial certification.",
+    "Browser identity uses genuine password sign-in and, where requested, the actual password confirmation action. No sessions or approval results are fabricated.",
+    "A deliberate lost response after the real proposal request tests uncertainty and retry. No application response data is substituted.",
+    "Checks cover manual proposal/approval recovery only; they do not establish complete reconciliation lifecycle or platform verification."
+  ],
+  "originalAuthorityHashBefore": "627e56ebfd91a0ffe0daa131a8b90522ab4ee7c0c47d2664eb15e65e1c3d622f",
+  "originalAuthorityHashAfter": "627e56ebfd91a0ffe0daa131a8b90522ab4ee7c0c47d2664eb15e65e1c3d622f",
+  "existingAuthorityUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "3a57c26a0540f775176a5791ceb6a5f910081ae25867592ef430db7de8e65274",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "945f52356a85512f80d7d790240a2e846cd066487aa06b721b9e2198fedc4a30",
+    "actions/payments/reconciliation.actions.ts": "1d1253a4321bbdcdecd30ed2eb9de5c7ad15510f18ab4d9002adcd375ebfc97e",
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "3a0aa1c9ea06275dd94c076f31854e2740da22437b0c22d2679c1a99a7fe46bb",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "83598e664a230127bb5afae1d1e38fa05c34e075e93ddaaa7e29551ec0fbe284",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "b161b7887b0e70a8ef65b0d5044e4ad2c8bef36b63423ca0f74d71f480e1be13",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "4ffff0ca2bf75aca40979a115328bd2060caa8c2ee0c7c4f7bc6bf63bc26b38c",
+    "messages/en.json": "ea6e0806916ef3083bdccf269b0b56948035604c972f522be26e58df742b4fa9",
+    "messages/fr.json": "c06debbf46e9439fa5df2211fa48629651031ebb658802ddfc924dad3be51cee",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/reconciliation/manual-match-lineage.sql.ts": "e0aa855abf3ba8e1fe763ef16d1ccde0b950b8c852762e69107dfbcfc21b14ca",
+    "services/_shared/protect.ts": "10cbdc803232c66ac6a763d0a32634e43706f481d40949026c959373095d097e"
+  },
+  "sourceStable": true,
+  "driverSha256": "51e57e70eeda5ffcba625c56627853c9c3e775ab795aec916b790f5609b661be",
+  "completedAt": "2026-09-05T21:17:47.576Z",
+  "passed": 2,
+  "failed": 0
+}

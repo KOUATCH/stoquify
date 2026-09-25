@@ -13,6 +13,9 @@ import {
 } from "@prisma/client"
 
 import { db } from "@/prisma/db"
+import { assertModuleNewWorkInTx } from "@/services/modules/module-admission.service"
+
+jest.mock("@/services/modules/module-admission.service", () => ({ assertModuleNewWorkInTx: jest.fn() }))
 
 import {
   approveManualMatch,
@@ -22,30 +25,36 @@ import {
 
 jest.mock("@/prisma/db", () => ({
   db: {
+    $queryRaw: jest.fn(),
     $transaction: jest.fn(),
+    auditLog: { create: jest.fn() },
+    tenantModuleConfiguration: { findUnique: jest.fn().mockResolvedValue(null) },
+    tenantModuleGrant: { findMany: jest.fn().mockResolvedValue([]) },
+    tenantModuleConfigurationCommand: { count: jest.fn().mockResolvedValue(0) },
     providerAccount: { findFirst: jest.fn() },
     reconciliationRun: { findFirst: jest.fn(), create: jest.fn(), update: jest.fn() },
     paymentTransaction: { findMany: jest.fn(), findFirst: jest.fn() },
     providerEvent: { findMany: jest.fn(), findFirst: jest.fn() },
     statementLine: { findMany: jest.fn(), findFirst: jest.fn() },
-    matchRecord: { create: jest.fn(), findFirst: jest.fn() },
-    paymentException: { create: jest.fn() },
+    matchRecord: { create: jest.fn(), findFirst: jest.fn(), findMany: jest.fn() },
+    paymentException: { create: jest.fn(), update: jest.fn() },
     suspenseItem: { create: jest.fn() },
-    paymentReconciliationInboxItem: { upsert: jest.fn() },
+    paymentReconciliationInboxItem: { upsert: jest.fn(), createMany: jest.fn() },
   },
 }))
 
 const mockedDb = db as unknown as {
+  $queryRaw: jest.Mock
   $transaction: jest.Mock
   providerAccount: { findFirst: jest.Mock }
   reconciliationRun: { findFirst: jest.Mock; create: jest.Mock; update: jest.Mock }
   paymentTransaction: { findMany: jest.Mock; findFirst: jest.Mock }
   providerEvent: { findMany: jest.Mock; findFirst: jest.Mock }
   statementLine: { findMany: jest.Mock; findFirst: jest.Mock }
-  matchRecord: { create: jest.Mock; findFirst: jest.Mock }
-  paymentException: { create: jest.Mock }
+  matchRecord: { create: jest.Mock; findFirst: jest.Mock; findMany: jest.Mock }
+  paymentException: { create: jest.Mock; update: jest.Mock }
   suspenseItem: { create: jest.Mock }
-  paymentReconciliationInboxItem: { upsert: jest.Mock }
+  paymentReconciliationInboxItem: { upsert: jest.Mock; createMany: jest.Mock }
 }
 
 function amount(value: number | string) {
@@ -55,6 +64,8 @@ function amount(value: number | string) {
 describe("durable payment reconciliation run service", () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockedDb.$queryRaw.mockImplementation(async query => query.sql.includes('"organizations"') ? [{ id: "org-1", requestedModules: [] }] : [{ id: "provider-account-1" }])
+    ;(assertModuleNewWorkInTx as jest.Mock).mockReset().mockResolvedValue(undefined)
     mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
     mockedDb.providerAccount.findFirst.mockResolvedValue({
       id: "provider-account-1",
@@ -73,21 +84,51 @@ describe("durable payment reconciliation run service", () => {
       id: "payment-transaction-1",
       amount: amount(10000),
       currencyCode: "XAF",
+      state: "CONFIRMED", direction: "INBOUND",
     })
     mockedDb.providerEvent.findFirst.mockResolvedValue({
       id: "provider-event-1",
       amount: amount(10000),
       currencyCode: "XAF",
+      status: "VERIFIED", direction: "INBOUND", signatureValid: true,
     })
     mockedDb.statementLine.findFirst.mockResolvedValue({
       id: "statement-line-1",
       amount: amount(10000),
       currencyCode: "XAF",
+      status: "UNMATCHED", direction: "CREDIT",
     })
     mockedDb.matchRecord.create.mockResolvedValue({ id: "match-1" })
+    mockedDb.matchRecord.findMany.mockResolvedValue([])
     mockedDb.paymentException.create.mockResolvedValue({ id: "exception-1" })
     mockedDb.suspenseItem.create.mockResolvedValue({ id: "suspense-1" })
     mockedDb.paymentReconciliationInboxItem.upsert.mockResolvedValue({ id: "inbox-1" })
+    mockedDb.paymentReconciliationInboxItem.createMany.mockResolvedValue({ count: 1 })
+  })
+
+  it("stops a new run before creating reconciliation effects", async () => {
+    ;(assertModuleNewWorkInTx as jest.Mock).mockRejectedValueOnce(new Error("New work stopped"))
+    await expect(runPaymentReconciliation({
+      organizationId: "org-1", providerAccountId: "provider-account-1", businessDate: new Date("2026-09-05"),
+    })).rejects.toThrow("New work stopped")
+    expect(assertModuleNewWorkInTx).toHaveBeenCalledWith(mockedDb, {
+      organizationId: "org-1", moduleSlug: "payment_reconciliation", operation: "payment.reconciliation.run.create",
+    })
+    expect(mockedDb.reconciliationRun.create).not.toHaveBeenCalled()
+    expect(mockedDb.paymentTransaction.findMany).not.toHaveBeenCalled()
+    expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()
+  })
+
+  it("runs required reconciliation with real admission when only new manual journals are stopped", async () => {
+    const actualAdmission = jest.requireActual<typeof import("@/services/modules/module-admission.service")>("@/services/modules/module-admission.service")
+    ;(assertModuleNewWorkInTx as jest.Mock).mockImplementation(actualAdmission.assertModuleNewWorkInTx)
+    mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["accounting"], newWorkStoppedAt: { accounting: "2026-09-05T12:00:00.000Z" } }])
+    mockedDb.paymentTransaction.findMany.mockResolvedValue([{ id: "payment-transaction-1", amount: amount(10000), currencyCode: "XAF", providerTransactionId: "txn-1", providerReference: "ref-1", direction: PaymentDirection.INBOUND, state: PaymentTransactionState.CONFIRMED }])
+    mockedDb.providerEvent.findMany.mockResolvedValue([{ id: "provider-event-1", providerEventId: "evt-1", providerTransactionId: "txn-1", providerReference: "ref-1", amount: amount(10000), currencyCode: "XAF", direction: PaymentDirection.INBOUND, status: ProviderEventStatus.VERIFIED, signatureValid: true }])
+    mockedDb.statementLine.findMany.mockResolvedValue([])
+    await expect(runPaymentReconciliation({ organizationId: "org-1", providerAccountId: "provider-account-1", businessDate: new Date("2026-09-05"), runById: "maker-1" })).resolves.toMatchObject({ runId: "run-1", status: ReconciliationRunStatus.READY_FOR_SIGNOFF, matchCount: 1, exceptionCount: 0 })
+    expect(mockedDb.$queryRaw).toHaveBeenCalledTimes(2)
+    expect(mockedDb.matchRecord.create).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({ paymentTransactionId: "payment-transaction-1", providerEventId: "provider-event-1", reconciliationRunId: "run-1" }) }))
   })
 
   it("creates explainable auto matches and itemized suspense for orphan statement lines", async () => {
@@ -112,6 +153,7 @@ describe("durable payment reconciliation run service", () => {
         currencyCode: "XAF",
         direction: PaymentDirection.INBOUND,
         status: ProviderEventStatus.VERIFIED,
+        signatureValid: true,
       },
     ])
     mockedDb.statementLine.findMany.mockResolvedValue([
@@ -267,6 +309,7 @@ describe("durable payment reconciliation run service", () => {
         currencyCode: "XAF",
         direction: PaymentDirection.INBOUND,
         status: ProviderEventStatus.VERIFIED,
+        signatureValid: true,
       },
     ])
     mockedDb.statementLine.findMany.mockResolvedValue([])
@@ -366,6 +409,7 @@ describe("durable payment reconciliation run service", () => {
         currencyCode: "EUR",
         direction: PaymentDirection.INBOUND,
         status: ProviderEventStatus.VERIFIED,
+        signatureValid: true,
       },
     ])
     mockedDb.statementLine.findMany.mockResolvedValue([])
@@ -396,7 +440,7 @@ describe("durable payment reconciliation run service", () => {
   })
 
   it("requires maker-checker separation for manual match approval", async () => {
-    mockedDb.matchRecord.create.mockResolvedValueOnce({ id: "proposed-match-1" })
+    mockedDb.matchRecord.create.mockImplementationOnce(({ data }: { data: object }) => ({ ...data, id: "proposed-match-1" }))
 
     const proposed = await proposeManualMatch({
       organizationId: "org-1",
@@ -405,10 +449,14 @@ describe("durable payment reconciliation run service", () => {
       statementLineId: "statement-line-1",
       proposedById: "maker-1",
       amountMatched: amount(10000),
+      idempotencyKey: "existing-maker-checker-test",
+      control: { actorPermissions: ["payments.reconciliation.match"] },
       correlationId: "corr-manual",
     })
 
     expect(proposed).toMatchObject({ matchId: "proposed-match-1", correlationId: "corr-manual" })
+    const proposalMetadata = mockedDb.matchRecord.create.mock.calls.at(-1)[0].data.metadata
+    const approvalControl = { actorPermissions: ["payments.reconciliation.override"], lastAuthAt: new Date() }
 
     mockedDb.matchRecord.findFirst.mockResolvedValue({
       id: "proposed-match-1",
@@ -423,6 +471,7 @@ describe("durable payment reconciliation run service", () => {
       amountMatched: amount(10000),
       currencyCode: "XAF",
       matchedById: "maker-1",
+      metadata: proposalMetadata,
     })
 
     await expect(
@@ -430,15 +479,19 @@ describe("durable payment reconciliation run service", () => {
         organizationId: "org-1",
         proposedMatchId: "proposed-match-1",
         approvedById: "maker-1",
+        expectedEvidenceRevision: proposalMetadata.evidenceRevision,
+        control: approvalControl,
       }),
-    ).rejects.toThrow("independent reviewer")
+    ).rejects.toThrow("independent approval")
 
-    mockedDb.matchRecord.create.mockResolvedValueOnce({ id: "approved-match-1" })
+    mockedDb.matchRecord.create.mockImplementationOnce(({ data }: { data: object }) => ({ ...data, id: "approved-match-1" }))
     await expect(
       approveManualMatch({
         organizationId: "org-1",
         proposedMatchId: "proposed-match-1",
         approvedById: "checker-1",
+        expectedEvidenceRevision: proposalMetadata.evidenceRevision,
+        control: approvalControl,
         correlationId: "corr-approve",
       }),
     ).resolves.toMatchObject({ matchId: "approved-match-1", correlationId: "corr-approve" })
@@ -454,6 +507,8 @@ describe("durable payment reconciliation run service", () => {
       statementLineId: "statement-line-from-another-tenant",
       proposedById: "maker-1",
       amountMatched: amount(10000),
+      idempotencyKey: "existing-foreign-line-test",
+      control: { actorPermissions: ["payments.reconciliation.match"] },
     })).rejects.toThrow("Statement line not found")
 
     expect(mockedDb.matchRecord.create).not.toHaveBeenCalled()

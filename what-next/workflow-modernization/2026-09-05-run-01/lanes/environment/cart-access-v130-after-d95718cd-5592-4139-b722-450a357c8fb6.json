@@ -1,0 +1,47 @@
+{
+  "at": "2026-09-13T14:00:02.031Z",
+  "phase": "after",
+  "sourceBefore": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+  "cases": [
+    {
+      "scenario": "legacy",
+      "cartWrites": "all_admitted",
+      "retainedRead": true,
+      "retainedClosure": true
+    },
+    {
+      "scenario": "active",
+      "cartWrites": "all_admitted",
+      "retainedRead": true,
+      "retainedClosure": true
+    },
+    {
+      "scenario": "empty",
+      "cartWrites": "all_denied_and_cart_unchanged",
+      "retainedRead": true,
+      "retainedClosure": true
+    },
+    {
+      "scenario": "read-only",
+      "cartWrites": "all_denied_and_cart_unchanged",
+      "retainedRead": true,
+      "retainedClosure": true
+    },
+    {
+      "scenario": "expired",
+      "cartWrites": "all_denied_and_cart_unchanged",
+      "retainedRead": true,
+      "retainedClosure": true
+    },
+    {
+      "scenario": "suspended-dependency",
+      "cartWrites": "all_denied_and_cart_unchanged",
+      "retainedRead": true,
+      "retainedClosure": true
+    }
+  ],
+  "scope": "Owned local PostgreSQL; actual shift/cart services and synthetic commercial grants. No checkout/payment/provider operation.",
+  "passed": true,
+  "sourceAfter": "ae8b7a03cab0418daa46300e7ba62a446f1f8e663a9fdb22416557a0e76473f0",
+  "sourceStable": true
+}

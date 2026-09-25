@@ -1,0 +1,57 @@
+{
+  "recordedDate": "2026-09-05",
+  "scope": "History service, protected action and native workbench continuation",
+  "observations": [
+    {
+      "toolSession": 95057,
+      "exitCode": 1,
+      "testsPassed": 76,
+      "testsFailed": 3,
+      "testsTotal": 79,
+      "seconds": 108.602,
+      "notes": "Initial service fixture omitted lifecycle timestamps; two UI cases exceeded their 5-second allowance. Fixture corrected without weakening production behavior."
+    },
+    {
+      "toolSession": 10217,
+      "exitCode": 1,
+      "testsPassed": 75,
+      "testsFailed": 4,
+      "testsTotal": 79,
+      "seconds": 85.728,
+      "notes": "Both service/action suites passed (52 tests). The UI suite had two timeouts and two assertion failures. This overall command did not pass."
+    },
+    {
+      "toolSession": 17158,
+      "exitCode": 0,
+      "testsPassed": 27,
+      "testsFailed": 0,
+      "seconds": 142.462,
+      "perTestTimeoutMs": 15000,
+      "report": "history-workbench-tests.json",
+      "notes": "Clean process, workbench suite only, assertions unchanged. Functional allowance is not an adopted product performance budget."
+    }
+  ],
+  "lint": {
+    "toolSession": 27457,
+    "exitCode": 0,
+    "scope": "History service, contracts, action, workbench and their three affected test files"
+  },
+  "moduleSurfaceRatchet": {
+    "exitCode": 0,
+    "baseline": "../2026-09-05-run-01/evidence/lifecycle-continuation/module-surfaces-final.json",
+    "currentReport": "module-surfaces.json",
+    "existingActiveGaps": 163,
+    "currentActiveGaps": 163,
+    "new": 0,
+    "worsened": 0,
+    "cleanGlobalReleaseGate": false
+  },
+  "typescript": {
+    "toolSession": 44942,
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0,
+    "completionObservedAt": "2026-09-05T15:08:05Z",
+    "limitation": "Overlapped final additive journal-form follow-up. Read the final isolated build source binding separately."
+  },
+  "evidenceProvenance": "Recorded from completed tool responses; only the final UI suite has the linked machine-readable Jest output. This record does not reconstruct missing raw logs or claim all 79 tests passed in one invocation."
+}

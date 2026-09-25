@@ -1,0 +1,11 @@
+# Historical account balances remain visible
+
+An archived chart account can still carry posted financial evidence. The trial balance now uses the account relation already loaded with each in-scope posted/reversed line when that account is absent from the current chart. It checks account identity and organization before including the descriptor, and retains deterministic account ordering. It does not silently discard a line when the required descriptor is unavailable.
+
+Financial statements now include both current accounts and archived accounts with organization-scoped posted/reversed evidence through the selected period end. This includes prior-period balances needed for the balance sheet, not only current-period activity. Descriptor queries preserve tenant boundaries. The service rejects activity without a valid scoped account descriptor. It loads all descriptor types so valid MEMO accounts remain distinguishable from missing evidence; the existing statement classification still excludes MEMO accounts from P&L/balance-sheet categories.
+
+Only reports.service.ts and financial-statements.service.ts changed in production. No ledger entry, account status, archival mutation, schema, permission, approval or customer data changed. Trial balance adds no query; financial statements retain the existing query count. Query latency was not benchmarked.
+
+Before correction, the targeted two suites reproduced 9 failures and 5 passes (2.927 s), including a balanced zero trial balance and zero revenue/costs despite archived posted evidence. After correction, six focused and affected-boundary suites passed all 30 checks (7.543 s). The final group includes existing export, structural immutability, manual-journal and posting controls. RETAINED_REPORT_VERIFICATION.json binds the exact source/test hashes and reports scope honestly.
+
+Still pending: real PostgreSQL/browser report proof, coordinated typecheck/lint, and the separate chart-register presentation issue. The chart register still excludes rows with deletedAt despite its archived label. A concurrency race between account/line reads can return unavailable; this slice does not claim a full reporting snapshot/archival concurrency redesign. Source data is retained, and no professional certification has been inferred.

@@ -1,0 +1,51 @@
+{
+  "status": "NOT APPLIED / NOT EXECUTED",
+  "builtAt": "2026-09-05T13:54:10.388Z",
+  "baseCapturedAt": "2026-09-05T13:48:35.153Z",
+  "patchSha256": "ea5faa4087e2759e84bd179ab4528b7f0901f735007d66bfd1be87733981bb87",
+  "candidateFiles": [
+    {
+      "path": "services/pos/pos.service.ts",
+      "artifact": "services__pos__pos.service.ts.txt",
+      "baseSha256": "3cfb6db6e51a1d30b33bd74bf61cb2ef06a508eeea827ba7c9a88037409aea22",
+      "candidateSha256": "3c0d44efa3b5a3a2a910ccf1b7230ccf16e4a53f2506b6ebaf50103fba597ceb",
+      "inMemoryPatchCheck": "PASS",
+      "execution": "NOT EXECUTED"
+    },
+    {
+      "path": "services/pos/offline-sync.service.ts",
+      "artifact": "services__pos__offline-sync.service.ts.txt",
+      "baseSha256": "1f145c236c445cea8ea34c37f49e0bcd9a1aed4dcc5a24c5c8503b1aa6bd0eb4",
+      "candidateSha256": "bff76be08cf4fae5a1afb322e8efd2b7881f29813211b6d399e386b1ff3afe7a",
+      "inMemoryPatchCheck": "PASS",
+      "execution": "NOT EXECUTED"
+    },
+    {
+      "path": "services/pos/offline-continuation.service.ts",
+      "artifact": "services__pos__offline-continuation.service.ts.txt",
+      "baseSha256": null,
+      "candidateSha256": "4fb899e8fafef36e96e6169eee2ab5d3ec7641d6966a1cf625ce4944f3671694",
+      "inMemoryPatchCheck": "PASS",
+      "execution": "NOT EXECUTED"
+    },
+    {
+      "path": "prisma/migrations/20260905210000_protect_offline_acceptance/migration.sql",
+      "artifact": "prisma__migrations__20260905210000_protect_offline_acceptance__migration.sql.txt",
+      "baseSha256": null,
+      "candidateSha256": "17a0c8dc0f9c275ad76d9b500775377cc35c9998602b37067b0576c01b8278f8",
+      "inMemoryPatchCheck": "PASS",
+      "execution": "NOT EXECUTED"
+    },
+    {
+      "path": "services/pos/__tests__/offline-continuation.service.test.ts",
+      "artifact": "services__pos____tests____offline-continuation.service.test.ts.txt",
+      "baseSha256": null,
+      "candidateSha256": "198a2caa739902b9ac01f3d44f8c4d548cb17fa26044b328b0a78f759f98fd5e",
+      "inMemoryPatchCheck": "PASS",
+      "execution": "NOT EXECUTED"
+    }
+  ],
+  "dependencyDrift": [],
+  "checkLimits": "Text-only patch applicability checked in memory; no code was imported, compiled, typechecked or executed; SQL was not applied.",
+  "migrationNameCheck": "Proposed 20260905210000_protect_offline_acceptance is unused; no source migration directory created."
+}

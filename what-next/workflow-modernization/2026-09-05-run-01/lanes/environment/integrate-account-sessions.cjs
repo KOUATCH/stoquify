@@ -1,0 +1,27 @@
+const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
+const root = path.resolve(__dirname, '../../../../..');
+const file = path.join(root, 'app/[locale]/(dashboard)/dashboard/settings/security/page.tsx');
+let text = fs.readFileSync(file, 'utf8');
+assert.ok(text.includes('async function revokeOtherSessionsAction'));
+text = text.replace('import { requireSession, revokeAllSessionsForUser }', 'import { requireSession }');
+text = text.replace('import { revalidatePath } from "next/cache"', 'import AccountSessions from "@/components/settings/AccountSessions"');
+text = text.replace('  ShieldAlert,\n', '');
+text = text.replace(/type SearchParams = Promise<Record<string, string \| string\[\] \| undefined>>\r?\n\r?\n/, '').replace('  searchParams?: SearchParams\n', '');
+text = text.replace(/async function revokeOtherSessionsAction\(formData: FormData\) \{[\s\S]*?\n\}\n\nasync function SecuritySettingsPageImpl/, 'async function SecuritySettingsPageImpl');
+text = text.replace('({ params, searchParams }: SecurityPageProps)', '({ params }: SecurityPageProps)');
+text = text.replace(/  const query = searchParams[^\n]*\n  const revokedValue[^\n]*\n  const revokedCount[^\n]*\n/, '');
+text = text.replace(/            \{revokedCount > 0 \? \([\s\S]*?            \) : null\}\n/, '');
+text = text.replace(/            <div className="grid grid-cols-2 gap-3">\n              <Metric label=\{labels.activeSessions\}[\s\S]*?<\/div>\n/, '');
+text = text.replace(/            <form action=\{revokeOtherSessionsAction\}[\s\S]*?<\/form>/, '            <AccountSessions locale={locale} actorId={state.verified.ctx.userId} organizationId={state.verified.ctx.orgId} sessionId={state.verified.claims.sessionId} />');
+// Stored enrollment fields cannot establish operational challenge enforcement.
+text = text.replace('const mfaEnabled = Boolean(state.user.mfaEnabledAt)', 'const mfaEnrollmentRecorded = Boolean(state.user.mfaEnabledAt)');
+text = text.replace(/\{statusBadge\(mfaEnabled, mfaEnabled \? labels.mfaEnabled : labels.mfaDisabled\)\}/, '<Badge variant="outline" className="border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] text-[var(--dash-text)]">{labels.mfaFlowMissing}</Badge>');
+text = text.replace(/              <Badge variant="outline" className="border-white\/10 bg-white\/\[0\.055\] text-\[var\(--dash-text-soft\)\]">\n                \{state.user.mfaBackupCodes.length\} backup codes\n              <\/Badge>/, '');
+text = text.replace('<p>{labels.mfaSchemaReady}</p>', '<p>{mfaEnrollmentRecorded ? labels.mfaEnabled : labels.mfaDisabled}</p>').replace('              <p>{labels.mfaFlowMissing}</p>\n','').replace('hasCriticalOrHigh && !mfaEnabled', 'hasCriticalOrHigh');
+text = text.replace('mfaEnabled: "MFA enabled"', 'mfaEnabled: "An enrollment date is recorded, but it does not confirm that sign-in challenges are enforced."').replace('mfaEnabled: "MFA active"', 'mfaEnabled: "Une date d’inscription est enregistrée, mais elle ne confirme pas l’application d’un second facteur à la connexion."');
+text = text.replace('mfaFlowMissing: "No finished enrollment or challenge route is connected yet, so this page does not expose an MFA toggle."','mfaFlowMissing: "Additional sign-in verification is unavailable"').replace('mfaFlowMissing: "Aucune route finale d\'enrolement ou challenge n\'est connectee, donc cette page n\'expose pas de bascule MFA."','mfaFlowMissing: "La vérification supplémentaire à la connexion est indisponible"');
+text = text.replace('sessionPolicy: "Current session state comes from BetterAuth plus the database session mirror."', 'sessionPolicy: "Review your current session and sign out other devices from your account."').replace('sessionPolicy: "L\'etat de session vient de BetterAuth et du miroir de session en base."', 'sessionPolicy: "Vérifiez votre session actuelle et déconnectez les autres appareils de votre compte."');
+text = text.replace('title: "Securite"','title: "Sécurité"');
+assert.ok(text.includes('<AccountSessions ')); assert.ok(!text.includes('revokedCount')); assert.ok(!text.includes('revokeOtherSessionsAction'));
+fs.writeFileSync(path.join(__dirname, 'account-sessions-page.candidate.txt'), text);
+console.log('Integrated service-owned account session controls; removed URL-derived success and unsupported MFA-enabled badge.');

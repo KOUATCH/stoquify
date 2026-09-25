@@ -1,0 +1,94 @@
+{
+  "startedAt": "2026-09-05T14:42:08.946Z",
+  "completedAt": "2026-09-05T14:42:46.477Z",
+  "classification": "ISOLATED_READ_ONLY_ACCOUNTING_STOP_PREVIEW",
+  "productionApproval": false,
+  "fixtureKey": "service_fr_mobile",
+  "results": [
+    {
+      "locale": "en",
+      "passed": true,
+      "accountingStopAvailable": true,
+      "manualJournalScopeVisible": true,
+      "blockedDependentHeadingAbsent": true,
+      "reconciliationStillSelected": true,
+      "authoritativeApplyControlEnabled": true,
+      "activated": false,
+      "controlText": "Stop new work in AccountingStops only the creation of manual journal entries. Existing journals, required ledger posting and reconciliation remain available under their usual controls."
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "accountingStopAvailable": true,
+      "manualJournalScopeVisible": true,
+      "blockedDependentHeadingAbsent": true,
+      "reconciliationStillSelected": true,
+      "authoritativeApplyControlEnabled": true,
+      "activated": false,
+      "controlText": "Arrêter les nouvelles opérations de ComptabilitéArrête uniquement la création d’écritures comptables manuelles. Les écritures existantes, les comptabilisations obligatoires et les rapprochements restent accessibles sous leurs contrôles habituels."
+    }
+  ],
+  "failure": null,
+  "persistedStateUnchanged": true,
+  "sourceStable": true,
+  "beforeSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "454958b4cbcf4bdfe55c6e60573ecf5a1ff984785c5d8abdc7e4fdf4e509258d"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "a2fc19cd607bdf29d36709bac27bc1589303e320e431a63e909c4c7877580a05"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "33f9048689f4edc5209a3cf4f35dcbd01096d22a83250bce41812b52ebeafad1"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-operational-dependencies.ts",
+      "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    }
+  ],
+  "afterSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "454958b4cbcf4bdfe55c6e60573ecf5a1ff984785c5d8abdc7e4fdf4e509258d"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "a2fc19cd607bdf29d36709bac27bc1589303e320e431a63e909c4c7877580a05"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "33f9048689f4edc5209a3cf4f35dcbd01096d22a83250bce41812b52ebeafad1"
+    },
+    {
+      "path": "services/modules/module-admission.service.ts",
+      "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+    },
+    {
+      "path": "services/modules/module-operational-dependencies.ts",
+      "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+    },
+    {
+      "path": "services/modules/module-stop-policy.service.ts",
+      "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+    }
+  ]
+}

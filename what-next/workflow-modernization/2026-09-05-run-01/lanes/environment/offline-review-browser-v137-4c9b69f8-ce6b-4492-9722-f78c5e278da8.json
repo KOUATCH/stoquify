@@ -1,0 +1,32 @@
+{
+  "at": "2026-09-13T15:45:24.992Z",
+  "sourcesBefore": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/offline/OfflineConflictReview.tsx": "6c73f2bb0c11c98054de0c6d1387d99a10f8fc895b02ec4ad9eda85fa0e24df7",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "9f23d3f82fe4ceae28f204617128a2892020fd805741fe06f5d7e281891b1f6d",
+    "hooks/posHooks/useOfflineSync.ts": "ef8500fc35a7973579e11062ffdf00d756f1586d25937ecd1a4bc93131eac1a3",
+    "messages/en.json": "accdd3b7b1f46f2899b96a6e687812f074404a8fc94bb2ca5d24575ddd465031",
+    "messages/fr.json": "c66a64c980bcd44260e8c12916c530c3a42b91f5ba853b77a42d753504b5dc43"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "pageErrors": [],
+      "initialText": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Tender operator-review-45ec2b07-031c-46cb-a627-7c501eebbfcc\n\nOWNED REVIEW OPERATOR\nSession\nMODULES\n6\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nOPERATIONS\n1\nSales\nCustomers, sales, and POS entry points\n2\nOverview\nPOS\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n3\nFinance\nCash, profitability, payments, and reconciliation\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n2\nO\n\noperator-review-45ec2b07-031c-46cb-a627-7c501eebbfcc1b3fd627-8d19-4591-a5bf-ba16ca0c3fdb@example.invalid\n\noperator-review-45ec2b07-031c-46cb-a627-7c501eebbfcc1b3fd627-8d19-4591-a5bf-ba16ca0c3fdb@example.invalid\n\nPOS\n\nOperations / Sales / POS\n\nFR\nO\n\nLOADING\n\nChecking the current checkout workspace\n\nLoading your current access, shift, stock and cart. Please wait before changing the sale.\n\nBack to dashboard"
+    }
+  ],
+  "scope": "Owned synthetic unresolved conflict; actual authentication, server actions, review audit and financial snapshots. Does not enable offline ingestion or replay.",
+  "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review conflicts', exact: true })\u001b[22m\n",
+  "sourcesAfter": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/offline/OfflineConflictReview.tsx": "6c73f2bb0c11c98054de0c6d1387d99a10f8fc895b02ec4ad9eda85fa0e24df7",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "9f23d3f82fe4ceae28f204617128a2892020fd805741fe06f5d7e281891b1f6d",
+    "hooks/posHooks/useOfflineSync.ts": "ef8500fc35a7973579e11062ffdf00d756f1586d25937ecd1a4bc93131eac1a3",
+    "messages/en.json": "accdd3b7b1f46f2899b96a6e687812f074404a8fc94bb2ca5d24575ddd465031",
+    "messages/fr.json": "c66a64c980bcd44260e8c12916c530c3a42b91f5ba853b77a42d753504b5dc43"
+  },
+  "sourceStable": true
+}

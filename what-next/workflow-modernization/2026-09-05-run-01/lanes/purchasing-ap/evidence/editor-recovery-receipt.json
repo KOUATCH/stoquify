@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-05T18:34:50.823Z",
+  "workflowIds": [
+    "PA-002"
+  ],
+  "sourceFiles": [
+    {
+      "path": "components/purchase-orders/ModernEditPurchaseOrderForm.tsx",
+      "sha256": "35d0879e7fb9c0cec8de241db45c05eb085cbdd6aced9d322ea2d37834372b05"
+    },
+    {
+      "path": "hooks/useRecentPurchaseOrderQueries.ts",
+      "sha256": "242cee7d2ef4de6062a9c4fb5ee5e615236af17b35de953a97cd5add676a52e6"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx",
+      "sha256": "ad31ccf0f894d3c85aa9d1d53bb782f492c6b7e6d504a8e1ab8d3c4ab94cbd77"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "2b269dffd58334739079ee51718fef2bd7e534b5007b901964a318564f6acad5"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "6cf697b3943ba7f580d85a5aee5bdb7ef043dc06f54a015122fc304e11b6f40e"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx",
+      "sha256": "60518ef078d2e4935c6a99daa6754d6594e79cd7242263ce5381834a40ecc796"
+    },
+    {
+      "path": "hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx",
+      "sha256": "4416f673c2a25412c781dc7f55a809cdfcb992e04b770a9f08252f49cd72f7e3"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/__tests__/page.test.tsx",
+      "sha256": "c988ed076f891141c6150425bfeae6abf8a9bb7b8bb748854bc2d99092862cd2"
+    }
+  ],
+  "beforeSourceFiles": [
+    {
+      "path": "components/purchase-orders/ModernEditPurchaseOrderForm.tsx",
+      "sha256": "18eab5025288e80e8f3fb7b5111470257d1e03721492d7a5ad0336b8e5e351cb"
+    },
+    {
+      "path": "hooks/useRecentPurchaseOrderQueries.ts",
+      "sha256": "5ee6a672fdd523203d09354b493b3a1fee754572b76da399e440a553bf334a1f"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx",
+      "sha256": "c78a6a89bba8919a94a38f79705f3059aa0159edd2b1c061ae965a9f41282351"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "8c18d3110ea5a7219a59838458a85781388b0449b020cbbbbd9d75bcf26a4ee8"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "eec3542fc4fd5c3efbe475130e2f3133489f417fc132b3a5dd6264d007ddf02d"
+    }
+  ],
+  "baseline": {
+    "type": "genuine_browser",
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/purchase-editor-browser-ef30b99c.json",
+    "outcome": "Both locales briefly retained rejected draft, then server-rendered non-DRAFT status caused edit route notFound; FR screenshot proves disappearance before viewport resize. English raw failure toast also visible.",
+    "triggerLimitation": "No claim that resize caused refresh. Exact delayed RSC trigger was not instrumented in the baseline; source route's non-DRAFT notFound branch and global MutationCache notification are verified."
+  },
+  "initialFocusedAttempt": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx\" \"hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx\" \"app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/__tests__/page.test.tsx\" --json --outputFile what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-editor-recovery-final.json",
+    "passed": 32,
+    "failed": 0,
+    "suites": 3,
+    "durationSeconds": 10.001,
+    "exitCode": 1,
+    "toolChunkId": "d01e83",
+    "limitation": "All assertions passed; writing JSON failed with sandbox EPERM. Preserved as distinct outcome."
+  },
+  "tests": {
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx\" \"hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx\" \"app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/__tests__/page.test.tsx\" --json --outputFile what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-editor-recovery-final.json",
+    "artifact": "what-next/workflow-modernization/2026-09-05-run-01/lanes/purchasing-ap/evidence/jest-editor-recovery-final.json",
+    "exitCode": 0,
+    "passed": 32,
+    "failed": 0,
+    "suites": 3,
+    "durationSeconds": 14.829,
+    "note": "Same scoped run was already dispatched to obtain evidence-write permission before parent requested avoiding an output-only rerun; no further tests executed."
+  },
+  "lint": {
+    "command": "node node_modules/eslint/bin/eslint.js \"components/purchase-orders/ModernEditPurchaseOrderForm.tsx\" \"hooks/useRecentPurchaseOrderQueries.ts\" \"app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/page.tsx\" \"components/purchase-orders/__tests__/ModernEditPurchaseOrderForm.test.tsx\" \"hooks/__tests__/useRecentPurchaseOrderQueries.boundary.test.tsx\" \"app/[locale]/(dashboard)/dashboard/purchase-orders/[id]/edit/__tests__/page.test.tsx\"",
+    "exitCode": 0,
+    "fileCount": 6,
+    "toolChunkId": "793811",
+    "output": "No lint messages."
+  },
+  "delivered": [
+    "Authorized existing non-DRAFT record stays in same actor/org/object editor identity; genuine missing/foreign/permission denial stays guarded.",
+    "Same-mounted form default values remain client draft on refreshed server props. New saved status locks saving; text/numeric/date values stay focusable read-only for review/copy.",
+    "Previous/Continue work in read-only mode; add/remove/select/save controls cannot mutate; submit handler and save function both guard status.",
+    "Focused persistent EN/FR alert explains locked status and comparison with saved order in separate tab.",
+    "Existing global notification suppression flags apply only when this form passes handlesFeedbackLocally; other hook callers retain default feedback."
+  ],
+  "remaining": [
+    "Genuine EN/FR recovery-only browser proof on existing clones is pending verification owner; no current runtime pass claimed here.",
+    "Parent combined typecheck pending with other coordinated corrections.",
+    "Reloading/closing the tab is not persistent draft storage; deliberate navigation still asks before discarding dirty values.",
+    "Other PA/AP workflows and server update/approval concurrency/shipping-only correctness remain required, not cleared by this presentation fix."
+  ],
+  "unchangedFinancialBackend": [
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672",
+      "matchesBrowserBaseline": true
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c",
+      "matchesBrowserBaseline": true
+    },
+    {
+      "path": "services/purchase-order/purchase-order.schemas.ts",
+      "sha256": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3",
+      "matchesBrowserBaseline": true
+    }
+  ]
+}

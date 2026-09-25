@@ -1,0 +1,16 @@
+flowchart LR
+  People[Owner, operator, accountant] --> Shell[One EN/FR workspace]
+  Shell --> Edge[Authenticated actions, APIs and queries]
+  Edge --> Policy[Tenant, permission, capability and control decision]
+  Policy --> Domains[Existing business domain services]
+  Admin[Configuration builder] --> Planner[Manifest planner and revision controller]
+  Planner --> Policy
+  Planner --> State[(Desired and observed configuration)]
+  Domains --> DB[(Tenant-scoped business records)]
+  Domains --> Outbox[Transactional business event outbox]
+  Outbox --> Views[Read models, work queues and analytics]
+  Views --> Shell
+  Outbox --> Adapters[Scoped provider adapters]
+  Adapters --> External[Banks, payment and filing systems]
+  Policy --> Evidence[Private audit and decision evidence]
+  Agent[Restricted agent tools] --> Policy

@@ -1,0 +1,69 @@
+{
+  "recordedAt": "2026-09-05T19:56:43.492Z",
+  "scope": "Automatic matching and provider direction correction; full workflow incomplete",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "services/reconciliation/payment-reconciliation-run.service.ts": "f80de6ec8438029eae18e3a0a8d39443dc6b2f191450c6a2e9843980507877ae",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts": "f22917620931007cd863f9a8cfcce9b190fa40bebd095789ae2deae0961b1311",
+    "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts": "759ea25c4b6197cc3bb59c293659c7d9e448568e1104371da5075f55e776308b",
+    "services/payments/adapters/mobile-money-hmac.adapter.ts": "f4ab6ca3d3608b4234fbff690b0ed75dad446ffb0892a196b48f21d720165e9e",
+    "services/payments/__tests__/mobile-money-hmac.adapter.test.ts": "4399dc0faf61a69afeb0a4364de9ff820fd139826c6a2c553f5bd4efa801c768"
+  },
+  "baseline": {
+    "sourceSha256": "0d8c80ef828dd406ade1632f4d250bda1a8906d7118340465c0d22cd42e64a15",
+    "failed": 20,
+    "passed": 2,
+    "suites": 1,
+    "testReportedSeconds": 31.53,
+    "session": 86756,
+    "terminalChunk": "c5d68c",
+    "evidenceLimit": "Baseline console retained in tool output; Jest completed but JSON write was denied by filesystem sandbox (EPERM). No baseline JSON artifact exists. Three prior-allocation expectations were subsequently strengthened from review status to transactional refusal with no new obligations."
+  },
+  "directionBaseline": {
+    "file": "evidence/reconciliation-direction-before.json",
+    "failed": 5,
+    "passed": 7
+  },
+  "finalTests": {
+    "file": "evidence/reconciliation-auto-after-02.json",
+    "passed": 96,
+    "failed": 0,
+    "passedSuites": 9,
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts services/payments/__tests__/mobile-money-hmac.adapter.test.ts services/payments/__tests__/provider-event.service.test.ts services/payments/__tests__/statement-import.service.test.ts services/payments/__tests__/pos-electronic-tender-authority.service.test.ts actions/payments/__tests__/reconciliation.actions.test.ts services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts services/modules/__tests__/module-reconciliation-obligations.service.test.ts",
+    "terminalChunk": "fde751"
+  },
+  "lint": {
+    "files": [
+      "services/reconciliation/payment-reconciliation-run.service.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts",
+      "services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts",
+      "services/payments/adapters/mobile-money-hmac.adapter.ts",
+      "services/payments/__tests__/mobile-money-hmac.adapter.test.ts"
+    ],
+    "exitCode": 0,
+    "session": 46227,
+    "terminalChunk": "63013a"
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "session": 63567,
+    "terminalChunk": "b3306b"
+  },
+  "postgres": {
+    "file": "lanes/environment/reconciliation-auto-run-c526f81b83f8.json",
+    "passed": 8,
+    "failed": 0,
+    "sourceStable": true,
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-reconciliation-auto.cjs run",
+    "terminalChunk": "9322dd"
+  },
+  "preflight": {
+    "file": "lanes/environment/reconciliation-auto-preflight-1497b240c645.json",
+    "targetGuardPassed": true,
+    "limitation": "Read-only preflight and receipt completed. Imported monitoring timers kept the CLI alive; its owned session was interrupted afterwards (exit1), then the runner was corrected to exit only after awaited checks, receipt writing and client disconnection. The subsequent run completed normally."
+  },
+  "build": "No repeat of failed packaging attempt; prior full build failed Windows symlink permission and predates this batch.",
+  "certification": false
+}

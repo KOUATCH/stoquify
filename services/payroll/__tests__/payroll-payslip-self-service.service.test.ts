@@ -398,7 +398,8 @@ describe("payroll payslip self-service service", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           eventType: "payroll.payslip.exported",
-          sourceType: "PAYROLL_PAYSLIP",
+          sourceType: undefined,
+          metadata: expect.objectContaining({ sourceEntityType: "PAYROLL_PAYSLIP" }),
           sourceId: "payslip-1",
           documentHash: result.contentHash,
         }),

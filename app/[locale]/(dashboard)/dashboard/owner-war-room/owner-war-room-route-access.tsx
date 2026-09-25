@@ -1,4 +1,6 @@
 import type { ReactNode } from "react"
+import { getTranslations } from "next-intl/server"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
@@ -42,21 +44,24 @@ const NO_ACTIVE_ORG_MESSAGE = "Refresh your session from the dashboard so the co
 const PERMISSION_DENIED_MESSAGE =
   "This read-only tenant command center requires administrator-wide operating authority. The denial was recorded by the RBAC guard."
 
-function getOwnerWarRoomRouteDenial(
+async function getOwnerWarRoomRouteDenial(
   surface: OwnerWarRoomRouteSurface,
   locale: Locale,
   error: RbacError,
-): OwnerWarRoomRouteDenial {
+): Promise<OwnerWarRoomRouteDenial> {
   const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+  const t = surface.key === "owner-war-room"
+    ? await getTranslations({ locale, namespace: "ownerWorkspaceAccess" })
+    : null
 
   return {
     noActiveOrg,
     title: noActiveOrg
-      ? surface.noActiveOrgTitle ?? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}`
-      : surface.permissionDeniedTitle ?? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`,
+      ? t?.("noActiveOrgTitle") ?? surface.noActiveOrgTitle ?? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}`
+      : t?.("deniedTitle") ?? surface.permissionDeniedTitle ?? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`,
     message: noActiveOrg
-      ? surface.noActiveOrgMessage ?? NO_ACTIVE_ORG_MESSAGE
-      : surface.permissionDeniedMessage ?? PERMISSION_DENIED_MESSAGE,
+      ? t?.("noActiveOrgMessage") ?? surface.noActiveOrgMessage ?? NO_ACTIVE_ORG_MESSAGE
+      : t?.("deniedMessage") ?? surface.permissionDeniedMessage ?? PERMISSION_DENIED_MESSAGE,
     href: localizePath(
       noActiveOrg
         ? surface.noActiveOrgPrimaryHref ?? "/dashboard"
@@ -113,7 +118,7 @@ async function evaluateOwnerWarRoomRouteAccess(
     }
   } catch (error) {
     if (error instanceof RbacError) {
-      const denial = getOwnerWarRoomRouteDenial(surface, locale, error)
+      const denial = await getOwnerWarRoomRouteDenial(surface, locale, error)
       return {
         kind: "blocked",
         node: renderOwnerWarRoomRouteDenial(denial),
@@ -148,11 +153,17 @@ export async function withOwnerWarRoomSurfaceAccess({
     return onDenied ? onDenied(state.denial) : state.node
   }
 
+  const decision = await observeModuleAccess({ organizationId: state.context.orgId, userId: state.context.userId, actorPermissions: state.context.permissions, moduleSlug: "dashboard", surfaceType: "page", surface: surface.route, accessIntent: "read", mode: "enforce", audit: true })
+  if (!decision.allowed) {
+    const t = await getTranslations({ locale: state.locale, namespace: "operatingWorkspaceAccess" })
+    return <DashboardRouteState kind="locked_module" locale={state.locale} title={t("title")} message={t("message")} primaryHref={localizePath("/dashboard", state.locale)} />
+  }
+
   try {
     return await onAllowed(state.context, state.locale)
   } catch (error) {
     if (error instanceof RbacError) {
-      const denial = getOwnerWarRoomRouteDenial(surface, state.locale, error)
+      const denial = await getOwnerWarRoomRouteDenial(surface, state.locale, error)
       return onDenied ? onDenied(denial) : renderOwnerWarRoomRouteDenial(denial)
     }
     throw error

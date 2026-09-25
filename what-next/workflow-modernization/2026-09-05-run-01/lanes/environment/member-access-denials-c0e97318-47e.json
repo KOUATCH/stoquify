@@ -1,0 +1,51 @@
+{
+  "run": "c0e97318-47e",
+  "startedAt": "2026-09-06T13:40:16.143Z",
+  "sourcesBefore": {
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "components/settings/MemberAccessEditor.tsx": "acbdc649fa3d44a66f962ff9b8f3c0bfe5953e9f13f51dfa36d5486530bb43f1",
+    "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40"
+  },
+  "database": "stoquify_local_registration_20260906_01",
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-member-access-denied-c0e97318-47e.png",
+        "en-member-access-foreign-c0e97318-47e.png",
+        "en-member-access-history-verified-c0e97318-47e.png"
+      ],
+      "deniedRoute": true,
+      "foreignMemberNotExposed": true,
+      "visibleHistoryRecords": 4
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-member-access-denied-c0e97318-47e.png",
+        "fr-member-access-foreign-c0e97318-47e.png",
+        "fr-member-access-history-verified-c0e97318-47e.png"
+      ],
+      "deniedRoute": true,
+      "foreignMemberNotExposed": true,
+      "visibleHistoryRecords": 4
+    }
+  ],
+  "before": "69e162e63871dc84cd3f2e4c38b1547641ec2ae3ccb0a59518234f2a4c4e08dc",
+  "after": "69e162e63871dc84cd3f2e4c38b1547641ec2ae3ccb0a59518234f2a4c4e08dc",
+  "authorityUnchanged": true,
+  "sourcesAfter": {
+    "actions/users/memberAccess.ts": "7c717508cba1cfa31059565014c72d1fe602853200669a28fc1626c2b8fab6fb",
+    "services/users/member-access-read.service.ts": "d89c264d3978141c30671b051987137664e6d70184fd15cce2705e7eb0b4c75e",
+    "components/settings/MemberAccessEditor.tsx": "acbdc649fa3d44a66f962ff9b8f3c0bfe5953e9f13f51dfa36d5486530bb43f1",
+    "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx": "402d4a4c3dd1a28de1b5f724711567673457e05a7c04d38a6a72e0bab3097f40"
+  },
+  "sourceStable": true,
+  "completedAt": "2026-09-06T13:41:54.615Z",
+  "driverSha256": "b54a8c143bf063a4378e81823fe91cda22ba46d4a8c528350660fe0059e41c3c",
+  "passed": 2,
+  "failed": 0
+}

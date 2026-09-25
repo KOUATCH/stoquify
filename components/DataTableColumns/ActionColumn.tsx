@@ -3,7 +3,6 @@
 import { notify } from "@/lib/notifications/notify"
 // import { deleteSaving } from "@/actions/savings";
 import { deleteUnit } from "@/actions/units/deleteUnit";
-import { deleteUser } from "@/actions/users/deleteUser";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -48,11 +47,9 @@ const ActionColumn = ({
       //   notify.success(`${model} Deleted Successfully`);
       // }
       else if (model === "user") {
-        const res = await deleteUser(id);
-        if (res.data) {
-          window.location.reload();
-        }
-        notify.success(`${model} Deleted Successfully`);
+        // Member deactivation requires a reviewed revision and recorded reason.
+        notify.error("Open Settings > Users to review and deactivate this account.");
+        return;
       }
     } catch (error) {
       console.log(error);

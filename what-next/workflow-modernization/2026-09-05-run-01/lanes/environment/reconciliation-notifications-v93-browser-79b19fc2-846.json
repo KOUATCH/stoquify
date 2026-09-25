@@ -1,0 +1,66 @@
+{
+  "at": "2026-09-09T08:02:58.876Z",
+  "run": "79b19fc2-846",
+  "sourcesBefore": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "93953ff65c4fc8830c7577db5afc367e49f5cb9460f449ae61eefe6e87c75935",
+    "components/finance/reconciliation-amount.ts": "fd648299e84c6d3ae846e3622598037aa43baf0a059343cda02b4925d722d9f4",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "f6060b1681a7a3c413e0df09b1947cfa454c30d80f23f6c55bd21d0961c1ffb2",
+    "actions/payments/reconciliation.actions.ts": "ae783ed4bc3e36f9a6c0cdb4688fac28cc662dfe3fca0c922606ef101ff42092",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "930e251e909a619f4964be47b291ec59d185eda4d437042d50665bf9f8612a52",
+    "messages/fr.json": "0339228691d2f457db63b963637902fbf39be8298dde01a59daa3608c73e1d1e"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "25 observations survive 60 newer ledger receipts; exact XAF/USD, invalid-amount fallback and localized snapshot labels",
+        "Actual desktop, mobile/tablet reflow, 200% text and reduced-motion screenshots",
+        "Reload retains notification bytes; this fixture has no SLA/close observations to generate"
+      ],
+      "screenshots": [
+        "reconciliation-notifications-v93-en-desktop-79b19fc2-846.png",
+        "reconciliation-notifications-v93-en-width-320-79b19fc2-846.png",
+        "reconciliation-notifications-v93-en-width-390-79b19fc2-846.png",
+        "reconciliation-notifications-v93-en-width-768-79b19fc2-846.png",
+        "reconciliation-notifications-v93-en-text200-79b19fc2-846.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 16372
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "25 observations survive 60 newer ledger receipts; exact XAF/USD, invalid-amount fallback and localized snapshot labels",
+        "Actual desktop, mobile/tablet reflow, 200% text and reduced-motion screenshots",
+        "Reload retains notification bytes; this fixture has no SLA/close observations to generate"
+      ],
+      "screenshots": [
+        "reconciliation-notifications-v93-fr-desktop-79b19fc2-846.png",
+        "reconciliation-notifications-v93-fr-width-320-79b19fc2-846.png",
+        "reconciliation-notifications-v93-fr-width-390-79b19fc2-846.png",
+        "reconciliation-notifications-v93-fr-width-768-79b19fc2-846.png",
+        "reconciliation-notifications-v93-fr-text200-79b19fc2-846.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 9562
+    }
+  ],
+  "scope": "Actual isolated app with normal password sign-in and synthetic notification observations. No external delivery, real financial event or approval claim.",
+  "originalBefore": "c76ed3e1d80ed1f6f18036b921ef5e17d3d1beb62ad34d97a9d1fb71bfe8ec39",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "93953ff65c4fc8830c7577db5afc367e49f5cb9460f449ae61eefe6e87c75935",
+    "components/finance/reconciliation-amount.ts": "fd648299e84c6d3ae846e3622598037aa43baf0a059343cda02b4925d722d9f4",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "f6060b1681a7a3c413e0df09b1947cfa454c30d80f23f6c55bd21d0961c1ffb2",
+    "actions/payments/reconciliation.actions.ts": "ae783ed4bc3e36f9a6c0cdb4688fac28cc662dfe3fca0c922606ef101ff42092",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "f75e076962cc3b2892f01fc3da71846e3ede1d07576870ad3998bcd379f0e480",
+    "messages/en.json": "930e251e909a619f4964be47b291ec59d185eda4d437042d50665bf9f8612a52",
+    "messages/fr.json": "0339228691d2f457db63b963637902fbf39be8298dde01a59daa3608c73e1d1e"
+  },
+  "sourceStable": true
+}

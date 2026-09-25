@@ -1,0 +1,138 @@
+{
+  "at": "2026-09-08T14:52:22.521Z",
+  "run": "48e36952-0bd",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "88a01a956a91adeafa29ccba92c8118e70d208816833aeb054035304245dec9c",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/purchasing/ap-history-export.service.ts": "04542dd5114618daf1b6dfe0783b84faef0a7a9028f274d0e22118e3192ba414",
+    "actions/purchasing/ap-history.actions.ts": "7110e55ff7b29d30bf6f025a9f18b6e6e51a3bb446744169dd9ac2b65e861407",
+    "components/purchasing/APHistoryExportDialog.tsx": "d88968c2bc04397841b7b6a185b68fbda67143d35fa5d85d917081b2f291b242",
+    "components/purchasing/APHistoryWorkbench.tsx": "b80a81533469da23a77ee2ebfa0a12607284a10067bd91415de508391d5955ea",
+    "hooks/useAPHistoryWorkbench.ts": "664d8a4a5a97338e0ba8c65f67566447804725e65fb317aacb47104f1238226b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx": "a7c1a54cc1b988941597ea2e42c667e4b62ec06f0d2a60b63309c2c39f218c20",
+    "messages/en.json": "87e8ffb32f05e39e79f9a2dabdb9ea4051baba291d8dd9a8d250fb4d020b0632",
+    "messages/fr.json": "5751d75c904d7a30c38776114ef31bca3c1a37ac40bb18f7548835cd1d8a0489"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "ap-history-export-en-fresh-auth-48e36952-0bd.png",
+        "ap-history-export-en-failure-48e36952-0bd.png"
+      ],
+      "downloads": [],
+      "pageErrors": [],
+      "timings": [],
+      "actionSignals": [
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [
+            "OWNED_BUYER"
+          ],
+          "hashes": [
+            "sha256:c6a153cc5a8a3e80fafa4b909da6fd68d81bd19f18da9b9c2ac2add625908192"
+          ]
+        }
+      ],
+      "error": "page.waitForEvent: Timeout 60000ms exceeded while waiting for event \"download\"\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================",
+      "clientDiagnostics": {
+        "secure": true,
+        "subtle": true,
+        "digest": {
+          "firstBytes": [
+            34,
+            109,
+            97,
+            110,
+            105
+          ],
+          "bytes": 18056,
+          "hash": "96738dcbcb606d9bbc798d35b6a59d0e47779286bc222c40b577657460337fb0"
+        }
+      }
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "ap-history-export-fr-fresh-auth-48e36952-0bd.png",
+        "ap-history-export-fr-failure-48e36952-0bd.png"
+      ],
+      "downloads": [],
+      "pageErrors": [],
+      "timings": [],
+      "actionSignals": [
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        }
+      ],
+      "error": "page.waitForEvent: Timeout 60000ms exceeded while waiting for event \"download\"\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================",
+      "clientDiagnostics": {
+        "secure": true,
+        "subtle": true,
+        "digest": {
+          "firstBytes": [
+            34,
+            109,
+            97,
+            110,
+            105
+          ],
+          "bytes": 18082,
+          "hash": "5f156f95d75c477e08cc8bd44504c068e4b5de350f38d8dc22f20bbcf6b8f986"
+        }
+      }
+    }
+  ],
+  "scope": "Owned local test database only, synthetic tenant invoices and CSV downloads; no external payments/messages or live customer data.",
+  "originalBefore": "991cfef242807edaa62701934ef65a710ea86999226921fa9b078e8e6e0c8909",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "88a01a956a91adeafa29ccba92c8118e70d208816833aeb054035304245dec9c",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/purchasing/ap-history-export.service.ts": "04542dd5114618daf1b6dfe0783b84faef0a7a9028f274d0e22118e3192ba414",
+    "actions/purchasing/ap-history.actions.ts": "7110e55ff7b29d30bf6f025a9f18b6e6e51a3bb446744169dd9ac2b65e861407",
+    "components/purchasing/APHistoryExportDialog.tsx": "d88968c2bc04397841b7b6a185b68fbda67143d35fa5d85d917081b2f291b242",
+    "components/purchasing/APHistoryWorkbench.tsx": "b80a81533469da23a77ee2ebfa0a12607284a10067bd91415de508391d5955ea",
+    "hooks/useAPHistoryWorkbench.ts": "664d8a4a5a97338e0ba8c65f67566447804725e65fb317aacb47104f1238226b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx": "a7c1a54cc1b988941597ea2e42c667e4b62ec06f0d2a60b63309c2c39f218c20",
+    "messages/en.json": "87e8ffb32f05e39e79f9a2dabdb9ea4051baba291d8dd9a8d250fb4d020b0632",
+    "messages/fr.json": "5751d75c904d7a30c38776114ef31bca3c1a37ac40bb18f7548835cd1d8a0489"
+  },
+  "sourceStable": true
+}

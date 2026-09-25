@@ -1,0 +1,92 @@
+{
+  "run": "20bcedd1-6eb",
+  "startedAt": "2026-09-07T07:40:12.444Z",
+  "sourcesBefore": {
+    "services/communication/customer-statement-delivery-worker.service.ts": "5a4498f398b473ff5e38b9c08b6f3ec949b3c1bec2ebc34c5c9d96cc0fc79174",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "scope": "Owned real PostgreSQL, new synthetic organization, network-free injected adapter. Observations reproduce defects; no external message.",
+  "checks": [
+    {
+      "name": "provider acceptance settles one atomic domain and transport outcome",
+      "passed": true,
+      "adapterCalls": 1
+    },
+    {
+      "name": "explicit provider rejection can retry once with a new fenced attempt",
+      "passed": true,
+      "adapterCalls": 2,
+      "oneRejectedOneAccepted": true
+    },
+    {
+      "name": "late acceptance cannot settle a reclaimed generation with a reused worker identity",
+      "passed": true,
+      "adapterCalls": 1,
+      "generation": 2
+    },
+    {
+      "name": "acceptance followed by complete settlement outage remains reserved and never auto-resends",
+      "passed": true,
+      "adapterCalls": 1,
+      "unknownHeld": true
+    },
+    {
+      "name": "simultaneous processors reserve at most one external invocation",
+      "passed": true,
+      "adapterCalls": 1,
+      "results": [
+        "LEASE_LOST",
+        "SENT"
+      ]
+    },
+    {
+      "name": "invalid outbox payload is rejected before provider access with matching domain failure history",
+      "passed": true,
+      "adapterCalls": 0
+    },
+    {
+      "name": "revocation blocks dispatch and retains a cancelled delivery record",
+      "passed": true,
+      "adapterCalls": 0
+    },
+    {
+      "name": "expired token cannot be sent",
+      "passed": true,
+      "adapterCalls": 0
+    },
+    {
+      "name": "disabled real adapter defers with durable proof that no external call started",
+      "passed": true,
+      "automaticRequeue": false
+    },
+    {
+      "name": "late provider response after timeout cannot change the held outcome",
+      "passed": true,
+      "adapterCalls": 1,
+      "lateResultIgnored": true
+    },
+    {
+      "name": "cross-tenant processing cannot inspect or mutate a claimed request",
+      "passed": true,
+      "unauthorizedCalls": 0
+    },
+    {
+      "name": "exhausted known rejection attempts stop before dispatch",
+      "passed": true,
+      "adapterCalls": 0
+    }
+  ],
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T07:40:14.688Z",
+  "sourcesAfter": {
+    "services/communication/customer-statement-delivery-worker.service.ts": "5a4498f398b473ff5e38b9c08b6f3ec949b3c1bec2ebc34c5c9d96cc0fc79174",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-delivery.service.ts": "64863167e4a2a08b75af290d8d265bd10a7dc2aee2df09afefc6d4029f79f3de",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

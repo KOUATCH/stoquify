@@ -19,6 +19,9 @@ import type {
 
 export type CustomerDTO = PrismaCustomer
 
+export type CustomerCreationReceipt = Pick<CustomerManagementRow, "id" | "organizationId" | "name" | "code">
+export type CustomerRemovalReceipt = { id: string; mode: "archived" | "deactivated" }
+
 export type CustomerManagementRow = {
   id: string
   organizationId: string
@@ -310,18 +313,8 @@ export async function updateCustomer(
 }
 
 export async function deleteCustomer(orgId: string, id: string): Promise<CustomerDTO> {
-  const customer = await db.customer.findFirst({
-    where: { id, organizationId: orgId, deletedAt: null },
-  })
-  if (!customer) throw new NotFoundError("Customer not found")
-
-  // Soft delete — the schema includes `deletedAt`, and SalesOrder + ledger
-  // entries reference Customer. Hard-delete would orphan history.
-  const deleted = await db.customer.update({
-    where: { id },
-    data: { deletedAt: new Date(), isActive: false },
-  })
-  return deleted as CustomerDTO
+  const { customer } = await removeCustomerWithRetention(orgId, id)
+  return customer
 }
 
 export async function getLegacyCustomersForOrg(organizationId: string): Promise<CustomerWithStats[]> {
@@ -450,19 +443,8 @@ export async function getLegacyCustomerOrdersForOrg(
 export async function archiveLegacyCustomerForOrg(
   organizationId: string,
   customerId: string,
-): Promise<void> {
-  await db.customer.updateMany({
-    where: {
-      id: customerId,
-      organizationId,
-      deletedAt: null,
-    },
-    data: {
-      deletedAt: new Date(),
-      isActive: false,
-      updatedAt: new Date(),
-    },
-  })
+): Promise<CustomerRemovalReceipt> {
+  return removeCustomerForManagement(organizationId, customerId)
 }
 
 async function buildCustomerManagementRows(
@@ -882,15 +864,10 @@ export async function getCustomerManagementRowForOrg(
 export async function createCustomerForManagement(
   organizationId: string,
   input: CustomerCreateInput,
-): Promise<CustomerManagementRow> {
+): Promise<CustomerCreationReceipt> {
   const customer = await createCustomer(organizationId, input)
-  const row = await reloadCustomerManagementRow(organizationId, customer.id)
-
-  if (!row) {
-    throw new BusinessRuleError("Customer was created but could not be reloaded")
-  }
-
-  return row
+  // Creation is committed. Aggregate reads must not turn that known result into a failure.
+  return { id: customer.id, organizationId: customer.organizationId, name: customer.name, code: customer.code }
 }
 
 export async function updateCustomerForManagement(
@@ -908,10 +885,10 @@ export async function updateCustomerForManagement(
   return row
 }
 
-export async function removeCustomerForManagement(
+async function removeCustomerWithRetention(
   organizationId: string,
   customerId: string,
-): Promise<{ id: string; mode: "archived" | "deactivated" }> {
+): Promise<{ customer: CustomerDTO; mode: CustomerRemovalReceipt["mode"] }> {
   const customer = await db.customer.findFirst({
     where: { id: customerId, organizationId, deletedAt: null },
     select: {
@@ -939,14 +916,22 @@ export async function removeCustomerForManagement(
     customer._count.statementSnapshots > 0 ||
     customer._count.settlements > 0
 
-  await db.customer.update({
+  const updated = await db.customer.update({
     where: { id: customerId },
     data: hasHistory
       ? { isActive: false }
       : { isActive: false, deletedAt: new Date() },
   })
 
-  return { id: customerId, mode: hasHistory ? "deactivated" : "archived" }
+  return { customer: updated, mode: hasHistory ? "deactivated" : "archived" }
+}
+
+export async function removeCustomerForManagement(
+  organizationId: string,
+  customerId: string,
+): Promise<CustomerRemovalReceipt> {
+  const { customer, mode } = await removeCustomerWithRetention(organizationId, customerId)
+  return { id: customer.id, mode }
 }
 
 export async function getCustomerDetailAnalyticsForOrg(

@@ -1,0 +1,61 @@
+{
+  "mode": "repair-fixture-email",
+  "attempt": "cf77fb9f-062",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "startedAt": "2026-09-06T05:30:41.470Z",
+  "sourcesBefore": {
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "components/Forms/users/userInvitationForm.tsx": "3edacf237a2bd2c26c19addae4e7a18315c44a5b8e319b44154427663d8c0c23",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "3264faaa8e9cb6364ba3e9524e5197aff784b3bf07d349e7c2b5987ea2344bbe",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "messages/en.json": "98e51495fc3557c882721e71bb27b43f8f1cde8cbe40a8cafda301fedad6642e",
+    "messages/fr.json": "73944a7b7ee3a8c30ea6702a82495f3c1864a0dd387e1222fcef09e470fa0631",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "Owned no-roles synthetic email normalized to the existing sign-in contract; identity and rights retained",
+      "passed": true
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "No live email: browser actors have no invitation or role-assignment permission; service checks precede provider calls.",
+    "Read, expiry, denial, validation and recovery are exercised; successful issuance, provider delivery and inviter provenance are still open.",
+    "Development route timings are observations, not production performance evidence."
+  ],
+  "authorityBefore": "d0546029c122b52fb2aafcfda60ffab028158dce72ec5cbc03e2ab2d31b7a795",
+  "createdAuditBefore": 0,
+  "authorityAfter": "d0546029c122b52fb2aafcfda60ffab028158dce72ec5cbc03e2ab2d31b7a795",
+  "authorityUnchanged": true,
+  "completedAt": "2026-09-06T05:30:41.651Z",
+  "sourcesAfter": {
+    "services/users/user-identity.service.ts": "12ebce6d2d56dbe6992f7d2ff3a2f33712f6052966ab794351c9d18379dfeb33",
+    "services/users/invitation-input.ts": "cc4cdb969265d5d68598f0ec5fe1f19f4a9d0c5b85645c832fd45130e45639f6",
+    "actions/users/sendInvite.ts": "7334e82855d0df1ccdd8a59a263b212113fc21b29f4292e114e013c5ea77d0f0",
+    "actions/users/getOrgInvites.ts": "5a02f2e757858922d0d9537f4c02ac42d8cc5e5bab4544c13cf527b9d7d4ee77",
+    "components/Forms/users/userInvitationForm.tsx": "3edacf237a2bd2c26c19addae4e7a18315c44a5b8e319b44154427663d8c0c23",
+    "components/dashboard/Tables/Invites.tsx": "7fa31fcbb6715f193251d5d1f844939ef82008422cd5abc6f34f1f389db9e911",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "3264faaa8e9cb6364ba3e9524e5197aff784b3bf07d349e7c2b5987ea2344bbe",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "13ab49e451317a2a6cb3d4a63e549b6486b0c87f18b8d5756b24ff1c5540fff0",
+    "messages/en.json": "98e51495fc3557c882721e71bb27b43f8f1cde8cbe40a8cafda301fedad6642e",
+    "messages/fr.json": "73944a7b7ee3a8c30ea6702a82495f3c1864a0dd387e1222fcef09e470fa0631",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "actions/security/step-up-auth.actions.ts": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "ba0046c500bbebaafbc6055f9370d742e5553b9f7f7844eab27b48769e616089",
+  "passed": 1,
+  "failed": 0
+}

@@ -1,9 +1,11 @@
 import type { ReactNode } from "react"
+import { getTranslations } from "next-intl/server"
 
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
 import { RbacError, requireAllPermissions, requireAnyPermission, requirePermission } from "@/lib/security/rbac"
 import type { Locale } from "@/types/bilingual"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 
 import type { AnalyticsRouteSurface, PermissionMode } from "./analytics-route-data-access"
 import { getAnalyticsRouteSurface } from "./analytics-route-data-access"
@@ -26,13 +28,6 @@ type AnalyticsRouteAccessResult =
       context: AnalyticsRouteContext
       locale: Locale
     }
-
-const NO_ACTIVE_ORG_TITLE_SUFFIX = "needs an active organization"
-const PERMISSION_DENIED_TITLE_SUFFIX = "is not available for this role"
-const NO_ACTIVE_ORG_MESSAGE =
-  "Refresh your session from the dashboard so this analytics surface can load tenant-scoped data."
-const PERMISSION_DENIED_MESSAGE =
-  "This analytics surface requires the matching permission and cannot be loaded without an authorized role."
 
 async function evaluateAnalyticsRouteAccess(
   surface: AnalyticsRouteSurface,
@@ -71,14 +66,19 @@ async function evaluateAnalyticsRouteAccess(
     }
   } catch (error) {
     if (error instanceof RbacError) {
+      const t = await getTranslations({ locale, namespace: "analyticsAccess" })
       const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+      const forbidden = error.code === "FORBIDDEN"
+      const signIn = error.code === "UNAUTHENTICATED" || error.code === "EMAIL_NOT_VERIFIED"
       const title = noActiveOrg
-        ? surface.noActiveOrgTitle ?? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}`
-        : surface.permissionDeniedTitle ?? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`
+        ? surface.noActiveOrgTitle ?? t(`${error.code}.title`)
+        : forbidden ? surface.permissionDeniedTitle ?? t(`${error.code}.title`) : t(`${error.code}.title`)
       const message = noActiveOrg
-        ? surface.noActiveOrgMessage ?? NO_ACTIVE_ORG_MESSAGE
-        : surface.permissionDeniedMessage ?? PERMISSION_DENIED_MESSAGE
-      const href = noActiveOrg
+        ? surface.noActiveOrgMessage ?? t(`${error.code}.message`)
+        : forbidden ? surface.permissionDeniedMessage ?? t(`${error.code}.message`) : t(`${error.code}.message`)
+      const href = signIn
+        ? `${localizePath("/login", locale)}?callbackUrl=${encodeURIComponent(localizePath(surface.route, locale))}`
+        : noActiveOrg
         ? localizePath(surface.noActiveOrgPrimaryHref ?? "/dashboard", locale)
         : localizePath(surface.permissionDeniedPrimaryHref ?? "/dashboard", locale)
 
@@ -86,16 +86,27 @@ async function evaluateAnalyticsRouteAccess(
         kind: "blocked",
         node: (
           <DashboardRouteState
-            kind={noActiveOrg ? "no_active_org" : "permission_denied"}
+            kind={noActiveOrg ? "no_active_org" : error.code === "UNAUTHENTICATED" ? "stale_session" : "permission_denied"}
+            locale={locale}
             title={title}
             message={message}
             primaryHref={href}
+            primaryLabel={signIn ? t("signIn") : undefined}
           />
         ),
       }
     }
 
     throw error
+  }
+
+  const requirements = surface.modules?.length ? surface.modules : surface.module ? [surface.module] : []
+  for (const requirement of requirements) {
+    const decision = await observeModuleAccess({ organizationId: context.orgId, userId: context.userId, actorPermissions: context.permissions, moduleSlug: requirement.moduleSlug, surfaceType: "page", surface: surface.route, accessIntent: "read", mode: "enforce", audit: true })
+    if (!decision.allowed) {
+      const t = await getTranslations({ locale, namespace: "analyticsAccess" })
+      return { kind: "blocked", node: <DashboardRouteState kind="locked_module" locale={locale} title={t("MODULE_UNAVAILABLE.title")} message={t("MODULE_UNAVAILABLE.message")} primaryHref={localizePath("/dashboard", locale)} /> }
+    }
   }
 
   return {

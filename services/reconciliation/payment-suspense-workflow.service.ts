@@ -8,12 +8,14 @@ import {
   SuspenseStatus,
   SuspenseType,
 } from "@prisma/client"
-import { createHash, randomUUID } from "node:crypto"
+import { randomUUID } from "node:crypto"
 
 import { db } from "@/prisma/db"
+import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { recordCloseCertificationInvalidationsForSourceInTx } from "@/services/accounting/close-assurance-pack.service"
-import { postPaymentSuspenseToLedger } from "./payment-suspense-ledger.service"
-import { BusinessRuleError, NotFoundError } from "@/services/_shared/action-errors"
+import { assertPaymentSuspenseLedgerTruthInTx, postPaymentSuspenseToLedger } from "./payment-suspense-ledger.service"
+import { BusinessRuleError, ConflictError, IdempotencyConflictError, NotFoundError } from "@/services/_shared/action-errors"
+import { suspenseEvidenceHash, suspenseEvidenceRevision, suspensePostingSourceHash, suspenseMetadata, suspenseApprovalKey, suspensePostingDate, suspensePostingCycle } from "./payment-suspense-evidence"
 import {
   assertSensitiveActionAllowed,
   auditSensitiveActionDecision,
@@ -51,6 +53,8 @@ export type AssignPaymentSuspenseItemResult = {
 }
 
 export type ProposeSuspenseReclassificationInput = {
+  expectedEvidenceRevision: string
+  idempotencyKey: string
   organizationId: string
   suspenseItemId: string
   proposedById: string
@@ -62,6 +66,8 @@ export type ProposeSuspenseReclassificationInput = {
 }
 
 export type ProposeSuspenseReclassificationResult = {
+  replayed: boolean
+  evidenceRevision: string
   suspenseItemId: string
   status: SuspenseStatus
   proposedById: string
@@ -69,6 +75,7 @@ export type ProposeSuspenseReclassificationResult = {
 }
 
 export type ApproveSuspensePostingInput = {
+  expectedEvidenceRevision: string
   organizationId: string
   suspenseItemId: string
   approvedById: string
@@ -77,6 +84,8 @@ export type ApproveSuspensePostingInput = {
 }
 
 export type ApproveSuspensePostingResult = {
+  replayed: boolean
+  approvedById: string
   suspenseItemId: string
   status: SuspenseStatus
   ledgerPostingBatchId: string
@@ -111,10 +120,6 @@ function asJsonObject(value: Record<string, unknown>): Prisma.InputJsonObject {
   return value as Prisma.InputJsonObject
 }
 
-function sha256(value: string) {
-  return createHash("sha256").update(value).digest("hex")
-}
-
 function metadataObject(value: Prisma.JsonValue | null | undefined): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? { ...(value as Record<string, unknown>) } : {}
 }
@@ -130,6 +135,16 @@ function proposedByIdFromMetadata(value: Prisma.JsonValue | null | undefined) {
   return typeof reclassification?.proposedById === "string" ? reclassification.proposedById : null
 }
 
+function requireReviewedRevision(value: string) {
+  if (!/^sha256:[a-f0-9]{64}$/.test(value ?? "")) {
+    throw new BusinessRuleError("Refresh and review the suspense evidence before submitting.")
+  }
+}
+
+async function lockSuspense(tx: Prisma.TransactionClient, organizationId: string, id: string) {
+  await tx.$queryRaw`SELECT id FROM suspense_items WHERE id = ${id} AND "organizationId" = ${organizationId} FOR UPDATE`
+}
+
 async function auditSuspenseWorkflow(
   tx: Prisma.TransactionClient,
   params: {
@@ -142,7 +157,7 @@ async function auditSuspenseWorkflow(
     postingBatchId?: string | null
   },
 ) {
-  await tx.ledgerAuditEvent.create({
+  return tx.ledgerAuditEvent.create({
     data: {
       organizationId: params.organizationId,
       actorId: params.actorId,
@@ -154,28 +169,6 @@ async function auditSuspenseWorkflow(
       metadata: params.metadata,
     },
   })
-}
-
-async function resolveOpenPeriodForSuspense(
-  tx: Prisma.TransactionClient,
-  organizationId: string,
-  businessDate: Date,
-) {
-  const period = await tx.accountingPeriod.findFirst({
-    where: {
-      organizationId,
-      startDate: { lte: businessDate },
-      endDate: { gte: businessDate },
-      status: "OPEN",
-    },
-    select: { id: true },
-  })
-
-  if (!period) {
-    throw new BusinessRuleError("An open accounting period is required before suspense posting approval.")
-  }
-
-  return period
 }
 
 async function assertSuspenseLedgerAccount(
@@ -199,12 +192,13 @@ export async function assignPaymentSuspenseItem(
   const assignedToId = input.assignedToId ?? input.assignedById
 
   const result = await db.$transaction(async (tx): Promise<ControlledResult<AssignPaymentSuspenseItemResult>> => {
+    await lockSuspense(tx, input.organizationId, input.suspenseItemId)
     const suspense = await tx.suspenseItem.findFirst({
       where: { id: input.suspenseItemId, organizationId: input.organizationId },
       include: {
         providerAccount: { select: { id: true, paymentRailId: true } },
         reconciliationRun: { select: { id: true } },
-        paymentExceptions: { select: { id: true, status: true } },
+        paymentExceptions: { select: { id: true, status: true, metadata: true, updatedAt: true } },
       },
     })
 
@@ -230,6 +224,12 @@ export async function assignPaymentSuspenseItem(
     await auditSensitiveActionDecision(tx, decision)
     if (!decision.allowed) return { denied: decision }
 
+    const assignee = await tx.user.findFirst({
+      where: { id: assignedToId, organizationId: input.organizationId, isActive: true },
+      select: { id: true },
+    })
+    if (!assignee) throw new BusinessRuleError("Suspense assignee is unavailable in this organization.")
+
     await tx.suspenseItem.update({
       where: { id: suspense.id },
       data: {
@@ -244,30 +244,39 @@ export async function assignPaymentSuspenseItem(
       },
     })
 
-    const exceptionUpdate = await tx.paymentException.updateMany({
-      where: {
-        organizationId: input.organizationId,
-        suspenseItemId: suspense.id,
-        status: { in: openExceptionStatuses },
-      },
-      data: {
-        ownerId: assignedToId,
-        status: PaymentExceptionStatus.ASSIGNED,
-        metadata: asJsonObject({
-          assignedById: input.assignedById,
-          assignedAt: new Date().toISOString(),
-          assignedCorrelationId: correlationId,
-        }),
-      },
-    })
+    let exceptionCount = 0
+    for (const exception of suspense.paymentExceptions) {
+      if (!openExceptionStatuses.includes(exception.status)) continue
+      const updated = await tx.paymentException.updateMany({
+        where: {
+          id: exception.id,
+          organizationId: input.organizationId,
+          suspenseItemId: suspense.id,
+          updatedAt: exception.updatedAt,
+          status: { in: openExceptionStatuses },
+        },
+        data: {
+          ownerId: assignedToId,
+          status: PaymentExceptionStatus.ASSIGNED,
+          metadata: asJsonObject({
+            ...metadataObject(exception.metadata),
+            assignedById: input.assignedById,
+            assignedAt: new Date().toISOString(),
+            assignedCorrelationId: correlationId,
+          }),
+        },
+      })
+      if (updated.count !== 1) throw new ConflictError("Exception evidence changed. Refresh before assigning the suspense item.")
+      exceptionCount += updated.count
+    }
 
-    await auditSuspenseWorkflow(tx, {
+    const assignmentAudit = await auditSuspenseWorkflow(tx, {
       organizationId: input.organizationId,
       actorId: input.assignedById,
       action: "PAYMENT_RECONCILIATION_SUSPENSE_ASSIGN",
       suspenseItemId: suspense.id,
       message: `Payment suspense item ${suspense.id} assigned`,
-      metadata: asJsonObject({ assignedToId, exceptionCount: exceptionUpdate.count, correlationId }),
+      metadata: asJsonObject({ assignedToId, exceptionCount, correlationId }),
     })
 
     await publishPaymentReconciliationNotification({
@@ -286,14 +295,14 @@ export async function assignPaymentSuspenseItem(
         exceptionId: suspense.paymentExceptions[0]?.id,
       },
       correlationId,
-      dedupeKey: `${suspense.id}:assigned:${assignedToId}`,
+      dedupeKey: `${suspense.id}:assigned:${assignmentAudit.id}`,
     }, tx)
 
     return {
       value: {
         suspenseItemId: suspense.id,
         assignedToId,
-        exceptionCount: exceptionUpdate.count,
+        exceptionCount,
         correlationId,
       },
     }
@@ -311,14 +320,18 @@ export async function proposeSuspenseReclassification(
   input: ProposeSuspenseReclassificationInput,
 ): Promise<ProposeSuspenseReclassificationResult> {
   const correlationId = input.correlationId ?? randomUUID()
+  requireReviewedRevision(input.expectedEvidenceRevision)
+  if (!/^[a-zA-Z0-9_-]{16,128}$/.test(input.idempotencyKey ?? "")) throw new BusinessRuleError("A stable suspense proposal request reference is required.")
   const reason = input.reason.trim()
   if (!reason) throw new BusinessRuleError("Suspense reclassification requires a reason.")
 
   const result = await db.$transaction(async (tx): Promise<ControlledResult<ProposeSuspenseReclassificationResult>> => {
+    await lockSuspense(tx, input.organizationId, input.suspenseItemId)
     const suspense = await tx.suspenseItem.findFirst({
       where: { id: input.suspenseItemId, organizationId: input.organizationId },
       include: {
-        providerAccount: { select: { id: true, paymentRailId: true } },
+        providerAccount: { select: { id: true, paymentRailId: true, suspenseLedgerAccountId: true } },
+        reconciliationRun: { select: { businessDate: true } },
         paymentExceptions: { select: { id: true } },
       },
     })
@@ -341,30 +354,46 @@ export async function proposeSuspenseReclassification(
       currency: suspense.currencyCode,
       metadata: { targetType: input.targetType, reason },
     })
-    await auditSensitiveActionDecision(tx, decision)
-    if (!decision.allowed) return { denied: decision }
-
+    if (!decision.allowed) {
+      await auditSensitiveActionDecision(tx, decision)
+      return { denied: decision }
+    }
+    const now = input.control.now ? new Date(input.control.now) : new Date()
+    const requestedAccount = input.suspenseLedgerAccountId ?? suspense.suspenseLedgerAccountId ?? suspense.providerAccount?.suspenseLedgerAccountId ?? null
+    const requestHash = suspenseEvidenceHash({ key: input.idempotencyKey, sourceRevision: input.expectedEvidenceRevision, actor: input.proposedById, targetType: input.targetType, reason, account: requestedAccount })
     const metadata = metadataObject(suspense.metadata)
+    const previous = suspenseMetadata(metadata.reclassification)
+    if (previous.requestId === input.idempotencyKey) {
+      if (previous.requestHash !== requestHash) throw new IdempotencyConflictError()
+      if (suspense.status !== SuspenseStatus.RESOLUTION_PROPOSED) throw new ConflictError("The proposal has moved on. Refresh its current evidence.")
+      return { value: { suspenseItemId: suspense.id, status: suspense.status, proposedById: input.proposedById, correlationId, replayed: true, evidenceRevision: suspenseEvidenceRevision(suspense, now) } }
+    }
+    if (suspenseEvidenceRevision(suspense, now) !== input.expectedEvidenceRevision) throw new ConflictError("Suspense evidence changed. Refresh and review before proposing.")
+    if (!requestedAccount) throw new BusinessRuleError("Configure the suspense ledger account before proposing reclassification.")
+    await assertSuspenseLedgerAccount(tx, input.organizationId, requestedAccount)
+    await auditSensitiveActionDecision(tx, decision)
     const updated = await tx.suspenseItem.update({
       where: { id: suspense.id },
       data: {
         type: input.targetType,
         status: SuspenseStatus.RESOLUTION_PROPOSED,
-        suspenseLedgerAccountId: input.suspenseLedgerAccountId ?? suspense.suspenseLedgerAccountId,
+        suspenseLedgerAccountId: requestedAccount,
         resolutionNotes: reason,
         metadata: asJsonObject({
           ...metadata,
           reclassification: {
+            requestId: input.idempotencyKey,
+            requestHash,
+            sourceRevision: input.expectedEvidenceRevision,
             proposedById: input.proposedById,
             proposedAt: new Date().toISOString(),
             targetType: input.targetType,
-            suspenseLedgerAccountId: input.suspenseLedgerAccountId ?? suspense.suspenseLedgerAccountId ?? null,
+            suspenseLedgerAccountId: requestedAccount,
             reason,
             correlationId,
           },
         }),
       },
-      select: { id: true, status: true },
     })
 
     await tx.paymentException.updateMany({
@@ -403,7 +432,7 @@ export async function proposeSuspenseReclassification(
         exceptionId: suspense.paymentExceptions[0]?.id,
       },
       correlationId,
-      dedupeKey: `${suspense.id}:reclassification-proposed:${input.proposedById}`,
+      dedupeKey: `${suspense.id}:reclassification-proposed:${input.idempotencyKey}`,
     }, tx)
 
     return {
@@ -412,6 +441,8 @@ export async function proposeSuspenseReclassification(
         status: updated.status,
         proposedById: input.proposedById,
         correlationId,
+        replayed: false,
+        evidenceRevision: suspenseEvidenceRevision({ ...updated, providerAccount: suspense.providerAccount, reconciliationRun: suspense.reconciliationRun }, now),
       },
     }
   })
@@ -428,9 +459,11 @@ export async function approveSuspensePosting(
   input: ApproveSuspensePostingInput,
 ): Promise<ApproveSuspensePostingResult> {
   const correlationId = input.correlationId ?? randomUUID()
+  requireReviewedRevision(input.expectedEvidenceRevision)
   const now = input.control.now ? new Date(input.control.now) : new Date()
 
   const result = await db.$transaction(async (tx): Promise<ControlledResult<ApproveSuspensePostingResult>> => {
+    await lockSuspense(tx, input.organizationId, input.suspenseItemId)
     const suspense = await tx.suspenseItem.findFirst({
       where: { id: input.suspenseItemId, organizationId: input.organizationId },
       include: {
@@ -441,7 +474,7 @@ export async function approveSuspensePosting(
     })
 
     if (!suspense) throw new NotFoundError("Suspense item not found")
-    if (suspense.status !== SuspenseStatus.RESOLUTION_PROPOSED) {
+    if (suspense.status !== SuspenseStatus.RESOLUTION_PROPOSED && suspense.status !== SuspenseStatus.POSTED_TO_SUSPENSE) {
       throw new BusinessRuleError("Suspense posting approval requires a proposed reclassification.")
     }
 
@@ -455,7 +488,6 @@ export async function approveSuspensePosting(
     if (!suspenseLedgerAccountId) {
       throw new BusinessRuleError("A suspense ledger account must be configured before posting approval.")
     }
-    await assertSuspenseLedgerAccount(tx, input.organizationId, suspenseLedgerAccountId)
 
     const decision = evaluateSensitiveAction({
       action: "payment.reconciliation.suspense.post",
@@ -475,11 +507,33 @@ export async function approveSuspensePosting(
         currentStatus: suspense.status,
       },
     })
+    if (!decision.allowed) {
+      await auditSensitiveActionDecision(tx, decision)
+      return { denied: decision }
+    }
+    if (suspense.status === SuspenseStatus.POSTED_TO_SUSPENSE) {
+      const saved = suspenseMetadata(suspenseMetadata(suspense.metadata).postingApproval)
+      if (saved.reviewedRevision !== input.expectedEvidenceRevision) throw new ConflictError("This approval does not match the reviewed proposal. Open the retained posting evidence.")
+      const approvedAt = typeof saved.approvedAt === "string" ? new Date(saved.approvedAt) : null
+      if (!approvedAt || !Number.isFinite(approvedAt.getTime()) || !suspense.postedAt || suspense.postedAt.getTime() !== approvedAt.getTime()
+        || typeof saved.approvedById !== "string" || saved.approvedById === proposedById || saved.proposedById !== proposedById
+        || !suspense.ledgerPostingBatchId || saved.ledgerPostingBatchId !== suspense.ledgerPostingBatchId || typeof saved.inboxItemId !== "string"
+        || saved.sourceHash !== suspensePostingSourceHash(suspense, approvedAt)
+        || saved.proposalHash !== suspenseEvidenceHash(reclassificationMetadata(suspense.metadata))) {
+        throw new ConflictError("Retained suspense approval evidence requires review.")
+      }
+      await assertPaymentSuspenseLedgerTruthInTx(tx, { organizationId: input.organizationId, suspenseItemId: suspense.id })
+      const inbox = await tx.paymentReconciliationInboxItem.findFirst({ where: { id: saved.inboxItemId, organizationId: input.organizationId, source: PaymentReconciliationInboxSource.SUSPENSE_POST, idempotencyKey: suspenseApprovalKey(suspense), externalId: suspense.ledgerPostingBatchId, status: PaymentReconciliationInboxStatus.PROCESSED } })
+      const retained = suspenseMetadata(inbox?.payloadSummary)
+      const audit = await tx.ledgerAuditEvent.findFirst({ where: { organizationId: input.organizationId, resourceId: suspense.id, action: "PAYMENT_RECONCILIATION_SUSPENSE_POST_APPROVE", actorId: saved.approvedById, postingBatchId: suspense.ledgerPostingBatchId } })
+      if (!inbox || !audit || inbox.payloadHash !== suspenseEvidenceHash(inbox.payloadSummary).slice(7) || retained.reviewedRevision !== input.expectedEvidenceRevision || retained.approvedById !== saved.approvedById || retained.requestedById !== proposedById || retained.suspenseItemId !== suspense.id || retained.ledgerPostingBatchId !== suspense.ledgerPostingBatchId) throw new ConflictError("Retained suspense approval receipt requires review.")
+      return { value: { suspenseItemId: suspense.id, status: suspense.status, ledgerPostingBatchId: suspense.ledgerPostingBatchId, inboxItemId: inbox.id, correlationId, replayed: true, approvedById: saved.approvedById, postingRequest: { sourceType: AccountingSourceType.PAYMENT_SUSPENSE, postingPurpose: AccountingPostingPurpose.SUSPENSE_RECLASSIFICATION, amount: suspense.amount.toFixed(2), currencyCode: suspense.currencyCode } } }
+    }
+    if (suspenseEvidenceRevision(suspense, now) !== input.expectedEvidenceRevision) throw new ConflictError("Suspense evidence changed. Refresh and review before approval.")
+    await assertSuspenseLedgerAccount(tx, input.organizationId, suspenseLedgerAccountId)
     await auditSensitiveActionDecision(tx, decision)
-    if (!decision.allowed) return { denied: decision }
-
-    const periodDate = suspense.reconciliationRun?.businessDate ?? now
-    const period = await resolveOpenPeriodForSuspense(tx, input.organizationId, periodDate)
+    const periodDate = suspensePostingDate(suspense, now)
+    const period = await getOpenPeriodForDate(input.organizationId, periodDate, tx)
 
     const postingRequest = buildSuspensePostingRequest({
       organizationId: input.organizationId,
@@ -505,6 +559,7 @@ export async function approveSuspensePosting(
     const batch = ledgerPosting.ledgerBatch
 
     const inboxPayload = asJsonObject({
+      reviewedRevision: input.expectedEvidenceRevision,
       suspenseItemId: suspense.id,
       ledgerPostingBatchId: batch.id,
       sourceType: postingRequest.sourceType,
@@ -516,30 +571,16 @@ export async function approveSuspensePosting(
       suspenseLedgerAccountId,
       correlationId,
     })
-    const payloadHash = sha256(JSON.stringify(inboxPayload))
-    const inbox = await tx.paymentReconciliationInboxItem.upsert({
-      where: {
-        organizationId_source_idempotencyKey: {
-          organizationId: input.organizationId,
-          source: PaymentReconciliationInboxSource.SUSPENSE_POST,
-          idempotencyKey: `${suspense.id}:posting-approval`,
-        },
-      },
-      create: {
+    const payloadHash = suspenseEvidenceHash(inboxPayload).slice(7)
+    // A completed approval is immutable. Normal retries resolve the retained
+    // receipt above; a conflicting pre-existing key must never be overwritten.
+    const inbox = await tx.paymentReconciliationInboxItem.create({
+      data: {
         organizationId: input.organizationId,
         providerAccountId: suspense.providerAccountId,
         source: PaymentReconciliationInboxSource.SUSPENSE_POST,
         status: PaymentReconciliationInboxStatus.PROCESSED,
-        idempotencyKey: `${suspense.id}:posting-approval`,
-        externalId: batch.id,
-        payloadHash,
-        payloadSummary: inboxPayload,
-        processedAt: now,
-        correlationId,
-      },
-      update: {
-        attempts: { increment: 1 },
-        status: PaymentReconciliationInboxStatus.PROCESSED,
+        idempotencyKey: suspenseApprovalKey(suspense),
         externalId: batch.id,
         payloadHash,
         payloadSummary: inboxPayload,
@@ -559,6 +600,9 @@ export async function approveSuspensePosting(
         metadata: asJsonObject({
           ...metadataObject(suspense.metadata),
           postingApproval: {
+            reviewedRevision: input.expectedEvidenceRevision,
+            sourceHash: suspensePostingSourceHash(suspense, now),
+            proposalHash: suspenseEvidenceHash(reclassificationMetadata(suspense.metadata)),
             proposedById,
             approvedById: input.approvedById,
             approvedAt: now.toISOString(),
@@ -596,7 +640,7 @@ export async function approveSuspensePosting(
         exceptionId: suspense.paymentExceptions[0]?.id,
       },
       correlationId,
-      dedupeKey: `${suspense.id}:reclassification-approved:${input.approvedById}`,
+      dedupeKey: `${suspense.id}:reclassification-approved:${input.approvedById}${suspensePostingCycle(suspense) ? `:cycle:${suspensePostingCycle(suspense)!.number}` : ""}`,
     }, tx)
 
     await recordCloseCertificationInvalidationsForSourceInTx(tx, input.organizationId, {
@@ -617,6 +661,8 @@ export async function approveSuspensePosting(
       value: {
         suspenseItemId: suspense.id,
         status: SuspenseStatus.POSTED_TO_SUSPENSE,
+        replayed: false,
+        approvedById: input.approvedById,
         ledgerPostingBatchId: batch.id,
         inboxItemId: inbox.id,
         correlationId,
@@ -628,7 +674,13 @@ export async function approveSuspensePosting(
         },
       },
     }
-  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable })
+  }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }).catch((error: unknown) => {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && (error.code === "P2034"
+      || (error.code === "P2010" && ["40001", "40P01"].includes(String(error.meta?.code))))) {
+      throw new ConflictError("Suspense posting or accounting setup changed concurrently. Refresh and review before retrying.")
+    }
+    throw error
+  })
 
   if ("denied" in result && result.denied) {
     assertSensitiveActionAllowed(result.denied)

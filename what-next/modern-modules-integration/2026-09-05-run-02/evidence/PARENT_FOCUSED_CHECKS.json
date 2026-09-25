@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-09-05T14:41:26.9467327Z",
+  "scope": "Final accounting explanation and shared authentication configuration; existing tool results recorded without rerunning.",
+  "checks": [
+    {
+      "exitCode": 0,
+      "command": "node node_modules/eslint/bin/eslint.js components/modules/ModuleCompositionWorkbench.tsx next.config.mjs"
+    },
+    {
+      "exitCode": 0,
+      "command": "JSON.parse messages/en.json and messages/fr.json; assert moduleComposition.stop.accountingScope exists"
+    }
+  ],
+  "sources": [
+    {
+      "sha256": "454958b4cbcf4bdfe55c6e60573ecf5a1ff984785c5d8abdc7e4fdf4e509258d",
+      "path": "components/modules/ModuleCompositionWorkbench.tsx"
+    },
+    {
+      "sha256": "a2fc19cd607bdf29d36709bac27bc1589303e320e431a63e909c4c7877580a05",
+      "path": "messages/en.json"
+    },
+    {
+      "sha256": "33f9048689f4edc5209a3cf4f35dcbd01096d22a83250bce41812b52ebeafad1",
+      "path": "messages/fr.json"
+    },
+    {
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19",
+      "path": "next.config.mjs"
+    }
+  ]
+}

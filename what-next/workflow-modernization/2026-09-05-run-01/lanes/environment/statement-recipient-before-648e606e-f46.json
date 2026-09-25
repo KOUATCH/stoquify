@@ -1,0 +1,52 @@
+{
+  "run": "648e606e-f46",
+  "startedAt": "2026-09-07T08:15:56.261Z",
+  "sourcesBefore": {
+    "app/customer-statement/[statementId]/CustomerStatementPortal.tsx": "9e5d95e61e399d81a225971ee4b4a37e12c8a5a23532ba2572a6fdea08aeb1fe",
+    "app/customer-statement/[statementId]/page.tsx": "a2fe1acdbf4a7eaf7507824b64c1f54b6a685c137f714d406a538a4629357cf8",
+    "app/api/customer-statements/[statementId]/route.ts": "9166a8f8d5042e2d10ad72e7b2a6a28183f638dd87d532281021d4ffb560ad82",
+    "app/api/customer-statements/[statementId]/actions/route.ts": "dad0b7962774283120bc17ad7b12b5d72922e1dee03b631984d206063991044a",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "5b8f169ae50dc9c589dd6a7692452e1e9dd88538c6f767c0ed2a0097c84496e0",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "Denied response lacks success-path private cache headers",
+      "reproduced": true,
+      "cacheControl": null,
+      "referrerPolicy": "strict-origin-when-cross-origin"
+    },
+    {
+      "name": "French requested link renders English workflow",
+      "reproduced": true
+    },
+    {
+      "name": "Reload loses command identity and creates a second recipient commitment after a lost response",
+      "reproduced": true,
+      "records": 2
+    }
+  ],
+  "scope": "Owned recipient fixtures from the actual posted-receivable and statement services. No payment, journal or external send. Before-change observations are defects, not desired behavior.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "screenshot": "statement-recipient-before-648e606e-f46.png",
+  "originalAfter": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T08:16:18.638Z",
+  "sourcesAfter": {
+    "app/customer-statement/[statementId]/CustomerStatementPortal.tsx": "9e5d95e61e399d81a225971ee4b4a37e12c8a5a23532ba2572a6fdea08aeb1fe",
+    "app/customer-statement/[statementId]/page.tsx": "a2fe1acdbf4a7eaf7507824b64c1f54b6a685c137f714d406a538a4629357cf8",
+    "app/api/customer-statements/[statementId]/route.ts": "9166a8f8d5042e2d10ad72e7b2a6a28183f638dd87d532281021d4ffb560ad82",
+    "app/api/customer-statements/[statementId]/actions/route.ts": "dad0b7962774283120bc17ad7b12b5d72922e1dee03b631984d206063991044a",
+    "services/accounting/customer-statement-access.service.ts": "296a9d920760aa1b4196b29c5321ef33b8d1e253c9c667b72e4c42109a23e4b5",
+    "services/accounting/customer-statement-recipient-action.service.ts": "5b8f169ae50dc9c589dd6a7692452e1e9dd88538c6f767c0ed2a0097c84496e0",
+    "services/accounting/customer-statement-token.ts": "2072a9af1e0837b9a91c4feedb6e5d2875404dae3d35aeb0deabd092dba80517",
+    "services/accounting/customer-statement.service.ts": "1f91c2a2a9026e5019e056c2ea215572f2c40b3812854bbd5e7f170f272fd730",
+    "services/accounting/customer-receivable-document.service.ts": "618632c6e050cf23942aa3896719015d0daf4b40e934bd18b731b0827a658101",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

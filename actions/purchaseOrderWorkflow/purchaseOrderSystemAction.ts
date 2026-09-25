@@ -1,40 +1,43 @@
 "use server"
+import { readPurchaseOrderDecisionHistory } from "@/services/purchase-order/purchase-order-decision-history";
+
+import { purchaseLifecyclePermission, purchaseLifecycleKindSchema, purchaseLifecycleRequestSchema, type PurchaseLifecycleRequest, type PurchaseLifecycleKind, type PurchaseLifecyclePreview, type PurchaseLifecycleReceipt } from "@/services/purchase-order/purchase-order-lifecycle-contracts";
+import { executePurchaseOrderLifecycle as executeLifecycleService, getPurchaseOrderLifecyclePreview } from "@/services/purchase-order/purchase-order.service";
 
 import { revalidatePath, revalidateTag } from "next/cache";
 
 import { requirePermission } from "@/lib/security/rbac";
-import { BusinessRuleError } from "@/services/_shared/action-errors";
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
+import { requireSession } from "@/lib/security/auth-session";
+import { purchaseApprovalRequestSchema, type PurchaseApprovalRequest, type PurchaseApprovalPreview, type PurchaseApprovalReceipt } from "@/services/purchase-order/purchase-order-approval-contracts";
+import { ForbiddenError } from "@/services/_shared/action-errors";
+import { BusinessRuleError, toSafeActionError } from "@/services/_shared/action-errors";
+import { getModuleOperationErrorReason } from "@/lib/modules/module-operation-error";
 import {
     BulkStatusUpdateSchema,
     ClonePurchaseOrderSchema,
     CreatePurchaseOrderSchema,
     POAnalyticsSchema,
-    ReceiveItemsSchema,
-    ResolveGoodsReceiptInspectionSchema,
     UpdatePurchaseOrderSchema,
     type PurchaseOrderStatus,
 } from "@/services/purchase-order/purchase-order.schemas";
 import {
     approvePurchaseOrder as approvePurchaseOrderService,
     bulkUpdateStatus,
-    cancelPurchaseOrder as cancelPurchaseOrderService,
     clonePurchaseOrder as clonePurchaseOrderService,
-    closePurchaseOrder as closePurchaseOrderService,
     createPurchaseOrder as createPurchaseOrderService,
-    deletePurchaseOrder as deletePurchaseOrderService,
     exportToCSV,
     getAnalytics,
     getGoodsReceipts,
     getPurchaseOrderById,
+    getPurchaseOrderDraftForActor,
+    getPurchaseOrderApprovalPreview,
     getPurchaseOrderCurrency,
     getRequiringAttention,
     getStatusHistory,
     getSummary,
     listPurchaseOrders,
-    receiveItems as receiveItemsService,
-    resolveGoodsReceiptInspection as resolveGoodsReceiptInspectionService,
     searchLocations as searchPurchaseOrderLocations,
-    submitPurchaseOrder as submitPurchaseOrderService,
     updatePurchaseOrder as updatePurchaseOrderService,
 } from "@/services/purchase-order/purchase-order.service";
 import { projectPurchaseOrderForActor } from "@/services/purchase-order/purchase-order-capabilities";
@@ -77,6 +80,10 @@ async function scopedOrg(
   if (requestedOrganizationId && requestedOrganizationId !== ctx.orgId) {
     throw new BusinessRuleError("You do not have access to this organization")
   }
+  if (permission === "purchases.orders.read") {
+    const access = await observeModuleAccess({ organizationId: ctx.orgId, userId: ctx.userId, actorPermissions: ctx.permissions, moduleSlug: "purchasing", surfaceType: "action", surface: "purchaseOrderSystemAction.read", accessIntent: "read", mode: "enforce", audit: true })
+    if (!access.allowed) throw new ForbiddenError("Purchasing module read access is unavailable")
+  }
   return { orgId: ctx.orgId, userId: ctx.userId, permissions: ctx.permissions }
 }
 
@@ -104,12 +111,13 @@ function mapCreatePayload(payload: CreatePurchaseOrderPayload, orgId: string, us
   })
 }
 
-function mapUpdatePayload(payload: UpdatePurchaseOrderDTO, orgId: string, userId: string) {
+function mapUpdatePayload(payload: UpdatePurchaseOrderDTO, orgId: string, userId: string, session: { sessionId: string; sessionToken: string }) {
   return UpdatePurchaseOrderSchema.parse({
     ...payload,
     organizationId: orgId,
     updatedById: userId,
-    shippingCost: payload.shippingCost ?? 0,
+    sessionId: session.sessionId,
+    sessionToken: session.sessionToken,
   })
 }
 
@@ -127,7 +135,7 @@ export async function getOrgPurchaseOrders(
       purchaseOrders.map((order) => projectPurchaseOrderForActor(order, actor, currency)) as PurchaseOrderWithRelations[],
     )
   } catch (error) {
-    return { success: false, data: [], error: error instanceof Error ? error.message : "Failed to fetch purchase orders" }
+    return { success: false, data: [], error: toSafeActionError(error).error }
   }
 }
 
@@ -161,6 +169,7 @@ export async function createPurchaseOrder(
       success: false,
       data: null as unknown as PurchaseOrderWithRelations,
       error: error instanceof Error ? error.message : "Failed to create purchase order",
+      ...(getModuleOperationErrorReason(error) ? { code: "FORBIDDEN" as const, reason: getModuleOperationErrorReason(error) } : {}),
     }
   }
 }
@@ -173,143 +182,123 @@ export async function updatePurchaseOrder(
       resourceId: payload.id,
       auditAllowed: true,
     })
-    const updated = await updatePurchaseOrderService(mapUpdatePayload(payload, orgId, userId))
-    revalidatePurchaseOrderWorkflow(orgId, updated.id)
+    const { claims } = await requireSession()
+    if (claims.userId !== userId || claims.tenantId !== orgId) throw new ForbiddenError("Current purchase-order identity is required.")
+    const updated = await updatePurchaseOrderService(mapUpdatePayload(payload, orgId, userId, claims))
+    // The durable receipt remains valid if cache invalidation fails after commit.
+    try { revalidatePurchaseOrderWorkflow(orgId, updated.id) } catch { /* A later navigation can fetch the committed record. */ }
     return response(updated as PurchaseOrderWithRelations, `Purchase order ${updated.orderNumber} updated successfully`)
   } catch (error) {
+    const safe = toSafeActionError(error)
     return {
       success: false,
       data: null as unknown as PurchaseOrderWithRelations,
-      error: error instanceof Error ? error.message : "Failed to update purchase order",
+      error: safe.error,
+      code: safe.code,
     }
   }
 }
 
-export async function deletePurchaseOrder(id: string, organizationId?: string): Promise<PurchaseOrderResponse<null>> {
+export async function getCurrentPurchaseOrderDraft(id: string, organizationId: string): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations>> {
   try {
-    const { orgId, userId } = await scopedOrg(organizationId, "purchases.delete", {
-      resourceId: id,
-      auditAllowed: true,
-    })
-    const orderNumber = await deletePurchaseOrderService(id, orgId, userId)
-    revalidatePurchaseOrderWorkflow(orgId, id)
-    return response(null, `Purchase order ${orderNumber} archived successfully`)
-  } catch (error) {
-    return { success: false, data: null, error: error instanceof Error ? error.message : "Failed to delete purchase order" }
-  }
+    const { orgId, userId } = await scopedOrg(organizationId, "purchases.orders.update", { resourceId: id })
+    const { claims } = await requireSession()
+    if (claims.userId !== userId || claims.tenantId !== orgId) throw new ForbiddenError("Current purchase-order identity is required.")
+    const current = await getPurchaseOrderDraftForActor(id, { organizationId: orgId, updatedById: userId, sessionId: claims.sessionId, sessionToken: claims.sessionToken })
+    return response(current)
+  } catch (error) { const safe = toSafeActionError(error); return { success: false, data: null as unknown as PurchaseOrderWithRelations, error: safe.error, code: safe.code } }
 }
 
-export async function submitPurchaseOrder(id: string, organizationId?: string) {
-  const { orgId } = await scopedOrg(organizationId, "purchases.orders.update", {
-    resourceId: id,
-    auditAllowed: true,
-  })
-  const updated = await submitPurchaseOrderService(id, orgId)
-  revalidatePurchaseOrderWorkflow(orgId, id)
-  return response(updated as PurchaseOrderWithRelations, `Purchase order ${updated.orderNumber} submitted for approval`)
+async function lifecycleScope(id: string, organizationId: string, kind: PurchaseLifecycleKind) {
+  const { orgId, userId } = await scopedOrg(organizationId, purchaseLifecyclePermission(kind), { resourceId: id })
+  const { claims } = await requireSession()
+  if (claims.userId !== userId || claims.tenantId !== orgId) throw new ForbiddenError("Current purchase-order identity is required.")
+  return { organizationId: orgId, actorId: userId, sessionId: claims.sessionId, sessionToken: claims.sessionToken }
 }
 
-export async function approvePurchaseOrder(id: string, organizationId?: string, _approvedBy?: string | null) {
-  const { orgId, userId } = await scopedOrg(organizationId, "purchases.orders.approve", {
-    resourceId: id,
-    auditAllowed: true,
-  })
-  const updated = await approvePurchaseOrderService(id, orgId, userId)
-  revalidatePurchaseOrderWorkflow(orgId, id)
-  return response(updated as PurchaseOrderWithRelations, `Purchase order ${updated.orderNumber} approved`)
+function lifecycleActionError(error: unknown) {
+  const safe = toSafeActionError(error)
+  // Preserve these bounded domain explanations without changing global error normalization.
+  const code = error instanceof BusinessRuleError && ["REVIEW_REQUIRED", "ARCHIVE_STATUS", "RETAINED_OBLIGATIONS", "OPEN_RECEIPT", "REFERENCE_UNAVAILABLE", "RECEIPT_EVIDENCE_REQUIRED"].includes(error.code) ? error.code : safe.code
+  return { ...safe, code, reason: getModuleOperationErrorReason(error) }
 }
 
-export async function cancelPurchaseOrder(id: string, organizationId?: string, reason?: string) {
-  const { orgId } = await scopedOrg(organizationId, "purchases.orders.cancel", {
-    resourceId: id,
-    auditAllowed: true,
-  })
-  const updated = await cancelPurchaseOrderService(id, orgId, reason)
-  revalidatePurchaseOrderWorkflow(orgId, id)
-  return response(updated as PurchaseOrderWithRelations, `Purchase order ${updated.orderNumber} cancelled`)
+export async function getPurchaseOrderDecisionHistory(lookup: string, organizationId: string) {
+  try {
+    const { orgId, userId } = await scopedOrg(organizationId, "purchases.orders.read")
+    const { claims } = await requireSession()
+    if (claims.userId !== userId || claims.tenantId !== orgId) throw new ForbiddenError("Current purchase-order identity is required.")
+    return response(await readPurchaseOrderDecisionHistory(lookup, { organizationId: orgId, actorId: userId, sessionId: claims.sessionId, sessionToken: claims.sessionToken }))
+  } catch (error) { const safe = toSafeActionError(error); return { success: false as const, data: null, error: safe.error, code: safe.code } }
 }
 
-export async function closePurchaseOrder(id: string, organizationId?: string) {
-  const { orgId } = await scopedOrg(organizationId, "purchases.orders.update", {
-    resourceId: id,
-    auditAllowed: true,
-  })
-  const updated = await closePurchaseOrderService(id, orgId)
-  revalidatePurchaseOrderWorkflow(orgId, id)
-  return response(updated as PurchaseOrderWithRelations, `Purchase order ${updated.orderNumber} completed`)
+export async function previewPurchaseOrderLifecycle(id: string, organizationId: string, kindInput: PurchaseLifecycleKind): Promise<PurchaseOrderResponse<PurchaseLifecyclePreview | null>> {
+  try { const kind = purchaseLifecycleKindSchema.parse(kindInput); return response(await getPurchaseOrderLifecyclePreview(id, await lifecycleScope(id, organizationId, kind), kind)) }
+  catch (error) { const safe = lifecycleActionError(error); return { success: false, data: null, error: safe.error, code: safe.code, reason: safe.reason } }
 }
 
+export async function executePurchaseOrderLifecycle(id: string, organizationId: string, requestInput: PurchaseLifecycleRequest): Promise<PurchaseOrderResponse<{ id: string; lifecycleReceipt: PurchaseLifecycleReceipt } | null>> {
+  try {
+    const request = purchaseLifecycleRequestSchema.parse(requestInput), scope = await lifecycleScope(id, organizationId, request.kind)
+    const result = await executeLifecycleService(id, scope, request)
+    try { revalidatePurchaseOrderWorkflow(scope.organizationId, id) } catch { /* A committed receipt remains recoverable when cache invalidation fails. */ }
+    return response(result)
+  } catch (error) { const safe = lifecycleActionError(error); return { success: false, data: null, error: safe.error, code: safe.code, reason: safe.reason } }
+}
+
+export async function deletePurchaseOrder(id: string, organizationId?: string, request?: PurchaseLifecycleRequest) {
+  if (!organizationId || request?.kind !== "archive") return { success: false as const, data: null, error: "Review this archive request before confirming.", code: "REVIEW_REQUIRED" }
+  return executePurchaseOrderLifecycle(id, organizationId, request)
+}
+export async function submitPurchaseOrder(id: string, organizationId?: string, request?: PurchaseLifecycleRequest) {
+  if (!organizationId || request?.kind !== "submit") return { success: false as const, data: null, error: "Review this submission before confirming.", code: "REVIEW_REQUIRED" }
+  return executePurchaseOrderLifecycle(id, organizationId, request)
+}
+
+async function approvalScope(id: string, organizationId: string) {
+  const { orgId, userId } = await scopedOrg(organizationId, "purchases.orders.approve", { resourceId: id })
+  const { claims } = await requireSession()
+  if (claims.userId !== userId || claims.tenantId !== orgId) throw new ForbiddenError("Current purchase-order identity is required.")
+  return { organizationId: orgId, actorId: userId, sessionId: claims.sessionId, sessionToken: claims.sessionToken }
+}
+
+export async function previewPurchaseOrderApproval(id: string, organizationId: string): Promise<PurchaseOrderResponse<PurchaseApprovalPreview | null>> {
+  try { return response(await getPurchaseOrderApprovalPreview(id, await approvalScope(id, organizationId))) }
+  catch (error) { const safe = toSafeActionError(error); return { success: false, data: null, error: safe.error, code: safe.code } }
+}
+
+export async function approvePurchaseOrder(id: string, organizationId: string, request: PurchaseApprovalRequest): Promise<PurchaseOrderResponse<{ id: string; approvalReceipt: PurchaseApprovalReceipt } | null>> {
+  try {
+    const scope = await approvalScope(id, organizationId)
+    const command = purchaseApprovalRequestSchema.parse(request)
+    const result = await approvePurchaseOrderService(id, scope.organizationId, scope.actorId, { ...command, ...scope })
+    try { revalidatePurchaseOrderWorkflow(scope.organizationId, id) } catch { /* The committed receipt survives cache failure. */ }
+    return response(result)
+  } catch (error) { const safe = toSafeActionError(error); return { success: false, data: null, error: safe.error, code: safe.code } }
+}
+
+export async function cancelPurchaseOrder(id: string, organizationId?: string, reason?: string, request?: PurchaseLifecycleRequest) {
+  if (!organizationId || request?.kind !== "cancel" || reason !== request.reason) return { success: false as const, data: null, error: "Review this cancellation before confirming.", code: "REVIEW_REQUIRED" }
+  return executePurchaseOrderLifecycle(id, organizationId, request)
+}
+export async function closePurchaseOrder(id: string, organizationId?: string, request?: PurchaseLifecycleRequest) {
+  if (!organizationId || request?.kind !== "complete") return { success: false as const, data: null, error: "Review this completion before confirming.", code: "REVIEW_REQUIRED" }
+  return executePurchaseOrderLifecycle(id, organizationId, request)
+}
+
+// Older clients must reopen receiving to review current quantities and consequences.
+// No unreviewed transport may bypass the receiving decision contract.
 export async function receiveItems(payload: GoodsReceiptPayload): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations>> {
   try {
-    const { orgId, userId } = await scopedOrg(payload.organizationId, "purchases.orders.receive", {
-      resourceId: payload.id,
-      auditAllowed: true,
-    })
-    const parsed = ReceiveItemsSchema.parse({
-      purchaseOrderId: payload.id,
-      organizationId: orgId,
-      receivedById: userId,
-      idempotencyKey: payload.idempotencyKey,
-      locationId: payload.locationId,
-      notes: payload.notes,
-      inspectionOutcome: payload.inspectionOutcome,
-      inspectionReason: payload.inspectionReason,
-      inspectionEvidenceNotes: payload.inspectionEvidenceNotes,
-      items: payload.items,
-    })
-    const result = await receiveItemsService(parsed)
-    revalidatePurchaseOrderWorkflow(orgId, payload.id)
-    revalidateTag("inventory")
-    revalidateTag(`inventory-${orgId}`)
-    revalidatePath("/[locale]/dashboard/inventory", "page")
-    return response(
-      result.purchaseOrder as PurchaseOrderWithRelations,
-      result.receiptStatus === "HELD"
-        ? `Goods receipt ${result.receiptNumber} recorded and held pending inspection resolution.`
-        : `Items received successfully. Goods receipt ${result.receiptNumber} created.`,
-    )
-  } catch (error) {
-    return {
-      success: false,
-      data: null as unknown as PurchaseOrderWithRelations,
-      error: error instanceof Error ? error.message : "Failed to receive items",
-    }
-  }
+    await scopedOrg(payload.organizationId, "purchases.orders.receive", { resourceId: payload.id })
+    return { success: false, data: null as unknown as PurchaseOrderWithRelations, error: "Open the order's receiving panel and review this receipt before confirming.", code: "REVIEW_REQUIRED" }
+  } catch (error) { const safe = toSafeActionError(error); return { success: false, data: null as unknown as PurchaseOrderWithRelations, error: safe.error, code: safe.code } }
 }
-
 export async function resolveGoodsReceiptInspection(payload: GoodsReceiptInspectionResolutionPayload) {
   try {
-    const { orgId, userId } = await scopedOrg(payload.organizationId, "purchases.orders.receive", {
-      resource: "GoodsReceipt",
-      resourceId: payload.goodsReceiptId,
-      auditAllowed: true,
-    })
-    const parsed = ResolveGoodsReceiptInspectionSchema.parse({
-      goodsReceiptId: payload.goodsReceiptId,
-      organizationId: orgId,
-      resolvedById: userId,
-      decision: payload.decision,
-      reason: payload.reason,
-      idempotencyKey: payload.idempotencyKey,
-    })
-    const result = await resolveGoodsReceiptInspectionService(parsed)
-    revalidatePurchaseOrderWorkflow(orgId, result.purchaseOrderId)
-    revalidateTag("inventory")
-    revalidateTag(`inventory-${orgId}`)
-    revalidatePath("/[locale]/dashboard/inventory", "page")
-    return response(
-      result,
-      result.decision === "ACCEPT"
-        ? `Goods receipt ${result.receiptNumber} released to inventory.`
-        : `Goods receipt ${result.receiptNumber} rejected and kept unavailable.`,
-    )
-  } catch (error) {
-    return {
-      success: false,
-      data: null,
-      error: error instanceof Error ? error.message : "Failed to resolve goods receipt inspection",
-    }
-  }
+    await scopedOrg(payload.organizationId, "purchases.orders.receive", { resource: "GoodsReceipt", resourceId: payload.goodsReceiptId })
+    return { success: false as const, data: null, error: "Open the order's receipt history and review this inspection decision before confirming.", code: "REVIEW_REQUIRED" }
+  } catch (error) { const safe = toSafeActionError(error); return { success: false as const, data: null, error: safe.error, code: safe.code } }
 }
 
 export async function getGoodsReceiptsForPurchaseOrder(purchaseOrderId: string, organizationId: string) {
@@ -326,6 +315,7 @@ export async function bulkUpdatePurchaseOrderStatus(params: {
   organizationId: string
   purchaseOrderIds: string[]
   toStatus: PurchaseOrderStatus
+  reviewedRequests?: Array<{ id: string; request: PurchaseLifecycleRequest }>
   reason?: string
 }): Promise<PurchaseOrderResponse<{ updated: string[]; failed: { id: string; error: string }[] }>> {
   if (params.toStatus === "APPROVED") {
@@ -338,7 +328,10 @@ export async function bulkUpdatePurchaseOrderStatus(params: {
     auditAllowed: true,
   })
   const parsed = BulkStatusUpdateSchema.parse({ ...params, organizationId: orgId })
-  const result = await bulkUpdateStatus(parsed)
+  const { claims } = await requireSession()
+  const scope = await lifecycleScope("bulk", orgId, params.toStatus === "CANCELLED" ? "cancel" : params.toStatus === "COMPLETED" ? "complete" : "submit")
+  if (claims.userId !== scope.actorId || claims.tenantId !== scope.organizationId) throw new ForbiddenError("Current purchase-order identity is required.")
+  const result = await bulkUpdateStatus(parsed, scope)
   revalidatePurchaseOrderWorkflow(orgId)
   return response(result, `Bulk update completed. Updated: ${result.updated.length}, failed: ${result.failed.length}`)
 }
@@ -355,15 +348,35 @@ export async function clonePurchaseOrder(params: {
     paymentTerms: string
     shippingCost: number
   }>
-}): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations>> {
-  const { orgId, userId } = await scopedOrg(params.organizationId, "purchases.orders.create", {
-    resourceId: params.id,
-    auditAllowed: true,
-  })
-  const parsed = ClonePurchaseOrderSchema.parse({ ...params, organizationId: orgId })
-  const cloned = await clonePurchaseOrderService(parsed, userId)
-  revalidatePurchaseOrderWorkflow(orgId, cloned.id)
-  return response(cloned as PurchaseOrderWithRelations, `Purchase order ${cloned.orderNumber} cloned successfully`)
+}): Promise<PurchaseOrderResponse<PurchaseOrderWithRelations> & {
+  failure?: "denied" | "unavailable" | "unknown"
+  canEdit?: boolean
+}> {
+  try {
+    const actor = await scopedOrg(params.organizationId, "purchases.orders.create", {
+      resourceId: params.id,
+      auditAllowed: true,
+    })
+    const parsed = ClonePurchaseOrderSchema.parse({ ...params, organizationId: actor.orgId })
+    const cloned = await clonePurchaseOrderService(parsed, actor.userId)
+    revalidatePurchaseOrderWorkflow(actor.orgId, cloned.id)
+    return {
+      ...response(cloned as PurchaseOrderWithRelations),
+      canEdit: actor.permissions.includes("purchases.orders.update"),
+    }
+  } catch (error) {
+    const reason = getModuleOperationErrorReason(error)
+    if (reason) return { success: false, data: null as unknown as PurchaseOrderWithRelations, code: "FORBIDDEN", reason, error: "New work is stopped", failure: "denied" }
+    const safe = toSafeActionError(error)
+    const failure = safe.status === 401 || safe.status === 403
+      ? "denied"
+      : ["NOT_FOUND", "VALIDATION_ERROR", "BUSINESS_RULE_VIOLATION", "CONFLICT"].includes(safe.code)
+        ? "unavailable"
+        : "unknown"
+    // Only a narrow presentation reason crosses this boundary. Internal
+    // exception text and metadata remain on the server.
+    return { success: false, data: null as unknown as PurchaseOrderWithRelations, ...(safe.code === "FORBIDDEN" ? { code: "FORBIDDEN" as const } : {}), failure }
+  }
 }
 
 export async function getPurchaseOrdersRequiringAttention(params: { organizationId: string; limit?: number }) {

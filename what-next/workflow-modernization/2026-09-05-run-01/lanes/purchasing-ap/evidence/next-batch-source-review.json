@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-05T17:50:16.727Z",
+  "status": "read-only-source-analysis-no-runtime-reproduction",
+  "sourceFiles": [
+    {
+      "path": "services/purchase-order/purchase-order.service.ts",
+      "sha256": "c9906f4c25bdd71debcd22792511cb255262dbc01cb5c4a868860d8ad86fd672"
+    },
+    {
+      "path": "services/purchase-order/purchase-order.schemas.ts",
+      "sha256": "b54f3695727c55ebf86b19a4e759cc491c3c23ea0cea57360771ce45760afea3"
+    },
+    {
+      "path": "services/purchase-order/purchase-order-capabilities.ts",
+      "sha256": "31d0384dc45ff85068730c7d3dfb88c729a873b09649d9b480370bccad2d0ec9"
+    },
+    {
+      "path": "actions/purchaseOrderWorkflow/purchaseOrderSystemAction.ts",
+      "sha256": "04aac98ac7c4d6fe94334c89de184530750e61349526fcb7d104941e67f5794c"
+    },
+    {
+      "path": "services/purchasing/ap-control.service.ts",
+      "sha256": "8d2b1e4f2453202fa3d96c95f087cd46638518331c1817f5bacdb4a075169f46"
+    },
+    {
+      "path": "services/purchasing/ap-control.schemas.ts",
+      "sha256": "194f6f10e5657cd53b9364abe6e5bff021ffd039d515899366d23a2bf4496484"
+    },
+    {
+      "path": "actions/purchasing/ap-control.actions.ts",
+      "sha256": "33361722d1150fdf84fdb442e97a9be09359a8a0b0db0fd33a2419a40edd9983"
+    },
+    {
+      "path": "services/purchasing/purchase-return-credit.service.ts",
+      "sha256": "c756697887cac35f5fde6f5f28dbbb1da5fd42d4a51fb1304a7743aca37d54a6"
+    },
+    {
+      "path": "services/purchasing/purchase-return-credit.schemas.ts",
+      "sha256": "71bbf72312acaaecd078f26ae1c10f8e06c1f5a03d9824c967e5aacd88865912"
+    },
+    {
+      "path": "actions/purchasing/purchase-return-credit.actions.ts",
+      "sha256": "73ef74bac31e83ba3d672a7448765f8b2c510422eb3dc158073f648c2caed43d"
+    },
+    {
+      "path": "components/purchasing/APControlWorkbench.tsx",
+      "sha256": "6332bb97c58dfbb1bb7007d6d3a36536e1cb4d501c540fb201664a5d8ac52a36"
+    },
+    {
+      "path": "services/controls/sensitive-action.service.ts",
+      "sha256": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea"
+    }
+  ],
+  "artifacts": [
+    "NEXT_BATCH_PLAN.md",
+    "AP_BACKEND_WORKFLOWS.json"
+  ],
+  "observations": [
+    "Non-DRAFT edit/state races and shipping-only mismatch are source-backed; planned interleaving tests have not run.",
+    "Ten AP write actions have no production app/components/hooks caller in code-only search.",
+    "Payment approval trusts caller-claimed requester origin; must reproduce and fix before approval UI."
+  ],
+  "noProductionChanges": true
+}

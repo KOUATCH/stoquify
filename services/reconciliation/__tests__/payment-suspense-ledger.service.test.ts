@@ -24,6 +24,8 @@ jest.mock("@/services/accounting/posting.service", () => ({
   createLedgerPostingBatch: jest.fn(),
 }))
 
+jest.mock("@/prisma/db", () => ({ db: {} }))
+
 jest.mock("@/services/accounting/posting-rules.service", () => ({
   requireActivePostingRule: jest.fn(),
 }))
@@ -108,6 +110,13 @@ function sourceLink() {
 
 function transaction() {
   const tx = {
+    paymentReconciliationInboxItem: { findMany: jest.fn().mockResolvedValue([]) },
+    $queryRaw: jest.fn().mockImplementation(async (query: TemplateStringsArray) => query.join("").includes("organization_accounting_settings") ? [{
+      id: "settings-1", organizationId: "org-1", baseCurrency: "XAF", updatedAt: new Date("2026-06-01"),
+    }] : [{
+      id: "period-1", organizationId: "org-1", status: "OPEN",
+      startDate: new Date("2026-06-01"), endDate: new Date("2026-06-30T23:59:59Z"),
+    }]),
     suspenseItem: {
       findFirst: jest.fn().mockResolvedValue(suspense()),
       findMany: jest.fn(),
@@ -188,6 +197,72 @@ describe("payment suspense ledger service", () => {
     })
     mockRequireRule.mockResolvedValue(postingRule())
     mockCreateSourceLink.mockResolvedValue(sourceLink())
+  })
+
+  it("refuses to copy foreign currency into base amounts at an invented rate of one", async () => {
+    const tx = transaction()
+    tx.suspenseItem.findFirst.mockResolvedValue({ ...suspense(), currencyCode: "EUR" })
+    tx.chartOfAccount.findMany.mockResolvedValue([
+      { id: "account-47", code: "471", currency: null, _count: { children: 0 } },
+      { id: "account-58", code: "585", currency: null, _count: { children: 0 } },
+    ])
+    await expect(postPaymentSuspenseToLedger({ organizationId: "org-1", suspenseItemId: "suspense-1", suspenseLedgerAccountId: "account-47",
+      periodId: "period-1", postingDate: new Date("2026-06-14"), actorId: "checker-1", correlationId: "currency-denial" }, tx as never))
+      .rejects.toMatchObject({ code: "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED" })
+    expect(tx.journalEntry.create).not.toHaveBeenCalled()
+    expect(tx.ledgerPostingBatch.update).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { rows: [] },
+    { rows: [{ id: "settings-1", organizationId: "org-1", baseCurrency: "" }] },
+    { rows: [{ id: "settings-foreign", organizationId: "org-2", baseCurrency: "XAF" }] },
+  ])("refuses missing or invalid accounting currency evidence: %j", async ({ rows }) => {
+    const tx = transaction(), originalQuery = tx.$queryRaw.getMockImplementation()!
+    tx.$queryRaw.mockImplementation(async (query: TemplateStringsArray) => query.join("").includes("organization_accounting_settings") ? rows : originalQuery(query))
+    await expect(postPaymentSuspenseToLedger({ organizationId: "org-1", suspenseItemId: "suspense-1", suspenseLedgerAccountId: "account-47",
+      periodId: "period-1", postingDate: new Date("2026-06-14"), actorId: "checker-1", correlationId: "currency-setup" }, tx as never))
+      .rejects.toMatchObject({ code: "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED" })
+    expect(tx.journalEntry.create).not.toHaveBeenCalled()
+  })
+
+  it("posts and retains the explicit basis for a non-XAF organization in its own currency", async () => {
+    const tx = transaction(), originalQuery = tx.$queryRaw.getMockImplementation()!
+    tx.$queryRaw.mockImplementation(async (query: TemplateStringsArray) => query.join("").includes("organization_accounting_settings")
+      ? [{ id: "settings-1", organizationId: "org-1", baseCurrency: "EUR", updatedAt: new Date("2026-06-01") }] : originalQuery(query))
+    tx.suspenseItem.findFirst.mockResolvedValue({ ...suspense(), currencyCode: "EUR" })
+    tx.chartOfAccount.findMany.mockResolvedValue([
+      { id: "account-47", code: "471", currency: null, _count: { children: 0 } },
+      { id: "account-58", code: "585", currency: null, _count: { children: 0 } },
+    ])
+    await postPaymentSuspenseToLedger({ organizationId: "org-1", suspenseItemId: "suspense-1", suspenseLedgerAccountId: "account-47",
+      periodId: "period-1", postingDate: new Date("2026-06-14"), actorId: "checker-1", correlationId: "currency-basis" }, tx as never)
+    expect(tx.ledgerPostingBatch.update).toHaveBeenCalledWith(expect.objectContaining({ data: expect.objectContaining({
+      metadata: expect.objectContaining({ currencyBasis: { version: 1, settingsId: "settings-1", settingsUpdatedAt: "2026-06-01T00:00:00.000Z", baseCurrency: "EUR", sourceCurrency: "EUR", exchangeRate: "1" } }),
+    }) }))
+  })
+
+  it.each(["CLOSED", "LOCKED"])("rejects direct posting into a %s period", async (status) => {
+    const tx = transaction()
+    tx.$queryRaw.mockResolvedValue([{
+      id: "period-1", organizationId: "org-1", status,
+      startDate: new Date("2026-06-01"), endDate: new Date("2026-06-30T23:59:59Z"),
+    }])
+    await expect(postPaymentSuspenseToLedger({
+      organizationId: "org-1", suspenseItemId: "suspense-1", suspenseLedgerAccountId: "account-47",
+      periodId: "period-1", postingDate: new Date("2026-06-14"), actorId: "checker-1", correlationId: "period-denial",
+    }, tx as never)).rejects.toThrow(/not open/i)
+    expect(tx.journalEntry.create).not.toHaveBeenCalled()
+    expect(tx.ledgerPostingBatch.update).not.toHaveBeenCalled()
+  })
+
+  it("rejects an input period inconsistent with the posting date", async () => {
+    const tx = transaction()
+    await expect(postPaymentSuspenseToLedger({
+      organizationId: "org-1", suspenseItemId: "suspense-1", suspenseLedgerAccountId: "account-47",
+      periodId: "other-period", postingDate: new Date("2026-06-14"), actorId: "checker-1", correlationId: "period-denial",
+    }, tx as never)).rejects.toThrow(/period.*changed/i)
+    expect(tx.journalEntry.create).not.toHaveBeenCalled()
   })
 
   it("creates a balanced posted journal and source link before returning success", async () => {
@@ -304,5 +379,12 @@ describe("payment suspense ledger service", () => {
         reconciliationRunId: "run-1",
       }),
     ).rejects.toThrow(/exactly one journal entry/i)
+  })
+  it("blocks certification when a later batch is attached to a source without its cycle lineage", async () => {
+    const tx = transaction()
+    tx.suspenseItem.findMany.mockResolvedValue([{ id: "suspense-1", organizationId: "org-1", amount: amount(5000), currencyCode: "XAF",
+      suspenseLedgerAccountId: "account-47", ledgerPostingBatchId: "batch-2", metadata: {},
+      ledgerPostingBatch: { id: "batch-2", postingCycle: 2, journalEntries: [{}] } }])
+    await expect(assertPaymentSuspenseLedgerTruthInTx(tx as never, { organizationId: "org-1", reconciliationRunId: "run-1" })).rejects.toThrow(/posting cycle does not match/i)
   })
 })

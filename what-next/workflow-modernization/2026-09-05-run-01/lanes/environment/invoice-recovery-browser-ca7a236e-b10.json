@@ -1,0 +1,98 @@
+{
+  "run": "ca7a236e-b10",
+  "at": "2026-09-08T09:04:08.534Z",
+  "sourcesBefore": {
+    "components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx": "17734942204929b44aeba25a4b8b544a545d1f63cdb7cb0b6b4c873afc40ef11",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "49ee0611aa286f363112fcd5ec64fc5af41335ac7eb1a7e46837c7e301e69c29",
+    "actions/purchasing/invoice-ledger-recovery.actions.ts": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/page.tsx": "ba5460787fcf83e49a79b6fa3c2a0eecf7c401ec72b67f58ac2ab4240d85f59d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "901b8fe2978c774b2657246daf9ba25217a8fbf353c629791d24eaca58b710c4",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2eee65b441ba480ceb5b49f1d272e23d5addeb01a2822e84d790aedbcc64639b",
+    "messages/en.json": "15ba3a49ef6a0c0f007edb2db8002e5b0b5547b595e23108f7c7b0684480a7af",
+    "messages/fr.json": "1dc8206e7c96b814a533a0a8c8ec32f27c32bd65473ee4bf22930d407a541395"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Existing AP entry point, current sources and selected invoice survive refresh",
+        "Keyboard focus stays in review and returns; mobile and tablet have no overflow",
+        "Incorrect password denied; actual password step-up followed by stale configuration rejection",
+        "Committed response loss recovered with one journal; mobile/200% text and reduced-motion preference exercised",
+        "History distinguishes recorded success from later synthetic journal reversal",
+        "Revoked current role denies direct route; original approval/liability/balance preserved"
+      ],
+      "screenshots": [
+        "invoice-recovery-en-selected-desktop-ca7a236e-b10.png",
+        "invoice-recovery-en-selected-320-ca7a236e-b10.png",
+        "invoice-recovery-en-selected-390-ca7a236e-b10.png",
+        "invoice-recovery-en-selected-768-ca7a236e-b10.png",
+        "invoice-recovery-en-review-desktop-ca7a236e-b10.png",
+        "invoice-recovery-en-stale-ca7a236e-b10.png",
+        "invoice-recovery-en-recovered-desktop-ca7a236e-b10.png",
+        "invoice-recovery-en-recovered-mobile-ca7a236e-b10.png",
+        "invoice-recovery-en-recovered-text200-ca7a236e-b10.png",
+        "invoice-recovery-en-history-current-reversal-ca7a236e-b10.png",
+        "invoice-recovery-en-denied-ca7a236e-b10.png"
+      ],
+      "timings": [
+        {
+          "name": "AP to recovery development baseline",
+          "ms": 27833
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Existing AP entry point, current sources and selected invoice survive refresh",
+        "Keyboard focus stays in review and returns; mobile and tablet have no overflow",
+        "Incorrect password denied; actual password step-up followed by stale configuration rejection",
+        "Committed response loss recovered with one journal; mobile/200% text and reduced-motion preference exercised",
+        "History distinguishes recorded success from later synthetic journal reversal",
+        "Revoked current role denies direct route; original approval/liability/balance preserved"
+      ],
+      "screenshots": [
+        "invoice-recovery-fr-selected-desktop-ca7a236e-b10.png",
+        "invoice-recovery-fr-selected-320-ca7a236e-b10.png",
+        "invoice-recovery-fr-selected-390-ca7a236e-b10.png",
+        "invoice-recovery-fr-selected-768-ca7a236e-b10.png",
+        "invoice-recovery-fr-review-desktop-ca7a236e-b10.png",
+        "invoice-recovery-fr-stale-ca7a236e-b10.png",
+        "invoice-recovery-fr-recovered-desktop-ca7a236e-b10.png",
+        "invoice-recovery-fr-recovered-mobile-ca7a236e-b10.png",
+        "invoice-recovery-fr-recovered-text200-ca7a236e-b10.png",
+        "invoice-recovery-fr-history-current-reversal-ca7a236e-b10.png",
+        "invoice-recovery-fr-denied-ca7a236e-b10.png"
+      ],
+      "timings": [
+        {
+          "name": "AP to recovery development baseline",
+          "ms": 7720
+        }
+      ],
+      "pageErrors": []
+    }
+  ],
+  "scope": "Actual isolated application; synthetic receipt/preparation/approval setup, normal browser sign-in and password step-up, actual recovery actions, database effects and history. No original approval UI or statutory certification claim.",
+  "originalBefore": "4d2f79b9ce17569a547e72f228a1e5f110e95a44f35e2d6887f9cc7b5724be5f",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoiceLedgerRecoveryWorkbench.tsx": "17734942204929b44aeba25a4b8b544a545d1f63cdb7cb0b6b4c873afc40ef11",
+    "services/purchasing/invoice-ledger-recovery.service.ts": "6f3feaf6263e85d28703a00206f62f6d8be976061728953f76f44ae4c1b78a4f",
+    "services/purchasing/invoice-ledger-recovery-authority.ts": "e7d79dacb108ccbf74ea9eef9ba4d65a2998f74af3443637f276160d36208474",
+    "services/purchasing/invoice-ledger-recovery-contracts.ts": "49ee0611aa286f363112fcd5ec64fc5af41335ac7eb1a7e46837c7e301e69c29",
+    "actions/purchasing/invoice-ledger-recovery.actions.ts": "148b144288aac64ae8859b0a6d3396b5790a99cc6c0f3f4bba0bf701c3d95e7b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/recovery/page.tsx": "ba5460787fcf83e49a79b6fa3c2a0eecf7c401ec72b67f58ac2ab4240d85f59d",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "901b8fe2978c774b2657246daf9ba25217a8fbf353c629791d24eaca58b710c4",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "2eee65b441ba480ceb5b49f1d272e23d5addeb01a2822e84d790aedbcc64639b",
+    "messages/en.json": "15ba3a49ef6a0c0f007edb2db8002e5b0b5547b595e23108f7c7b0684480a7af",
+    "messages/fr.json": "1dc8206e7c96b814a533a0a8c8ec32f27c32bd65473ee4bf22930d407a541395"
+  },
+  "sourceStable": true
+}

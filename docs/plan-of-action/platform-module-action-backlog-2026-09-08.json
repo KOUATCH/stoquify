@@ -1,0 +1,2415 @@
+{
+  "preparedAt": "2026-09-08T14:56:59.919Z",
+  "status": "REVIEW_PACKAGES_PUBLISHED_IMPLEMENTATION_NOT_STARTED",
+  "candidate": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "evidenceBoundary": "This is a source review and focused local verification, not a full runtime certification. Database clients in the selected tests are mocked or injected. No deployed database, authenticated browser, live provider, production telemetry, restore rehearsal or qualified statutory approval was inspected in this run. Unexecuted scenarios below are acceptance requirements, not test results. No application code, migration, business record or deployment is changed by this report.",
+  "catalogCoverage": {
+    "catalog": [
+      "dashboard",
+      "inventory",
+      "sales",
+      "pos",
+      "cash_drawer",
+      "accounting",
+      "close_assurance",
+      "compliance",
+      "purchasing",
+      "presence",
+      "payroll",
+      "finance",
+      "payment_reconciliation",
+      "analytics",
+      "reports",
+      "commercial_agents",
+      "content",
+      "settings",
+      "administration"
+    ],
+    "covered": [
+      "pos",
+      "sales",
+      "purchasing",
+      "inventory",
+      "finance",
+      "cash_drawer",
+      "payment_reconciliation",
+      "presence",
+      "payroll",
+      "compliance",
+      "close_assurance",
+      "dashboard",
+      "analytics",
+      "reports",
+      "settings",
+      "administration",
+      "content",
+      "commercial_agents"
+    ],
+    "accounting": "Existing ACC/ACR roadmap"
+  },
+  "modules": [
+    {
+      "id": "POS",
+      "title": "POS sales, refunds and shifts",
+      "report": "pos-sales-review-and-action-plan-2026-09-08.md",
+      "prompt": "pos-sales-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "pos"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 35,
+        "failed": 0,
+        "file": "services/pos/__tests__/pos.service.test.ts"
+      },
+      "findings": [
+        "PM-INV-001"
+      ],
+      "owner": "Revenue engineering and store operations"
+    },
+    {
+      "id": "OFF",
+      "title": "Offline POS devices, sync and replay",
+      "report": "offline-pos-review-and-action-plan-2026-09-08.md",
+      "prompt": "offline-pos-audit-execution-prompt-2026-09-08.md",
+      "catalog": [],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 22,
+        "failed": 0,
+        "file": "services/pos/__tests__/offline-sync.service.test.ts"
+      },
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "owner": "POS integration engineering and store operations"
+    },
+    {
+      "id": "SAL",
+      "title": "Sales orders, reservations, delivery and billing",
+      "report": "sales-fulfillment-review-and-action-plan-2026-09-08.md",
+      "prompt": "sales-fulfillment-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "sales"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 7,
+        "failed": 0,
+        "file": "services/order-to-cash/__tests__/delivery-order.service.test.ts"
+      },
+      "findings": [],
+      "owner": "Order-to-cash engineering and sales operations"
+    },
+    {
+      "id": "CUS",
+      "title": "Customers, receivables, statements and settlement",
+      "report": "customers-receivables-review-and-action-plan-2026-09-08.md",
+      "prompt": "customers-receivables-audit-execution-prompt-2026-09-08.md",
+      "catalog": [],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 6,
+        "failed": 0,
+        "file": "services/accounting/__tests__/customer-statement-access.service.test.ts"
+      },
+      "findings": [],
+      "owner": "Receivables engineering and credit controller"
+    },
+    {
+      "id": "PUR",
+      "title": "Purchasing, supplier collaboration and AP",
+      "report": "purchasing-suppliers-ap-review-and-action-plan-2026-09-08.md",
+      "prompt": "purchasing-suppliers-ap-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "purchasing"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 43,
+        "failed": 0,
+        "file": "services/purchasing/__tests__/ap-control.service.test.ts"
+      },
+      "findings": [],
+      "owner": "Purchasing engineering, procurement and AP controller"
+    },
+    {
+      "id": "INV",
+      "title": "Inventory, transfers, counts and valuation",
+      "report": "inventory-valuation-review-and-action-plan-2026-09-08.md",
+      "prompt": "inventory-valuation-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "inventory"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 8,
+        "failed": 1,
+        "file": "services/inventory/__tests__/inventory-stock-event.service.test.ts"
+      },
+      "findings": [
+        "PM-INV-001"
+      ],
+      "owner": "Inventory engineering and stock controller"
+    },
+    {
+      "id": "FIN",
+      "title": "Finance, cash drawers, expenses and treasury",
+      "report": "finance-cash-treasury-review-and-action-plan-2026-09-08.md",
+      "prompt": "finance-cash-treasury-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "finance",
+        "cash_drawer"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 3,
+        "failed": 0,
+        "file": "services/finance/__tests__/finance-dashboard.service.test.ts"
+      },
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001",
+        "PM-CACHE-001"
+      ],
+      "owner": "Finance engineering and treasury controller"
+    },
+    {
+      "id": "PAY",
+      "title": "Providers, statements, matching and suspense",
+      "report": "payments-reconciliation-review-and-action-plan-2026-09-08.md",
+      "prompt": "payments-reconciliation-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "payment_reconciliation"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 49,
+        "failed": 0,
+        "file": "services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts"
+      },
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "owner": "Payments engineering and reconciliation controller"
+    },
+    {
+      "id": "HR",
+      "title": "HRIS, presence, contracts and self-service",
+      "report": "hris-presence-review-and-action-plan-2026-09-08.md",
+      "prompt": "hris-presence-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "presence"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 3,
+        "failed": 0,
+        "file": "services/hris/__tests__/approval-inbox.service.test.ts"
+      },
+      "findings": [
+        "PM-HR-001",
+        "PM-SCOPE-001"
+      ],
+      "owner": "People engineering, HR operations and privacy reviewer"
+    },
+    {
+      "id": "PRL",
+      "title": "Payroll, payslips, obligations and payment",
+      "report": "payroll-review-and-action-plan-2026-09-08.md",
+      "prompt": "payroll-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "payroll"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 46,
+        "failed": 0,
+        "file": "services/payroll/__tests__/payroll-control.service.test.ts"
+      },
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "owner": "Payroll engineering, payroll controller and qualified country reviewer"
+    },
+    {
+      "id": "CMP",
+      "title": "Fiscal documents, compliance and country packs",
+      "report": "compliance-country-packs-review-and-action-plan-2026-09-08.md",
+      "prompt": "compliance-country-packs-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "compliance"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 5,
+        "failed": 0,
+        "file": "services/compliance/__tests__/fiscal-document.service.test.ts"
+      },
+      "findings": [],
+      "owner": "Compliance engineering and qualified jurisdiction reviewer"
+    },
+    {
+      "id": "CLS",
+      "title": "Close assurance, incidents and accountant collaboration",
+      "report": "close-assurance-review-and-action-plan-2026-09-08.md",
+      "prompt": "close-assurance-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "close_assurance"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 2,
+        "failed": 0,
+        "file": "services/assurance/__tests__/assurance-control-tower.service.test.ts"
+      },
+      "findings": [],
+      "owner": "Assurance engineering and independent controller"
+    },
+    {
+      "id": "ANA",
+      "title": "Dashboards, analytics, command views and reports",
+      "report": "dashboards-analytics-reports-review-and-action-plan-2026-09-08.md",
+      "prompt": "dashboards-analytics-reports-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "dashboard",
+        "analytics",
+        "reports"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 1,
+        "failed": 0,
+        "file": "services/analytics/__tests__/business-pulse.service.test.ts"
+      },
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001"
+      ],
+      "owner": "Data engineering, product and metric owners"
+    },
+    {
+      "id": "IAM",
+      "title": "Identity, tenant access, settings and administration",
+      "report": "identity-settings-admin-review-and-action-plan-2026-09-08.md",
+      "prompt": "identity-settings-admin-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "settings",
+        "administration"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 10,
+        "failed": 0,
+        "file": "services/security/__tests__/account-session.service.test.ts"
+      },
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "owner": "Identity engineering and security/privacy reviewer"
+    },
+    {
+      "id": "MOD",
+      "title": "Module lifecycle, packaging and billing boundaries",
+      "report": "module-lifecycle-billing-review-and-action-plan-2026-09-08.md",
+      "prompt": "module-lifecycle-billing-audit-execution-prompt-2026-09-08.md",
+      "catalog": [],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 11,
+        "failed": 0,
+        "file": "services/modules/__tests__/module-admission.service.test.ts"
+      },
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "owner": "Platform engineering and commercial product operations"
+    },
+    {
+      "id": "ONB",
+      "title": "Onboarding, imports and migration readiness",
+      "report": "onboarding-master-data-review-and-action-plan-2026-09-08.md",
+      "prompt": "onboarding-master-data-audit-execution-prompt-2026-09-08.md",
+      "catalog": [],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 9,
+        "failed": 0,
+        "file": "services/onboarding/__tests__/master-data-import-guards.test.ts"
+      },
+      "findings": [],
+      "owner": "Migration engineering and onboarding operations"
+    },
+    {
+      "id": "COM",
+      "title": "Notifications, collaboration and referral outcomes",
+      "report": "communications-referrals-review-and-action-plan-2026-09-08.md",
+      "prompt": "communications-referrals-audit-execution-prompt-2026-09-08.md",
+      "catalog": [],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 12,
+        "failed": 0,
+        "file": "services/communication/__tests__/customer-statement-delivery-worker.service.test.ts"
+      },
+      "findings": [],
+      "owner": "Integration engineering, support and growth operations"
+    },
+    {
+      "id": "AI",
+      "title": "AI, command agents and proposal governance",
+      "report": "ai-agent-governance-review-and-action-plan-2026-09-08.md",
+      "prompt": "ai-agent-governance-audit-execution-prompt-2026-09-08.md",
+      "catalog": [],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 13,
+        "failed": 0,
+        "file": "services/ai/__tests__/copilot-proposal.service.test.ts"
+      },
+      "findings": [],
+      "owner": "Agent engineering, domain owner and independent assurance"
+    },
+    {
+      "id": "EVT",
+      "title": "Events, recovery, migrations and platform operations",
+      "report": "events-platform-reliability-review-and-action-plan-2026-09-08.md",
+      "prompt": "events-platform-reliability-audit-execution-prompt-2026-09-08.md",
+      "catalog": [],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": {
+        "passed": 7,
+        "failed": 0,
+        "file": "services/events/__tests__/business-event-outbox.service.test.ts"
+      },
+      "findings": [
+        "PM-INV-001"
+      ],
+      "owner": "Platform/database engineering and SRE"
+    },
+    {
+      "id": "WEB",
+      "title": "Public experience, content and marketing administration",
+      "report": "content-public-experience-review-and-action-plan-2026-09-08.md",
+      "prompt": "content-public-experience-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "content"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": null,
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "owner": "Frontend/content owner and product operations"
+    },
+    {
+      "id": "AGT",
+      "title": "Commercial agents and revenue channels",
+      "report": "commercial-agents-review-and-action-plan-2026-09-08.md",
+      "prompt": "commercial-agents-audit-execution-prompt-2026-09-08.md",
+      "catalog": [
+        "commercial_agents"
+      ],
+      "status": "SOURCE_REVIEW_AND_FOCUSED_VERIFICATION",
+      "tests": null,
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "owner": "Commercial product owner and platform engineering"
+    }
+  ],
+  "findings": [
+    {
+      "id": "PM-FIN-001",
+      "modules": [
+        "FIN",
+        "ANA"
+      ],
+      "classification": "CONFIRMED_SOURCE_DEFECT",
+      "priority": "P1",
+      "confidence": "High for source behavior; affected tenant population unmeasured",
+      "title": "Finance summary aggregates are bounded by display-oriented row caps",
+      "source": "services/finance/finance-dashboard.service.ts",
+      "line": 568,
+      "additional": [
+        [
+          "services/finance/finance-dashboard.service.ts",
+          697
+        ],
+        [
+          "services/finance/finance-dashboard.service.ts",
+          742
+        ],
+        [
+          "services/finance/finance-dashboard.service.ts",
+          766
+        ]
+      ],
+      "trigger": "More than 250 eligible orders or 100 active counterparties in the requested scope.",
+      "observed": "The service fetches capped order/customer/supplier sets and derives revenue and receivable/payable summary values from those arrays. The selected finance test covers payroll forecast proof, not overflow populations.",
+      "expected": "Summary totals and counts represent the complete declared population; paginated detail rows have an independent query.",
+      "impact": "Cash planning, aging, working capital and profitability can omit obligations or revenue and lead operators to incorrect decisions. No monetary loss or production incident was measured.",
+      "likelihood": "Conditional on population exceeding the caps; prevalence unknown",
+      "rootCause": "Summary computation and display data reuse the same bounded read arrays.",
+      "mitigation": "Organization filters and some explicit payroll proof states exist; they do not restore omitted rows.",
+      "correction": "Use scoped decimal database aggregates and separate detail pagination; bind totals to a consistent snapshot and explicit operational/accounting basis.",
+      "acceptance": "Fixtures with 251 orders and 101 customers/suppliers retain complete totals; pagination does not alter KPIs; export and detail reconcile.",
+      "owner": "Finance/data engineering with treasury controller",
+      "effort": "3–6 engineering days after the metric contract; production data investigation separately sized",
+      "data": "Recompute impacted views and identify exported/relied-upon reports; do not manufacture journal corrections for a read-model defect.",
+      "links": [
+        "ACC-014",
+        "ACR-21"
+      ]
+    },
+    {
+      "id": "PM-ANA-001",
+      "modules": [
+        "ANA",
+        "FIN"
+      ],
+      "classification": "CONFIRMED_SOURCE_DEFECT",
+      "priority": "P1",
+      "confidence": "High for query/composition path",
+      "title": "Business Pulse includes draft orders and defaults the displayed currency to XAF",
+      "source": "services/analytics/sales-analytics.service.ts",
+      "line": 165,
+      "additional": [
+        [
+          "services/analytics/sales-analytics.service.ts",
+          143
+        ],
+        [
+          "services/analytics/sales-analytics.service.ts",
+          631
+        ],
+        [
+          "services/analytics/sales-analytics.service.ts",
+          647
+        ]
+      ],
+      "trigger": "An eligible location contains a draft order, or a non-XAF organization opens Business Pulse.",
+      "observed": "The sales read excludes only CANCELLED, sums the remaining order totals, and the runtime Business Pulse caller omits currency when composing output; composition defaults to XAF. Date boundaries also use server-local start/end-of-day helpers.",
+      "expected": "Recognized sales, currency and business-day boundaries come from reviewed tenant/source policy; drafts are not described as completed sales.",
+      "impact": "Operators may treat unfinalized demand as revenue or read the wrong currency, propagating incorrect signals into priorities and management decisions.",
+      "likelihood": "Conditional on draft/non-XAF/time-boundary usage; observed tenant frequency unknown",
+      "rootCause": "Generic order aggregation is reused for an authoritative-sounding sales KPI and runtime context is incomplete.",
+      "mitigation": "A blocked-state composer and composition test exist; the selected test supplies precomputed summary values and does not exercise source population or tenant currency resolution.",
+      "correction": "Reuse the existing analytical context work; define recognized event/returns/cutoff policy, resolve tenant currency and add source-to-UI fixtures.",
+      "acceptance": "Completed 100 plus draft 900 yields recognized sales 100 under the agreed policy; non-XAF and local-midnight fixtures retain correct labels and periods.",
+      "owner": "Analytics engineering and metric owner",
+      "effort": "3–6 engineering days after policy agreement",
+      "data": "Review affected dashboards/exports and downstream signals; retain source transactions unchanged.",
+      "links": [
+        "STQ-RM-001",
+        "historical F1"
+      ]
+    },
+    {
+      "id": "PM-HR-001",
+      "modules": [
+        "HR"
+      ],
+      "classification": "CONFIRMED_SOURCE_UX_GAP",
+      "priority": "P2",
+      "confidence": "High for current field; user failure rate unmeasured",
+      "title": "HR approval requires a technical evidence-hash field",
+      "source": "components/hris/HrisApprovalInbox.tsx",
+      "line": 353,
+      "additional": [
+        [
+          "services/hris/approval-inbox.service.ts",
+          68
+        ]
+      ],
+      "trigger": "An HR approver reviews an item through the approval inbox.",
+      "observed": "The current UI presents an Approval evidence hash input. The API accepts evidence data as part of approval; selected tests establish parts of the separation-of-duties and redaction contract, not usability of producing a hash.",
+      "expected": "The approver reviews understandable source facts; the server binds the exact revision and proof digest.",
+      "impact": "Users may abandon the flow, copy an unrelated hash or require developer assistance. This is a usability/control-quality exposure, not demonstrated approval forgery.",
+      "likelihood": "The field is present; frequency and severity of real user friction require task observation",
+      "rootCause": "An implementation-level proof representation is exposed as an operator input.",
+      "mitigation": "Domain decision eligibility and scoped/redacted inbox tests pass.",
+      "correction": "Resolve evidence server-side and show source revision, differences, decision reason and receipt while retaining maker-checker rules.",
+      "acceptance": "An HR user completes approval without manually generating hashes; changed evidence rejects stale approval; unauthorized/self-approval fixtures remain denied.",
+      "owner": "People frontend/domain engineering and HR controller",
+      "effort": "2–4 engineering days, plus observed task validation",
+      "data": "No automatic historical approval rewrite; investigate questionable old evidence only if independently identified.",
+      "links": [
+        "STQ-RM-007",
+        "historical F4"
+      ]
+    },
+    {
+      "id": "PM-CACHE-001",
+      "modules": [
+        "OFF",
+        "PAY",
+        "PRL",
+        "FIN",
+        "IAM"
+      ],
+      "classification": "CREDIBLE_RISK_REQUIRES_RUNTIME_VALIDATION",
+      "priority": "P1",
+      "confidence": "High for missing key dimensions; cross-session disclosure not demonstrated",
+      "title": "Several sensitive query families omit tenant or actor identity",
+      "source": "hooks/payments/usePaymentReconciliationDashboard.ts",
+      "line": 19,
+      "additional": [
+        [
+          "hooks/payroll/usePayrollWorkbench.ts",
+          16
+        ],
+        [
+          "hooks/finance/useFinanceDashboard.ts",
+          7
+        ],
+        [
+          "hooks/posHooks/useOfflineSync.ts",
+          75
+        ],
+        [
+          "lib/providers/query-provider.tsx",
+          14
+        ]
+      ],
+      "trigger": "Organization, actor, permissions or entitlements change while the QueryClient survives.",
+      "observed": "Payment and payroll keys use fixed prefixes (and limits/IDs); finance/offline keys include filters but no explicit tenant/actor. QueryProvider creates one client with useState. This review did not execute every identity-change path or establish whether navigation remounts/clears it.",
+      "expected": "Scope-changing transitions cannot render old protected results; result-changing scope belongs in cache identity with cancellation/removal where necessary.",
+      "impact": "Stale financial or personnel data may be shown in the wrong context if the client survives. Severity justifies early validation, but this is not a confirmed disclosure incident.",
+      "likelihood": "Depends on client lifetime and identity-transition behavior; unmeasured",
+      "rootCause": "Server-inferred authority is not represented explicitly in these client keys.",
+      "mitigation": "Server actions retain authorization and some keys have location/run filters; full reloads could clear caches but are not a complete demonstrated contract.",
+      "correction": "Trace every switch/logout/revocation path, then centralize scoped keys and query cancellation/removal; avoid retaining previous protected data across authority changes.",
+      "acceptance": "Same-browser two-tenant/actor tests show no old values during loading, errors or revocation; all impacted views refresh after writes.",
+      "owner": "Shared frontend/IAM owner plus affected module owners",
+      "effort": "2–3 days to validate; 3–7 engineering days if shared lifecycle correction is required",
+      "data": "No data mutation required; assess exposure only if runtime reproduction identifies it.",
+      "links": [
+        "ACC-010",
+        "ACR-22"
+      ]
+    },
+    {
+      "id": "PM-INV-001",
+      "modules": [
+        "INV",
+        "EVT",
+        "POS"
+      ],
+      "classification": "CONFIRMED_VERIFICATION_FAILURE",
+      "priority": "P1",
+      "confidence": "High for failing test; deployed defect not established",
+      "title": "Inventory idempotency-conflict test fails while recording anomaly evidence",
+      "source": "services/inventory/__tests__/inventory-stock-event.service.test.ts",
+      "line": 431,
+      "additional": [
+        [
+          "services/events/business-event-anomaly.service.ts",
+          119
+        ],
+        [
+          "services/inventory/inventory-stock-event.service.ts",
+          692
+        ]
+      ],
+      "trigger": "The focused test reuses a stock event key with a different payload hash.",
+      "observed": "Expected an idempotency-key conflict; received Business-event conflict evidence could not be recorded. The later assertions about stock mutation are not reached after the failed expectation.",
+      "expected": "A conflicting replay is rejected without stock mutation, and durable conflict evidence survives the required transaction outcome.",
+      "impact": "The current verification packet cannot prove this financial/stock retry boundary. A stale test mock is plausible; a real evidence failure must be ruled out.",
+      "likelihood": "Reproduced in the local fixture; deployed frequency unknown",
+      "rootCause": "Unresolved interaction between the fixture evidence client and the current anomaly-recording contract.",
+      "mitigation": "The operation rejects in the observed test; other stock and outbox checks pass. Rejection alone does not establish complete evidence retention.",
+      "correction": "Inspect injected versus independent evidence clients, update obsolete fixtures only if confirmed, and add an isolated PostgreSQL replay/rollback scenario before changing runtime logic.",
+      "acceptance": "Identical replay is idempotent; changed payload returns the intended safe conflict; quantities/ledger effects stay unchanged and the required conflict evidence is queryable after rollback.",
+      "owner": "Inventory and event-platform engineering",
+      "effort": "1–2 engineering days for diagnosis; any runtime fix and DB validation sized after reproduction",
+      "data": "No stock backfill justified by this test alone. If a real defect is confirmed, investigate source IDs and quantities before authorizing repair.",
+      "links": [
+        "ACC-015"
+      ]
+    },
+    {
+      "id": "PM-SCOPE-001",
+      "modules": [
+        "AGT",
+        "WEB",
+        "MOD",
+        "HR"
+      ],
+      "classification": "CAPABILITY_EVIDENCE_GAP",
+      "priority": "P2",
+      "confidence": "High for catalog/search result; runtime/deployment scope unverified",
+      "title": "Catalog entries and actual workflow evidence need reconciliation",
+      "source": "services/modules/module-catalog.service.ts",
+      "line": 243,
+      "additional": [
+        [
+          "services/modules/module-catalog.service.ts",
+          171
+        ],
+        [
+          "services/modules/module-catalog.service.ts",
+          255
+        ]
+      ],
+      "trigger": "A buyer or operator treats catalog status and route prefixes as proof of a complete workflow.",
+      "observed": "Commercial Agents is available, Presence is available and Content is internal in the catalog. Exact path-name discovery found no presence/commercial-agents/blogs implementation family; HRIS attendance and public landing surfaces do exist elsewhere. This is a search result, not proof of complete absence.",
+      "expected": "Every offered capability maps to a connected owner, route, data lifecycle and evidence-supported scope; aliases and deferred features are explicit.",
+      "impact": "False expectations, failed onboarding and entitlement confusion can damage trust. Commission liability or payroll scope must not be inferred from a catalog row.",
+      "likelihood": "Depends on which catalog promises reach users; not measured",
+      "rootCause": "Declared catalog scope and implementation naming/availability have not been reconciled in this review.",
+      "mitigation": "Content is already marked internal; HRIS provides related workforce/time capability.",
+      "correction": "Trace aliases and deployment flags, then document supported scope or restrict misleading availability. Do not build speculative CMS/commission systems as part of hardening.",
+      "acceptance": "Every advertised catalog row has a verified destination and owner, or an explicit unavailable/internal disposition reflected in UI and commercial material.",
+      "owner": "Module platform and commercial product owners",
+      "effort": "1–2 days of discovery; approved product changes separately estimated",
+      "data": "No business-record changes; preserve existing grants and obligations when correcting availability.",
+      "links": []
+    }
+  ],
+  "tasks": [
+    {
+      "id": "PM-POS-01",
+      "module": "POS",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Revenue engineering and store operations",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "INV",
+        "PAY"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-POS-02",
+      "module": "POS",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Revenue engineering and store operations",
+      "dependencies": [
+        "PM-POS-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "INV",
+        "PAY"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "A declared electronic tender is not settled provider money; Prove simultaneous refund and duplicate commit cannot create extra effects; Preserve currency precision through fiscal receipt. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-POS-03",
+      "module": "POS",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Revenue engineering and store operations",
+      "dependencies": [
+        "PM-POS-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "INV",
+        "PAY"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-POS-04",
+      "module": "POS",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Revenue engineering and store operations",
+      "dependencies": [
+        "PM-POS-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "INV",
+        "PAY"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-OFF-01",
+      "module": "OFF",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "POS integration engineering and store operations",
+      "dependencies": [],
+      "integrationContracts": [
+        "POS",
+        "EVT",
+        "IAM",
+        "MOD"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-OFF-02",
+      "module": "OFF",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "POS integration engineering and store operations",
+      "dependencies": [
+        "PM-OFF-01"
+      ],
+      "integrationContracts": [
+        "POS",
+        "EVT",
+        "IAM",
+        "MOD"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Test revoked keys, wrong device, sequence gaps and tenant mismatch; Crash after sale commit, lose the receipt response, then reconnect and replay; Make offline stock/payment limits explicit. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-OFF-03",
+      "module": "OFF",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "POS integration engineering and store operations",
+      "dependencies": [
+        "PM-OFF-02"
+      ],
+      "integrationContracts": [
+        "POS",
+        "EVT",
+        "IAM",
+        "MOD"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-OFF-04",
+      "module": "OFF",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "POS integration engineering and store operations",
+      "dependencies": [
+        "PM-OFF-03"
+      ],
+      "integrationContracts": [
+        "POS",
+        "EVT",
+        "IAM",
+        "MOD"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-SAL-01",
+      "module": "SAL",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Order-to-cash engineering and sales operations",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "CMP",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-SAL-02",
+      "module": "SAL",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Order-to-cash engineering and sales operations",
+      "dependencies": [
+        "PM-SAL-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "CMP",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Reservation is not goods issue or revenue recognition; Test concurrent confirm, repeated billing, partial delivery and late cancellation; Document supported partial-order variants before promising them. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-SAL-03",
+      "module": "SAL",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Order-to-cash engineering and sales operations",
+      "dependencies": [
+        "PM-SAL-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "CMP",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-SAL-04",
+      "module": "SAL",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Order-to-cash engineering and sales operations",
+      "dependencies": [
+        "PM-SAL-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "CMP",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-CUS-01",
+      "module": "CUS",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Receivables engineering and credit controller",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-CUS-02",
+      "module": "CUS",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Receivables engineering and credit controller",
+      "dependencies": [
+        "PM-CUS-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Recipient access is bounded to the statement workflow; Test duplicate/over-allocation, revoked tokens and tenant switch; Distinguish snapshot amount from current outstanding after later payments. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-CUS-03",
+      "module": "CUS",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Receivables engineering and credit controller",
+      "dependencies": [
+        "PM-CUS-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-CUS-04",
+      "module": "CUS",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Receivables engineering and credit controller",
+      "dependencies": [
+        "PM-CUS-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-PUR-01",
+      "module": "PUR",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Purchasing engineering, procurement and AP controller",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-PUR-02",
+      "module": "PUR",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Purchasing engineering, procurement and AP controller",
+      "dependencies": [
+        "PM-PUR-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Separate receiving, invoice and payment authority; independently review bank changes; Prove corrections preserve stock, AP balance and ledger lineage under retry; Rebaseline ongoing AP edits before declaring historical failures fixed. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-PUR-03",
+      "module": "PUR",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Purchasing engineering, procurement and AP controller",
+      "dependencies": [
+        "PM-PUR-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-PUR-04",
+      "module": "PUR",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Purchasing engineering, procurement and AP controller",
+      "dependencies": [
+        "PM-PUR-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "PAY",
+        "COM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-INV-01",
+      "module": "INV",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Inventory engineering and stock controller",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-INV-02",
+      "module": "INV",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Inventory engineering and stock controller",
+      "dependencies": [
+        "PM-INV-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Separate available, reserved and owned stock under concurrent requests; Reconcile physical quantity and value independently; Test negative stock, backdating, missing costs and closed-period reversal. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-INV-03",
+      "module": "INV",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Inventory engineering and stock controller",
+      "dependencies": [
+        "PM-INV-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-INV-04",
+      "module": "INV",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Inventory engineering and stock controller",
+      "dependencies": [
+        "PM-INV-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-FIN-01",
+      "module": "FIN",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Finance engineering and treasury controller",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "POS",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001",
+        "PM-CACHE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-FIN-02",
+      "module": "FIN",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Finance engineering and treasury controller",
+      "dependencies": [
+        "PM-FIN-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "POS",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001",
+        "PM-CACHE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Whole-business totals must not come from capped table rows; Distinguish cash movement, order revenue and posted earnings; Tie transfer pairs without duplicating bank settlement. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-FIN-03",
+      "module": "FIN",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Finance engineering and treasury controller",
+      "dependencies": [
+        "PM-FIN-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "POS",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001",
+        "PM-CACHE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-FIN-04",
+      "module": "FIN",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Finance engineering and treasury controller",
+      "dependencies": [
+        "PM-FIN-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "PAY",
+        "POS",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001",
+        "PM-CACHE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-PAY-01",
+      "module": "PAY",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Payments engineering and reconciliation controller",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-PAY-02",
+      "module": "PAY",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Payments engineering and reconciliation controller",
+      "dependencies": [
+        "PM-PAY-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Accepted request, settled money and reconciled evidence are separate states; Test tampering, duplicate files, concurrent residual allocation and stale sign-off; Unknown provider outcomes require investigation before any duplicate-risk retry. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-PAY-03",
+      "module": "PAY",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Payments engineering and reconciliation controller",
+      "dependencies": [
+        "PM-PAY-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-PAY-04",
+      "module": "PAY",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Payments engineering and reconciliation controller",
+      "dependencies": [
+        "PM-PAY-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-HR-01",
+      "module": "HR",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "People engineering, HR operations and privacy reviewer",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-HR-001",
+        "PM-SCOPE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-HR-02",
+      "module": "HR",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "People engineering, HR operations and privacy reviewer",
+      "dependencies": [
+        "PM-HR-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-HR-001",
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Manager scope must honor effective dates and delegation; Bind approvals to readable source evidence; users should not invent hashes; Reconcile attendance revisions before payroll input certification. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-HR-03",
+      "module": "HR",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "People engineering, HR operations and privacy reviewer",
+      "dependencies": [
+        "PM-HR-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-HR-001",
+        "PM-SCOPE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-HR-04",
+      "module": "HR",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "People engineering, HR operations and privacy reviewer",
+      "dependencies": [
+        "PM-HR-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-HR-001",
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-PRL-01",
+      "module": "PRL",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Payroll engineering, payroll controller and qualified country reviewer",
+      "dependencies": [],
+      "integrationContracts": [
+        "HR",
+        "CMP",
+        "PAY",
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-PRL-02",
+      "module": "PRL",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Payroll engineering, payroll controller and qualified country reviewer",
+      "dependencies": [
+        "PM-PRL-01"
+      ],
+      "integrationContracts": [
+        "HR",
+        "CMP",
+        "PAY",
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Calculation tests do not establish statutory acceptance; Test partial/repeated payment, rejected destinations and retro corrections; Restrict personal payroll exports and preserve source snapshots. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-PRL-03",
+      "module": "PRL",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Payroll engineering, payroll controller and qualified country reviewer",
+      "dependencies": [
+        "PM-PRL-02"
+      ],
+      "integrationContracts": [
+        "HR",
+        "CMP",
+        "PAY",
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-PRL-04",
+      "module": "PRL",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Payroll engineering, payroll controller and qualified country reviewer",
+      "dependencies": [
+        "PM-PRL-03"
+      ],
+      "integrationContracts": [
+        "HR",
+        "CMP",
+        "PAY",
+        "IAM",
+        "MOD",
+        "EVT"
+      ],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-CMP-01",
+      "module": "CMP",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Compliance engineering and qualified jurisdiction reviewer",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-CMP-02",
+      "module": "CMP",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Compliance engineering and qualified jurisdiction reviewer",
+      "dependencies": [
+        "PM-CMP-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Do not infer uniform regional tax/payroll rules from OHADA accounting coverage; Prove sequence uniqueness and retry behavior in deployed constraints and provider sandbox; Clearly block unsupported/expired packs and review mappings professionally. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-CMP-03",
+      "module": "CMP",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Compliance engineering and qualified jurisdiction reviewer",
+      "dependencies": [
+        "PM-CMP-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-CMP-04",
+      "module": "CMP",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Compliance engineering and qualified jurisdiction reviewer",
+      "dependencies": [
+        "PM-CMP-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-CLS-01",
+      "module": "CLS",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Assurance engineering and independent controller",
+      "dependencies": [],
+      "integrationContracts": [
+        "PAY",
+        "PUR",
+        "INV",
+        "PRL",
+        "CMP",
+        "EVT",
+        "IAM"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-CLS-02",
+      "module": "CLS",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Assurance engineering and independent controller",
+      "dependencies": [
+        "PM-CLS-01"
+      ],
+      "integrationContracts": [
+        "PAY",
+        "PUR",
+        "INV",
+        "PRL",
+        "CMP",
+        "EVT",
+        "IAM"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "A green checklist does not prove every producer was examined; Time-bound waivers must not silently become permanent; Prevent stale packs and certificate reuse after source corrections. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-CLS-03",
+      "module": "CLS",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Assurance engineering and independent controller",
+      "dependencies": [
+        "PM-CLS-02"
+      ],
+      "integrationContracts": [
+        "PAY",
+        "PUR",
+        "INV",
+        "PRL",
+        "CMP",
+        "EVT",
+        "IAM"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-CLS-04",
+      "module": "CLS",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Assurance engineering and independent controller",
+      "dependencies": [
+        "PM-CLS-03"
+      ],
+      "integrationContracts": [
+        "PAY",
+        "PUR",
+        "INV",
+        "PRL",
+        "CMP",
+        "EVT",
+        "IAM"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-ANA-01",
+      "module": "ANA",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Data engineering, product and metric owners",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "FIN",
+        "SAL",
+        "INV",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-ANA-02",
+      "module": "ANA",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Data engineering, product and metric owners",
+      "dependencies": [
+        "PM-ANA-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "FIN",
+        "SAL",
+        "INV",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Exclude drafts/cancellations according to the recognition policy; Remove fixed-currency and server-local-time assumptions from tenant reporting; Measure large-tenant query performance and task outcomes before adding dashboards. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-ANA-03",
+      "module": "ANA",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Data engineering, product and metric owners",
+      "dependencies": [
+        "PM-ANA-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "FIN",
+        "SAL",
+        "INV",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-ANA-04",
+      "module": "ANA",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Data engineering, product and metric owners",
+      "dependencies": [
+        "PM-ANA-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "FIN",
+        "SAL",
+        "INV",
+        "EVT"
+      ],
+      "findings": [
+        "PM-FIN-001",
+        "PM-ANA-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-IAM-01",
+      "module": "IAM",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Identity engineering and security/privacy reviewer",
+      "dependencies": [],
+      "integrationContracts": [],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-IAM-02",
+      "module": "IAM",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Identity engineering and security/privacy reviewer",
+      "dependencies": [
+        "PM-IAM-01"
+      ],
+      "integrationContracts": [],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Direct endpoints must enforce the same authority as the UI; Test foreign IDs, expired sessions, invitation replay and last-admin races; Separate tenant administration from platform authority and redact sensitive data. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-IAM-03",
+      "module": "IAM",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Identity engineering and security/privacy reviewer",
+      "dependencies": [
+        "PM-IAM-02"
+      ],
+      "integrationContracts": [],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-IAM-04",
+      "module": "IAM",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Identity engineering and security/privacy reviewer",
+      "dependencies": [
+        "PM-IAM-03"
+      ],
+      "integrationContracts": [],
+      "findings": [
+        "PM-CACHE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-MOD-01",
+      "module": "MOD",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Platform engineering and commercial product operations",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-MOD-02",
+      "module": "MOD",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Platform engineering and commercial product operations",
+      "dependencies": [
+        "PM-MOD-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Catalog availability is not released capability; Test direct services, jobs, APIs and routes under each entitlement mode; Separate new-work dependencies from obligations that must remain completable. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-MOD-03",
+      "module": "MOD",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Platform engineering and commercial product operations",
+      "dependencies": [
+        "PM-MOD-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-MOD-04",
+      "module": "MOD",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Platform engineering and commercial product operations",
+      "dependencies": [
+        "PM-MOD-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-ONB-01",
+      "module": "ONB",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Migration engineering and onboarding operations",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "PUR"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-ONB-02",
+      "module": "ONB",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Migration engineering and onboarding operations",
+      "dependencies": [
+        "PM-ONB-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "PUR"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Master-data import is not full financial migration or opening-balance cutover; Test retries, changed evidence and partial commit recovery; Preserve originals and rehearse restore before historical financial repair. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-ONB-03",
+      "module": "ONB",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Migration engineering and onboarding operations",
+      "dependencies": [
+        "PM-ONB-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "PUR"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-ONB-04",
+      "module": "ONB",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Migration engineering and onboarding operations",
+      "dependencies": [
+        "PM-ONB-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "INV",
+        "CUS",
+        "PUR"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-COM-01",
+      "module": "COM",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Integration engineering, support and growth operations",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-COM-02",
+      "module": "COM",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Integration engineering, support and growth operations",
+      "dependencies": [
+        "PM-COM-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "An outbox record does not prove delivery or reading; Test stale-worker completion and accepted-but-timeout provider outcomes; All-time registration attribution is not retained customer activity. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-COM-03",
+      "module": "COM",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Integration engineering, support and growth operations",
+      "dependencies": [
+        "PM-COM-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-COM-04",
+      "module": "COM",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Integration engineering, support and growth operations",
+      "dependencies": [
+        "PM-COM-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "EVT"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-AI-01",
+      "module": "AI",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Agent engineering, domain owner and independent assurance",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "ANA"
+      ],
+      "findings": [],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-AI-02",
+      "module": "AI",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Agent engineering, domain owner and independent assurance",
+      "dependencies": [
+        "PM-AI-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "ANA"
+      ],
+      "findings": [],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Definitions and deterministic rules are not proof of autonomous AI functionality; Bind proposals to current run/source facts and reject invented permissions or routes; Test denial, untrusted content isolation, suspension and cost boundaries. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-AI-03",
+      "module": "AI",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Agent engineering, domain owner and independent assurance",
+      "dependencies": [
+        "PM-AI-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "ANA"
+      ],
+      "findings": [],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-AI-04",
+      "module": "AI",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Agent engineering, domain owner and independent assurance",
+      "dependencies": [
+        "PM-AI-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "EVT",
+        "ANA"
+      ],
+      "findings": [],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-EVT-01",
+      "module": "EVT",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Platform/database engineering and SRE",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-EVT-02",
+      "module": "EVT",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Platform/database engineering and SRE",
+      "dependencies": [
+        "PM-EVT-01"
+      ],
+      "integrationContracts": [
+        "IAM"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Deduplication hashes alone do not prove concurrent/external exactly-once effects; Preserve conflict evidence across rollback and fence stale workers; Repository migrations do not establish deployed constraints; inspect scripts before execution. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-EVT-03",
+      "module": "EVT",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Platform/database engineering and SRE",
+      "dependencies": [
+        "PM-EVT-02"
+      ],
+      "integrationContracts": [
+        "IAM"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-EVT-04",
+      "module": "EVT",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Platform/database engineering and SRE",
+      "dependencies": [
+        "PM-EVT-03"
+      ],
+      "integrationContracts": [
+        "IAM"
+      ],
+      "findings": [
+        "PM-INV-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-WEB-01",
+      "module": "WEB",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Frontend/content owner and product operations",
+      "dependencies": [],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "COM"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-WEB-02",
+      "module": "WEB",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Frontend/content owner and product operations",
+      "dependencies": [
+        "PM-WEB-01"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "COM"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "Internal catalog status does not establish a complete CMS; Protect tenant data in public previews and forms; Verify mobile, keyboard, EN/FR and consent behavior. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-WEB-03",
+      "module": "WEB",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Frontend/content owner and product operations",
+      "dependencies": [
+        "PM-WEB-02"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "COM"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-WEB-04",
+      "module": "WEB",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Frontend/content owner and product operations",
+      "dependencies": [
+        "PM-WEB-03"
+      ],
+      "integrationContracts": [
+        "IAM",
+        "MOD",
+        "COM"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    },
+    {
+      "id": "PM-AGT-01",
+      "module": "AGT",
+      "title": "Bind current scope, owners and candidate",
+      "status": "READY",
+      "owner": "Commercial product owner and platform engineering",
+      "dependencies": [],
+      "integrationContracts": [
+        "MOD",
+        "COM",
+        "PAY"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "1–2 reviewer days",
+      "deliverable": "Confirm every listed workflow, supported variant and relevant prior ACC/ACR or STQ-RM item; hash current sources, map entry points and name a domain reviewer.",
+      "acceptance": "All material paths have active/legacy/deferred status; no existing change is overwritten."
+    },
+    {
+      "id": "PM-AGT-02",
+      "module": "AGT",
+      "title": "Reproduce priority risks and freeze contracts",
+      "status": "PLANNED",
+      "owner": "Commercial product owner and platform engineering",
+      "dependencies": [
+        "PM-AGT-01"
+      ],
+      "integrationContracts": [
+        "MOD",
+        "COM",
+        "PAY"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–4 reviewer/QA days; isolated environments may extend elapsed time",
+      "deliverable": "A catalog entry does not establish recruitment or payout functionality; Do not turn inferred referrals into commission liabilities; Prefer an explicit availability decision over speculative engine development. Reproduce all linked findings before prescribing data repair.",
+      "acceptance": "A scenario ledger records expected/observed behavior, source IDs, denied side effects and remaining blockers."
+    },
+    {
+      "id": "PM-AGT-03",
+      "module": "AGT",
+      "title": "Implement verified corrections and investigate affected data",
+      "status": "CONDITIONAL_ON_CONFIRMED_FINDINGS",
+      "owner": "Commercial product owner and platform engineering",
+      "dependencies": [
+        "PM-AGT-02"
+      ],
+      "integrationContracts": [
+        "MOD",
+        "COM",
+        "PAY"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "Use linked finding estimates; otherwise estimate after diagnosis",
+      "deliverable": "Correct the smallest owning boundary; preserve domain history, shared controls and public contracts. Investigate historical impact separately and design reversible repair only if needed.",
+      "acceptance": "Focused regression, cross-module tie-out and review prove the correction; no speculative implementation or silent historical rewrite."
+    },
+    {
+      "id": "PM-AGT-04",
+      "module": "AGT",
+      "title": "Verify integrated release and controlled rollout",
+      "status": "PLANNED",
+      "owner": "Commercial product owner and platform engineering",
+      "dependencies": [
+        "PM-AGT-03"
+      ],
+      "integrationContracts": [
+        "MOD",
+        "COM",
+        "PAY"
+      ],
+      "findings": [
+        "PM-SCOPE-001"
+      ],
+      "effort": "2–3 reviewer/QA days plus the real operational cycle",
+      "deliverable": "Run isolated DB failure/concurrency scenarios, authenticated role/locale/cache tests, representative performance/export checks and recovery rehearsal. Pilot the agreed supported scope.",
+      "acceptance": "No unexplained material mismatch, unauthorized effect or stale evidence claim; domain reviewer and operations owner accept scoped results."
+    }
+  ],
+  "gates": [
+    "G0 scope and candidate",
+    "G1 reproduction and containment",
+    "G2 authority and source invariants",
+    "G3 cross-module reconciliation",
+    "G4 cache/UI/export fidelity",
+    "G5 repair/recovery/pilot"
+  ],
+  "dependencyValidation": "All task dependency IDs exist; graph acyclic; all 18 non-accounting catalog entries mapped"
+}

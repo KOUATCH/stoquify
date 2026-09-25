@@ -1,0 +1,57 @@
+{
+  "at": "2026-09-08T08:24:19.122Z",
+  "sourceBaseline": "evidence/source-baseline-v58.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceHashes": {
+    "services/purchasing/ap-control.service.ts": "2fc32087a7341ae8d147e5a2d7b827419997d61fab92d9324b670d5b58bb6b07",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "c09fb4c3e9b3dfa5c375fcadaa2d5dda16dfb607c5a52628a7ef8139d5b30869",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "actions/purchasing/__tests__/ap-control.actions.test.ts": "fea76b7b96eaa5788d0da1335fdaf6804d70ff93a23ab50ac4b0952293896ece",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "services/purchasing/__tests__/invoice-preparation-contracts.test.ts": "30f46200d1036e8076beeaa9678d25386029ddacb592484d63b7cedb9dc843f8",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/__tests__/invoice-preparation.actions.test.ts": "f35191435e85b4cbbc923bf64096b0083ea085ebcf541d6380cad19700a28844",
+    "services/purchase-order/__tests__/purchase-order-receive-batch.service.test.ts": "e3938b5607b1b0174e8e0c7fc76c57247bca07ae97ce2cd0c9607364f8420af1"
+  },
+  "verifier": {
+    "path": "lanes/environment/verify-invoice-approval-integrity.cjs",
+    "sha256": "a18d0368d3126b0d6dc923441efe36d62c5ffb5623f3efc6a07a05d16c6a7c98"
+  },
+  "before": "lanes/environment/invoice-approval-integrity-e1ecdec2-61a.json",
+  "after": "lanes/environment/invoice-approval-integrity-e1af9c6b-25d.json",
+  "tests": "evidence/invoice-approval-integrity-tests.json",
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js services/purchasing/ap-control.service.ts services/purchasing/__tests__/ap-control.service.test.ts",
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "migration": "none",
+  "browser": "not run; no new interface in this checkpoint",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 221,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2663,
+      "tests": 933,
+      "pages": 150,
+      "routeHandlers": 18,
+      "actionSources": 162,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2195,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

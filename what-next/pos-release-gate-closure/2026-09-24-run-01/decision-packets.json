@@ -1,0 +1,312 @@
+{
+  "generatedAt": "2026-09-24T09:07:34.739Z",
+  "contractPath": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+  "contractSha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db",
+  "contractVersion": "0.2.0",
+  "status": "PENDING_AUTHENTIC_REVIEW",
+  "decisions": [
+    {
+      "id": "D-01",
+      "title": "Store-credit tender disposition",
+      "selectedOption": "DISABLE_HIDE_AND_REJECT_STORE_CREDIT",
+      "technicalValidity": "VALID",
+      "implementationStatus": "ENFORCED_DEVELOPMENT_SCOPE",
+      "evidence": [
+        "services/pos/pos.service.ts",
+        "components/pos/ProfessionalPOSSystem.tsx"
+      ],
+      "requiredApproverRoles": [
+        "Product owner",
+        "Financial controller",
+        "Payments owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Retain the selected disabled store-credit scope until issuance, redemption, liability, expiry, refund and reconciliation controls have approved evidence.",
+        "alternatives": "Implement a separately approved store-credit product, or exclude it from the release. Enabling an existing UI option alone is insufficient.",
+        "impact": "Cashiers cannot redeem store credit; finance avoids an unproven liability and reconciliation path.",
+        "acceptance": "UI hides unsupported tender and server rejects crafted store-credit requests before sale, inventory, cash or journal consequences.",
+        "rollback": "Keep store-credit tender disabled at the service boundary and preserve previously recorded facts."
+      }
+    },
+    {
+      "id": "D-02",
+      "title": "Physical terminal/register and drawer session boundary",
+      "selectedOption": "TERMINAL_CURRENT_SESSION_CAS_PLUS_ONE_SESSION_DRAWER_OPENING_CLAIM",
+      "technicalValidity": "VALID_WITH_DATABASE_INVARIANT_GAP",
+      "implementationStatus": "PARTIALLY_ENFORCED",
+      "evidence": [
+        "prisma/schema.prisma:POSStation.currentSessionId",
+        "services/pos/pos.service.ts:openPOSShift",
+        "services/pos/pos.service.ts:commitPOSSale"
+      ],
+      "limitations": [
+        "The terminal claim is unique/CAS protected; the drawer claim is evidenced by one session opening record but is not a dedicated unique active-drawer-claim aggregate."
+      ],
+      "requiredApproverRoles": [
+        "Retail operations owner",
+        "POS architect",
+        "Security owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Retain the selected terminal/session claim design for review, with explicit evidence of drawer-ownership limits rather than implying a stronger database invariant.",
+        "alternatives": "Introduce a dedicated unique active-drawer claim through a separately reviewed migration, or restrict operations to the demonstrated terminal/drawer allocation.",
+        "impact": "Cashier handover, duplicate tabs, supervisor recovery and cash responsibility depend on one authoritative active owner.",
+        "acceptance": "Race concurrent open, handover, close, sale and recovery commands; prove one owner and no mutation through a stale session across organizations and locations.",
+        "rollback": "Block new affected sessions; reconcile and close existing sessions through their recorded owner without rewriting cash history."
+      }
+    },
+    {
+      "id": "D-03",
+      "title": "First electronic payment provider",
+      "selectedOption": "ELECTRONIC_TENDER_DISABLED_UNTIL_NAMED_PROVIDER_APPROVED",
+      "technicalValidity": "VALID_FAIL_CLOSED",
+      "implementationStatus": "DISABLED_CURRENT_SCOPE",
+      "evidence": [
+        "services/pos/pos.service.ts:assertSupportedSaleTenders",
+        "components/pos/ProfessionalPOSSystem.tsx:tenderMethods"
+      ],
+      "requiredApproverRoles": [
+        "Payments owner",
+        "Treasury owner",
+        "Security owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Approve only the explicit disabled electronic-tender scope until a named provider and its real contract have been reviewed.",
+        "alternatives": "Select a provider and complete G3A sandbox and treasury review; defer electronic tenders entirely.",
+        "impact": "Cash-only operation is narrower but avoids mapping uncertain or fabricated provider results to paid sales.",
+        "acceptance": "Unsupported electronic tenders fail before mutation. Later activation needs signed callback/replay, unknown/late-capture, settlement and reversal evidence.",
+        "rollback": "Disable new electronic attempts and retain investigation/reconciliation of existing provider references."
+      }
+    },
+    {
+      "id": "D-04",
+      "title": "Offline tender policy",
+      "selectedOption": "OFFLINE_CAPTURE_DISABLED",
+      "technicalValidity": "VALID_FAIL_CLOSED",
+      "implementationStatus": "DISABLED_CURRENT_SCOPE",
+      "evidence": [
+        "services/pos/offline-sync.service.ts",
+        "docs/pos-enterprise-grade-audit/EXECUTION_00_DECISION_REGISTER.json"
+      ],
+      "requiredApproverRoles": [
+        "Product owner",
+        "Risk owner",
+        "Retail operations owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Keep offline capture disabled under the frozen decision; reference synchronization or replay scaffolding does not prove safe offline sale acceptance.",
+        "alternatives": "Approve a bounded offline policy with device identity, limits, fiscal timing and replay/conflict controls, or require network connectivity.",
+        "impact": "Disconnection interrupts new checkout but retained uncertain requests remain recoverable without duplicate sale creation.",
+        "acceptance": "Network loss cannot produce a false recorded sale; reconnect preserves the original request identity and resolves uncertain outcomes safely.",
+        "rollback": "Disable new offline capture; preserve queued evidence and route unresolved records to a scoped operator workflow."
+      }
+    },
+    {
+      "id": "D-05",
+      "title": "Browser, terminal and peripheral support matrix",
+      "selectedOption": "EDGE_151_WINDOWS_10_25H2_SIMULATED_DESKTOP_PDF_ONLY_DEVELOPMENT",
+      "technicalValidity": "VALID_LIMITED_SCOPE",
+      "implementationStatus": "DEVELOPMENT_MATRIX_DECLARED_NOT_PHYSICALLY_CERTIFIED",
+      "evidence": [
+        "docs/pos-enterprise-grade-audit/templates/TEMPLATE-04-HARDWARE-COMPLIANCE-MATRIX_FILLED_20260817.md"
+      ],
+      "requiredApproverRoles": [
+        "Retail operations owner",
+        "QA owner",
+        "Support owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_SIGNED_MATRIX_OR_PRODUCTION_EXCLUSION",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Treat the exact frozen simulated-desktop/PDF option as development scope only. Its declared browser/OS labels require reconciliation with an actual supported device matrix before broader approval.",
+        "alternatives": "Approve explicit peripheral exclusions for a bounded release, or test named browser/OS/scanner/printer/drawer combinations.",
+        "impact": "Defines support promises, cashier ergonomics and recovery procedures; a rendered printer label is not a hardware test.",
+        "acceptance": "Record actual versions and viewport dimensions, EN/FR, keyboard, screen-reader, touch, zoom/reflow, disconnect/retry and each included physical device.",
+        "rollback": "Withdraw unsupported matrix entries and show unavailable device capability accurately; preserve browser receipt access where verified."
+      }
+    },
+    {
+      "id": "D-06",
+      "title": "Returns, voids and refunds policy",
+      "selectedOption": "LINKED_COMPENSATING_FULL_SALE_REFUND_AND_VOID_CURRENT_SCOPE",
+      "technicalValidity": "VALID_TARGET_PARTIAL_IMPLEMENTATION",
+      "implementationStatus": "FRESH_AUTH_AND_COMPENSATING_EVENTS_PRESENT_PARTIAL_RETURN_AND_MAKER_CHECKER_MISSING",
+      "evidence": [
+        "actions/pos/tender.actions.ts",
+        "services/pos/pos.service.ts:refundPOSSale",
+        "services/pos/pos.service.ts:voidPOSSale",
+        "services/accounting/postings/post-refund.ts",
+        "services/accounting/postings/post-void.ts"
+      ],
+      "limitations": [
+        "No partial line/quantity return aggregate, inspection/disposition workflow, materiality threshold or maker-checker approval contract is production-proven."
+      ],
+      "requiredApproverRoles": [
+        "Financial controller",
+        "Retail operations owner",
+        "Risk owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Retain source-linked compensating full-sale corrections as the reviewed target; do not imply partial returns or maker-checker are complete.",
+        "alternatives": "Restrict release to approved correction scenarios, or implement and prove partial-line disposition and materiality/approval controls in a later approved slice.",
+        "impact": "Protects inventory, customer balances, cash and ledger provenance while keeping operator responsibilities explicit.",
+        "acceptance": "Fresh-auth denial, permissions, original-drawer ownership, insufficient cash, duplicate correction and unsupported electronic reversal have no unintended effects; approved paths balance.",
+        "rollback": "Disable affected new correction paths and preserve original and compensating records for controlled resolution."
+      }
+    },
+    {
+      "id": "D-07",
+      "title": "Pilot country, currency, language and fiscal profile",
+      "selectedOption": "CAMEROON_XAF_EN_FR_DEVELOPMENT_ONLY",
+      "technicalValidity": "VALID_LIMITED_SCOPE",
+      "implementationStatus": "DEVELOPMENT_ONLY_COUNTRY_PACK_FAILS_CLOSED_FOR_PRODUCTION",
+      "evidence": [
+        "what-next/statutory-country-pack-production-readiness.json",
+        "docs/HR-Payroll/evidence/country-packs/CM/2026-07-19/manifest.json"
+      ],
+      "requiredApproverRoles": [
+        "Product owner",
+        "Financial controller",
+        "Qualified Cameroon country-pack reviewer"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_QUALIFIED_COUNTRY_REVIEW_AND_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Retain Cameroon/XAF/EN/FR development-only scope until qualified country review and independent checking supply dated authoritative provenance.",
+        "alternatives": "Approve a narrower nonproduction scope, or obtain country-specific fiscal numbering, tax, submission, retention and correction approval.",
+        "impact": "Defines what receipts and country behavior may claim; zero-tax synthetic tests do not establish statutory compliance.",
+        "acceptance": "Qualified reviewer and independent checker bind dated sources and supported/unsupported rules to the country-pack version and release candidate.",
+        "rollback": "Keep unapproved statutory issuance disabled; preserve immutable evidence and route existing submission exceptions to their owner."
+      }
+    },
+    {
+      "id": "D-08",
+      "title": "Pilot service levels and error budgets",
+      "selectedOption": "NO_PRODUCTION_SLO_UNTIL_D05_MATRIX_AND_MEASURED_BASELINE",
+      "technicalValidity": "VALID",
+      "implementationStatus": "TARGET_CONTRACT_NOT_BASELINED",
+      "requiredApproverRoles": [
+        "SRE owner",
+        "Product owner",
+        "Support owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_BASELINE_AND_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Retain the decision not to claim a production SLO until D-05 and measured workload baselines exist.",
+        "alternatives": "Measure and approve targets for a bounded workstation/cohort, or retain development-only service expectations.",
+        "impact": "Support staffing, timeout/retry budgets and expansion decisions must match observed capacity and failure recovery.",
+        "acceptance": "Record workload, concurrency, duration, latency percentiles, errors, recovery time, alert acknowledgement and explicitly approved thresholds.",
+        "rollback": "Stop expansion when the approved budget is exceeded; retain observability and incident ownership during rollback."
+      }
+    },
+    {
+      "id": "D-09",
+      "title": "Delivery invoice recognition event",
+      "selectedOption": "ORDER_CONFIRMATION_NON_POSTING_INVOICE_FROM_ACCEPTED_DELIVERED_QUANTITY",
+      "technicalValidity": "VALID_ACCOUNTING_TARGET",
+      "implementationStatus": "NOT_IMPLEMENTED_AS_DELIVERY_O2C_AGGREGATES",
+      "evidence": [
+        "prisma/schema.prisma:SalesOrderStatus"
+      ],
+      "requiredApproverRoles": [
+        "Financial controller",
+        "Order-to-cash product owner",
+        "Qualified accounting reviewer"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_AND_QUALIFIED_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Review the selected delivery-based recognition target with the controller and qualified accounting reviewer; ordinary immediate POS tests do not prove a complete delivery/invoice aggregate.",
+        "alternatives": "Keep delivery invoicing excluded, or approve a separately specified advance/deposit policy with its own recognition controls.",
+        "impact": "Prevents duplicate billing and premature revenue/receivable recognition across confirmation, delivery and invoicing.",
+        "acceptance": "Confirmation remains non-posting; eligible accepted delivery quantities, partial invoices and retries cannot create duplicate invoices, revenue or tax.",
+        "rollback": "Disable new unsupported delivery invoice creation; preserve posted documents and use approved linked corrections."
+      }
+    },
+    {
+      "id": "D-10",
+      "title": "Reservation, availability and goods-issue policy",
+      "selectedOption": "RESERVATION_AFFECTS_AVAILABILITY_ONLY_PHYSICAL_ISSUE_OWNS_STOCK_AND_COGS",
+      "technicalValidity": "VALID_INVENTORY_ACCOUNTING_TARGET",
+      "implementationStatus": "IMMEDIATE_POS_GOODS_ISSUE_PRESENT_DELIVERY_RESERVATION_AGGREGATE_NOT_IMPLEMENTED",
+      "evidence": [
+        "services/inventory/inventory-stock-event.service.ts:postPOSStockIssue",
+        "services/inventory/inventory-stock-event.service.ts:postStockReservation"
+      ],
+      "requiredApproverRoles": [
+        "Inventory controller",
+        "Fulfillment owner",
+        "Accounting owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Retain availability-only reservations and stock/COGS ownership at physical issue as the proposed policy; define negative-stock, UOM, lot and serial exclusions explicitly. The frozen evidence pointer postStockReservation names an unimplemented target, not a function verified in current source.",
+        "alternatives": "Limit release to immediate POS goods issue, or implement and approve reservation/fulfillment aggregates and unsupported-combination handling.",
+        "impact": "Aligns cashier availability, warehouse responsibility and finance valuation without double stock or COGS effects.",
+        "acceptance": "Concurrent reservation, partial issue, backorder, cancellation and reversal prove no oversell or duplicate COGS; reservation alone leaves on-hand and COGS unchanged.",
+        "rollback": "Disable unsupported reservation/fulfillment combinations and preserve source-linked stock events and commitments."
+      }
+    },
+    {
+      "id": "D-11",
+      "title": "Business-day, statement, reconciliation and accounting-close boundary",
+      "selectedOption": "KEEP_SESSION_DRAWER_BUSINESS_DAY_STATEMENT_RECONCILIATION_AND_CLOSE_SEPARATE",
+      "technicalValidity": "VALID_CONTROL_TARGET",
+      "implementationStatus": "SESSION_STATEMENT_RECONCILIATION_AND_ACCOUNTING_PERIOD_PRESENT_BUSINESS_DAY_AGGREGATE_MISSING",
+      "evidence": [
+        "prisma/schema.prisma:POSSession",
+        "prisma/schema.prisma:StatementFile",
+        "prisma/schema.prisma:ReconciliationRun",
+        "services/accounting/periods.service.ts"
+      ],
+      "requiredApproverRoles": [
+        "Financial controller",
+        "Treasury owner",
+        "Retail operations owner"
+      ],
+      "approvals": [],
+      "approvalStatus": "PENDING_ACCOUNTABLE_APPROVERS",
+      "historicalDeclaration": true,
+      "actualOwners": null,
+      "packet": {
+        "rationale": "Retain separation of session, drawer, business day, statement, reconciliation and accounting close; a working drawer page does not prove end-to-end business-day close.",
+        "alternatives": "Limit supported close scope explicitly, or implement missing aggregates and obtain controller/treasury approval for the full close cycle.",
+        "impact": "Cashier declarations, supervisor variances, settlement matching and accountant period controls remain independently attributable.",
+        "acceptance": "Prove blind declaration where required, no self-approved material variance, cash/provider/ledger/bank tie-out and late-correction invalidation.",
+        "rollback": "Stop close finalization on unresolved differences; retain evidence and reopen through a typed, audited correction procedure."
+      }
+    }
+  ]
+}

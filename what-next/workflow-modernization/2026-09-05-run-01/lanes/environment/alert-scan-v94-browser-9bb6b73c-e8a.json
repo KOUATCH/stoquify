@@ -1,0 +1,74 @@
+{
+  "at": "2026-09-09T08:21:54.074Z",
+  "run": "9bb6b73c-e8a",
+  "sourcesBefore": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d674643c445bac8968701e93fe876db6c5521ca6e44b9de6ee0966c3fbc55c7c",
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "36b4e9baa43ba9cdc88934cface102d09a081e4d29c94b3a4cddc585e99902cb",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "scripts/reconciliation-alert-worker.ts": "3569c665644111ae1265613317bfde9f1ea12945f0c6beed208fec442d7afd2c",
+    "messages/en.json": "70907055344bb20525fd3c73e6557a789b639f349e84183e14945e981ca283dd",
+    "messages/fr.json": "ac7f90512a13bc0a96f4bb1f3987839cebe5f60fe531cc62e6468c42d32f0176"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "No worker run remains explicitly unknown while existing dashboard alerts stay available",
+        "Committed first-page progress displayed from the actual worker receipt",
+        "Real failed page is visible as failed, preserving prior committed progress",
+        "Same scan reference resumes to completion; wording does not certify issue resolution or scheduler health",
+        "Desktop/mobile/tablet, 200% text and reduced-motion status rendering"
+      ],
+      "screenshots": [
+        "alert-scan-v94-en-none-9bb6b73c-e8a.png",
+        "alert-scan-v94-en-running-9bb6b73c-e8a.png",
+        "alert-scan-v94-en-failed-9bb6b73c-e8a.png",
+        "alert-scan-v94-en-complete-9bb6b73c-e8a.png",
+        "alert-scan-v94-en-width-320-9bb6b73c-e8a.png",
+        "alert-scan-v94-en-width-390-9bb6b73c-e8a.png",
+        "alert-scan-v94-en-width-768-9bb6b73c-e8a.png",
+        "alert-scan-v94-en-text200-9bb6b73c-e8a.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 16381
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "No worker run remains explicitly unknown while existing dashboard alerts stay available",
+        "Committed first-page progress displayed from the actual worker receipt",
+        "Real failed page is visible as failed, preserving prior committed progress",
+        "Same scan reference resumes to completion; wording does not certify issue resolution or scheduler health",
+        "Desktop/mobile/tablet, 200% text and reduced-motion status rendering"
+      ],
+      "screenshots": [
+        "alert-scan-v94-fr-none-9bb6b73c-e8a.png",
+        "alert-scan-v94-fr-running-9bb6b73c-e8a.png",
+        "alert-scan-v94-fr-failed-9bb6b73c-e8a.png",
+        "alert-scan-v94-fr-complete-9bb6b73c-e8a.png",
+        "alert-scan-v94-fr-width-320-9bb6b73c-e8a.png",
+        "alert-scan-v94-fr-width-390-9bb6b73c-e8a.png",
+        "alert-scan-v94-fr-width-768-9bb6b73c-e8a.png",
+        "alert-scan-v94-fr-text200-9bb6b73c-e8a.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 11163
+    }
+  ],
+  "scope": "Owned app with normal sign-in, actual internal scan service and synthetic overdue items. Legacy dashboard delivery remains active; no production scheduler or cutover.",
+  "originalBefore": "72412cbd0ea47821b2c391367106bd075741899838f2996d3b6054387c87c2f1",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d674643c445bac8968701e93fe876db6c5521ca6e44b9de6ee0966c3fbc55c7c",
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "36b4e9baa43ba9cdc88934cface102d09a081e4d29c94b3a4cddc585e99902cb",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "scripts/reconciliation-alert-worker.ts": "3569c665644111ae1265613317bfde9f1ea12945f0c6beed208fec442d7afd2c",
+    "messages/en.json": "70907055344bb20525fd3c73e6557a789b639f349e84183e14945e981ca283dd",
+    "messages/fr.json": "ac7f90512a13bc0a96f4bb1f3987839cebe5f60fe531cc62e6468c42d32f0176"
+  },
+  "sourceStable": true
+}

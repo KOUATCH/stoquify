@@ -1,8 +1,6 @@
 import { routeByKey, withChangePasswordSurfaceAccess } from "./change-password-route-access"
 
-import { getUserById } from "@/actions/users/getUserById"
 import ChangePasswordForm from "@/components/Forms/ChangePasswordForm"
-import { getAuthenticatedUser } from "@/config/useAuth"
 
 export default async function ChangePass({
   params,
@@ -18,12 +16,12 @@ export default async function ChangePass({
   return withChangePasswordSurfaceAccess({
     params,
     surface,
-    onAllowed: async () => {
-      const user = await getAuthenticatedUser()
-      const userDetails = await getUserById(user?.id ?? "")
+    onAllowed: async (context) => {
       return (
-        <div className="p-8">
-          <ChangePasswordForm initialData={userDetails} editingId={user?.id} />
+        <div className="dashboard-landing-theme dark min-h-screen overflow-x-hidden">
+          <div className="dashboard-landing-content p-4 sm:p-6 lg:p-8">
+            <ChangePasswordForm editingId={context.userId} />
+          </div>
         </div>
       )
     },

@@ -1,0 +1,15 @@
+{
+  "classification": "FOCUSED_REGRESSION_BEFORE_CORRECTION",
+  "source": "services/users/user-identity.service.ts before atomic token consumption",
+  "toolSession": 87304,
+  "exitCode": 1,
+  "tests": { "failed": 3, "passed": 0, "skipped": 20, "total": 23 },
+  "seconds": 11.431,
+  "observedFailures": [
+    "Credential transaction did not conditionally consume the currently valid reset token.",
+    "Token consumed or replaced during password policy evaluation still produced a successful credential change.",
+    "Two callers reading the same token both returned 200 instead of one succeeding and one rejecting the consumed token."
+  ],
+  "evidenceLimit": "Mock-based service regressions. These demonstrate the missing service check, not actual PostgreSQL locking.",
+  "reportWrite": "Jest executed and printed failures; JSON output write failed with EPERM. This receipt records the observed tool output rather than fabricating the missing Jest JSON."
+}

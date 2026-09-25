@@ -1,4 +1,10 @@
 import { render } from "@testing-library/react"
+jest.mock("@/hooks/posHooks/usePOSCheckoutLifecycle", () => ({ usePOSCheckoutLifecycle: () => ({
+  ready: true, busy: false, leaseId: "00000000-0000-4000-8000-000000000001", error: null, snapshot: null,
+  acceptedCartId: null, acceptCart: jest.fn(), refresh: jest.fn(), command: jest.fn(),
+}) }))
+jest.mock("@/actions/pos/checkout.actions", () => ({ retainLegacyPOSCheckoutAction: jest.fn().mockResolvedValue({ success: true, data: null }) }))
+jest.mock("@/hooks/usePermissions", () => ({ usePermissions: () => ({ user: { id: "cashier-1" }, organizationId: "org-1", hasPermission: () => false }) }))
 
 const mockNotifications = {
   warning: jest.fn(),
@@ -44,6 +50,7 @@ jest.mock("@/hooks/posHooks/usePosOperations", () => ({
   useAddPOSCartLine: jest.fn(),
   useClosePOSShift: jest.fn(),
   useCommitPOSSale: jest.fn(),
+  usePOSSaleCommitStatus: jest.fn(),
   useOpenPOSShift: jest.fn(),
   usePOSCatalog: jest.fn(),
   usePOSCustomers: jest.fn(),
@@ -96,6 +103,7 @@ function setupHooks(capability: CapabilityState) {
   mockHooks.useUpdatePOSCartLine.mockReturnValue(mutationState() as never)
   mockHooks.useRemovePOSCartLine.mockReturnValue(mutationState() as never)
   mockHooks.useCommitPOSSale.mockReturnValue(mutationState() as never)
+  mockHooks.usePOSSaleCommitStatus.mockReturnValue(mutationState() as never)
   mockHooks.useRevokePublicReceiptAccessToken.mockReturnValue(mutationState() as never)
   mockHooks.usePublicReceiptAccessTokens.mockReturnValue({ data: actionSuccess([]), isFetching: false } as never)
   mockHooks.usePublicReceiptSalesSearch.mockReturnValue({ data: actionSuccess([]), isFetching: false } as never)

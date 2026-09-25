@@ -17,6 +17,7 @@ import {
   toStockTransferRecord,
 } from "@/services/inventory/inventory-read.service"
 import { postInventoryReservation } from "@/services/inventory/inventory-stock-event.service"
+import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
 import { createStockTransfer as createStockTransferService } from "@/services/inventory/inventory-transfer.service"
 import {
   createItem as createInventoryItem,
@@ -157,6 +158,7 @@ async function trustedInventoryContext(
   return {
     organizationId: ctx.orgId,
     userId: ctx.userId,
+    permissions: ctx.permissions,
   }
 }
 
@@ -331,6 +333,18 @@ export const reserveInventory = inventoryAction(
       resource: "InventoryReservation",
       auditAllowed: true,
     })
+    const moduleDecision = await observeModuleAccess({
+      organizationId: ctx.organizationId,
+      userId: ctx.userId,
+      actorPermissions: ctx.permissions,
+      moduleSlug: "inventory",
+      surfaceType: "action",
+      surface: "actions/inventory/inventoryActions.ts:reserveInventory",
+      accessIntent: "write",
+      mode: "enforce",
+      audit: true,
+    })
+    if (!moduleDecision.allowed) throw new ForbiddenError("Inventory module is not available for this organization")
     const reservations = await Promise.all(
       data.reservations.map((reservation) =>
         postInventoryReservation({

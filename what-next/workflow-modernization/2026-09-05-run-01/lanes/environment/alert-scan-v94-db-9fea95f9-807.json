@@ -1,0 +1,39 @@
+{
+  "at": "2026-09-09T08:19:20.821Z",
+  "run": "9fea95f9-807",
+  "checks": [
+    "Actual worker command commits first 100 alerts and reports incomplete exit status",
+    "Mid-page insert failure rolls back alerts and checkpoint together; durable failure retains prior progress",
+    "Concurrent resumption serializes on checkpoint and completes all 205 overdue suspense records once",
+    "All 31 ready-run observations processed beyond the old 25-run limit",
+    "Final review signal and completion checkpoint commit together; complete exit status returned",
+    "Completed scan replay performs no persisted changes",
+    "Legacy dashboard trigger remains active and coexists without duplicate or overwritten notifications",
+    "Generic inbox leasing excludes processed scan control receipts",
+    "New evidence waits for a new scan; next scan captures it without duplicating prior daily observations",
+    "Same scan UUID in another organization neither reads nor alters the first tenant"
+  ],
+  "sourcesBefore": {
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "36b4e9baa43ba9cdc88934cface102d09a081e4d29c94b3a4cddc585e99902cb",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "scripts/reconciliation-alert-worker.ts": "3569c665644111ae1265613317bfde9f1ea12945f0c6beed208fec442d7afd2c",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d674643c445bac8968701e93fe876db6c5521ca6e44b9de6ee0966c3fbc55c7c",
+    "messages/en.json": "70907055344bb20525fd3c73e6557a789b639f349e84183e14945e981ca283dd",
+    "messages/fr.json": "ac7f90512a13bc0a96f4bb1f3987839cebe5f60fe531cc62e6468c42d32f0176"
+  },
+  "scope": "Owned PostgreSQL and real worker command execution; synthetic suspense/run observations, no approvals or external delivery. Legacy dashboard trigger remains active.",
+  "originalBefore": "9b79e8eb32d94e188e120545b883024cc74c5f989334c09ee65dfcc0925e7e34",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/reconciliation/payment-reconciliation-alert-scan.service.ts": "af67dc9958d46775412f37a390becb10d77d841ba9cce2bbd22dbd98dd1382cb",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "36b4e9baa43ba9cdc88934cface102d09a081e4d29c94b3a4cddc585e99902cb",
+    "services/reconciliation/payment-reconciliation-notifications.ts": "e8679c104ca00dfbb038b843b477110331ed535fd62e2ff44fe8cec3d048e99e",
+    "scripts/reconciliation-alert-worker.ts": "3569c665644111ae1265613317bfde9f1ea12945f0c6beed208fec442d7afd2c",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "d674643c445bac8968701e93fe876db6c5521ca6e44b9de6ee0966c3fbc55c7c",
+    "messages/en.json": "70907055344bb20525fd3c73e6557a789b639f349e84183e14945e981ca283dd",
+    "messages/fr.json": "ac7f90512a13bc0a96f4bb1f3987839cebe5f60fe531cc62e6468c42d32f0176"
+  },
+  "sourceStable": true
+}

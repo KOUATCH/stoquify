@@ -1,0 +1,72 @@
+-- REVIEW CANDIDATE ONLY: NOT APPLIED / NOT EXECUTED.
+-- Proposed migration name must be assigned through the normal catalog workflow.
+-- SQL-only trigger protection: no Prisma client regeneration required.
+-- No backfill: historic records do not gain server acceptance proof.
+
+CREATE FUNCTION protect_accepted_offline_envelope() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE acceptance record;
+BEGIN
+  IF TG_OP = 'DELETE' THEN
+    IF OLD."businessEventId" IS NOT NULL THEN
+      RAISE EXCEPTION 'Accepted offline envelope is retained evidence' USING ERRCODE = '23514';
+    END IF;
+    RETURN OLD;
+  END IF;
+  IF OLD."businessEventId" IS NOT NULL THEN
+    IF (to_jsonb(NEW) - ARRAY['status','postingBatchId','documentHash','blockerCode','blockerMessage','metadata','updatedAt'])
+       IS DISTINCT FROM
+       (to_jsonb(OLD) - ARRAY['status','postingBatchId','documentHash','blockerCode','blockerMessage','metadata','updatedAt']) THEN
+      RAISE EXCEPTION 'Accepted offline envelope identity and content are immutable' USING ERRCODE = '23514';
+    END IF;
+  ELSIF NEW."businessEventId" IS NOT NULL THEN
+    IF (to_jsonb(NEW) - ARRAY['businessEventId','status','postingBatchId','documentHash','blockerCode','blockerMessage','metadata','updatedAt'])
+       IS DISTINCT FROM
+       (to_jsonb(OLD) - ARRAY['businessEventId','status','postingBatchId','documentHash','blockerCode','blockerMessage','metadata','updatedAt']) THEN
+      RAISE EXCEPTION 'Linking acceptance cannot rewrite envelope identity' USING ERRCODE = '23514';
+    END IF;
+    SELECT b.* INTO acceptance FROM "business_events" b
+      WHERE b."id" = NEW."businessEventId" AND b."organizationId" = NEW."organizationId" FOR SHARE;
+    IF NOT FOUND OR acceptance."eventSource" <> 'OFFLINE_POS'
+      OR acceptance."eventType" <> 'pos.offline.event.captured'
+      OR acceptance."sourceId" IS DISTINCT FROM NEW."id"
+      OR acceptance."payloadHash" IS DISTINCT FROM NEW."payloadHash"
+      OR acceptance."deviceId" IS DISTINCT FROM NEW."deviceId"
+      OR acceptance."registerId" IS DISTINCT FROM NEW."terminalId"
+      OR acceptance."locationId" IS DISTINCT FROM NEW."locationId"
+      OR acceptance."payload"->>'offlineEventId' IS DISTINCT FROM NEW."id"
+      OR acceptance."payload"->>'entryHash' IS DISTINCT FROM NEW."entryHash"
+      OR acceptance."payload"->>'payloadHash' IS DISTINCT FROM NEW."payloadHash" THEN
+      RAISE EXCEPTION 'Offline acceptance must match its scoped envelope' USING ERRCODE = '23514';
+    END IF;
+  END IF;
+  RETURN NEW;
+END $$;
+
+CREATE TRIGGER accepted_offline_envelope_guard
+BEFORE UPDATE OR DELETE ON "pos_offline_events"
+FOR EACH ROW EXECUTE FUNCTION protect_accepted_offline_envelope();
+
+CREATE FUNCTION protect_offline_acceptance_record() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF OLD."eventSource" = 'OFFLINE_POS' AND OLD."eventType" = 'pos.offline.event.captured' THEN
+    IF TG_OP = 'DELETE' THEN
+      RAISE EXCEPTION 'Offline acceptance is retained evidence' USING ERRCODE = '23514';
+    END IF;
+    IF (to_jsonb(NEW) - ARRAY['status','processedAt','failedAt','failureCode','failureMessage','metadata','updatedAt'])
+       IS DISTINCT FROM
+       (to_jsonb(OLD) - ARRAY['status','processedAt','failedAt','failureCode','failureMessage','metadata','updatedAt']) THEN
+      RAISE EXCEPTION 'Offline acceptance identity and proof are immutable' USING ERRCODE = '23514';
+    END IF;
+  ELSIF TG_OP = 'UPDATE' AND NEW."eventSource" = 'OFFLINE_POS' AND NEW."eventType" = 'pos.offline.event.captured' THEN
+    RAISE EXCEPTION 'A different business event cannot become offline acceptance' USING ERRCODE = '23514';
+  END IF;
+  IF TG_OP = 'DELETE' THEN RETURN OLD; END IF;
+  RETURN NEW;
+END $$;
+
+CREATE TRIGGER offline_acceptance_record_guard
+BEFORE UPDATE OR DELETE ON "business_events"
+FOR EACH ROW EXECUTE FUNCTION protect_offline_acceptance_record();
+

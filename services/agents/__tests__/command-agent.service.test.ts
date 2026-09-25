@@ -118,6 +118,13 @@ describe("Command Agent idempotency recovery", () => {
     });
   });
 
+  it("passes the selected language to the trusted context resolver without relaxing release authorization", async () => {
+    mockFindReceipt.mockResolvedValueOnce(REPLAY);
+    await runCommandAgent({ ...REQUEST, locale: "fr" });
+    expect(mockResolveContext).toHaveBeenCalledWith(expect.objectContaining({ locale: "fr", requestedModules: ["dashboard"] }));
+    expect(mockAuthorizeRelease).toHaveBeenCalled();
+  });
+
   it("does not expose a correlation owned by another trusted scope", async () => {
     mockFindReceipt.mockResolvedValue(null);
     mockRunAgent.mockRejectedValue({

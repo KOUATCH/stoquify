@@ -185,7 +185,7 @@ async function recordEvidenceEvent(
     idempotencyKey: input.idempotencyKey,
     payload: input.payload,
     actorId: input.actorId,
-    sourceType: "HRIS_CONTRACT_DOCUMENT",
+    sourceEntityType: "HRIS_CONTRACT_DOCUMENT",
     sourceId: input.contractId,
     documentHash: input.documentHash,
     metadata: { gate: "stoquify-hris-07-contract-document-evidence" },

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { getTranslations } from "next-intl/server"
 
 import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import { localizePath, pickLocale } from "@/i18n/routing"
@@ -8,13 +9,14 @@ import type { Locale } from "@/types/bilingual"
 import type { DailyDigestRouteSurface } from "./daily-digest-route-data-access"
 import { getDailyDigestRouteSurface } from "./daily-digest-route-data-access"
 
+type PermissionMode = "single" | "all" | "any"
+
 type PermissionInput = {
   resource?: string
   resourceId?: string
   auditAllowed?: boolean
 }
 
-type PermissionMode = "single" | "all" | "any"
 type DailyDigestRouteContext = Awaited<ReturnType<typeof requirePermission>>
 
 type DailyDigestRouteAccessResult =
@@ -28,12 +30,6 @@ type DailyDigestRouteAccessResult =
       locale: Locale
     }
 
-const NO_ACTIVE_ORG_TITLE_SUFFIX = "needs an active organization"
-const PERMISSION_DENIED_TITLE_SUFFIX = "is not available for this role"
-const NO_ACTIVE_ORG_MESSAGE = "Refresh your session from the dashboard so Daily Digest can load tenant-scoped signals."
-const PERMISSION_DENIED_MESSAGE =
-  "Daily Digest is read-only, but it still requires dashboard, finance, accounting, or inventory access."
-
 async function evaluateDailyDigestRouteAccess(
   surface: DailyDigestRouteSurface,
   localePromise: Promise<{ locale: string }>,
@@ -41,8 +37,8 @@ async function evaluateDailyDigestRouteAccess(
 ): Promise<DailyDigestRouteAccessResult> {
   const { locale: rawLocale } = await localePromise
   const locale = pickLocale(rawLocale)
-  let context: DailyDigestRouteContext
 
+  let context: DailyDigestRouteContext
   const options: PermissionInput = {
     resource: permissionOptions.resource ?? surface.resource,
     resourceId: permissionOptions.resourceId,
@@ -51,6 +47,7 @@ async function evaluateDailyDigestRouteAccess(
 
   try {
     const mode: PermissionMode = surface.permissionMode ?? "single"
+
     if (mode === "all") {
       context = await requireAllPermissions(surface.permissions, {
         resource: options.resource,
@@ -70,18 +67,32 @@ async function evaluateDailyDigestRouteAccess(
     }
   } catch (error) {
     if (error instanceof RbacError) {
+      const t = await getTranslations({ locale, namespace: "dailyDigestAccess" })
       const noActiveOrg = error.code === "NO_ACTIVE_ORG"
+      const forbidden = error.code === "FORBIDDEN"
+      const signIn = error.code === "UNAUTHENTICATED" || error.code === "EMAIL_NOT_VERIFIED"
+      const title = noActiveOrg
+        ? surface.noActiveOrgTitle ?? t(`${error.code}.title`)
+        : forbidden ? surface.permissionDeniedTitle ?? t(`${error.code}.title`) : t(`${error.code}.title`)
+      const message = noActiveOrg
+        ? surface.noActiveOrgMessage ?? t(`${error.code}.message`)
+        : forbidden ? surface.permissionDeniedMessage ?? t(`${error.code}.message`) : t(`${error.code}.message`)
+      const href = signIn
+        ? `${localizePath("/login", locale)}?callbackUrl=${encodeURIComponent(localizePath(surface.route, locale))}`
+        : noActiveOrg
+        ? localizePath(surface.noActiveOrgPrimaryHref ?? "/dashboard", locale)
+        : localizePath(surface.permissionDeniedPrimaryHref ?? "/dashboard", locale)
+
       return {
         kind: "blocked",
         node: (
           <DashboardRouteState
-            kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={noActiveOrg ? surface.noActiveOrgTitle ?? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : surface.permissionDeniedTitle ?? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
-            message={noActiveOrg ? surface.noActiveOrgMessage ?? NO_ACTIVE_ORG_MESSAGE : surface.permissionDeniedMessage ?? PERMISSION_DENIED_MESSAGE}
-            primaryHref={localizePath(
-              noActiveOrg ? surface.noActiveOrgPrimaryHref ?? "/dashboard" : surface.permissionDeniedPrimaryHref ?? "/dashboard",
-              locale,
-            )}
+            kind={noActiveOrg ? "no_active_org" : error.code === "UNAUTHENTICATED" ? "stale_session" : "permission_denied"}
+            locale={locale}
+            title={title}
+            message={message}
+            primaryHref={href}
+            primaryLabel={signIn ? t("signIn") : undefined}
           />
         ),
       }
@@ -109,7 +120,11 @@ export async function withDailyDigestSurfaceAccess({
   onAllowed: (context: DailyDigestRouteContext, locale: Locale) => Promise<ReactNode> | ReactNode
 }) {
   const state = await evaluateDailyDigestRouteAccess(surface, params, permissionOptions)
-  if (state.kind === "blocked") return state.node
+
+  if (state.kind === "blocked") {
+    return state.node
+  }
+
   return onAllowed(state.context, state.locale)
 }
 

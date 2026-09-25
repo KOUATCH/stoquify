@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-19T12:51:04.121Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "ff5c7c80c69736ec3203ccde9c86df00ecc3cc449ff439f7e7ed075c1a7e9094",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "finance": false,
+      "reconciliation": false,
+      "locales": []
+    }
+  ],
+  "passed": false,
+  "error": "explicit-empty: Finance workspace follows grant\n\ntrue !== false\n",
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "ff5c7c80c69736ec3203ccde9c86df00ecc3cc449ff439f7e7ed075c1a7e9094",
+    "services/daily-habit/daily-habit-source-visibility.ts": "4e19776af15cc9595653e130aa2d571355d0189082a9a0b770f9607b313c0c1b",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/payment-truth-snapshot.service.ts": "212b2ea791c37ab86af6a56796a95bce0368eae4bb19e01cd5de7032dec0b96e"
+  },
+  "sourceStable": true
+}

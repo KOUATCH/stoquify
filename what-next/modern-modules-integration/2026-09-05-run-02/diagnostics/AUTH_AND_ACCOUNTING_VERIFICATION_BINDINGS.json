@@ -1,0 +1,213 @@
+{
+  "boundAt": "2026-09-05T14:49:19.099Z",
+  "classification": "SCOPED_ISOLATED_AUTH_AND_ACCOUNTING_PREVIEW_EVIDENCE",
+  "productionApproval": false,
+  "auth": {
+    "passed": 8,
+    "failed": 0,
+    "failure": null,
+    "startedAt": "2026-09-05T14:40:14.032Z",
+    "completedAt": "2026-09-05T14:41:16.478Z",
+    "sourceStableDuringCheck": true,
+    "sourcesAsTested": [
+      {
+        "path": "next.config.mjs",
+        "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+      },
+      {
+        "path": "lib/auth-client.ts",
+        "sha256": "282aa45adf3637c7de07beac0233d2167a83518315f795819a0acecedec66948"
+      },
+      {
+        "path": "hooks/useClientAuth.ts",
+        "sha256": "c76b06c6630426a3c5aa5d898d8b02bd13634aa09bdced72ed1f20baf3c7df7b"
+      },
+      {
+        "path": "components/inventory/transfers/TransferDashboard.tsx",
+        "sha256": "1d2013ac354ae64ecc1642371464f43fc76d9fb8397531c0d5f1322625bb9e56"
+      },
+      {
+        "path": "actions/security/step-up-auth.actions.ts",
+        "sha256": "468b73c8676428cdef5785c80dffdd4232150eb7a1a9db896c9ff6fb657af407"
+      },
+      {
+        "path": "components/modules/ModuleCompositionWorkbench.tsx",
+        "sha256": "454958b4cbcf4bdfe55c6e60573ecf5a1ff984785c5d8abdc7e4fdf4e509258d"
+      },
+      {
+        "path": "messages/en.json",
+        "sha256": "a2fc19cd607bdf29d36709bac27bc1589303e320e431a63e909c4c7877580a05"
+      },
+      {
+        "path": "messages/fr.json",
+        "sha256": "33f9048689f4edc5209a3cf4f35dcbd01096d22a83250bce41812b52ebeafad1"
+      }
+    ],
+    "generatedBundleAsTested": {
+      "path": ".next-modern-modules-integration/server/app/[locale]/(dashboard)/dashboard/inventory/transfers/page.js",
+      "sha256": "65f0f4c620dfdb058cbea2eb0a7b8d3ebc2a3fabab4708876d43f4a8692bbbc7",
+      "externalClient": false,
+      "bundledReactStore": true,
+      "vendoredSsrReact": true,
+      "vendorPath": ".next-modern-modules-integration\\server\\vendor-chunks\\better-auth@1.6.26_@prisma+_d24fae1797ed323d5d6672531c718152.js",
+      "vendorSha256": "b817042507204434966e4e4a6049d0d4b7415531fd37f5ea90e71d03a9ebb9a6"
+    },
+    "usefulTransferResultMs": 11045,
+    "syntheticEffects": "The final passed attempt saved one draft and assured one real session. An earlier selector-failed attempt also saved one draft before failing. Real sign-ins created normal sessions. No activation, stop-policy change or transfer mutation."
+  },
+  "accountingPreview": {
+    "passed": 2,
+    "failed": 0,
+    "failure": null,
+    "locales": [
+      "en",
+      "fr"
+    ],
+    "startedAt": "2026-09-05T14:42:08.946Z",
+    "completedAt": "2026-09-05T14:42:46.477Z",
+    "sourceStableDuringCheck": true,
+    "sourcesAsTested": [
+      {
+        "path": "next.config.mjs",
+        "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+      },
+      {
+        "path": "components/modules/ModuleCompositionWorkbench.tsx",
+        "sha256": "454958b4cbcf4bdfe55c6e60573ecf5a1ff984785c5d8abdc7e4fdf4e509258d"
+      },
+      {
+        "path": "messages/en.json",
+        "sha256": "a2fc19cd607bdf29d36709bac27bc1589303e320e431a63e909c4c7877580a05"
+      },
+      {
+        "path": "messages/fr.json",
+        "sha256": "33f9048689f4edc5209a3cf4f35dcbd01096d22a83250bce41812b52ebeafad1"
+      },
+      {
+        "path": "services/modules/module-admission.service.ts",
+        "sha256": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b"
+      },
+      {
+        "path": "services/modules/module-operational-dependencies.ts",
+        "sha256": "64ccdf1e12b20df6aecf104766b82c225242e0032a5a15e073939d98e66c5677"
+      },
+      {
+        "path": "services/modules/module-stop-policy.service.ts",
+        "sha256": "7c2b6cb777bba0ca01bd7b618ddd06bf9974ca026ba3979572245a5f7373f038"
+      }
+    ],
+    "persistedConfigurationAndCommandCountsUnchanged": true,
+    "activated": false
+  },
+  "interpretation": [
+    "Counts refer to eight auth observations and two localized preview cases, not ten independent end-to-end customer journeys.",
+    "All six listed screenshots were visually inspected as actual rendered application content; no synthetic image edits.",
+    "Cold development transfer compilation took 177.8 seconds. Preserved timeout and transient development Webpack failures precede the serialized successful warm check. No production performance certification.",
+    "Source versions are those tested at the recorded timestamps. Subsequent history pagination and manual-journal recovery edits require separately bound coverage; this manifest does not claim those changes were exercised.",
+    "All run01 artifacts remain unchanged. No production or customer environment was activated."
+  ],
+  "artifacts": [
+    {
+      "path": "../AUTH_SSR_DIAGNOSIS.md",
+      "bytes": 7087,
+      "modifiedAt": "2026-09-05T14:46:43.722Z",
+      "sha256": "d6556aa3d44b26b585591dbeaf3721906e43258fc765254a3a5f87a2b22906c1"
+    },
+    {
+      "path": "auth-react-ssr-probe.cjs",
+      "bytes": 4736,
+      "modifiedAt": "2026-09-05T14:25:47.127Z",
+      "sha256": "3a08a70f7d49f95e3dbdcf113bc635929e3e1aa8374949c759d61e60fccbcff1"
+    },
+    {
+      "path": "auth-react-ssr-probe.json",
+      "bytes": 4517,
+      "modifiedAt": "2026-09-05T14:27:10.206Z",
+      "sha256": "6da0d02d26ea837d3571f4bd2bc8e2184b1e547a014bd3e455658ecdadac2949"
+    },
+    {
+      "path": "auth-bundling-browser.cjs",
+      "bytes": 9578,
+      "modifiedAt": "2026-09-05T14:38:07.465Z",
+      "sha256": "9c9ff4b4f26d05815489acf58d4154232e5420ca675f1c645b60e4f183633f20"
+    },
+    {
+      "path": "auth-bundling-browser.json",
+      "bytes": 4217,
+      "modifiedAt": "2026-09-05T14:41:16.533Z",
+      "sha256": "5d94a292428776007c7dce3c12e9330196afa31909a5c1e49a1410b3dc1a0bff"
+    },
+    {
+      "path": "auth-bundling-browser-cold-timeout.json",
+      "bytes": 2714,
+      "modifiedAt": "2026-09-05T14:30:06.757Z",
+      "sha256": "275c2dd74dcd9df98b3a1949c9d600c37c3d717a6e6091c27145a57454784558"
+    },
+    {
+      "path": "auth-bundling-browser-webpack-runtime-failure.json",
+      "bytes": 2933,
+      "modifiedAt": "2026-09-05T14:33:57.775Z",
+      "sha256": "ad0894306bee95ea670d81fde613c34d2d83398edada5fc21a112e952f5a6722"
+    },
+    {
+      "path": "auth-bundling-browser-success-locator-ambiguity.json",
+      "bytes": 3936,
+      "modifiedAt": "2026-09-05T14:36:51.413Z",
+      "sha256": "daab5e00adeff03300a126a898fd20af648e9d5f93c43b8fa27d51356181cc48"
+    },
+    {
+      "path": "accounting-stop-preview-browser.cjs",
+      "bytes": 7166,
+      "modifiedAt": "2026-09-05T14:41:57.586Z",
+      "sha256": "8ffef6a8a81864c95f8b880916f84a236cb853b7443cdfdb300c35ce24e41a54"
+    },
+    {
+      "path": "accounting-stop-preview-browser.json",
+      "bytes": 3527,
+      "modifiedAt": "2026-09-05T14:42:46.485Z",
+      "sha256": "bfeb4e86650a2816619ec93c5d062ea5682bc3bb058a4a166b9485eb96d77ffe"
+    },
+    {
+      "path": "transfer-after-auth-bundling.png",
+      "bytes": 732302,
+      "modifiedAt": "2026-09-05T14:40:53.160Z",
+      "sha256": "cf52e0786b1ae6776ddf61d3e3157f4af5cacd2eb4c8dbed1806a73d749143bd"
+    },
+    {
+      "path": "modules-after-auth-bundling.png",
+      "bytes": 869329,
+      "modifiedAt": "2026-09-05T14:41:15.944Z",
+      "sha256": "f140e7d8c1eef503edf02449576cdb113a30f35436148f891b160bc14863668f"
+    },
+    {
+      "path": "accounting-stop-control-en.png",
+      "bytes": 476062,
+      "modifiedAt": "2026-09-05T14:42:21.365Z",
+      "sha256": "963874bc21d02912d4699243957f5fae325116acf079e1011b3a413e6e9a6e72"
+    },
+    {
+      "path": "accounting-stop-preview-en.png",
+      "bytes": 22854,
+      "modifiedAt": "2026-09-05T14:42:26.224Z",
+      "sha256": "4028a8892d846385ef5fe3c2b0bdb8549a70caa5049613d816fb3fddbd084041"
+    },
+    {
+      "path": "accounting-stop-control-fr.png",
+      "bytes": 476949,
+      "modifiedAt": "2026-09-05T14:42:40.466Z",
+      "sha256": "23d9cba9c6a1743f26b7f5a65ca6b2f9963a3b866771a927231c92ee2574c37e"
+    },
+    {
+      "path": "accounting-stop-preview-fr.png",
+      "bytes": 24843,
+      "modifiedAt": "2026-09-05T14:42:43.721Z",
+      "sha256": "f56746c9e06a7ecb8bdd4f287bc9c6c61ad0644d2cdfcae9d0584738c996d88a"
+    },
+    {
+      "path": "selected-development-server-output.txt",
+      "bytes": 1331,
+      "modifiedAt": "2026-09-05T14:48:12.372Z",
+      "sha256": "e638a8d355ea66d72168ac898c640149ebc430d3aa143cd29a818dc04ef18f20"
+    }
+  ]
+}

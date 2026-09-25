@@ -1,0 +1,66 @@
+{
+  "at": "2026-09-08T14:19:30.677Z",
+  "run": "57782aaa-7b1",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "8ba4db861bd9cbc3f05f9fe97a62be882720d33517a2596393a50cd2a82735e2",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "components/purchasing/APHistoryWorkbench.tsx": "6a6be30557bf7ed0eb3260f64bba6bfb5aaebfcbc8746c1dfde692d1f375b2af",
+    "lib/purchasing/ap-history-presentation.ts": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad",
+    "components/suppliers/SupplierManagementDashboard.tsx": "d4dcf8134b19569fb48b15aa52c5274fc7b79e5e256ab26bd62103d23a21eb63",
+    "actions/purchasing/ap-history.actions.ts": "16dfa889f045e5de6959031b09ac1f975aa1847c6a42b30c550fae35185406a8",
+    "hooks/useAPHistoryWorkbench.ts": "5f61c7db4199b710762ba682e45b15fe9a914f8b18696ec09ae63e32bae524d5",
+    "messages/en.json": "1e022ead58456363ac035a8452ec200339a341efae79a9ddb46b8653d6bf5838",
+    "messages/fr.json": "1e80a5741c8864278ac8942124e54ff05d502335c92f4df425b4f5ef5c648b18"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "ap-history-financial-en-unposted-desktop-57782aaa-7b1.png",
+        "ap-history-financial-en-failure-57782aaa-7b1.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development history first-read observation",
+          "ms": 15930
+        }
+      ],
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('row').filter({ hasText: 'REVIEWED-history-financial-ui-57782aaa-7b1-en' }).getByRole('button', { name: 'Details', exact: true })\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [],
+      "screenshots": [
+        "ap-history-financial-fr-unposted-desktop-57782aaa-7b1.png",
+        "ap-history-financial-fr-failure-57782aaa-7b1.png"
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development history first-read observation",
+          "ms": 8753
+        }
+      ],
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('row').filter({ hasText: 'REVIEWED-history-financial-ui-57782aaa-7b1-fr' }).getByRole('button', { name: 'Details', exact: true })\u001b[22m\n"
+    }
+  ],
+  "scope": "Owned local test database only. Real invoice approval in synthetic tenants; deliberately inconsistent synthetic invoices demonstrate unavailable evidence, not operational approvals.",
+  "originalBefore": "510fe7c93f3bc26f892e0ca078b462eadd2d6471ca910a2d7eb3270fd06e0230",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "8ba4db861bd9cbc3f05f9fe97a62be882720d33517a2596393a50cd2a82735e2",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "components/purchasing/APHistoryWorkbench.tsx": "6a6be30557bf7ed0eb3260f64bba6bfb5aaebfcbc8746c1dfde692d1f375b2af",
+    "lib/purchasing/ap-history-presentation.ts": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad",
+    "components/suppliers/SupplierManagementDashboard.tsx": "d4dcf8134b19569fb48b15aa52c5274fc7b79e5e256ab26bd62103d23a21eb63",
+    "actions/purchasing/ap-history.actions.ts": "16dfa889f045e5de6959031b09ac1f975aa1847c6a42b30c550fae35185406a8",
+    "hooks/useAPHistoryWorkbench.ts": "5f61c7db4199b710762ba682e45b15fe9a914f8b18696ec09ae63e32bae524d5",
+    "messages/en.json": "1e022ead58456363ac035a8452ec200339a341efae79a9ddb46b8653d6bf5838",
+    "messages/fr.json": "1e80a5741c8864278ac8942124e54ff05d502335c92f4df425b4f5ef5c648b18"
+  },
+  "sourceStable": true
+}

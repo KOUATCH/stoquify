@@ -1,0 +1,76 @@
+{
+  "at": "2026-09-08T15:49:24.659Z",
+  "sourceBaseline": "evidence/source-baseline-v78.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "skill": "011-aqstoqflow-purchasing-ap-controls",
+  "sources": {
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "lib/purchasing/ap-history-presentation.ts": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad",
+    "services/purchasing/__tests__/ap-history.service.test.ts": "c8c3d4d8a3ad198f9501bb94419696680f920dbe789f7ece6d364991d1ca013d",
+    "services/purchasing/__tests__/ap-history-allocation-integrity.test.ts": "b8e1041baa7ca12ddc0b46482ad3d9d70ba54b98aaaaac4649a68c8f385d9d5b",
+    "services/purchasing/__tests__/ap-history-export.service.test.ts": "0813f46e98616401dc67bb6bc95ee0ed043c971463872c0e1c477de160e76720",
+    "services/purchasing/__tests__/ap-history-financial.test.ts": "5ae903bb998f5168067d7d3f166e10d36649d211364745031e82bb3e1ae50bea"
+  },
+  "tests": {
+    "file": "evidence/ap-allocation-final-v78.json",
+    "passed": 40,
+    "suites": 4,
+    "session": 86713,
+    "exitCode": 0
+  },
+  "commands": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --incremental false --pretty false",
+      "session": 34120,
+      "status": "passed",
+      "exitCode": 0
+    },
+    {
+      "command": "eslint financial resolver and three affected tests",
+      "session": 46373,
+      "status": "passed",
+      "exitCode": 0
+    }
+  ],
+  "browserAndDatabase": "lanes/environment/ap-allocation-scope-7fa017b6-a80.json",
+  "screenshots": [
+    "lanes/environment/ap-allocation-en-inconsistent-desktop-7fa017b6-a80.png",
+    "lanes/environment/ap-allocation-en-inconsistent-mobile-7fa017b6-a80.png",
+    "lanes/environment/ap-allocation-en-recovered-7fa017b6-a80.png",
+    "lanes/environment/ap-allocation-fr-inconsistent-desktop-7fa017b6-a80.png",
+    "lanes/environment/ap-allocation-fr-inconsistent-mobile-7fa017b6-a80.png",
+    "lanes/environment/ap-allocation-fr-recovered-7fa017b6-a80.png"
+  ],
+  "before": "evidence/ap-allocation-before-v78.json",
+  "intermediate": "evidence/ap-allocation-after-v78.json",
+  "coverage": {
+    "discoveredWorkflows": 222,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2724,
+      "tests": 959,
+      "pages": 155,
+      "routeHandlers": 18,
+      "actionSources": 166,
+      "backgroundCandidates": 32,
+      "uiControlCandidates": 2284,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 207,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false,
+  "next": "Broader supplier-ledger/payment/credit reconciliation and remaining workflow coverage",
+  "migration": "none",
+  "externalActions": "none",
+  "limits": [
+    "Additional targeted evidence query; large-volume behavior unverified",
+    "No automatic allocation repair; no claim of successful real payment execution",
+    "Read-side allocation ceiling differs deliberately from existing exact-total creation/release checks"
+  ]
+}

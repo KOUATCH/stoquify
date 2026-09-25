@@ -20,7 +20,10 @@ import {
   X,
   Zap,
 } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { usePathname } from "next/navigation"
+import type { Locale } from "@/types/bilingual"
+import { notificationCategoryLabel, notificationCopy, notificationDateTime, notificationStateLabel } from "@/lib/notifications/presentation"
 
 export type NotificationCategory =
   | "general"
@@ -135,9 +138,11 @@ function notificationTone(notification: NotificationData) {
 }
 
 function getNotificationStyles(notification: NotificationData, isUnread?: boolean) {
+  const tone = notification.type === "success" && notification.category === "system" ? "system-success" : notificationTone(notification)
+
   return cn(
     "notification-toast",
-    `notification-toast--${notificationTone(notification)}`,
+    `notification-toast--${tone}`,
     isUnread && "notification-toast--unread",
     notification.priority === "high" && "notification-toast--high-priority"
   )
@@ -146,7 +151,10 @@ function getNotificationStyles(notification: NotificationData, isUnread?: boolea
 function getCategoryToneClass(category?: string, type?: NotificationData["type"], severity?: NotificationSeverity) {
   if (severity === "critical" || severity === "error" || type === "error") return "notification-icon--danger"
   if (severity === "warning" || type === "warning") return "notification-icon--warning"
-  if (severity === "success" || type === "success") return "notification-icon--success"
+  if (severity === "success" || type === "success") {
+    if (category === "system") return "notification-icon--brand"
+    return "notification-icon--success"
+  }
 
   switch (category) {
     case "cash":
@@ -191,19 +199,6 @@ function getIconStyles(type: NotificationData["type"], category?: string, severi
   return cn("notification-icon rounded-lg p-2", getCategoryToneClass(category, type, severity))
 }
 
-function formatNotificationTime(createdAt?: string) {
-  if (!createdAt) return "Now"
-
-  try {
-    return new Intl.DateTimeFormat(undefined, {
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(createdAt))
-  } catch {
-    return "Now"
-  }
-}
-
 export function NotificationSystem({
   notifications,
   onRemove,
@@ -214,6 +209,20 @@ export function NotificationSystem({
   showSoundControl = true,
 }: NotificationSystemProps) {
   const [soundsPlayed, setSoundsPlayed] = useState<Set<string>>(new Set())
+  const pathname = usePathname()
+  const locale: Locale = pathname?.split("/")[1] === "fr" ? "fr" : "en"
+  const reviewingMessages = /^\/(en|fr)\/dashboard\/settings\/notifications\/?$/.test(pathname ?? "")
+  const t = notificationCopy[locale]
+  const previousMessages = useRef(new Map<string, string>())
+  const [announcement, setAnnouncement] = useState({ text: "", urgent: false })
+
+  useEffect(() => {
+    const messages = new Map(notifications.map(n => [n.id, `${n.type}:${n.title}:${n.message}`]))
+    const changed = notifications.filter(n => previousMessages.current.get(n.id) !== messages.get(n.id))
+    previousMessages.current = messages
+    if (changed.length) setAnnouncement({ text: changed.map(n => `${n.title}. ${n.message}`).join(" "), urgent: changed.some(n => n.type === "error" || n.severity === "critical") })
+    else if (!notifications.length) setAnnouncement({ text: "", urgent: false })
+  }, [notifications])
 
   useEffect(() => {
     notifications.forEach((notification) => {
@@ -232,6 +241,8 @@ export function NotificationSystem({
 
   return (
     <>
+      <div role="status" aria-atomic="true" className="sr-only">{announcement.urgent ? "" : announcement.text}</div>
+      <div role="alert" aria-atomic="true" className="sr-only">{announcement.urgent ? announcement.text : ""}</div>
       {showSoundControl ? (
         <div className="fixed right-4 top-4 z-50">
           <Button
@@ -239,7 +250,8 @@ export function NotificationSystem({
             size="sm"
             onClick={onToggleSound}
             className="notification-control h-10 gap-2 rounded-lg px-3"
-            aria-label={soundEnabled ? "Disable notification sound" : "Enable notification sound"}
+            aria-label={soundEnabled ? t.disableSound : t.enableSound}
+            aria-pressed={soundEnabled}
           >
             <span className="relative inline-flex">
               <Bell className="h-4 w-4" />
@@ -252,19 +264,19 @@ export function NotificationSystem({
             {soundEnabled ? (
               <>
                 <Volume2 className="notification-control-icon notification-control-icon--on h-4 w-4" />
-                <span className="notification-control-label notification-control-label--on text-xs font-bold">On</span>
+                <span className="notification-control-label notification-control-label--on text-xs font-bold">{t.on}</span>
               </>
             ) : (
               <>
                 <VolumeX className="notification-control-icon h-4 w-4" />
-                <span className="notification-control-label text-xs font-bold">Off</span>
+                <span className="notification-control-label text-xs font-bold">{t.off}</span>
               </>
             )}
           </Button>
         </div>
       ) : null}
 
-      <div className="fixed right-4 top-16 z-50 w-[calc(100vw-2rem)] max-w-sm space-y-3 sm:w-96">
+      <div hidden={reviewingMessages} role="region" aria-label={t.region} className="pointer-events-none fixed right-4 top-16 z-50 max-h-[calc(100dvh-5rem)] w-[calc(100vw-2rem)] max-w-sm space-y-3 overflow-y-auto sm:w-96">
         {sortedNotifications.map((notification, index) => (
           <NotificationCard
             key={notification.id}
@@ -272,6 +284,8 @@ export function NotificationSystem({
             onRemove={onRemove}
             onMarkRead={onMarkRead}
             index={index}
+            locale={locale}
+            pauseDismiss={reviewingMessages}
           />
         ))}
       </div>
@@ -335,15 +349,34 @@ function NotificationCard({
   onRemove,
   onMarkRead,
   index,
+  locale,
+  pauseDismiss,
 }: {
   notification: NotificationData
   onRemove: (id: string) => void
   onMarkRead: (id: string) => void
   index: number
+  locale: Locale
+  pauseDismiss: boolean
 }) {
   const [isExiting, setIsExiting] = useState(false)
   const [progress, setProgress] = useState(100)
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const card = useRef<HTMLDivElement>(null)
+  const t = notificationCopy[locale]
   const isUnread = !notification.readAt
+
+  useEffect(() => {
+    if (!hovered) return
+    // Removing the button under the pointer can suppress mouseleave in the browser.
+    // Reconcile hover on the next pointer move so the expiry timer can resume.
+    const reconcileHover = (event: PointerEvent) => {
+      if (!card.current?.contains(event.target as Node)) setHovered(false)
+    }
+    document.addEventListener("pointermove", reconcileHover, { passive: true })
+    return () => document.removeEventListener("pointermove", reconcileHover)
+  }, [hovered])
 
   const handleRemove = useCallback(() => {
     setIsExiting(true)
@@ -358,6 +391,8 @@ function NotificationCard({
       setProgress(100)
       return
     }
+    // Give the full reading interval again after pointer/keyboard interaction.
+    if (hovered || focused || pauseDismiss) return
 
     const interval = 75
     const steps = duration / interval
@@ -377,12 +412,20 @@ function NotificationCard({
       clearInterval(progressTimer)
       clearTimeout(removeTimer)
     }
-  }, [handleRemove, notification.duration])
+  }, [handleRemove, notification.duration, hovered, focused, pauseDismiss])
 
   return (
     <div
+      ref={card}
+      role="group"
+      aria-label={notification.title}
+      tabIndex={-1}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false) }}
       className={cn(
-        "relative transform overflow-hidden rounded-lg transition-all duration-300 ease-out",
+        "pointer-events-auto relative transform overflow-hidden rounded-lg [overflow-wrap:anywhere] transition-all duration-300 ease-out motion-reduce:transition-none motion-reduce:animate-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--product-brand)]",
         getNotificationStyles(notification, isUnread),
         isExiting ? "translate-x-full scale-95 opacity-0" : "translate-x-0 scale-100 opacity-100",
         "animate-in slide-in-from-right-full"
@@ -399,19 +442,19 @@ function NotificationCard({
       ) : null}
 
       <div className="p-4">
-        <div className="flex items-start gap-4">
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
           <div className={getIconStyles(notification.type, notification.category, notification.severity)}>
             <NotificationIcon type={notification.type} category={notification.category} />
           </div>
 
-          <div className="min-w-0 flex-1">
+          <div className="w-full min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h4 className="notification-title truncate text-sm font-bold leading-tight">{notification.title}</h4>
+                  <h4 className="notification-title break-words text-sm font-bold leading-tight">{notification.title}</h4>
                   {isUnread ? (
                     <span className="notification-badge notification-badge--new rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide">
-                      New
+                      {t.new}
                     </span>
                   ) : null}
                 </div>
@@ -423,27 +466,27 @@ function NotificationCard({
                 size="sm"
                 className="notification-dismiss-button h-8 w-8 rounded-lg p-0"
                 onClick={handleRemove}
-                aria-label={`Dismiss ${notification.title}`}
+                aria-label={`${t.dismiss}: ${notification.title}`}
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
 
             <div className="notification-meta mt-3 flex flex-wrap items-center gap-2 text-xs">
-              <span>{formatNotificationTime(notification.createdAt)}</span>
+              <span>{notificationDateTime(notification.createdAt, locale)}</span>
               {notification.category && notification.category !== "general" ? (
                 <span className="notification-pill notification-pill--category rounded-full px-2 py-0.5 font-semibold capitalize">
-                  {notification.category.replace("_", " ")}
+                  {notificationCategoryLabel(notification.category, locale)}
                 </span>
               ) : null}
               {notification.priority === "high" ? (
                 <span className="notification-pill notification-pill--priority rounded-full px-2 py-0.5 font-bold">
-                  High priority
+                  {t.high}
                 </span>
               ) : null}
               {notification.deliveryState ? (
                 <span className="notification-pill notification-pill--state rounded-full px-2 py-0.5 font-semibold capitalize">
-                  {notification.deliveryState}
+                  {notificationStateLabel(notification, locale)}
                 </span>
               ) : null}
             </div>
@@ -453,18 +496,18 @@ function NotificationCard({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="notification-action-button h-8 rounded-lg text-xs font-semibold"
-                  onClick={() => onMarkRead(notification.id)}
+                  className="notification-action-button h-auto min-h-9 whitespace-normal rounded-lg py-2 text-xs font-semibold"
+                  onClick={() => { onMarkRead(notification.id); card.current?.focus() }}
                 >
                   <CheckCheck className="h-3.5 w-3.5" />
-                  Mark read
+                  {t.markRead}
                 </Button>
               ) : null}
               {notification.action ? (
                 <Button
                   variant="outline"
                   size="sm"
-                  className="notification-action-button h-8 rounded-lg text-xs font-semibold"
+                  className="notification-action-button h-auto min-h-9 whitespace-normal rounded-lg py-2 text-xs font-semibold"
                   onClick={() => {
                     onMarkRead(notification.id)
                     notification.action?.onClick()

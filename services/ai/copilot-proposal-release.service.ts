@@ -139,6 +139,20 @@ export async function authorizeCopilotProposalRelease(
   }
 }
 
+// Display hint only. Every mutation must still authorize the current release.
+export async function isCopilotProposalReleaseAvailable(
+  input: Parameters<typeof authorizeCopilotProposalRelease>[0],
+  dependencies: Dependencies = DEFAULT_DEPENDENCIES,
+): Promise<boolean> {
+  try {
+    await authorizeCopilotProposalRelease(input, dependencies)
+    return true
+  } catch (error) {
+    if (error instanceof ForbiddenError) return false
+    throw error
+  }
+}
+
 function proposalReleaseReady(
   release: ProposalRelease,
   roleCodes: readonly string[],

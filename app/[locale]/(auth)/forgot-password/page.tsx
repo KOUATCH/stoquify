@@ -1,15 +1,14 @@
 import ForgotPasswordForm from "@/components/Forms/ForgotPasswordForm";
-import { GridBackground } from "@/components/reusable-ui/grid-background";
-import React from "react";
+import { AuthV2Shell } from "@/components/auth/v2/AuthV2Shell";
+import { pickLocale } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
 
-export default function Page() {
+export default async function Page({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = pickLocale((await params).locale);
   return (
-    <GridBackground>
-      <div className="px-4">
+    <AuthV2Shell locale={locale} variant="recovery" alternatePath="/forgot-password">
         <ForgotPasswordForm />
-      </div>
-    </GridBackground>
+    </AuthV2Shell>
   );
 }

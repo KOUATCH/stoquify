@@ -1,0 +1,141 @@
+{
+  "run": "ccbdde7f-f3c",
+  "mode": "browser",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T16:01:15.194Z",
+  "sourcesBefore": {
+    "services/organization/organization-directory-input.ts": "a3091cfa11d5404cf1732481fc0e547efff470f7876dbcc95e6b0fa7c9dde98e",
+    "services/organization/organization-directory-export.service.ts": "20ac8eb07a632974307389cea64cc3bfce57b4ff741494f489618bd2fa4d64ac",
+    "services/organization/organization-settings.service.ts": "f63eae1907bf75d2244bc3acb531c55eecfa373ed95dbd2cc89122f4f79d7ea1",
+    "services/security/export-safety.service.ts": "9ca809ce39b3ae1b94610143bad050afed3a8d961cf6b1afcabf0276fb6945f3",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "actions/organization/organization-directory-export.actions.ts": "8600a2e0cb86bfb2d9d33857700fd89feea820ee0c86aa21f42fa5433b42561e",
+    "hooks/useOrganizationDirectoryExport.ts": "f963b92baa1fcdcb9d1c7a57fcc11f35911fb65acf71e63cb68d629a3a8a3efb",
+    "hooks/organization-directory-recovery.ts": "cf94f47cf9e3112fbc5f949d29ffea1bddbc0a29a38a1ba28a54c94b147936ee",
+    "components/settings/OrganizationDirectoryExport.tsx": "6d06133fb1f9334ebcd7311ca8a9515af75b1aa2f087ae018596f36b3535266e",
+    "components/settings/OrganizationManagementTable.tsx": "1f3097cd65ecaca67b9b10bb10b11ae0361071a49bf8b6bfdd8373b4425c6d08",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "en company export, denial, review, recovery and downloads",
+      "passed": true,
+      "routeReadyMs": 8409,
+      "newAudits": 2,
+      "deniedExport": true,
+      "freshPasswordConfirmed": true,
+      "exactBytesVerified": true,
+      "keyboardFocusContainmentAndReturn": true,
+      "lostAcknowledgementAcrossRefresh": true,
+      "failedPreviewRecovery": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "screenshots": [
+        "en-directory-export-reader-denied-ccbdde7f-f3c.png",
+        "en-directory-export-review-390-ccbdde7f-f3c.png",
+        "en-directory-export-review-768-ccbdde7f-f3c.png",
+        "en-directory-export-review-1440-ccbdde7f-f3c.png",
+        "en-directory-export-prepared-ccbdde7f-f3c.png",
+        "en-directory-export-interrupted-ccbdde7f-f3c.png",
+        "en-directory-export-recovered-mobile-ccbdde7f-f3c.png",
+        "en-directory-export-preview-failure-ccbdde7f-f3c.png"
+      ],
+      "downloads": [
+        {
+          "file": "en-directory-export-prepared-ccbdde7f-f3c.csv",
+          "bytes": 1097,
+          "sha256": "bbdac6b1cffb897bba23002d422bf169fca051045175d0eeec0c896fb81c11da"
+        },
+        {
+          "file": "en-directory-export-download-again-ccbdde7f-f3c.csv",
+          "bytes": 1097,
+          "sha256": "bbdac6b1cffb897bba23002d422bf169fca051045175d0eeec0c896fb81c11da"
+        },
+        {
+          "file": "en-directory-export-recovered-ccbdde7f-f3c.csv",
+          "bytes": 1097,
+          "sha256": "65a37b4ea5fa4bf069df5e1bdbeb598cb495c81a0957bd501e9985411db0a1fc"
+        }
+      ],
+      "durationMs": 67823
+    },
+    {
+      "name": "fr company export, denial, review, recovery and downloads",
+      "passed": true,
+      "routeReadyMs": 9794,
+      "newAudits": 2,
+      "deniedExport": true,
+      "freshPasswordConfirmed": true,
+      "exactBytesVerified": true,
+      "keyboardFocusContainmentAndReturn": true,
+      "lostAcknowledgementAcrossRefresh": true,
+      "failedPreviewRecovery": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "screenshots": [
+        "fr-directory-export-reader-denied-ccbdde7f-f3c.png",
+        "fr-directory-export-review-390-ccbdde7f-f3c.png",
+        "fr-directory-export-review-768-ccbdde7f-f3c.png",
+        "fr-directory-export-review-1440-ccbdde7f-f3c.png",
+        "fr-directory-export-prepared-ccbdde7f-f3c.png",
+        "fr-directory-export-interrupted-ccbdde7f-f3c.png",
+        "fr-directory-export-recovered-mobile-ccbdde7f-f3c.png",
+        "fr-directory-export-preview-failure-ccbdde7f-f3c.png"
+      ],
+      "downloads": [
+        {
+          "file": "fr-directory-export-prepared-ccbdde7f-f3c.csv",
+          "bytes": 1181,
+          "sha256": "e9edd2cacdb35d6ec0f58a3161c16ca677e46b3299b8272bfdf08d295fb4f8d2"
+        },
+        {
+          "file": "fr-directory-export-download-again-ccbdde7f-f3c.csv",
+          "bytes": 1181,
+          "sha256": "e9edd2cacdb35d6ec0f58a3161c16ca677e46b3299b8272bfdf08d295fb4f8d2"
+        },
+        {
+          "file": "fr-directory-export-recovered-ccbdde7f-f3c.csv",
+          "bytes": 1181,
+          "sha256": "46a5383e15bd7043dc2c2aec83b48f0adcd222143d0b8b07ec86da1b3b4005c9"
+        }
+      ],
+      "durationMs": 78641
+    }
+  ],
+  "limitations": [
+    "Synthetic owned database only. No migration, external delivery, or real payment execution.",
+    "Network-response loss and audit-sink failure are injected; PostgreSQL transactions and browser downloads are real."
+  ],
+  "originalBefore": "4f2be114bc3d7a2315f2440e73ed981daabd17b1b5913b1ff9d6d08b8d4df805",
+  "credentialUrlRequests": 0,
+  "originalAfter": "4f2be114bc3d7a2315f2440e73ed981daabd17b1b5913b1ff9d6d08b8d4df805",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T16:03:43.130Z",
+  "sourcesAfter": {
+    "services/organization/organization-directory-input.ts": "a3091cfa11d5404cf1732481fc0e547efff470f7876dbcc95e6b0fa7c9dde98e",
+    "services/organization/organization-directory-export.service.ts": "20ac8eb07a632974307389cea64cc3bfce57b4ff741494f489618bd2fa4d64ac",
+    "services/organization/organization-settings.service.ts": "f63eae1907bf75d2244bc3acb531c55eecfa373ed95dbd2cc89122f4f79d7ea1",
+    "services/security/export-safety.service.ts": "9ca809ce39b3ae1b94610143bad050afed3a8d961cf6b1afcabf0276fb6945f3",
+    "services/controls/sensitive-action.service.ts": "21d817957dd9beab529b40fcd2fb2e60460a7f39b9778ae85da97fc3097d7fea",
+    "actions/organization/organization-directory-export.actions.ts": "8600a2e0cb86bfb2d9d33857700fd89feea820ee0c86aa21f42fa5433b42561e",
+    "hooks/useOrganizationDirectoryExport.ts": "f963b92baa1fcdcb9d1c7a57fcc11f35911fb65acf71e63cb68d629a3a8a3efb",
+    "hooks/organization-directory-recovery.ts": "cf94f47cf9e3112fbc5f949d29ffea1bddbc0a29a38a1ba28a54c94b147936ee",
+    "components/settings/OrganizationDirectoryExport.tsx": "6d06133fb1f9334ebcd7311ca8a9515af75b1aa2f087ae018596f36b3535266e",
+    "components/settings/OrganizationManagementTable.tsx": "1f3097cd65ecaca67b9b10bb10b11ae0361071a49bf8b6bfdd8373b4425c6d08",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "f6674b0ab6e7cd904d580e314b18adc56954ea7f0852cf15ca95f68a5797dd17",
+  "passed": 2,
+  "failed": 0
+}

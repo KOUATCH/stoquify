@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { jsonErrorEnvelopeResponse } from "@/lib/error-handling/route-response"
 import { NotFoundError } from "@/services/_shared/action-errors"
 import { getPublicSupplierPoEnvelope } from "@/services/purchase-order/supplier-po-acknowledgement.service"
+import { privateSupplierPoResponse } from "@/services/purchase-order/supplier-po-http"
 
 const ENDPOINT = "GET /api/supplier-po-envelopes/[envelopeId]"
 
@@ -16,11 +17,7 @@ function requestIpAddress(request: Request) {
 }
 
 function securedJson(data: unknown, status = 200) {
-  const response = NextResponse.json(data, { status })
-  response.headers.set("Cache-Control", "private, no-store, max-age=0")
-  response.headers.set("Referrer-Policy", "no-referrer")
-  response.headers.set("X-Content-Type-Options", "nosniff")
-  return response
+  return privateSupplierPoResponse(NextResponse.json(data, { status }))
 }
 
 export async function GET(
@@ -41,10 +38,10 @@ export async function GET(
     })
     return securedJson({ success: true, data: envelope })
   } catch (error) {
-    return jsonErrorEnvelopeResponse(
+    return privateSupplierPoResponse(jsonErrorEnvelopeResponse(
       error,
       { endpoint: ENDPOINT },
       { success: false },
-    )
+    ))
   }
 }

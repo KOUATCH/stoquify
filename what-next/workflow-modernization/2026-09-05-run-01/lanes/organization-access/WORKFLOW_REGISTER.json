@@ -1,0 +1,1848 @@
+{
+  "schemaVersion": 1,
+  "lane": "organization-access",
+  "evidenceDate": "2026-09-06T18:38:35.873Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "coverage": {
+    "discoveredWorkflows": 23,
+    "runtimeVisited": 23,
+    "completeWorkflowVerified": 0,
+    "denominatorStatus": "bounded_semantic_discovery_not_total_platform_coverage",
+    "tenantDirectoryDefectsCorrected": 1
+  },
+  "identityOverlaps": [
+    {
+      "id": "ID-03",
+      "owner": "parent identity lane",
+      "name": "Invite workspace user",
+      "source": "services/users/user-identity.service.ts:sendInviteWorkflow"
+    },
+    {
+      "id": "ID-04",
+      "owner": "parent identity lane",
+      "name": "Redeem invitation",
+      "source": "services/users/user-identity.service.ts:acceptInvitationWorkflow"
+    }
+  ],
+  "graphs": [
+    {
+      "file": "graphify-out/graph_components.json",
+      "communities": [
+        9,
+        26,
+        111,
+        163
+      ]
+    },
+    {
+      "file": "graphify-out/graph_actions.json",
+      "communities": [
+        1,
+        0,
+        102
+      ]
+    },
+    {
+      "file": "graphify-out/graph_hooks.json",
+      "communities": [
+        14,
+        32
+      ]
+    },
+    {
+      "file": "graphify-out/graph_app.json",
+      "communities": [
+        164,
+        165,
+        166,
+        49,
+        167,
+        3
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "OA-PROFILE-READ",
+      "name": "Read current organization settings",
+      "purpose": "Understand identity, locale, currency, timezone and operating calendar.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "system.organization.read (COMPANY_READ alias) for settings",
+          "MANAGE_SYSTEM_SETTINGS plus settings module API guard for v1 read"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/company",
+        "/[locale]/dashboard/settings/organization -> localized company redirect",
+        "GET /api/v1/organisations",
+        "app/[locale]/(dashboard)/dashboard/settings/company/page.tsx",
+        "hooks/useOrganizationSettings.ts",
+        "actions/organization/organization-settings-actions.ts",
+        "app/api/v1/organisations/route.ts"
+      ],
+      "services": [
+        "services/organization/organization-settings.service.ts",
+        "services/organization/organization-read.service.ts"
+      ],
+      "records": [
+        "Organization"
+      ],
+      "transitions": [
+        "Current server identity and read permission",
+        "Scoped active/nondeleted organization lookup",
+        "Visible loading/unavailable/retry or saved profile",
+        "Server-derived read-only/edit affordance; stale refresh preserves draft"
+      ],
+      "sideEffects": [
+        "Reads only"
+      ],
+      "implementationStatus": "bounded_profile_validation_revision_audit_and_en_fr_recovery_implemented",
+      "reviewStatus": "implemented_verified_bounded_scope",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "PROFILE_REVIEW.md",
+        "PROFILE_IMPLEMENTATION.md",
+        "../../evidence/organization-profile-receipt.json"
+      ],
+      "findings": [],
+      "remaining": [
+        "Actual assistive-technology, native zoom and comprehensive contrast verification remain open.",
+        "API/route read-policy parity and authorized audit-history browsing need completion.",
+        "Controlled currency migration is not implemented; direct profile currency changes are explicitly refused. Connected timezone/inventory-date consequences remain under review.",
+        "Additional organization creation, directory affordances and membership handoff remain separate incomplete workflows."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-PROFILE-UPDATE",
+      "name": "Review and update organization defaults",
+      "purpose": "Maintain identity, regional defaults and operating dates.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "system.organization.update",
+          "fresh authentication 300 seconds",
+          "same-organization guard"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/company",
+        "components/settings/OrganizationSettingsForm.tsx",
+        "actions/organization/organization-settings-actions.ts",
+        "hooks/useOrganizationSettings.ts"
+      ],
+      "services": [
+        "services/organization/organization-settings.service.ts",
+        "services/organization/organization-profile-input.ts",
+        "services/organization/organization-profile-update.service.ts",
+        "services/security/step-up-auth.service.ts"
+      ],
+      "records": [
+        "Organization",
+        "AuditLog",
+        "Session",
+        "Role"
+      ],
+      "transitions": [
+        "Load server-derived view/edit capability and pin saved revision",
+        "Edit a tenant-local draft; retain it across refresh or failure",
+        "Review changes and confirm own password through real step-up when required",
+        "Recheck current tenant, actor, role membership, session and revision under database locks",
+        "Commit profile and before/after audit atomically; preserve prior state on audit failure",
+        "Reload and compare stale/uncertain state; merge only explicitly edited fields; save as a new reviewed change"
+      ],
+      "sideEffects": [
+        "Only submitted profile fields change; currency change is refused",
+        "Mandatory same-transaction before/after audit",
+        "Revision-bound cache refresh; inline accessible feedback"
+      ],
+      "implementationStatus": "bounded_profile_validation_revision_audit_and_en_fr_recovery_implemented",
+      "reviewStatus": "implemented_verified_bounded_scope",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "PROFILE_REVIEW.md",
+        "PROFILE_IMPLEMENTATION.md",
+        "../../evidence/organization-profile-receipt.json"
+      ],
+      "findings": [
+        "OA-F05",
+        "OA-F06",
+        "OA-F07"
+      ],
+      "remaining": [
+        "Actual assistive-technology, native zoom and comprehensive contrast verification remain open.",
+        "API/route read-policy parity and authorized audit-history browsing need completion.",
+        "Controlled currency migration is not implemented; direct profile currency changes are explicitly refused. Connected timezone/inventory-date consequences remain under review.",
+        "Additional organization creation, directory affordances and membership handoff remain separate incomplete workflows."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-DIRECTORY",
+      "name": "Review current organization directory data",
+      "purpose": "Inspect the current company footprint and accurately described exact payment aggregate.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "system.organization.read; request must match ctx.orgId"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/company",
+        "components/settings/OrganizationManagementTable.tsx:358",
+        "hooks/useOrganizationSettings.ts:101",
+        "actions/organization/organization-settings-actions.ts:102",
+        "services/organization/organization-settings.service.ts:150"
+      ],
+      "services": [
+        "services/organization/organization-settings.service.ts"
+      ],
+      "records": [
+        "Organization + relation counts",
+        "Payment PAID aggregate"
+      ],
+      "transitions": [
+        "Authorize current tenant",
+        "Read scoped organization, related counts and gross paid payment amount",
+        "Search/filter/sort, copy ID or open a related screen",
+        "Enter separately controlled export review when permitted"
+      ],
+      "sideEffects": [
+        "Read sensitive cross-domain aggregates; browser CSV/clipboard on explicit action"
+      ],
+      "implementationStatus": "tenant_scope_exact_decimal_amount_and_export_separation_corrected",
+      "reviewStatus": "focused_service_regression_passed",
+      "runtimeStatus": "en_fr_current_scope_exact_amount_and_controlled_export_entry_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        {
+          "kind": "mocked_service_tests",
+          "source": "DIRECTORY_SCOPE_VERIFICATION.json",
+          "result": "15 passed in two suites; before 10 failed / 4 passed"
+        },
+        {
+          "kind": "mocked_service_tests",
+          "source": "DIRECTORY_SCOPE_VERIFICATION.json",
+          "result": "15 passed in two suites; before 10 failed / 4 passed"
+        },
+        "ORGANIZATION_HANDOFF.md",
+        "../../evidence/organization-handoff-receipt.json",
+        "ORGANIZATION_DIRECTORY_EXPORT.md",
+        "../../evidence/directory-export-receipt.json"
+      ],
+      "findings": [
+        "OA-F01"
+      ],
+      "remaining": [
+        "Directory clipboard and secondary links need complete lifecycle verification.",
+        "Full shell permission refresh, cross-tab updates and native accessibility remain open."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-CREATE",
+      "name": "Set up another organization through owner registration",
+      "purpose": "Create a usable company and owner through the existing registration workflow, preserving the current workspace until an explicit account sign-in.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "system.organization.update",
+          "fresh authentication 300 seconds"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/company/page.tsx",
+        "components/settings/OrganizationManagementTable.tsx",
+        "components/settings/OrganizationSetupHandoff.tsx",
+        "actions/organization/organization-settings-actions.ts#createOrganizationAction"
+      ],
+      "services": [
+        "services/organization/organization-settings.service.ts#createOrganizationForSettings",
+        "services/users/user-identity.service.ts#registerOrganizationAccount"
+      ],
+      "records": [
+        "Organization",
+        "Role"
+      ],
+      "transitions": [
+        "Open guidance without mutation",
+        "Open owner registration in a separate tab",
+        "Owner enters own identity, credentials and consent",
+        "Review and explicitly submit existing ID-02 registration",
+        "Persist owner, credential, company, role and registration audit",
+        "Require email verification; preserve original signed-in workspace"
+      ],
+      "sideEffects": [
+        "Creates active organization with wildcard administrator template; no member assignment or switch occurs"
+      ],
+      "implementationStatus": "ownerless_creation_refused_existing_owner_registration_handoff_implemented",
+      "reviewStatus": "current_source_real_database_and_browser_review",
+      "runtimeStatus": "en_fr_actual_registration_and_original_session_preservation_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "ORGANIZATION_HANDOFF.md",
+        "../../evidence/organization-handoff-receipt.json"
+      ],
+      "findings": [
+        "OA-F02",
+        "OA-F06"
+      ],
+      "remaining": [
+        "One-account multiple-organization membership and a switcher are unimplemented engineering work.",
+        "Live owner-email delivery, verification recovery and full onboarding remain separately incomplete; local new owners remain unverified.",
+        "Pre-existing ownerless organization records need individually authorized reconciliation; no automatic deletion or reassignment.",
+        "Organization directory CSV export authority/audit and full retention review remain open.",
+        "Native screen reader, browser zoom, comprehensive contrast and full sign-in exceptions/recovery remain open.",
+        "Permission refresh, personal-identity administration and the remaining whole-platform register remain open.",
+        "Previously rejected global authentication/provider and live invitation-adapter changes remain unapplied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-ROLE-LIST",
+      "name": "Browse role catalogue",
+      "purpose": "Locate current tenant roles and open role editing.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "roles.read (READ_ROLES alias)",
+          "same-tenant role lookup"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/roles",
+        "app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx:93",
+        "actions/roles/getOrgRoles.ts",
+        "actions/roles/getRoleById.ts"
+      ],
+      "services": [
+        "services/roles/role.service.ts"
+      ],
+      "records": [
+        "Role"
+      ],
+      "transitions": [
+        "read -> catalogue/summary -> edit link"
+      ],
+      "sideEffects": [
+        "Reads only"
+      ],
+      "implementationStatus": "scoped_error_aware_bilingual_permission_aware_catalogue_implemented",
+      "reviewStatus": "current_source_unit_and_actual_browser_review",
+      "runtimeStatus": "en_fr_reader_editor_filter_keyboard_menu_and_localized_handoff_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "ROLE_CATALOGUE.md",
+        "../../evidence/role-catalogue-and-registration-receipt.json",
+        "INVITATION_GRANT_CONTROLS.md",
+        "../../evidence/invitation-grant-controls-receipt.json"
+      ],
+      "findings": [
+        "OA-F03",
+        "OA-F10"
+      ],
+      "remaining": [
+        "Member assignment/deactivation and coordinated last-administrator protection remain under review.",
+        "Catalogue read failures are unit-tested; runtime database-outage presentation remains unvisited. Native zoom, screen reader and comprehensive contrast review are open.",
+        "The French shell still contains English navigation labels outside the corrected role page. Mobile screenshot records the first fold; reflow is checked at 390/768/1440.",
+        "Four role-control operations now use stored-grant authority. Other alias families and global RBAC semantics remain under review."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-ROLE-CREATE",
+      "name": "Create a tenant role and grantable permissions",
+      "purpose": "Define a reusable permission set within the administrator grant ceiling.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "roles.create",
+          "current password-confirmed session within 300 seconds",
+          "roles.permissions.assign and risk-aware stored-grant ceiling for additions",
+          "roles.permissions.remove for removals; no canonical alias substitution",
+          "controls.audit.read for retained history"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/roles/new/page.tsx",
+        "components/Forms/RoleForm.tsx",
+        "actions/roles/createRole.ts",
+        "actions/roles/getRoleEditor.ts",
+        "hooks/useRoleEditor.ts"
+      ],
+      "services": [
+        "services/roles/role.service.ts",
+        "services/roles/role-write.service.ts",
+        "services/roles/role-editor.service.ts",
+        "services/roles/role-permission-policy.ts"
+      ],
+      "records": [
+        "Role",
+        "AuditLog ROLE_CHANGED command receipt",
+        "Current User/role membership/Session authority"
+      ],
+      "transitions": [
+        "Load current scoped role and stored-grant catalogue",
+        "Edit bounded EN/FR names, description and retained permission selection",
+        "Review permission deltas and responsibilities",
+        "Confirm own password if required, then explicitly save",
+        "Lock current organization/account/role/session and reject stale or unauthorized changes",
+        "Commit role and mandatory audit atomically; return same receipt for an identical retry",
+        "Keep draft for stale comparison or lost-response recovery; inspect authorized recent history"
+      ],
+      "sideEffects": [
+        "New role record; no user-role association added"
+      ],
+      "implementationStatus": "transactional_commands_bilingual_editor_and_scoped_history_implemented",
+      "reviewStatus": "current_source_postgres_and_actual_browser_review",
+      "runtimeStatus": "en_fr_create_update_stepup_stale_merge_lost_response_and_history_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "ROLE_AUTHORITY_REVIEW.md",
+        "../../evidence/role-authority-receipt.json",
+        "ROLE_WORKFLOW_IMPLEMENTATION.md",
+        "../../evidence/role-workflow-receipt.json",
+        "../../evidence/role-catalogue-and-registration-receipt.json",
+        "INVITATION_GRANT_CONTROLS.md",
+        "../../evidence/invitation-grant-controls-receipt.json",
+        "MEMBER_LIFECYCLE_REVIEW.md",
+        "../../evidence/role-custodian-receipt.json"
+      ],
+      "findings": [
+        "OA-F06",
+        "OA-F08",
+        "OA-F10"
+      ],
+      "remaining": [
+        "Member assignment/deactivation and connected last-administrator safety",
+        "History export/pagination/retention review",
+        "Tab-close draft recovery, native zoom, screen reader and complete contrast review",
+        "Whole-platform workflow reconciliation and remaining remediation",
+        "Four role-control operations now use stored-grant authority. Other alias families and global RBAC semantics remain under review."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-ROLE-UPDATE",
+      "name": "Change role metadata and permissions",
+      "purpose": "Apply reviewed permission changes to an existing tenant role.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "roles.update",
+          "current password-confirmed session within 300 seconds",
+          "roles.permissions.assign and risk-aware stored-grant ceiling for additions",
+          "roles.permissions.remove for removals; no canonical alias substitution",
+          "controls.audit.read for retained history"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/roles/update/[id]/page.tsx",
+        "components/Forms/RoleForm.tsx",
+        "actions/roles/updateRole.ts",
+        "actions/roles/getRoleEditor.ts",
+        "hooks/useRoleEditor.ts"
+      ],
+      "services": [
+        "services/roles/role.service.ts",
+        "services/roles/role-write.service.ts",
+        "services/roles/role-editor.service.ts",
+        "services/roles/role-permission-policy.ts"
+      ],
+      "records": [
+        "Role",
+        "AuditLog ROLE_CHANGED command receipt",
+        "Current User/role membership/Session authority"
+      ],
+      "transitions": [
+        "Load current scoped role and stored-grant catalogue",
+        "Edit bounded EN/FR names, description and retained permission selection",
+        "Review permission deltas and responsibilities",
+        "Confirm own password if required, then explicitly save",
+        "Lock current organization/account/role/session and reject stale or unauthorized changes",
+        "Commit role and mandatory audit atomically; return same receipt for an identical retry",
+        "Keep draft for stale comparison or lost-response recovery; inspect authorized recent history"
+      ],
+      "sideEffects": [
+        "Changes permissions for all users holding role; read-time RBAC reloads current roles"
+      ],
+      "implementationStatus": "transactional_commands_bilingual_editor_and_scoped_history_implemented",
+      "reviewStatus": "current_source_postgres_and_actual_browser_review",
+      "runtimeStatus": "en_fr_create_update_stepup_stale_merge_lost_response_and_history_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "ROLE_AUTHORITY_REVIEW.md",
+        "../../evidence/role-authority-receipt.json",
+        "ROLE_WORKFLOW_IMPLEMENTATION.md",
+        "../../evidence/role-workflow-receipt.json",
+        "../../evidence/role-catalogue-and-registration-receipt.json",
+        "INVITATION_GRANT_CONTROLS.md",
+        "../../evidence/invitation-grant-controls-receipt.json",
+        "MEMBER_LIFECYCLE_REVIEW.md",
+        "../../evidence/role-custodian-receipt.json",
+        "MEMBER_DEACTIVATION.md",
+        "SESSION_REVOCATION_REVIEW.md",
+        "../../evidence/member-deactivation-receipt.json",
+        "MEMBER_ACCESS.md",
+        "../../evidence/member-access-receipt.json"
+      ],
+      "findings": [
+        "OA-F04",
+        "OA-F06",
+        "OA-F08",
+        "OA-F10"
+      ],
+      "remaining": [
+        "History export/pagination/retention review",
+        "Tab-close draft recovery, native zoom, screen reader and complete contrast review",
+        "Whole-platform workflow reconciliation and remaining remediation",
+        "Four role-control operations now use stored-grant authority. Other alias families and global RBAC semantics remain under review.",
+        "History pagination/export and full retention analysis.",
+        "Draft/retry continuity across refresh or tab closure.",
+        "Actual native screen reader, browser zoom and comprehensive contrast checks.",
+        "Global cached identity/provider session behavior remains in its separate rejected-change review.",
+        "Personal-identity administration, organization handoffs and the full remaining platform workflow register."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-USERS",
+      "name": "Review and export organization users",
+      "purpose": "Find active/inactive users, role associations and verification state.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "users.read (READ_USERS alias)",
+          "same-tenant check",
+          "safeUserSelect omits passwords/tokens/role permission arrays"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/users",
+        "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx:46",
+        "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx:40",
+        "actions/users/getOrgUsers.ts"
+      ],
+      "services": [
+        "services/users/user-identity.service.ts"
+      ],
+      "records": [
+        "User",
+        "Role associations"
+      ],
+      "transitions": [
+        "scoped read -> map safe rows -> filters/search -> refresh or CSV"
+      ],
+      "sideEffects": [
+        "Browser CSV on explicit action; no new server export"
+      ],
+      "implementationStatus": "member_directory_and_deactivation_corrected_remaining_lifecycle_open",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "MEMBER_LIFECYCLE_REVIEW.md",
+        "../../evidence/role-custodian-receipt.json",
+        "MEMBER_DEACTIVATION.md",
+        "SESSION_REVOCATION_REVIEW.md",
+        "../../evidence/member-deactivation-receipt.json",
+        "MEMBER_ACCESS.md",
+        "../../evidence/member-access-receipt.json"
+      ],
+      "findings": [
+        "OA-F03",
+        "OA-F10"
+      ],
+      "remaining": [
+        "Default cached identity and provider-wide session issuance require further review; no global cache change was applied.",
+        "Native screen-reader, zoom and comprehensive contrast verification remain open.",
+        "History pagination/export and full retention analysis.",
+        "Draft/retry continuity across refresh or tab closure.",
+        "Actual native screen reader, browser zoom and comprehensive contrast checks.",
+        "Global cached identity/provider session behavior remains in its separate rejected-change review.",
+        "Personal-identity administration, organization handoffs and the full remaining platform workflow register."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-DEACTIVATE",
+      "name": "Deactivate an organization user while retaining history",
+      "purpose": "Stop account access, lock the user and cancel pending invitations without deleting business records.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "users.deactivate OR users.delete",
+          "current password-confirmed session within 300 seconds",
+          "same-tenant target, self-denial and last-custodian preservation"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx",
+        "components/settings/UserDeactivation.tsx",
+        "actions/users/deleteUser.ts"
+      ],
+      "services": [
+        "services/users/user-lifecycle.service.ts"
+      ],
+      "records": [
+        "User",
+        "Invite",
+        "AuditLog"
+      ],
+      "transitions": [
+        "confirm -> scoped transaction -> pending invites CANCELLED + inactive/locked user + cleared legacy token + audit -> safe DTO"
+      ],
+      "sideEffects": [
+        "Retains user and financial records; read-time RBAC rejects inactive account"
+      ],
+      "implementationStatus": "member_directory_and_deactivation_corrected_remaining_lifecycle_open",
+      "reviewStatus": "current_source_and_owned_runtime_review",
+      "runtimeStatus": "partial_real_postgres_and_en_fr_browser_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "MEMBER_LIFECYCLE_REVIEW.md",
+        "../../evidence/role-custodian-receipt.json",
+        "MEMBER_DEACTIVATION.md",
+        "SESSION_REVOCATION_REVIEW.md",
+        "../../evidence/member-deactivation-receipt.json",
+        "MEMBER_ACCESS.md",
+        "../../evidence/member-access-receipt.json"
+      ],
+      "findings": [
+        "OA-F09",
+        "OA-F10"
+      ],
+      "remaining": [
+        "Default cached identity and provider-wide session issuance require further review; no global cache change was applied.",
+        "Native screen-reader, zoom and comprehensive contrast verification remain open.",
+        "History pagination/export and full retention analysis.",
+        "Draft/retry continuity across refresh or tab closure.",
+        "Actual native screen reader, browser zoom and comprehensive contrast checks.",
+        "Global cached identity/provider session behavior remains in its separate rejected-change review.",
+        "Personal-identity administration, organization handoffs and the full remaining platform workflow register."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-USER-EDIT",
+      "name": "Review a member’s current access",
+      "purpose": "Find the current account, inspect scoped roles and open role changes, reactivation or permitted history.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "users.read; current same-organization account",
+          "controls.audit.read only for history"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx",
+        "components/settings/MemberAccessEditor.tsx",
+        "hooks/useMemberAccess.ts",
+        "actions/users/memberAccess.ts"
+      ],
+      "services": [
+        "services/users/member-access-read.service.ts",
+        "services/users/member-access.service.ts",
+        "services/users/member-access-policy.ts",
+        "services/users/member-access-input.ts"
+      ],
+      "records": [
+        "User safe access read model",
+        "Current roles and membership",
+        "Redacted permitted AuditLog history"
+      ],
+      "transitions": [
+        "Directory member-access link → current scoped account/roles → authority-aware review or history"
+      ],
+      "sideEffects": [
+        "Read path only; changes owned by distinct member-role and reactivation workflows"
+      ],
+      "implementationStatus": "supported_history_export_and_same_tab_recovery_implemented",
+      "reviewStatus": "current_source_postgres_and_browser_bytes_review",
+      "runtimeStatus": "en_fr_paging_audited_download_and_lost_response_refresh_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "MEMBER_LIFECYCLE_REVIEW.md",
+        "../../evidence/role-custodian-receipt.json",
+        "MEMBER_DEACTIVATION.md",
+        "SESSION_REVOCATION_REVIEW.md",
+        "../../evidence/member-deactivation-receipt.json",
+        "MEMBER_ACCESS.md",
+        "../../evidence/member-access-receipt.json",
+        "MEMBER_HISTORY_AND_RECOVERY.md",
+        "../../evidence/member-history-receipt.json"
+      ],
+      "findings": [
+        "OA-F11"
+      ],
+      "remaining": [
+        "Same-tab draft recovery is verified; tab-close recovery remains unimplemented.",
+        "Organization deletion, retention, legal-hold and immutable-record policy require lifecycle review; AuditLog currently cascades on organization deletion.",
+        "Actual native screen-reader operation, browser zoom and comprehensive contrast checks remain open.",
+        "Personal-identity administration, organization handoffs and the remaining whole-platform register remain open.",
+        "The earlier global authentication/provider and live invitation-adapter rejections remain respected; no rejected change was applied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-INVITE-ADMIN",
+      "name": "Review organization invitations",
+      "purpose": "Inspect pending/accepted/expired/cancelled invitations and locate the owner workflow.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "users.read OR users.invite for list",
+          "ID-03/ID-04 retain their own authoritative invite/grant/redemption controls"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/users -> Invites tab",
+        "actions/users/getOrgInvites.ts",
+        "components/dashboard/Tables/Invites.tsx",
+        "ID-03 sendInviteWorkflow",
+        "ID-04 acceptInvitationWorkflow"
+      ],
+      "services": [
+        "services/users/user-identity.service.ts",
+        "services/security/role-grant-policy.service.ts"
+      ],
+      "records": [
+        "Invite safe projection and Role label"
+      ],
+      "transitions": [
+        "list -> search/status -> invitation creation/redemption handled by existing identity workflows"
+      ],
+      "sideEffects": [
+        "Read-only administration; pending invitations can be cancelled by user deactivation owner"
+      ],
+      "implementationStatus": "scoped_register_cancellation_reissue_history_and_stored_grant_choices_implemented_transport_open",
+      "reviewStatus": "current_source_and_parent_identity_evidence",
+      "runtimeStatus": "en_fr_role_choices_current_source_verified_parent_issuance_history_evidence_retained",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "INVITATION_GRANT_CONTROLS.md",
+        "../../evidence/invitation-grant-controls-receipt.json",
+        "../../evidence/invitation-history-receipt.json",
+        "../../evidence/invitation-management-receipt.json"
+      ],
+      "findings": [
+        "OA-F03",
+        "OA-F10"
+      ],
+      "remaining": [
+        "Administration entry reuses ID-03/ID-04; do not count issuance/redemption as duplicate workflows.",
+        "Member deactivation/assignment and coordinated last-administrator protection",
+        "Other shared alias families and global RBAC semantics",
+        "New ambiguous-history presentation and reissue in a dedicated browser journey",
+        "Directory-wide EN/FR, native zoom, actual screen reader and full contrast review",
+        "Production invitation adapter remains absent after the previously recorded automatic approval rejection; operator retry controls and delivery outcomes are unverified",
+        "Whole-platform discovery/reconciliation, remaining workflows and release verification"
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-PERMISSION-REFRESH",
+      "name": "Resolve current permissions for navigation and operations",
+      "purpose": "Display actor-bound current permissions with explicit lookup failure and recovery, keeping server operation checks authoritative.",
+      "personas": [
+        "organization administrator or authorized role holder"
+      ],
+      "authority": {
+        "permissions": [
+          "Authenticated verified active user in active current organization",
+          "Endpoint reads own permission set; domain mutations retain their own permission checks"
+        ],
+        "scope": "Current server-derived organization; endpoint-specific scope details and exceptions are recorded below. Client controls do not establish authority."
+      },
+      "entryPoints": [
+        "app/api/me/permissions/route.ts",
+        "app/api/auth/permissions/route.ts",
+        "lib/auth-client.ts#usePermissions",
+        "hooks/usePermissions.ts",
+        "components/finance/PaymentReconciliationWorkbench.tsx"
+      ],
+      "services": [
+        "lib/security/auth-session.ts#requireSession",
+        "lib/security/rbac.ts#requireRbacContext"
+      ],
+      "records": [
+        "User/Role current source",
+        "React Query permission cache"
+      ],
+      "transitions": [
+        "Resolve current account and session",
+        "Read current server actor/organization/permissions with private no-store response",
+        "Reject another actor response or malformed snapshot",
+        "Show checking/error/signed-out/ready separately",
+        "Block financial changes during uncertain access without clearing entered amounts",
+        "Retry only the lookup",
+        "Recheck after successful role/member change and visibility restoration"
+      ],
+      "sideEffects": [
+        "Permission-decision audit by protected operations; reads do not change grants"
+      ],
+      "implementationStatus": "query_error_scope_and_invalidation_corrected_shell_refresh_open",
+      "reviewStatus": "current_source_focused_guard_and_browser_review",
+      "runtimeStatus": "en_fr_real_lookup_http_fault_keyboard_retry_and_settled_recovery_verified",
+      "evidence": [
+        "DISCOVERY.md",
+        "SOURCE_BINDING.json",
+        "PERMISSION_REFRESH.md",
+        "../../evidence/permission-refresh-receipt.json",
+        "../../evidence/dashboard-localization-v73.json",
+        "../../SHARED_DASHBOARD_LANGUAGE_AND_RECOVERY.md",
+        "../../evidence/navigation-current-v74.json",
+        "../../NAVIGATION_CURRENT_DESTINATION.md",
+        "../../RBAC_IDENTITY_V121.md",
+        "../../evidence/rbac-identity-v121.json"
+      ],
+      "findings": [
+        "OA-F12"
+      ],
+      "remaining": [
+        "The shell uses a separate server-provided permission snapshot; full shell refresh and continuously active cross-tab propagation need implementation/review.",
+        "Native tab-switch visibility was unavailable in the installed headless browser; its hidden/visible transition is explicitly emulated, while keyboard retry is real browser input.",
+        "Native screen-reader, browser zoom, full contrast and focus after a disappearing retry control remain open accessibility work.",
+        "Live database-outage behavior is not proven by browser HTTP 503 injection.",
+        "Complete populated financial recovery, remaining organization directory exports, personal identity and the whole-platform workflow inventory remain open.",
+        "Previously rejected global authentication/provider and live invitation-adapter changes remain unapplied."
+      ],
+      "completeWorkflowVerified": false,
+      "v121IdentityCorrection": "Current RBAC authority requires the immutable live session subject ID. Email fallback removed; returned subject checked. PostgreSQL reassignment proof and actual EN/FR session regression retained."
+    },
+    {
+      "id": "OA-ROLE-HISTORY",
+      "name": "Inspect recent role change history",
+      "purpose": "Inspect retained role commands and their recorded permission deltas without exposing private request proof.",
+      "personas": [
+        "Authorized role editor with audit-read permission"
+      ],
+      "authority": {
+        "permissions": [
+          "roles.update",
+          "controls.audit.read"
+        ],
+        "scope": "Current organization and requested role; current stored grants"
+      },
+      "entryPoints": [
+        "components/Forms/RoleHistory.tsx",
+        "actions/roles/getRoleEditor.ts"
+      ],
+      "services": [
+        "services/roles/role-editor.service.ts"
+      ],
+      "records": [
+        "AuditLog ROLE_CHANGED"
+      ],
+      "transitions": [
+        "Open role editor",
+        "Check current audit-read permission",
+        "Read latest ten scoped records",
+        "Show recorded deltas or honest older-record gaps",
+        "Keep failed queries distinct from successful empty history"
+      ],
+      "sideEffects": [
+        "Read only"
+      ],
+      "implementationStatus": "bounded_scoped_history_implemented",
+      "reviewStatus": "current_source_unit_and_browser_review",
+      "runtimeStatus": "en_fr_positive_history_and_unit_denied_failed_source_verified",
+      "completeWorkflowVerified": false,
+      "evidence": [
+        "ROLE_WORKFLOW_IMPLEMENTATION.md",
+        "../../evidence/role-workflow-receipt.json"
+      ],
+      "remaining": [
+        "Dedicated browser audit-denied history path",
+        "Pagination/export/retention review and full accessibility verification"
+      ]
+    },
+    {
+      "id": "OA-MEMBER-ROLES",
+      "name": "Change an existing member’s assigned roles",
+      "purpose": "Add or remove justified responsibilities with current stored authority.",
+      "personas": [
+        "Authorized organization administrator",
+        "Audit reader where permitted"
+      ],
+      "authority": {
+        "permissions": [
+          "users.read",
+          "users.roles.assign and full grant ceiling for additions",
+          "users.roles.remove for removals",
+          "fresh own password-confirmed session"
+        ],
+        "scope": "Server-derived current organization and member; no client-established authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx",
+        "components/settings/MemberAccessEditor.tsx",
+        "hooks/useMemberAccess.ts",
+        "actions/users/memberAccess.ts"
+      ],
+      "services": [
+        "services/users/member-access-read.service.ts",
+        "services/users/member-access.service.ts",
+        "services/users/member-access-policy.ts",
+        "services/users/member-access-input.ts"
+      ],
+      "records": [
+        "User",
+        "Role membership",
+        "Session",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Current member roles → draft additions/removals and reason → explicit review → step-up if needed → locked current-evidence check → audited membership change/session revocation → receipt and current state"
+      ],
+      "sideEffects": [
+        "Transactional membership/account changes where requested, target-session revocation and mandatory audit; retained business records"
+      ],
+      "implementationStatus": "supported_history_export_and_same_tab_recovery_implemented",
+      "reviewStatus": "current_source_postgres_and_browser_bytes_review",
+      "runtimeStatus": "en_fr_paging_audited_download_and_lost_response_refresh_verified",
+      "evidence": [
+        "MEMBER_ACCESS.md",
+        "../../evidence/member-access-receipt.json",
+        "MEMBER_HISTORY_AND_RECOVERY.md",
+        "../../evidence/member-history-receipt.json"
+      ],
+      "remaining": [
+        "Same-tab draft recovery is verified; tab-close recovery remains unimplemented.",
+        "Organization deletion, retention, legal-hold and immutable-record policy require lifecycle review; AuditLog currently cascades on organization deletion.",
+        "Actual native screen-reader operation, browser zoom and comprehensive contrast checks remain open.",
+        "Personal-identity administration, organization handoffs and the remaining whole-platform register remain open.",
+        "The earlier global authentication/provider and live invitation-adapter rejections remain respected; no rejected change was applied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-REACTIVATE",
+      "name": "Reactivate a verified member with current roles",
+      "purpose": "Restore sign-in eligibility after recorded deactivation through a new authorized decision.",
+      "personas": [
+        "Authorized organization administrator",
+        "Audit reader where permitted"
+      ],
+      "authority": {
+        "permissions": [
+          "users.read",
+          "users.activate",
+          "users.roles.assign and current ceiling for every selected role",
+          "users.roles.remove for roles removed",
+          "fresh own password-confirmed session"
+        ],
+        "scope": "Server-derived current organization and member; no client-established authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx",
+        "components/settings/MemberAccessEditor.tsx",
+        "hooks/useMemberAccess.ts",
+        "actions/users/memberAccess.ts"
+      ],
+      "services": [
+        "services/users/member-access-read.service.ts",
+        "services/users/member-access.service.ts",
+        "services/users/member-access-policy.ts",
+        "services/users/member-access-input.ts"
+      ],
+      "records": [
+        "User",
+        "Role membership",
+        "Session",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Verified inactive locked member with matching deactivation receipt → current role selection/reason → explicit review → fresh authority → atomic activation/session cleanup/audit → receipt → member signs in normally"
+      ],
+      "sideEffects": [
+        "Transactional membership/account changes where requested, target-session revocation and mandatory audit; retained business records"
+      ],
+      "implementationStatus": "supported_history_export_and_same_tab_recovery_implemented",
+      "reviewStatus": "current_source_postgres_and_browser_bytes_review",
+      "runtimeStatus": "en_fr_paging_audited_download_and_lost_response_refresh_verified",
+      "evidence": [
+        "MEMBER_ACCESS.md",
+        "../../evidence/member-access-receipt.json",
+        "MEMBER_HISTORY_AND_RECOVERY.md",
+        "../../evidence/member-history-receipt.json"
+      ],
+      "remaining": [
+        "Same-tab draft recovery is verified; tab-close recovery remains unimplemented.",
+        "Organization deletion, retention, legal-hold and immutable-record policy require lifecycle review; AuditLog currently cascades on organization deletion.",
+        "Actual native screen-reader operation, browser zoom and comprehensive contrast checks remain open.",
+        "Personal-identity administration, organization handoffs and the remaining whole-platform register remain open.",
+        "The earlier global authentication/provider and live invitation-adapter rejections remain respected; no rejected change was applied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-MEMBER-HISTORY",
+      "name": "Inspect retained member access history",
+      "purpose": "Read scoped retained role/deactivation history across anchored pages without gaps or fabricated empty results.",
+      "personas": [
+        "Authorized organization administrator",
+        "Audit reader where permitted"
+      ],
+      "authority": {
+        "permissions": [
+          "users.read",
+          "controls.audit.read"
+        ],
+        "scope": "Server-derived current organization and member; no client-established authority."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx",
+        "components/settings/MemberAccessEditor.tsx",
+        "hooks/useMemberAccess.ts",
+        "actions/users/memberAccess.ts",
+        "components/settings/MemberAccessHistory.tsx",
+        "hooks/useMemberHistory.ts",
+        "actions/users/memberHistory.ts#getMemberHistoryAction"
+      ],
+      "services": [
+        "services/users/member-access-read.service.ts",
+        "services/users/member-access.service.ts",
+        "services/users/member-access-policy.ts",
+        "services/users/member-access-input.ts",
+        "services/users/member-history.service.ts",
+        "services/users/member-history-input.ts"
+      ],
+      "records": [
+        "User",
+        "Role membership",
+        "Session",
+        "AuditLog"
+      ],
+      "transitions": [
+        "Current audit authority → same-tenant member → anchored first 20 → older/newer pages → explicit current-history reload → meaningful read error recovery"
+      ],
+      "sideEffects": [
+        "Read-only safe history projection"
+      ],
+      "implementationStatus": "supported_history_export_and_same_tab_recovery_implemented",
+      "reviewStatus": "current_source_postgres_and_browser_bytes_review",
+      "runtimeStatus": "en_fr_paging_audited_download_and_lost_response_refresh_verified",
+      "evidence": [
+        "MEMBER_ACCESS.md",
+        "../../evidence/member-access-receipt.json",
+        "MEMBER_HISTORY_AND_RECOVERY.md",
+        "../../evidence/member-history-receipt.json"
+      ],
+      "remaining": [
+        "Same-tab draft recovery is verified; tab-close recovery remains unimplemented.",
+        "Organization deletion, retention, legal-hold and immutable-record policy require lifecycle review; AuditLog currently cascades on organization deletion.",
+        "Actual native screen-reader operation, browser zoom and comprehensive contrast checks remain open.",
+        "Personal-identity administration, organization handoffs and the remaining whole-platform register remain open.",
+        "The earlier global authentication/provider and live invitation-adapter rejections remain respected; no rejected change was applied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-MEMBER-HISTORY-EXPORT",
+      "name": "Export a reviewed page of member access history",
+      "purpose": "Download exactly the reviewed private access records with traceable, byte-matching export evidence.",
+      "personas": [
+        "Authorized organization audit reader with distinct export authority"
+      ],
+      "authority": {
+        "permissions": [
+          "users.read",
+          "controls.audit.read",
+          "reports.export",
+          "current own password-confirmed session within 300 seconds"
+        ],
+        "scope": "Server-derived organization/actor and same-organization member."
+      },
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx",
+        "components/settings/MemberAccessHistory.tsx",
+        "hooks/useMemberHistory.ts",
+        "actions/users/memberHistory.ts#exportMemberHistoryAction"
+      ],
+      "services": [
+        "services/users/member-history.service.ts",
+        "services/users/member-history-input.ts",
+        "services/security/export-safety.service.ts"
+      ],
+      "records": [
+        "Scoped AuditLog history",
+        "Current User/Role/Session authority",
+        "CONTROLLED_EXPORT_ALLOWED audit",
+        "Private CSV file"
+      ],
+      "transitions": [
+        "Review anchored page → request export → password confirmation if required → explicit export → locked authority/page-hash recheck → mandatory audit → byte-preserving download → retry prepared download without a new export"
+      ],
+      "sideEffects": [
+        "One mandatory export audit per preparation; no access or financial mutation."
+      ],
+      "implementationStatus": "implemented_supported_path",
+      "reviewStatus": "current_service_transaction_and_actual_download_bytes_verified",
+      "runtimeStatus": "en_fr_real_browser_download_denial_and_retry_verified",
+      "evidence": [
+        "MEMBER_HISTORY_AND_RECOVERY.md",
+        "../../evidence/member-history-receipt.json"
+      ],
+      "remaining": [
+        "Same-tab draft recovery is verified; tab-close recovery remains unimplemented.",
+        "Organization deletion, retention, legal-hold and immutable-record policy require lifecycle review; AuditLog currently cascades on organization deletion.",
+        "Actual native screen-reader operation, browser zoom and comprehensive contrast checks remain open.",
+        "Personal-identity administration, organization handoffs and the remaining whole-platform register remain open.",
+        "The earlier global authentication/provider and live invitation-adapter rejections remain respected; no rejected change was applied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "ID-09",
+      "name": "Sign in to an existing organization account",
+      "purpose": "Authenticate an existing account and open its current tenant workspace without exposing credentials in a native URL submission.",
+      "domain": "identity",
+      "personas": [
+        "Existing verified account holder"
+      ],
+      "authority": {
+        "scope": "Own existing account credentials; server session and tenant scope remain authoritative."
+      },
+      "entryPoints": [
+        "app/[locale]/(auth)/login/page.tsx",
+        "app/[locale]/(auth)/login-v2/page.tsx",
+        "app/api/auth/[...all]/route.ts",
+        "components/auth/EnhancedLoginForm.tsx",
+        "components/auth/v2/LoginV2Form.tsx",
+        "components/settings/OrganizationSetupHandoff.tsx"
+      ],
+      "services": [
+        "lib/auth.ts",
+        "lib/auth-client.ts",
+        "lib/security/rbac.ts"
+      ],
+      "records": [
+        "Existing User/Account",
+        "Session",
+        "Current organization and roles",
+        "Sign-in metadata"
+      ],
+      "transitions": [
+        "Initialize POST form with credential controls disabled beforehand",
+        "Enter existing credentials",
+        "Submit through existing authentication client",
+        "Preserve entries after recoverable failure",
+        "Server creates authenticated session",
+        "Navigate and reload other tabs in the newly signed-in organization"
+      ],
+      "sideEffects": [
+        "Existing authentication workflow creates sessions and updates sign-in metadata; no new membership or grants."
+      ],
+      "implementationStatus": "pre_initialization_credential_url_exposure_corrected",
+      "reviewStatus": "focused_ssr_form_recovery_and_current_owned_browser_scope_verified",
+      "runtimeStatus": "en_fr_v2_sign_in_and_both_variants_no_script_submission_safety_verified",
+      "evidence": [
+        "ORGANIZATION_HANDOFF.md",
+        "../../evidence/organization-handoff-receipt.json"
+      ],
+      "remaining": [
+        "One-account multiple-organization membership and a switcher are unimplemented engineering work.",
+        "Live owner-email delivery, verification recovery and full onboarding remain separately incomplete; local new owners remain unverified.",
+        "Pre-existing ownerless organization records need individually authorized reconciliation; no automatic deletion or reassignment.",
+        "Organization directory CSV export authority/audit and full retention review remain open.",
+        "Native screen reader, browser zoom, comprehensive contrast and full sign-in exceptions/recovery remain open.",
+        "Permission refresh, personal-identity administration and the remaining whole-platform register remain open.",
+        "Previously rejected global authentication/provider and live invitation-adapter changes remain unapplied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-DIRECTORY-EXPORT",
+      "name": "Review, prepare and recover a company directory CSV",
+      "purpose": "Export exactly reviewed current-company data with current authority and a durable, recoverable record.",
+      "personas": [
+        "Current organization user with directory-read and report-export permissions"
+      ],
+      "authority": {
+        "permissions": [
+          "system.organization.read",
+          "reports.export",
+          "Current password-confirmed session within 300 seconds"
+        ],
+        "scope": "Server-derived organization and actor; current authority rechecked at preparation and replay."
+      },
+      "entryPoints": [
+        "/[locale]/dashboard/settings/company",
+        "components/settings/OrganizationDirectoryExport.tsx",
+        "hooks/useOrganizationDirectoryExport.ts",
+        "actions/organization/organization-directory-export.actions.ts"
+      ],
+      "services": [
+        "services/organization/organization-directory-export.service.ts",
+        "services/organization/organization-settings.service.ts",
+        "services/security/export-safety.service.ts"
+      ],
+      "records": [
+        "Organization and scoped counts",
+        "Nondeleted PAID payment amount aggregate",
+        "Current User/Role/Session authority",
+        "AuditLog retained exact export receipt"
+      ],
+      "transitions": [
+        "Review current server-provided fields and filters",
+        "Confirm password when required",
+        "Compare reviewed hash with current transaction snapshot",
+        "Record exact CSV and audit atomically",
+        "Download or re-download prepared bytes",
+        "Retry identical request after uncertain response or same-tab refresh"
+      ],
+      "sideEffects": [
+        "One controlled export audit per unique completed request",
+        "Local browser CSV download; no domain/payment mutation"
+      ],
+      "implementationStatus": "supported_controlled_export_and_same_tab_recovery_implemented",
+      "reviewStatus": "source_unit_database_and_actual_browser_review",
+      "runtimeStatus": "en_fr_denial_fresh_proof_exact_download_keyboard_reflow_failure_and_refresh_retry_verified",
+      "evidence": [
+        "ORGANIZATION_DIRECTORY_EXPORT.md",
+        "../../evidence/directory-export-receipt.json"
+      ],
+      "findings": [
+        "OA-F13"
+      ],
+      "remaining": [
+        "Native screen-reader, actual browser zoom and comprehensive contrast verification are still open.",
+        "Session-storage recovery lasts 24 hours in the same tab; tab-close recovery and operator-facing export history need separate review.",
+        "Formal retention/hold/revocation policy and organization-delete audit cascades remain open.",
+        "Full shell permission refresh, continuously active cross-tab updates, personal-account administration and other platform workflows remain open.",
+        "The local development timing observations do not establish a production budget, load assurance or before/after performance improvement.",
+        "Previously rejected global authentication/provider hooks and live invitation-delivery adapter remain unapplied."
+      ],
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-SELF-PROFILE",
+      "name": "Read and update the signed-in account profile",
+      "purpose": "Inspect and maintain permitted personal profile details for the current account.",
+      "authority": "Server-derived current self actor/org/session, usable account and organization, profile.read for read and current profile.update for write/replay.",
+      "entryPoints": [
+        "components/UserDropdownMenu.tsx",
+        "components/dashboard/Navbar.tsx",
+        "/en/dashboard/profile",
+        "/fr/dashboard/profile",
+        "app/api/auth/[...all]/route.ts",
+        "/api/auth/update-user",
+        "app/[locale]/(dashboard)/dashboard/profile/page.tsx",
+        "app/api/me/profile/route.ts",
+        "actions/users/self-profile.actions.ts",
+        "hooks/useSelfProfile.ts",
+        "components/settings/SelfProfile.tsx"
+      ],
+      "services": [
+        "services/users/self-profile.service.ts",
+        "services/users/self-profile-http.service.ts",
+        "lib/security/auth-session.ts#requireSession"
+      ],
+      "records": [
+        "User allowed display fields",
+        "SelfProfile SELF_PROFILE_UPDATED mandatory AuditLog receipt"
+      ],
+      "transitions": [
+        "Open current account menu",
+        "Reach profile page",
+        "Read current scoped profile",
+        "Review and save permitted changes",
+        "Confirm persisted outcome and recover conflicts"
+      ],
+      "implementationStatus": "service_owned_revision_checked_audited_profile_and_bilingual_account_menu_implemented",
+      "runtimeStatus": "en_fr_real_database_http_browser_save_denial_stale_draft_and_retry_verified",
+      "remaining": [
+        "Full platform discovery, connected workflows and final requirement audit remain incomplete.",
+        "OA-F18 header clipping is corrected in verified EN/FR width/text cases. Native zoom/assistive technology/contrast and complete shell navigation remain open.",
+        "Basic display fields only; email, phone ownership, credentials, avatar upload and role changes use separate workflows.",
+        "External SDK/API consumers must migrate from generic update-user payloads to the reviewed contract before rollout.",
+        "Formal audit retention/hold and organization-delete cascade behavior remain open. Stable actor IDs, not display names, identify audit actors.",
+        "Global session/provider/cache behavior and other sign-out helper callers remain separate work. Earlier rejected global auth changes are unapplied."
+      ],
+      "findings": [
+        "OA-F15",
+        "OA-F17"
+      ],
+      "evidence": [
+        "ACCOUNT_MANAGEMENT_BASELINE.md",
+        "../../lanes/environment/profile-route-before-6597b8ea-9c9.json",
+        "../../lanes/environment/account-management-before-6d27d7df-2dc.json",
+        "SELF_PROFILE_BOUNDARY.md",
+        "../../lanes/environment/self-profile-before-80057a5e-514.json",
+        "SELF_PROFILE_MANAGEMENT.md",
+        "../../evidence/self-profile-receipt.json",
+        "HEADER_REFLOW.md",
+        "../../evidence/header-reflow-receipt.json"
+      ],
+      "personas": [
+        "Current signed-in organization user"
+      ],
+      "reviewStatus": "source_tests_postgres_http_and_actual_browser_review",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-SECURITY-READ",
+      "name": "Review the signed-in account security state",
+      "purpose": "Understand own password, session, permission and supported MFA state without fabricated readiness.",
+      "authority": "Current canonical profile.read, active usable current account/organization and verified requesting session.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts",
+        "components/UserDropdownMenu.tsx"
+      ],
+      "services": [
+        "services/security/security-settings.service.ts",
+        "lib/security/auth-session.ts#requireSession"
+      ],
+      "records": [
+        "Current User, Session, credential-account presence and password-change date"
+      ],
+      "transitions": [
+        "Authorize current account",
+        "Read current security evidence",
+        "Distinguish operational controls from incomplete MFA setup",
+        "Open permitted password/session actions"
+      ],
+      "implementationStatus": "canonical_permission_and_honest_session_mfa_state_implemented",
+      "runtimeStatus": "en_fr_canonical_reader_allowed_denied_user_blocked_forged_query_ignored",
+      "remaining": [
+        "Full page copy/design normalization, native accessibility and relevant password/MFA handoffs remain open."
+      ],
+      "findings": [
+        "OA-F14"
+      ],
+      "evidence": [
+        "ACCOUNT_MANAGEMENT_BASELINE.md",
+        "../../lanes/environment/account-management-before-6d27d7df-2dc.json",
+        "ACCOUNT_SESSION_MANAGEMENT.md",
+        "../../evidence/account-session-receipt.json"
+      ],
+      "personas": [
+        "Current signed-in organization user"
+      ],
+      "reviewStatus": "source_tests_postgres_and_actual_browser_review",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-SESSION-REVOKE",
+      "name": "Revoke other sessions of the current account",
+      "purpose": "End selected other sessions while retaining the requesting session and trustworthy outcome evidence.",
+      "authority": "Server-derived current actor/org/session plus fresh database profile.read check; self only. No new password-proof/approver policy.",
+      "entryPoints": [
+        "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx",
+        "components/settings/AccountSessions.tsx",
+        "hooks/useAccountSessions.ts",
+        "actions/security/account-session.actions.ts"
+      ],
+      "services": [
+        "services/security/account-session.service.ts",
+        "lib/security/auth-session.ts#requireSession"
+      ],
+      "records": [
+        "Current Session reviewed set",
+        "Mandatory AccountSessions AUTH_SESSION_REVOKED AuditLog receipt"
+      ],
+      "transitions": [
+        "Review other sessions",
+        "Submit self-scoped revocation",
+        "Preserve current session",
+        "Confirm actual revoked sessions and retained audit",
+        "Recover interrupted or duplicate submission"
+      ],
+      "implementationStatus": "atomic_reviewed_revocation_idempotent_receipt_and_same_tab_recovery_implemented",
+      "runtimeStatus": "en_fr_real_session_effects_permission_endpoint_denial_refresh_recovery_keyboard_reflow_history_verified",
+      "remaining": [
+        "Global session/cache/provider behavior and all session-sensitive transports are not fully verified; previously rejected global hooks/cache changes remain unapplied.",
+        "Native screen-reader, actual zoom and comprehensive contrast verification remain open.",
+        "Formal retention/hold, organization-delete audit cascade and comprehensive legacy session-event history remain open.",
+        "Profile route/service workflow and bilingual account menu/unsupported role and plan labels remain open.",
+        "Twenty-four-hour same-tab retry metadata cannot be recovered in a new requesting session; current-account recent receipts remain available.",
+        "Whole-platform workflow discovery, connected remediation and final requirement audit remain incomplete."
+      ],
+      "findings": [
+        "OA-F16"
+      ],
+      "evidence": [
+        "ACCOUNT_MANAGEMENT_BASELINE.md",
+        "../../lanes/environment/account-management-before-6d27d7df-2dc.json",
+        "ACCOUNT_SESSION_MANAGEMENT.md",
+        "../../evidence/account-session-receipt.json"
+      ],
+      "personas": [
+        "Current signed-in organization user"
+      ],
+      "reviewStatus": "source_tests_postgres_and_actual_browser_review",
+      "completeWorkflowVerified": false
+    },
+    {
+      "id": "OA-SELF-SIGNOUT",
+      "name": "Sign out the current account from shell or session recovery",
+      "purpose": "Leave the current account with honest local/server session outcomes and safe recovery from failure.",
+      "personas": [
+        "Current account holder, including a user in session-recovery state"
+      ],
+      "authority": "Valid current browser session/cookie context; leaving an account must not require profile edit permission or a usable organization.",
+      "entryPoints": [
+        "components/UserDropdownMenu.tsx",
+        "components/dashboard/Navbar.tsx",
+        "components/dashboard/Sidebar.tsx",
+        "components/dashboard/SessionRecoverySignOutButton.tsx",
+        "lib/auth-client.ts#signOut",
+        "app/api/auth/[...all]/route.ts",
+        "/api/auth/sign-out",
+        "components/NotAuthorized.tsx",
+        "/[locale]/unauthorized"
+      ],
+      "services": [
+        "services/security/self-sign-out.service.ts",
+        "lib/security/self-sign-out-plugin.ts",
+        "Installed Better Auth router, signed-cookie verification and native cookie cleanup"
+      ],
+      "records": [
+        "Exact presented Session",
+        "Transactional AuditLog auth.session.signed_out",
+        "Current browser authentication cookies"
+      ],
+      "transitions": [
+        "Discover sign-out action",
+        "Request current-account logout once",
+        "Distinguish cookie removal from server-session deletion",
+        "Confirm authoritative completion or show unconfirmed result",
+        "Retry safely and return to localized login"
+      ],
+      "sideEffects": [
+        "Current-session deletion and browser cookie removal; no other-session or financial mutation intended"
+      ],
+      "implementationStatus": "strict_confirmed_endpoint_atomic_revocation_audit_and_en_fr_recovery_implemented",
+      "runtimeStatus": "partial_real_postgres_installed_router_and_en_fr_all_four_callers_verified",
+      "reviewStatus": "source_unit_database_router_and_actual_browser_review",
+      "completeWorkflowVerified": false,
+      "findings": [
+        "OA-F19",
+        "OA-F20",
+        "OA-F21"
+      ],
+      "evidence": [
+        "SELF_SIGN_OUT_DISCOVERY.md",
+        "../../evidence/self-profile-receipt.json",
+        "CURRENT_SESSION_SIGN_OUT.md",
+        "../../evidence/self-signout-receipt.json",
+        "../../evidence/dashboard-localization-v73.json",
+        "../../SHARED_DASHBOARD_LANGUAGE_AND_RECOVERY.md",
+        "../../evidence/navigation-current-v74.json",
+        "../../NAVIGATION_CURRENT_DESTINATION.md"
+      ],
+      "remaining": [
+        "Native zoom, assistive technology and complete contrast remain unverified.",
+        "Global cached authentication on unrelated transports remains unchanged; no universal immediate invalidation claim.",
+        "Audit retention/organization-delete policy and end-user sign-out export remain separate unfinished reviews.",
+        "Development 43,680ms first transition and 923–4,037ms remaining initial cases are observations, not performance acceptance.",
+        "Full platform inventory and workflow remediation remain active."
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "OA-F01",
+      "priority": "next_authorized_correction_after_freeze",
+      "status": "corrected_mocked_service_verified",
+      "summary": "Ordinary organization read permission broadens directory to every tenant and paid aggregate.",
+      "sources": [
+        "actions/organization/organization-settings-actions.ts:102",
+        "services/organization/organization-settings.service.ts:87",
+        "services/organization/organization-settings.service.ts:150",
+        "lib/security/rbac.ts:174",
+        "lib/security/rbac.ts:366",
+        "app/[locale]/(dashboard)/dashboard/settings/company/page.tsx:43"
+      ],
+      "details": "Action requires system.organization.read, asserts requested tenant equals context tenant, then passes ctx.user.permissions. canReadOrganizations returns true for that same permission and omits id from findMany; paid aggregates follow all returned IDs. No distinct platform/global authority found. Scope test/patch plan in DIRECTORY_SCOPE_CORRECTION_PLAN.md.",
+      "remediation": "DIRECTORY_SCOPE_REMEDIATION.md",
+      "verification": "DIRECTORY_SCOPE_VERIFICATION.json"
+    },
+    {
+      "id": "OA-F02",
+      "status": "reproduced_ownerless_creation_corrected_with_owner_registration_handoff",
+      "summary": "Additional organization creation has no owner membership or workspace switch.",
+      "sources": [
+        "services/organization/organization-settings.service.ts:222",
+        "actions/organization/organization-settings-actions.ts:123",
+        "prisma/schema.prisma:148"
+      ],
+      "details": "Transaction creates organization and Administrator role only. No actor association or user transfer. User model is single-organization and guards are tenant strict. Do not introduce a global exception merely to keep newly created rows visible.",
+      "currentEvidence": [
+        "../../evidence/organization-handoff-receipt.json",
+        "ORGANIZATION_HANDOFF.md"
+      ],
+      "remaining": [
+        "One-account multiple-organization membership and a switcher are unimplemented engineering work.",
+        "Live owner-email delivery, verification recovery and full onboarding remain separately incomplete; local new owners remain unverified.",
+        "Pre-existing ownerless organization records need individually authorized reconciliation; no automatic deletion or reassignment.",
+        "Organization directory CSV export authority/audit and full retention review remain open.",
+        "Native screen reader, browser zoom, comprehensive contrast and full sign-in exceptions/recovery remain open.",
+        "Permission refresh, personal-identity administration and the remaining whole-platform register remain open.",
+        "Previously rejected global authentication/provider and live invitation-adapter changes remain unapplied."
+      ]
+    },
+    {
+      "id": "OA-F03",
+      "status": "source_confirmed_false_empty_paths",
+      "summary": "User/invite/role load failures become legitimate empty catalogues.",
+      "sources": [
+        "actions/users/getOrgUsers.ts",
+        "actions/users/getOrgInvites.ts",
+        "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx:46",
+        "app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx:93"
+      ],
+      "details": "User/invite actions catch all and return []; roles error data is discarded. Current users page advertises Live Data even for collapsed failures; role update uses not-found for any load failure."
+    },
+    {
+      "id": "OA-F04",
+      "status": "source_confirmed_authority_gap_requires_policy_regression",
+      "summary": "Clearing every role permission skips assignment authority.",
+      "sources": [
+        "actions/roles/role-auth.ts:39",
+        "actions/roles/updateRole.ts:32",
+        "services/roles/role.service.ts:132"
+      ],
+      "details": "updateRole sees [] as truthy, calls assertCanAssignPermissions, which returns early on zero length; service persists []. A roles.update actor without roles.permissions.assign can remove all permissions. No last-admin availability or concurrent revision check found."
+    },
+    {
+      "id": "OA-F05",
+      "status": "source_confirmed_validation_gap_domain_impact_not_executed",
+      "summary": "Organization currency/timezone/calendar inputs rely on compile-time types and permissive strings.",
+      "sources": [
+        "actions/organization/organization-settings-actions.ts:160",
+        "services/organization/organization-settings.service.ts:301",
+        "services/organization/organization-settings.service.ts:337"
+      ],
+      "details": "Only name trimming validation is explicit in owner. Direct action input can bypass client selects. Currency and operating-date effects on established financial activity require exact domain review, not generic business approval claims."
+    },
+    {
+      "id": "OA-F06",
+      "status": "source_evidenced_recovery_defects_not_executed",
+      "summary": "Fresh-auth and committed-write recovery are incomplete in settings/role forms.",
+      "sources": [
+        "components/settings/OrganizationSettingsForm.tsx:350",
+        "components/settings/OrganizationManagementTable.tsx:450",
+        "components/Forms/RoleForm.tsx:49",
+        "actions/organization/organization-settings-actions.ts:143",
+        "actions/roles/createRole.ts:39",
+        "services/roles/role.service.ts:176"
+      ],
+      "details": "Forms have no local password step-up. Revalidation failure is caught as mutation failure after organization/role commit. Role update can commit then fail reload. No safe same-command create retry identity found."
+    },
+    {
+      "id": "OA-F07",
+      "status": "source_risk_not_runtime_reproduced",
+      "summary": "Organization profile refetch can replace an unsaved draft.",
+      "sources": [
+        "components/settings/OrganizationSettingsForm.tsx:316",
+        "hooks/useOrganizationSettings.ts:81"
+      ],
+      "details": "Effect unconditionally resets all formData whenever query organization changes, with no dirty-state guard. Verify stale query focus/refetch while editing before correction."
+    },
+    {
+      "id": "OA-F08",
+      "status": "source_confirmed_audit_limit",
+      "summary": "Role mutation governance evidence is best effort after commit.",
+      "sources": [
+        "services/roles/role.service.ts:115",
+        "services/roles/role.service.ts:187",
+        "lib/security/audit-log.ts:45"
+      ],
+      "details": "logSecurityEvent swallows audit insert failures; unlike user deactivation there is no in-transaction before/after audit record for roles. Do not claim trustworthy durable role-change history from this code alone."
+    },
+    {
+      "id": "OA-F09",
+      "status": "source_confirmed_false_success_path",
+      "summary": "Member deactivation UI falsely claims deletion on rejected action.",
+      "sources": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx:61",
+        "components/DataTableColumns/NewActionColumn.tsx:35",
+        "actions/users/deleteUser.ts:9",
+        "services/users/user-lifecycle.service.ts:47"
+      ],
+      "details": "deleteUser returns a failure envelope; row callback resolves without throwing; generic action emits Deleted Successfully. Confirmation says irreversible physical deletion while owner deactivates and retains history. No write or browser attempt performed."
+    },
+    {
+      "id": "OA-F10",
+      "status": "source_confirmed_localization_and_action_affordance_gaps",
+      "summary": "Users/role editing/invite administration retain English-only copy and misleading actions.",
+      "sources": [
+        "components/Forms/RoleForm.tsx",
+        "components/dashboard/Tables/Invites.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx",
+        "app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx"
+      ],
+      "details": "RoleForm uses /roles footer/header and unlocalized navigation; most users/admin copy and date formatting are English. Actions are presented independent of their specific mutation permission, leaving server denial as first explanation. Actual EN/FR, keyboard and mobile checks pending."
+    },
+    {
+      "id": "OA-F11",
+      "status": "source_confirmed_missing_route",
+      "summary": "User edit links target a route absent from current source.",
+      "sources": [
+        "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx:70"
+      ],
+      "details": "No settings/users/update/[id] page found; no member update/reactivation/role-assignment workflow found beyond invitations. Read helper is not an editing workflow."
+    },
+    {
+      "id": "OA-F12",
+      "status": "query_failure_and_invalidation_corrected_shell_and_cross_tab_open",
+      "summary": "Client permission refresh can conceal service errors or lag role changes.",
+      "sources": [
+        "lib/auth-client.ts:34",
+        "app/api/me/permissions/route.ts",
+        "app/api/auth/permissions/route.ts"
+      ],
+      "details": "Client key is user ID, five-minute staleTime; non-OK becomes empty permissions. Role mutations revalidate route only. Explicit private/no-store/error semantics differ across endpoints; server RBAC remains fresh and this is not a proven authorization bypass.",
+      "currentEvidence": [
+        "PERMISSION_REFRESH.md",
+        "../../evidence/permission-refresh-receipt.json"
+      ],
+      "remaining": [
+        "The shell uses a separate server-provided permission snapshot; full shell refresh and continuously active cross-tab propagation need implementation/review.",
+        "Native tab-switch visibility was unavailable in the installed headless browser; its hidden/visible transition is explicitly emulated, while keyboard retry is real browser input.",
+        "Native screen-reader, browser zoom, full contrast and focus after a disappearing retry control remain open accessibility work.",
+        "Live database-outage behavior is not proven by browser HTTP 503 injection.",
+        "Complete populated financial recovery, remaining organization directory exports, personal identity and the whole-platform workflow inventory remain open.",
+        "Previously rejected global authentication/provider and live invitation-adapter changes remain unapplied."
+      ]
+    },
+    {
+      "id": "OA-F13",
+      "severity": "high",
+      "summary": "Company directory CSV bypassed report-export authority, fresh proof and audit; the amount labelled revenue was a gross mixed payment aggregate.",
+      "status": "supported_export_and_amount_semantics_corrected_retention_and_native_accessibility_open",
+      "evidence": [
+        "lanes/environment/organization-directory-before-95156237-87c.json",
+        "../../evidence/directory-export-receipt.json"
+      ],
+      "remaining": [
+        "Native screen-reader, actual browser zoom and comprehensive contrast verification are still open.",
+        "Session-storage recovery lasts 24 hours in the same tab; tab-close recovery and operator-facing export history need separate review.",
+        "Formal retention/hold/revocation policy and organization-delete audit cascades remain open.",
+        "Full shell permission refresh, continuously active cross-tab updates, personal-account administration and other platform workflows remain open.",
+        "The local development timing observations do not establish a production budget, load assurance or before/after performance improvement.",
+        "Previously rejected global authentication/provider hooks and live invitation-delivery adapter remain unapplied."
+      ]
+    },
+    {
+      "id": "OA-F14",
+      "summary": "Security settings require unmapped PASSWORD_READ and deny canonical profile readers.",
+      "evidence": [
+        "ACCOUNT_MANAGEMENT_BASELINE.md",
+        "../../lanes/environment/account-management-before-6d27d7df-2dc.json",
+        "ACCOUNT_SESSION_MANAGEMENT.md",
+        "../../evidence/account-session-receipt.json"
+      ],
+      "status": "supported_security_and_session_workflow_corrected_broader_boundaries_open"
+    },
+    {
+      "id": "OA-F15",
+      "summary": "Existing profile menu target has no page; both localized direct routes return 404.",
+      "evidence": [
+        "ACCOUNT_MANAGEMENT_BASELINE.md",
+        "../../lanes/environment/profile-route-before-6597b8ea-9c9.json",
+        "SELF_PROFILE_MANAGEMENT.md",
+        "../../evidence/self-profile-receipt.json"
+      ],
+      "status": "supported_profile_route_and_reviewed_write_corrected_external_and_accessibility_boundaries_open"
+    },
+    {
+      "id": "OA-F16",
+      "summary": "The URL-derived success and nontransactional session sign-out were corrected with an atomic reviewed command and durable recovery; full transport/retention coverage remains open.",
+      "evidence": [
+        "ACCOUNT_MANAGEMENT_BASELINE.md",
+        "../../lanes/environment/account-management-before-6d27d7df-2dc.json",
+        "ACCOUNT_SESSION_MANAGEMENT.md",
+        "../../evidence/account-session-receipt.json"
+      ],
+      "status": "supported_security_and_session_workflow_corrected_broader_boundaries_open"
+    },
+    {
+      "id": "OA-F17",
+      "severity": "high",
+      "summary": "Authenticated accounts without profile.update can change display name through /api/auth/update-user without a change audit; structured names remain different.",
+      "status": "supported_profile_route_and_reviewed_write_corrected_external_and_accessibility_boundaries_open",
+      "evidence": [
+        "SELF_PROFILE_BOUNDARY.md",
+        "../../lanes/environment/self-profile-before-80057a5e-514.json",
+        "SELF_PROFILE_MANAGEMENT.md",
+        "../../evidence/self-profile-receipt.json"
+      ]
+    },
+    {
+      "id": "OA-F18",
+      "summary": "Shared header clips the account trigger at 390px with CSS text enlarged to 200%; a document-width-only assertion misses the clipping.",
+      "status": "verified_header_wrapping_and_keyboard_access_corrected_native_zoom_and_full_shell_open",
+      "impact": "Low-vision users can lose a visible account-menu trigger on a narrow screen; native zoom and keyboard access need explicit shared-shell verification.",
+      "evidence": [
+        "SELF_PROFILE_MANAGEMENT.md",
+        "../../lanes/environment/fr-self-profile-display-text-200-percent-334a6bcf-9ba.png",
+        "HEADER_REFLOW.md",
+        "../../evidence/header-reflow-receipt.json"
+      ],
+      "affectedFiles": [
+        "components/dashboard/Navbar.tsx",
+        "components/UserDropdownMenu.tsx"
+      ],
+      "nextAction": "Continue full shared-shell navigation/localization/zoom/assistive-technology review; retain verified wrapping."
+    },
+    {
+      "id": "OA-F19",
+      "summary": "Three shared sign-out helper callers redirect or hide failure without confirming the returned authentication result.",
+      "status": "reproduced_corrected_and_verified_for_current_session_path_global_boundaries_open",
+      "evidence": [
+        "SELF_SIGN_OUT_DISCOVERY.md",
+        "CURRENT_SESSION_SIGN_OUT.md",
+        "../../evidence/self-signout-receipt.json"
+      ],
+      "affectedFiles": [
+        "lib/auth-client.ts",
+        "components/dashboard/Navbar.tsx",
+        "components/dashboard/Sidebar.tsx",
+        "components/dashboard/SessionRecoverySignOutButton.tsx"
+      ],
+      "nextAction": "Retain strict result handling and exact-session audit transaction; complete remaining global transport/retention/release reviews separately."
+    },
+    {
+      "id": "OA-F20",
+      "summary": "Installed provider sign-out catches session-deletion errors, clears cookies and returns success; local logout can differ from server revocation.",
+      "status": "reproduced_corrected_and_verified_for_current_session_path_global_boundaries_open",
+      "evidence": [
+        "SELF_SIGN_OUT_DISCOVERY.md",
+        "CURRENT_SESSION_SIGN_OUT.md",
+        "../../evidence/self-signout-receipt.json"
+      ],
+      "affectedFiles": [
+        "node_modules/better-auth/dist/api/routes/sign-out.mjs",
+        "app/api/auth/[...all]/route.ts"
+      ],
+      "boundary": "Do not modify vendor files or repeat rejected global cookie/provider hooks; design a supported narrow contract after isolated proof.",
+      "nextAction": "Retain strict result handling and exact-session audit transaction; complete remaining global transport/retention/release reviews separately."
+    },
+    {
+      "id": "OA-F21",
+      "summary": "Mobile drawer lacked a named dialog; enlarged text cramped its header, and its visible close icon was intercepted by the content layer.",
+      "status": "corrected_and_verified_en_fr_mobile_keyboard_pointer_and_css_text_reflow_native_at_open",
+      "affectedFiles": [
+        "components/dashboard/Navbar.tsx",
+        "components/ui/sheet.tsx"
+      ],
+      "evidence": [
+        "CURRENT_SESSION_SIGN_OUT.md",
+        "../../evidence/self-signout-receipt.json",
+        "../../evidence/self-signout-initial-attempts.md"
+      ]
+    }
+  ],
+  "verification": {
+    "executed": [
+      {
+        "scope": "OA-F01 tenant directory only",
+        "receipt": "DIRECTORY_SCOPE_VERIFICATION.json",
+        "passed": 15,
+        "failed": 0
+      },
+      {
+        "scope": "OA-SECURITY-READ / OA-SESSION-REVOKE",
+        "receipt": "../../evidence/account-session-receipt.json",
+        "tests": 44,
+        "postgres": 8,
+        "browser": 2
+      },
+      {
+        "scope": "OA-SELF-PROFILE and account-menu journey",
+        "receipt": "../../evidence/self-profile-receipt.json",
+        "tests": 50,
+        "postgres": 9,
+        "http": 2,
+        "browser": 2,
+        "display": 2,
+        "visualFailure": "OA-F18"
+      },
+      {
+        "scope": "OA-F18 shared header",
+        "receipt": "../../evidence/header-reflow-receipt.json",
+        "languages": 2,
+        "cases": 16,
+        "screenshots": 16,
+        "fullAccessibilityVerified": false
+      },
+      {
+        "scope": "OA-SELF-SIGNOUT",
+        "receipt": "../../evidence/self-signout-receipt.json",
+        "unitTests": 27,
+        "postgresCases": 8,
+        "endpointCases": 5,
+        "browserJourneys": 10,
+        "finalMobileJourneys": 2,
+        "screenshots": 32,
+        "fullAccessibilityVerified": false
+      }
+    ],
+    "notExecuted": [
+      "External messages",
+      "Complete native accessibility and every remaining platform workflow"
+    ],
+    "status": "Per-workflow source-bound receipts record completed focused tests/database/browser checks; no full-workflow certification."
+  },
+  "sourceBaseline": "../../evidence/source-baseline-v38.json",
+  "originalDiscoveryBaseline": "../../evidence/source-baseline-v22.json",
+  "updatedAt": "2026-09-13T12:07:03.491Z"
+}

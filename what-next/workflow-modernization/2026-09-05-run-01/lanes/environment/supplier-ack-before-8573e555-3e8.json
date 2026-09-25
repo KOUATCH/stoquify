@@ -1,0 +1,60 @@
+{
+  "run": "8573e555-3e8",
+  "startedAt": "2026-09-07T09:38:28.233Z",
+  "sourcesBefore": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "7c1b86a5dc702513b2396d8a2b77e27263311c0057d0c5198901925f3c616d75",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "42f7f7c0c2210dd4bd67c1d358ffa0a1e73aa2a8c37f81767d861371d9822f6f",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "770e865e8572aa07dd68b2e41231391bb92de6056c0f439da2bb39f1821e4f3f",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "ae675a914fcd26b3a67e85413923716d8b905966f6fdfd3099bc5ca33eba253a",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "e80fbe9073641bb768f984ff293f0d2c9048e46dc520e6ea5f101552fd5098f4",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "4a0271f27c93a9c7d50211377091a1b6ce69679bf15b47106639b5bd09f10f3c",
+    "messages/en.json": "243cf605e4051644f034688cce2871af203596c7c734af447344588c478e2b68",
+    "messages/fr.json": "a0fcec471a2be8abf0164a7a4090ca78675de8365760659fefe58324d1ec5a65"
+  },
+  "checks": [
+    {
+      "name": "Supplier change-request draft disappears and resets to acceptance after reload",
+      "reproduced": true
+    },
+    {
+      "name": "Actual denied signed supplier endpoint loses required private headers",
+      "reproduced": true
+    },
+    {
+      "name": "A four-decimal requested quantity is silently rounded to three decimals",
+      "reproduced": true
+    }
+  ],
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "orderBefore": "4a318090ca2d4236cccc97b3a8274726447dbee3a7211e26bdc77846e5515a2e",
+  "screenshot": "supplier-ack-before-8573e555-3e8.png",
+  "deniedHeaders": {
+    "status": 404,
+    "cacheControl": null,
+    "referrerPolicy": "strict-origin-when-cross-origin"
+  },
+  "originalAfter": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "app/[locale]/supplier-purchase-order/[envelopeId]/SupplierPoAcknowledgementPortal.tsx": "7c1b86a5dc702513b2396d8a2b77e27263311c0057d0c5198901925f3c616d75",
+    "app/[locale]/supplier-purchase-order/[envelopeId]/page.tsx": "8bc5762c1306e00f5615182881f758da48626673bdbe7e3c8d518a1ed0f87e6b",
+    "app/api/supplier-po-envelopes/[envelopeId]/route.ts": "42f7f7c0c2210dd4bd67c1d358ffa0a1e73aa2a8c37f81767d861371d9822f6f",
+    "app/api/supplier-po-envelopes/[envelopeId]/proposals/route.ts": "770e865e8572aa07dd68b2e41231391bb92de6056c0f439da2bb39f1821e4f3f",
+    "services/purchase-order/supplier-po-acknowledgement.service.ts": "ae675a914fcd26b3a67e85413923716d8b905966f6fdfd3099bc5ca33eba253a",
+    "services/purchase-order/supplier-po-acknowledgement.schemas.ts": "e80fbe9073641bb768f984ff293f0d2c9048e46dc520e6ea5f101552fd5098f4",
+    "services/purchase-order/supplier-po-access-token.ts": "ee32c57346bd26ce17069cd6e9ef4f27abc28262d1a4d4110fc7e755cbb4eb6c",
+    "actions/purchaseOrderWorkflow/supplier-po-acknowledgement.actions.ts": "2e2a7d207d26822ffc4df450cdcb94752264262ce7d1c63461992b0f8fd7c36a",
+    "components/purchase-orders/SupplierPoAcknowledgementWorkbench.tsx": "a9a312200aaf7d3b76818783354027c09c5c112b6ada13130a71550beb4861e9",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "middleware.ts": "4a0271f27c93a9c7d50211377091a1b6ce69679bf15b47106639b5bd09f10f3c",
+    "messages/en.json": "243cf605e4051644f034688cce2871af203596c7c734af447344588c478e2b68",
+    "messages/fr.json": "a0fcec471a2be8abf0164a7a4090ca78675de8365760659fefe58324d1ec5a65"
+  },
+  "sourceStable": true,
+  "completedAt": "2026-09-07T09:39:49.706Z"
+}

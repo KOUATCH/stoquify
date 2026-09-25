@@ -1,0 +1,164 @@
+{
+  "run": "3018d90a-bbf",
+  "startedAt": "2026-09-07T08:01:07.820Z",
+  "sourcesBefore": {
+    "services/accounting/customer-statement-retry.service.ts": "709da1ab5f944cdce472a842dcfabe3beb7a98bb34b3b3b93f0bfc969254b1f7",
+    "services/accounting/customer-statement-delivery-recovery.ts": "4953a59aee97b05b003dba4c168093afc875895678bd8330b782c8f71f3ad97c",
+    "services/accounting/customer-statement.schemas.ts": "7fb4d93d60b164b94d8b71d074c6547db50aee34ee1c1a1fece78274398649cb",
+    "hooks/customer-statement-request.ts": "198035df0436e97cea0b80bbbca656b11a98688b84852f725f8fc265b6cb07c3",
+    "services/communication/customer-statement-delivery-worker.service.ts": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-history.service.ts": "337acd530edfd0a9922173cad7231bf50809b43d7df065e7cd8c5ee04a0ae7ba",
+    "actions/accounting/customer-statement-history.actions.ts": "e424d9e004bea1fcebe2ed29182b903259014687b36bdd1bf7a0368a827a7630",
+    "components/customers/CustomerStatementHistory.tsx": "d8a6e0330b02a0028d627291de3c81e8603ce52794b8969b819b0eb599274145",
+    "components/customers/CustomerStatementWorkflow.tsx": "69763f35f5797c347df9a8955a33b559975aae80f03f9693bde906c8563c07ec",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-statement-retry-review-3018d90a-bbf.png",
+        "en-statement-retry-reflow-320-100-3018d90a-bbf.png",
+        "en-statement-retry-reflow-320-200-3018d90a-bbf.png",
+        "en-statement-retry-reflow-390-100-3018d90a-bbf.png",
+        "en-statement-retry-reflow-390-200-3018d90a-bbf.png",
+        "en-statement-retry-reflow-768-100-3018d90a-bbf.png",
+        "en-statement-retry-reflow-768-200-3018d90a-bbf.png",
+        "en-statement-retry-reflow-1440-100-3018d90a-bbf.png",
+        "en-statement-retry-reflow-1440-200-3018d90a-bbf.png",
+        "en-statement-retry-unconfirmed-3018d90a-bbf.png",
+        "en-statement-retry-failure-3018d90a-bbf.png"
+      ],
+      "reflow": [
+        {
+          "width": 320,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "actionVisible": true
+        }
+      ],
+      "routeReadyMs": 5372,
+      "onlyKnownUnsentOffered": true,
+      "error": "expect(locator).toHaveValue(expected) failed\n\nLocator: getByRole('region', { name: 'Statement history', exact: true }).getByRole('form', { name: 'Resume statement processing', exact: true }).getByLabel('Reason for retry', { exact: true })\nExpected: \"Owned setup reviewed\"\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.value\" with timeout 45000ms\n  - waiting for getByRole('region', { name: 'Statement history', exact: true }).getByRole('form', { name: 'Resume statement processing', exact: true }).getByLabel('Reason for retry', { exact: true })\n",
+      "originalPermissionsRestored": true
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-statement-retry-review-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-320-100-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-320-200-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-390-100-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-390-200-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-768-100-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-768-200-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-1440-100-3018d90a-bbf.png",
+        "fr-statement-retry-reflow-1440-200-3018d90a-bbf.png",
+        "fr-statement-retry-unconfirmed-3018d90a-bbf.png",
+        "fr-statement-retry-failure-3018d90a-bbf.png"
+      ],
+      "reflow": [
+        {
+          "width": 320,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 320,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 390,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 768,
+          "scale": 200,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 100,
+          "actionVisible": true
+        },
+        {
+          "width": 1440,
+          "scale": 200,
+          "actionVisible": true
+        }
+      ],
+      "routeReadyMs": 2886,
+      "onlyKnownUnsentOffered": true,
+      "error": "expect(locator).toHaveValue(expected) failed\n\nLocator: getByRole('region', { name: 'Historique des relevés', exact: true }).getByRole('form', { name: 'Reprendre le traitement du relevé', exact: true }).getByLabel('Motif de reprise', { exact: true })\nExpected: \"Configuration de test vérifiée\"\nTimeout: 45000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.value\" with timeout 45000ms\n  - waiting for getByRole('region', { name: 'Historique des relevés', exact: true }).getByRole('form', { name: 'Reprendre le traitement du relevé', exact: true }).getByLabel('Motif de reprise', { exact: true })\n",
+      "originalPermissionsRestored": true
+    }
+  ],
+  "scope": "Owned real PostgreSQL worker outcomes and authenticated EN/FR history. Only scoped synthetic fixtures; no external provider calls.",
+  "originalBefore": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalAfter": "cf6979a5a0526b0203431448179d7c8623d16c1ef3bf597c5a2758dd1b6ad6ee",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-07T08:03:21.734Z",
+  "sourcesAfter": {
+    "services/accounting/customer-statement-retry.service.ts": "709da1ab5f944cdce472a842dcfabe3beb7a98bb34b3b3b93f0bfc969254b1f7",
+    "services/accounting/customer-statement-delivery-recovery.ts": "4953a59aee97b05b003dba4c168093afc875895678bd8330b782c8f71f3ad97c",
+    "services/accounting/customer-statement.schemas.ts": "7fb4d93d60b164b94d8b71d074c6547db50aee34ee1c1a1fece78274398649cb",
+    "hooks/customer-statement-request.ts": "198035df0436e97cea0b80bbbca656b11a98688b84852f725f8fc265b6cb07c3",
+    "services/communication/customer-statement-delivery-worker.service.ts": "038af645c4becc2779a2d8987a8a71afe3a1a8c21e81796163659993a341ebef",
+    "services/communication/customer-statement-delivery.provider.ts": "42b77f3df0fe2607f8f04d07cfe663437d69f1576d41b34d3aa9b859cbe30f32",
+    "services/accounting/customer-statement-history.service.ts": "337acd530edfd0a9922173cad7231bf50809b43d7df065e7cd8c5ee04a0ae7ba",
+    "actions/accounting/customer-statement-history.actions.ts": "e424d9e004bea1fcebe2ed29182b903259014687b36bdd1bf7a0368a827a7630",
+    "components/customers/CustomerStatementHistory.tsx": "d8a6e0330b02a0028d627291de3c81e8603ce52794b8969b819b0eb599274145",
+    "components/customers/CustomerStatementWorkflow.tsx": "69763f35f5797c347df9a8955a33b559975aae80f03f9693bde906c8563c07ec",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true
+}

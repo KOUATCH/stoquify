@@ -1,3 +1,5 @@
+import { AccountingDataTable } from "@/components/accounting/AccountingDataTable"
+
 import { redirect } from "next/navigation"
 import { Archive, ListTree, Plus } from "lucide-react"
 
@@ -122,7 +124,77 @@ async function AccountingAccountsPageImpl({ params, searchParams }: PageProps) {
         />
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.6fr]">
+      <div className="grid min-w-0 grid-cols-1 gap-6">
+
+
+        <AccountingPanel title="Account list" description={accountsResponse.success ? "Active and archived account nodes." : accountsResponse.error || "Accounts unavailable."}>
+          <div className="overflow-x-auto">
+            <AccountingDataTable
+              caption={"Account list"}
+              locale={locale === "fr" ? "fr" : "en"}
+              emptyMessage={"No accounts yet."}
+              columns={[
+                { label: "Code" },
+                { label: "Name" },
+                { label: "Type" },
+                { label: "Normal" },
+                { label: "Manual" },
+                { label: "Lines" },
+                { label: "Action", className: "text-right" },
+              ]}
+              rows={accounts.map((account) => {
+                return {
+                  id: account.id,
+                  searchText: [
+                    account.code,
+                    account.nameEn,
+                    account.nameFr,
+                    account.type,
+                    account.normalBalance,
+                    account.allowManualPost ? "Yes" : "No",
+                    account._count.journalLines,
+                    account.isActive ? "Active" : "Archived",
+                  ]
+                    .filter((value) => value !== null && value !== undefined)
+                    .join(" "),
+                  cells: [
+                    <div key="cell-0" className="font-medium text-[var(--dash-text)]">
+                      {account.code}
+                    </div>,
+                    <div key="cell-1" className="text-[var(--dash-text-soft)]">
+                      {account.nameEn}
+                    </div>,
+                    <div key="cell-2" className="text-[var(--dash-text-soft)]">
+                      {account.type}
+                    </div>,
+                    <div key="cell-3" className="text-[var(--dash-text-soft)]">
+                      {account.normalBalance}
+                    </div>,
+                    <div key="cell-4" className="text-[var(--dash-text-soft)]">
+                      {account.allowManualPost ? "Yes" : "No"}
+                    </div>,
+                    <div key="cell-5" className="text-[var(--dash-text-soft)]">
+                      {account._count.journalLines}
+                    </div>,
+                    <div key="cell-6" className="text-right">
+                      {account.isActive ? (
+                        <form action={archiveAccount}>
+                          <input type="hidden" name="accountId" value={account.id} />
+                          <button className="dashboard-button-secondary h-9 rounded-lg px-3 text-xs font-medium">
+                            Archive
+                          </button>
+                        </form>
+                      ) : (
+                        <span className="text-xs text-[var(--dash-text-faint)]">Archived</span>
+                      )}
+                    </div>,
+                  ],
+                }
+              })}
+            />
+          </div>
+        </AccountingPanel>
+
         <AccountingPanel title="Create account" description="Use leaf accounts for manual journal posting.">
           <form action={createAccount} className="grid gap-4 p-5">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -180,52 +252,6 @@ async function AccountingAccountsPageImpl({ params, searchParams }: PageProps) {
             </label>
             <button className="dashboard-button-create h-10 rounded-lg px-4 text-sm font-medium">Create account</button>
           </form>
-        </AccountingPanel>
-
-        <AccountingPanel title="Account list" description={accountsResponse.success ? "Active and archived account nodes." : accountsResponse.error || "Accounts unavailable."}>
-          <div className="overflow-x-auto">
-            <table className="dashboard-table-base w-full min-w-[860px] text-sm">
-              <thead className="border-b border-[var(--dash-border-subtle)] text-left text-xs uppercase text-[var(--dash-text-faint)]">
-                <tr>
-                  <th className="px-4 py-3">Code</th>
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Normal</th>
-                  <th className="px-4 py-3">Manual</th>
-                  <th className="px-4 py-3">Lines</th>
-                  <th className="px-4 py-3 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {accounts.length ? (
-                  accounts.map((account) => (
-                    <tr key={account.id} className="border-b border-[var(--dash-border-subtle)]">
-                      <td className="px-4 py-3 font-medium text-[var(--dash-text)]">{account.code}</td>
-                      <td className="px-4 py-3 text-[var(--dash-text-soft)]">{account.nameEn}</td>
-                      <td className="px-4 py-3 text-[var(--dash-text-soft)]">{account.type}</td>
-                      <td className="px-4 py-3 text-[var(--dash-text-soft)]">{account.normalBalance}</td>
-                      <td className="px-4 py-3 text-[var(--dash-text-soft)]">{account.allowManualPost ? "Yes" : "No"}</td>
-                      <td className="px-4 py-3 text-[var(--dash-text-soft)]">{account._count.journalLines}</td>
-                      <td className="px-4 py-3 text-right">
-                        {account.isActive ? (
-                          <form action={archiveAccount}>
-                            <input type="hidden" name="accountId" value={account.id} />
-                            <button className="dashboard-button-secondary h-9 rounded-lg px-3 text-xs font-medium">Archive</button>
-                          </form>
-                        ) : (
-                          <span className="text-xs text-[var(--dash-text-faint)]">Archived</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-[var(--dash-text-soft)]">No accounts yet.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
         </AccountingPanel>
       </div>
     </AccountingPageShell>

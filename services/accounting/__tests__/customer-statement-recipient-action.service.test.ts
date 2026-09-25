@@ -128,6 +128,65 @@ beforeEach(() => {
 })
 
 describe("customer statement recipient actions", () => {
+  const promiseInput = {
+    statementSnapshotId: "statement-1", token: "signed-token", actionType: "PROMISE_TO_PAY" as const,
+    requestedAmount: "20.00", promisedFor: new Date("2026-08-10T12:00:00.000Z"),
+    note: "We will settle by the promised date.", idempotencyKey: "promise-retry-001", correlationId: "promise-correlation-001", now: NOW,
+  }
+
+  async function recordedPromise() {
+    const first = buildTx()
+    const result = await submitCustomerStatementRecipientActionInTx(first.tx, promiseInput)
+    const saved = await first.actionCreate.mock.results[0].value
+    const state = await first.stateCreate.mock.results[0].value
+    jest.clearAllMocks()
+    return { result, ...buildTx({ existing: { ...saved, states: [state] } }) }
+  }
+
+  it.each(["NaN", "Infinity", "-Infinity"])("rejects non-finite monetary input before access or writes: %s", async requestedAmount => {
+    const { tx, actionCreate } = buildTx()
+    await expect(submitCustomerStatementRecipientActionInTx(tx, { ...promiseInput, requestedAmount })).rejects.toThrow()
+    expect(mockResolve).not.toHaveBeenCalled()
+    expect(actionCreate).not.toHaveBeenCalled()
+  })
+
+  it("returns the recorded promise after its date passes without creating new evidence", async () => {
+    const { tx, result, actionCreate, stateCreate } = await recordedPromise()
+    const retryAt = new Date("2026-08-11T12:00:00.000Z")
+    await expect(submitCustomerStatementRecipientActionInTx(tx, { ...promiseInput, now: retryAt })).resolves.toEqual({ ...result, replayed: true })
+    expect(mockResolve).toHaveBeenCalledWith(tx, expect.objectContaining({ now: retryAt, token: "signed-token", action: CustomerStatementAccessAction.PROMISE_TO_PAY }))
+    expect(actionCreate).not.toHaveBeenCalled()
+    expect(stateCreate).not.toHaveBeenCalled()
+    expect(mockRecordEvent).not.toHaveBeenCalled()
+    expect(mockMarkEvent).not.toHaveBeenCalled()
+    expect(tx.auditLog.create).not.toHaveBeenCalled()
+    expect(mockRecordAccess).toHaveBeenCalledTimes(1)
+  })
+
+  it("still rejects changed promise payload under an existing key after its date passes", async () => {
+    const { tx, actionCreate } = await recordedPromise()
+    await expect(submitCustomerStatementRecipientActionInTx(tx, { ...promiseInput, note: "Different payment explanation.", now: new Date("2026-08-11T12:00:00.000Z") })).rejects.toThrow("idempotency evidence was reused")
+    expect(actionCreate).not.toHaveBeenCalled()
+    expect(mockRecordAccess).not.toHaveBeenCalled()
+  })
+
+  it.each([new Date("2026-08-08T12:00:00.000Z"), new Date("2027-08-10T12:00:00.000Z")])("rejects a new promise outside the current date window (%s)", async promisedFor => {
+    const { tx, actionCreate, stateCreate } = buildTx()
+    await expect(submitCustomerStatementRecipientActionInTx(tx, { ...promiseInput, promisedFor })).rejects.toThrow("within the next 365 days")
+    expect(actionCreate).not.toHaveBeenCalled()
+    expect(stateCreate).not.toHaveBeenCalled()
+    expect(mockRecordEvent).not.toHaveBeenCalled()
+  })
+
+  it.each(["expired", "revoked", "foreign statement"])("keeps current %s token denial ahead of recorded-result lookup", async reason => {
+    const { tx, actionCreate } = await recordedPromise()
+    mockResolve.mockRejectedValueOnce(new Error(`Denied ${reason} token`))
+    await expect(submitCustomerStatementRecipientActionInTx(tx, { ...promiseInput, now: new Date("2026-08-11T12:00:00.000Z") })).rejects.toThrow(`Denied ${reason} token`)
+    expect(tx.customerStatementRecipientAction.findFirst).not.toHaveBeenCalled()
+    expect(actionCreate).not.toHaveBeenCalled()
+    expect(mockRecordAccess).not.toHaveBeenCalled()
+  })
+
   it("creates an immutable dispute with an OPEN hash-chained state and no raw-note audit", async () => {
     const { tx, actionCreate, stateCreate } = buildTx()
 

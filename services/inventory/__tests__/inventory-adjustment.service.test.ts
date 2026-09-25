@@ -14,6 +14,7 @@ import {
 jest.mock("@/prisma/db", () => ({
   db: {
     $transaction: jest.fn(),
+    $queryRaw: jest.fn(),
     item: { findFirst: jest.fn(), findMany: jest.fn() },
     location: { findFirst: jest.fn() },
     stockAdjustment: { count: jest.fn(), create: jest.fn(), findFirst: jest.fn(), update: jest.fn() },
@@ -36,6 +37,7 @@ jest.mock("@/prisma/db", () => ({
 }))
 
 const mockedDb = db as unknown as {
+  $queryRaw: jest.Mock
   $transaction: jest.Mock
   item: { findFirst: jest.Mock; findMany: jest.Mock }
   location: { findFirst: jest.Mock }
@@ -182,6 +184,7 @@ function itemWithInventory(overrides: Record<string, unknown> = {}) {
 
 beforeEach(() => {
   jest.clearAllMocks()
+  mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: [], newWorkStoppedAt: {} }])
   mockedDb.$transaction.mockImplementation(async (callback) => callback(mockedDb))
   mockedDb.item.findFirst.mockResolvedValue(itemWithInventory())
   mockedDb.item.findMany.mockResolvedValue([
@@ -248,6 +251,12 @@ beforeEach(() => {
 })
 
 describe("requestManualItemStockAdjustment", () => {
+  it("blocks new manual adjustments after a reviewed inventory stop", async () => {
+    mockedDb.$queryRaw.mockImplementation(async (query: { sql: string }) => query.sql.includes('"organizations"') ? [{ id: "org-1" }] : [{ newWorkStoppedModules: ["inventory"], newWorkStoppedAt: { inventory: "2026-09-05T10:00:00Z" } }])
+    await expect(requestManualItemStockAdjustment({ organizationId: "org-1", itemId: "item-1", actorId: "maker-1", quantityChange: -2, mode: "delta", reason: "Correction" })).rejects.toMatchObject({ metadata: { reason: "MODULE_NEW_WORK_STOPPED" } })
+    expect(mockedDb.stockAdjustment.create).not.toHaveBeenCalled()
+    expect(mockedDb.inventoryTransaction.create).not.toHaveBeenCalled()
+  })
   it("turns a legacy manual stock edit into a submitted adjustment without mutating stock", async () => {
     mockedDb.stockAdjustment.update.mockResolvedValue(
       adjustment({

@@ -1,0 +1,95 @@
+{
+  "recordedAt": "2026-09-06T11:41:23.065Z",
+  "baseline": "evidence/source-baseline-v25.json",
+  "sources": {
+    "app/[locale]/(dashboard)/dashboard/settings/roles/page.tsx": "633e680226f937833891855a47016dee47de248780d0e035c73e9cf390d30ce4",
+    "app/[locale]/(dashboard)/dashboard/settings/roles/columns.tsx": "ae6f88a5f6464137b656a74241499f265228093661ee83fb84f67954229e2b85",
+    "actions/roles/getOrgRoles.ts": "fb44435011405aff0914235e9015ded367c9170b8bb2a8cc234b845e17b4acbe",
+    "services/roles/role.service.ts": "4c8013cea94f4e6f40f7ef446feda698bde55dc117659062f18ce9aa91d67f31",
+    "components/ui/dropdown-menu.tsx": "6d60afe0821a1972277bf5fadce7454153cd459b16ac8f25fee4de525e49f4e2",
+    "components/DataTableComponents/DataTable.tsx": "cfd2eff50cc19dd3b06e8874c5f50b7cf745f832eb39a9fbbb00fe24fe897470",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "scope": [
+    "OA-ROLE-LIST",
+    "ID-01",
+    "ID-02"
+  ],
+  "tests": {
+    "file": "evidence/role-catalogue-tests-01.json",
+    "passed": 3,
+    "failed": 0,
+    "exitCode": 0,
+    "chunk": "268270"
+  },
+  "catalogue": {
+    "file": "lanes/environment/role-catalogue-browser-browser-a734d487-35b.json",
+    "passed": 2,
+    "failed": 0,
+    "chunk": "15aa51"
+  },
+  "registration": {
+    "file": "lanes/environment/registration-standard-fr-fbb37a5a-a97.json",
+    "passed": 1,
+    "failed": 0,
+    "chunk": "bded80",
+    "ordinaryCooldownRespected": true,
+    "createdUnverifiedAccounts": 1,
+    "externalEmail": false
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "8643df"
+  },
+  "lint": {
+    "exitCode": 0,
+    "chunk": "f0f7c5"
+  },
+  "screenshots": [
+    "evidence/role-catalogue-and-registration/en-role-catalogue-reader-a734d487-35b.png",
+    "evidence/role-catalogue-and-registration/en-role-catalogue-menu-a734d487-35b.png",
+    "evidence/role-catalogue-and-registration/en-role-catalogue-editor-handoff-a734d487-35b.png",
+    "evidence/role-catalogue-and-registration/fr-role-catalogue-reader-a734d487-35b.png",
+    "evidence/role-catalogue-and-registration/fr-role-catalogue-menu-a734d487-35b.png",
+    "evidence/role-catalogue-and-registration/fr-role-catalogue-editor-handoff-a734d487-35b.png",
+    "evidence/role-catalogue-and-registration/register-fr-entry-fbb37a5a-a97.png",
+    "evidence/role-catalogue-and-registration/register-fr-required-fbb37a5a-a97.png",
+    "evidence/role-catalogue-and-registration/register-fr-company-fbb37a5a-a97.png",
+    "evidence/role-catalogue-and-registration/register-fr-ready-fbb37a5a-a97.png",
+    "evidence/role-catalogue-and-registration/register-fr-recovery-fbb37a5a-a97.png",
+    "evidence/role-catalogue-and-registration/register-fr-verification-fbb37a5a-a97.png"
+  ],
+  "remaining": [
+    "Member assignment/deactivation, connected last-administrator protection and invitation grant aliases remain under review.",
+    "Catalogue read failures are unit-tested; runtime database-outage presentation remains unvisited. Native zoom, screen reader and comprehensive contrast review are open.",
+    "The French shell still contains English navigation labels outside the corrected role page. Mobile screenshot records the first fold; reflow is checked at 390/768/1440.",
+    "Registration verification delivery and complete onboarding remain unverified; the new account is unverified with no session."
+  ],
+  "historicalAttempts": [
+    {
+      "file": "lanes/environment/role-catalogue-browser-browser-14529db6-545.json",
+      "result": "0/2: controls used before hydration completed; local catalogue controls now disabled until interactive."
+    },
+    {
+      "file": "lanes/environment/role-catalogue-browser-browser-e746c106-7aa.json",
+      "result": "0/2: test counted the shared table footer; data-row assertions corrected, no production change for this failure."
+    },
+    {
+      "chunk": "b85cc4",
+      "result": "Three tests passed but report writing failed with EPERM; rerun retained its report."
+    }
+  ],
+  "completeWorkflowVerified": false,
+  "migrations": false,
+  "deployment": false
+}

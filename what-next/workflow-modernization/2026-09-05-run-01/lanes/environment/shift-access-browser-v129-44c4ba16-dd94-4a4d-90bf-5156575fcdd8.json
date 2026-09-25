@@ -1,0 +1,54 @@
+{
+  "at": "2026-09-13T13:52:44.182Z",
+  "sourcesBefore": {
+    "services/pos/pos.service.ts": "b36c75482d2820a661b93e998c70db96698b61cef15f44b31003f64925949d34",
+    "services/pos/shift-opening-access.ts": "4c89c7f9015632b0bfb96477a44ffeab5b7149ba77705b875c3f17bf3a8751b4",
+    "actions/pos/session.actions.ts": "4d6b1f17b38a1999db08a6246cb917666458b51a5226be99e54946a0575fa73c",
+    "hooks/posHooks/usePosOperations.ts": "6ff2bd826108d8d1f637e339d61d470fa09ccb8a41d95f47e1bd2aa21bc0a6c2",
+    "components/pos/ProfessionalPOSSystem.tsx": "7eb9e76ee5a949110681533fc1ee3a17f2f51b62e359ac95bd7d26f248fd1d1b",
+    "messages/en.json": "1094ccd5d459df92ea915ae0fd9b2abfe946e24010b2f2ebab8cddee5aadcf50",
+    "messages/fr.json": "76131cd27b3c9b54ce4e3c3e67654adc2a8bbefcc4c6a6a705b9a8502cfbe55c"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [
+        "shift-access-v129-en-1440-44c4ba16-dd94-4a4d-90bf-5156575fcdd8.png",
+        "shift-access-v129-en-768-44c4ba16-dd94-4a4d-90bf-5156575fcdd8.png",
+        "shift-access-v129-en-320-44c4ba16-dd94-4a4d-90bf-5156575fcdd8.png"
+      ],
+      "readyMs": 12051,
+      "commercialDenialWithAmountRetainedAndNoShift": true,
+      "fixtureGrantChangeDoesNotAutoSubmit": true,
+      "explicitKeyboardRetryOpensOnce": true,
+      "retainedClosureVerifiedByService": true
+    },
+    {
+      "locale": "fr",
+      "pageErrors": [],
+      "screenshots": [
+        "shift-access-v129-fr-1440-44c4ba16-dd94-4a4d-90bf-5156575fcdd8.png",
+        "shift-access-v129-fr-768-44c4ba16-dd94-4a4d-90bf-5156575fcdd8.png",
+        "shift-access-v129-fr-320-44c4ba16-dd94-4a4d-90bf-5156575fcdd8.png"
+      ],
+      "readyMs": 12928,
+      "commercialDenialWithAmountRetainedAndNoShift": true,
+      "fixtureGrantChangeDoesNotAutoSubmit": true,
+      "explicitKeyboardRetryOpensOnce": true,
+      "retainedClosureVerifiedByService": true
+    }
+  ],
+  "scope": "Owned local credentials and real shift actions. EN read-only POS and FR suspended sales grant fixtures. Local grant restoration is synthetic test setup, not live customer activation. No sale, payment or external operation.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/pos/pos.service.ts": "b36c75482d2820a661b93e998c70db96698b61cef15f44b31003f64925949d34",
+    "services/pos/shift-opening-access.ts": "4c89c7f9015632b0bfb96477a44ffeab5b7149ba77705b875c3f17bf3a8751b4",
+    "actions/pos/session.actions.ts": "4d6b1f17b38a1999db08a6246cb917666458b51a5226be99e54946a0575fa73c",
+    "hooks/posHooks/usePosOperations.ts": "6ff2bd826108d8d1f637e339d61d470fa09ccb8a41d95f47e1bd2aa21bc0a6c2",
+    "components/pos/ProfessionalPOSSystem.tsx": "7eb9e76ee5a949110681533fc1ee3a17f2f51b62e359ac95bd7d26f248fd1d1b",
+    "messages/en.json": "1094ccd5d459df92ea915ae0fd9b2abfe946e24010b2f2ebab8cddee5aadcf50",
+    "messages/fr.json": "76131cd27b3c9b54ce4e3c3e67654adc2a8bbefcc4c6a6a705b9a8502cfbe55c"
+  },
+  "sourceStable": true
+}

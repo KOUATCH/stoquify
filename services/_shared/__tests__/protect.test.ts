@@ -2,6 +2,7 @@ import { protect } from "@/services/_shared/protect"
 import { assertCanUseOrganization, RbacError, requirePermission } from "@/lib/security/rbac"
 import { FreshAuthRequiredError, requireFreshAuth } from "@/lib/security/auth-session"
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service"
+import { ApplicationError } from "@/services/_shared/action-errors"
 
 jest.mock("@/lib/security/rbac", () => {
   class MockRbacError extends Error {
@@ -91,6 +92,26 @@ describe("protect", () => {
     expect(mockRequirePermission).toHaveBeenCalledWith("users.read", { resource: "User" })
     expect(mockAssertCanUseOrganization).not.toHaveBeenCalled()
     expect(handler).toHaveBeenCalledWith({ id: "user-2" }, ctx)
+  })
+
+  it("preserves only the allowlisted stopped-work reason on an authorized command denial", async () => {
+    mockRequirePermission.mockResolvedValue({ userId: "user-1", orgId: "org-1", permissions: ["payroll.runs.calculate"] })
+    const action = protect({ permission: "payroll.runs.calculate" }, async () => { throw new ApplicationError("FORBIDDEN", "New work is stopped", 403, true, { reason: "MODULE_NEW_WORK_STOPPED", privateEvidence: "private-marker" }) })
+    const result = await action({})
+    expect(result).toMatchObject({ success: false, status: 403, code: "FORBIDDEN", reason: "MODULE_NEW_WORK_STOPPED" })
+    expect(result).not.toHaveProperty("metadata")
+    expect(JSON.stringify(result)).not.toContain("private-marker")
+  })
+
+  it("preserves unrelated FORBIDDEN behavior without disclosing other metadata reasons", async () => {
+    mockRequirePermission.mockResolvedValue({ userId: "user-1", orgId: "org-1", permissions: ["payroll.runs.calculate"] })
+    const action = protect({ permission: "payroll.runs.calculate" }, async () => { throw new ApplicationError("FORBIDDEN", "Different restriction", 403, true, { reason: "PRIVATE_AUTH_REASON", privateEvidence: "private-marker" }) })
+    const result = await action({})
+    expect(result).toMatchObject({ success: false, status: 403, code: "FORBIDDEN", error: "Forbidden" })
+    expect(result).not.toHaveProperty("reason")
+    expect(result).not.toHaveProperty("metadata")
+    expect(JSON.stringify(result)).not.toContain("private-marker")
+    expect(JSON.stringify(result)).not.toContain("PRIVATE_AUTH_REASON")
   })
 
   it("rejects caller-supplied organization scope that does not pass RBAC context checks", async () => {

@@ -1,0 +1,52 @@
+{
+  "at": "2026-09-13T14:22:15.114Z",
+  "sourcesBefore": {
+    "services/pos/pos.service.ts": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+    "services/pos/tender-write-access.ts": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4",
+    "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1",
+    "components/pos/ProfessionalPOSSystem.tsx": "5c346f16cdf8f9aebd3736aa24a253c3b534e5d4c9be975260845578fe3a7d28",
+    "hooks/posHooks/usePosOperations.ts": "bc07f2361d6a4678ee9271b9cfe2b8ab0a0b0457b2b3f56b7ce078590c666cfc",
+    "messages/en.json": "25a1e9de9f61c693ea1a89cd82e8ef7ed4f66363564d338fbf029b8922d750b4",
+    "messages/fr.json": "1c7ce874ab566e275ff814b3bc466a244282a7a0f74124fdc6668a3d2d81ae26"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [
+        "tender-v131-en-1440-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+        "tender-v131-en-768-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+        "tender-v131-en-320-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png"
+      ],
+      "readyMs": 13470,
+      "deniedAttemptPreservesTenderAndFinancialState": true,
+      "grantChangeDoesNotSubmit": true,
+      "explicitKeyboardRetryCommitsExactlyOnceWithBalancedPostings": true
+    },
+    {
+      "locale": "fr",
+      "pageErrors": [],
+      "screenshots": [
+        "tender-v131-fr-1440-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+        "tender-v131-fr-768-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png",
+        "tender-v131-fr-320-b45e5db1-5702-46cc-8f34-6cd32daa6c20.png"
+      ],
+      "readyMs": 7658,
+      "deniedAttemptPreservesTenderAndFinancialState": true,
+      "grantChangeDoesNotSubmit": true,
+      "explicitKeyboardRetryCommitsExactlyOnceWithBalancedPostings": true
+    }
+  ],
+  "scope": "Actual EN/FR cashier actions on owned local accounts and PostgreSQL. Synthetic cash/ledger fixture, no external provider, delivery, statutory approval or live activation.",
+  "passed": true,
+  "sourcesAfter": {
+    "services/pos/pos.service.ts": "756f76baad98ed659442972d3abf3475f45fb72a0a6f2a23e1bad7ce9085d02a",
+    "services/pos/tender-write-access.ts": "a06a5d1810d0785881856e41af66c6c30c2d07f7700d2e81b88c34624a82f4f4",
+    "actions/pos/tender.actions.ts": "ea89bafdc4357f5ded9044779cd41d206753379310afc27af9bd53504207a9d1",
+    "components/pos/ProfessionalPOSSystem.tsx": "5c346f16cdf8f9aebd3736aa24a253c3b534e5d4c9be975260845578fe3a7d28",
+    "hooks/posHooks/usePosOperations.ts": "bc07f2361d6a4678ee9271b9cfe2b8ab0a0b0457b2b3f56b7ce078590c666cfc",
+    "messages/en.json": "25a1e9de9f61c693ea1a89cd82e8ef7ed4f66363564d338fbf029b8922d750b4",
+    "messages/fr.json": "1c7ce874ab566e275ff814b3bc466a244282a7a0f74124fdc6668a3d2d81ae26"
+  },
+  "sourceStable": true
+}

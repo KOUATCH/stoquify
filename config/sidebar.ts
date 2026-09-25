@@ -278,8 +278,8 @@ export const sidebarLinks: ISidebarLink[] = [
       { title: "AP Workbench", href: "/dashboard/purchases/payables", permission: "finance.payables.read" },
       { title: "New Purchase Order", href: "/dashboard/purchase-orders/new", permission: PERMISSIONS.CREATE_PURCHASE_ORDERS },
       { title: "New Supplier", href: "/dashboard/purchases/suppliers/create", permission: PERMISSIONS.CREATE_SUPPLIERS },
-      { title: "Purchase Orders", href: "/dashboard/purchase-orders", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
       { title: "Purchase Analytics", href: "/dashboard/purchase-orders/analytics", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
+      { title: "Purchase Orders", href: "/dashboard/purchase-orders", permission: PERMISSIONS.READ_PURCHASE_ORDERS },
       { title: "Suppliers", href: "/dashboard/purchases/suppliers", permission: PERMISSIONS.READ_SUPPLIERS },
     ],
   },
@@ -310,7 +310,7 @@ export const sidebarLinks: ISidebarLink[] = [
     priority: "utility",
     dropdownMenu: [
       { title: "Appearance", href: "/dashboard/settings/appearance", permission: PERMISSIONS.DASHBOARD_READ },
-      { title: "Change Password", href: "/dashboard/change-password", permission: PERMISSIONS.PASSWORD_READ },
+      { title: "Change Password", href: "/dashboard/change-password", permission: "profile.password.update" },
       { title: "Company", href: "/dashboard/settings/company", permission: PERMISSIONS.COMPANY_READ },
       {
         title: "Data onboarding",
@@ -336,21 +336,15 @@ export const sidebarLinks: ISidebarLink[] = [
 export function filterSidebarLinksByPermission(
   links: ISidebarLink[],
   hasPermission: (permission: string) => boolean,
+  canShow: (item: { href?: string; moduleSlug?: string }) => boolean = () => true,
 ): ISidebarLink[] {
-  return links
-    .map((link) => ({
-      ...link,
-      dropdownMenu: link.dropdownMenu?.filter((item) =>
-        hasSidebarPermission(item, hasPermission),
-      ),
-    }))
-    .filter(
-      (link) =>
-        hasSidebarPermission(link, hasPermission) ||
-        Boolean(link.dropdown && link.dropdownMenu?.length),
-    )
+  return links.flatMap((link): ISidebarLink[] => {
+    const canOpen = hasSidebarPermission(link, hasPermission) && canShow(link)
+    const dropdownMenu = link.dropdownMenu?.filter((item) => hasSidebarPermission(item, hasPermission) && canShow(item))
+    if (!canOpen && !(link.dropdown && dropdownMenu?.length)) return []
+    return [{ ...link, href: canOpen ? link.href : undefined, dropdownMenu }]
+  })
 }
-
 function hasSidebarPermission(
   item: Pick<ISidebarLink, "permission" | "permissions" | "permissionMode">,
   hasPermission: (permission: string) => boolean,
@@ -473,19 +467,20 @@ export function getDefaultSidebarLinks(links: ISidebarLink[], normalizedPath: st
 }
 
 export function findSidebarActiveContext(links: ISidebarLink[], normalizedPath: string) {
+  let selected: { link: ISidebarLink; child: ISidebarDropdownItem | undefined; section: SidebarSection } | null = null
+  let matchedLength = -1
   for (const link of links) {
     const section = sidebarSectionByKey.get(link.section) ?? sidebarSections[0]
-
-    if (isSidebarHrefActive(normalizedPath, link.href)) {
-      return { link, child: undefined, section }
+    if (link.href && isSidebarHrefActive(normalizedPath, link.href) && link.href.length > matchedLength) {
+      selected = { link, child: undefined, section }
+      matchedLength = link.href.length
     }
-
-    const child = link.dropdownMenu?.find((item) => isSidebarHrefActive(normalizedPath, item.href))
-
-    if (child) {
-      return { link, child, section }
+    for (const child of link.dropdownMenu ?? []) {
+      if (isSidebarHrefActive(normalizedPath, child.href) && child.href.length > matchedLength) {
+        selected = { link, child, section }
+        matchedLength = child.href.length
+      }
     }
   }
-
-  return null
+  return selected
 }

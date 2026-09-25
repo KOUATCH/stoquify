@@ -3,6 +3,7 @@
 const fs = require("fs")
 const path = require("path")
 const crypto = require("crypto")
+const { evidenceContext, isText, timestamp, verifyAttestation } = require("./pos-governance-evidence")
 
 const CONTRACT_PATH =
   "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json"
@@ -90,10 +91,35 @@ function readJson(root, relativePath) {
 }
 
 function exactIds(values) {
-  return JSON.stringify([...new Set(values)].sort())
+  return JSON.stringify([...values].sort())
 }
 
-function hasApprovalEvidence(decision) {
+function approvalBinding(contract, decision, approval) {
+  return {
+    kind: "POS_G1_DECISION_APPROVAL",
+    contract,
+    decision: {
+      decisionId: decision.decisionId,
+      selectedOption: decision.selectedOption,
+      rationale: decision.rationale,
+      effectiveVersion: decision.effectiveVersion,
+      reviewOrExpiryAt: decision.reviewOrExpiryAt,
+      evidenceLinks: decision.evidenceLinks,
+      affectedCapabilities: decision.affectedCapabilities,
+      rollbackOrDisablePolicy: decision.rollbackOrDisablePolicy,
+    },
+    approval: {
+      accountableApprover: approval.accountableApprover,
+      approverRole: approval.approverRole,
+      authorityReference: approval.authorityReference,
+      freshAuthenticatedAt: approval.freshAuthenticatedAt,
+      approvedAt: approval.approvedAt,
+    },
+  }
+}
+
+function hasApprovalEvidence(decision, context, contract) {
+  if (!context || !contract) return false
   if (decision.approvalStatus !== "APPROVED") return false
   if (!Array.isArray(decision.approvals) || decision.approvals.length === 0) return false
   if (!Array.isArray(decision.requiredApproverRoles) || decision.requiredApproverRoles.length === 0) {
@@ -102,43 +128,49 @@ function hasApprovalEvidence(decision) {
   const approvalsAreValid = decision.approvals.every(
     (approval) =>
       approval &&
-      approval.accountableApprover &&
-      approval.approverRole &&
-      approval.authorityReference &&
-      approval.freshAuthenticatedAt &&
-      approval.approvedAt &&
-      approval.signatureReference &&
+      isText(approval.accountableApprover) &&
+      isText(approval.approverRole) &&
+      isText(approval.authorityReference) &&
+      isText(approval.signatureReference) &&
       /^[a-f0-9]{64}$/.test(approval.signatureEvidenceSha256 || "") &&
-      Number.isFinite(Date.parse(approval.freshAuthenticatedAt)) &&
-      Number.isFinite(Date.parse(approval.approvedAt)) &&
-      Date.parse(approval.approvedAt) >= Date.parse(approval.freshAuthenticatedAt) &&
-      Date.parse(approval.approvedAt) - Date.parse(approval.freshAuthenticatedAt) <= 10 * 60 * 1000,
+      Number.isFinite(timestamp(approval.freshAuthenticatedAt)) &&
+      Number.isFinite(timestamp(approval.approvedAt)) &&
+      timestamp(approval.approvedAt) <= context.now &&
+      timestamp(approval.approvedAt) >= timestamp(approval.freshAuthenticatedAt) &&
+      timestamp(approval.approvedAt) - timestamp(approval.freshAuthenticatedAt) <= 10 * 60 * 1000 &&
+      (() => {
+        const proof = verifyAttestation(context, approval.signatureReference, approval.signatureEvidenceSha256,
+          approvalBinding(contract, decision, approval), ["ARTIFACT_BOUND_APPROVAL"])
+        return proof.ready && timestamp(proof.payload.verifiedAt) >= timestamp(approval.approvedAt) &&
+          timestamp(proof.payload.reviewOrExpiryAt) <= timestamp(decision.reviewOrExpiryAt)
+      })(),
   )
   if (!approvalsAreValid) return false
   const approvedRoles = new Set(
     decision.approvals.map((approval) => approval.approverRole.trim().toLowerCase()),
   )
   return decision.requiredApproverRoles.every((role) =>
-    approvedRoles.has(role.trim().toLowerCase()),
+    isText(role) && approvedRoles.has(role.trim().toLowerCase()),
   )
 }
 
-function hasDecisionApprovalEvidence(decision, approvalRecord) {
+function hasDecisionApprovalEvidence(decision, approvalRecord, context, contract) {
+  if (!context || !contract) return false
   if (!approvalRecord || approvalRecord.decisionId !== decision.id) return false
   if (approvalRecord.selectedOption !== decision.selectedOption) return false
   if (typeof approvalRecord.rationale !== "string" || approvalRecord.rationale.trim() === "") {
     return false
   }
-  if (typeof approvalRecord.effectiveVersion !== "string" || approvalRecord.effectiveVersion.trim() === "") {
+  if (approvalRecord.effectiveVersion !== contract.contractVersion) {
     return false
   }
-  if (!Number.isFinite(Date.parse(approvalRecord.reviewOrExpiryAt))) return false
-  if (!Array.isArray(approvalRecord.evidenceLinks) || approvalRecord.evidenceLinks.length === 0) {
+  if (!Number.isFinite(timestamp(approvalRecord.reviewOrExpiryAt)) || timestamp(approvalRecord.reviewOrExpiryAt) <= context.now) return false
+  if (!Array.isArray(approvalRecord.evidenceLinks) || approvalRecord.evidenceLinks.length === 0 || !approvalRecord.evidenceLinks.every(isText)) {
     return false
   }
   if (
     !Array.isArray(approvalRecord.affectedCapabilities) ||
-    approvalRecord.affectedCapabilities.length === 0
+    approvalRecord.affectedCapabilities.length === 0 || !approvalRecord.affectedCapabilities.every(isText)
   ) {
     return false
   }
@@ -151,10 +183,11 @@ function hasDecisionApprovalEvidence(decision, approvalRecord) {
   return hasApprovalEvidence({
     ...approvalRecord,
     requiredApproverRoles: decision.requiredApproverRoles,
-  })
+  }, context, contract)
 }
 
-function buildG1ContractGate(root = process.cwd()) {
+function buildG1ContractGate(root = process.cwd(), options = {}) {
+  const context = evidenceContext(root, options)
   const contract = readJson(root, CONTRACT_PATH)
   const approvalRegister = readJson(root, APPROVAL_REGISTER_PATH)
   const contractMarkdown = readText(root, CONTRACT_MD_PATH)
@@ -172,6 +205,13 @@ function buildG1ContractGate(root = process.cwd()) {
     .createHash("sha256")
     .update(fs.readFileSync(path.resolve(root, CONTRACT_PATH)))
     .digest("hex")
+  const contractBinding = {
+    contractArtifactId: contract.artifactId,
+    contractVersion: contract.contractVersion,
+    contractPath: CONTRACT_PATH,
+    contractSha256,
+    releaseScope: contract.currentAuthorizedScope,
+  }
   const approvalRecords = Array.isArray(approvalRegister.decisionApprovals)
     ? approvalRegister.decisionApprovals
     : []
@@ -188,7 +228,7 @@ function buildG1ContractGate(root = process.cwd()) {
   const approvedDecisionIds = contract.decisions
     .filter((decision) =>
       detachedApprovalRegisterReady
-        ? hasDecisionApprovalEvidence(decision, approvalRecordByDecisionId.get(decision.id))
+        ? hasDecisionApprovalEvidence(decision, approvalRecordByDecisionId.get(decision.id), context, contractBinding)
         : false,
     )
     .map((decision) => decision.id)
@@ -288,7 +328,7 @@ function buildG1ContractGate(root = process.cwd()) {
     id: `${decision.id.toLowerCase()}_accountable_approval`,
     decisionId: decision.id,
     ready: detachedApprovalRegisterReady
-      ? hasDecisionApprovalEvidence(decision, approvalRecordByDecisionId.get(decision.id))
+      ? hasDecisionApprovalEvidence(decision, approvalRecordByDecisionId.get(decision.id), context, contractBinding)
       : false,
     requiredApproverRoles: decision.requiredApproverRoles,
     status:
@@ -305,6 +345,11 @@ function buildG1ContractGate(root = process.cwd()) {
     generatedAt: new Date().toISOString(),
     gateId: "G1",
     status,
+    evidenceVerification: {
+      trustStatus: context.trustError || "TRUST_ANCHORS_CONFIGURED",
+      binding: contractBinding,
+      method: "ED25519_TRUSTED_ISSUER_ATTESTATION",
+    },
     technicalStatus: technicalReady ? "READY_FOR_ACCOUNTABLE_REVIEW" : "TECHNICAL_CONTRACT_INVALID",
     runtimeConformance: "PARTIAL_WITH_EXPLICIT_GAPS",
     approvalStatus: approvalsReady
@@ -329,6 +374,8 @@ function buildG1ContractGate(root = process.cwd()) {
       "Technical validity does not approve a business, accounting, security or country-pack decision.",
       "Runtime mappings marked partial or missing are not frozen production behavior.",
       "Development authorization does not authorize production or statutory use.",
+      "Source-text technical checks are structural preflight, not proof of runtime control behavior.",
+      "Trusted issuer signatures attest identity, authority and evidence review; this local gate does not independently establish real-world identity.",
     ],
   }
 }
@@ -348,6 +395,7 @@ function renderMarkdown(report) {
     `Technical contract: **${report.technicalStatus}**`,
     `Runtime conformance: **${report.runtimeConformance}**`,
     `Accountable approval: **${report.approvalStatus}**`,
+    `Evidence verifier: **${report.evidenceVerification.trustStatus}**`,
     "",
     "## Technical checks",
     "",
@@ -399,6 +447,7 @@ module.exports = {
   EXPECTED_EVENT_TYPES,
   EXPECTED_STATE_MACHINE_IDS,
   buildG1ContractGate,
+  approvalBinding,
   hasDecisionApprovalEvidence,
   hasApprovalEvidence,
   parseArgs,

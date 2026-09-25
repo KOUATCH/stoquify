@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "environment": "non-production",
+  "organizationId": "rds_org_001",
+  "foreignProbeOrganizationId": "rds_org_002",
+  "approvalPlatform": null,
+  "approvalWorkspaceId": null,
+  "approvalTemplateId": null,
+  "providerAdapterModule": null,
+  "identityProvider": null,
+  "governanceRegisterUri": null,
+  "secretManagerReference": null,
+  "callbackUrl": null,
+  "evidenceStoreUri": null,
+  "retentionPolicyReference": null,
+  "proposedValidityDays": 30,
+  "servicePrincipals": {
+    "approvalOrchestration": null,
+    "evidenceCapture": null,
+    "independentVerifier": null,
+    "implementationCi": null
+  },
+  "signedDelegation": {
+    "policyId": "STOQ-X1-POL-004",
+    "status": "DRAFT_UNSIGNED",
+    "approvalRecordId": null,
+    "signatureReference": null,
+    "signedArtifactUri": null,
+    "signedArtifactSha256": null,
+    "signedAt": null,
+    "expiresAt": null,
+    "signingModel": null,
+    "umbrellaAuthorityInstrumentId": null
+  },
+  "databaseResolvedContext": {
+    "retrievedAt": "2026-09-01T13:53:04.477Z",
+    "databaseName": "stoquify_replay_next_20260830",
+    "readOnlyVerified": true,
+    "artifactHashesValid": true,
+    "existingX1ActivationPackages": 0,
+    "contractArtifactUri": "repository://stoquify/docs/blockers-docs/X1_CONTRACT_ARTIFACT_MANIFEST_2026-08-31.json",
+    "contractManifestSha256": "cdb16e90a74ea942e204bc8191445041a98102850619363096786768e777c9e4",
+    "authorizedTenantCandidate": {
+      "organizationId": "rds_org_001",
+      "name": "Wilkinson - Feeney 001",
+      "tradeName": "Stoquify",
+      "countryCode": "CM",
+      "currency": "XAF",
+      "timezone": "Africa/Douala",
+      "defaultLocale": "EN",
+      "isActive": true,
+      "requestedModules": [
+        "POS",
+        "Sales",
+        "Inventory",
+        "Accounting",
+        "Finance",
+        "Payment reconciliation",
+        "Payroll",
+        "Compliance"
+      ]
+    },
+    "foreignProbeTenantCandidate": {
+      "organizationId": "rds_org_002",
+      "name": "McDermott, Greenholt and Johnson 002",
+      "tradeName": "AqStoq Market 002",
+      "countryCode": "CM",
+      "currency": "XAF",
+      "timezone": "Africa/Douala",
+      "defaultLocale": "FR",
+      "isActive": true
+    },
+    "technicalPersonaCandidates": {
+      "productBudget": {
+        "name": "Kouatchoua Mark",
+        "userId": "rds_org_001_compliance_user_product_approver",
+        "accountIdentifier": "product.approver.rds-org001@stockflow.test",
+        "roleId": "rds_org_001_compliance_role_product_approver",
+        "roleCode": "product_approver",
+        "permissionCount": 32,
+        "formalAuthorityProven": false
+      },
+      "securityControl": {
+        "name": "Yonga Springfield",
+        "userId": "rds_org_001_compliance_user_security_owner",
+        "accountIdentifier": "security.owner.rds-org001@stockflow.test",
+        "roleId": "rds_org_001_compliance_role_security_owner",
+        "roleCode": "security_owner",
+        "permissionCount": 5,
+        "formalAuthorityProven": false
+      },
+      "managedSecretsApproximate": {
+        "name": "Ronald Djakou",
+        "userId": "rds_org_001_compliance_user_sre_owner",
+        "accountIdentifier": "sre.owner.rds-org001@stockflow.test",
+        "roleId": "rds_org_001_compliance_role_sre_owner",
+        "roleCode": "sre_owner",
+        "permissionCount": 20,
+        "formalAuthorityProven": false
+      },
+      "fixtureTenantApproximate": {
+        "name": "Mireille Nkoa",
+        "userId": "rds_org_001_compliance_user_owner",
+        "accountIdentifier": "owner.rds-org001@stockflow.test",
+        "roleId": "rds_org_001_compliance_role_owner",
+        "roleCode": "owner",
+        "permissionCount": 217,
+        "formalAuthorityProven": false
+      },
+      "independentReleaseCandidate": {
+        "name": "Sonkeng Steve",
+        "userId": "rds_org_001_compliance_user_qa_owner",
+        "accountIdentifier": "qa.owner.rds-org001@stockflow.test",
+        "roleId": "rds_org_001_compliance_role_qa_owner",
+        "roleCode": "qa_owner",
+        "permissionCount": 27,
+        "formalAuthorityProven": false
+      },
+      "externalAccountantEvidencePersona": {
+        "name": "Carine Manga",
+        "userId": "rds_org_001_compliance_user_external_accountant",
+        "accountIdentifier": "external.accountant.rds-org001@stockflow.test",
+        "roleId": "rds_org_001_compliance_role_external_accountant",
+        "roleCode": "external_accountant",
+        "permissionCount": 24,
+        "formalAuthorityProven": false
+      }
+    }
+  }
+}

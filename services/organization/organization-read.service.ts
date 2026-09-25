@@ -19,7 +19,7 @@ const apiOrganizationSelect = {
 
 export async function getApiOrganizationById(organizationId: string) {
   return db.organization.findFirst({
-    where: { id: organizationId },
+    where: { id: organizationId, isActive: true, deletedAt: null },
     select: apiOrganizationSelect,
   })
 }

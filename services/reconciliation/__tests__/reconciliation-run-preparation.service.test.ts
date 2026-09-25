@@ -1,0 +1,142 @@
+jest.mock("server-only", () => ({}))
+jest.mock("@/lib/security/auth-session", () => ({ FreshAuthRequiredError: class extends Error {} }))
+jest.mock("@/prisma/db", () => ({ db: { $transaction: jest.fn() } }))
+jest.mock("../payment-reconciliation-certification.service", () => ({ loadRunForCertification: jest.fn(), validateReconciliationRunEvidenceInTx: jest.fn() }))
+jest.mock("../payment-reconciliation-notifications", () => ({ publishPaymentReconciliationNotification: jest.fn() }))
+
+import { db } from "@/prisma/db"
+import { BusinessRuleError } from "@/services/_shared/action-errors"
+import { loadRunForCertification, validateReconciliationRunEvidenceInTx } from "../payment-reconciliation-certification.service"
+import { previewReconciliationPreparation, prepareReconciliationRun, readReconciliationPreparation } from "../reconciliation-run-preparation.service"
+import { assertCurrentRunPreparationInTx, preparationHash as hash } from "../reconciliation-run-preparation-evidence"
+import { reconciliationPreparationSchema } from "../reconciliation-run-preparation.contracts"
+
+const now = new Date("2026-09-13T10:00:00Z")
+const control = { organizationId: "org", actorId: "operator", actorPermissions: ["payments.reconciliation.read", "accounting.journal.read", "payments.reconciliation.run"], now, lastAuthAt: now }
+let run: any, evidence: any, rows: any[], audits: any[]
+const tx: any = { user: { findFirst: jest.fn() }, reconciliationRun: { updateMany: jest.fn(), findMany: jest.fn(), count: jest.fn() },
+  paymentReconciliationInboxItem: { findFirst: jest.fn(), create: jest.fn(), findMany: jest.fn(), count: jest.fn() }, ledgerAuditEvent: { findFirst: jest.fn(), create: jest.fn() } }
+beforeEach(() => {
+  jest.resetAllMocks(); rows = []; audits = []
+  run = { id: "run", organizationId: "org", runById: "maker", status: "NEEDS_REVIEW", updatedAt: now, metadata: { retained: true },
+    signedAt: null, signedById: null, certificateHash: null, certificatePayload: null, businessDate: now, accountingPeriodId: "period", providerAccount: { status: "ACTIVE", displayName: "Provider", currencyCode: "XAF" } }
+  evidence = { period: { id: "period" }, sourceEvidence: { version: 1, sourceHash: "a".repeat(64), counts: { providerEventCount: 1, exceptionCount: 1 } } }
+  ;(db.$transaction as jest.Mock).mockImplementation(work => work(tx))
+  ;(loadRunForCertification as jest.Mock).mockImplementation(async (_tx, org) => {
+    if (org !== run.organizationId) throw new Error("foreign run denied")
+    return { ...run, metadata: { ...run.metadata } }
+  })
+  ;(validateReconciliationRunEvidenceInTx as jest.Mock).mockImplementation(async () => evidence)
+  tx.user.findFirst.mockResolvedValue({ id: "operator" })
+  tx.reconciliationRun.updateMany.mockImplementation(async ({ data }) => { run = { ...run, ...data }; return { count: 1 } })
+  tx.paymentReconciliationInboxItem.create.mockImplementation(async ({ data }) => { rows.push(data); return data })
+  tx.paymentReconciliationInboxItem.findFirst.mockImplementation(async ({ where }) => rows.find(row => Object.entries(where).every(([k, v]) => row[k] === v)) ?? null)
+  tx.ledgerAuditEvent.create.mockImplementation(async ({ data }) => { audits.push(data); return data })
+  tx.ledgerAuditEvent.findFirst.mockImplementation(async ({ where }) => audits.find(a => a.organizationId === where.organizationId && a.resourceId === where.resourceId && a.actorId === where.actorId && a.action === where.action && a.metadata.receiptId === where.metadata.equals) ?? null)
+  tx.paymentReconciliationInboxItem.findMany.mockImplementation(async () => rows.map(row => ({ id: row.id, createdAt: now })))
+  tx.paymentReconciliationInboxItem.count.mockImplementation(async () => rows.length)
+})
+async function command() {
+  const p = await previewReconciliationPreparation({ runId: "run" }, control)
+  return { runId: "run", reason: "Reviewed source and all closed obligations", expectedRevision: p.revision!, idempotencyKey: "01386bb6-b3bd-4985-9f43-c83206764fbb" }
+}
+it("prepares only the reviewed revision and retains proof for independent signing", async () => {
+  const input = await command(); expect(tx.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  const result = await prepareReconciliationRun(input, control)
+  expect(result).toMatchObject({ currentStatus: "READY_FOR_SIGNOFF", replayed: false })
+  expect(rows).toHaveLength(1); expect(audits).toHaveLength(1)
+  expect(run.metadata.retained).toBe(true); expect(rows[0].payloadSummary.beforeRun.status).toBe("NEEDS_REVIEW")
+  await expect(assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, "signer")).resolves.toBeUndefined()
+  await expect(assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, "operator")).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(db.$transaction).toHaveBeenLastCalledWith(expect.any(Function), { isolationLevel: "Serializable" })
+})
+it.each(["source", "setup", "run"])("rejects changed %s evidence before signing", async change => {
+  await prepareReconciliationRun(await command(), control)
+  if (change === "source") evidence.sourceEvidence.sourceHash = "b".repeat(64)
+  if (change === "setup") run.providerAccount.status = "SUSPENDED"
+  if (change === "run") run.updatedAt = new Date(now.getTime() + 1)
+  await expect(assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, "signer")).rejects.toMatchObject({ code: "CONFLICT" })
+})
+it.each(["NEEDS_REVIEW", "SIGNED"])("replays the retained request without restoring readiness from %s", async status => {
+  const input = await command(); const first = await prepareReconciliationRun(input, control)
+  run.status = status
+  expect(await prepareReconciliationRun(input, control)).toMatchObject({ receiptId: first.receiptId, currentStatus: status, replayed: true })
+  expect(tx.reconciliationRun.updateMany).toHaveBeenCalledTimes(1); expect(rows).toHaveLength(1)
+  await expect(prepareReconciliationRun({ ...input, reason: "Changed request using the same key" }, control)).rejects.toMatchObject({ code: "IDEMPOTENCY_CONFLICT" })
+})
+it.each(["audit", "payload", "scope", "timestamp"])("refuses corrupted %s preparation evidence", async change => {
+  await prepareReconciliationRun(await command(), control)
+  if (change === "audit") audits.length = 0
+  if (change === "payload") rows[0].payloadSummary.reason = "Altered retained reason"
+  if (change === "scope") rows[0].organizationId = "foreign"
+  if (change === "timestamp") { rows[0].payloadSummary.preparedAt = new Date(0).toISOString(); rows[0].payloadHash = hash(rows[0].payloadSummary).slice(7) }
+  await expect(assertCurrentRunPreparationInTx(tx, run, evidence.sourceEvidence.sourceHash, "signer")).rejects.toMatchObject({ code: "CONFLICT" })
+})
+it("rejects stale previews and failed compare-and-set without creating receipts", async () => {
+  const input = await command(); run.updatedAt = new Date(now.getTime() + 1)
+  await expect(prepareReconciliationRun(input, control)).rejects.toMatchObject({ code: "CONFLICT" })
+  expect(rows).toHaveLength(0); expect(tx.reconciliationRun.updateMany).not.toHaveBeenCalled()
+  tx.reconciliationRun.updateMany.mockResolvedValue({ count: 0 })
+  await expect(prepareReconciliationRun(await command(), control)).rejects.toMatchObject({ code: "CONFLICT" })
+  expect(rows).toHaveLength(0)
+})
+it.each(["permissions", "inactive", "expired", "future"])("denies %s authority before writes", async condition => {
+  const input = await command(), actor = { ...control }
+  if (condition === "permissions") actor.actorPermissions = ["payments.reconciliation.read"]
+  if (condition === "inactive") tx.user.findFirst.mockResolvedValue(null)
+  if (condition === "expired") actor.lastAuthAt = new Date(now.getTime() - 300001)
+  if (condition === "future") actor.lastAuthAt = new Date(now.getTime() + 1)
+  await expect(prepareReconciliationRun(input, actor)).rejects.toThrow()
+  expect(tx.reconciliationRun.updateMany).not.toHaveBeenCalled()
+})
+it("reports genuine prerequisite blockers and propagates infrastructure failure", async () => {
+  ;(validateReconciliationRunEvidenceInTx as jest.Mock).mockRejectedValue(Object.assign(new BusinessRuleError("External evidence missing"), { preparationBlocker: "EXTERNAL_EVIDENCE_REQUIRED" }))
+  expect(await previewReconciliationPreparation({ runId: "run" }, control)).toMatchObject({ canPrepare: false, revision: null, counts: null, blocker: "EXTERNAL_EVIDENCE_REQUIRED" })
+  ;(validateReconciliationRunEvidenceInTx as jest.Mock).mockRejectedValue(new Error("database unavailable"))
+  await expect(previewReconciliationPreparation({ runId: "run" }, control)).rejects.toThrow("database unavailable")
+})
+it.each(["SIGNED", "VOIDED", "DRAFT"])("does not prepare a %s run", async status => {
+  run.status = status
+  expect(await previewReconciliationPreparation({ runId: "run" }, control)).toMatchObject({ canPrepare: false, blocker: "RUN_STATE_REQUIRED", revision: null })
+  expect(tx.reconciliationRun.updateMany).not.toHaveBeenCalled()
+})
+it("returns bounded run pages with complete scoped counts and stable cursor", async () => {
+  tx.reconciliationRun.findMany.mockResolvedValue(Array.from({ length: 21 }, (_, i) => ({ ...run, id: `run-${i}`, createdAt: now })))
+  tx.reconciliationRun.count.mockResolvedValue(58)
+  const page = await readReconciliationPreparation({ kind: "runs", search: "Provider" }, control)
+  expect(page.kind).toBe("runs"); if (page.kind !== "runs") throw new Error("Wrong page")
+  expect(page.runs).toHaveLength(20); expect(page.total).toBe(58); expect(page.nextCursor).toEqual({ id: "run-19", createdAt: now.toISOString() })
+  expect(tx.reconciliationRun.count.mock.calls[0][0].where).toMatchObject({ organizationId: "org", providerAccount: { organizationId: "org" }, paymentRail: { organizationId: "org" }, status: { in: ["NEEDS_REVIEW", "READY_FOR_SIGNOFF"] } })
+  tx.reconciliationRun.count.mockRejectedValue(new Error("count unavailable"))
+  await expect(readReconciliationPreparation({ kind: "runs" }, control)).rejects.toThrow("count unavailable")
+})
+it("permits scoped run discovery without exposing preparation evidence to a reconciliation-only reader", async () => {
+  const reader = { ...control, actorPermissions: ["payments.reconciliation.read"] }
+  tx.reconciliationRun.findMany.mockResolvedValue([{ id: "run", status: "READY_FOR_SIGNOFF", businessDate: now, createdAt: now, providerAccount: { displayName: "Provider", currencyCode: "XAF" } }])
+  tx.reconciliationRun.count.mockResolvedValue(1)
+  expect(await readReconciliationPreparation({ kind: "runs" }, reader)).toMatchObject({ kind: "runs", total: 1, runs: [{ id: "run" }] })
+  expect(tx.reconciliationRun.findMany).toHaveBeenCalledWith(expect.objectContaining({ where: { AND: [expect.objectContaining({ organizationId: "org", providerAccount: { organizationId: "org" }, paymentRail: { organizationId: "org" } }), {}] } }))
+  await expect(readReconciliationPreparation({ kind: "history", runId: "run" }, reader)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  await expect(previewReconciliationPreparation({ runId: "run" }, reader)).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(loadRunForCertification).not.toHaveBeenCalled()
+  expect(tx.paymentReconciliationInboxItem.findMany).not.toHaveBeenCalled()
+})
+it.each(["missing-permission", "inactive"])("denies run discovery for %s before querying runs", async condition => {
+  if (condition === "inactive") tx.user.findFirst.mockResolvedValue(null)
+  await expect(readReconciliationPreparation({ kind: "runs" }, { ...control, actorPermissions: condition === "missing-permission" ? [] : ["payments.reconciliation.read"] })).rejects.toMatchObject({ code: "FORBIDDEN" })
+  expect(tx.reconciliationRun.findMany).not.toHaveBeenCalled()
+  expect(tx.reconciliationRun.count).not.toHaveBeenCalled()
+})
+it("retains redacted preparation history after reopening and refuses tampered audit", async () => {
+  await prepareReconciliationRun(await command(), control); run.status = "NEEDS_REVIEW"
+  const page = await readReconciliationPreparation({ kind: "history", runId: "run" }, control)
+  expect(page).toMatchObject({ kind: "history", total: 1, run: { status: "NEEDS_REVIEW" }, records: [{ preparedById: "operator" }] })
+  expect(JSON.stringify(page)).not.toMatch(/beforeRun|requestHash|afterRunHash|sourceHash|reviewedRevision/)
+  audits.length = 0
+  await expect(readReconciliationPreparation({ kind: "history", runId: "run" }, control)).rejects.toMatchObject({ code: "CONFLICT" })
+})
+it("rejects client authority injection and malformed revision/key/reason", async () => {
+  const input = await command()
+  for (const extra of [{ organizationId: "foreign" }, { actorId: "signer" }, { expectedRevision: "invalid" }, { idempotencyKey: "invalid" }, { reason: " " }])
+    expect(reconciliationPreparationSchema.safeParse({ ...input, ...extra }).success).toBe(false)
+})

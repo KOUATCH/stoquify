@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-12T19:24:29.572Z",
+  "sourceFile": "services/reconciliation/payment-reconciliation-certification.service.ts",
+  "sourceBefore": "a2c55caba8f207473fb89efe52bc5567999037cad1b4d91ad952794026b836d2",
+  "checks": [
+    "Unresolved exceptions/suspense beyond 100 resolved sample rows remain counted; matches total 145.",
+    "Empty, foreign-run refusal and own-tenant reads have no persisted side effects.",
+    "A real second-connection insert during detail loading appears only on the next snapshot.",
+    "Count failure propagates without a false zero result or mutation."
+  ],
+  "scope": "Owned synthetic run-detail read verification. Terminal fixture labels only reproduce the >100-row sampling defect; no genuine resolution, sign-off or approval is claimed.",
+  "originalBefore": "f4137492cce00171645ac32e373bd13813d79d682210a8616e76e237be02c208",
+  "financialBefore": "80cac3dfc511b63f312054dc3989c9e4d1aa24e2ecd2877758f7ba3194976daf",
+  "readMs": 67,
+  "originalUnchanged": true,
+  "financialUnchanged": true,
+  "sourceAfter": "a2c55caba8f207473fb89efe52bc5567999037cad1b4d91ad952794026b836d2",
+  "sourceStable": true
+}

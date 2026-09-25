@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-15T10:59:05.577Z",
+  "sourceBefore": {
+    "services/referrals/referral-funnel-read-model.service.ts": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a",
+    "components/referrals/ReferralFunnelDashboard.tsx": "9adb23f346264e3e3b880729e4ff32636f80dd471f9ffaa1b957a8d7d7932fc9",
+    "messages/referral-funnel/en.json": "d5ebef0e2c5c04585689e08ab922119d4a72c54febb66f9342a5ba86137a130e",
+    "messages/referral-funnel/fr.json": "5061872772fb2d656c9a5ab53b6006e44606c1e64b7d46c2bbebf9eb2c4f685d",
+    "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0"
+  },
+  "checks": {
+    "empty": true,
+    "queuedNotAccepted": true,
+    "deduplicatedClickAndRegistration": true,
+    "totals": {
+      "preparedLinks": 3,
+      "clicks": 1,
+      "registrations": 2,
+      "acceptedInvitations": 1
+    },
+    "historicalFormulaWouldReportActivations": 2,
+    "legacyRegistrationNotAcceptance": true,
+    "tenantScopeAndAggregatePrivacy": true,
+    "revocationPreservesHistoricalAcceptance": true
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "pageErrors": []
+    }
+  ],
+  "scope": "Owned local database only. Synthetic consent inputs and private queued envelopes; no provider worker or external delivery.",
+  "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Referral funnel', level: 1 })\nExpected: visible\nError: strict mode violation: getByRole('heading', { name: 'Referral funnel', level: 1 }) resolved to 2 elements:\n    1) <h1 class=\"truncate text-lg font-bold text-white\">Referral Funnel</h1> aka getByRole('heading', { name: 'Referral Funnel', exact: true })\n    2) <h1 class=\"mt-2 text-2xl font-semibold tracking-tight sm:text-3xl\">Referral funnel</h1> aka locator('h1').filter({ hasText: /^Referral funnel$/ })\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Referral funnel', level: 1 })\n",
+  "sourceAfter": {
+    "services/referrals/referral-funnel-read-model.service.ts": "4bd96bb5307450d839e076072647aa0a61c552dd1629e81f15e5bee8b20dc82a",
+    "components/referrals/ReferralFunnelDashboard.tsx": "9adb23f346264e3e3b880729e4ff32636f80dd471f9ffaa1b957a8d7d7932fc9",
+    "messages/referral-funnel/en.json": "d5ebef0e2c5c04585689e08ab922119d4a72c54febb66f9342a5ba86137a130e",
+    "messages/referral-funnel/fr.json": "5061872772fb2d656c9a5ab53b6006e44606c1e64b7d46c2bbebf9eb2c4f685d",
+    "services/accounting/accountant-access.service.ts": "a9e6f9c2c431e334ed3c889a3b572be5d546214584335115525e948d66ae9be0"
+  },
+  "sourceStable": true
+}

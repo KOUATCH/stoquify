@@ -7,6 +7,7 @@ export const ROLE_ACTION_PERMISSIONS = {
   create: "roles.create",
   update: "roles.update",
   assignPermissions: "roles.permissions.assign",
+  removePermissions: "roles.permissions.remove",
 } as const
 
 export const ROLE_AUTH_SURFACE = {
@@ -16,6 +17,7 @@ export const ROLE_AUTH_SURFACE = {
     "roles.create",
     "roles.update",
     "roles.permissions.assign",
+    "roles.permissions.remove",
   ],
 } as const
 
@@ -33,8 +35,15 @@ export async function requireRoleAction(permission: string): Promise<AuthedRoleC
   return ctx
 }
 
+export function roleWriteContext(ctx: AuthedRoleContext, claims: { userId: string; tenantId: string; sessionId: string; sessionToken: string }) {
+  if (claims.userId !== ctx.userId || claims.tenantId !== ctx.orgId) throw new ForbiddenError("Your organization session changed. Reload before saving.")
+  return { ...ctx, session: { id: claims.sessionId, token: claims.sessionToken } }
+}
+
 export function assertCanAssignPermissions(ctx: AuthedRoleContext, requestedPermissions?: string[] | null) {
-  if (!requestedPermissions?.length || ctx.isSuperUser) return
+  // An explicit empty selection revokes permissions; it is still an assignment.
+  // Tenant wildcard status does not bypass the canonical risk-aware grant ceiling.
+  if (requestedPermissions == null) return
 
   if (!hasRbacPermission(ctx.permissions, ROLE_ACTION_PERMISSIONS.assignPermissions)) {
     throw new ForbiddenError("Forbidden")

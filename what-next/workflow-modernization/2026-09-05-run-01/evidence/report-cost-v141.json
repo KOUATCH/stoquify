@@ -1,0 +1,794 @@
+{
+  "at": "2026-09-13T17:44:05.673Z",
+  "baseline": "evidence/source-baseline-v141.json",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sources": {
+    "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+    "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+    "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+    "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+    "components/reports/item-performance-report.tsx": "7716ac5d993609b2689f23470a233a1baac1fb6fccea42a9aca4f3827b9ec059",
+    "components/reports/report-cost-basis.tsx": "9c6817b107e6233693b6fb5555deeac9292161e7f567891e91d560a7480ba8c8",
+    "components/reports/report-trust-banner.tsx": "b623457123548290937bdb0a1e119d8720e1226c50d52ddee557ec80d127d91d",
+    "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "47a7255edc5ce98223786f51ef8b2b91556803878f4dfd4085e00d67aeda55c3",
+    "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+    "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+  },
+  "tests": {
+    "passed": 41,
+    "suites": 6,
+    "receipt": "f18132",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/analytics/__tests__/completed-sales-evidence.test.ts services/analytics/__tests__/financial-reports.service.test.ts actions/analytics/analytics/__tests__/financial-reports.authorization.test.ts components/reports/__tests__/item-performance-report.test.tsx components/reports/__tests__/financial-summary-report.test.tsx app/[locale]/(dashboard)/dashboard/analytics/reports/__tests__/ReportsClient.test.tsx --silent"
+  },
+  "lint": {
+    "passed": true,
+    "files": 13,
+    "receipt": "531822"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "f26f7f",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "database": {
+    "file": "lanes/environment/report-cost-v141-after-f3a12709-dea9-4b80-ad70-2f31e2ad1ad6.json",
+    "receipt": "1fb199",
+    "at": "2026-09-13T17:17:51.684Z",
+    "phase": "after",
+    "sourceBefore": {
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+      "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36"
+    },
+    "checks": [
+      {
+        "name": "catalogue_edit",
+        "firstCost": 20,
+        "afterEditCost": 20,
+        "itemCost": 20,
+        "firstProfit": 80,
+        "afterEditProfit": 80
+      },
+      {
+        "name": "missing_cost_is_unavailable",
+        "passed": true
+      },
+      {
+        "name": "foreign_location_rejected",
+        "passed": true
+      },
+      {
+        "name": "archived_sold_item_retained",
+        "passed": true
+      },
+      {
+        "name": "pending_payment_excluded",
+        "passed": true
+      },
+      {
+        "name": "delivery_line_cost_and_tax",
+        "netRevenue": 300,
+        "grossValue": 340,
+        "cost": 80,
+        "profit": 220,
+        "passed": true
+      },
+      {
+        "name": "genuine_empty_period",
+        "passed": true
+      }
+    ],
+    "organizationId": "workflow_tender_report_65f6e197-a4c2-4e6f-bf92-5c577fc393bc",
+    "passed": true,
+    "reproduced": false,
+    "sourceAfter": {
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+      "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36"
+    },
+    "sourceStable": true
+  },
+  "browser": {
+    "file": "lanes/environment/report-browser-v141-cc98cb64-e985-4464-9e9a-f4442f11873f.json",
+    "receipt": "bd15db",
+    "at": "2026-09-13T17:40:30.353Z",
+    "sourceBefore": {
+      "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+      "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+      "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+      "components/reports/item-performance-report.tsx": "7716ac5d993609b2689f23470a233a1baac1fb6fccea42a9aca4f3827b9ec059",
+      "components/reports/report-cost-basis.tsx": "9c6817b107e6233693b6fb5555deeac9292161e7f567891e91d560a7480ba8c8",
+      "components/reports/report-trust-banner.tsx": "b623457123548290937bdb0a1e119d8720e1226c50d52ddee557ec80d127d91d",
+      "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "47a7255edc5ce98223786f51ef8b2b91556803878f4dfd4085e00d67aeda55c3",
+      "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+      "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+    },
+    "browser": [
+      {
+        "locale": "en",
+        "screenshots": [
+          "report-v141-en-summary-1440-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-en-summary-768-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-en-summary-320-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-en-items-1440-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-en-items-768-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-en-items-320-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-en-text200-cc98cb64-e985-4464-9e9a-f4442f11873f.png"
+        ],
+        "pageErrors": [],
+        "readyMs": 5472,
+        "catalogueEditDoesNotRepriceMargin": true,
+        "hourlyKeyboardTable": true,
+        "failedReadShowsErrorAndRetry": true,
+        "missingEvidenceIsNotZero": true,
+        "itemMissingEvidenceAndKeyboardFilter": true,
+        "selectedUrl": "/en/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+        "afterReload": {
+          "url": "http://127.0.0.1:3110/en/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+          "status": 200,
+          "headings": [
+            "Operational reports"
+          ],
+          "alerts": [
+            "",
+            ""
+          ]
+        },
+        "refreshRetainsSelectedReportAndDates": true,
+        "enlargedTextControlsFit": true,
+        "revokedReadDenied": true
+      },
+      {
+        "locale": "fr",
+        "screenshots": [
+          "report-v141-fr-summary-1440-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-fr-summary-768-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-fr-summary-320-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-fr-items-1440-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-fr-items-768-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-fr-items-320-cc98cb64-e985-4464-9e9a-f4442f11873f.png",
+          "report-v141-fr-text200-cc98cb64-e985-4464-9e9a-f4442f11873f.png"
+        ],
+        "pageErrors": [],
+        "readyMs": 5285,
+        "catalogueEditDoesNotRepriceMargin": true,
+        "hourlyKeyboardTable": true,
+        "failedReadShowsErrorAndRetry": true,
+        "missingEvidenceIsNotZero": true,
+        "itemMissingEvidenceAndKeyboardFilter": true,
+        "selectedUrl": "/fr/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+        "afterReload": {
+          "url": "http://127.0.0.1:3110/fr/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+          "status": 200,
+          "headings": [
+            "Rapports opérationnels"
+          ],
+          "alerts": [
+            "",
+            ""
+          ]
+        },
+        "refreshRetainsSelectedReportAndDates": true,
+        "enlargedTextControlsFit": true,
+        "revokedReadDenied": true
+      }
+    ],
+    "passed": true,
+    "sourceAfter": {
+      "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+      "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+      "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+      "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+      "components/reports/item-performance-report.tsx": "7716ac5d993609b2689f23470a233a1baac1fb6fccea42a9aca4f3827b9ec059",
+      "components/reports/report-cost-basis.tsx": "9c6817b107e6233693b6fb5555deeac9292161e7f567891e91d560a7480ba8c8",
+      "components/reports/report-trust-banner.tsx": "b623457123548290937bdb0a1e119d8720e1226c50d52ddee557ec80d127d91d",
+      "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "47a7255edc5ce98223786f51ef8b2b91556803878f4dfd4085e00d67aeda55c3",
+      "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+      "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+    },
+    "sourceStable": true
+  },
+  "browserAttemptArchive": [
+    {
+      "file": "lanes/environment/report-browser-v141-0734f352-3722-48e3-8941-7744ee3864e4.json",
+      "at": "2026-09-13T17:34:32.476Z",
+      "sourceBefore": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "32a35ce29776d4f8ac5a770c54b67f37ce50436b6f4b74f284362694745942e2",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [],
+          "pageErrors": [],
+          "readyMs": 12899,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failure": {
+            "url": "http://127.0.0.1:3110/en/dashboard/analytics/reports?report=financial&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+            "headings": [
+              "Reports",
+              "Operational reports"
+            ],
+            "alerts": [
+              "",
+              ""
+            ],
+            "selected": [
+              "",
+              "Sales and marginsOrder value and original sale margins"
+            ]
+          }
+        }
+      ],
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Retry', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mt-6 dashboard-filter-chip rounded-lg\">…</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n",
+      "sourceAfter": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "32a35ce29776d4f8ac5a770c54b67f37ce50436b6f4b74f284362694745942e2",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-12456ec1-12f7-4733-a4f4-ba448d661348.json",
+      "at": "2026-09-13T17:32:10.236Z",
+      "sourceBefore": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "1e9da73405455bbc2c0d340e5e85c3cb7d32078d9b65a14dde3ec266ff37b896",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [
+            "report-v141-en-summary-1440-12456ec1-12f7-4733-a4f4-ba448d661348.png",
+            "report-v141-en-summary-768-12456ec1-12f7-4733-a4f4-ba448d661348.png",
+            "report-v141-en-summary-320-12456ec1-12f7-4733-a4f4-ba448d661348.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 2758,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true,
+          "failure": {
+            "url": "http://127.0.0.1:3110/en/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+            "headings": [
+              "Operational reports"
+            ],
+            "alerts": [
+              "",
+              ""
+            ],
+            "selected": [
+              "",
+              "Item performanceProduct sales and current stock"
+            ]
+          }
+        }
+      ],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Item performance report', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Item performance report', exact: true })\n",
+      "sourceAfter": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "1e9da73405455bbc2c0d340e5e85c3cb7d32078d9b65a14dde3ec266ff37b896",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-29114f59-4474-4e96-88ae-2810b4e4974c.json",
+      "at": "2026-09-13T17:13:23.650Z",
+      "sourceBefore": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2cea7bf749913434d51cfac3464e248300113ed3ff34f3e30fe28a29609cd0bf",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [],
+          "pageErrors": [],
+          "readyMs": 63718,
+          "catalogueEditDoesNotRepriceMargin": true
+        }
+      ],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByTestId('financial-summary-report').getByRole('table')\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByTestId('financial-summary-report').getByRole('table')\n",
+      "sourceAfter": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2cea7bf749913434d51cfac3464e248300113ed3ff34f3e30fe28a29609cd0bf",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-48c697b7-754f-43bf-8b77-de6210326b1f.json",
+      "at": "2026-09-13T17:17:20.552Z",
+      "sourceBefore": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [],
+          "pageErrors": [],
+          "readyMs": 7787,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true
+        }
+      ],
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByRole('alert')\nExpected substring: \"Reports could not be loaded safely. Try again or adjust the filters.\"\nError: strict mode violation: getByRole('alert') resolved to 3 elements:\n    1) <div role=\"alert\" class=\"border bg-card shadow dashboard-glass-panel rounded-lg text-[var(--dash-text)]\">…</div> aka getByRole('alert').filter({ hasText: 'Reports could not loadReports' })\n    2) <div role=\"alert\" class=\"sr-only\" aria-atomic=\"true\"></div> aka getByRole('alert').nth(1)\n    3) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n  - Expect \"to.have.text\" with timeout 60000ms\n  - waiting for getByRole('alert')\n",
+      "sourceAfter": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-69e5c450-07b1-4f22-b117-abadb47a1826.json",
+      "at": "2026-09-13T17:29:51.630Z",
+      "sourceBefore": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "1e9da73405455bbc2c0d340e5e85c3cb7d32078d9b65a14dde3ec266ff37b896",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [
+            "report-v141-en-summary-1440-69e5c450-07b1-4f22-b117-abadb47a1826.png",
+            "report-v141-en-summary-768-69e5c450-07b1-4f22-b117-abadb47a1826.png",
+            "report-v141-en-summary-320-69e5c450-07b1-4f22-b117-abadb47a1826.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 8702,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true
+        }
+      ],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Item performance report', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Item performance report', exact: true })\n",
+      "sourceAfter": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "1e9da73405455bbc2c0d340e5e85c3cb7d32078d9b65a14dde3ec266ff37b896",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-aef338f6-1d1c-40b7-99b8-88bb1ca38530.json",
+      "at": "2026-09-13T17:24:20.633Z",
+      "sourceBefore": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "7709aaf6a08cecb283f1377d8f5efd3ff0dcd37c1e6f4d897228fe7e3dfd8d13",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [
+            "report-v141-en-summary-1440-aef338f6-1d1c-40b7-99b8-88bb1ca38530.png",
+            "report-v141-en-summary-768-aef338f6-1d1c-40b7-99b8-88bb1ca38530.png",
+            "report-v141-en-summary-320-aef338f6-1d1c-40b7-99b8-88bb1ca38530.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 7903,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true,
+          "itemMissingEvidenceAndKeyboardFilter": true
+        }
+      ],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Item performance report', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Item performance report', exact: true })\n",
+      "sourceAfter": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "7709aaf6a08cecb283f1377d8f5efd3ff0dcd37c1e6f4d897228fe7e3dfd8d13",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-b6cc712c-724d-4588-91e5-5b7477e8e883.json",
+      "at": "2026-09-13T17:27:30.021Z",
+      "sourceBefore": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "7709aaf6a08cecb283f1377d8f5efd3ff0dcd37c1e6f4d897228fe7e3dfd8d13",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [
+            "report-v141-en-summary-1440-b6cc712c-724d-4588-91e5-5b7477e8e883.png",
+            "report-v141-en-summary-768-b6cc712c-724d-4588-91e5-5b7477e8e883.png",
+            "report-v141-en-summary-320-b6cc712c-724d-4588-91e5-5b7477e8e883.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 4173,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true,
+          "itemMissingEvidenceAndKeyboardFilter": true,
+          "selectedUrl": "/en/dashboard/analytics/reports?report=financial&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+          "afterReload": {
+            "url": "http://127.0.0.1:3110/en/dashboard/analytics/reports?report=financial&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+            "status": 200,
+            "headings": [
+              "Operational reports"
+            ],
+            "alerts": [
+              "",
+              ""
+            ]
+          }
+        }
+      ],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Item performance report', exact: true })\nExpected: visible\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 60000ms\n  - waiting for getByRole('heading', { name: 'Item performance report', exact: true })\n",
+      "sourceAfter": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "7709aaf6a08cecb283f1377d8f5efd3ff0dcd37c1e6f4d897228fe7e3dfd8d13",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-c519ac2b-a2aa-4b28-9e7b-70985bde1445.json",
+      "at": "2026-09-13T17:19:18.686Z",
+      "sourceBefore": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [
+            "report-v141-en-summary-1440-c519ac2b-a2aa-4b28-9e7b-70985bde1445.png",
+            "report-v141-en-summary-768-c519ac2b-a2aa-4b28-9e7b-70985bde1445.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 4345,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true
+        }
+      ],
+      "error": "locator.scrollIntoViewIfNeeded: Element is not attached to the DOM\nCall log:\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n",
+      "sourceAfter": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-d6ccae50-b008-4896-8f38-2a6f14ed536e.json",
+      "at": "2026-09-13T17:36:56.413Z",
+      "sourceBefore": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "f246028edd937303325f1cdbfd7c65c31f2047273ae194eb2fd6b3debe19e658",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [
+            "report-v141-en-summary-1440-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-en-summary-768-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-en-summary-320-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-en-items-1440-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-en-items-768-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-en-items-320-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-en-text200-d6ccae50-b008-4896-8f38-2a6f14ed536e.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 10736,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true,
+          "itemMissingEvidenceAndKeyboardFilter": true,
+          "selectedUrl": "/en/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+          "afterReload": {
+            "url": "http://127.0.0.1:3110/en/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+            "status": 200,
+            "headings": [
+              "Operational reports"
+            ],
+            "alerts": [
+              "",
+              ""
+            ]
+          },
+          "refreshRetainsSelectedReportAndDates": true,
+          "revokedReadDenied": true
+        },
+        {
+          "locale": "fr",
+          "screenshots": [
+            "report-v141-fr-summary-1440-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-fr-summary-768-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-fr-summary-320-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-fr-items-1440-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-fr-items-768-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-fr-items-320-d6ccae50-b008-4896-8f38-2a6f14ed536e.png",
+            "report-v141-fr-text200-d6ccae50-b008-4896-8f38-2a6f14ed536e.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 2799,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true,
+          "itemMissingEvidenceAndKeyboardFilter": true,
+          "selectedUrl": "/fr/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+          "afterReload": {
+            "url": "http://127.0.0.1:3110/fr/dashboard/analytics/reports?report=items&reportFrom=2026-08-31T23%3A00%3A00.000Z&reportTo=2026-09-30T22%3A59%3A59.999Z",
+            "status": 200,
+            "headings": [
+              "Rapports opérationnels"
+            ],
+            "alerts": [
+              "",
+              ""
+            ]
+          },
+          "refreshRetainsSelectedReportAndDates": true,
+          "revokedReadDenied": true
+        }
+      ],
+      "passed": true,
+      "sourceAfter": {
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/page.tsx": "3b57abd9a4b1c7fd1249d8f36417bc6b641d7c6ffd8909e6083f7e49c652f627",
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "f246028edd937303325f1cdbfd7c65c31f2047273ae194eb2fd6b3debe19e658",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    },
+    {
+      "file": "lanes/environment/report-browser-v141-ff23a122-fac3-463e-a27b-d8de1e21df62.json",
+      "at": "2026-09-13T17:21:26.622Z",
+      "sourceBefore": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "browser": [
+        {
+          "locale": "en",
+          "screenshots": [
+            "report-v141-en-summary-1440-ff23a122-fac3-463e-a27b-d8de1e21df62.png",
+            "report-v141-en-summary-768-ff23a122-fac3-463e-a27b-d8de1e21df62.png",
+            "report-v141-en-summary-320-ff23a122-fac3-463e-a27b-d8de1e21df62.png"
+          ],
+          "pageErrors": [],
+          "readyMs": 2592,
+          "catalogueEditDoesNotRepriceMargin": true,
+          "hourlyKeyboardTable": true,
+          "failedReadShowsErrorAndRetry": true,
+          "missingEvidenceIsNotZero": true,
+          "itemMissingEvidenceAndKeyboardFilter": true
+        }
+      ],
+      "error": "locator.scrollIntoViewIfNeeded: Element is not attached to the DOM\nCall log:\n\u001b[2m  - attempting scroll into view action\u001b[22m\n\u001b[2m    - waiting for element to be stable\u001b[22m\n",
+      "sourceAfter": {
+        "services/analytics/completed-sales-evidence.ts": "a9bf47defbb51935784e347b946a3fe5e0f15acd58922eebba0b8b4ad4478d7d",
+        "services/analytics/financial-reports.service.ts": "acf22c712fc51a691cfca898695c182a3251cce0f6b6fd47f3019b146d09ec36",
+        "components/reports/financial-summary-report.tsx": "2bdceced65968867611a342e3b5b6db9b31b320e14188385c7d19a79eac5d61a",
+        "components/reports/item-performance-report.tsx": "e83b36fc98acfb00746f0578265450f2cbb6af386b66162e996373849b6b834c",
+        "components/reports/report-cost-basis.tsx": "ac08accd948a0c7f0d36bb4553d31bd98551b677bc959b79510dd4c401d0a5b7",
+        "components/reports/report-trust-banner.tsx": "c0a3d368ab416d824713e17545ff0a387ce4d888661b1fd8fbd5ea32482dbf5f",
+        "app/[locale]/(dashboard)/dashboard/analytics/reports/ReportsClient.tsx": "8839ff23f7a8f0986d576ab8ae0d7e6d0e33df904ab9ae19e4d12265340e4367",
+        "messages/en.json": "845e5d7eca7a4a652f7eb36edb73dffe445d89a39b8714ebce93ca23b12aaffa",
+        "messages/fr.json": "7a97348a0cbde853833bec668a916d2f1138b650bc4efd747fd3ea18d189bb70"
+      },
+      "sourceStable": true
+    }
+  ],
+  "priorAttempts": [
+    {
+      "receipt": "ca72bc",
+      "result": "Functional browser checks passed on earlier source, but manual review found 200% text overlap. Final reflow adds explicit control bounds and corrected screenshots."
+    },
+    {
+      "receipt": "b48330",
+      "file": "evidence/report-cost-before-v141.json",
+      "result": "Historical-cost defect reproduced; evidence file write failed EPERM after successful checks."
+    },
+    {
+      "receipt": "9ee684",
+      "file": "lanes/environment/report-cost-v141-after-e582c091-5802-4e95-a07d-863465f9cbd0.json",
+      "result": "Five checks passed, then synthetic delivery fixture lacked required customerId; corrected fixture, no production workaround."
+    },
+    {
+      "receipt": "e1918e",
+      "file": "lanes/environment/report-browser-v141-29114f59-4474-4e96-88ae-2810b4e4974c.json",
+      "result": "Actual margin passed; native disclosure Enter failed. Replaced with existing shared button."
+    },
+    {
+      "receipt": "e2daa7",
+      "file": "lanes/environment/report-browser-v141-48c697b7-754f-43bf-8b77-de6210326b1f.json",
+      "result": "Keyboard disclosure passed; broad alert selector also matched shell announcers. Scoped test to report alert."
+    },
+    {
+      "receipt": "fa4f9f",
+      "file": "lanes/environment/report-browser-v141-c519ac2b-a2aa-4b28-9e7b-70985bde1445.json",
+      "result": "Failure/retry/missing evidence and two sizes passed; report detached during responsive shell remount."
+    },
+    {
+      "receipt": "f2972e",
+      "file": "lanes/environment/report-browser-v141-ff23a122-fac3-463e-a27b-d8de1e21df62.json",
+      "result": "Summary at three sizes and item interaction passed; switching size reset selected report. Added URL-backed report/date recovery."
+    },
+    {
+      "receipt": "93c1ed",
+      "result": "34 tests passed; one test hit repository non-configurable clipboard in userEvent.setup. Used direct keyboard API; final 40 tests pass."
+    }
+  ],
+  "build": {
+    "run": false,
+    "reason": "Actual application dev integration exercised; default migration-bearing build not invoked."
+  },
+  "visualReview": {
+    "inspected": [
+      "EN desktop and narrow summary",
+      "Final FR mobile and text200 item report"
+    ],
+    "limits": [
+      "No professional accessibility certification, real screen reader or approved production latency budget."
+    ]
+  },
+  "guide": "REPORT_COST_V141.md",
+  "coverage": {
+    "discoveredWorkflows": 255,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2912,
+      "tests": 1037,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 176,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2542,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 199,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

@@ -17,3 +17,8 @@ export const TerminalManagementSchema = z.object({
 })
 
 export type TerminalManagementInput = z.infer<typeof TerminalManagementSchema>
+
+export const TerminalManagementUpdateSchema = TerminalManagementSchema.extend({
+  expectedRevision: z.string().regex(/^[a-f0-9]{64}$/),
+})
+export type TerminalManagementUpdateInput = z.infer<typeof TerminalManagementUpdateSchema>

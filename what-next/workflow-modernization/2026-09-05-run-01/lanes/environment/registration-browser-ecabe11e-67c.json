@@ -1,0 +1,118 @@
+{
+  "run": "ecabe11e-67c",
+  "startedAt": "2026-09-06T09:23:46.326Z",
+  "baseUrl": "http://127.0.0.1:3108",
+  "database": "stoquify_local_registration_20260906_01",
+  "sourcesBefore": {
+    "components/auth/BeautifulRegisterForm.tsx": "302d94b28f81dbf482203583760dc98d8432dd4efee830a7064f86ef4c17b5ec",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "6e8d27f53dd70cae16c28e520cc61d79f9452a078b6e6b1f28c348912b75c5e9",
+    "hooks/useRegisterWorkflow.ts": "0482387bd00b0d5df1e435ac9d882fb7b1ecf194ef6c68bea5c96dd5049cc747",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "a741f115708ebbfc4bb9dc1aed3316f7490cdb045cb05334156000e655d0dc53",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "checks": [
+    {
+      "key": "register-v2-en",
+      "passed": false,
+      "screenshots": [
+        "register-v2-en-entry-ecabe11e-67c.png",
+        "register-v2-en-ready-ecabe11e-67c.png",
+        "register-v2-en-failure-ecabe11e-67c.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2080,
+      "error": "locator.click: Error: strict mode violation: locator('form button[type=\"submit\"]') resolved to 2 elements:\n    1) <button disabled type=\"submit\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow px-4 py-2 h-12 w-full rounded-lg bg-[#132028] text-sm font-black text-white hover:bg-[#22323b] disabled:cursor-not-allowed disabled:opacity-60\">…</button> aka getByRole('button', { name: 'Verify and continue' })\n    2) <button type=\"submit\" class=\"inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-auto min-h-11 w-full whitespace-normal border-[#74581c] bg-white px-3 py-2 text-[#132028]\">Request verification code</button> aka getByRole('button', { name: 'Request verification code' })\n\nCall log:\n\u001b[2m  - waiting for locator('form button[type=\"submit\"]')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transit"
+    },
+    {
+      "key": "register-v2-fr",
+      "passed": false,
+      "screenshots": [
+        "register-v2-fr-entry-ecabe11e-67c.png",
+        "register-v2-fr-failure-ecabe11e-67c.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2760,
+      "error": "locator.uncheck: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[name=\"requestedModules\"]').first()\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"POS\" type=\"checkbox\" name=\"requestedModules\" class=\"h-4 w-4 rounded border-[#9fb4bb]/40 text-[#178e83] focus:ring-[#178e83]/25\"/>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    3 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n"
+    },
+    {
+      "key": "register-en",
+      "passed": true,
+      "screenshots": [
+        "register-en-entry-ecabe11e-67c.png",
+        "register-en-required-ecabe11e-67c.png",
+        "register-en-company-ecabe11e-67c.png",
+        "register-en-ready-ecabe11e-67c.png",
+        "register-en-recovery-ecabe11e-67c.png",
+        "register-en-verification-ecabe11e-67c.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2005,
+      "abortedRequests": 1,
+      "saveMs": 2852,
+      "createdOrganizationId": "de2f5b4c-ba27-430c-af6e-234385985070",
+      "creationAudited": true,
+      "unverifiedHandoff": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    },
+    {
+      "key": "register-fr",
+      "passed": true,
+      "screenshots": [
+        "register-fr-entry-ecabe11e-67c.png",
+        "register-fr-required-ecabe11e-67c.png",
+        "register-fr-company-ecabe11e-67c.png",
+        "register-fr-ready-ecabe11e-67c.png",
+        "register-fr-recovery-ecabe11e-67c.png",
+        "register-fr-rate-limited-ecabe11e-67c.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 2919,
+      "abortedRequests": 1,
+      "ordinaryIpLimitDenied": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Owned local application and actual registration service with external email disabled. Verification handoff is tested; no delivered code is claimed.",
+    "Three successful browser creations and a fourth denial use the ordinary shared IP registration limit; no reset, spoofing or bypass.",
+    "Browser accessibility checks cover labels, keyboard, focus and reflow; no actual screen-reader or comprehensive contrast certification.",
+    "The browser uses a separate database cloned only from owned synthetic controls; baseline tenant authority is checked unchanged."
+  ],
+  "originalAuthorityBefore": "439609785e4f1468ca09800b45fa5814a975a6587e9f9e3f7eb21b65778e68cf",
+  "originalAuthorityAfter": "439609785e4f1468ca09800b45fa5814a975a6587e9f9e3f7eb21b65778e68cf",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T09:25:19.608Z",
+  "sourcesAfter": {
+    "components/auth/BeautifulRegisterForm.tsx": "302d94b28f81dbf482203583760dc98d8432dd4efee830a7064f86ef4c17b5ec",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "6e8d27f53dd70cae16c28e520cc61d79f9452a078b6e6b1f28c348912b75c5e9",
+    "hooks/useRegisterWorkflow.ts": "0482387bd00b0d5df1e435ac9d882fb7b1ecf194ef6c68bea5c96dd5049cc747",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "a741f115708ebbfc4bb9dc1aed3316f7490cdb045cb05334156000e655d0dc53",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "sourceStable": true,
+  "driverSha256": "2479836aa8153fc186400609b8f9ace0dc9d2d72341d353cae9013bf3cb26bf9",
+  "passed": 2,
+  "failed": 2
+}

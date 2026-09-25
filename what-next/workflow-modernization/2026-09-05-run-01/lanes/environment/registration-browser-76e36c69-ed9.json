@@ -1,0 +1,82 @@
+{
+  "run": "76e36c69-ed9",
+  "startedAt": "2026-09-06T09:19:54.117Z",
+  "baseUrl": "http://127.0.0.1:3108",
+  "database": "stoquify_local_registration_20260906_01",
+  "sourcesBefore": {
+    "components/auth/BeautifulRegisterForm.tsx": "302d94b28f81dbf482203583760dc98d8432dd4efee830a7064f86ef4c17b5ec",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "6e8d27f53dd70cae16c28e520cc61d79f9452a078b6e6b1f28c348912b75c5e9",
+    "hooks/useRegisterWorkflow.ts": "0482387bd00b0d5df1e435ac9d882fb7b1ecf194ef6c68bea5c96dd5049cc747",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "869855566160fff64842949f7d907f772d4c8b6fd98ce1fccf92e7444ed4d761",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "checks": [
+    {
+      "key": "register-v2-en",
+      "passed": false,
+      "screenshots": [
+        "register-v2-en-failure-76e36c69-ed9.png"
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeDisabled() failed\n\nLocator:  locator('form fieldset')\nExpected: disabled\nReceived: enabled\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 5000ms\n  - waiting for locator('form fieldset')\n    13 × locator resolved to <fieldset disabled class=\"min-w-0 space-y-5\">…</fieldset>\n       - unexpected value \"enabled\"\n"
+    },
+    {
+      "key": "register-v2-fr",
+      "passed": false,
+      "screenshots": [
+        "register-v2-fr-failure-76e36c69-ed9.png"
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeDisabled() failed\n\nLocator:  locator('form fieldset')\nExpected: disabled\nReceived: enabled\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 5000ms\n  - waiting for locator('form fieldset')\n    14 × locator resolved to <fieldset disabled class=\"min-w-0 space-y-5\">…</fieldset>\n       - unexpected value \"enabled\"\n"
+    },
+    {
+      "key": "register-en",
+      "passed": false,
+      "screenshots": [
+        "register-en-failure-76e36c69-ed9.png"
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeDisabled() failed\n\nLocator:  locator('form fieldset')\nExpected: disabled\nReceived: enabled\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 5000ms\n  - waiting for locator('form fieldset')\n    14 × locator resolved to <fieldset disabled class=\"min-w-0 space-y-5\">…</fieldset>\n       - unexpected value \"enabled\"\n"
+    },
+    {
+      "key": "register-fr",
+      "passed": false,
+      "screenshots": [
+        "register-fr-failure-76e36c69-ed9.png"
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeDisabled() failed\n\nLocator:  locator('form fieldset')\nExpected: disabled\nReceived: enabled\nTimeout:  5000ms\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 5000ms\n  - waiting for locator('form fieldset')\n    13 × locator resolved to <fieldset disabled class=\"min-w-0 space-y-5\">…</fieldset>\n       - unexpected value \"enabled\"\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Owned local application and actual registration service with external email disabled. Verification handoff is tested; no delivered code is claimed.",
+    "Three successful browser creations and a fourth denial use the ordinary shared IP registration limit; no reset, spoofing or bypass.",
+    "Browser accessibility checks cover labels, keyboard, focus and reflow; no actual screen-reader or comprehensive contrast certification.",
+    "The browser uses a separate database cloned only from owned synthetic controls; baseline tenant authority is checked unchanged."
+  ],
+  "originalAuthorityBefore": "439609785e4f1468ca09800b45fa5814a975a6587e9f9e3f7eb21b65778e68cf",
+  "originalAuthorityAfter": "439609785e4f1468ca09800b45fa5814a975a6587e9f9e3f7eb21b65778e68cf",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T09:21:52.857Z",
+  "sourcesAfter": {
+    "components/auth/BeautifulRegisterForm.tsx": "302d94b28f81dbf482203583760dc98d8432dd4efee830a7064f86ef4c17b5ec",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "6e8d27f53dd70cae16c28e520cc61d79f9452a078b6e6b1f28c348912b75c5e9",
+    "hooks/useRegisterWorkflow.ts": "0482387bd00b0d5df1e435ac9d882fb7b1ecf194ef6c68bea5c96dd5049cc747",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "869855566160fff64842949f7d907f772d4c8b6fd98ce1fccf92e7444ed4d761",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "sourceStable": true,
+  "driverSha256": "bbee949cc60fb165f0037b2cd1c800a965e53b13960fe4e02079b68f59684991",
+  "passed": 0,
+  "failed": 4
+}

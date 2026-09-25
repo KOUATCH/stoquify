@@ -1,0 +1,50 @@
+{
+  "at": "2026-09-08T15:44:48.473Z",
+  "run": "7fa017b6-a80",
+  "sourcesBefore": {
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "lib/purchasing/ap-history-presentation.ts": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "checks": [
+        "One filtered invoice retains its recorded 200 movement but cannot claim settlement totals when outside-filter allocations make 150 exceed payment 100",
+        "Corrected 75+25 split recovers the filtered remainder 125 without reissuing the payment"
+      ],
+      "screenshots": [
+        "ap-allocation-en-inconsistent-desktop-7fa017b6-a80.png",
+        "ap-allocation-en-inconsistent-mobile-7fa017b6-a80.png",
+        "ap-allocation-en-recovered-7fa017b6-a80.png"
+      ],
+      "pageErrors": []
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "checks": [
+        "One filtered invoice retains its recorded 200 movement but cannot claim settlement totals when outside-filter allocations make 150 exceed payment 100",
+        "Corrected 75+25 split recovers the filtered remainder 125 without reissuing the payment"
+      ],
+      "screenshots": [
+        "ap-allocation-fr-inconsistent-desktop-7fa017b6-a80.png",
+        "ap-allocation-fr-inconsistent-mobile-7fa017b6-a80.png",
+        "ap-allocation-fr-recovered-7fa017b6-a80.png"
+      ],
+      "pageErrors": []
+    }
+  ],
+  "scope": "Owned local synthetic payment/ledger/allocation evidence. No real payment release, statutory posting claim or external traffic.",
+  "originalBefore": "bfe2240f2f97334919703f3045223a16b0215df6468b5ec03df40856c59ba4c0",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history-financial.ts": "404727120663e9b3114a1b8984cb314b1772c9f835feaf5db24673e2ed4244f7",
+    "services/purchasing/ap-history.service.ts": "a0fe20219bde21358c02172cfc4cf905c4c4a8d7492afb49ee1999e45172a64d",
+    "components/purchasing/APHistoryWorkbench.tsx": "9bde6d5d6e880362dfc3944e61350eecdc377ca06916e1416c44131728cfcadc",
+    "lib/purchasing/ap-history-presentation.ts": "04989744fe24f7d656e229d56e8f17689e224df35f4054e798b72c648f9a9cad"
+  },
+  "sourceStable": true
+}

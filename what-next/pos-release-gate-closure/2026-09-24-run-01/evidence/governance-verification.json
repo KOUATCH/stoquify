@@ -1,0 +1,90 @@
+{
+  "generatedAt": "2026-09-24T09:08:02.076Z",
+  "head": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "node": "v22.17.0",
+  "files": [
+    {
+      "path": "scripts/pos-g1-contract-gate.js",
+      "sha256": "7ef5567e691edb2f22beaf352cea0d97a50390ae2bd0432ed6d13c74e5f1457c"
+    },
+    {
+      "path": "scripts/pos-enterprise-program-gate.js",
+      "sha256": "199a8a2ca89d86be45f8cd2c2e1295cda24969e978c6e2985745ad625608dcb2"
+    },
+    {
+      "path": "scripts/pos-governance-evidence.js",
+      "sha256": "0b326b68966b763a736fb13df1aada1eb8973e3999b1e3854ff517015dc8f3ee"
+    },
+    {
+      "path": "scripts/__tests__/pos-g1-contract-gate.test.js",
+      "sha256": "62fc46c392f1d0a96bde52fb6426153a81cf9822de12b3cd86c4a08aec38b563"
+    },
+    {
+      "path": "scripts/__tests__/pos-enterprise-program-gate.test.js",
+      "sha256": "37181b02c91d6ac1baa84e95d68f968a068486a659d4fdf7b4f4eb63a42b1e07"
+    },
+    {
+      "path": "scripts/__tests__/pos-governance-evidence.test.js",
+      "sha256": "4dd1b1dadd110bc798e3251f56c3d226214b35a83b7e1e4d205e0e528f54c5a3"
+    },
+    {
+      "path": "scripts/pos-governance-test-fixture.js",
+      "sha256": "9a295f3bda177add329b5bdd0523af0d3a6a5d612390df4e22b5b92e33c32cad"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "sha256": "11434eb3e1af1826516426e90d2d53a2faa47ade361d91191b5f3e0c950a36db"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_APPROVAL_REGISTER.json",
+      "sha256": "49e19d9ed6c83df23010264ffff4bb92dbe63ba4c2e7a8e3acdc42c0e4fe8340"
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "sha256": "95058c201dad8c9693d2a96830ce492828a5245baaf7bac36f92a97059e195f2"
+    }
+  ],
+  "businessArtifactsUnchangedAgainstHead": [
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_FREEZE_V0_2_0.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_06_G1_CONTRACT_APPROVAL_REGISTER.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/pos-enterprise-grade-audit/EXECUTION_07_G2_G9_GATE_CLOSURE_PROGRAM.json",
+      "unchanged": true
+    }
+  ],
+  "verification": {
+    "originalRegression": {
+      "suites": 2,
+      "failed": 5,
+      "passed": 4,
+      "exitCode": 1
+    },
+    "focusedTests": {
+      "suites": 3,
+      "passed": 45,
+      "failed": 0,
+      "exitCode": 0
+    },
+    "eslint": {
+      "exitCode": 0,
+      "diagnostics": 0
+    },
+    "g1Gate": {
+      "exitCode": 1,
+      "technical": "13/13",
+      "approved": "0/11"
+    },
+    "programGate": {
+      "exitCode": 1,
+      "technical": "12/12",
+      "gates": "0/10",
+      "external": "0/9"
+    }
+  }
+}

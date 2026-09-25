@@ -136,7 +136,8 @@ export const settingsRouteCatalog: SettingsRouteSurface[] = [
     route: "/dashboard/settings/security",
     resource: "SettingsSecurity",
     title: "Security settings",
-    permissions: ["PASSWORD_READ"],
+    titleFr: "Sécurité du compte",
+    permissions: ["profile.read"],
   },
   {
     key: "settings-tax-rates",
@@ -172,6 +173,15 @@ export const settingsRouteCatalog: SettingsRouteSurface[] = [
     resource: "SettingsUsers",
     title: "User directory",
     permissions: ["READ_USERS"],
+  },
+  {
+    key: "settings-users-update",
+    route: "/dashboard/settings/users/update/[id]",
+    resource: "User",
+    title: "Member access",
+    titleFr: "Accès du membre",
+    permissions: ["users.read"],
+    module: { moduleSlug: "settings", surface: "app/[locale]/(dashboard)/dashboard/settings/users/update/[id]/page.tsx", accessIntent: "read", mode: "observe" },
   },
 ]
 

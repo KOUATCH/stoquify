@@ -1,0 +1,206 @@
+{
+  "run": "6fe45358-008",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T06:27:32.738Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "c7e8c48397d238b3d04699c646817ebbc1fa96991aa24685b43de2fb4bda4847",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/users/invitation-revision.ts": "c46ccc217f3aa3cfc17f91474f3dab2896ed3f0094ad1eee7f3e2311081d35d4",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82"
+  },
+  "checks": [
+    {
+      "name": "concurrent identical requests commit one invitation, event, queue and mandatory audit",
+      "passed": true,
+      "durationMs": 188,
+      "detail": {
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1,
+        "sameIssue": true,
+        "noBearerInQueue": true,
+        "defaultWorkerDisabled": true
+      }
+    },
+    {
+      "name": "competing distinct requests for one recipient create only one pending invitation",
+      "passed": true,
+      "durationMs": 50,
+      "detail": {
+        "statuses": [
+          200,
+          409
+        ],
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "issuance audit failure rolls back invitation, event and queue; retry completes once",
+      "passed": true,
+      "durationMs": 53,
+      "detail": {
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "current issuer revocation and foreign roles cannot create invitations",
+      "passed": true,
+      "durationMs": 31,
+      "detail": {
+        "foreignDenied": true,
+        "disabledIssuerDenied": true
+      }
+    },
+    {
+      "name": "uncertain delivery retries identical bytes and key; records simulated acceptance separately",
+      "passed": true,
+      "durationMs": 63,
+      "detail": {
+        "attempts": 2,
+        "stableBodyAndKey": true,
+        "simulatedAdapterOnly": true
+      }
+    },
+    {
+      "name": "stale worker cannot overwrite the new lease's accepted receipt",
+      "passed": true,
+      "durationMs": 68,
+      "detail": {
+        "newLease": "SENT",
+        "oldLease": "LEASE_LOST"
+      }
+    },
+    {
+      "name": "post-adapter audit failure retains the first attempt for safe recovery",
+      "passed": true,
+      "durationMs": 56,
+      "detail": {
+        "stableRetry": true,
+        "simulatedAdapterOnly": true
+      }
+    },
+    {
+      "name": "expired retry window requires review without another adapter call",
+      "passed": true,
+      "durationMs": 41,
+      "detail": {
+        "status": "DEAD_LETTER"
+      }
+    },
+    {
+      "name": "role expansion after issuance cancels delivery without granting new authority",
+      "passed": true,
+      "durationMs": 40,
+      "detail": {
+        "status": "CANCELLED",
+        "identityCreated": false
+      }
+    },
+    {
+      "name": "legacy pending invitation can be explicitly replaced with new authority evidence",
+      "passed": true,
+      "durationMs": 45,
+      "detail": {
+        "oldLinkInvalidated": true,
+        "actualNewIssuerRecorded": true,
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "concurrent replacement requests produce one new revision and retain prior history",
+      "passed": true,
+      "durationMs": 69,
+      "detail": {
+        "statuses": [
+          200,
+          409
+        ],
+        "invites": 1,
+        "events": 2,
+        "outbox": 2,
+        "audits": 2
+      }
+    },
+    {
+      "name": "cancellation and replacement cannot both act on the same reviewed revision",
+      "passed": true,
+      "durationMs": 58,
+      "detail": {
+        "statuses": [
+          200,
+          409
+        ],
+        "retainedInvites": 1
+      }
+    },
+    {
+      "name": "cancel audit failure rolls back the link, queue and decision, then retry is idempotent",
+      "passed": true,
+      "durationMs": 59,
+      "detail": {
+        "status": "CANCELLED",
+        "queue": "CANCELLED",
+        "oneCancellationAudit": true
+      }
+    },
+    {
+      "name": "accepted and foreign invitations cannot be cancelled",
+      "passed": true,
+      "durationMs": 58,
+      "detail": {
+        "acceptedRetained": true,
+        "foreignUnchanged": true
+      }
+    },
+    {
+      "name": "replacement retains a previous simulated provider receipt and records a separate request",
+      "passed": true,
+      "durationMs": 62,
+      "detail": {
+        "historicalReceiptRetained": true,
+        "oldLinkInvalid": true,
+        "simulatedAdapterOnly": true
+      }
+    }
+  ],
+  "limitations": [
+    "Real PostgreSQL and production service logic; adapters are isolated in-memory receipts only, never actual provider acceptance.",
+    "No production transport is installed; default worker is disabled.",
+    "Legacy invitation provenance and redemption-time permission revision enforcement remain separate work."
+  ],
+  "authorityBefore": "d46cb2a40ed2b3dc346b111d4bdabea80549d85582e6ab3c75a5ada535ed1c64",
+  "authorityAfter": "d46cb2a40ed2b3dc346b111d4bdabea80549d85582e6ab3c75a5ada535ed1c64",
+  "authorityUnchanged": true,
+  "completedAt": "2026-09-06T06:27:33.898Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-issuance.service.ts": "7b9462c4eb78202fe4179c2ef48317a1953585be467c338dd30925d682724939",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "5134792fa49805ec774aba071b03b3bfeea8df0765e8347485699395eb694b8d",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "c7e8c48397d238b3d04699c646817ebbc1fa96991aa24685b43de2fb4bda4847",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "services/users/invitation-revision.ts": "c46ccc217f3aa3cfc17f91474f3dab2896ed3f0094ad1eee7f3e2311081d35d4",
+    "services/users/user-invitation-management.service.ts": "2ffc17c3702e0ee379103c42af01b0c1d2f92d9a325b8bf07c1b29f72e621c82"
+  },
+  "sourceStable": true,
+  "passed": 15,
+  "failed": 0,
+  "blockedFetches": 0,
+  "driverSha256": "8372e837ce338a1b413ac13420412fa124e52a670ffbe644a00d70f86eef48a7"
+}

@@ -1,0 +1,192 @@
+{
+  "checkedAt": "2026-09-24T04:04:29.457Z",
+  "target": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "stoquify_replay_next_20260830"
+  },
+  "method": "Guarded BEGIN READ ONLY; information_schema, PostgreSQL catalogs and Prisma migration metadata only; no business-row reads or mutations",
+  "migrationName": "20260909093000_add_suspense_posting_cycles",
+  "migrationPath": "prisma/migrations/20260909093000_add_suspense_posting_cycles/migration.sql",
+  "migrationSha256": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+  "migrationTables": [
+    {
+      "table_schema": "public",
+      "table_name": "_prisma_migrations"
+    }
+  ],
+  "migrationHistory": [],
+  "migrationHistorySummary": {
+    "total": 86,
+    "finished": 86,
+    "unfinished": 0,
+    "latest_finished_at": "2026-09-20T11:56:54.247Z"
+  },
+  "observed": {
+    "postingCyclePresent": false,
+    "cycleScopeConstraintPresent": false,
+    "replacementUniqueIndexPresent": false,
+    "oldUniqueIndexPresent": true,
+    "targetMigrationRecordedFinished": false
+  },
+  "columns": [
+    {
+      "column_name": "id",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "organizationId",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "periodId",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "sourceType",
+      "data_type": "USER-DEFINED",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "sourceId",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "postingPurpose",
+      "data_type": "USER-DEFINED",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "idempotencyKey",
+      "data_type": "text",
+      "is_nullable": "NO",
+      "column_default": null
+    },
+    {
+      "column_name": "sourceVersion",
+      "data_type": "integer",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "status",
+      "data_type": "USER-DEFINED",
+      "is_nullable": "NO",
+      "column_default": "'PENDING'::\"LedgerPostingBatchStatus\""
+    },
+    {
+      "column_name": "errorMessage",
+      "data_type": "text",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "metadata",
+      "data_type": "jsonb",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "postedAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "reversedAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "YES",
+      "column_default": null
+    },
+    {
+      "column_name": "createdAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "NO",
+      "column_default": "CURRENT_TIMESTAMP"
+    },
+    {
+      "column_name": "updatedAt",
+      "data_type": "timestamp without time zone",
+      "is_nullable": "NO",
+      "column_default": null
+    }
+  ],
+  "indexes": [
+    {
+      "index_name": "ledger_posting_batches_organizationId_idempotencyKey_key",
+      "is_unique": true,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE UNIQUE INDEX \"ledger_posting_batches_organizationId_idempotencyKey_key\" ON public.ledger_posting_batches USING btree (\"organizationId\", \"idempotencyKey\")"
+    },
+    {
+      "index_name": "ledger_posting_batches_organizationId_sourceType_sourceId_p_key",
+      "is_unique": true,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE UNIQUE INDEX \"ledger_posting_batches_organizationId_sourceType_sourceId_p_key\" ON public.ledger_posting_batches USING btree (\"organizationId\", \"sourceType\", \"sourceId\", \"postingPurpose\")"
+    },
+    {
+      "index_name": "ledger_posting_batches_organizationId_status_createdAt_idx",
+      "is_unique": false,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE INDEX \"ledger_posting_batches_organizationId_status_createdAt_idx\" ON public.ledger_posting_batches USING btree (\"organizationId\", status, \"createdAt\")"
+    },
+    {
+      "index_name": "ledger_posting_batches_periodId_idx",
+      "is_unique": false,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE INDEX \"ledger_posting_batches_periodId_idx\" ON public.ledger_posting_batches USING btree (\"periodId\")"
+    },
+    {
+      "index_name": "ledger_posting_batches_pkey",
+      "is_unique": true,
+      "is_valid": true,
+      "is_ready": true,
+      "definition": "CREATE UNIQUE INDEX ledger_posting_batches_pkey ON public.ledger_posting_batches USING btree (id)"
+    }
+  ],
+  "constraints": [
+    {
+      "constraint_name": "ledger_posting_batches_organizationId_fkey",
+      "type": "f",
+      "validated": true,
+      "deferrable": false,
+      "definition": "FOREIGN KEY (\"organizationId\") REFERENCES organizations(id) ON UPDATE CASCADE ON DELETE CASCADE"
+    },
+    {
+      "constraint_name": "ledger_posting_batches_periodId_fkey",
+      "type": "f",
+      "validated": true,
+      "deferrable": false,
+      "definition": "FOREIGN KEY (\"periodId\") REFERENCES accounting_periods(id) ON UPDATE CASCADE ON DELETE SET NULL"
+    },
+    {
+      "constraint_name": "ledger_posting_batches_pkey",
+      "type": "p",
+      "validated": true,
+      "deferrable": false,
+      "definition": "PRIMARY KEY (id)"
+    }
+  ],
+  "queries": {
+    "migrationTables": "SELECT table_schema, table_name FROM information_schema.tables WHERE table_name = '_prisma_migrations' ORDER BY table_schema",
+    "history": "SELECT id, migration_name, checksum, started_at, finished_at, rolled_back_at, applied_steps_count FROM public._prisma_migrations WHERE migration_name = $1 ORDER BY started_at",
+    "historySummary": "SELECT count(*)::int AS total, count(*) FILTER (WHERE finished_at IS NOT NULL AND rolled_back_at IS NULL)::int AS finished, count(*) FILTER (WHERE finished_at IS NULL AND rolled_back_at IS NULL)::int AS unfinished, max(finished_at) AS latest_finished_at FROM public._prisma_migrations",
+    "columns": "SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'ledger_posting_batches' ORDER BY ordinal_position",
+    "indexes": "SELECT ci.relname AS index_name, i.indisunique AS is_unique, i.indisvalid AS is_valid, i.indisready AS is_ready, pg_get_indexdef(i.indexrelid) AS definition FROM pg_index i JOIN pg_class ct ON ct.oid = i.indrelid JOIN pg_namespace n ON n.oid = ct.relnamespace JOIN pg_class ci ON ci.oid = i.indexrelid WHERE n.nspname = 'public' AND ct.relname = 'ledger_posting_batches' ORDER BY ci.relname",
+    "constraints": "SELECT c.conname AS constraint_name, c.contype AS type, c.convalidated AS validated, c.condeferrable AS deferrable, pg_get_constraintdef(c.oid, true) AS definition FROM pg_constraint c JOIN pg_class t ON t.oid = c.conrelid JOIN pg_namespace n ON n.oid = t.relnamespace WHERE n.nspname = 'public' AND t.relname = 'ledger_posting_batches' ORDER BY c.conname"
+  }
+}

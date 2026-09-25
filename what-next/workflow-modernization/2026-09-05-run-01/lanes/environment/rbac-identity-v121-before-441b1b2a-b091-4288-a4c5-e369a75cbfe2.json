@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-13T11:57:24.955Z",
+  "phase": "before",
+  "organizationId": "workflow_rbac_identity_441b1b2a-b091-4288-a4c5-e369a75cbfe2",
+  "source": "lib/security/rbac.ts",
+  "sourceBefore": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+  "checks": [
+    {
+      "name": "reproduced a different active email owner replacing an inactive session subject",
+      "reproduced": true,
+      "originalId": "cmtzrem740001ma4sszm8czxk",
+      "resolvedId": "cmtzremck0005ma4sajm7mg04"
+    }
+  ],
+  "scope": "Owned real PostgreSQL users/roles; synthetic session return and Next headers isolate a stale identity snapshot between authentication and RBAC loading. No live authentication or professional security certification claim.",
+  "passed": true,
+  "sourceAfter": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+  "sourceStable": true
+}

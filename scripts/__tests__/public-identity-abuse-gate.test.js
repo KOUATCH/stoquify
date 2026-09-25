@@ -41,6 +41,7 @@ function writeReadyFixture(root) {
     'operation: "password_reset_request"',
     'operation: "password_reset_completion"',
     'operation: "email_otp_verification"',
+    'operation: "email_otp_resend"',
   ])
   for (const file of [
     "actions/auth.ts",
@@ -49,6 +50,7 @@ function writeReadyFixture(root) {
     "actions/users/sendResetLink.ts",
     "actions/users/updateUserPassword.ts",
     "actions/users/verifyOtp.ts",
+    "actions/users/resendVerificationCode.ts",
   ]) {
     write(root, file, "getPublicIdentityRequestContext()")
   }
@@ -105,6 +107,7 @@ describe("public identity abuse readiness gate", () => {
       "reset_request_limit",
       "reset_completion_limit",
       "otp_limit",
+      "otp_resend_limit",
     ]))
   })
 })

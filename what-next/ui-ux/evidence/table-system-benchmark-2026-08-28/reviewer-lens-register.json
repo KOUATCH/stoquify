@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-08-28",
+  "lenses": [
+    {
+      "lens": "principal system architecture",
+      "disposition": "material",
+      "finding": "Use one headless table engine behind archetype contracts and preserve service-owned business truth.",
+      "roadmap": ["N0", "N1", "N2", "L3"]
+    },
+    {
+      "lens": "senior frontend engineering",
+      "disposition": "material",
+      "finding": "Fragmented wrappers and query ownership prevent fixes from propagating; consolidate shell, adapters, and tests.",
+      "roadmap": ["N1", "N2", "N3"]
+    },
+    {
+      "lens": "product strategy",
+      "disposition": "material",
+      "finding": "Role/task saved views create more value than broad premium-grid feature parity.",
+      "roadmap": ["N2", "N4", "N5", "N6"]
+    },
+    {
+      "lens": "UI/UX and interaction design",
+      "disposition": "material",
+      "finding": "Formalize seven archetypes, one toolbar hierarchy, explicit states, and archetype-specific phone adaptations.",
+      "roadmap": ["N0", "N1", "X1", "X2", "X3", "X4"]
+    },
+    {
+      "lens": "accounting and financial controls",
+      "disposition": "material",
+      "finding": "Separate drafts from posted facts; bind bulk actions and exports to reproducible query/evidence scope.",
+      "roadmap": ["N3", "N6", "X1"]
+    },
+    {
+      "lens": "inventory and operational controls",
+      "disposition": "material",
+      "finding": "Selection by durable ID, eligibility reasons, and corrections are required for stock-sensitive bulk work.",
+      "roadmap": ["N3", "N4", "X3"]
+    },
+    {
+      "lens": "payroll and HR controls",
+      "disposition": "material",
+      "finding": "Saved views, columns, and exports must preserve HRIS/payroll scope, redaction, effective date, and country-pack context.",
+      "roadmap": ["X2"]
+    },
+    {
+      "lens": "cybersecurity and authorization",
+      "disposition": "material",
+      "finding": "Route, action, saved-view, selection-token, and export authorization must be independently enforced.",
+      "roadmap": ["N2", "N3", "N4", "N5", "N6"]
+    },
+    {
+      "lens": "privacy and data minimization",
+      "disposition": "material",
+      "finding": "Forbidden fields must not leak through saved-view definitions, counts, URLs, exports, or preference payloads.",
+      "roadmap": ["N2", "X2"]
+    },
+    {
+      "lens": "accessibility",
+      "disposition": "material",
+      "finding": "Keyboard, focus, announcements, sorting, selection, menus, and responsive alternatives are release gates; no conformance claim is made.",
+      "roadmap": ["N1", "N4", "N5", "N6", "X5"]
+    },
+    {
+      "lens": "mobile and field operations",
+      "disposition": "material",
+      "finding": "Horizontal scroll alone is insufficient; master, queue, statement, evidence, and editable archetypes need different phone behavior.",
+      "roadmap": ["N0", "N4", "N5", "N6", "X3"]
+    },
+    {
+      "lens": "performance and data architecture",
+      "disposition": "material",
+      "finding": "Define deterministic server query modes and measured thresholds before virtualization.",
+      "roadmap": ["N0", "N2", "X5"]
+    },
+    {
+      "lens": "quality engineering and release governance",
+      "disposition": "material",
+      "finding": "Use contract tests, inventory ratchets, approved authenticated route smoke, and evidence manifests.",
+      "roadmap": ["N0", "N1", "L1"]
+    },
+    {
+      "lens": "SaaS growth and customer success",
+      "disposition": "material",
+      "finding": "Cross-module consistency and role defaults reduce onboarding/training cost and increase enterprise trust.",
+      "roadmap": ["N2", "N4", "N5", "N6", "L1"]
+    }
+  ]
+}
+

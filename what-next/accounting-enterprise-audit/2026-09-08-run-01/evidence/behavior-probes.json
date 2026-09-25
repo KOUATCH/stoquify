@@ -1,0 +1,101 @@
+{
+  "generatedAt": "2026-09-08T11:59:20.722Z",
+  "scope": "Current service functions with synthetic in-memory database doubles; no deployed database access",
+  "results": [
+    {
+      "id": "FX_BASE_AMOUNT",
+      "status": "REPRODUCED",
+      "input": {
+        "currency": "EUR",
+        "amount": "100",
+        "syntheticRate": "655.957"
+      },
+      "observed": {
+        "baseDebit": "100",
+        "exchangeRate": "655.957",
+        "locationId": "foreign-location",
+        "customerId": "foreign-customer"
+      },
+      "expectedConvertedBase": "65595.70",
+      "note": "Supplied dimensions are also copied without entity lookup in the invoked service."
+    },
+    {
+      "id": "REPORT_CURRENCY_MIX",
+      "status": "REPRODUCED",
+      "syntheticInput": "100 EUR at rate 655.957 plus 100 XAF on the same account",
+      "observed": {
+        "currency": "XAF",
+        "balanceSheet": {
+          "assets": "200.00",
+          "liabilities": "0.00",
+          "equity": "200.00",
+          "accumulatedEarnings": "0.00",
+          "liabilitiesAndEquity": "200.00",
+          "difference": "0.00",
+          "isBalanced": true
+        },
+        "groupBy": [
+          "accountId"
+        ],
+        "sum": {
+          "debit": true,
+          "credit": true
+        }
+      },
+      "expectedBaseAssets": "65695.70"
+    },
+    {
+      "id": "PARTIAL_FISCAL_YEAR",
+      "status": "REPRODUCED",
+      "requestedStart": "2026-06-15",
+      "firstPeriodStart": "2026-06-01T00:00:00.000Z",
+      "periodCount": 3
+    },
+    {
+      "id": "SOURCE_OWNED_REVERSAL",
+      "status": "REPRODUCED",
+      "inputSourceType": "POS_SALE",
+      "originalNewStatus": "REVERSED",
+      "reversalSourceType": "MANUAL",
+      "reversalOfEntryId": "pos-journal",
+      "note": "Only journal/batch/audit doubles were provided; no sale, tender, inventory or source-owned reversal command was invoked. Authorization was mocked as allowed."
+    },
+    {
+      "id": "GL_OPENING_BALANCE",
+      "status": "REPRODUCED",
+      "scenario": "Opening balance 100 before selected start date; selected movement debit 25",
+      "observedRunningBalance": "25.00",
+      "queryCount": 1,
+      "expectedAccountBalance": "125.00",
+      "note": "Current result is period movement, but field is named runningBalance; no opening-balance query is made."
+    },
+    {
+      "id": "LOCKED_SETTINGS_MUTATION",
+      "status": "REPRODUCED",
+      "before": {
+        "organizationId": "org",
+        "setupStatus": "LOCKED",
+        "accountingEnabled": true,
+        "baseCurrency": "XAF",
+        "inventoryValuationPolicy": "WEIGHTED_AVERAGE"
+      },
+      "after": {
+        "organizationId": "org",
+        "setupStatus": "LOCKED",
+        "accountingEnabled": true,
+        "baseCurrency": "EUR",
+        "inventoryValuationPolicy": "ARBITRARY_POLICY",
+        "roundingScale": 6
+      },
+      "note": "No ledger activity lookup, setup-lock rejection or close invalidation is performed by this service."
+    },
+    {
+      "id": "CLOSE_WITHOUT_ASSURANCE_READ",
+      "status": "REPRODUCED",
+      "observedPeriodStatus": "CLOSED",
+      "assuranceReads": 0,
+      "syntheticAssuranceState": "BLOCKED / INVENTORY_MISMATCH",
+      "note": "Authorization was mocked as allowed. Demonstrates separate close preflight, not a bypass of the certified-export gate."
+    }
+  ]
+}

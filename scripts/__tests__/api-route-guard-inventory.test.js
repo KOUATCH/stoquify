@@ -26,6 +26,21 @@ function scriptPath() {
 }
 
 describe("api route guard inventory", () => {
+  it("does not declare unknown endpoints ready, including endpoints under the auth prefix", () => {
+    const root = makeTempRepo()
+    writeFile(root, "app/api/auth/new-endpoint/route.ts", "export function GET() { return new Response('data') }")
+    const report = buildApiRouteGuardInventory(root, { mode: "fail" })
+    expect(report.records[0]).toMatchObject({ classification: "unclassified", moduleApplicability: "review_required" })
+    expect(report.records[0].issues).toContain("unclassified_route_requires_review")
+    expect(gateResultForReport(report, "fail").exitCode).toBe(1)
+  })
+
+  it("recognizes the authenticated session claims route without exempting the entire auth prefix", () => {
+    const root = makeTempRepo()
+    writeFile(root, "app/api/auth/permissions/route.ts", "export async function GET() { await requireSession(); return new Response('claims') }")
+    const report = buildApiRouteGuardInventory(root, { mode: "fail" })
+    expect(report.records[0]).toMatchObject({ classification: "authenticated", guard: "requireSession", moduleApplicability: "not_applicable_session_claims", issues: [] })
+  })
   it("classifies tenant, public, upload, and receipt evidence in report mode", () => {
     const root = makeTempRepo()
     writeFile(
@@ -109,13 +124,13 @@ describe("api route guard inventory", () => {
       mode: "fail",
       status: "blocked",
       exitCode: 1,
-      issueCount: 2,
+      issueCount: 3,
     })
     expect(gateResultForReport(report, "warn")).toMatchObject({
       mode: "warn",
       status: "blocked",
       exitCode: 0,
-      issueCount: 2,
+      issueCount: 3,
     })
   })
 

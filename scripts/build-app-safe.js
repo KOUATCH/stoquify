@@ -252,7 +252,20 @@ function expectsStandaloneOutput(root) {
 }
 
 function inspectNextOutput(root, options = {}) {
-  const nextDir = path.join(root, ".next")
+  const outputName = (options.env || process.env).NEXT_DIST_DIR?.trim() || ".next"
+  const nextDir = path.resolve(root, outputName)
+  const relative = path.relative(path.resolve(root), nextDir)
+  if (!relative || relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    throw new Error(`Refusing unsafe build output path: ${nextDir}`)
+  }
+  // Resolve the nearest existing parent too: a new output can sit below a junction.
+  let existingAncestor = nextDir
+  while (!pathExists(existingAncestor)) existingAncestor = path.dirname(existingAncestor)
+  const realRelative = path.relative(fs.realpathSync(root), fs.realpathSync(existingAncestor))
+  if ((existingAncestor === nextDir && !realRelative) || realRelative === ".." ||
+    realRelative.startsWith(`..${path.sep}`) || path.isAbsolute(realRelative)) {
+    throw new Error(`Refusing unsafe build output link: ${nextDir}`)
+  }
   const reasons = []
 
   if (!pathExists(nextDir)) {
@@ -263,7 +276,7 @@ function inspectNextOutput(root, options = {}) {
       state: "stale-or-corrupt",
       nextDir,
       shouldClean: true,
-      reasons: [".next exists but is not a directory"],
+      reasons: [`${outputName} exists but is not a directory`],
     }
   }
 
@@ -287,7 +300,7 @@ function inspectNextOutput(root, options = {}) {
         state: "stale-or-corrupt",
         nextDir,
         shouldClean: true,
-        reasons: [".next has production build markers but no BUILD_ID"],
+        reasons: [`${outputName} has production build markers but no BUILD_ID`],
       }
     }
 
@@ -295,23 +308,23 @@ function inspectNextOutput(root, options = {}) {
       state: "cache-only",
       nextDir,
       shouldClean: false,
-      reasons: [".next has no production build markers"],
+      reasons: [`${outputName} has no production build markers`],
     }
   }
 
   const buildId = readFileTrimmed(buildIdPath)
-  if (!buildId) reasons.push(".next/BUILD_ID is empty")
+  if (!buildId) reasons.push(`${outputName}/BUILD_ID is empty`)
 
   if (buildId) {
     const ssgManifest = path.join(nextDir, "static", buildId, "_ssgManifest.js")
     if (!pathExists(ssgManifest)) {
-      reasons.push(`.next/static/${buildId}/_ssgManifest.js is missing`)
+      reasons.push(`${outputName}/static/${buildId}/_ssgManifest.js is missing`)
     }
   }
 
   const requireStandalone = options.requireStandalone ?? expectsStandaloneOutput(root)
   if (requireStandalone && !pathExists(path.join(nextDir, "standalone", "server.js"))) {
-    reasons.push(".next/standalone/server.js is missing for standalone output")
+    reasons.push(`${outputName}/standalone/server.js is missing for standalone output`)
   }
 
   return {
@@ -474,6 +487,7 @@ async function runSafeBuild(options = {}) {
 
   const nextOutput = inspectNextOutput(root, options)
   summary.nextOutput = {
+    nextDir: nextOutput.nextDir,
     state: nextOutput.state,
     shouldClean: nextOutput.shouldClean,
     reasons: nextOutput.reasons,
@@ -510,6 +524,7 @@ async function runSafeBuild(options = {}) {
 
   const postBuildNextOutput = inspectNextOutput(root, options)
   summary.postBuildNextOutput = {
+    nextDir: postBuildNextOutput.nextDir,
     state: postBuildNextOutput.state,
     shouldClean: postBuildNextOutput.shouldClean,
     reasons: postBuildNextOutput.reasons,
@@ -569,11 +584,12 @@ function renderSummary(summary) {
     lines.push(renderProcessList(summary.orphanedBuildProcesses))
   }
   if (summary.nextOutput) {
-    lines.push(`.next state: ${summary.nextOutput.state}`)
+    lines.push(`Build output: ${summary.nextOutput.nextDir}`)
+    lines.push(`Output state: ${summary.nextOutput.state}`)
     if (summary.nextOutput.reasons.length > 0) {
-      lines.push(`.next reasons: ${summary.nextOutput.reasons.join("; ")}`)
+      lines.push(`Output reasons: ${summary.nextOutput.reasons.join("; ")}`)
     }
-    lines.push(`.next cleaned: ${summary.cleanedNext ? "yes" : "no"}`)
+    lines.push(`Output cleaned: ${summary.cleanedNext ? "yes" : "no"}`)
   }
   if (summary.build) {
     lines.push(`Build command: ${summary.build.commandLine}`)
@@ -582,9 +598,9 @@ function renderSummary(summary) {
     if (summary.build.spawnError) lines.push(`Build spawn error: ${summary.build.spawnError}`)
   }
   if (summary.postBuildNextOutput) {
-    lines.push(`Post-build .next state: ${summary.postBuildNextOutput.state}`)
+    lines.push(`Post-build output state: ${summary.postBuildNextOutput.state}`)
     if (summary.postBuildNextOutput.reasons.length > 0) {
-      lines.push(`Post-build .next reasons: ${summary.postBuildNextOutput.reasons.join("; ")}`)
+      lines.push(`Post-build output reasons: ${summary.postBuildNextOutput.reasons.join("; ")}`)
     }
   }
   lines.push(`Orphaned build chains after build: ${summary.postBuildOrphanedBuildProcesses.length}`)

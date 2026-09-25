@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Check, FileCheck2, Loader2, ShieldAlert, X } from "lucide-react"
 
 import {
@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import type { CommandDailyBrief } from "@/services/agents/command-agent-contracts"
 import type { CopilotProposalDto } from "@/services/ai/copilot-proposal.service"
+import type { CreateCopilotProposalInput } from "@/services/ai/copilot-proposal.schemas"
 
 type CopilotProposalControlsProps = {
   runId: string
@@ -29,9 +30,12 @@ const copy = {
     reject: "Reject proposal",
     accepted: "Proposal accepted",
     rejected: "Proposal rejected",
+    expired: "Proposal expired",
+    cancelled: "Proposal cancelled",
     noAuthority:
       "Acceptance records human intent only. The copilot cannot execute the workflow.",
     failed: "The proposal could not be recorded safely.",
+    evidenceChanged: "The proposal or its evidence is no longer current. Refresh the analysis and review its sources before preparing a new proposal. You can still reject an unexpired draft.",
   },
   fr: {
     prepare: "Preparer la proposition",
@@ -40,13 +44,20 @@ const copy = {
     reject: "Rejeter la proposition",
     accepted: "Proposition acceptee",
     rejected: "Proposition rejetee",
+    expired: "Proposition expirée",
+    cancelled: "Proposition annulée",
     noAuthority:
       "L'acceptation enregistre uniquement l'intention humaine. Le copilote ne peut pas executer le processus.",
     failed: "La proposition n'a pas pu etre enregistree de maniere sure.",
+    evidenceChanged: "La proposition ou ses preuves ne sont plus à jour. Actualisez l’analyse et vérifiez ses sources avant de préparer une nouvelle proposition. Vous pouvez encore rejeter un brouillon non expiré.",
   },
 } as const
 
-export function CopilotProposalControls({
+export function CopilotProposalControls(props: CopilotProposalControlsProps) {
+  return <ProposalControls key={`${props.runId}:${props.priority.id}`} {...props} />
+}
+
+function ProposalControls({
   runId,
   priority,
   evidence,
@@ -59,15 +70,19 @@ export function CopilotProposalControls({
   const [proposal, setProposal] = useState<CopilotProposalDto | null>(null)
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const request = useRef<CreateCopilotProposalInput | null>(null)
+  const inFlight = useRef(false)
 
   async function prepare() {
+    if (inFlight.current) return
+    inFlight.current = true
     setPending(true)
     setError(null)
     try {
       const selectedEvidence = evidence.filter((item) =>
         priority.evidenceIds.includes(item.id),
       )
-      const response = await createCopilotProposalAction({
+      request.current ??= {
         runId,
         proposalType: "NAVIGATE_TO_WORKFLOW",
         targetRoute: priority.href,
@@ -84,26 +99,30 @@ export function CopilotProposalControls({
           freshness: item.freshness,
           available: item.available,
         })),
-        periodStart,
-        periodEnd,
-        asOf,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        periodStart: new Date(periodStart),
+        periodEnd: new Date(periodEnd),
+        asOf: new Date(asOf),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         idempotencyKey: `copilot-proposal:${runId}:${priority.id}`,
-      })
+      }
+      const response = await createCopilotProposalAction(request.current)
       if (!response.success) {
-        setError(response.error || t.failed)
+        setError(response.code === "BUSINESS_RULE_VIOLATION" || response.code === "NOT_FOUND" || response.code === "CONFLICT"
+          ? t.evidenceChanged : response.error || t.failed)
         return
       }
       setProposal(response.data)
     } catch {
       setError(t.failed)
     } finally {
+      inFlight.current = false
       setPending(false)
     }
   }
 
   async function decide(decision: "ACCEPTED" | "REJECTED") {
-    if (!proposal) return
+    if (!proposal || inFlight.current) return
+    inFlight.current = true
     setPending(true)
     setError(null)
     try {
@@ -116,13 +135,15 @@ export function CopilotProposalControls({
             : "Rejected after human review.",
       })
       if (!response.success) {
-        setError(response.error || t.failed)
+        setError(response.code === "BUSINESS_RULE_VIOLATION" || response.code === "NOT_FOUND" || response.code === "CONFLICT"
+          ? t.evidenceChanged : response.error || t.failed)
         return
       }
       setProposal(response.data)
     } catch {
       setError(t.failed)
     } finally {
+      inFlight.current = false
       setPending(false)
     }
   }
@@ -187,8 +208,8 @@ export function CopilotProposalControls({
           </Button>
         </div>
       ) : (
-        <p className="text-right text-xs font-medium text-[var(--dash-text)]">
-          {proposal.status === "ACCEPTED" ? t.accepted : t.rejected}
+        <p className="text-right text-xs font-medium text-[var(--dash-text)]" role="status">
+          {{ ACCEPTED: t.accepted, REJECTED: t.rejected, EXPIRED: t.expired, CANCELLED: t.cancelled }[proposal.status]}
         </p>
       )}
       {error ? (

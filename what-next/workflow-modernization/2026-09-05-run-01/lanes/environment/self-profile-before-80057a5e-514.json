@@ -1,0 +1,53 @@
+{
+  "run": "80057a5e-514",
+  "source": "owned-self-profile-verification",
+  "startedAt": "2026-09-06T17:21:33.997Z",
+  "sourcesBefore": {
+    "app/api/auth/[...all]/route.ts": "d97a1513ea50a3d23bd78a155c47893b03a505f0cdb1b524ea5d70274eafb8ee",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "lib/auth-client.ts": "d5dcaf05372e073b5b4f3b4c4d765e219c62f7e111bad90c3dd5fc292b903b38",
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "services/users/user-invitation-history.service.ts": "86d0943c05e233607a6f42b9bb4115e8505d1411ce435a08ccc1c7390b1d8500"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "profileRouteExists": false,
+      "hasProfileUpdate": false,
+      "updateStatus": 200,
+      "persistedNameChange": true,
+      "newAudits": 0,
+      "defectReproduced": true,
+      "nameAndStructuredNamesCanDisagree": true,
+      "syntheticProfileRestored": true
+    },
+    {
+      "locale": "fr",
+      "profileRouteExists": false,
+      "hasProfileUpdate": false,
+      "updateStatus": 200,
+      "persistedNameChange": true,
+      "newAudits": 0,
+      "defectReproduced": true,
+      "nameAndStructuredNamesCanDisagree": true,
+      "syntheticProfileRestored": true
+    }
+  ],
+  "workflowPassed": false,
+  "scope": "Real HTTP source-defect reproduction in new synthetic accounts; not a passed profile workflow.",
+  "originalBefore": "ac13fc57940da4e18df491a01984e85cc936a4d9b908958fa5b68cca23b2f707",
+  "originalAfter": "ac13fc57940da4e18df491a01984e85cc936a4d9b908958fa5b68cca23b2f707",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T17:21:35.595Z",
+  "sourcesAfter": {
+    "app/api/auth/[...all]/route.ts": "d97a1513ea50a3d23bd78a155c47893b03a505f0cdb1b524ea5d70274eafb8ee",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267",
+    "lib/auth-client.ts": "d5dcaf05372e073b5b4f3b4c4d765e219c62f7e111bad90c3dd5fc292b903b38",
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "services/users/user-invitation-history.service.ts": "86d0943c05e233607a6f42b9bb4115e8505d1411ce435a08ccc1c7390b1d8500"
+  },
+  "sourceStable": true,
+  "driverSha256": "2947615cf1a2a8d182654a1a6522e29a8c4729df134e9c9c9802416f44e8743d"
+}

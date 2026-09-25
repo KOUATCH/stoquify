@@ -1,0 +1,36 @@
+{
+  "decisionId": "USER-DIRECTIVE-20260830-ISOLATED-RESEED",
+  "capturedAt": "2026-08-30T20:52:55+01:00",
+  "approvalClassification": "UNVERIFIED_CHAT_DIRECTIVE",
+  "approverIdentity": "UNVERIFIED",
+  "approverControlRole": "UNVERIFIED",
+  "target": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "stoquify_replay_next_20260830",
+    "tenants": ["rds_org_001", "rds_org_002"]
+  },
+  "previousDatabase": {
+    "database": "stoquify_dev_migrated_20260814",
+    "disposition": "PRESERVED_NOT_RESET"
+  },
+  "verification": {
+    "migrationStatus": "UP_TO_DATE_80_OF_80",
+    "seedStatus": "PASS",
+    "readOnlyVerifier": "PASS",
+    "contractTests": "PASS_10_OF_10"
+  },
+  "blockers": {
+    "TRB-001": "CLOSED",
+    "TRB-002": "CLOSED",
+    "TRB-003": "OPEN_GOVERNANCE",
+    "TRB-004": "PARTIAL_SECRET_MANAGER_UNVERIFIED",
+    "TRB-005": "OPEN_UI_EVIDENCE",
+    "TRB-006": "CLOSED_DATA",
+    "TRB-007": "CLOSED",
+    "TRB-008": "OPEN_WINDOWS_PROCESS_LOCK",
+    "TRB-009": "MITIGATED",
+    "TRB-010": "CLOSED"
+  },
+  "containsSecrets": false
+}

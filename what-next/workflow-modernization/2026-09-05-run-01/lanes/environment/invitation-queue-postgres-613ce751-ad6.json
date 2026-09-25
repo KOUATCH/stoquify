@@ -1,0 +1,133 @@
+{
+  "run": "613ce751-ad6",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T06:07:14.880Z",
+  "sourcesBefore": {
+    "services/users/user-invitation-issuance.service.ts": "40cf6caaab023f4937b1e0a44a0f872feeb1d58ac64448a955413b2ce069c42e",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "b7c53352750340e25398dd4e06d7f5caad48a2609645800d91a19f435bc14c10",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "14a4dea6fe59487b323893cbaac51c458033b6da0eee908c05b2938a8d6304a2",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "concurrent identical requests commit one invitation, event, queue and mandatory audit",
+      "passed": true,
+      "durationMs": 249,
+      "detail": {
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1,
+        "sameIssue": true,
+        "noBearerInQueue": true,
+        "defaultWorkerDisabled": true
+      }
+    },
+    {
+      "name": "competing distinct requests for one recipient create only one pending invitation",
+      "passed": true,
+      "durationMs": 86,
+      "detail": {
+        "statuses": [
+          409,
+          200
+        ],
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "issuance audit failure rolls back invitation, event and queue; retry completes once",
+      "passed": true,
+      "durationMs": 59,
+      "detail": {
+        "invites": 1,
+        "events": 1,
+        "outbox": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "current issuer revocation and foreign roles cannot create invitations",
+      "passed": true,
+      "durationMs": 31,
+      "detail": {
+        "foreignDenied": true,
+        "disabledIssuerDenied": true
+      }
+    },
+    {
+      "name": "uncertain delivery retries identical bytes and key; records simulated acceptance separately",
+      "passed": true,
+      "durationMs": 67,
+      "detail": {
+        "attempts": 2,
+        "stableBodyAndKey": true,
+        "simulatedAdapterOnly": true
+      }
+    },
+    {
+      "name": "stale worker cannot overwrite the new lease's accepted receipt",
+      "passed": true,
+      "durationMs": 64,
+      "detail": {
+        "newLease": "SENT",
+        "oldLease": "LEASE_LOST"
+      }
+    },
+    {
+      "name": "post-adapter audit failure retains the first attempt for safe recovery",
+      "passed": true,
+      "durationMs": 61,
+      "detail": {
+        "stableRetry": true,
+        "simulatedAdapterOnly": true
+      }
+    },
+    {
+      "name": "expired retry window requires review without another adapter call",
+      "passed": true,
+      "durationMs": 45,
+      "detail": {
+        "status": "DEAD_LETTER"
+      }
+    },
+    {
+      "name": "role expansion after issuance cancels delivery without granting new authority",
+      "passed": true,
+      "durationMs": 42,
+      "detail": {
+        "status": "CANCELLED",
+        "identityCreated": false
+      }
+    }
+  ],
+  "limitations": [
+    "Real PostgreSQL and production service logic; adapters are isolated in-memory receipts only, never actual provider acceptance.",
+    "No production transport is installed; default worker is disabled.",
+    "Legacy invitation provenance and redemption-time permission revision enforcement remain separate work."
+  ],
+  "authorityBefore": "1e75c552d757f40330ac5c633d19e4bf21f8c3e50414dae5d162d6b440b007ec",
+  "authorityAfter": "1e75c552d757f40330ac5c633d19e4bf21f8c3e50414dae5d162d6b440b007ec",
+  "authorityUnchanged": true,
+  "completedAt": "2026-09-06T06:07:15.784Z",
+  "sourcesAfter": {
+    "services/users/user-invitation-issuance.service.ts": "40cf6caaab023f4937b1e0a44a0f872feeb1d58ac64448a955413b2ce069c42e",
+    "services/users/user-invitation-authority.service.ts": "628851be3e4ff8a09ffff7edece5282aac0615653404e60d68b1f55486d6d655",
+    "services/users/user-invitation-delivery-contract.ts": "b7c53352750340e25398dd4e06d7f5caad48a2609645800d91a19f435bc14c10",
+    "services/communication/user-invitation-delivery-worker.service.ts": "409f3cf7971f012c3526c58cabc3c29b7b6214c7e29617a0a4bce3767b93464f",
+    "services/users/invitation-input.ts": "14a4dea6fe59487b323893cbaac51c458033b6da0eee908c05b2938a8d6304a2",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "passed": 9,
+  "failed": 0,
+  "blockedFetches": 0,
+  "driverSha256": "f264294cc7c6affc2b82740d0a6bd83475d41b9b5165a9720922c36fee57a7c7"
+}

@@ -29,27 +29,44 @@ export function useAuth() {
   }
 }
 
-// Permissions are NOT stored in the session cookie — they are fetched fresh
-// from /api/me/permissions via React Query (cached for 5 minutes).
-export function usePermissions() {
-  const { data: session } = authClient.useSession()
+type PermissionSnapshot = { userId: string; organizationId: string; permissions: string[]; fetchedAt: number }
+class PermissionLookupError extends Error {
+  constructor(public readonly code: string) { super(code) }
+}
 
-  const { data: permissionsData } = useQuery<{ permissions: string[] }>({
-    queryKey: ["permissions", session?.user?.id],
-    queryFn: async () => {
-      const res = await fetch("/api/me/permissions")
-      if (!res.ok) return { permissions: [] }
-      return res.json()
+// This display snapshot never authorizes an operation. Server guards check current authority.
+export function usePermissions() {
+  const { data: session, isPending: sessionPending } = authClient.useSession()
+  const userId = session?.user?.id
+
+  const query = useQuery<PermissionSnapshot>({
+    queryKey: ["permissions", userId],
+    queryFn: async ({ signal }) => {
+      const res = await fetch("/api/me/permissions", { cache: "no-store", signal })
+      if (!res.ok) throw new PermissionLookupError(res.status === 401 ? "UNAUTHENTICATED" : res.status === 403 ? "FORBIDDEN" : "AUTHORIZATION_CHECK_FAILED")
+      const body = await res.json()
+      if (body?.userId !== userId) throw new PermissionLookupError("IDENTITY_CHANGED")
+      if (typeof body.organizationId !== "string" || !body.organizationId || !Array.isArray(body.permissions) || !body.permissions.every((value: unknown) => typeof value === "string") || !Number.isFinite(body.fetchedAt)) throw new PermissionLookupError("AUTHORIZATION_CHECK_FAILED")
+      return body
     },
-    enabled: !!session?.user,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    placeholderData: { permissions: [] },
+    enabled: !!userId && !sessionPending,
+    staleTime: 0,
+    retry: false,
+    refetchOnWindowFocus: "always",
+    meta: { suppressErrorNotification: true },
   })
 
-  const userPermissions = permissionsData?.permissions ?? []
+  const permissionState = sessionPending ? "loading" : !userId ? "signed_out" : query.isFetching || query.isPending ? "loading" : query.isError ? "error" : "ready"
+  const userPermissions = permissionState === "ready" && query.data && query.data.userId === userId ? query.data.permissions : []
 
   return {
     permissions: userPermissions,
+    // Preserve this actor's cache scope during refetch; permissions still remain empty until ready.
+    organizationId: !sessionPending && !query.isError && query.data?.userId === userId ? query.data?.organizationId : undefined,
+    permissionState,
+    permissionError: permissionState === "error" ? query.error instanceof PermissionLookupError ? query.error.code : "AUTHORIZATION_CHECK_FAILED" : null,
+    permissionsCheckedAt: permissionState === "ready" ? query.data?.fetchedAt : undefined,
+    refreshPermissions: query.refetch,
     hasPermission: (permission: string) => hasRbacPermission(userPermissions, permission),
     hasAnyPermission: (permissions: string[]) => hasAnyRbacPermission(userPermissions, permissions),
     hasAllPermissions: (permissions: string[]) => hasAllRbacPermissions(userPermissions, permissions),
@@ -78,7 +95,10 @@ export async function signOut(options?: {
     ? redirectPath
     : `${baseUrl}${redirectPath}`
 
-  await authClient.signOut()
+  const result = await authClient.signOut()
+  if (result.error || result.data?.success !== true) {
+    throw new Error("SIGN_OUT_UNCONFIRMED")
+  }
 
   if (options?.redirect !== false) {
     window.location.href = callbackUrl

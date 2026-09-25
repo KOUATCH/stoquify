@@ -1,0 +1,29 @@
+{
+  "command": "ties",
+  "startedAt": "2026-09-05T14:58:03.491Z",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "fixture": "service_en_desktop",
+  "productionApproval": false,
+  "checks": [],
+  "beforeSources": [
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "564b7601d243c98c1830baae5f41a97aaa76e1139877abf692f9f710fa4b4377"
+    },
+    {
+      "path": "services/modules/module-composition-contracts.ts",
+      "sha256": "e03f44cc1a38fb3df6bfe09f9484977ee09836a7ef53132e8668138557fc6fe7"
+    },
+    {
+      "path": "actions/modules/module-composition.actions.ts",
+      "sha256": "365ceb8476c766960697cf30dd33b1dbf03bfbdac88f4a3efbb94834fb5ac83d"
+    }
+  ],
+  "historyBefore": 112,
+  "existingActiveCount": 2,
+  "activeCommandIds": [
+    "cmtoepldf002pmapczthaphxv",
+    "cmtof6un000fpmapczluhsi1z"
+  ],
+  "failure": "Real transaction-time defaults must naturally tie\n\n31 !== 1\n"
+}

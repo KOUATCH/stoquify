@@ -76,6 +76,7 @@ export type BusinessSignal = {
   suggestedAction: string
   actionPath: string
   requiredPermission: string
+  additionalRequiredPermissions?: readonly string[]
   assignedRole: SignalOwnerRole
   assigneeId: string | null
   blockers: SnapshotBlocker[]
@@ -106,6 +107,7 @@ export type BusinessSignalFact = {
   suggestedAction?: string
   actionPath?: string
   requiredPermission?: string
+  additionalRequiredPermissions?: readonly string[]
   assignedRole?: SignalOwnerRole
   assigneeId?: string | null
   blockers?: SnapshotBlocker[]
@@ -134,6 +136,7 @@ export type ActionItem = {
   nextStep: string
   actionPath: string
   requiredPermission: string
+  additionalRequiredPermissions?: readonly string[]
   status: ActionItemStatus
   severity: BusinessSignalSeverity
   severityScore: number

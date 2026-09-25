@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-13T12:52:35.162Z",
+  "sourcesBefore": {
+    "services/pos/terminal-management.service.ts": "bb56aa35398215db086795c078602fe9f2bb21bf1ccaa279be945b6aa2df39e2",
+    "actions/pos/terminal-management.actions.ts": "88a177d15188dc480d89a333f82e77fbe41509c9c323eb6c0d7323e38532ecac",
+    "hooks/posHooks/useTerminalManagement.ts": "8ae69fdef67b0d1ebf55b1d2cbb327dc5346943dc0269adddf9007d69a47c797",
+    "components/pos/TerminalManagementDashboard.tsx": "bcd05ccca37173efc5251a201fe1dd82fd337ded88466ad2b566afea0e26d6d5"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "pageErrors": [],
+      "screenshots": [],
+      "readyMs": 48524
+    }
+  ],
+  "scope": "Owned real sign-in/terminal actions, actual shift opening after dialogs loaded, persisted checks. No checkout or external operation.",
+  "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('menuitem', { name: 'Edit terminal', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <div tabindex=\"-1\" role=\"menuitem\" data-orientation=\"vertical\" data-radix-collection-item=\"\" class=\"enterprise-floating-item relative flex cursor-default select-none items-center gap-2 px-2 py-1.5 text-sm outline-none transition-colors data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0\">…</div>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n",
+  "sourcesAfter": {
+    "services/pos/terminal-management.service.ts": "bb56aa35398215db086795c078602fe9f2bb21bf1ccaa279be945b6aa2df39e2",
+    "actions/pos/terminal-management.actions.ts": "88a177d15188dc480d89a333f82e77fbe41509c9c323eb6c0d7323e38532ecac",
+    "hooks/posHooks/useTerminalManagement.ts": "8ae69fdef67b0d1ebf55b1d2cbb327dc5346943dc0269adddf9007d69a47c797",
+    "components/pos/TerminalManagementDashboard.tsx": "bcd05ccca37173efc5251a201fe1dd82fd337ded88466ad2b566afea0e26d6d5"
+  },
+  "sourceStable": true
+}

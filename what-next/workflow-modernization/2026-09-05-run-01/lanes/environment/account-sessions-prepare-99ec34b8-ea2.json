@@ -1,0 +1,58 @@
+{
+  "run": "99ec34b8-ea2",
+  "mode": "prepare",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T17:01:38.063Z",
+  "sourcesBefore": {
+    "services/security/account-session-input.ts": "9b2199b5d58a5bbdaeb7a32e26a70729e101fc25e595e7ce8d578b75fe6ec612",
+    "services/security/account-session.service.ts": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279",
+    "actions/security/account-session.actions.ts": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+    "hooks/account-session-recovery.ts": "51b76e45e3daf8d11eb3d27b52d28bcd1ccf0f112a7afaceca5da6addaefe5c2",
+    "hooks/useAccountSessions.ts": "5bbf90b1bfa22381b83cf51c991997cb87bca5dec61cf7e5c11aa791042f8671",
+    "components/settings/AccountSessions.tsx": "8f1cde5d8332686b8bc9d158aa65bb2620677908d64047f7dbeacaf176105e58",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "3cef34c77414195b097fae7af0c9eb1a29bde3afb10c63783b0ff928f55f3794",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "create independent owned session fixtures",
+      "passed": true,
+      "organizations": 2
+    }
+  ],
+  "limitations": [
+    "Owned synthetic database and development app only. No global auth changes, external messages, migrations or financial operations.",
+    "Mandatory-audit failure and lost response are injected; session rows, concurrency, HTTP authentication and UI interactions are real.",
+    "Cached authentication on unrelated transports remains a separate unverified/rejected global change boundary."
+  ],
+  "originalBefore": "3c6354f6058ce88293b80beba2dc55f9b9c89d65f5c261489c2317985306194b",
+  "originalAfter": "3c6354f6058ce88293b80beba2dc55f9b9c89d65f5c261489c2317985306194b",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T17:01:39.062Z",
+  "sourcesAfter": {
+    "services/security/account-session-input.ts": "9b2199b5d58a5bbdaeb7a32e26a70729e101fc25e595e7ce8d578b75fe6ec612",
+    "services/security/account-session.service.ts": "d94096fb8fc80c1a2f36094945a7853914c5fd670a7fc623b754c07c4d1ddd98",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279",
+    "actions/security/account-session.actions.ts": "5afd2c7574bce18b2c346449a72ce09c80e41590af0daa7e6c2e4957172487a8",
+    "hooks/account-session-recovery.ts": "51b76e45e3daf8d11eb3d27b52d28bcd1ccf0f112a7afaceca5da6addaefe5c2",
+    "hooks/useAccountSessions.ts": "5bbf90b1bfa22381b83cf51c991997cb87bca5dec61cf7e5c11aa791042f8671",
+    "components/settings/AccountSessions.tsx": "8f1cde5d8332686b8bc9d158aa65bb2620677908d64047f7dbeacaf176105e58",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "3cef34c77414195b097fae7af0c9eb1a29bde3afb10c63783b0ff928f55f3794",
+    "app/[locale]/(dashboard)/dashboard/settings/settings-route-data-access.ts": "c33c99501cd4970c4b865e18be63345346c748605555e999e941bcd67cfb0099",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "lib/security/rbac-permissions.ts": "73eddb2b6a825e52b15be0c892e6abb8dfee444e366563c885539d73bf105018",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "driverSha256": "7bf4b76217deaadee83c03795722c3a1c0d644dd54aa10e30bd9d985594e8278",
+  "passed": 1,
+  "failed": 0
+}

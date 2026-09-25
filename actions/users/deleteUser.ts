@@ -2,26 +2,22 @@
 
 import { safeStatusActionErrorResult } from "@/actions/_shared/safe-action-responses";
 import { requireFreshAuth } from "@/lib/security/auth-session";
-import { requirePermission } from "@/lib/security/rbac";
+import { requireAnyPermission } from "@/lib/security/rbac";
+import { ForbiddenError } from "@/services/_shared/action-errors";
+import type { UserDeactivationCommand } from "@/services/users/user-deactivation-input";
 import { observeModuleAccess } from "@/services/modules/module-entitlement.service";
 import { deactivateUserForOrganization } from "@/services/users/user-lifecycle.service";
 
-export async function deleteUser(id: string) {
+// Keep the established action name for callers; the operation retains the account.
+export async function deleteUser(id: string, command?: UserDeactivationCommand) {
   try {
-    await requireFreshAuth(300);
-    const ctx = await requirePermission("users.delete", {
+    const verified = await requireFreshAuth(300);
+    const ctx = await requireAnyPermission(["users.deactivate", "users.delete"], {
       resource: "User",
       resourceId: id,
-      auditAllowed: true,
     });
 
-    if (id === ctx.userId) {
-      return {
-        error: "You cannot delete your own account",
-        status: 400,
-        data: null,
-      };
-    }
+    if (verified.claims.userId !== ctx.userId || verified.claims.tenantId !== ctx.orgId) throw new ForbiddenError("Your organization session changed. Reload before continuing.");
 
     await observeModuleAccess({
       moduleSlug: "settings",
@@ -38,7 +34,12 @@ export async function deleteUser(id: string) {
       organizationId: ctx.orgId,
       targetUserId: id,
       actorId: ctx.userId,
+      command,
+      session: { id: verified.claims.sessionId, token: verified.claims.sessionToken },
     });
+
+    // Directory reads are uncached. The caller refreshes after the user closes
+    // the receipt; immediate route revalidation would unmount that receipt.
 
     return {
       ok: true,
@@ -46,7 +47,7 @@ export async function deleteUser(id: string) {
     };
   } catch (error) {
     return safeStatusActionErrorResult(error, {
-      action: "users.delete",
+      action: "users.deactivate",
       component: "User",
     }, "Something went wrong, Please try again");
   }

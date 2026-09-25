@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-09-08T12:03:43.366Z",
+  "node": "v22.17.0",
+  "scope": "Synthetic in-memory rows through the current getGeneralLedger service. Three samples per size; CPU and JSON payload only. No database I/O, query plan, deployment, network, browser or concurrency measurement. Other local audit processes may be running.",
+  "samples": [
+    {
+      "rows": 1000,
+      "durationsMs": [
+        48.51,
+        25.54,
+        14.48
+      ],
+      "medianMs": 25.54,
+      "serializedBytes": 260230,
+      "lastBalance": "25000.00"
+    },
+    {
+      "rows": 10000,
+      "durationsMs": [
+        126.55,
+        177.3,
+        105.19
+      ],
+      "medianMs": 126.55,
+      "serializedBytes": 2642231,
+      "lastBalance": "250000.00"
+    },
+    {
+      "rows": 50000,
+      "durationsMs": [
+        535.99,
+        491.4,
+        441.99
+      ],
+      "medianMs": 491.4,
+      "serializedBytes": 13372232,
+      "lastBalance": "1250000.00"
+    }
+  ]
+}

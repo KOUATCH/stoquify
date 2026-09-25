@@ -320,6 +320,11 @@ describe("BI evidence adapter", () => {
     })
   })
 
+  it("preserves explicitly unassessed urgency while retaining source severity", () => {
+    const insight = createSignalInsight({ signal: paymentSignal() })
+    expect(createRiskRankFromInsight({ insight, rank: 1, urgency: null })).toMatchObject({ urgency: null, severity: "critical", severityScore: 100 })
+  })
+
   it("creates proof drawer subjects only when proof data is available", () => {
     const availableKpi = createSnapshotKpi({
       id: "cash-at-risk",

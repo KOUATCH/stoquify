@@ -1,0 +1,66 @@
+{
+  "at": "2026-09-09T08:37:41.818Z",
+  "run": "065520f3-2d1",
+  "sourcesBefore": {
+    "services/accounting/posting.service.ts": "f426c9c00125f4db4d256e782129e511aa51ec6e3e0e226efe9defa118b1abcf",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "6a85e9b2fd864c2e74e78abeffd8a0383046c65fd549a551110375d916345f59",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735",
+    "messages/en.json": "1505eae9425cc69e78f6037932fec4796582cd37642da37dcd56636e2f73becd",
+    "messages/fr.json": "4351b35713e7f42520917b6e8153b4bc72e3b4b004ff0e95ccd6f1acf59c347f"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "stages": [
+        "Actual posted suspense journal retains evidence and shows localized explanation instead of generic reversal",
+        "Existing horizontally scrollable table keeps explanation reachable on mobile/tablet and at 200% text",
+        "Read/reload does not reverse the journal or change suspense state"
+      ],
+      "screenshots": [
+        "suspense-reversal-v95-en-desktop-065520f3-2d1.png",
+        "suspense-reversal-v95-en-width-320-065520f3-2d1.png",
+        "suspense-reversal-v95-en-width-390-065520f3-2d1.png",
+        "suspense-reversal-v95-en-width-768-065520f3-2d1.png",
+        "suspense-reversal-v95-en-text200-065520f3-2d1.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 89456
+    },
+    {
+      "locale": "fr",
+      "stages": [
+        "Actual posted suspense journal retains evidence and shows localized explanation instead of generic reversal",
+        "Existing horizontally scrollable table keeps explanation reachable on mobile/tablet and at 200% text",
+        "Read/reload does not reverse the journal or change suspense state"
+      ],
+      "screenshots": [
+        "suspense-reversal-v95-fr-desktop-065520f3-2d1.png",
+        "suspense-reversal-v95-fr-width-320-065520f3-2d1.png",
+        "suspense-reversal-v95-fr-width-390-065520f3-2d1.png",
+        "suspense-reversal-v95-fr-width-768-065520f3-2d1.png",
+        "suspense-reversal-v95-fr-text200-065520f3-2d1.png"
+      ],
+      "pageErrors": [],
+      "passed": true,
+      "loadMs": 5708
+    }
+  ],
+  "scope": "Owned app, actual synthetic suspense posting and normal sign-in; source-owned reversal explanation. No generic reversal or live financial operation performed by browser.",
+  "originalBefore": "dcba10940a14d6619054fed563613b2325ccdf83542c85cae8e2296c7d88b517",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/posting.service.ts": "f426c9c00125f4db4d256e782129e511aa51ec6e3e0e226efe9defa118b1abcf",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "6a85e9b2fd864c2e74e78abeffd8a0383046c65fd549a551110375d916345f59",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735",
+    "messages/en.json": "1505eae9425cc69e78f6037932fec4796582cd37642da37dcd56636e2f73becd",
+    "messages/fr.json": "4351b35713e7f42520917b6e8153b4bc72e3b4b004ff0e95ccd6f1acf59c347f"
+  },
+  "sourceStable": true
+}

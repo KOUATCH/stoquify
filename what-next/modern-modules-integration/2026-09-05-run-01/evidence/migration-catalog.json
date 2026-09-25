@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-09-05T11:47:19.986Z",
+  "status": "ready",
+  "hashContract": {
+    "version": "stoquify-migration-sql-sha256-v1",
+    "approvalIdentity": "canonicalLfSha256",
+    "transportIdentity": "rawSha256",
+    "encoding": "UTF-8",
+    "canonicalization": "Decode as UTF-8, normalize CRLF and lone CR line endings to LF, preserve every other byte represented by the decoded text, then SHA-256 hash the UTF-8 result."
+  },
+  "migrationCount": 82,
+  "manifestPresent": true,
+  "manifestSha256": "cc1bf3049fee206a7ab8f6600c8770669e048c1d5b336e59f4e83a8b770b9a13",
+  "catalogSha256": "6ab3297e0ba07091e5873f3c7e5ab906ddb3cbeb2e13480fefdf7052ca98665e",
+  "unmanifested": [],
+  "missingFromCatalog": [],
+  "changed": [],
+  "duplicateTimestamps": [
+    {
+      "timestamp": "20260818120000",
+      "migrations": [
+        "20260818120000_governed_delivery_order_to_cash",
+        "20260818120000_pos_electronic_tender_authority"
+      ],
+      "grandfathered": true,
+      "reason": "Both full migration names were already applied before the timestamp-uniqueness ratchet. Preserve their immutable names and reject every new collision."
+    }
+  ],
+  "errors": [],
+  "secretValuePrinted": false
+}

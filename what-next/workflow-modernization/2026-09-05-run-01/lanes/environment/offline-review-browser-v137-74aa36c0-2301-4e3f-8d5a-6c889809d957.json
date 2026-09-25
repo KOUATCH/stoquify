@@ -1,0 +1,44 @@
+{
+  "at": "2026-09-13T15:53:26.556Z",
+  "sourcesBefore": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/ProfessionalPOSSystem.tsx": "f870ee1629a3c6ddd3550852b07224febd8a350bbeb21e1b3a9f179138f3e6a1",
+    "components/pos/offline/OfflineConflictReview.tsx": "0869b216edcdacee7ad52a73093ac7a5d9bb2a6a7c061a579669d238b021ea2c",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "09490b9581514c28c848e109beda1aaf71a9222bdba70e924016b772e3395166",
+    "hooks/posHooks/useOfflineSync.ts": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+    "messages/en.json": "450889362158308412d629e4ac835b43f8bdf894d9e2602c1912dc0436ad0055",
+    "messages/fr.json": "a1a2e629946998dc9b974e384d7bf93031e6928ae0c2bcb077773d99c006cc89"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [
+        "offline-review-v137-en-1440-74aa36c0-2301-4e3f-8d5a-6c889809d957.png",
+        "offline-review-v137-en-768-74aa36c0-2301-4e3f-8d5a-6c889809d957.png",
+        "offline-review-v137-en-320-74aa36c0-2301-4e3f-8d5a-6c889809d957.png"
+      ],
+      "pageErrors": [],
+      "initialText": "q\nstoq\nuify\nENTERPRISE OS\nNotifications\n0\n\nWorkflow registration Tender operator-review-2f45edd7-9e4a-4133-b800-5f58f0efd0cf\n\nOWNED REVIEW OPERATOR\nSession\nMODULES\n6\nCOMMAND\n2\nDashboard\nOperating overview\nCommand Center\nOwner and manager daily command views\n3\nOPERATIONS\n1\nSales\nCustomers, sales, and POS entry points\n2\nOverview\nPOS\nFINANCE & TRUST\n2\nAccounting\nLedger, close, reports, and controls\n3\nFinance\nCash, profitability, payments, and reconciliation\n2\nGOVERNANCE\n1\nSettings\nCompany, roles, locations, modules, and security\n2\nO\n\noperator-review-2f45edd7-9e4a-4133-b800-5f58f0efd0cfa2b1391c-c4ff-4fa8-8511-9b9e1278bee0@example.invalid\n\noperator-review-2f45edd7-9e4a-4133-b800-5f58f0efd0cfa2b1391c-c4ff-4fa8-8511-9b9e1278bee0@example.invalid\n\nPOS\n\nOperations / Sales / POS\n\nFR\nO\n\nLOADING\n\nChecking the current checkout workspace\n\nLoading your current access, shift, stock and cart. Please wait before changing the sale.\n\nBack to dashboard",
+      "readyMs": 11126,
+      "explicitFreshAuthenticationNoAutomaticSave": true,
+      "staleRejectedDraftRetained": true,
+      "lostResponseRetrySingleAuditBlockerRetained": true,
+      "readOnlyReviewerDenied": true,
+      "readPermissionRevocationHidesReview": true
+    }
+  ],
+  "scope": "Owned synthetic unresolved conflict; actual authentication, server actions, review audit and financial snapshots. Does not enable offline ingestion or replay.",
+  "error": "\nInvalid `db.organization.create()` invocation in\nE:\\ohada saas\\Focused projects\\stoquify\\what-next\\workflow-modernization\\2026-09-05-run-01\\lanes\\environment\\verify-tender-access-v131.cjs:7:24\n\n  4 const hash=()=>crypto.createHash('sha256').update(fs.readFileSync(path.join(f.root,'services/pos/pos.service.ts'))).digest('hex');report.sourceBefore=hash();\n  5 async function fixture(label){\n  6  const organizationId='workflow_tender_'+label+'_'+stamp;\n→ 7  await db.organization.create(\nUnique constraint failed on the fields: (`id`)",
+  "sourcesAfter": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/ProfessionalPOSSystem.tsx": "f870ee1629a3c6ddd3550852b07224febd8a350bbeb21e1b3a9f179138f3e6a1",
+    "components/pos/offline/OfflineConflictReview.tsx": "0869b216edcdacee7ad52a73093ac7a5d9bb2a6a7c061a579669d238b021ea2c",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "09490b9581514c28c848e109beda1aaf71a9222bdba70e924016b772e3395166",
+    "hooks/posHooks/useOfflineSync.ts": "5ab9d1ff49e3d31a6136f46e6212f1662e56551ee48227c08de9951530d0fb3a",
+    "messages/en.json": "450889362158308412d629e4ac835b43f8bdf894d9e2602c1912dc0436ad0055",
+    "messages/fr.json": "a1a2e629946998dc9b974e384d7bf93031e6928ae0c2bcb077773d99c006cc89"
+  },
+  "sourceStable": true
+}

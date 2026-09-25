@@ -41,7 +41,7 @@ describe("owner war room action", () => {
           moduleSlug: "dashboard",
           surface: "actions/owner-war-room/owner-war-room.actions.ts",
           accessIntent: "read",
-          mode: "observe",
+          mode: "enforce",
         },
       }),
       expect.any(Function),

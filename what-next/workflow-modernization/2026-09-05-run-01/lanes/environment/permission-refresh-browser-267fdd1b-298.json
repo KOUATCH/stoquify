@@ -1,0 +1,98 @@
+{
+  "run": "267fdd1b-298",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T15:18:11.163Z",
+  "sourcesBefore": {
+    "app/api/me/permissions/route.ts": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+    "lib/auth-client.ts": "97b40613799a2bfbb73c0b7ac78adc64bf739f7cb87d5eb903f9ec1e6263a66c",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "hooks/useRoleEditor.ts": "fa6566a87e6a1cc3a12833572140980e244eba92c54678463c3c033147088e0f",
+    "hooks/useMemberAccess.ts": "62819de4c49d56cedfa3edde9a4887eda38424df0d55389aa245823f1c006d5b",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "df93be861a49d4919733003a5dc25e5dd3291360f9761ff05c69ad3be315b626",
+    "messages/en.json": "d6fed749cb49a6f27b8aac7e86498e067698dd4e5ed23d686d47d86868bffb76",
+    "messages/fr.json": "dca85252f7833d075bb2d81b41a67b2c917a3e2e3fe2efd4cdd9acf474acffcd"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-permission-refresh-mobile-error-267fdd1b-298.png",
+        "en-permission-refresh-desktop-error-267fdd1b-298.png",
+        "en-permission-refresh-recovered-267fdd1b-298.png"
+      ],
+      "pageErrors": [],
+      "actualApi": {
+        "status": 200,
+        "privateNoStore": true,
+        "actorBound": true,
+        "organizationBound": true,
+        "permissionCount": 620
+      },
+      "routeReadyMs": 86360,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "injectedLookupFailureVisible": true,
+      "keyboardRetryRecovered": true,
+      "focusRefreshFailureVisible": true
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-permission-refresh-mobile-error-267fdd1b-298.png",
+        "fr-permission-refresh-desktop-error-267fdd1b-298.png",
+        "fr-permission-refresh-recovered-267fdd1b-298.png",
+        "fr-permission-refresh-failure-267fdd1b-298.png"
+      ],
+      "pageErrors": [],
+      "actualApi": {
+        "status": 200,
+        "privateNoStore": true,
+        "actorBound": true,
+        "organizationBound": true,
+        "permissionCount": 620
+      },
+      "routeReadyMs": 24110,
+      "widths": [
+        390,
+        768,
+        1440
+      ],
+      "injectedLookupFailureVisible": true,
+      "keyboardRetryRecovered": true,
+      "error": "expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('manual-match-lane').getByRole('alert')\nExpected substring: \"Vos accès n’ont pas pu être vérifiés.\"\nTimeout: 90000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.text\" with timeout 90000ms\n  - waiting for getByTestId('manual-match-lane').getByRole('alert')\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Browser permission failure is an explicitly injected HTTP 503; it is not evidence of a real database outage.",
+    "No financial action or grant mutation is requested. Existing owned credentials are used for sign-in.",
+    "Shell permission snapshots and fully active cross-tab push refresh remain separate review boundaries."
+  ],
+  "before": "da91a534033e633d824114c2081bec68876f36e322370bc6c0cce616853d868a",
+  "anonymousDenied": true,
+  "after": "da91a534033e633d824114c2081bec68876f36e322370bc6c0cce616853d868a",
+  "originalAuthorityAndFinancialRecordsUnchanged": true,
+  "completedAt": "2026-09-06T15:22:06.917Z",
+  "sourcesAfter": {
+    "app/api/me/permissions/route.ts": "d1baa3b0c46424784bc2faaf1c51e2ea64eae7b456472b7aa8652d38c1becf5f",
+    "lib/auth-client.ts": "97b40613799a2bfbb73c0b7ac78adc64bf739f7cb87d5eb903f9ec1e6263a66c",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "lib/security/rbac.ts": "acc32e77a21c05518bec7ab6a727895181420861fee88deb029b393e0a6916ec",
+    "hooks/useRoleEditor.ts": "fa6566a87e6a1cc3a12833572140980e244eba92c54678463c3c033147088e0f",
+    "hooks/useMemberAccess.ts": "62819de4c49d56cedfa3edde9a4887eda38424df0d55389aa245823f1c006d5b",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "df93be861a49d4919733003a5dc25e5dd3291360f9761ff05c69ad3be315b626",
+    "messages/en.json": "d6fed749cb49a6f27b8aac7e86498e067698dd4e5ed23d686d47d86868bffb76",
+    "messages/fr.json": "dca85252f7833d075bb2d81b41a67b2c917a3e2e3fe2efd4cdd9acf474acffcd"
+  },
+  "sourceStable": true,
+  "driverSha256": "0bb90500c528ebfdd258b32cc01c6df91466d2642efaf2ce731527a270415e98",
+  "passed": 1,
+  "failed": 1
+}

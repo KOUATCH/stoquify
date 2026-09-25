@@ -9,7 +9,7 @@ import {
 import { protect, type ProtectedActionContext } from "@/services/_shared/protect"
 import {
   getPaymentReconciliationDashboardData,
-  type PaymentReconciliationDashboardData,
+  type PaymentReconciliationDashboardData as DashboardServiceData,
 } from "@/services/reconciliation/payment-reconciliation-dashboard.service"
 import {
   exportReconciliationCertificate,
@@ -31,8 +31,16 @@ import {
 } from "@/services/reconciliation/payment-suspense-workflow.service"
 import { MobileMoneyHmacAdapter } from "@/services/payments/adapters/mobile-money-hmac.adapter"
 import { importProviderStatement, type ImportProviderStatementResult } from "@/services/payments/statement-import.service"
+import { readPaymentSuspenseRecords, suspenseReadSchema, type SuspenseReadPage } from "@/services/reconciliation/payment-suspense-read.service"
+import { previewSuspenseCorrection, proposeSuspenseCorrection, reviewSuspenseCorrection, decideSuspenseCorrection, readSuspenseCorrectionHistory } from "@/services/reconciliation/payment-suspense-correction.service"
+import { suspenseCorrectionDraftSchema, suspenseCorrectionProposalSchema, suspenseCorrectionDecisionSchema, suspenseCorrectionReviewSchema, suspenseCorrectionHistorySchema, suspenseCorrectionExportSchema } from "@/services/reconciliation/payment-suspense-correction.contracts"
+import { exportSuspenseCorrection } from "@/services/reconciliation/payment-suspense-correction-export.service"
+import { reconciliationCertificateExportSchema } from "@/services/reconciliation/reconciliation-certificate-export.contracts"
+import { readReconciliationCertificateHistory } from "@/services/reconciliation/reconciliation-certificate-history.service"
+import { certificateHistorySchema, type CertificateHistoryPage } from "@/services/reconciliation/reconciliation-certificate-history.contracts"
 
-export type { PaymentReconciliationDashboardData }
+export type PaymentReconciliationDashboardData = DashboardServiceData & { scope: { organizationId: string; actorId: string } }
+export type PaymentSuspenseRecords = SuspenseReadPage & { scope: PaymentReconciliationDashboardData["scope"] }
 export type { ImportProviderStatementResult, ReconciliationCertificateExportResult, ReconciliationRunDetail, SignReconciliationRunResult }
 
 const suspenseTypes = [
@@ -71,6 +79,8 @@ const importStatementSchema = z.object({
 })
 
 const proposeManualMatchSchema = z.object({
+  idempotencyKey: z.string().min(16).max(128),
+  supersedesProposalId: z.string().min(1).optional(),
   providerAccountId: z.string().min(1),
   paymentTransactionId: z.string().min(1),
   providerEventId: z.string().optional(),
@@ -81,6 +91,7 @@ const proposeManualMatchSchema = z.object({
 })
 
 const approveManualMatchSchema = z.object({
+  expectedEvidenceRevision: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   proposedMatchId: z.string().min(1),
   correlationId: z.string().optional(),
 })
@@ -92,6 +103,8 @@ const assignSuspenseItemSchema = z.object({
 })
 
 const proposeSuspenseReclassificationSchema = z.object({
+  expectedEvidenceRevision: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+  idempotencyKey: z.string().regex(/^[a-zA-Z0-9_-]{16,128}$/),
   suspenseItemId: z.string().min(1),
   targetType: z.enum(suspenseTypes),
   reason: z.string().trim().min(3),
@@ -100,28 +113,60 @@ const proposeSuspenseReclassificationSchema = z.object({
 })
 
 const approveSuspensePostingSchema = z.object({
+  expectedEvidenceRevision: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   suspenseItemId: z.string().min(1),
   correlationId: z.string().optional(),
 })
 
 const signRunSchema = z.object({
   runId: z.string().min(1),
+  expectedEvidenceRevision: z.string().regex(/^sha256:[a-f0-9]{64}$/),
   expectedSourceVersionHash: z
     .string()
-    .regex(/^sha256:[a-f0-9]{64}$/)
-    .optional(),
+    .regex(/^sha256:[a-f0-9]{64}$/),
   correlationId: z.string().optional(),
 })
 
-const exportCertificateSchema = z.object({
-  runId: z.string().min(1),
-  fileType: z.literal("json").optional(),
-  correlationId: z.string().optional(),
-})
 
 const getDashboard = protect<unknown, PaymentReconciliationDashboardData>(
   { permission: "payments.reconciliation.read", auditResource: "PaymentReconciliation", auditAllowed: false },
-  async (_input, ctx) => getPaymentReconciliationDashboardData(ctx.orgId),
+  async (_input, ctx) => ({ ...await getPaymentReconciliationDashboardData(ctx.orgId), scope: { organizationId: ctx.orgId, actorId: ctx.userId } }),
+)
+
+const getSuspenseRecords = protect<unknown, PaymentSuspenseRecords>(
+  { permission: "payments.reconciliation.read", auditResource: "SuspenseItem", auditAllowed: false,
+    module: { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts#getPaymentSuspenseRecordsAction", surfaceType: "action", accessIntent: "read", mode: "enforce", audit: false } },
+  async (input, ctx) => ({ ...await readPaymentSuspenseRecords(ctx.orgId, suspenseReadSchema.parse(input)), scope: { organizationId: ctx.orgId, actorId: ctx.userId } }),
+)
+
+const correctionReadModule = { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts", surfaceType: "action", accessIntent: "read", mode: "enforce", audit: false } as const
+const correctionWriteModule = { ...correctionReadModule, accessIntent: "write", audit: true } as const
+function correctionControl(ctx: ProtectedActionContext) { return { organizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions } }
+type CorrectionActionData<T> = T & { scope: { organizationId: string; actorId: string } }
+function correctionScope<T>(data: T, ctx: ProtectedActionContext): CorrectionActionData<T> { return { ...data, scope: { organizationId: ctx.orgId, actorId: ctx.userId } } }
+const correctionPreview = protect<unknown, CorrectionActionData<Awaited<ReturnType<typeof previewSuspenseCorrection>>>>(
+  { permission: "payments.reconciliation.read", auditResource: "SuspenseItem", module: correctionReadModule },
+  async (input, ctx) => correctionScope(await previewSuspenseCorrection(suspenseCorrectionDraftSchema.parse(input), correctionControl(ctx)), ctx),
+)
+const correctionPropose = protect<unknown, CorrectionActionData<Awaited<ReturnType<typeof proposeSuspenseCorrection>>>>(
+  { permission: "payments.reconciliation.suspense.propose", auditResource: "SuspenseItem", module: correctionWriteModule },
+  async (input, ctx) => correctionScope(await proposeSuspenseCorrection(suspenseCorrectionProposalSchema.parse(input), correctionControl(ctx)), ctx),
+)
+const correctionReview = protect<unknown, CorrectionActionData<Awaited<ReturnType<typeof reviewSuspenseCorrection>>>>(
+  { permission: "payments.reconciliation.read", auditResource: "SuspenseItem", module: correctionReadModule },
+  async (input, ctx) => { const parsed = suspenseCorrectionReviewSchema.parse(input); return correctionScope(await reviewSuspenseCorrection(parsed.suspenseItemId, parsed.proposalId, correctionControl(ctx)), ctx) },
+)
+const correctionDecide = protect<unknown, CorrectionActionData<Awaited<ReturnType<typeof decideSuspenseCorrection>>>>(
+  { permission: "payments.reconciliation.suspense.post", auditResource: "SuspenseItem", freshAuth: { maxAgeSeconds: 300 }, module: correctionWriteModule },
+  async (input, ctx) => correctionScope(await decideSuspenseCorrection(suspenseCorrectionDecisionSchema.parse(input), { ...correctionControl(ctx), lastAuthAt: verifiedFreshAuthTime(ctx) }), ctx),
+)
+const correctionHistory = protect<unknown, CorrectionActionData<Awaited<ReturnType<typeof readSuspenseCorrectionHistory>>>>(
+  { permission: "payments.reconciliation.read", auditResource: "SuspenseItem", module: correctionReadModule },
+  async (input, ctx) => correctionScope(await readSuspenseCorrectionHistory(suspenseCorrectionHistorySchema.parse(input), correctionControl(ctx)), ctx),
+)
+const correctionExport = protect<unknown, CorrectionActionData<Awaited<ReturnType<typeof exportSuspenseCorrection>>>>(
+  { permission: "payments.export", auditResource: "SuspenseCorrectionRecord", auditAllowed: true, freshAuth: { maxAgeSeconds: 300 }, module: correctionReadModule },
+  async (input, ctx) => correctionScope(await exportSuspenseCorrection(suspenseCorrectionExportSchema.parse(input), { ...correctionControl(ctx), lastAuthAt: verifiedFreshAuthTime(ctx) }), ctx),
 )
 
 const getRunDetail = protect<unknown, ReconciliationRunDetail>(
@@ -164,7 +209,10 @@ const runReconciliation = protect<unknown, Awaited<ReturnType<typeof runPaymentR
 )
 
 const proposeMatch = protect<unknown, Awaited<ReturnType<typeof proposeManualMatch>>>(
-  { permission: "payments.reconciliation.match", auditResource: "PaymentReconciliationMatch", auditAllowed: true },
+  {
+    permission: "payments.reconciliation.match", auditResource: "PaymentReconciliationMatch", auditAllowed: true,
+    module: { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts", surfaceType: "action", accessIntent: "write", mode: "enforce", audit: true },
+  },
   async (input, ctx) => {
     const parsed = proposeManualMatchSchema.parse(input)
     return proposeManualMatch({
@@ -175,6 +223,9 @@ const proposeMatch = protect<unknown, Awaited<ReturnType<typeof proposeManualMat
       statementLineId: parsed.statementLineId,
       proposedById: ctx.userId,
       amountMatched: parsed.amountMatched,
+      idempotencyKey: parsed.idempotencyKey,
+      supersedesProposalId: parsed.supersedesProposalId,
+      control: { actorPermissions: ctx.permissions },
       currencyCode: parsed.currencyCode,
       correlationId: parsed.correlationId,
     })
@@ -182,20 +233,28 @@ const proposeMatch = protect<unknown, Awaited<ReturnType<typeof proposeManualMat
 )
 
 const approveMatch = protect<unknown, Awaited<ReturnType<typeof approveManualMatch>>>(
-  { permission: "payments.reconciliation.override", auditResource: "PaymentReconciliationMatch", auditAllowed: true, freshAuth: true },
+  {
+    permission: "payments.reconciliation.override", auditResource: "PaymentReconciliationMatch", auditAllowed: true, freshAuth: true,
+    module: { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts", surfaceType: "action", accessIntent: "write", mode: "enforce", audit: true },
+  },
   async (input, ctx) => {
     const parsed = approveManualMatchSchema.parse(input)
     return approveManualMatch({
       organizationId: ctx.orgId,
       proposedMatchId: parsed.proposedMatchId,
       approvedById: ctx.userId,
+      expectedEvidenceRevision: parsed.expectedEvidenceRevision,
+      control: { actorPermissions: ctx.permissions, lastAuthAt: verifiedFreshAuthTime(ctx) },
       correlationId: parsed.correlationId,
     })
   },
 )
 
 const assignSuspense = protect<unknown, Awaited<ReturnType<typeof assignPaymentSuspenseItem>>>(
-  { permission: "payments.reconciliation.exception.assign", auditResource: "PaymentReconciliationException", auditAllowed: true },
+  {
+    permission: "payments.reconciliation.exception.assign", auditResource: "PaymentReconciliationException", auditAllowed: true,
+    module: { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts", surfaceType: "action", accessIntent: "write", mode: "enforce", audit: true },
+  },
   async (input, ctx) => {
     const parsed = assignSuspenseItemSchema.parse(input)
     return assignPaymentSuspenseItem({
@@ -212,10 +271,15 @@ const assignSuspense = protect<unknown, Awaited<ReturnType<typeof assignPaymentS
 )
 
 const proposeSuspense = protect<unknown, Awaited<ReturnType<typeof proposeSuspenseReclassification>>>(
-  { permission: "payments.reconciliation.suspense.propose", auditResource: "PaymentSuspenseItem", auditAllowed: true },
+  {
+    permission: "payments.reconciliation.suspense.propose", auditResource: "PaymentSuspenseItem", auditAllowed: true,
+    module: { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts", surfaceType: "action", accessIntent: "write", mode: "enforce", audit: true },
+  },
   async (input, ctx) => {
     const parsed = proposeSuspenseReclassificationSchema.parse(input)
     return proposeSuspenseReclassification({
+      expectedEvidenceRevision: parsed.expectedEvidenceRevision,
+      idempotencyKey: parsed.idempotencyKey,
       organizationId: ctx.orgId,
       suspenseItemId: parsed.suspenseItemId,
       proposedById: ctx.userId,
@@ -231,16 +295,20 @@ const proposeSuspense = protect<unknown, Awaited<ReturnType<typeof proposeSuspen
 )
 
 const approveSuspense = protect<unknown, Awaited<ReturnType<typeof approveSuspensePosting>>>(
-  { permission: "payments.reconciliation.suspense.post", auditResource: "PaymentSuspenseItem", auditAllowed: true, freshAuth: true },
+  {
+    permission: "payments.reconciliation.suspense.post", auditResource: "PaymentSuspenseItem", auditAllowed: true, freshAuth: true,
+    module: { moduleSlug: "payment_reconciliation", surface: "actions/payments/reconciliation.actions.ts", surfaceType: "action", accessIntent: "write", mode: "enforce", audit: true },
+  },
   async (input, ctx) => {
     const parsed = approveSuspensePostingSchema.parse(input)
     return approveSuspensePosting({
+      expectedEvidenceRevision: parsed.expectedEvidenceRevision,
       organizationId: ctx.orgId,
       suspenseItemId: parsed.suspenseItemId,
       approvedById: ctx.userId,
       control: {
         actorPermissions: ctx.permissions,
-        lastAuthAt: Date.now(),
+        lastAuthAt: verifiedFreshAuthTime(ctx),
       },
       correlationId: parsed.correlationId,
     })
@@ -271,6 +339,7 @@ const signRun = protect<unknown, SignReconciliationRunResult>(
       runId: parsed.runId,
       signedById: ctx.userId,
       expectedSourceVersionHash: parsed.expectedSourceVersionHash,
+      expectedEvidenceRevision: parsed.expectedEvidenceRevision,
       control: {
         actorPermissions: ctx.permissions,
         lastAuthAt,
@@ -280,31 +349,45 @@ const signRun = protect<unknown, SignReconciliationRunResult>(
   },
 )
 
-const exportCertificate = protect<unknown, ReconciliationCertificateExportResult>(
+const readCertificateHistory = protect<unknown, CertificateHistoryPage>(
+  { permission: "payments.reconciliation.read", auditResource: "ReconciliationCertificateHistory", auditAllowed: false, module: correctionReadModule },
+  async (input, ctx) => readReconciliationCertificateHistory(certificateHistorySchema.parse(input), { organizationId: ctx.orgId, actorId: ctx.userId, actorPermissions: ctx.permissions }),
+)
+
+export async function readReconciliationCertificateHistoryAction(input: unknown) { return readCertificateHistory(input) }
+
+const exportCertificate = protect<unknown, ReconciliationCertificateExportResult & { scope: { organizationId: string; actorId: string } }>(
   {
     permission: "payments.reconciliation.certificate.export",
     auditResource: "PaymentReconciliationCertificate",
     auditAllowed: true,
-    freshAuth: true,
+    freshAuth: { maxAgeSeconds: 300 },
+    module: correctionReadModule,
   },
   async (input, ctx) => {
-    const parsed = exportCertificateSchema.parse(input)
-    return exportReconciliationCertificate({
+    const parsed = reconciliationCertificateExportSchema.parse(input)
+    const data = await exportReconciliationCertificate({
+      ...parsed,
       organizationId: ctx.orgId,
       runId: parsed.runId,
       exportedById: ctx.userId,
       fileType: parsed.fileType,
       control: {
         actorPermissions: ctx.permissions,
-        lastAuthAt: Date.now(),
+        lastAuthAt: verifiedFreshAuthTime(ctx),
       },
       correlationId: parsed.correlationId,
     })
+    return { ...data, scope: { organizationId: ctx.orgId, actorId: ctx.userId } }
   },
 )
 
 export async function getPaymentReconciliationDashboardAction(input: unknown = {}) {
   return getDashboard(input)
+}
+
+export async function getPaymentSuspenseRecordsAction(input: unknown = {}) {
+  return getSuspenseRecords(input)
 }
 
 export async function getReconciliationRunDetailAction(input: unknown) {
@@ -346,6 +429,13 @@ export async function signReconciliationRunAction(input: unknown) {
 export async function exportReconciliationCertificateAction(input: unknown) {
   return exportCertificate(input)
 }
+
+export async function previewSuspenseCorrectionAction(input: unknown) { return correctionPreview(input) }
+export async function proposeSuspenseCorrectionAction(input: unknown) { return correctionPropose(input) }
+export async function reviewSuspenseCorrectionAction(input: unknown) { return correctionReview(input) }
+export async function decideSuspenseCorrectionAction(input: unknown) { return correctionDecide(input) }
+export async function readSuspenseCorrectionHistoryAction(input: unknown) { return correctionHistory(input) }
+export async function exportSuspenseCorrectionAction(input: unknown) { return correctionExport(input) }
 
 function verifiedFreshAuthTime(ctx: ProtectedActionContext) {
   const freshAuth = ctx.freshAuth

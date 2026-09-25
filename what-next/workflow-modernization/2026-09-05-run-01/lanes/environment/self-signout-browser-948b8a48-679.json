@@ -1,0 +1,70 @@
+{
+  "run": "948b8a48-679",
+  "mode": "browser",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T18:29:10.972Z",
+  "sourcesBefore": {
+    "services/security/self-sign-out.service.ts": "0740a35ae29b6488ba4c3eabbfc03dc45f324d79d73ea96f0d8d3fc2516c26c4",
+    "lib/security/self-sign-out-plugin.ts": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3",
+    "lib/security/self-sign-out-copy.ts": "faa60df473b042556226493747334a2d909dcb0fef52ae07aa54a27605cf1be8",
+    "lib/auth.ts": "cbb5447afeaa3bb04e420b6e9033bf14059c09cac403346bf67cd9e6a5068522",
+    "lib/auth-client.ts": "c59265a308acfe015acc769871fcace0532a6b1d8b9028e517740d41f10f26da",
+    "components/dashboard/Navbar.tsx": "36337cd0a5a61ea7c3dca348a1d0444e6a8eb33bf4f122be6fc394ea1f19885c",
+    "components/dashboard/Sidebar.tsx": "62024b77626f20ed6bfe0176c1a45ecd484b8f415896890b48dc724660b94c2e",
+    "components/dashboard/SessionRecoverySignOutButton.tsx": "f9ffe729473024b54161c30c64d59952c82afcc34dac2bd2c3af9847223bd7eb",
+    "components/UserDropdownMenu.tsx": "b9b16967985af691cf06054fa9d6726b43bab04c1bdb176e609fe875083af890",
+    "components/NotAuthorized.tsx": "880c053c5285769fa1cadce2849e1c6924b0efcf4131b72925f4855371153904",
+    "components/ui/sheet.tsx": "5d2a929209da08e82f5214e8f0aff57406d2c603b5c72e6784a4be299f1b61e6",
+    "app/api/auth/[...all]/route.ts": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "node_modules/better-auth/dist/api/index.mjs": "ed9ff22e34787cf2402c2f986517f4e861d4263cea7da49e6c5edc858e997dbf",
+    "node_modules/better-auth/dist/cookies/index.mjs": "c9fae72096771f4136183278073d1e97c327c599d553d6171af1b6f72a50a18f"
+  },
+  "checks": [
+    {
+      "name": "en mobile failure stays visible, retry confirms persisted sign-out",
+      "passed": false,
+      "error": "page.addStyleTag: Provide an object with a `url`, `path` or `content` property; screenshots: en-self-signout-mobile-failed-948b8a48-679.png,en-self-signout-mobile-failure-948b8a48-679.png",
+      "durationMs": 12423
+    },
+    {
+      "name": "fr mobile failure stays visible, retry confirms persisted sign-out",
+      "passed": false,
+      "error": "page.addStyleTag: Provide an object with a `url`, `path` or `content` property; screenshots: fr-self-signout-mobile-failed-948b8a48-679.png,fr-self-signout-mobile-failure-948b8a48-679.png",
+      "durationMs": 5353
+    }
+  ],
+  "limitations": [
+    "Owned synthetic accounts and local development application only. No production, external messages, migrations or financial operations.",
+    "Audit failures, unavailable responses and lost acknowledgements are injected. PostgreSQL effects, installed provider routing and browser interactions are real.",
+    "No claim about global cached-session invalidation, native assistive technology, production latency or provider-wide certification."
+  ],
+  "originalBefore": "554f1bf71a14ccf7672a21e9a8bb3715734a6fd8126a9009d6f0807ede7709be",
+  "selectedEntry": "mobile",
+  "originalAfter": "554f1bf71a14ccf7672a21e9a8bb3715734a6fd8126a9009d6f0807ede7709be",
+  "originalUnchanged": true,
+  "completedAt": "2026-09-06T18:29:29.881Z",
+  "sourcesAfter": {
+    "services/security/self-sign-out.service.ts": "0740a35ae29b6488ba4c3eabbfc03dc45f324d79d73ea96f0d8d3fc2516c26c4",
+    "lib/security/self-sign-out-plugin.ts": "503233fa378ea7d1e8897e0905617ce4dc6cfb011867ba7d73d4d0a0c7fd9ca3",
+    "lib/security/self-sign-out-copy.ts": "faa60df473b042556226493747334a2d909dcb0fef52ae07aa54a27605cf1be8",
+    "lib/auth.ts": "cbb5447afeaa3bb04e420b6e9033bf14059c09cac403346bf67cd9e6a5068522",
+    "lib/auth-client.ts": "c59265a308acfe015acc769871fcace0532a6b1d8b9028e517740d41f10f26da",
+    "components/dashboard/Navbar.tsx": "36337cd0a5a61ea7c3dca348a1d0444e6a8eb33bf4f122be6fc394ea1f19885c",
+    "components/dashboard/Sidebar.tsx": "62024b77626f20ed6bfe0176c1a45ecd484b8f415896890b48dc724660b94c2e",
+    "components/dashboard/SessionRecoverySignOutButton.tsx": "f9ffe729473024b54161c30c64d59952c82afcc34dac2bd2c3af9847223bd7eb",
+    "components/UserDropdownMenu.tsx": "b9b16967985af691cf06054fa9d6726b43bab04c1bdb176e609fe875083af890",
+    "components/NotAuthorized.tsx": "880c053c5285769fa1cadce2849e1c6924b0efcf4131b72925f4855371153904",
+    "components/ui/sheet.tsx": "5d2a929209da08e82f5214e8f0aff57406d2c603b5c72e6784a4be299f1b61e6",
+    "app/api/auth/[...all]/route.ts": "62e75e9d4868c51dc8403b6fea5065309d9b373b556214d7ead5472005ab4d3b",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae",
+    "app/[locale]/(dashboard)/dashboard/layout.tsx": "f1a1c7267c4ced967b56977e7aa699421cc3908e8fe6b27e4c959d672fb6f95d",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "node_modules/better-auth/dist/api/index.mjs": "ed9ff22e34787cf2402c2f986517f4e861d4263cea7da49e6c5edc858e997dbf",
+    "node_modules/better-auth/dist/cookies/index.mjs": "c9fae72096771f4136183278073d1e97c327c599d553d6171af1b6f72a50a18f"
+  },
+  "sourceStable": true,
+  "driverSha256": "f7613b49585cafa3f81968082fd9533cae6dbb60438b631baa7b6b73203fb5f5"
+}

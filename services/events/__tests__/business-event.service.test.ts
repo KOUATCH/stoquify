@@ -38,6 +38,62 @@ function createEvidenceClient() {
 }
 
 describe("business event gateway", () => {
+  it("preserves a domain reference and existing metadata without classifying it as accounting", async () => {
+    const tx = createTx()
+    tx.businessEvent.findUnique.mockResolvedValue(null)
+    tx.businessEvent.create.mockImplementation(async ({ data }) => ({ id: "event-domain", ...data }))
+    const metadata = { evidenceHash: "retained", nested: { state: "requested" } }
+    await recordBusinessEventInTx(tx, {
+      organizationId: "org-1", eventType: "CONTRACT_CHANGED", idempotencyKey: "domain-1",
+      payload: { contractId: "contract-1" }, sourceEntityType: "PAYROLL_CONTRACT",
+      sourceId: "contract-1", metadata,
+    })
+    expect(tx.businessEvent.create.mock.calls[0][0].data).toMatchObject({
+      sourceType: undefined, sourceId: "contract-1",
+      metadata: { ...metadata, sourceEntityType: "PAYROLL_CONTRACT" },
+    })
+    expect(metadata).not.toHaveProperty("sourceEntityType")
+  })
+
+  it("retains a valid accounting classification alongside a domain reference", async () => {
+    const tx = createTx()
+    tx.businessEvent.findUnique.mockResolvedValue(null)
+    tx.businessEvent.create.mockImplementation(async ({ data }) => ({ id: "event-accounting", ...data }))
+    await recordBusinessEventInTx(tx, {
+      organizationId: "org-1", eventType: "PAYROLL_POSTED", idempotencyKey: "accounting-1", payload: {},
+      sourceType: "PAYROLL_RUN", sourceEntityType: "PayrollRun", sourceId: "run-1",
+      metadata: { sourceEntityType: "PayrollRun", retained: true },
+    })
+    expect(tx.businessEvent.create.mock.calls[0][0].data).toMatchObject({
+      sourceType: "PAYROLL_RUN", sourceId: "run-1",
+      metadata: { sourceEntityType: "PayrollRun", retained: true },
+    })
+  })
+
+  it.each(["PAYROLL_CONTRACT", "UNKNOWN", " PAYROLL_RUN "])("rejects invalid accounting source %s before database access", async (sourceType) => {
+    const tx = createTx()
+    const client = { businessEvent: tx.businessEvent, $transaction: jest.fn() }
+    const input = { organizationId: "org-1", eventType: "SOURCE_CHECK", idempotencyKey: "invalid", payload: {}, sourceType }
+    // Invalid runtime input deliberately bypasses the compile-time contract.
+    // @ts-expect-error invalid accounting source
+    await expect(recordBusinessEventInTx(tx, input)).rejects.toMatchObject({ code: "VALIDATION_ERROR", status: 400 })
+    // @ts-expect-error invalid accounting source
+    await expect(recordBusinessEvent(input, client)).rejects.toMatchObject({ code: "VALIDATION_ERROR", status: 400 })
+    expect(tx.businessEvent.findUnique).not.toHaveBeenCalled()
+    expect(tx.businessEvent.create).not.toHaveBeenCalled()
+    expect(client.$transaction).not.toHaveBeenCalled()
+  })
+
+  it.each([[], "discarded", 12, new Date(), { sourceEntityType: "OtherEntity" }])("rejects lossy or conflicting domain metadata %#", async (metadata) => {
+    const tx = createTx()
+    await expect(recordBusinessEventInTx(tx, {
+      organizationId: "org-1", eventType: "SOURCE_CHECK", idempotencyKey: "conflict", payload: {},
+      sourceEntityType: "PAYROLL_CONTRACT", sourceId: "contract-1", metadata,
+    })).rejects.toMatchObject({ code: "VALIDATION_ERROR" })
+    expect(tx.businessEvent.findUnique).not.toHaveBeenCalled()
+    expect(tx.businessEvent.create).not.toHaveBeenCalled()
+  })
+
   it("records an append-only event with deterministic payload and outbox hashes", async () => {
     const tx = createTx()
     tx.businessEvent.findUnique.mockResolvedValue(null)

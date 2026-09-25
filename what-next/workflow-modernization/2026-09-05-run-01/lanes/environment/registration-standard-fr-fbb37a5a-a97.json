@@ -1,0 +1,74 @@
+{
+  "run": "fbb37a5a-a97",
+  "startedAt": "2026-09-06T11:26:37.361Z",
+  "baseUrl": "http://127.0.0.1:3108",
+  "mode": "standard-fr-positive-after-ordinary-cooldown",
+  "database": "stoquify_local_registration_20260906_01",
+  "sourcesBefore": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "checks": [
+    {
+      "key": "register-fr",
+      "passed": true,
+      "screenshots": [
+        "register-fr-entry-fbb37a5a-a97.png",
+        "register-fr-required-fbb37a5a-a97.png",
+        "register-fr-company-fbb37a5a-a97.png",
+        "register-fr-ready-fbb37a5a-a97.png",
+        "register-fr-recovery-fbb37a5a-a97.png",
+        "register-fr-verification-fbb37a5a-a97.png"
+      ],
+      "pageErrors": [],
+      "noScriptPostDisabled": true,
+      "routeReadyMs": 3258,
+      "abortedRequests": 1,
+      "saveMs": 13686,
+      "createdOrganizationId": "0e81f38a-3457-41ff-ad96-06a7a2764290",
+      "creationAudited": true,
+      "unverifiedHandoff": true,
+      "widths": [
+        390,
+        768,
+        1440
+      ]
+    }
+  ],
+  "blockedOrigins": [],
+  "credentialUrlRequests": 0,
+  "limitations": [
+    "Owned local application and actual registration service with external email disabled. Verification handoff is tested; no delivered code is claimed.",
+    "Only the French standard registration positive journey is attempted after the actual stored IP cooldown expires. No counter reset, spoofing, client identity change or bypass.",
+    "Browser accessibility checks cover labels, keyboard, focus and reflow; no actual screen-reader or comprehensive contrast certification.",
+    "The browser uses a separate database cloned only from owned synthetic controls; baseline tenant authority is checked unchanged."
+  ],
+  "cooldownCheckedAt": "2026-09-06T11:26:37.603Z",
+  "observedBlockedUntil": "2026-09-06T11:26:17.046Z",
+  "originalAuthorityBefore": "060d4e728c08b75d771c32c69734deb4b2d10b8aeab55abe9c9c9a0b360ab4f5",
+  "originalAuthorityAfter": "060d4e728c08b75d771c32c69734deb4b2d10b8aeab55abe9c9c9a0b360ab4f5",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T11:27:01.729Z",
+  "sourcesAfter": {
+    "components/auth/BeautifulRegisterForm.tsx": "8f3caaa2e1cbf79105f4bc8c78c0e90a5ea4505f9d88924a0145166c05f3dcc2",
+    "components/auth/auth-copy.ts": "828749da7bd3057c2978d33d70ad10971175bef85f3ed11f7655c52933b7468d",
+    "components/auth/v2/RegisterV2Form.tsx": "b7bbc40471d091a9bcb844f4aa1b6da5be59166a864472995844df115ad845ef",
+    "hooks/useRegisterWorkflow.ts": "b69ef9311199bd246414ddbe387757adb4385dba87b7bfe06d47dd90d2833981",
+    "actions/auth.ts": "00a1c318a29e4af1ca5805d1c82eaceb3eac2fc62304bb8dbd4ef0a97dd17186",
+    "services/users/user-identity.service.ts": "609872393f05977239631c99d8e8590edc3c0c121ebdbf4a53f74f241d2a75b7",
+    "services/users/registration-input.ts": "648e28adb16d3eb2cc439f0054f1bc583c8797522b906fa584e29df8b79d0294",
+    "app/[locale]/(auth)/register/page.tsx": "6beb793b3655799d4858358ef7ba94f8c865b70f356618105d85a3fc5897e04f",
+    "app/[locale]/(auth)/register-v2/page.tsx": "21887601e45b561c1680c46d259b15d317cafbd89ef537e2ea05d39478aef018"
+  },
+  "sourceStable": true,
+  "driverSha256": "6f33cd018a58185dc00275b1df884f02a7bf37b247dbc95ea837dfa5d9fbb0eb",
+  "passed": 1,
+  "failed": 0
+}

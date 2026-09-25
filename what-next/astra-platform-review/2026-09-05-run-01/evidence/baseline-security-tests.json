@@ -1,0 +1,27 @@
+{
+  "id": "baseline-security-tests",
+  "startedAt": "2026-09-05T09:01:01.306Z",
+  "finishedAt": "2026-09-05T09:03:09.104Z",
+  "command": [
+    "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "node_modules/jest/bin/jest.js",
+    "--runInBand",
+    "--json",
+    "--testPathPatterns",
+    "lib/security/__tests__|services/_shared/__tests__|services/security/__tests__|app/api/.*/__tests__|actions/storage/__tests__"
+  ],
+  "target": "local workspace; database connection disabled with loopback port 1",
+  "exitCode": 0,
+  "signal": null,
+  "status": "passed",
+  "summary": {
+    "suites": 35,
+    "passedSuites": 35,
+    "failedSuites": 0,
+    "tests": 171,
+    "passedTests": 171,
+    "failedTests": 0,
+    "pendingTests": 0
+  },
+  "log": "baseline-security-tests.log"
+}

@@ -1,0 +1,37 @@
+# AP history continuity and recovery — v77
+
+## Changes and evidence
+
+The previous pagination could omit a payment whose identifier matched an invoice at the page boundary: the owned PostgreSQL reproduction returned 28 of 29 records. The combined cursor now includes the source lane and identifier, matching effective-date, creation-date, lane and database identifier ordering. The corrected traversal returns all 29 records exactly once.
+
+The previous freshness check examined only records still matching the filters. An invoice changing from DRAFT to CANCELLED could disappear from that check and leave the continuation accepted with a different summary. Cursor adapter supplier-ap-history.v3 binds the current permissions, currency, filters and a tenant-scoped revision of invoices, payments, allocations, credit notes, ledger evidence, suppliers and bank-display fields. The revision queries include records outside the current filter, so movement out of scope, deletion and evidence changes cannot silently continue the old page sequence. The revision is calculated inside the existing RepeatableRead transaction. The database checks also cover date movement, new ledger evidence, allocations without a parent timestamp change and supplier renaming.
+
+The browser cache now separates organization and actor identities and rejects responses belonging to another identity. It no longer carries prior data into a new query scope. Opening or closing a later-page detail retains the cursor. A stale continuation has distinct localized recovery guidance. Recovery removes inactive cached AP pages for that identity before starting again; if already on the first page, it explicitly refetches. A reset action remains reachable when invalid filters prevent a read. These changes do not establish new permissions or create financial effects.
+
+## What users do
+
+Open `/en/dashboard/purchases/payables/history` or `/fr/dashboard/purchases/payables/history` through authorized Purchases navigation. Select the activity and document dates required for your AP task. A supplier detail page supplies its supplier scope; obtain the intended supplier and period from the AP owner and source documents, not guessed IDs.
+
+Use Next page to continue. You can open a row's details and close them with Escape without losing that page. If records or evidence change, choose **Refresh from the first page / Actualiser depuis la première page**. Supplier, dates and page size remain selected, and the refreshed values describe the current records. Use **Reset / Réinitialiser** if the selected dates or activity prevent reading; supplier scope remains attached to the supplier workflow. An ordinary loading failure instead offers Retry. A failed query is not a successful empty history.
+
+No approval record, signature or new organizational decision is required for this read-only recovery. If denied, ask your organization administrator to check your current AP read permission, workspace and purchasing-module availability. Obtain those assignments from the existing role and module controls. A history page or browser cache cannot confer access.
+
+## Verification and limits
+
+The final focused suite has 65 passing tests across nine suites, including cursor revision, financial and export regressions, scoped caches, malformed/stale action codes, preserved detail navigation and recovery. Seven owned PostgreSQL checks pass. Final EN/FR browser runs each cover later-page details, stale continuation without a page reload, cache-aware recovery and ordinary transport failure/retry. Each has six screenshots, no page errors, unchanged bound sources and unchanged records outside its owned fixtures. The recovered dataset contains 30 records after one of the original 31 moves outside the date filter. Desktop and 390-pixel mobile states were exercised; actual screenshots were inspected. See the receipt for typecheck/lint outcomes and exact source bindings.
+
+Earlier 34-test and 63-test assertions passed; the 63-test command exited 1 because Windows denied writing its JSON receipt. The final 65-test run writes its receipt and exits 0. The initial typecheck error in the action-response union was corrected with an explicit code-property guard. The first browser run passed but used a page reload and did not establish cache continuity; the strengthened run does. These attempts remain historical evidence with their actual limits.
+
+The revision currently scans seven tenant source families for paginated reads. Any relevant AP change in that tenant can invalidate continuation, even if another supplier was edited. This favors consistency but can require restarting in busy organizations. A durable aggregate revision counter and measured large-volume optimization remain possible follow-up work, not implemented behavior. Single-page reads and bounded all-row exports do not add this revision scan. Development timings are observations, not production budgets or performance certification.
+
+Full supplier-ledger/payment-allocation reconciliation across unselected invoices, large-volume reads, permission-denial audit coverage and remaining history UI debt are open. The current view is not a historical trial balance. Screenshots still show truncated KPI/help text, technical source/filter wording and a supplier identifier during stale states. Native zoom, comprehensive contrast, actual screen-reader review and full previous/back navigation remain unverified. PA-029 and the platform-wide assignment remain incomplete.
+
+## Rollout and recovery
+
+Deploy the coherent service, action, hook and localized interface changes together through normal release controls. No migration or backfill is required. Older open cursors intentionally require a fresh first-page read. Monitor conflict frequency, read failures and paginated query duration; do not suppress conflicts or restore an older incomplete cursor to make the screen appear healthy. If a defect is found, correct forward or pause continuation explicitly while retaining authorized first-page access. Preserve all source and audit records. No live deployment, production activation, real payment, external message or X1 clearance is part of this batch.
+
+## Review responsibilities
+
+Architecture/backend/API: one existing service-owned read and cursor contract, no new transport or domain service. Database/finance/analytics/audit: repeatable reads and evidence-sensitive continuity; no ledger writes or claims of statutory accuracy. IAM/privacy/security: tenant-scoped revision queries, actor/organization cache separation, response-scope rejection and safe error codes. Frontend/design/UX/accessibility/localization: existing shell, shared actions and EN/FR failure recovery; no new design system. Product/operations/SRE/release: understandable recovery, current-source semantics, explicit scan cost and remaining verification limits. Statutory/country-rule changes, POS/offline, HRIS/payroll, payment providers, AI/agents, billing/growth and external integration changes: not applicable to this read-continuity correction because their behavior was not changed. These are engineering reviews, not professional approvals.
+
+Selected skill: `011-aqstoqflow-purchasing-ap-controls`. Bounded gates pass for cursor completeness, source-change rejection, cache scope, EN/FR recovery and focused regression checks. Whole-workflow and platform assurance remain open. Next recommended numbered skill is `012-aqstoqflow-payroll-presence-engine` after the active AP priorities, without automatic advancement.

@@ -25,6 +25,21 @@ function order(
 }
 
 describe("purchase-order server capability projection", () => {
+  it("does not offer approval when the requester is unknown", () => {
+    expect(derivePurchaseOrderCapabilities(order("SUBMITTED", { createdById: null }), { userId: "checker", permissions: allMutationPermissions }).approve.allowed).toBe(false)
+  })
+  it("does not offer approval or completion for an empty order", () => {
+    const actor = { userId: "checker", permissions: allMutationPermissions }
+    expect(derivePurchaseOrderCapabilities(order("SUBMITTED", { lines: [] }), actor).approve.allowed).toBe(false)
+    expect(derivePurchaseOrderCapabilities(order("RECEIVED", { lines: [] }), actor).complete.allowed).toBe(false)
+  })
+
+  it("requires received quantities as well as received status for completion", () => {
+    const actor = { userId: "buyer", permissions: allMutationPermissions }
+    expect(derivePurchaseOrderCapabilities(order("RECEIVED"), actor).complete.allowed).toBe(false)
+    expect(derivePurchaseOrderCapabilities(order("RECEIVED", { lines: [{ orderedQuantity: "10.125", receivedQuantity: "10.125" }] }), actor).complete.allowed).toBe(true)
+  })
+
   it("denies every mutation for a read-only actor", () => {
     const capabilities = derivePurchaseOrderCapabilities(order("DRAFT"), {
       userId: "viewer-1",

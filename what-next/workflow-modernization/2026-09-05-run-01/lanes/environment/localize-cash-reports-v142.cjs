@@ -1,0 +1,29 @@
+const fs=require('fs');
+const copies={
+en:{
+cashierTitle:"Cashier activity and closing counts",cashierBasis:"Sales and cash movements belong to the selected period. Elapsed shift time is clipped to that period; it is not a measure of working time or employee performance. Closing differences cover whole shifts counted in this period. Open shifts have no final count.",
+noShifts:"No overlapping shifts in this period.",elapsedHours:"Elapsed shift hours",cashReceipts:"Cash received",cashOutflows:"Cash paid out",netCountVariance:"Net recorded count difference",absoluteVariance:"Sum of absolute count differences",unknownCashier:"Unnamed cashier",
+countCoverage:"Counts in period: {recorded}. Open: {open}. Counted outside period: {outside}. Inconsistent: {inconsistent}.",
+inconsistentCash:"{count} cash movement record(s) have inconsistent amounts or balance changes. Complete totals are unavailable. Review the source drawer transactions before relying on this report.",
+cashFlowTitle:"Cash movements and closing counts",cashFlowBasis:"Operating cash received and paid out in the selected period. Opening floats, closing counts and reconciliation entries are excluded. These totals do not represent bank cash flow, drawer balances or ledger-certified amounts.",
+netMovement:"Net cash movement",cashSales:"Cash sale receipts",otherCashIn:"Other cash receipts",cashReturns:"Cash returned on voids",cashRefunds:"Cash refunds",cashPayouts:"Cash payouts",otherCashOut:"Other cash paid out",cashBreakdown:"Movement categories",
+excludedCashCounts:"Excluded count entries: {opening} opening, {closing} closing, {reconciliation} reconciliation.",
+dailyCash:"Daily cash movements",cumulativeBasis:"Cumulative movement starts at zero for this report period. It is not an actual drawer balance. Days without operating movements are omitted.",
+noCashMovements:"No operating cash movements in this period.",cumulativeMovement:"Cumulative net movement",closingCounts:"Shift closing counts",
+closingCountBasis:"Whole-shift count evidence is shown separately from period cash flow. Difference = counted cash − expected cash; negative is a shortage and positive is an overage. A recorded count is operational evidence, not independent approval. Inconsistent counts are excluded from aggregate differences.",
+countOPEN:"Open — no final count",countRECORDED:"Closing count recorded in period",countOUTSIDE_PERIOD:"Closing count outside selected period",countINCONSISTENT:"Inconsistent closing evidence — review required",shortage:"Shortage",overage:"Overage",countedAt:"Shift ended",expectedCount:"Expected cash",actualCount:"Counted cash",signedVariance:"Signed count difference"
+},
+fr:{
+cashierTitle:"Activité des caissiers et comptages de clôture",cashierBasis:"Les ventes et mouvements de caisse concernent la période choisie. La durée écoulée des sessions est limitée à cette période ; elle ne mesure ni le temps travaillé ni la performance du personnel. Les écarts portent sur les sessions entières comptées durant cette période. Une session ouverte n’a pas de comptage final.",
+noShifts:"Aucune session ne chevauche cette période.",elapsedHours:"Heures de session écoulées",cashReceipts:"Espèces reçues",cashOutflows:"Espèces décaissées",netCountVariance:"Écart net des comptages enregistrés",absoluteVariance:"Somme des écarts absolus",unknownCashier:"Caissier sans nom",
+countCoverage:"Comptages dans la période : {recorded}. Sessions ouvertes : {open}. Comptages hors période : {outside}. Incohérents : {inconsistent}.",
+inconsistentCash:"{count} mouvement(s) de caisse présentent des montants ou variations de solde incohérents. Les totaux complets sont indisponibles. Vérifiez les opérations du tiroir avant d’utiliser ce rapport.",
+cashFlowTitle:"Mouvements de caisse et comptages de clôture",cashFlowBasis:"Espèces reçues et décaissées durant la période choisie. Les fonds d’ouverture, comptages de clôture et écritures de rapprochement sont exclus. Ces totaux ne représentent ni les flux bancaires, ni les soldes des tiroirs, ni des montants comptables certifiés.",
+netMovement:"Mouvement net de caisse",cashSales:"Encaissements des ventes",otherCashIn:"Autres encaissements",cashReturns:"Espèces rendues lors d’annulations",cashRefunds:"Remboursements en espèces",cashPayouts:"Décaissements",otherCashOut:"Autres sorties d’espèces",cashBreakdown:"Catégories de mouvements",
+excludedCashCounts:"Écritures de comptage exclues : {opening} à l’ouverture, {closing} à la clôture, {reconciliation} de rapprochement.",
+dailyCash:"Mouvements de caisse quotidiens",cumulativeBasis:"Le cumul part de zéro au début de la période du rapport. Il ne constitue pas le solde réel d’un tiroir. Les jours sans mouvement opérationnel sont omis.",
+noCashMovements:"Aucun mouvement opérationnel de caisse durant cette période.",cumulativeMovement:"Mouvement net cumulé",closingCounts:"Comptages de clôture des sessions",
+closingCountBasis:"Les comptages des sessions entières sont présentés séparément des flux de la période. Écart = espèces comptées − espèces attendues ; un écart négatif est un manquant, un écart positif un excédent. Un comptage enregistré est une preuve opérationnelle, pas une approbation indépendante. Les comptages incohérents sont exclus des écarts agrégés.",
+countOPEN:"Session ouverte — aucun comptage final",countRECORDED:"Comptage de clôture enregistré dans la période",countOUTSIDE_PERIOD:"Comptage de clôture hors période choisie",countINCONSISTENT:"Preuves de clôture incohérentes — vérification requise",shortage:"Manquant",overage:"Excédent",countedAt:"Fin de session",expectedCount:"Espèces attendues",actualCount:"Espèces comptées",signedVariance:"Écart signé du comptage"
+}};
+for(const [locale,copy] of Object.entries(copies)){const file='messages/'+locale+'.json',source=fs.readFileSync(file,'utf8'),json=JSON.parse(source);Object.assign(json.operationalReports,copy);fs.writeFileSync(file,JSON.stringify(json,null,2)+'\n')}

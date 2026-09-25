@@ -46,3 +46,7 @@ Maturity labels follow `AQSTOQFLOW_UI_COMPONENT_REGISTRY_2026-06-26.md`:
 - A route cannot move from `partial` to `aligned` if it still uses hard-coded one-off colors where constitution tokens already exist.
 - Protected routes may pass unauthenticated HTTP smoke by returning or redirecting to a safe auth state. Authenticated screenshot certification still requires a real browser session or saved Playwright storage state.
 - Screenshot smoke is deliberately small. It is meant to catch blank pages, broken redirects, layout overflow, and first-viewport drift, not pixel-perfect design churn.
+
+## Daily Digest scoped review — 2026-09-19
+
+`/en/dashboard/daily-digest` and `/fr/dashboard/daily-digest`: **partial**. Manager views have current EN desktop / FR 320px rendered contrast, hover and unclipped keyboard-focus evidence. Native screen-reader/zoom and other persona/theme coverage remain. See the [single detailed review](../../../what-next/workflow-modernization/2026-09-05-run-01/DAILY_DIGEST_ACCESSIBILITY_VERIFICATION.md). No route certification or unrelated maturity upgrade is implied.

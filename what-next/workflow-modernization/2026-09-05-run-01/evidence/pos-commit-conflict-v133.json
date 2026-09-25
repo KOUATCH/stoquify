@@ -1,0 +1,67 @@
+{
+  "at": "2026-09-13T15:01:51.353Z",
+  "sourceBaseline": "evidence/source-baseline-v133.json",
+  "sources": {
+    "services/pos/pos.service.ts": "53775d719bae2266022976e262596c7d6d4389742d03a05e1330c37d1b1cfe70",
+    "services/pos/__tests__/commit-recovery.service.test.ts": "9e508713dfa6db1acbe13161b7dbb791913dfa3abd47c47479356d1253c8309a"
+  },
+  "reproduction": {
+    "receipt": "70dab5",
+    "result": "Failed as expected for unbounded exception; initial statusCode test typo corrected to actual status field."
+  },
+  "tests": {
+    "passed": 45,
+    "suiteCount": 3,
+    "receipt": "aa6dd6",
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/pos/__tests__/commit-recovery.service.test.ts actions/pos/__tests__/commit-recovery.actions.test.ts services/pos/__tests__/pos.service.test.ts"
+  },
+  "typecheck": {
+    "passed": true,
+    "receipt": "7105dc",
+    "command": "node node_modules/typescript/bin/tsc --noEmit --pretty false"
+  },
+  "lint": {
+    "passed": true,
+    "receipt": "86eda8",
+    "command": "node node_modules/eslint/bin/eslint.js services/pos/pos.service.ts services/pos/__tests__/commit-recovery.service.test.ts"
+  },
+  "database": {
+    "file": "lanes/environment/commit-conflict-v133-bcde4f02-1d8d-45fd-875b-89335c53d1e8.json",
+    "receipt": "d6f8b3",
+    "at": "2026-09-13T14:59:55.653Z",
+    "sourceBefore": "53775d719bae2266022976e262596c7d6d4389742d03a05e1330c37d1b1cfe70",
+    "checks": [
+      "Changed request produces bounded 409 with no stored result/hash/cause and no financial or registry effects",
+      "Foreign scope remains not-found without effects",
+      "Original unchanged request remains recoverable under read-only grant after conflict"
+    ],
+    "scope": "Owned local PostgreSQL, synthetic cash sale and accounting setup; no external payment or live approval.",
+    "passed": true,
+    "sourceAfter": "53775d719bae2266022976e262596c7d6d4389742d03a05e1330c37d1b1cfe70",
+    "sourceStable": true
+  },
+  "browser": {
+    "rerun": false,
+    "reason": "No presentation change; actual service/action/logger tested, PG conflict and original recovery verified. v132 browser evidence remains historical."
+  },
+  "guide": "COMMIT_CONFLICT_V133.md",
+  "coverage": {
+    "discoveredWorkflows": 251,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2895,
+      "tests": 1029,
+      "pages": 161,
+      "routeHandlers": 18,
+      "actionSources": 175,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2517,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 202,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  },
+  "wholeWorkflowComplete": false
+}

@@ -32,6 +32,7 @@ import { postVoid } from "./post-void"
 const mockRecordPostedCloseInvalidation = recordPostedJournalCloseInvalidationInTx as jest.Mock
 
 const mockTx = {
+  $queryRaw: jest.fn(),
   paymentRefund: {
     findFirst: jest.fn(),
   },
@@ -275,6 +276,7 @@ function arrangePosting(rulePurpose: AccountingPostingPurpose, entryPrefix: stri
   mockTx.ledgerPostingBatch.create.mockResolvedValue(pendingBatch)
   mockTx.journalEntry.findFirst.mockResolvedValue(null)
   mockTx.accountingPeriod.findFirst.mockResolvedValue(openPeriod)
+  mockTx.$queryRaw.mockResolvedValue([openPeriod])
   mockTx.postingRule.findFirst.mockResolvedValue({
     id: `rule-${rulePurpose}`,
     code: `POS-${rulePurpose}`,

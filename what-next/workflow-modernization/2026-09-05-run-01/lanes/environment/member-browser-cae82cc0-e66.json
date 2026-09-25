@@ -1,0 +1,86 @@
+{
+  "run": "cae82cc0-e66",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T12:45:26.229Z",
+  "sourcesBefore": {
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/users/user-deactivation-input.ts": "05608dcd80012423167e6794f3fb1177f35d005d13d19df408b9d12aab01b47b",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "actions/users/deleteUser.ts": "3ee1d29bc0e90a47e20adfc94c7efb10bc493c1e538bf0e117fc1f3ce34d618e",
+    "actions/users/getOrgUsers.ts": "fbf600c4f408f935b817fe73e09a8ced9c8fa28275508d2cf3ebfb3d07dfa716",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "d0acd9b750a709995bd8225d34ed51f6971219b789271932fdc756df348ee6e3",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "56aba611556db7b997b9f5834cd8ac38e6fe63fb26d9e27cde54bc869f1120b9",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "0011560ede42debfd30daba77fe48e569eeda308c1b4fab117ef123edf22f7ad",
+    "components/settings/UserDeactivation.tsx": "eba56720109ab7c940a9f2aec3900dadc74a7bbc455508c7ac21554af21d824a",
+    "components/settings/user-directory-copy.ts": "285611a1d96f3038f45e676d633d91e8871894262b7cb3f578ea155e69c051c3",
+    "lib/security/rbac-permissions.ts": "986f09b3f63ad522ef4a9e803fc96ff0d7b07a295c785cc6fb70ce3b23df02d5",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": false,
+      "screenshots": [
+        "en-member-reader-cae82cc0-e66.png",
+        "en-member-review-mobile-cae82cc0-e66.png",
+        "en-member-review-desktop-cae82cc0-e66.png",
+        "en-member-receipt-cae82cc0-e66.png",
+        "en-member-failure-cae82cc0-e66.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 19076,
+      "readerCannotDeactivate": true,
+      "deactivationReceiptMs": 5270,
+      "cachedSessionStillPresent": true,
+      "newPasswordSignInRejected": true,
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByRole('button', { name: 'Close', exact: true })\u001b[22m\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "screenshots": [
+        "fr-member-reader-cae82cc0-e66.png",
+        "fr-member-review-mobile-cae82cc0-e66.png",
+        "fr-member-review-desktop-cae82cc0-e66.png",
+        "fr-member-receipt-cae82cc0-e66.png",
+        "fr-member-failure-cae82cc0-e66.png"
+      ],
+      "pageErrors": [],
+      "routeReadyMs": 9547,
+      "readerCannotDeactivate": true,
+      "deactivationReceiptMs": 1644,
+      "cachedSessionStillPresent": true,
+      "newPasswordSignInRejected": true,
+      "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByRole('button', { name: 'Fermer', exact: true })\u001b[22m\n"
+    }
+  ],
+  "blockedOrigins": [],
+  "limitations": [
+    "Only fresh synthetic member accounts are deactivated. Existing administrators and scoped directory readers are reused without changing their grants or credentials.",
+    "No email, migration, original member deactivation, production action or external call.",
+    "Keyboard, responsive and reduced-motion browser evidence is not native screen-reader certification.",
+    "Default cached get-session display may retain old identity for five minutes. Fresh session checks and password sign-in are tested separately. Broad cache/provider-hook changes were rejected and remain unapplied."
+  ],
+  "originalAuthorityBefore": "bce115464713acfa80cecdca29733dfee6a939234858f9df6ab390ce3cb675e1",
+  "originalAuthorityAfter": "bce115464713acfa80cecdca29733dfee6a939234858f9df6ab390ce3cb675e1",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T12:49:42.711Z",
+  "sourcesAfter": {
+    "services/users/user-lifecycle.service.ts": "b5907938c176ba0fbd82915c6df1197bd647bc225a82f584969459e270703ebe",
+    "services/users/user-deactivation-input.ts": "05608dcd80012423167e6794f3fb1177f35d005d13d19df408b9d12aab01b47b",
+    "services/roles/role-custodian-policy.ts": "dccbe503b0c031385234b0a42e68ea3c5034fe6f4daa7688aa737336d1708142",
+    "actions/users/deleteUser.ts": "3ee1d29bc0e90a47e20adfc94c7efb10bc493c1e538bf0e117fc1f3ce34d618e",
+    "actions/users/getOrgUsers.ts": "fbf600c4f408f935b817fe73e09a8ced9c8fa28275508d2cf3ebfb3d07dfa716",
+    "app/[locale]/(dashboard)/dashboard/settings/users/page.tsx": "d0acd9b750a709995bd8225d34ed51f6971219b789271932fdc756df348ee6e3",
+    "app/[locale]/(dashboard)/dashboard/settings/users/columns.tsx": "56aba611556db7b997b9f5834cd8ac38e6fe63fb26d9e27cde54bc869f1120b9",
+    "app/[locale]/(dashboard)/dashboard/settings/users/UsersPageClient.tsx": "0011560ede42debfd30daba77fe48e569eeda308c1b4fab117ef123edf22f7ad",
+    "components/settings/UserDeactivation.tsx": "eba56720109ab7c940a9f2aec3900dadc74a7bbc455508c7ac21554af21d824a",
+    "components/settings/user-directory-copy.ts": "285611a1d96f3038f45e676d633d91e8871894262b7cb3f578ea155e69c051c3",
+    "lib/security/rbac-permissions.ts": "986f09b3f63ad522ef4a9e803fc96ff0d7b07a295c785cc6fb70ce3b23df02d5",
+    "lib/auth.ts": "cb916ecda00352dc7dc9a8a9cbb94e3ae134659b4f4b2397c5456dd34108a267"
+  },
+  "sourceStable": true,
+  "driverSha256": "91ed0dabdb1c450e259aef44afebf80dab54b3bcfdc8e4f3ad3778851f20f03c",
+  "passed": 0,
+  "failed": 2
+}

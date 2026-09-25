@@ -12,9 +12,13 @@ import {
 
 import { BusinessRuleError, ConflictError, NotFoundError } from "@/services/_shared/action-errors"
 import { assertBalancedJournalEntry } from "@/services/accounting/invariants"
+import { getOpenPeriodForDate } from "@/services/accounting/periods.service"
 import { createLedgerPostingBatch } from "@/services/accounting/posting.service"
 import { requireActivePostingRule } from "@/services/accounting/posting-rules.service"
 import { createAccountingSourceLink } from "@/services/accounting/source-link.service"
+import { assertPriorSuspenseCyclesInTx } from "./payment-suspense-cycle-ledger.service"
+import { suspenseMetadata } from "./payment-suspense-evidence"
+import { assertPriorSuspenseResolutionsInTx } from "./payment-suspense-resolution-recovery-evidence.service"
 
 export type PostPaymentSuspenseToLedgerInput = {
   organizationId: string
@@ -53,6 +57,24 @@ type SuspenseJournal = Prisma.JournalEntryGetPayload<{
 
 function currency(value?: string | null) {
   return (value || "XAF").trim().toUpperCase()
+}
+
+async function requireSameCurrencyBasis(tx: Prisma.TransactionClient, organizationId: string, sourceCurrency: string) {
+  // Lock the configured basis until posting commits. A concurrent settings edit
+  // must not change the meaning of the base amounts halfway through this write.
+  const rows = await tx.$queryRaw<{ id: string; organizationId: string; baseCurrency: string; updatedAt: Date }[]>`
+    SELECT id, "organizationId", "baseCurrency", "updatedAt"
+    FROM organization_accounting_settings WHERE "organizationId" = ${organizationId} FOR SHARE
+  `
+  const settings = rows[0], baseCurrency = settings?.baseCurrency?.trim().toUpperCase()
+  if (rows.length !== 1 || !settings || settings.organizationId !== organizationId || !/^[A-Z]{3}$/.test(baseCurrency ?? "")
+    || !/^[A-Z]{3}$/.test(sourceCurrency) || sourceCurrency !== baseCurrency) {
+    throw new BusinessRuleError(
+      "Suspense posting requires a configured accounting currency matching the source currency. Foreign-currency posting needs verified conversion evidence; keep this item open for accounting review.",
+      "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED",
+    )
+  }
+  return { version: 1, settingsId: settings.id, settingsUpdatedAt: settings.updatedAt.toISOString(), baseCurrency, sourceCurrency, exchangeRate: "1" }
 }
 
 function mappingKey(value?: string | null) {
@@ -252,6 +274,15 @@ function assertJournalTruth(
   }
 
   assertBalancedJournalEntry(journal.lines)
+  const metadata = suspenseMetadata(batch.metadata), currencyBasis = suspenseMetadata(metadata.currencyBasis)
+  if (Object.prototype.hasOwnProperty.call(metadata, "currencyBasis") && (currencyBasis.version !== 1 || typeof currencyBasis.settingsId !== "string"
+    || !currencyBasis.settingsId || typeof currencyBasis.settingsUpdatedAt !== "string"
+    || !Number.isFinite(new Date(currencyBasis.settingsUpdatedAt).getTime())
+    || currencyBasis.sourceCurrency !== input.currencyCode || currencyBasis.baseCurrency !== input.currencyCode || currencyBasis.exchangeRate !== "1"
+    || journal.lines.some(line => currency(line.currency) !== input.currencyCode || !line.exchangeRate.eq(1)
+      || line.baseDebit == null || line.baseCredit == null || !line.baseDebit.eq(line.debit) || !line.baseCredit.eq(line.credit)))) {
+    throw new BusinessRuleError("Retained suspense currency evidence requires accounting review.", "SUSPENSE_CURRENCY_EVIDENCE_REQUIRED")
+  }
   const suspenseLines = journal.lines.filter(
     (line) => line.accountId === input.suspenseLedgerAccountId,
   )
@@ -282,12 +313,12 @@ function assertJournalTruth(
 
 export async function assertPaymentSuspenseLedgerTruthInTx(
   tx: Prisma.TransactionClient,
-  input: { organizationId: string } & TruthScope,
+  input: { organizationId: string; includeResolved?: boolean } & TruthScope,
 ) {
   const items = await tx.suspenseItem.findMany({
     where: {
       organizationId: input.organizationId,
-      status: SuspenseStatus.POSTED_TO_SUSPENSE,
+      status: input.includeResolved ? { in: [SuspenseStatus.POSTED_TO_SUSPENSE, SuspenseStatus.RESOLVED, SuspenseStatus.WRITTEN_OFF] } : SuspenseStatus.POSTED_TO_SUSPENSE,
       ...("suspenseItemId" in input
         ? { id: input.suspenseItemId }
         : { reconciliationRunId: input.reconciliationRunId }),
@@ -297,6 +328,8 @@ export async function assertPaymentSuspenseLedgerTruthInTx(
       organizationId: true,
       amount: true,
       currencyCode: true,
+      metadata: true,
+      status: true,
       suspenseLedgerAccountId: true,
       ledgerPostingBatchId: true,
       ledgerPostingBatch: {
@@ -313,6 +346,8 @@ export async function assertPaymentSuspenseLedgerTruthInTx(
   const operationalTotals = new Map<string, Prisma.Decimal>()
   const ledgerTotals = new Map<string, Prisma.Decimal>()
   for (const item of items) {
+    await assertPriorSuspenseResolutionsInTx(tx, input.organizationId, item)
+    const postingCycle = await assertPriorSuspenseCyclesInTx(tx, input.organizationId, item)
     const batch = item.ledgerPostingBatch
     if (!item.suspenseLedgerAccountId || !item.ledgerPostingBatchId || !batch) {
       throw new BusinessRuleError("Posted payment suspense item is missing ledger evidence")
@@ -320,6 +355,7 @@ export async function assertPaymentSuspenseLedgerTruthInTx(
     if (batch.journalEntries.length !== 1) {
       throw new BusinessRuleError("Payment suspense posting must have exactly one journal entry")
     }
+    if ((batch.postingCycle ?? 1) !== postingCycle) throw new BusinessRuleError("Current suspense posting cycle does not match its source evidence")
     const itemAmount = new Prisma.Decimal(item.amount).toDecimalPlaces(2)
     const key = `${item.suspenseLedgerAccountId}:${currency(item.currencyCode)}`
     const ledgerAmount = assertJournalTruth(
@@ -380,24 +416,31 @@ export async function postPaymentSuspenseToLedger(
   const currencyCode = currency(suspense.currencyCode)
   if (sourceAmount.lte(0)) throw new BusinessRuleError("Payment suspense amount must be positive")
 
-  const batch = await createLedgerPostingBatch(
-    {
+  const cycle = await assertPriorSuspenseCyclesInTx(tx, input.organizationId, suspense)
+  await assertPriorSuspenseResolutionsInTx(tx, input.organizationId, suspense)
+  const batchInput = {
       organizationId: input.organizationId,
       periodId: input.periodId,
       sourceType: AccountingSourceType.PAYMENT_SUSPENSE,
       sourceId: suspense.id,
       postingPurpose: AccountingPostingPurpose.SUSPENSE_RECLASSIFICATION,
       sourceVersion: 1,
-      idempotencyKey: `payment-suspense:${suspense.id}:reclassification:v1`,
+      idempotencyKey: cycle === 1 ? `payment-suspense:${suspense.id}:reclassification:v1` : `payment-suspense:${suspense.id}:reclassification:cycle:${cycle}`,
       metadata: json({
         suspenseLedgerAccountId: input.suspenseLedgerAccountId,
         amount: sourceAmount.toFixed(2),
         currencyCode,
         correlationId: input.correlationId,
       }),
-    },
-    tx,
-  )
+    }
+  // Later cycles are admitted only by this source gateway after verifying every
+  // prior compensating journal and independent correction receipt above.
+  const batch = cycle === 1 ? await createLedgerPostingBatch(batchInput, tx) :
+    await tx.ledgerPostingBatch.findFirst({ where: { organizationId: input.organizationId, idempotencyKey: batchInput.idempotencyKey } }) ??
+    await tx.ledgerPostingBatch.create({ data: { ...batchInput, postingCycle: cycle } })
+  if (cycle > 1 && (batch.organizationId !== input.organizationId || batch.sourceType !== AccountingSourceType.PAYMENT_SUSPENSE
+    || batch.sourceId !== suspense.id || batch.postingPurpose !== AccountingPostingPurpose.SUSPENSE_RECLASSIFICATION || batch.postingCycle !== cycle
+    || (batch.sourceVersion ?? 1) !== 1 || batch.periodId !== input.periodId)) throw new ConflictError("Suspense posting cycle identity requires review.")
 
   if (batch.status === LedgerPostingBatchStatus.POSTED) {
     await assertPaymentSuspenseLedgerTruthInTx(tx, {
@@ -418,11 +461,17 @@ export async function postPaymentSuspenseToLedger(
   if (batch.status !== LedgerPostingBatchStatus.PENDING) {
     throw new BusinessRuleError(`Payment suspense posting batch is ${batch.status.toLowerCase()}`)
   }
+  // Retained posted evidence above is replayable after closure; new effects are not.
+  const period = await getOpenPeriodForDate(input.organizationId, input.postingDate, tx)
+  if (period.id !== input.periodId || batch.periodId !== period.id) {
+    throw new BusinessRuleError("Suspense accounting period changed. Review the posting before approval.")
+  }
   const incomplete = await tx.journalEntry.findFirst({
     where: { organizationId: input.organizationId, postingBatchId: batch.id },
     select: { id: true },
   })
   if (incomplete) throw new ConflictError("Payment suspense has an incomplete journal posting")
+  const currencyBasis = await requireSameCurrencyBasis(tx, input.organizationId, suspense.currencyCode.trim().toUpperCase())
 
   const rule = await requireActivePostingRule(
     input.organizationId,
@@ -495,6 +544,7 @@ export async function postPaymentSuspenseToLedger(
         suspenseLedgerAccountId: input.suspenseLedgerAccountId,
         amount: sourceAmount.toFixed(2),
         currencyCode,
+        currencyBasis,
         postingRuleId: rule.id,
         postingRuleCode: rule.code,
         correlationId: input.correlationId,

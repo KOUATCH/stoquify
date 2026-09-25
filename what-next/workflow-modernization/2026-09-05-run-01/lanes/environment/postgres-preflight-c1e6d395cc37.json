@@ -1,0 +1,64 @@
+{
+  "runId": "c1e6d395cc37",
+  "mode": "preflight",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-05T17:14:20.382Z",
+  "sourceBefore": {
+    "services/users/user-identity.service.ts": "ceeafbb34c34a6fb92be792a985ad00a52360bb69e45e7f5c483ec137613833b",
+    "lib/security/auth-credentials.ts": "69933b96f64d0bccec1a0b7a6d3ac0091ea164cfd775c4005ed47f37fd130007",
+    "lib/auth.ts": "7f70e475a8c2e2caa4e1c96e03b23ff9c242a91f2e155acdafe6430c73258187",
+    "lib/password.ts": "343d01416bb6fb07ebd8f224322f23817de8c4f410bc79629ccd5c3c540d367e",
+    "lib/security/password-utils.ts": "869c55cd24b0c99d03e67bae08c9673f18ea814fbbd1aab69a9fb1454a931a9b",
+    "services/auth/password-policy.ts": "5d598bacf70b6cad827d9cf30f62252be0083b09714654b4928639e46fca82b7",
+    "lib/security/hibp.ts": "31eedd18507e4d7dc49e8c19fc7bb04dadf98654ac25d04bbab2cdbe06d09dd8",
+    "services/security/public-identity-abuse.service.ts": "1af36d57560a89e4a237d4e5e4db05e6b96f2a92982e4291f4025cbcd6cc17cd",
+    "lib/security/audit-log.ts": "581f21d753c5cb5435cda8ee15d12effd5daef21f479a8849068e613d082935b",
+    "services/accounting/customer-statement-recipient-action.service.ts": "6ada66081f7d005b7a2aa14ccf6cb39222e92b38be47b68e85552bed73176340",
+    "services/accounting/customer-statement-access.service.ts": "cd5d27cd455c4cfe8cdd34340afdd3af4c30b19547e21959a850a8a9865ee091",
+    "services/accounting/customer-statement-token.ts": "279fc0b624b26283c6bbc5751746bbbc65370677d51d5ce84bf4d455cc3fc131",
+    "services/_shared/signed-external-access-token.ts": "91600b0334b5af97a3e8b4469acd43a25457278a7ae514345d0acf623eb48ad0",
+    "services/events/business-event.service.ts": "a1c71eb69a4cedf001c68c5d696df508a69780ecc03ec0139cfaf5d78034ffa7",
+    "prisma/schema.prisma": "b6bc5e364ffb72ae2edba499e9b3739b3a8cbed5306ce06e4fb401cfe9b6f945"
+  },
+  "checks": [],
+  "ownedOrganizations": [],
+  "limitations": [
+    "HIBP network deliberately unavailable: production offline handling exercised, online breach service unverified",
+    "Synthetic immutable statement input: snapshot generation and ledger provenance unverified",
+    "Internal service calls: public transport behavior is separate coverage"
+  ],
+  "network": {
+    "actualRequestsSent": 0,
+    "blockedFetchOrigins": []
+  },
+  "guard": {
+    "verified": true,
+    "existingOwnedOrganizations": 34,
+    "completedMigrations": 84,
+    "browserDatabaseUntouched": true
+  },
+  "runtimeImports": "Current production services and real Better Auth loaded",
+  "sourceAfter": {
+    "services/users/user-identity.service.ts": "ceeafbb34c34a6fb92be792a985ad00a52360bb69e45e7f5c483ec137613833b",
+    "lib/security/auth-credentials.ts": "69933b96f64d0bccec1a0b7a6d3ac0091ea164cfd775c4005ed47f37fd130007",
+    "lib/auth.ts": "7f70e475a8c2e2caa4e1c96e03b23ff9c242a91f2e155acdafe6430c73258187",
+    "lib/password.ts": "343d01416bb6fb07ebd8f224322f23817de8c4f410bc79629ccd5c3c540d367e",
+    "lib/security/password-utils.ts": "869c55cd24b0c99d03e67bae08c9673f18ea814fbbd1aab69a9fb1454a931a9b",
+    "services/auth/password-policy.ts": "5d598bacf70b6cad827d9cf30f62252be0083b09714654b4928639e46fca82b7",
+    "lib/security/hibp.ts": "31eedd18507e4d7dc49e8c19fc7bb04dadf98654ac25d04bbab2cdbe06d09dd8",
+    "services/security/public-identity-abuse.service.ts": "1af36d57560a89e4a237d4e5e4db05e6b96f2a92982e4291f4025cbcd6cc17cd",
+    "lib/security/audit-log.ts": "581f21d753c5cb5435cda8ee15d12effd5daef21f479a8849068e613d082935b",
+    "services/accounting/customer-statement-recipient-action.service.ts": "6ada66081f7d005b7a2aa14ccf6cb39222e92b38be47b68e85552bed73176340",
+    "services/accounting/customer-statement-access.service.ts": "cd5d27cd455c4cfe8cdd34340afdd3af4c30b19547e21959a850a8a9865ee091",
+    "services/accounting/customer-statement-token.ts": "279fc0b624b26283c6bbc5751746bbbc65370677d51d5ce84bf4d455cc3fc131",
+    "services/_shared/signed-external-access-token.ts": "91600b0334b5af97a3e8b4469acd43a25457278a7ae514345d0acf623eb48ad0",
+    "services/events/business-event.service.ts": "a1c71eb69a4cedf001c68c5d696df508a69780ecc03ec0139cfaf5d78034ffa7",
+    "prisma/schema.prisma": "b6bc5e364ffb72ae2edba499e9b3739b3a8cbed5306ce06e4fb401cfe9b6f945"
+  },
+  "sourceStable": true,
+  "driverHash": "94d116d1dcc5c3587f4e789dc0c3a4f0fe11c80f330d2e4b682428cc0448d213",
+  "completedAt": "2026-09-05T17:14:25.549Z",
+  "passed": 0,
+  "failed": 0,
+  "status": "READY_READ_ONLY"
+}

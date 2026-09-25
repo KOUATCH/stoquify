@@ -1,5 +1,6 @@
 import { Clock3, Database, GitBranch, ShieldCheck } from "lucide-react"
 
+import { biLocale, biGradeCopy, biCopy } from "@/lib/dashboard/bi-presentation"
 import { EvidenceGradeBadge } from "@/components/evidence/EvidenceGradeBadge"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
@@ -11,14 +12,7 @@ type BIEvidenceBadgeRowProps = {
   freshness: BIFreshness
   provenance?: BIProvenance | null
   className?: string
-}
-
-const trustLabels: Record<BITrustState, string> = {
-  operational: "Operational",
-  posted: "Posted",
-  reconciled: "Reconciled",
-  certified: "Certified",
-  blocked: "Blocked",
+  locale?: string
 }
 
 const trustClasses: Record<BITrustState, string> = {
@@ -35,19 +29,24 @@ export function BIEvidenceBadgeRow({
   freshness,
   provenance,
   className,
+  locale = "en",
 }: BIEvidenceBadgeRowProps) {
   const sourceCount = provenance?.sourceModules.length ?? 0
+  const t = biCopy[biLocale(locale)]
+  const sourceDate = freshness.sourceMaxUpdatedAt ? new Date(freshness.sourceMaxUpdatedAt) : null
+  const validSourceDate = sourceDate && Number.isFinite(sourceDate.getTime()) ? sourceDate : null
+  const freshnessState = freshness.stale && freshness.state === "fresh" ? "stale" : freshness.state
 
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)}>
-      <EvidenceGradeBadge grade={evidenceGrade} />
+      <EvidenceGradeBadge grade={evidenceGrade} locale={locale} />
       <Badge variant="outline" className={cn("gap-1.5 rounded-md", trustClasses[trustState])}>
         <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-        {trustLabels[trustState]}
+        {biGradeCopy[biLocale(locale)][trustState]}
       </Badge>
       <Badge variant="outline" className="gap-1.5 rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
         <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
-        {freshness.state}
+        {t[freshnessState]}
       </Badge>
       {sourceCount > 0 ? (
         <Badge variant="outline" className="gap-1.5 rounded-md border-[var(--dash-border-subtle)] text-[var(--dash-text-soft)]">
@@ -62,8 +61,18 @@ export function BIEvidenceBadgeRow({
           title={provenance.sourceHash}
         >
           <Database className="h-3.5 w-3.5" aria-hidden="true" />
-          Source hash
+          {biCopy[biLocale(locale)].sourceHash}
         </Badge>
+      ) : null}
+      {freshness.stale ? (
+        <div className="w-full min-w-0 rounded-md border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] p-2 text-xs leading-5 text-[var(--dash-text)] [overflow-wrap:anywhere]">
+          <p className="font-semibold">{t.staleSource}</p>
+          {validSourceDate ? (
+            <p>{t.sourceUpdated}: <time dateTime={freshness.sourceMaxUpdatedAt!}>{new Intl.DateTimeFormat(biLocale(locale) === "fr" ? "fr-FR" : "en-GB", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }).format(validSourceDate)} UTC</time></p>
+          ) : <p>{t.sourceTimeMissing}</p>}
+          {freshness.maxAgeMinutes !== null && Number.isFinite(freshness.maxAgeMinutes) && freshness.maxAgeMinutes > 0 ? <p>{t.freshnessLimit}: {freshness.maxAgeMinutes} {t.minutes}</p> : null}
+          <p>{t.staleGuidance}</p>
+        </div>
       ) : null}
     </div>
   )

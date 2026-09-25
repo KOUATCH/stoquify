@@ -77,4 +77,9 @@ describe("analytics financial report authorization", () => {
     expect(mockAssertCanUseOrganization).not.toHaveBeenCalled()
     expect(readModel).not.toHaveBeenCalled()
   })
+  it.each(actions)("rejects a different organization before reading the %s report", async (_name, action, readModel) => {
+    mockAssertCanUseOrganization.mockRejectedValueOnce(new Error("Organization scope denied"))
+    await expect(action("foreign-org", "foreign-location", startDate, endDate)).rejects.toThrow("Organization scope denied")
+    expect(readModel).not.toHaveBeenCalled()
+  })
 })

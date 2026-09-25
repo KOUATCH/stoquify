@@ -93,8 +93,13 @@ async function evaluateAccountingRouteAccess(
         node: (
           <DashboardRouteState
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
-            title={noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
-            message={noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE}
+            title={locale === "fr"
+              ? noActiveOrg ? "Une organisation active est requise" : "Accès à la comptabilité refusé"
+              : noActiveOrg ? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}` : `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`}
+            message={locale === "fr"
+              ? noActiveOrg ? "Actualisez votre session depuis le tableau de bord pour accéder aux données comptables de votre organisation."
+                : "Vos autorisations actuelles ne permettent pas d’ouvrir cet espace. Demandez à un administrateur de vérifier votre accès."
+              : noActiveOrg ? NO_ACTIVE_ORG_MESSAGE : PERMISSION_DENIED_MESSAGE}
             primaryHref={localizePath("/dashboard", locale)}
           />
         ),
@@ -125,8 +130,13 @@ async function evaluateAccountingRouteAccess(
         node: (
           <DashboardRouteState
             kind="locked_module"
-            title={moduleRequirement.moduleLockedTitle ?? `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`}
-            message={moduleRequirement.moduleLockedMessage ?? DEFAULT_MODULE_LOCKED_MESSAGE}
+            title={moduleRequirement.moduleLockedTitle ?? (moduleRequirement.moduleSlug === "close_assurance"
+              ? locale === "fr" ? "L’assurance de clôture est indisponible" : "Close Assurance is not available"
+              : `${surface.title} ${DEFAULT_MODULE_LOCKED_TITLE_SUFFIX}`)}
+            message={moduleRequirement.moduleLockedMessage ?? (moduleRequirement.moduleSlug === "close_assurance"
+              ? locale === "fr" ? "L’accès en lecture à l’assurance de clôture ou à sa dépendance comptable n’est pas disponible. Demandez à un administrateur de vérifier les droits et leur période de validité."
+                : "Read access to Close Assurance or its accounting dependency is unavailable. Ask an administrator to check the grants and their validity periods."
+              : DEFAULT_MODULE_LOCKED_MESSAGE)}
             primaryHref={localizePath("/dashboard", locale)}
           />
         ),

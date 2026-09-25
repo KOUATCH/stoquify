@@ -1,0 +1,61 @@
+# Source provenance
+
+See `source-final.json` for current SHA-256s. Compare initial-manifest changes against `baseline/`, and consult the domain review for files outside that initial manifest. Do not treat the entire dirty Git diff as this run.
+
+| Path | Baseline comparison |
+| --- | --- |
+| `actions/pos/__tests__/cart-write-access.actions.test.ts` | changed |
+| `actions/pos/__tests__/drawer-dashboard.actions.test.ts` | changed |
+| `actions/pos/__tests__/offline-review.actions.test.ts` | changed |
+| `actions/pos/__tests__/receipt-token.actions.test.ts` | changed |
+| `actions/pos/__tests__/session.actions.test.ts` | changed |
+| `actions/pos/__tests__/sync.actions.test.ts` | changed |
+| `actions/pos/__tests__/tender.actions.test.ts` | changed |
+| `actions/pos/__tests__/terminal-management.actions.test.ts` | changed |
+| `actions/pos/cache-revalidation.ts` | not-in-initial-manifest |
+| `actions/pos/cart.actions.ts` | changed |
+| `actions/pos/drawer-dashboard.actions.ts` | changed |
+| `actions/pos/offline-review.actions.ts` | changed |
+| `actions/pos/receipt-token.actions.ts` | changed |
+| `actions/pos/session.actions.ts` | changed |
+| `actions/pos/sync.actions.ts` | changed |
+| `actions/pos/tender.actions.ts` | changed |
+| `actions/pos/terminal-management.actions.ts` | changed |
+| `app/[locale]/(dashboard)/dashboard/pos/pos-route-access.tsx` | changed |
+| `app/[locale]/(dashboard)/dashboard/pos/pos-route-data-access.ts` | changed |
+| `app/api/receipts/[receiptId]/__tests__/route.test.ts` | changed |
+| `app/api/receipts/[receiptId]/route.ts` | changed |
+| `app/digital-receipt/[receiptId]/PrintReceiptButton.tsx` | not-in-initial-manifest |
+| `app/digital-receipt/[receiptId]/__tests__/page.test.tsx` | not-in-initial-manifest |
+| `app/digital-receipt/[receiptId]/not-found.tsx` | not-in-initial-manifest |
+| `app/digital-receipt/[receiptId]/page.tsx` | not-in-initial-manifest |
+| `components/pos/CashDrawerManagementDashboard.tsx` | changed |
+| `components/pos/ProfessionalPOSSystem.tsx` | changed |
+| `components/pos/TerminalManagementDashboard.tsx` | changed |
+| `components/pos/__tests__/ProfessionalPOSSystem.shift-close.test.tsx` | changed |
+| `hooks/posHooks/__tests__/checkout-lifecycle-races.test.tsx` | not-in-initial-manifest |
+| `hooks/posHooks/__tests__/drawer-read-scope.test.tsx` | not-in-initial-manifest |
+| `hooks/posHooks/__tests__/pos-read-scope.test.tsx` | changed |
+| `hooks/posHooks/__tests__/usePosOperations-receipts.test.tsx` | changed |
+| `hooks/posHooks/useDrawerDashboard.ts` | changed |
+| `hooks/posHooks/usePOSCheckoutLifecycle.ts` | changed |
+| `hooks/posHooks/usePOSReadQuery.ts` | changed |
+| `hooks/useCashPaymentHistoryWorkbench.ts` | not-in-initial-manifest |
+| `lib/security/__tests__/middleware-routing.test.ts` | not-in-initial-manifest |
+| `messages/en.json` | changed |
+| `messages/fr.json` | changed |
+| `middleware.ts` | not-in-initial-manifest |
+| `scripts/__tests__/payment-cash-truth-gate.test.js` | not-in-initial-manifest |
+| `scripts/payment-cash-truth-gate.js` | not-in-initial-manifest |
+| `services/pos/__tests__/cash-payment-history.service.test.ts` | changed |
+| `services/pos/__tests__/pos-commit-result.postgres.test.ts` | changed |
+| `services/pos/__tests__/pos-corrections.postgres.test.ts` | not-in-initial-manifest |
+| `services/pos/__tests__/pos-full-commit.postgres.test.ts` | not-in-initial-manifest |
+| `services/pos/__tests__/pos-shift-close.postgres.test.ts` | changed |
+| `services/pos/__tests__/pos.service.test.ts` | changed |
+| `services/pos/__tests__/receipt-public.test.ts` | changed |
+| `services/pos/__tests__/terminal-result-transaction.service.test.ts` | not-in-initial-manifest |
+| `services/pos/cash-payment-history.service.ts` | changed |
+| `services/pos/pos.service.ts` | changed |
+| `services/pos/receipt.service.ts` | changed |
+| `services/pos/terminal-management.service.ts` | changed |

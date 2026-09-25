@@ -10,7 +10,7 @@ import {
 } from "@/lib/security/rbac"
 import type { Locale } from "@/types/bilingual"
 
-import type { PosRouteSurface, PermissionMode } from "./pos-route-data-access"
+import type { PosRouteSurface, PosRouteText, PermissionMode } from "./pos-route-data-access"
 import { getPosRouteSurface } from "./pos-route-data-access"
 
 type PosRouteContext = Awaited<ReturnType<typeof requirePermission>>
@@ -37,6 +37,10 @@ const PERMISSION_DENIED_TITLE_SUFFIX = "is not available for this role"
 
 function getPermissionMode(surface: PosRouteSurface): PermissionMode {
   return surface.permissionMode ?? "single"
+}
+
+function routeText(text: PosRouteText | undefined, locale: Locale) {
+  return typeof text === "string" ? text : text?.[locale]
 }
 
 async function evaluatePosRouteAccess(
@@ -83,10 +87,11 @@ async function evaluatePosRouteAccess(
             kind={noActiveOrg ? "no_active_org" : "permission_denied"}
             title={
               noActiveOrg
-                ? surface.noActiveOrgTitle ?? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}`
-                : surface.permissionDeniedTitle ?? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`
+                ? routeText(surface.noActiveOrgTitle, locale) ?? `${surface.title} ${NO_ACTIVE_ORG_TITLE_SUFFIX}`
+                : routeText(surface.permissionDeniedTitle, locale) ?? `${surface.title} ${PERMISSION_DENIED_TITLE_SUFFIX}`
             }
-            message={noActiveOrg ? surface.noActiveOrgMessage : surface.permissionDeniedMessage}
+            message={routeText(noActiveOrg ? surface.noActiveOrgMessage : surface.permissionDeniedMessage, locale)}
+            locale={locale}
             primaryHref={localizePath(
               noActiveOrg
                 ? surface.noActiveOrgPrimaryHref ?? "/dashboard"

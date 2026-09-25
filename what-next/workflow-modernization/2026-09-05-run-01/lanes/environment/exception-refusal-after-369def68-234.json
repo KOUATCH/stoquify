@@ -1,0 +1,70 @@
+{
+  "at": "2026-09-08T11:16:34.125Z",
+  "run": "369def68-234",
+  "before": false,
+  "checks": [
+    {
+      "name": "changed source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "legacy source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "archived source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "status-changed source refusal and strict approval",
+      "status": "passed"
+    },
+    {
+      "name": "refusal binds changed source and preserves OPEN after stale preview",
+      "status": "passed"
+    },
+    {
+      "name": "maker does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "role does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "fresh does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "expired does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "foreign does not bypass refusal controls",
+      "status": "passed"
+    },
+    {
+      "name": "database proof lookup failure is not a permitted unverified refusal",
+      "status": "passed"
+    },
+    {
+      "name": "concurrent exact refusal converges without duplicate effects",
+      "status": "passed"
+    }
+  ],
+  "sourcesBefore": {
+    "services/purchasing/ap-control.service.ts": "622e5d9fc1ccc2b54754a21aec9416c0f97e571d581c7d42e7ce655a94ba2fe9",
+    "services/purchasing/invoice-match-exception.service.ts": "768845621e29022c5aa9ab160c91dddcd9161f1be01b74f77cb67759c9780d82",
+    "services/purchasing/invoice-match-exception-authority.ts": "ef58645922eb4e3dc53fe2d27d3af69bda25b06d5613606ea626f0ba13fc0ed6",
+    "services/purchasing/invoice-match-exception-contracts.ts": "798ecbd4300321d27bca9d62c9b23bafa8475d4bc9126aeda18268942e9cc13a"
+  },
+  "originalBefore": "fc092d254b2a9f52d01ed122f335c0f9b865a741e3941646eb4490b505f13f2c",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-control.service.ts": "622e5d9fc1ccc2b54754a21aec9416c0f97e571d581c7d42e7ce655a94ba2fe9",
+    "services/purchasing/invoice-match-exception.service.ts": "768845621e29022c5aa9ab160c91dddcd9161f1be01b74f77cb67759c9780d82",
+    "services/purchasing/invoice-match-exception-authority.ts": "ef58645922eb4e3dc53fe2d27d3af69bda25b06d5613606ea626f0ba13fc0ed6",
+    "services/purchasing/invoice-match-exception-contracts.ts": "798ecbd4300321d27bca9d62c9b23bafa8475d4bc9126aeda18268942e9cc13a"
+  },
+  "sourceStable": true
+}

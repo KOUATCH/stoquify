@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-08T20:28:35.239Z",
+  "run": "b80977cf-a6a",
+  "sourcesBefore": {
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/accounting/posting.service.ts": "6978d887319fc82384075de1fa1946eef538ad40762a5577a1ae1da61cfa1df1"
+  },
+  "checks": [
+    "A posting writer holds the period; close waits before preflight and rejects its newly committed pending batch",
+    "When close queues first, the later transactional period check waits and rejects the freshly closed period",
+    "Concurrent period closes produce one close and one retained close audit",
+    "Independent posting checks share the same period; another tenant closes independently",
+    "Cross-tenant period close cannot lock or close another tenant period"
+  ],
+  "scope": "Owned localhost PostgreSQL interleavings using real period-close and period-check services. Synthetic actors and direct service control context, not full public authorization/browser proof. No migrations, messages or live payments.",
+  "originalBefore": "bedb433dc024e97a16badd4cb631feee37a88993bbf43426b374599b26bc4c8e",
+  "passed": true,
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/accounting/periods.service.ts": "6b8730e6e76d4a8414d8ba0b39505813626b895a476226ff095356d14e6988d8",
+    "services/accounting/posting.service.ts": "6978d887319fc82384075de1fa1946eef538ad40762a5577a1ae1da61cfa1df1"
+  },
+  "sourceStable": true
+}

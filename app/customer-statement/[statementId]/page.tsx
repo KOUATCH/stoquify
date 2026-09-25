@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
   title: "Secure customer statement | Stoquify",
-  description: "Review a secure, verified customer statement.",
+  description: "Review a saved customer statement and respond to its sender.",
   robots: {
     index: false,
     follow: false,

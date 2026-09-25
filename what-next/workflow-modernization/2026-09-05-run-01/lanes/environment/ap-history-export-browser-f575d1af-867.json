@@ -1,0 +1,199 @@
+{
+  "at": "2026-09-08T14:57:29.066Z",
+  "run": "f575d1af-867",
+  "sourcesBefore": {
+    "services/purchasing/ap-history.service.ts": "c5ae0394931bb15e72f87bcb60c071d9243da2a152e684aa9fa865b7d743c966",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/purchasing/ap-history-export.service.ts": "9cdcd7f822f804219cd26d6e44392589ded8a4ca48436d621d229589e7a31241",
+    "actions/purchasing/ap-history.actions.ts": "eb714503be7e7ebdacf871e5475656ded5304c75a0dcc503ed6c04e96b811844",
+    "components/purchasing/APHistoryExportDialog.tsx": "7f2d2f83ba995f8ffb12a4a93e109add25c23f52bac00dc1d24133aee0257c81",
+    "components/purchasing/APHistoryWorkbench.tsx": "b80a81533469da23a77ee2ebfa0a12607284a10067bd91415de508391d5955ea",
+    "hooks/useAPHistoryWorkbench.ts": "664d8a4a5a97338e0ba8c65f67566447804725e65fb317aacb47104f1238226b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx": "a7c1a54cc1b988941597ea2e42c667e4b62ec06f0d2a60b63309c2c39f218c20",
+    "messages/en.json": "87e8ffb32f05e39e79f9a2dabdb9ea4051baba291d8dd9a8d250fb4d020b0632",
+    "messages/fr.json": "5751d75c904d7a30c38776114ef31bca3c1a37ac40bb18f7548835cd1d8a0489"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": true,
+      "stages": [
+        "Fresh password assurance, 63-row download from a 50-row page, exact persisted hash/count, formula escaping, currencies and unavailable evidence checked",
+        "Dialog keyboard containment, Escape focus return, mobile and CSS zoom checked",
+        "Transport failure does not announce readiness; retry generates a fresh audited file",
+        "Export permission revocation denies download while read access remains; no new artifact audit"
+      ],
+      "screenshots": [
+        "ap-history-export-en-fresh-auth-f575d1af-867.png",
+        "ap-history-export-en-download-desktop-f575d1af-867.png",
+        "ap-history-export-en-mobile-f575d1af-867.png",
+        "ap-history-export-en-zoom-f575d1af-867.png",
+        "ap-history-export-en-failed-download-f575d1af-867.png",
+        "ap-history-export-en-export-denied-f575d1af-867.png"
+      ],
+      "downloads": [
+        {
+          "file": "ap-history-export-en-first-f575d1af-867.csv",
+          "bytes": 18059,
+          "contentHash": "sha256:f33abe612da28a7b6c2a1307f3914baa56ddc0af24374d1878d138e69c576224",
+          "auditId": "cmtssnsss00v7ma1snkv1nc83",
+          "rowCount": 63
+        },
+        {
+          "file": "ap-history-export-en-retry-f575d1af-867.csv",
+          "bytes": 18059,
+          "contentHash": "sha256:d1242bb09825d1ada8b95142ff3427f56197de3a4573c1de3649cb16607fcc83",
+          "auditId": "cmtsso3ci00v9ma1s2mfoilzf",
+          "rowCount": 63
+        }
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development export including download observation",
+          "ms": 5941
+        },
+        {
+          "name": "Development export including download observation",
+          "ms": 1771
+        }
+      ],
+      "actionSignals": [
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [
+            "OWNED_BUYER"
+          ],
+          "hashes": [
+            "sha256:f33abe612da28a7b6c2a1307f3914baa56ddc0af24374d1878d138e69c576224"
+          ]
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "stages": [
+        "Fresh password assurance, 63-row download from a 50-row page, exact persisted hash/count, formula escaping, currencies and unavailable evidence checked",
+        "Dialog keyboard containment, Escape focus return, mobile and CSS zoom checked",
+        "Transport failure does not announce readiness; retry generates a fresh audited file",
+        "Export permission revocation denies download while read access remains; no new artifact audit"
+      ],
+      "screenshots": [
+        "ap-history-export-fr-fresh-auth-f575d1af-867.png",
+        "ap-history-export-fr-download-desktop-f575d1af-867.png",
+        "ap-history-export-fr-mobile-f575d1af-867.png",
+        "ap-history-export-fr-zoom-f575d1af-867.png",
+        "ap-history-export-fr-failed-download-f575d1af-867.png",
+        "ap-history-export-fr-export-denied-f575d1af-867.png"
+      ],
+      "downloads": [
+        {
+          "file": "ap-history-export-fr-first-f575d1af-867.csv",
+          "bytes": 18085,
+          "contentHash": "sha256:13b5ea21a7380e0013362bae547ad31c8511c911974ec4a28c77c980b5540d44",
+          "auditId": "cmtssoox200vfma1sq9hcvsbi",
+          "rowCount": 63
+        },
+        {
+          "file": "ap-history-export-fr-retry-f575d1af-867.csv",
+          "bytes": 18085,
+          "contentHash": "sha256:e98aaca82557ca7f3cc4a6c16c7c8cd696482334c580740a8dbaf47770d21755",
+          "auditId": "cmtssoyg400vhma1s50ri5wr4",
+          "rowCount": 63
+        }
+      ],
+      "pageErrors": [],
+      "timings": [
+        {
+          "name": "Development export including download observation",
+          "ms": 3073
+        },
+        {
+          "name": "Development export including download observation",
+          "ms": 2169
+        }
+      ],
+      "actionSignals": [
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [
+            "FRESH_AUTH_REQUIRED",
+            "OWNED_BUYER"
+          ],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        },
+        {
+          "status": 200,
+          "codes": [
+            "OWNED_BUYER"
+          ],
+          "hashes": [
+            "sha256:e98aaca82557ca7f3cc4a6c16c7c8cd696482334c580740a8dbaf47770d21755"
+          ]
+        },
+        {
+          "status": 200,
+          "codes": [],
+          "hashes": []
+        }
+      ]
+    }
+  ],
+  "scope": "Owned local test database only, synthetic tenant invoices and CSV downloads; no external payments/messages or live customer data.",
+  "originalBefore": "f71843cc3cc778f23606427cda5409705388d355c75290e0e5768715dc67a2fc",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "services/purchasing/ap-history.service.ts": "c5ae0394931bb15e72f87bcb60c071d9243da2a152e684aa9fa865b7d743c966",
+    "services/purchasing/ap-history-financial.ts": "97df832e287fe20e47ed96f585f999d99980933efb5c9dc3d6fe598b5852747d",
+    "services/purchasing/ap-history-export.service.ts": "9cdcd7f822f804219cd26d6e44392589ded8a4ca48436d621d229589e7a31241",
+    "actions/purchasing/ap-history.actions.ts": "eb714503be7e7ebdacf871e5475656ded5304c75a0dcc503ed6c04e96b811844",
+    "components/purchasing/APHistoryExportDialog.tsx": "7f2d2f83ba995f8ffb12a4a93e109add25c23f52bac00dc1d24133aee0257c81",
+    "components/purchasing/APHistoryWorkbench.tsx": "b80a81533469da23a77ee2ebfa0a12607284a10067bd91415de508391d5955ea",
+    "hooks/useAPHistoryWorkbench.ts": "664d8a4a5a97338e0ba8c65f67566447804725e65fb317aacb47104f1238226b",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/history/page.tsx": "a7c1a54cc1b988941597ea2e42c667e4b62ec06f0d2a60b63309c2c39f218c20",
+    "messages/en.json": "87e8ffb32f05e39e79f9a2dabdb9ea4051baba291d8dd9a8d250fb4d020b0632",
+    "messages/fr.json": "5751d75c904d7a30c38776114ef31bca3c1a37ac40bb18f7548835cd1d8a0489"
+  },
+  "sourceStable": true
+}

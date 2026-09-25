@@ -1,0 +1,186 @@
+{
+  "run": "1ea2f9f7-bb7",
+  "database": "stoquify_local_modern_modules_controls_20260905_01",
+  "startedAt": "2026-09-06T04:46:39.733Z",
+  "sourcesBefore": {
+    "services/users/user-identity.service.ts": "150694e461211b0bfb29e9c69d24b3d5c31142f59e167ecf6912ac2ffd9ac82b",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "checks": [
+    {
+      "name": "two concurrent redemptions create exactly one complete identity and audit",
+      "passed": true,
+      "durationMs": 281,
+      "detail": {
+        "statuses": [
+          409,
+          200
+        ],
+        "invite": "ACCEPTED",
+        "userId": "cmtpbxp2y0007maxoj48m21hr",
+        "users": 1,
+        "accounts": 1,
+        "passwords": 1,
+        "audits": 1
+      }
+    },
+    {
+      "name": "Credential failure rolls back claim and credentials; retry completes once",
+      "passed": true,
+      "durationMs": 192,
+      "detail": {
+        "rollback": {
+          "invite": "PENDING",
+          "userId": null,
+          "users": 0,
+          "accounts": 0,
+          "passwords": 0,
+          "audits": 0
+        },
+        "retry": {
+          "invite": "ACCEPTED",
+          "userId": "cmtpbxp9e000pmaxoio73amsx",
+          "users": 1,
+          "accounts": 1,
+          "passwords": 1,
+          "audits": 1
+        }
+      }
+    },
+    {
+      "name": "Audit failure rolls back claim and credentials; retry completes once",
+      "passed": true,
+      "durationMs": 188,
+      "detail": {
+        "rollback": {
+          "invite": "PENDING",
+          "userId": null,
+          "users": 0,
+          "accounts": 0,
+          "passwords": 0,
+          "audits": 0
+        },
+        "retry": {
+          "invite": "ACCEPTED",
+          "userId": "cmtpbxper0019maxo2dvp88xp",
+          "users": 1,
+          "accounts": 1,
+          "passwords": 1,
+          "audits": 1
+        }
+      }
+    },
+    {
+      "name": "cancel after hashing cannot create an identity",
+      "passed": true,
+      "durationMs": 57,
+      "detail": {
+        "invite": "CANCELLED",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    },
+    {
+      "name": "reissue after hashing cannot create an identity",
+      "passed": true,
+      "durationMs": 62,
+      "detail": {
+        "invite": "PENDING",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    },
+    {
+      "name": "disable after hashing cannot create an identity",
+      "passed": true,
+      "durationMs": 76,
+      "detail": {
+        "invite": "PENDING",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    },
+    {
+      "name": "wildcard after hashing cannot create an identity",
+      "passed": true,
+      "durationMs": 57,
+      "detail": {
+        "invite": "PENDING",
+        "userId": null,
+        "users": 0,
+        "accounts": 0,
+        "passwords": 0,
+        "audits": 0
+      }
+    },
+    {
+      "name": "expired and disabled invitation contexts hide account metadata",
+      "passed": true,
+      "durationMs": 53,
+      "detail": {
+        "expired": {
+          "invite": "EXPIRED",
+          "userId": null,
+          "users": 0,
+          "accounts": 0,
+          "passwords": 0,
+          "audits": 0
+        },
+        "disabled": {
+          "invite": "PENDING",
+          "userId": null,
+          "users": 0,
+          "accounts": 0,
+          "passwords": 0,
+          "audits": 0
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "Synthetic invitations created directly as owned local preconditions; no real invitation email or issuer-delivery claim.",
+    "Actual password hashing/credential writes and public abuse controls are used; HIBP network is blocked so its existing unavailable-network behavior is exercised.",
+    "Fault injection only affects an owned transaction's credential or audit write; it does not disable database constraints. Browser/onboarding proof is separate."
+  ],
+  "originalAuthorityBefore": "45805d7c7de4dc51d366abcf2a04cbfbc9e6520fdeeb605c501c0814f4e15e36",
+  "originalAuthorityAfter": "45805d7c7de4dc51d366abcf2a04cbfbc9e6520fdeeb605c501c0814f4e15e36",
+  "originalAuthorityUnchanged": true,
+  "completedAt": "2026-09-06T04:46:41.017Z",
+  "sourcesAfter": {
+    "services/users/user-identity.service.ts": "150694e461211b0bfb29e9c69d24b3d5c31142f59e167ecf6912ac2ffd9ac82b",
+    "lib/security/auth-credentials.ts": "6df9ea6035e96df80968797e17a556bdaf1b63e4c68309f1dbd5509c7e20ed1d",
+    "services/security/role-grant-policy.service.ts": "caca40c5d6fa5f16805e16b89226a1ddebf4addb59cef23cad457a33500ed9a7",
+    "services/security/public-identity-abuse.service.ts": "3bfda578b90e84a39b7b3b99d7398cc24ce6c044530c55d2b136a0513b9d0a59",
+    "services/auth/password-policy.ts": "6e45ebb0d2516c16ae2c38350b4e2f30a7406771ce197f59230114fdd642be24",
+    "lib/security/hibp.ts": "d34039ed3af4b8060e6b9b3aeac25189e80676f7d7c51f45b2c69a0f0210ef46",
+    "lib/password.ts": "3010e193816de5f45bf810dfa1e9fb7fe961710df85b7edfdd0f4c8c1af6570b",
+    "actions/users/createInvitedUser.ts": "d0b2c293774be46b03c3cc7c0c8eea5880ef9a751e679acae467f990efe9264c",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+  },
+  "sourceStable": true,
+  "network": {
+    "actualFetchRequests": 0,
+    "blockedOrigins": [
+      "https://api.pwnedpasswords.com"
+    ]
+  },
+  "passed": 8,
+  "failed": 0,
+  "driverSha256": "3e72368c3e740f3c3730dc5aceef8fe5b2af99e48268be58aadba28d5cfd3e72"
+}

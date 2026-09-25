@@ -7,52 +7,43 @@ import {
   analyticsToneClass,
 } from "@/components/analytics/dashboard/analytics-dashboard-theme"
 import { Badge } from "@/components/ui/badge"
+import { useLocale, useTranslations } from "next-intl"
 
 interface ReportTrustBannerProps {
   provenance?: ReportProvenance
 }
 
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value))
-}
-
-function freshnessLabel(value: ReportProvenance["freshness"]) {
-  if (value === "CURRENT_AS_OF_GENERATION") return "Current at generation"
-  return "Historical period"
-}
-
 export function ReportTrustBanner({ provenance }: ReportTrustBannerProps) {
+  const locale = useLocale(), t = useTranslations("operationalReports")
+  const date = (value: string, includeTime = false) => new Intl.DateTimeFormat(locale, { dateStyle: "medium", ...(includeTime ? { timeStyle: "short" } : {}), timeZone: provenance?.timezone }).format(new Date(value))
   if (!provenance) {
     return (
       <div className="rounded-lg border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] px-4 py-3 text-sm text-[var(--dash-warning)]">
-        Source status unavailable. Treat this report as unverified until provenance is provided.
+        {t("trustMissing")}
       </div>
     )
   }
 
   return (
-    <div className={`${analyticsRowClass} px-4 py-3`}>
+    <div className={`${analyticsRowClass} min-w-0 px-4 py-3 [overflow-wrap:anywhere]`}>
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline" className={analyticsToneClass("brand")}>{provenance.sourceLabel}</Badge>
-            <Badge variant="outline" className={analyticsToneClass("info")}>{freshnessLabel(provenance.freshness)}</Badge>
-            <Badge variant="outline" className={analyticsToneClass("success")}>{provenance.certificationLabel}</Badge>
+            <Badge variant="outline" className={analyticsToneClass("muted")}>{t("trustSource")}</Badge>
+            <Badge variant="outline" className={analyticsToneClass("info")}>{t(provenance.freshness === "CURRENT_AS_OF_GENERATION" ? "trustCurrent" : "trustHistory")}</Badge>
+            <Badge variant="outline" className={analyticsToneClass("info")}>{t("trustInternal")}</Badge>
           </div>
           <p className={`text-sm ${analyticsMutedTextClass}`}>
-            Period {new Date(provenance.periodStart).toLocaleDateString()} - {new Date(provenance.periodEnd).toLocaleDateString()}
-            {" "}from {provenance.rowCount.toLocaleString()} source rows. Generated {formatDateTime(provenance.generatedAt)}.
+            {t("trustPeriod", { from: date(provenance.periodStart), to: date(provenance.periodEnd), count: provenance.rowCount, at: date(provenance.generatedAt, true) })}
           </p>
           <p className={`text-xs ${analyticsMutedTextClass}`}>
-            Currency: {provenance.currency}. Sources: {provenance.sourceTables.join(", ")}. Filter hash: {provenance.filterHash.slice(0, 12)}.
+            {t("trustDetail", { currency: provenance.currency, sources: provenance.sourceTables.join(", "), hash: provenance.filterHash.slice(0, 12) })}
           </p>
         </div>
         {provenance.knownBlockers.length ? (
           <div className={`max-w-md text-xs ${analyticsMutedTextClass}`}>
-            {provenance.knownBlockers.join("; ")}.
+            {t("trustLimit")}
+            {provenance.knownBlockers.filter(blocker => !["Not a statutory OHADA certified export", "Not signed by Close & Assurance pack controls"].includes(blocker)).map(blocker => <p key={blocker}>{blocker}</p>)}
           </div>
         ) : null}
       </div>

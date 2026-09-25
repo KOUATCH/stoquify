@@ -1,0 +1,219 @@
+{
+  "at": "2026-09-19T13:04:08.715Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-explicit-empty-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-explicit-empty-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "allowed": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-active-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-active-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "suspended",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-suspended-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-suspended-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "expired",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "future",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "missing",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "read-only",
+      "allowed": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-read-only-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-read-only-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "read-only-flag",
+      "allowed": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "required-accounting-suspended",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-required-accounting-suspended-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-required-accounting-suspended-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "recommended-reconciliation-suspended",
+      "allowed": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "stopped-new-work-retained-read",
+      "allowed": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-stopped-new-work-retained-read-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-stopped-new-work-retained-read-fr.png"
+        }
+      ]
+    },
+    {
+      "name": "permission-revoked",
+      "allowed": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-permission-revoked-en.png"
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "browser": true,
+          "screenshot": "digest-close-access-fed8ff8e-57ef-480e-93ef-a12b2bf59dab-permission-revoked-fr.png"
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "rawEvidenceUnchanged": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "e33ae43b8f32db391cf77a0a754af121da52c2ad6f9dec5b1f27539af59218df",
+    "services/daily-habit/daily-habit-source-visibility.ts": "51531444c09a7be74cd8314afc714a994984695b2abc76440082d816e7294784",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/modules/module-catalog.service.ts": "185666fd2ddf1ec9773d77e17d8c654623e74ee5525e4fed501b525a619b5b3e",
+    "services/snapshots/close-readiness-snapshot.service.ts": "ed14eeecfb0eb819045f2843a2fa7575f4a7b13f7be20682d68b17131eca0a0b"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,82 @@
+{
+  "run": "16d9ccaf-678",
+  "at": "2026-09-08T07:57:24.858Z",
+  "sourcesBefore": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "4b97fcc5c28f9b8dee7db190e36d10f46f1bb62d327ae029466379f6769b82ee",
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "eccbc3e874ddba1b3cda57eadc4289e8ecb7f8d71cbb82428fbff0de65feeb38",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "28706a09649516fdc039cdcde97cdd49b632ad2c3d6957bad0a95960d3f25c3d",
+    "messages/en.json": "98e79aea25d6264a7143e0dada19ee41f53b7b68466efbf6dcc671794324b6f1",
+    "messages/fr.json": "a180c0160eb968bfd7a1d1988e881816a99a81ddb710dab20621a6da3a67b4db"
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "passed": false,
+      "stages": [
+        "Draft and file checksum retained after refresh"
+      ],
+      "screenshots": [
+        "invoice-preparation-en-draft-desktop-16d9ccaf-678.png",
+        "invoice-preparation-en-draft-320-16d9ccaf-678.png",
+        "invoice-preparation-en-draft-390-16d9ccaf-678.png",
+        "invoice-preparation-en-draft-768-16d9ccaf-678.png",
+        "invoice-preparation-en-review-desktop-16d9ccaf-678.png",
+        "invoice-preparation-en-failure-16d9ccaf-678.png"
+      ],
+      "timings": [
+        {
+          "name": "Payables to preparation development baseline",
+          "ms": 66688
+        }
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('button', { name: 'Review preparation', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Review preparation', exact: true })\n    117 × locator resolved to <button class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-10 px-4 py-2\">Review preparation</button>\n        - unexpected value \"inactive\"\n"
+    },
+    {
+      "locale": "fr",
+      "passed": false,
+      "stages": [
+        "Draft and file checksum retained after refresh"
+      ],
+      "screenshots": [
+        "invoice-preparation-fr-draft-desktop-16d9ccaf-678.png",
+        "invoice-preparation-fr-draft-320-16d9ccaf-678.png",
+        "invoice-preparation-fr-draft-390-16d9ccaf-678.png",
+        "invoice-preparation-fr-draft-768-16d9ccaf-678.png",
+        "invoice-preparation-fr-review-desktop-16d9ccaf-678.png",
+        "invoice-preparation-fr-failure-16d9ccaf-678.png"
+      ],
+      "timings": [
+        {
+          "name": "Payables to preparation development baseline",
+          "ms": 6889
+        }
+      ],
+      "pageErrors": [],
+      "error": "expect(locator).toBeFocused() failed\n\nLocator:  getByRole('button', { name: 'Vérifier la préparation', exact: true })\nExpected: focused\nReceived: inactive\nTimeout:  60000ms\n\nCall log:\n  - Expect \"to.be.focused\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Vérifier la préparation', exact: true })\n    117 × locator resolved to <button class=\"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-blue-600 text-white shadow hover:bg-blue-700 h-10 px-4 py-2\">Vérifier la préparation</button>\n        - unexpected value \"inactive\"\n"
+    }
+  ],
+  "scope": "Actual owned local application, synthetic approved PO setup, real receiving, invoice preparation, stale state and response-loss recovery. No approval or posting proof.",
+  "originalBefore": "4b9ad6dfbad1a26c9a7ca346cdba60e1255539b17b2647c009a36690e2ba7fe7",
+  "originalUnchanged": true,
+  "sourcesAfter": {
+    "components/purchasing/InvoicePreparationWorkbench.tsx": "4b97fcc5c28f9b8dee7db190e36d10f46f1bb62d327ae029466379f6769b82ee",
+    "services/purchasing/invoice-preparation.service.ts": "170d8452e5138dac0052aaeab87dd75e9b1e5b9443bcae50994d473d6f212502",
+    "services/purchasing/invoice-preparation-authority.ts": "83320be08c92ef042e2c730e5761ff8629b53d8715bb676ca1bd1c6a2f3674a4",
+    "services/purchasing/invoice-preparation-contracts.ts": "59d60021f075aedf11a521435261ef18d2d9b3fa603402b05bcb51be0e3b134e",
+    "actions/purchasing/invoice-preparation.actions.ts": "5c8166dcf9540f849b45359b121489c2066a6213104d0fe63fffe2ebcd4f2842",
+    "actions/purchasing/ap-control.actions.ts": "af146fdb053ef7c5e051d8cd3744d2f0b101b247640607e792160b11d8000650",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/prepare/page.tsx": "b19b7a8930038aa6f1f5815d34a26e41176d3315a3ae2d51703950a9293e79cc",
+    "app/[locale]/(dashboard)/dashboard/purchases/payables/page.tsx": "eccbc3e874ddba1b3cda57eadc4289e8ecb7f8d71cbb82428fbff0de65feeb38",
+    "app/[locale]/(dashboard)/dashboard/purchases/purchases-route-data-access.ts": "28706a09649516fdc039cdcde97cdd49b632ad2c3d6957bad0a95960d3f25c3d",
+    "messages/en.json": "98e79aea25d6264a7143e0dada19ee41f53b7b68466efbf6dcc671794324b6f1",
+    "messages/fr.json": "a180c0160eb968bfd7a1d1988e881816a99a81ddb710dab20621a6da3a67b4db"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,2349 @@
+{
+  "startedAt": "2026-09-05T16:56:40.051Z",
+  "baseURL": "http://127.0.0.1:3107",
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "source": "local-modern-modules-verification",
+  "privateFixtureGuardPassed": true,
+  "productionApproval": false,
+  "businessMutationsRequested": false,
+  "externalBrowserRequestsAllowed": false,
+  "beforeSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/page.tsx",
+      "sha256": "6712a0c01051ee44552aa58749d4637dcc5048f18166c1a631fe6fb3e46ce725"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "components/dashboard/EnhancedEnterpriseDashboard.tsx",
+      "sha256": "26ab26c2afbb7fac08136e77fe658b88caac44e8dd56be552f2583c647e40265"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+    },
+    {
+      "path": "services/dashboard/dashboard-read-model.service.ts",
+      "sha256": "9626f224ab1e882b89ec6ec5f38680194008ab0be2007bbfbfff86fb51a25aee"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "ca426baa0072391a390550c735546c6fe5d031d415c9d2430a6ac2cab81401a0"
+    },
+    {
+      "path": "app/globals.css",
+      "sha256": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "5e10711b9dd0b4cfbc0c320d37f81e63b6f90602841b1373a0eee674df2a29cd"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "ba0b6ce96ef5c706fff415c93c2e8cdb6efaf215f41d9a53caf13394305b4e94"
+    }
+  ],
+  "cases": [
+    {
+      "locale": "en",
+      "route": "dashboard",
+      "fixture": "retailer_en_desktop",
+      "errors": [],
+      "startedAt": "2026-09-05T16:56:45.249Z",
+      "httpStatus": 200,
+      "usefulResultMs": 31737,
+      "headings": [
+        "Today's Operating Truth",
+        "Workspace setup",
+        "Live operating status",
+        "Urgent action queue",
+        "Evidence timeline",
+        "Useful shortcuts"
+      ],
+      "alerts": [],
+      "navigation": [
+        {
+          "role": null,
+          "label": "Dashboard navigation",
+          "text": "qstoquifyEnterprise OSNotifications0Stoquify verification · retailer_en_desktopModule verification administratorLiveModules7Command2DashboardOperating overviewCommand CenterOwner and manager daily command views3Operations2InventoryItems, loss control, stock movements, transfers, and units3SalesCustomers, sales, and POS entry points3Finance & Trust2AccountingLedger, close, reports, and controls5FinanceCash, profitability, payments, and reconciliation8Governance1SettingsCompany, roles, locations, modules, and security3MVModule Verifierretailer_en_desktop@modern-modules.stockflow.test",
+          "links": [
+            {
+              "label": "qstoquifyEnterprise OS",
+              "href": "/en/dashboard"
+            },
+            {
+              "label": "DashboardOperating overview",
+              "href": "/en/dashboard"
+            }
+          ]
+        },
+        {
+          "role": null,
+          "label": "Primary dashboard modules",
+          "text": "Command2DashboardOperating overviewCommand CenterOwner and manager daily command views3Operations2InventoryItems, loss control, stock movements, transfers, and units3SalesCustomers, sales, and POS entry points3Finance & Trust2AccountingLedger, close, reports, and controls5FinanceCash, profitability, payments, and reconciliation8Governance1SettingsCompany, roles, locations, modules, and security3",
+          "links": [
+            {
+              "label": "DashboardOperating overview",
+              "href": "/en/dashboard"
+            }
+          ]
+        },
+        {
+          "role": null,
+          "label": null,
+          "text": "Periodlast 30 daysLocationAll locationsGeneratedSep 5, 05:57 PMOpen owner war room",
+          "links": [
+            {
+              "label": "Open owner war room",
+              "href": "/en/dashboard/owner-war-room"
+            }
+          ]
+        }
+      ],
+      "mainLinks": [
+        {
+          "label": "Open owner war room",
+          "href": "/en/dashboard/owner-war-room"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/settings/company"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/settings/locations"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/settings/roles"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/inventory/items"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/settings/terminals"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/accounting/setup"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/payroll"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/assurance/control-tower"
+        },
+        {
+          "label": "POS0No active POS sessions inside this scope.Operational/ dashboard read model",
+          "href": "/en/dashboard/pos"
+        },
+        {
+          "label": "Stock0No critical stock signal in the dashboard read model.Operational/ dashboard read model",
+          "href": "/en/dashboard/inventory"
+        },
+        {
+          "label": "CashFCFA 0Paid customer payments in the selected period.Operational/ dashboard read model",
+          "href": "/en/dashboard/finance/payments"
+        },
+        {
+          "label": "Suppliers/AP0Pending purchase orders in the dashboard read model.Operational/ dashboard read model",
+          "href": "/en/dashboard/finance/payables"
+        },
+        {
+          "label": "CloseNot availableThis module exists, but its detailed read model is not connected to this dashboard yet.Proof unavailable/ module source pending",
+          "href": "/en/dashboard/accounting/close"
+        },
+        {
+          "label": "PayrollNot availableThis module exists, but its detailed read model is not connected to this dashboard yet.Proof unavailable/ module source pending",
+          "href": "/en/dashboard/payroll"
+        },
+        {
+          "label": "ComplianceNot availableThis module exists, but its detailed read model is not connected to this dashboard yet.Proof unavailable/ module source pending",
+          "href": "/en/dashboard/compliance"
+        },
+        {
+          "label": "Review",
+          "href": "/en/dashboard/inventory/items?stock=reorder"
+        },
+        {
+          "label": "Review",
+          "href": "/en/dashboard/sales?status=open"
+        },
+        {
+          "label": "Review",
+          "href": "/en/dashboard/purchase-orders?status=pending"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/finance/sales"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/finance/profitability"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/finance/payments"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/inventory"
+        },
+        {
+          "label": "Open",
+          "href": "/en/dashboard/purchases"
+        },
+        {
+          "label": "Reorder candidates",
+          "href": "/en/dashboard/inventory/items?stock=reorder"
+        },
+        {
+          "label": "Open sales orders",
+          "href": "/en/dashboard/sales?status=open"
+        },
+        {
+          "label": "Purchase orders to finish",
+          "href": "/en/dashboard/purchase-orders?status=pending"
+        },
+        {
+          "label": "Owner war room",
+          "href": "/en/dashboard/owner-war-room"
+        },
+        {
+          "label": "Open POS",
+          "href": "/en/dashboard/pos"
+        },
+        {
+          "label": "Inventory",
+          "href": "/en/dashboard/inventory"
+        },
+        {
+          "label": "Finance",
+          "href": "/en/dashboard/finance"
+        },
+        {
+          "label": "Payroll",
+          "href": "/en/dashboard/payroll"
+        }
+      ],
+      "observed": true,
+      "completedAt": "2026-09-05T16:57:17.949Z"
+    },
+    {
+      "locale": "en",
+      "route": "modules",
+      "fixture": "retailer_en_desktop",
+      "errors": [],
+      "startedAt": "2026-09-05T16:57:17.949Z",
+      "httpStatus": 200,
+      "usefulResultMs": 9333,
+      "headings": [
+        "Build your workspace",
+        "Configuration preparation",
+        "Start with how you work",
+        "Choose your capabilities",
+        "Your draft"
+      ],
+      "alerts": [
+        ""
+      ],
+      "navigation": [
+        {
+          "role": null,
+          "label": "Dashboard navigation",
+          "text": "qstoquifyEnterprise OSNotifications0Stoquify verification · retailer_en_desktopModule verification administratorLiveModules7Command2DashboardOperating overviewCommand CenterOwner and manager daily command views3Operations2InventoryItems, loss control, stock movements, transfers, and units3SalesCustomers, sales, and POS entry points3Finance & Trust2AccountingLedger, close, reports, and controls5FinanceCash, profitability, payments, and reconciliation8Governance1SettingsCompany, roles, locations, modules, and security3AppearanceData onboardingModulesMVModule Verifierretailer_en_desktop@modern-modules.stockflow.test",
+          "links": [
+            {
+              "label": "qstoquifyEnterprise OS",
+              "href": "/en/dashboard"
+            },
+            {
+              "label": "DashboardOperating overview",
+              "href": "/en/dashboard"
+            },
+            {
+              "label": "Appearance",
+              "href": "/en/dashboard/settings/appearance"
+            },
+            {
+              "label": "Data onboarding",
+              "href": "/en/dashboard/settings/data-onboarding"
+            },
+            {
+              "label": "Modules",
+              "href": "/en/dashboard/settings/modules"
+            }
+          ]
+        },
+        {
+          "role": null,
+          "label": "Primary dashboard modules",
+          "text": "Command2DashboardOperating overviewCommand CenterOwner and manager daily command views3Operations2InventoryItems, loss control, stock movements, transfers, and units3SalesCustomers, sales, and POS entry points3Finance & Trust2AccountingLedger, close, reports, and controls5FinanceCash, profitability, payments, and reconciliation8Governance1SettingsCompany, roles, locations, modules, and security3AppearanceData onboardingModules",
+          "links": [
+            {
+              "label": "DashboardOperating overview",
+              "href": "/en/dashboard"
+            },
+            {
+              "label": "Appearance",
+              "href": "/en/dashboard/settings/appearance"
+            },
+            {
+              "label": "Data onboarding",
+              "href": "/en/dashboard/settings/data-onboarding"
+            },
+            {
+              "label": "Modules",
+              "href": "/en/dashboard/settings/modules"
+            }
+          ]
+        },
+        {
+          "role": null,
+          "label": null,
+          "text": "OrganizationStoquify verification · retailer_en_desktopRequested revision10Active workspace revision10Current state checkedSep 5, 2026, 5:57 PMRefresh current state",
+          "links": []
+        },
+        {
+          "role": null,
+          "label": null,
+          "text": "Your draft7 business capabilities3 shared foundationsA draft is a selection, not an activation or approval.Review configurationSave draftShared foundationsOperating dashboardOrganization settingsAdministrationRequired connectionsFinanceRequired by Payment reconciliationAccountingRequired by Payment reconciliationThis configuration uses existing access. It does not purchase modules or change subscription terms.",
+          "links": []
+        }
+      ],
+      "mainLinks": [
+        {
+          "label": "Open setup",
+          "href": "/en/dashboard/compliance"
+        },
+        {
+          "label": "Open setup",
+          "href": "/en/dashboard/payroll"
+        }
+      ],
+      "observed": true,
+      "completedAt": "2026-09-05T16:57:28.133Z"
+    },
+    {
+      "locale": "fr",
+      "route": "dashboard",
+      "fixture": "retailer_fr_mobile",
+      "errors": [
+        "Invalid or unexpected token"
+      ],
+      "startedAt": "2026-09-05T16:57:29.442Z",
+      "httpStatus": 200,
+      "usefulResultMs": 8435,
+      "headings": [
+        "Verite operationnelle du jour",
+        "Mise en route espace",
+        "Etat vivant",
+        "Actions urgentes",
+        "Chronologie des preuves",
+        "Raccourcis utiles"
+      ],
+      "alerts": [],
+      "navigation": [
+        {
+          "role": null,
+          "label": "Dashboard navigation",
+          "text": "qstoquifyEnterprise OSNotifications0Stoquify verification · retailer_fr_mobileModule verification administratorLiveModules7Command2DashboardOperating overviewCommand CenterOwner and manager daily command views3Operations2InventoryItems, loss control, stock movements, transfers, and units5SalesCustomers, sales, and POS entry points3Finance & Trust2AccountingLedger, close, reports, and controls5FinanceCash, profitability, payments, and reconciliation8Governance1SettingsCompany, roles, locations, modules, and security4MVModule Verifierretailer_fr_mobile@modern-modules.stockflow.test",
+          "links": [
+            {
+              "label": "qstoquifyEnterprise OS",
+              "href": "/fr/dashboard"
+            },
+            {
+              "label": "DashboardOperating overview",
+              "href": "/fr/dashboard"
+            }
+          ]
+        },
+        {
+          "role": null,
+          "label": "Primary dashboard modules",
+          "text": "Command2DashboardOperating overviewCommand CenterOwner and manager daily command views3Operations2InventoryItems, loss control, stock movements, transfers, and units5SalesCustomers, sales, and POS entry points3Finance & Trust2AccountingLedger, close, reports, and controls5FinanceCash, profitability, payments, and reconciliation8Governance1SettingsCompany, roles, locations, modules, and security4",
+          "links": [
+            {
+              "label": "DashboardOperating overview",
+              "href": "/fr/dashboard"
+            }
+          ]
+        },
+        {
+          "role": null,
+          "label": null,
+          "text": "Periode30 derniers joursLieuTous les lieuxGenere5 sept., 17:57Ouvrir war room",
+          "links": [
+            {
+              "label": "Ouvrir war room",
+              "href": "/fr/dashboard/owner-war-room"
+            }
+          ]
+        }
+      ],
+      "mainLinks": [
+        {
+          "label": "Ouvrir war room",
+          "href": "/fr/dashboard/owner-war-room"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/settings/company"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/settings/locations"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/settings/roles"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/inventory/items"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/settings/terminals"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/accounting/setup"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/payroll"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/assurance/control-tower"
+        },
+        {
+          "label": "PDV0Aucune session POS active dans le perimetre.Operational/ modele lecture dashboard",
+          "href": "/fr/dashboard/pos"
+        },
+        {
+          "label": "Stock0Aucun signal stock critique dans le modele lecture.Operational/ modele lecture dashboard",
+          "href": "/fr/dashboard/inventory"
+        },
+        {
+          "label": "Tresorerie0 FCFAPaiements clients payes sur la periode.Operational/ modele lecture dashboard",
+          "href": "/fr/dashboard/finance/payments"
+        },
+        {
+          "label": "Fournisseurs/AP0Commandes fournisseurs en attente dans le modele lecture.Operational/ modele lecture dashboard",
+          "href": "/fr/dashboard/finance/payables"
+        },
+        {
+          "label": "ClotureNon disponibleCe module existe, mais son modele lecture detaille n'alimente pas encore ce dashboard.Proof unavailable/ source module a connecter",
+          "href": "/fr/dashboard/accounting/close"
+        },
+        {
+          "label": "PaieNon disponibleCe module existe, mais son modele lecture detaille n'alimente pas encore ce dashboard.Proof unavailable/ source module a connecter",
+          "href": "/fr/dashboard/payroll"
+        },
+        {
+          "label": "ConformiteNon disponibleCe module existe, mais son modele lecture detaille n'alimente pas encore ce dashboard.Proof unavailable/ source module a connecter",
+          "href": "/fr/dashboard/compliance"
+        },
+        {
+          "label": "Revoir",
+          "href": "/fr/dashboard/inventory/items?stock=reorder"
+        },
+        {
+          "label": "Revoir",
+          "href": "/fr/dashboard/sales?status=open"
+        },
+        {
+          "label": "Revoir",
+          "href": "/fr/dashboard/purchase-orders?status=pending"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/finance/sales"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/finance/profitability"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/finance/payments"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/inventory"
+        },
+        {
+          "label": "Ouvrir",
+          "href": "/fr/dashboard/purchases"
+        },
+        {
+          "label": "Reorder candidates",
+          "href": "/fr/dashboard/inventory/items?stock=reorder"
+        },
+        {
+          "label": "Open sales orders",
+          "href": "/fr/dashboard/sales?status=open"
+        },
+        {
+          "label": "Purchase orders to finish",
+          "href": "/fr/dashboard/purchase-orders?status=pending"
+        },
+        {
+          "label": "War room owner",
+          "href": "/fr/dashboard/owner-war-room"
+        },
+        {
+          "label": "Ouvrir POS",
+          "href": "/fr/dashboard/pos"
+        },
+        {
+          "label": "Inventaire",
+          "href": "/fr/dashboard/inventory"
+        },
+        {
+          "label": "Finance",
+          "href": "/fr/dashboard/finance"
+        },
+        {
+          "label": "Paie",
+          "href": "/fr/dashboard/payroll"
+        }
+      ],
+      "mobileOverflow": {
+        "viewport": 390,
+        "content": 390
+      },
+      "observed": true,
+      "completedAt": "2026-09-05T16:57:41.446Z"
+    },
+    {
+      "locale": "fr",
+      "route": "modules",
+      "fixture": "retailer_fr_mobile",
+      "errors": [
+        "Invalid or unexpected token"
+      ],
+      "startedAt": "2026-09-05T16:57:41.446Z",
+      "httpStatus": 200,
+      "failure": "expect(locator).toHaveAttribute(expected) failed\n\nLocator: getByTestId('module-composition-workbench')\nExpected: \"true\"\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.have.attribute.value\" with timeout 60000ms\n  - waiting for getByTestId('module-composition-workbench')\n    56 × locator resolved to <div aria-busy=\"true\" data-hydrated=\"false\" data-configuring=\"true\" data-testid=\"module-composition-workbench\" class=\"dashboard-landing-theme dark min-h-screen overflow-x-hidden module-composition_workbench__oJ0Gd\">…</div>\n       - unexpected value \"false\"\n",
+      "completedAt": "2026-09-05T16:58:51.490Z"
+    }
+  ],
+  "blockedExternalOrigins": [],
+  "sourceState": {
+    "branch": "codex/migration-control-plane-release-2026-08-29",
+    "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+    "workingTreeEntries": 310,
+    "workingTreeStatusSha256": "852f8172e1b34b480a7d2440dc39d549e6ec754a816c337ee9725360d2222fa9"
+  },
+  "inventoryBefore": [
+    {
+      "organization": {
+        "id": "org_modules_legacy_en_desktop",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "EN",
+        "deletedAt": null
+      },
+      "fixture": "legacy_en_desktop",
+      "users": [
+        {
+          "id": "usr_modules_legacy_en_desktop",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read"
+              ],
+              "organizationId": "org_modules_legacy_en_desktop"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 3,
+        "activeRevision": 1,
+        "selectedModules": [
+          "accounting",
+          "finance",
+          "reports",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "dashboard",
+          "finance",
+          "reports",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": []
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "system_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "cash_drawer",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "close_assurance",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "commercial_agents",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "compliance",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "content",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "system_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "inventory",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payroll",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "pos",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "presence",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "purchasing",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "system_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": null,
+      "counts": {
+        "location": 0,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 0
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_retailer_en_desktop",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "EN",
+        "deletedAt": null
+      },
+      "fixture": "retailer_en_desktop",
+      "users": [
+        {
+          "id": "usr_modules_denied",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_DENIED",
+              "permissions": [
+                "dashboard.read"
+              ],
+              "organizationId": "org_modules_retailer_en_desktop"
+            }
+          ]
+        },
+        {
+          "id": "usr_modules_retailer_en_desktop",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read"
+              ],
+              "organizationId": "org_modules_retailer_en_desktop"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 10,
+        "activeRevision": 10,
+        "selectedModules": [
+          "cash_drawer",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "cash_drawer",
+          "dashboard",
+          "finance",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": [
+          "inventory"
+        ]
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "cash_drawer",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "inventory",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "pos",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 1,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_retailer_fr_mobile",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "FR",
+        "deletedAt": null
+      },
+      "fixture": "retailer_fr_mobile",
+      "users": [
+        {
+          "id": "usr_modules_retailer_fr_mobile",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read",
+                "TRANSFERS_READ",
+                "inventory.stock.transfer",
+                "inventory.levels.read",
+                "locations.read"
+              ],
+              "organizationId": "org_modules_retailer_fr_mobile"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 7,
+        "activeRevision": 7,
+        "selectedModules": [
+          "cash_drawer",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "cash_drawer",
+          "dashboard",
+          "finance",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": [
+          "inventory"
+        ]
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "cash_drawer",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "inventory",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "pos",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 3,
+        "customer": 0,
+        "supplier": 0,
+        "item": 1,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_service_en_desktop",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "EN",
+        "deletedAt": null
+      },
+      "fixture": "service_en_desktop",
+      "users": [
+        {
+          "id": "usr_modules_service_en_desktop",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read"
+              ],
+              "organizationId": "org_modules_service_en_desktop"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 4,
+        "activeRevision": 4,
+        "selectedModules": [
+          "accounting",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "dashboard",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": []
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 0,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_service_fr_mobile",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "FR",
+        "deletedAt": null
+      },
+      "fixture": "service_fr_mobile",
+      "users": [
+        {
+          "id": "usr_modules_service_fr_mobile",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read",
+                "accounting.accounts.read",
+                "accounting.journal.create"
+              ],
+              "organizationId": "org_modules_service_fr_mobile"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 8,
+        "activeRevision": 8,
+        "selectedModules": [
+          "accounting",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "dashboard",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": [
+          "accounting"
+        ]
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 0,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    }
+  ],
+  "inventoryAfter": [
+    {
+      "organization": {
+        "id": "org_modules_legacy_en_desktop",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "EN",
+        "deletedAt": null
+      },
+      "fixture": "legacy_en_desktop",
+      "users": [
+        {
+          "id": "usr_modules_legacy_en_desktop",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read"
+              ],
+              "organizationId": "org_modules_legacy_en_desktop"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 3,
+        "activeRevision": 1,
+        "selectedModules": [
+          "accounting",
+          "finance",
+          "reports",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "dashboard",
+          "finance",
+          "reports",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": []
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "system_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "cash_drawer",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "close_assurance",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "commercial_agents",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "compliance",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "content",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "system_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "inventory",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payroll",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "pos",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "presence",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "purchasing",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "legacy_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "system_default",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": null,
+      "counts": {
+        "location": 0,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 0
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_retailer_en_desktop",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "EN",
+        "deletedAt": null
+      },
+      "fixture": "retailer_en_desktop",
+      "users": [
+        {
+          "id": "usr_modules_denied",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_DENIED",
+              "permissions": [
+                "dashboard.read"
+              ],
+              "organizationId": "org_modules_retailer_en_desktop"
+            }
+          ]
+        },
+        {
+          "id": "usr_modules_retailer_en_desktop",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read"
+              ],
+              "organizationId": "org_modules_retailer_en_desktop"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 10,
+        "activeRevision": 10,
+        "selectedModules": [
+          "cash_drawer",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "cash_drawer",
+          "dashboard",
+          "finance",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": [
+          "inventory"
+        ]
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "cash_drawer",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "inventory",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "pos",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 1,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_retailer_fr_mobile",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "FR",
+        "deletedAt": null
+      },
+      "fixture": "retailer_fr_mobile",
+      "users": [
+        {
+          "id": "usr_modules_retailer_fr_mobile",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read",
+                "TRANSFERS_READ",
+                "inventory.stock.transfer",
+                "inventory.levels.read",
+                "locations.read"
+              ],
+              "organizationId": "org_modules_retailer_fr_mobile"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 7,
+        "activeRevision": 7,
+        "selectedModules": [
+          "cash_drawer",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "cash_drawer",
+          "dashboard",
+          "finance",
+          "inventory",
+          "payment_reconciliation",
+          "pos",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": [
+          "inventory"
+        ]
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "cash_drawer",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "inventory",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "pos",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 3,
+        "customer": 0,
+        "supplier": 0,
+        "item": 1,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_service_en_desktop",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "EN",
+        "deletedAt": null
+      },
+      "fixture": "service_en_desktop",
+      "users": [
+        {
+          "id": "usr_modules_service_en_desktop",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read"
+              ],
+              "organizationId": "org_modules_service_en_desktop"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 4,
+        "activeRevision": 4,
+        "selectedModules": [
+          "accounting",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "dashboard",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": []
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 0,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    },
+    {
+      "organization": {
+        "id": "org_modules_service_fr_mobile",
+        "onboardingSource": "local-modern-modules-verification",
+        "isActive": true,
+        "countryCode": "CM",
+        "currency": "XAF",
+        "defaultLocale": "FR",
+        "deletedAt": null
+      },
+      "fixture": "service_fr_mobile",
+      "users": [
+        {
+          "id": "usr_modules_service_fr_mobile",
+          "isActive": true,
+          "isLocked": false,
+          "roles": [
+            {
+              "code": "MODULES_LOCAL_ADMIN",
+              "permissions": [
+                "dashboard.read",
+                "MANAGE_SYSTEM_SETTINGS",
+                "system.settings.update",
+                "inventory.items.read",
+                "sales.read",
+                "customers.read",
+                "OPERATE_POS",
+                "finance.read",
+                "finance.dashboard.read",
+                "finance.cash-drawer.read",
+                "CASH_DRAWER_READ",
+                "accounting.reports.read",
+                "accounting.journal.read",
+                "payments.reconciliation.read",
+                "reports.read",
+                "accounting.accounts.read",
+                "accounting.journal.create"
+              ],
+              "organizationId": "org_modules_service_fr_mobile"
+            }
+          ]
+        }
+      ],
+      "configuration": {
+        "revision": 8,
+        "activeRevision": 8,
+        "selectedModules": [
+          "accounting",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales"
+        ],
+        "activeModules": [
+          "accounting",
+          "administration",
+          "dashboard",
+          "finance",
+          "payment_reconciliation",
+          "reports",
+          "sales",
+          "settings"
+        ],
+        "newWorkStoppedModules": [
+          "accounting"
+        ]
+      },
+      "grants": [
+        {
+          "moduleSlug": "accounting",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "administration",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "analytics",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "dashboard",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "finance",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "payment_reconciliation",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "reports",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "sales",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        },
+        {
+          "moduleSlug": "settings",
+          "status": "active",
+          "readOnly": false,
+          "startsAt": null,
+          "endsAt": null
+        }
+      ],
+      "accounting": {
+        "setupStatus": "READY",
+        "accountingEnabled": true
+      },
+      "counts": {
+        "location": 0,
+        "customer": 0,
+        "supplier": 0,
+        "item": 0,
+        "salesOrder": 0,
+        "purchaseOrder": 0,
+        "journalEntry": 0,
+        "payrollEmployee": 0,
+        "paymentTransaction": 0,
+        "providerAccount": 1
+      }
+    }
+  ],
+  "businessAndAuthoritySnapshotUnchanged": true,
+  "afterSources": [
+    {
+      "path": "next.config.mjs",
+      "sha256": "02fb9e080430eac700afa5dafa4faa2f170eaee303a1207662fac5cffd19ff19"
+    },
+    {
+      "path": "prisma/schema.prisma",
+      "sha256": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0"
+    },
+    {
+      "path": "scripts/modern-modules-local-verification.js",
+      "sha256": "fc2da4e39950d965c1041c40d08a3ad4bc74a66a45b30141c24ac7952a3bbc75"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/page.tsx",
+      "sha256": "6712a0c01051ee44552aa58749d4637dcc5048f18166c1a631fe6fb3e46ce725"
+    },
+    {
+      "path": "app/[locale]/(dashboard)/dashboard/settings/modules/page.tsx",
+      "sha256": "d1b7c2202d57b997ce0292ac9c3bac8ffb615162a266fd95a626a4f5a1212ac4"
+    },
+    {
+      "path": "components/dashboard/EnhancedEnterpriseDashboard.tsx",
+      "sha256": "26ab26c2afbb7fac08136e77fe658b88caac44e8dd56be552f2583c647e40265"
+    },
+    {
+      "path": "components/modules/ModuleCompositionWorkbench.tsx",
+      "sha256": "ca1e5fde1230c5716e6eebbe4353e1456b7e57fc65373499beb0c900c8672b90"
+    },
+    {
+      "path": "services/dashboard/dashboard-read-model.service.ts",
+      "sha256": "9626f224ab1e882b89ec6ec5f38680194008ab0be2007bbfbfff86fb51a25aee"
+    },
+    {
+      "path": "services/modules/module-composition.service.ts",
+      "sha256": "123c912ff168d2e6f9e47ae7010b192fdb6397b30d1e747bdd35448f8eecffdf"
+    },
+    {
+      "path": "config/sidebar.ts",
+      "sha256": "ca426baa0072391a390550c735546c6fe5d031d415c9d2430a6ac2cab81401a0"
+    },
+    {
+      "path": "app/globals.css",
+      "sha256": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68"
+    },
+    {
+      "path": "messages/en.json",
+      "sha256": "2ace6fd20e92e92cb0c6848840e80c0b334d7c10b6bc437dbd71c06d7ae2375a"
+    },
+    {
+      "path": "messages/fr.json",
+      "sha256": "ba0b6ce96ef5c706fff415c93c2e8cdb6efaf215f41d9a53caf13394305b4e94"
+    }
+  ],
+  "sourceStable": false,
+  "completedAt": "2026-09-05T16:58:51.887Z"
+}

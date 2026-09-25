@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-15T13:22:02.814Z",
+  "sourceBefore": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "f7683a38ccac82f7797c6e5f6f335c548211a7309c070434fd0024d464d9784f"
+  },
+  "browser": [],
+  "passed": false,
+  "error": "expect(locator).toBeDisabled() failed\n\nLocator: getByRole('button', { name: 'Command', exact: true })\nExpected: disabled\nTimeout: 60000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.disabled\" with timeout 60000ms\n  - waiting for getByRole('button', { name: 'Command', exact: true })\n",
+  "sourceAfter": {
+    "services/bi/bi-contracts.ts": "e19a1149adbcf6369ce8800ba26e9a1169ae8c96728beb1eeababf04613fa872",
+    "services/bi/bi-evidence-adapter.service.ts": "c512c8dbba67354627b2617b01a0298e02aae95a589c46c3cd2851b377ccf9ba",
+    "services/daily-habit/daily-habit-digest.service.ts": "b89b4d046110e9389633ffcc9a9e834a7317d623e47510f6a1e20f7fc17dc9fa",
+    "components/bi/BIRiskOpportunityRadar.tsx": "a2067a81841d882f560ab0bce19563049aad68cf855e739904e80f2bd2c6be0a",
+    "components/bi/BICommandModeTabs.tsx": "67f6c9bf0ba76db5f8f29ce3eec8ed75daa8d5590232c7a5b1f7a82f0953693c",
+    "components/daily-habit/DailyHabitDigestDashboard.tsx": "f7683a38ccac82f7797c6e5f6f335c548211a7309c070434fd0024d464d9784f"
+  },
+  "sourceStable": true
+}

@@ -1,0 +1,16 @@
+
+ROUTE /en/dashboard/compliance
+FILE app/[locale]/(dashboard)/dashboard/compliance/page.tsx
+COMPONENTS app/[locale]/(dashboard)/dashboard/compliance/page.tsx; components/compliance/ComplianceCenterDashboard.tsx
+DEPENDENCIES app/[locale]/(dashboard)/dashboard/compliance/compliance-route-access.tsx; actions/compliance/compliance-center.actions.ts; lib/utils.ts; hooks/compliance/useComplianceCenter.ts
+REDIRECTS []
+HEADINGS Compliance Center | Fiscal document queue | Adapter health | Authority submission queue
+PROPS Compliance access denied | Compliance data unavailable | Fiscal documents | Certified | Open submissions | Submission exceptions | Active adapters | Search documents | No fiscal documents found | The selected scope has no fiscal documents in the compliance kernel yet. | No adapter configuration found | Configure a reviewed sandbox or manual portal adapter before production certification claims. | Country pack | Capability | Credential | Official specification | Independent review | Open queue | Search submissions | No open submissions found | The selected scope has no authority submission work requiring operator attention.
+CONTROLS All countries (Select, {"onValueChange":"setCountryCode"}, components/compliance/ComplianceCenterDashboard.tsx:411)
+All statuses (Select, {"onValueChange":"setDocumentStatus"}, components/compliance/ComplianceCenterDashboard.tsx:431)
+Refresh (Button, {"type":"\"button\"","onClick":"refreshComplianceCenter","disabled":"query.isFetching"}, components/compliance/ComplianceCenterDashboard.tsx:447)
+Retry (Button, {"type":"\"button\"","onClick":"refreshComplianceCenter"}, components/compliance/ComplianceCenterDashboard.tsx:477)
+Search documents (Input, {"onChange":"(event) => onSearch(event.target.value)"}, components/compliance/ComplianceCenterDashboard.tsx:597)
+All adapter statuses (Select, {"onValueChange":"onStatus"}, components/compliance/ComplianceCenterDashboard.tsx:699)
+All statuses (Select, {"onValueChange":"onStatus"}, components/compliance/ComplianceCenterDashboard.tsx:814)
+Search submissions (Input, {"onChange":"(event) => onSearch(event.target.value)"}, components/compliance/ComplianceCenterDashboard.tsx:829)

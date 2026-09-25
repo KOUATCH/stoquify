@@ -1,0 +1,67 @@
+{
+  "run": "ecf899ed-9fc",
+  "database": "stoquify_local_registration_20260906_01",
+  "startedAt": "2026-09-06T16:21:46.884Z",
+  "sourcesBefore": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "707e80cb91e0f2953091c0a81989e98581d6b91a2ef499cec2312ead6c04f0a3",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "defectsReproduced": [],
+      "screenshots": [
+        "en-account-management-before-failure-ecf899ed-9fc.png"
+      ],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Other active sessions revoked: 999', { exact: true })\nExpected: visible\nTimeout: 90000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 90000ms\n  - waiting for getByText('Other active sessions revoked: 999', { exact: true })\n"
+    },
+    {
+      "locale": "fr",
+      "defectsReproduced": [],
+      "screenshots": [
+        "fr-account-management-before-failure-ecf899ed-9fc.png"
+      ],
+      "error": "expect(locator).toBeVisible() failed\n\nLocator: getByText('Autres sessions actives revoquees: 999', { exact: true })\nExpected: visible\nTimeout: 90000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"to.be.visible\" with timeout 90000ms\n  - waiting for getByText('Autres sessions actives revoquees: 999', { exact: true })\n"
+    }
+  ],
+  "workflowPassed": false,
+  "limitations": [
+    "Read-only reproduction with synthetic accounts; no session revocation or profile mutation is submitted."
+  ],
+  "graphHints": [
+    {
+      "file": "graphify-out/graph_components.json",
+      "nodes": [
+        {
+          "id": "userdropdownmenu_tsx",
+          "community": 199,
+          "label": "UserDropdownMenu.tsx"
+        }
+      ]
+    },
+    {
+      "file": "graphify-out/graph_app.json",
+      "nodes": [
+        {
+          "id": "locale_dashboard_dashboard_settings_security_page_tsx",
+          "community": 10,
+          "label": "page.tsx"
+        }
+      ]
+    }
+  ],
+  "completedAt": "2026-09-06T16:27:08.862Z",
+  "sourcesAfter": {
+    "components/UserDropdownMenu.tsx": "9e146edd445371c396fb01914ec442706643577006328e21041cc8115c77186f",
+    "components/dashboard/Navbar.tsx": "462e9ed917242bf6558817a50c4bdfd413766ed8fb15b29a9dbad80158b02ac6",
+    "app/[locale]/(dashboard)/dashboard/settings/security/page.tsx": "707e80cb91e0f2953091c0a81989e98581d6b91a2ef499cec2312ead6c04f0a3",
+    "services/security/security-settings.service.ts": "1dc701edf320dd0103e9997eeb3b0251c250217f316a98e6b67d773223400279",
+    "lib/security/auth-session.ts": "d72bbbd03dda9045a973a0a0a9ba7d60309d8b4626d56325cd07959c32adeaae"
+  },
+  "sourceStable": true,
+  "driverSha256": "def7c8e04116ac5c9393b90ec316db1efee1e4143318521162a1db91c0ed1eee",
+  "reproduced": 0
+}

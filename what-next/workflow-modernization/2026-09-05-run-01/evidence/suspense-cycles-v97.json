@@ -1,0 +1,106 @@
+{
+  "at": "2026-09-09T09:18:39.618Z",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "baseline": "evidence/source-baseline-v97.json",
+  "sources": {
+    "prisma/migrations/20260909093000_add_suspense_posting_cycles/migration.sql": "cd5d20a342504c2f1d27c8644c3d41a8f80019d56a0a459678166df6ff8f119f",
+    "prisma/migration-catalog-manifest.json": "1b1eb11ec91b862ed11bd91b5f65025e69e71e973fbd8889c8fcfca87474de9f",
+    "services/accounting/posting.service.ts": "9a4ca1019d85480a4178b40ed37a275e17e03d94b9c88b8e6db82cc8f1bdfa3b",
+    "services/reconciliation/payment-suspense-workflow.service.ts": "3551bb8ae88a0f488ace137816567c8ce963d8647ca2519a32b1db4d8f78d10a",
+    "services/reconciliation/payment-suspense-ledger.service.ts": "e331773906e6e3aece499dbd3bb7fcc7454ca6a87ed607603047944ec93bc291",
+    "prisma/schema.prisma": "5689f340eaf805a347a8884fee6d662f0236f5eda74d070537073f45a2b370e8",
+    "app/[locale]/(dashboard)/dashboard/accounting/journals/page.tsx": "6a85e9b2fd864c2e74e78abeffd8a0383046c65fd549a551110375d916345f59",
+    "services/accounting/journals.service.ts": "1bbb29f93c825ecca5f68d0aed5dd79295b70271b2eab92aae4590e1891ab36c",
+    "actions/accounting/journals.actions.ts": "74af364d5795365dc391c2a0bacfda856dc784ffed17368b60f3032b5969d735",
+    "messages/en.json": "1505eae9425cc69e78f6037932fec4796582cd37642da37dcd56636e2f73becd",
+    "messages/fr.json": "4351b35713e7f42520917b6e8153b4bc72e3b4b004ff0e95ccd6f1acf59c347f",
+    "services/accounting/postings/post-sale.test.ts": "de58c3c9a9f2b39a13f9d20904894390038680004d2db2470fd2c48ec8403ab6",
+    "services/payroll/__tests__/payroll-control.service.test.ts": "8f60aeee129132419a0da707d9843ffcfa6594b06d16a065b0653ffa389eb472",
+    "services/accounting/postings/post-payment.test.ts": "154b2793020c54b0badc9d0966f65b45fc1f628f10c83b43ba9eb4fec27b8ee2",
+    "services/accounting/__tests__/posting-batch-identity.test.ts": "6472c843d0ef071cfb3497de1b26fa2e57641d238edba9546fed7eda3b4e7d60",
+    "services/purchasing/__tests__/ap-control.service.test.ts": "ac8a328f8f864be0436d50fa9b5fcc5b620e9204c47df0b6e53b8cb4beb6c1f0",
+    "services/accounting/postings/post-reversal.test.ts": "69aa138346bec88dc88323fb6e470a4a7fd0bb7c6809edfe1fea774c870f963e",
+    "services/accounting/__tests__/customer-settlement.service.test.ts": "f1dfc30ba58d3e229d7dec19a66785d5c959597896ab31b8903e1826fd071e46",
+    "services/accounting/__tests__/customer-settlement-reversal.service.test.ts": "dea70554e133517287873a0ea767b5033a299ebef7c6f980ee6ee2f8dcfa90e9",
+    "services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts": "edd7b4055b86a4c5dee2413a1b506027d912016ece253cc63912bb1114cc673c",
+    "services/inventory/__tests__/inventory-adjustment.service.test.ts": "1b52254495fb3194360da684f3facba764045a669ac6318b43d20c5a924bae26",
+    "services/accounting/__tests__/posting.service.test.ts": "a889b931cc8590897f1f9fe5e2dc60eefe5d608f7001ff2470678bd6ed35c7d1",
+    "services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts": "e8ae92da3ebfe5af661c81cc5666e7fd10925dc71e0e3e41e2906ef4762ff0fa",
+    "services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts": "41832c491673908ecd1a44d88d9d512a0ec9e91a4f25ddafaedb15e450115c7f"
+  },
+  "commands": {
+    "tests": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath \"services/accounting/postings/post-sale.test.ts\" \"services/payroll/__tests__/payroll-control.service.test.ts\" \"services/accounting/postings/post-payment.test.ts\" \"services/accounting/__tests__/posting-batch-identity.test.ts\" \"services/purchasing/__tests__/ap-control.service.test.ts\" \"services/accounting/postings/post-reversal.test.ts\" \"services/accounting/__tests__/customer-settlement.service.test.ts\" \"services/accounting/__tests__/customer-settlement-reversal.service.test.ts\" \"services/reconciliation/__tests__/payment-suspense-workflow.service.test.ts\" \"services/inventory/__tests__/inventory-adjustment.service.test.ts\" \"services/accounting/__tests__/posting.service.test.ts\" \"services/inventory/__tests__/inventory-adjustment-reversal.service.test.ts\" \"services/reconciliation/__tests__/payment-suspense-ledger.service.test.ts\" --json --outputFile=\"what-next/workflow-modernization/2026-09-05-run-01/evidence/suspense-cycles-tests-v97.json\"",
+    "rehearsal": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-suspense-cycle-migration-v97.cjs",
+    "apply": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/apply-suspense-cycle-migration-v97.cjs",
+    "runtime": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-suspense-cycle-runtime-v97.cjs",
+    "browser": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-suspense-cycle-browser-v97.cjs",
+    "generate": "node node_modules/prisma/build/index.js generate",
+    "schema": "node node_modules/prisma/build/index.js validate",
+    "catalog": "node scripts/prisma-migration-catalog-gate.js --mode write --out what-next/workflow-modernization/2026-09-05-run-01/evidence/suspense-cycle-catalog-v97.json",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit --pretty false",
+    "lint": "node node_modules/eslint/bin/eslint.js services/accounting/posting.service.ts services/accounting/__tests__/posting-batch-identity.test.ts"
+  },
+  "tests": {
+    "file": "evidence/suspense-cycles-tests-v97.json",
+    "session": 33818,
+    "passed": 192,
+    "suites": 13
+  },
+  "migration": {
+    "rehearsalFile": "lanes/environment/suspense-cycle-migration-v97-bd798055-3ed.json",
+    "applyFile": "lanes/environment/suspense-cycle-apply-v97-b158b081-f10.json",
+    "ownedOnly": true,
+    "checks": 6
+  },
+  "runtime": {
+    "file": "lanes/environment/suspense-cycle-runtime-v97-c50557bf-22e.json",
+    "checks": 5
+  },
+  "browser": {
+    "file": "lanes/environment/suspense-cycle-v97-browser-03f56319-c39.json",
+    "session": 49600,
+    "screenshots": "evidence/suspense-cycles-v97-screenshots",
+    "sourceStable": true,
+    "originalUnchanged": true
+  },
+  "typecheck": {
+    "session": 36232,
+    "exitCode": 0,
+    "earlierFailure": {
+      "session": 45996,
+      "reason": "Next-generated files disappeared during app restart"
+    }
+  },
+  "schema": {
+    "exitCode": 0
+  },
+  "lint": {
+    "exitCode": 0,
+    "files": 2
+  },
+  "catalog": {
+    "file": "evidence/suspense-cycle-catalog-v97.json",
+    "status": "ready"
+  },
+  "previousGoalTurn": "progress: v96 posting identity conflict fix",
+  "wholeWorkflowComplete": false,
+  "coverage": {
+    "discoveredWorkflows": 229,
+    "completeWorkflowsVerified": 0,
+    "sourceCandidateCounts": {
+      "sourceFiles": 2783,
+      "tests": 982,
+      "pages": 159,
+      "routeHandlers": 18,
+      "actionSources": 168,
+      "backgroundCandidates": 33,
+      "uiControlCandidates": 2374,
+      "excludedFiles": 47,
+      "workflowsVerified": 0,
+      "workflowDenominator": null
+    },
+    "unmappedEntrySources": 209,
+    "interpretation": "Provisional semantic workflow denominator grows with discovery. No route/export/control count establishes workflow completion."
+  }
+}

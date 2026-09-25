@@ -1,0 +1,82 @@
+{
+  "run": "334a6bcf-9ba",
+  "startedAt": "2026-09-06T17:54:26.606Z",
+  "sourcesBefore": {
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "components/dashboard/Navbar.tsx": "159e5a897611d164c019c97495d8da29fbebcfebc34a569cd48a300588de4ef9",
+    "components/settings/SelfProfile.tsx": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+  },
+  "checks": [
+    {
+      "locale": "en",
+      "passed": true,
+      "screenshots": [
+        "en-self-profile-display-menu-320-334a6bcf-9ba.png",
+        "en-self-profile-display-menu-768-334a6bcf-9ba.png",
+        "en-self-profile-display-menu-1440-334a6bcf-9ba.png",
+        "en-self-profile-display-theme-toggled-334a6bcf-9ba.png",
+        "en-self-profile-display-text-200-percent-334a6bcf-9ba.png"
+      ],
+      "avatar": [
+        {
+          "color": "rgb(2, 8, 23)",
+          "background": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "color": "rgb(255, 255, 255)",
+          "background": "rgb(47, 125, 246)"
+        }
+      ],
+      "widths": [
+        320,
+        768,
+        1440
+      ],
+      "keyboardThemeToggleAndReturn": true,
+      "textEnlargementReflow": true,
+      "durationMs": 17348
+    },
+    {
+      "locale": "fr",
+      "passed": true,
+      "screenshots": [
+        "fr-self-profile-display-menu-320-334a6bcf-9ba.png",
+        "fr-self-profile-display-menu-768-334a6bcf-9ba.png",
+        "fr-self-profile-display-menu-1440-334a6bcf-9ba.png",
+        "fr-self-profile-display-theme-toggled-334a6bcf-9ba.png",
+        "fr-self-profile-display-text-200-percent-334a6bcf-9ba.png"
+      ],
+      "avatar": [
+        {
+          "color": "rgb(2, 8, 23)",
+          "background": "rgba(0, 0, 0, 0)"
+        },
+        {
+          "color": "rgb(255, 255, 255)",
+          "background": "rgb(47, 125, 246)"
+        }
+      ],
+      "widths": [
+        320,
+        768,
+        1440
+      ],
+      "keyboardThemeToggleAndReturn": true,
+      "textEnlargementReflow": true,
+      "durationMs": 7360
+    }
+  ],
+  "scope": "Read-only final menu display and reflow checks. Sign-in creates only owned synthetic sessions. CSS text enlargement is not native browser zoom or assistive-technology certification.",
+  "completedAt": "2026-09-06T17:54:52.195Z",
+  "sourcesAfter": {
+    "components/UserDropdownMenu.tsx": "f6280085889d1bb6e73300d9005a41b1711da576ab17bcbd07b4adf38d3281a7",
+    "components/dashboard/Navbar.tsx": "159e5a897611d164c019c97495d8da29fbebcfebc34a569cd48a300588de4ef9",
+    "components/settings/SelfProfile.tsx": "326c95f04a2b8f0c2d1817cda9cac03b0acc1f8a80f1cec86f7f4d4929320b5c",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "jest.setup.ts": "a678e3e6f665b07734487ae10601509ef4af4b14a47de9fef4cbeb6144b83494"
+  },
+  "sourceStable": true,
+  "driverSha256": "b324aa6d37d2fccb0c6d3c536f26c3de1420af2c7d76d418543877b71fc1aa59"
+}

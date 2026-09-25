@@ -1,0 +1,105 @@
+{
+  "recordedAt": "2026-09-05T20:46:36.142Z",
+  "scope": "Manual reconciliation allocation, approval and recovery; whole workflow incomplete",
+  "branch": "codex/migration-control-plane-release-2026-08-29",
+  "commit": "a05a41ef66cd5d98fd69ae3df18225795f912232",
+  "sourceBaseline": "evidence/source-baseline-v7.json",
+  "sources": {
+    "services/reconciliation/payment-reconciliation-manual-match.service.ts": "48ec09fc74321baa5d24d35bb132daaed6da7abb4bf1d5d238bf8b517d8c8bff",
+    "services/reconciliation/payment-reconciliation-manual-read.service.ts": "50333d251f63323c2862ffd4715d70a1c483cb8a45bbe9b6895dac84a41b12aa",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "4ffff0ca2bf75aca40979a115328bd2060caa8c2ee0c7c4f7bc6bf63bc26b38c",
+    "services/reconciliation/payment-reconciliation-dashboard.service.ts": "b161b7887b0e70a8ef65b0d5044e4ad2c8bef36b63423ca0f74d71f480e1be13",
+    "actions/payments/reconciliation.actions.ts": "d2b66dba25ca896ebddcc03a322b1b504b9d7ab843ceb673288031e0718cf4a4",
+    "actions/payments/__tests__/reconciliation.actions.test.ts": "f9e077e1043d2eac779f8b0415577848d6e9bd07af92730d482e0e6b824cbe0d",
+    "services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts": "62d170aa06993effd6cdcf1bc4b9146c72bc58196adee2ac2c3086c61766f873",
+    "services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts": "14e76923770814b0577626c0d3626de72d2d9d033400d93f2e363e73e7d0b600",
+    "hooks/payments/usePaymentReconciliationDashboard.ts": "945f52356a85512f80d7d790240a2e846cd066487aa06b721b9e2198fedc4a30",
+    "hooks/__tests__/useManualMatchWorkflow.test.tsx": "8a54b15d2270c4643c21657939ade12beaaaa3e3dd298703b7571e4edb6b6679",
+    "components/finance/PaymentReconciliationWorkbench.tsx": "526a402e36513d27dd63dcd013ba87a968d1b2ac376f29318b323fabc47bd888",
+    "components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx": "d740ee58d2a3fa4362235b6380cda6c0c857b56e92cb4562e56f0037b4974a96",
+    "messages/en.json": "ea6e0806916ef3083bdccf269b0b56948035604c972f522be26e58df742b4fa9",
+    "messages/fr.json": "c06debbf46e9439fa5df2211fa48629651031ebb658802ddfc924dad3be51cee"
+  },
+  "baseline": {
+    "file": "evidence/reconciliation-manual-before.json",
+    "passed": 5,
+    "failed": 29,
+    "terminalChunk": "bf4ece"
+  },
+  "tests": {
+    "file": "evidence/reconciliation-manual-after-06.json",
+    "passed": 147,
+    "failed": 0,
+    "suites": 11,
+    "seconds": 9.642,
+    "command": "node node_modules/jest/bin/jest.js --runInBand --runTestsByPath services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts services/reconciliation/__tests__/payment-reconciliation-auto-match.test.ts services/payments/__tests__/mobile-money-hmac.adapter.test.ts services/payments/__tests__/provider-event.service.test.ts services/payments/__tests__/statement-import.service.test.ts services/reconciliation/__tests__/payment-reconciliation-certification.service.test.ts services/modules/__tests__/module-reconciliation-obligations.service.test.ts actions/payments/__tests__/reconciliation.actions.test.ts hooks/__tests__/useManualMatchWorkflow.test.tsx components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx --json --outputFile=what-next/workflow-modernization/2026-09-05-run-01/evidence/reconciliation-manual-after-06.json",
+    "terminalChunk": "2e5fff"
+  },
+  "lint": {
+    "command": "node node_modules/eslint/bin/eslint.js services/reconciliation/payment-reconciliation-manual-match.service.ts services/reconciliation/payment-reconciliation-manual-read.service.ts services/reconciliation/payment-reconciliation-run.service.ts services/reconciliation/payment-reconciliation-dashboard.service.ts actions/payments/reconciliation.actions.ts actions/payments/__tests__/reconciliation.actions.test.ts services/reconciliation/__tests__/payment-reconciliation-manual-match.test.ts services/reconciliation/__tests__/payment-reconciliation-run.service.test.ts hooks/payments/usePaymentReconciliationDashboard.ts hooks/__tests__/useManualMatchWorkflow.test.tsx components/finance/PaymentReconciliationWorkbench.tsx components/finance/__tests__/PaymentReconciliationWorkbench.test.tsx",
+    "exitCode": 0,
+    "terminalChunk": "da1729"
+  },
+  "typecheck": {
+    "command": "npm run typecheck",
+    "exitCode": 0,
+    "session": 36609,
+    "terminalChunk": "43b000"
+  },
+  "postgres": {
+    "file": "lanes/environment/reconciliation-manual-run-f03ebb7afd2b.json",
+    "passed": 8,
+    "failed": 0,
+    "command": "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-reconciliation-manual.cjs run",
+    "terminalChunk": "23ed3e",
+    "sourceStable": true
+  },
+  "browser": [
+    {
+      "file": "lanes/environment/manual-browser-browser-52cadf1a.json",
+      "passed": 2,
+      "failed": 0,
+      "terminalChunk": "d5bbfa",
+      "scope": "Genuine loss/retry and approval before inline-notification correction; historical UI hashes retained"
+    },
+    {
+      "file": "lanes/environment/manual-browser-recovery-fd139788.json",
+      "passed": 2,
+      "failed": 0,
+      "terminalChunk": "45c5c5",
+      "scope": "Current UI: actual refusal, preserved draft, replacement and independent approval with retained86.00 total per locale; reflow and scoped axe",
+      "sourceStable": true
+    }
+  ],
+  "browserCommands": [
+    "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-manual-browser.cjs prepare",
+    "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-manual-browser.cjs browser",
+    "node what-next/workflow-modernization/2026-09-05-run-01/lanes/environment/verify-manual-browser.cjs recovery"
+  ],
+  "runtime": {
+    "executable": "C:\\Users\\J COMPUTER\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "application": "http://127.0.0.1:3107",
+    "sourceStable": true,
+    "existingAuthorityUnchanged": true
+  },
+  "accessibility": {
+    "scope": "Manual lane only",
+    "axeViolations": 0,
+    "axePassedRules": 15,
+    "incomplete": [
+      "color-contrast"
+    ],
+    "nativeZoomVerified": false,
+    "screenReaderVerified": false
+  },
+  "failedAttempts": [
+    "evidence/reconciliation-manual-ui-after-01.json was not produced: uncaught wrong translation namespace; terminal005f97 later confirms corrected25/25",
+    "evidence/reconciliation-manual-after-03.json: nonexistent adapter path,100 tests passed,1 suite failed",
+    "evidence/reconciliation-manual-after-04.json: missing test mock resets,2 failed/114passed",
+    "lanes/environment/manual-browser-prepare-f5da3b0e.json: provider-code uniqueness failure, retained partial synthetic data",
+    "Earlier typecheck session11088/chunke83248: generic return inference errors corrected before current pass"
+  ],
+  "build": "Earlier full build failed Windows standalone symlink packaging; no full-build/release pass claimed",
+  "completeWorkflowVerified": false,
+  "certification": false
+}

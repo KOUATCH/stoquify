@@ -1,0 +1,148 @@
+{
+  "recordedAt": "2026-09-24T03:46:08.003Z",
+  "note": "The after scan predates the final optional-error-code guard. This task manifest records the final edited files; line counts are unchanged by that guard. Other concurrent changes are not attributed to this task.",
+  "applicationLineDelta": -1745,
+  "files": [
+    {
+      "file": "hooks/useCashPaymentHistoryWorkbench.ts",
+      "category": "application",
+      "before": {
+        "file": "hooks/useCashPaymentHistoryWorkbench.ts",
+        "category": "application",
+        "lines": 193,
+        "bytes": 7854,
+        "sha256": "b59fc6680cce2abc0bce5fe09d7984c463ef647cc56f9ff7e01c0dacc74fab7f",
+        "typecheckRoot": true
+      },
+      "after": {
+        "lines": 211,
+        "bytes": 9604,
+        "sha256": "f03a12cbccf5cf28277c8b088645fc1033352b883e7aa7aae6db8763a61db0b7"
+      },
+      "lineDelta": 18
+    },
+    {
+      "file": "services/pos/cash-payment-history.service.ts",
+      "category": "application",
+      "before": {
+        "file": "services/pos/cash-payment-history.service.ts",
+        "category": "application",
+        "lines": 648,
+        "bytes": 23314,
+        "sha256": "ad512ee4825f928b04efd2f75b4da74a5870ea0130edb4b01c0b23b23705cb57",
+        "typecheckRoot": true
+      },
+      "after": {
+        "lines": 662,
+        "bytes": 24102,
+        "sha256": "78c0e579a2317a5ac850d21e633ad17f006b0f7f86278e97b841301c61b5eeb1"
+      },
+      "lineDelta": 14
+    },
+    {
+      "file": "components/finance/CashPaymentHistoryWorkbench.tsx",
+      "category": "application",
+      "before": {
+        "file": "components/finance/CashPaymentHistoryWorkbench.tsx",
+        "category": "application",
+        "lines": 385,
+        "bytes": 20694,
+        "sha256": "72de3ca04d39b6d4e5ca7bde3bc8f713ec0aeed74f5148a76f783480ee55534b",
+        "typecheckRoot": true
+      },
+      "after": {
+        "lines": 391,
+        "bytes": 20864,
+        "sha256": "0890e0258040483e326ee345adbfe9a0a0bf1e4df4a60e294bd7b66021f9e27c"
+      },
+      "lineDelta": 6
+    },
+    {
+      "file": "services/leakage/pos-cash-shortage-production-activation-preflight.ts",
+      "category": "application",
+      "before": {
+        "file": "services/leakage/pos-cash-shortage-production-activation-preflight.ts",
+        "category": "application",
+        "lines": 10857,
+        "bytes": 696744,
+        "sha256": "73fbd148d43684857ad6ba7a54714b5300fbc9055caf13e57c2568f81bfc9d7e",
+        "typecheckRoot": true
+      },
+      "after": {
+        "lines": 9074,
+        "bytes": 634877,
+        "sha256": "e0836a69aff6b64767601425a3b83f706ad5260fc992a231975e641738b5b41b"
+      },
+      "lineDelta": -1783
+    },
+    {
+      "file": "hooks/__tests__/useCashPaymentHistoryWorkbench.scope.test.tsx",
+      "category": "tests",
+      "before": null,
+      "after": {
+        "lines": 123,
+        "bytes": 5998,
+        "sha256": "e25534cea8ca9c45c9b1b48cf570e4bb9e2800347bbeb690258f4f808757bf39"
+      },
+      "lineDelta": 123
+    },
+    {
+      "file": "hooks/__tests__/useCashPaymentHistoryWorkbench.test.ts",
+      "category": "tests",
+      "before": {
+        "file": "hooks/__tests__/useCashPaymentHistoryWorkbench.test.ts",
+        "category": "tests",
+        "lines": 47,
+        "bytes": 1694,
+        "sha256": "3d2ea2d9022242777a74113365d73aa74a280c4151ed1a48be5e909e39b7078a",
+        "typecheckRoot": false
+      },
+      "after": {
+        "lines": 48,
+        "bytes": 1769,
+        "sha256": "aa7dade2c0ae1939fca5f8001499aa8dbb5647e1405210dcb47b17943378de74"
+      },
+      "lineDelta": 1
+    },
+    {
+      "file": "services/pos/__tests__/cash-payment-history.service.test.ts",
+      "category": "tests",
+      "before": {
+        "file": "services/pos/__tests__/cash-payment-history.service.test.ts",
+        "category": "tests",
+        "lines": 217,
+        "bytes": 8063,
+        "sha256": "556eba915b8e7ccc4b275bfb33c7b5c832ffe0ab5b2c39cf0697c3350eb1f55c",
+        "typecheckRoot": false
+      },
+      "after": {
+        "lines": 339,
+        "bytes": 16103,
+        "sha256": "41f62d4fa024e5281eaf3d64b98ee9b514430be11e10a4552c4a9582956115d3"
+      },
+      "lineDelta": 122
+    }
+  ],
+  "observedConcurrentApplicationChanges": [
+    {
+      "file": "actions/pos/session.actions.ts",
+      "lineDelta": -10
+    },
+    {
+      "file": "actions/pos/tender.actions.ts",
+      "lineDelta": -10
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/pos/pos-route-access.tsx",
+      "lineDelta": 5
+    },
+    {
+      "file": "app/[locale]/(dashboard)/dashboard/pos/pos-route-data-access.ts",
+      "lineDelta": 1
+    },
+    {
+      "file": "services/pos/receipt.service.ts",
+      "lineDelta": 13
+    }
+  ]
+}

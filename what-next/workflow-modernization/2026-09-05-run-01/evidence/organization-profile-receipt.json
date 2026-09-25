@@ -1,0 +1,155 @@
+{
+  "recordedAt": "2026-09-06T10:17:52.638Z",
+  "baseline": "evidence/source-baseline-v22.json",
+  "sources": {
+    "services/organization/organization-profile-input.ts": "2695de2ead0eee23bf6b7ae19d98c54038dfd08707da5f1ea32b38c705111a9e",
+    "services/organization/organization-profile-update.service.ts": "fc11107c21f08a5f394596ab014637135464819d7cd9ca8583e8f9307a4284a7",
+    "services/organization/organization-settings.service.ts": "1e5ca31bcb23cdda3ba0a48e2399972bb3e528716deba7db9b7d243e0f36c9bb",
+    "services/organization/organization-read.service.ts": "8b42420cf3d81fc65ba4b1d93fc8116893eb476a0a79350c8ab36751787b4ad3",
+    "actions/organization/organization-settings-actions.ts": "7fad736216e08d456329f9e5b5749a477a48cc81fac62ddbbcb56fe85ff2103b",
+    "lib/security/rbac-permissions.ts": "ef00afb66edd8015f7e3603e06abd5276d0a5c416ce6d02acb219c4b2f2652a0",
+    "services/security/step-up-auth.service.ts": "f2e3770b7b01982f9a17e5ee8328d56f3d07e44ab7bd68e23e34c4fbb6e2bed8",
+    "prisma/schema.prisma": "b8f21ae09ffdff28a5535f17ccbef55f1959ed24a70ae5439db178c0053c33a0",
+    "hooks/useOrganizationSettings.ts": "376e7c0d338531227ba66b1521e35aa00ca11ee001f1e60813b849201c802c73",
+    "components/settings/OrganizationSettingsForm.tsx": "76f07f0614b3235b90d82cb4948c1a9352a8162a932c1f25549739fe2fd9cb54",
+    "app/[locale]/(dashboard)/dashboard/settings/company/page.tsx": "aa78f1f474b2bf9b974bcd222e728872124b6ec314377436c36f27b3985ced85",
+    "components/ui/select.tsx": "7ef0812b5c194d01300e67fe2330b8ef95268ae5b1683d665f42636d91d75fab",
+    "app/globals.css": "15a3bcaeb80559524a6ce1a8f980fe707cd5ad3e872745ba9438accffd8ebc68",
+    "app/api/v1/organisations/route.ts": "99c1c268608b1efca7f63c81995e720a807e4439437baae16e8ba9f1dc1ebb0d"
+  },
+  "tests": {
+    "file": "evidence/organization-profile-regression-06.json",
+    "passed": 74,
+    "failed": 0,
+    "suites": 7,
+    "exitCode": 0,
+    "chunk": "d87b4d"
+  },
+  "typecheck": {
+    "exitCode": 0,
+    "chunk": "0e3704"
+  },
+  "lint": {
+    "files": 12,
+    "exitCode": 0,
+    "chunk": "749eab"
+  },
+  "diffCheck": {
+    "exitCode": 0,
+    "chunk": "04b57c"
+  },
+  "serviceBoundary": {
+    "file": "evidence/organization-profile-boundaries.json",
+    "surfaces": 5,
+    "activeViolations": 0,
+    "exitCode": 0,
+    "chunk": "627570"
+  },
+  "postgres": {
+    "file": "lanes/environment/organization-profile-b2ec1639-8c1.json",
+    "passed": 18,
+    "failed": 0,
+    "scope": "Current unchanged service/action/security/schema bindings. UI bindings in this earlier receipt are historical; the final browser receipt binds the revised UI."
+  },
+  "browser": {
+    "file": "lanes/environment/organization-profile-browser-browser-cdd4771d-fd2.json",
+    "passed": 2,
+    "failed": 0,
+    "scope": "EN/FR denied/read-only/edit/actual step-up/stale merge/transport recovery; three new audited saves per locale"
+  },
+  "screenshots": [
+    {
+      "file": "evidence/organization-profile/en-organization-profile-denied-cdd4771d-fd2.png",
+      "sha256": "3a7f2ecadac3ccd932b6b619845c81e6acc4909c45a008a94e1b16688aabebe3"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-read-only-cdd4771d-fd2.png",
+      "sha256": "f00c2821d4ba855d663214b9be377982f2b5e93d212018c39bb3bdba1249510f"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-ready-cdd4771d-fd2.png",
+      "sha256": "c56da194f26e4972009415f50e05ecb33e758c50101e6b61b9f2e99b060bab3f"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-regional-options-cdd4771d-fd2.png",
+      "sha256": "0a5c01f6883ba353d4c18cf6785f83dc10144d6d2e044940c3e3baa8ec4d50e1"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-review-cdd4771d-fd2.png",
+      "sha256": "b23d37f571dd00eb4ae07c4e95507462b31a5c4ff29aa8354605c1b2f86c6de8"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-fresh-auth-required-cdd4771d-fd2.png",
+      "sha256": "601264806f6b074a9ad2f2dfc842df6e6c002648d2f39335e4c17e87528a4bb1"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-saved-cdd4771d-fd2.png",
+      "sha256": "78e8969f7558ac74fc8f057a1f3dc91930c77bd9686148b881fc42aab5f2b164"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-stale-draft-cdd4771d-fd2.png",
+      "sha256": "d9ff34828bc01c19513dc02b4872fa4e62249b6c17843ca4ed2f84e403fac68a"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-compare-cdd4771d-fd2.png",
+      "sha256": "c7ef30e95ca60e3786ad4abad8b962535bb5f489e717a606b777068299404c36"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-transport-recovery-cdd4771d-fd2.png",
+      "sha256": "c32afee16d4560a7b8493070f032f88a5db84bd70c2df9d8900484b0d0945d95"
+    },
+    {
+      "file": "evidence/organization-profile/en-organization-profile-recovered-cdd4771d-fd2.png",
+      "sha256": "ad98468cbcefe9ab049b5f627103f802b379e7ac4a9c1c2e7493268df4be05b7"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-denied-cdd4771d-fd2.png",
+      "sha256": "c1094cb4f1644a8fd7b9212675dc235955d37a4cc3ae46c2c26d9cfa6153584a"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-read-only-cdd4771d-fd2.png",
+      "sha256": "b0d6eb3327792fadf349b97c9cb02715dc7682a352f5d1d528a18df71252f062"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-ready-cdd4771d-fd2.png",
+      "sha256": "eaa82c3deb09fdbc2f25d1c6bee8cf01db491c4a1d3b046b43baf613443d17f3"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-regional-options-cdd4771d-fd2.png",
+      "sha256": "49659fb0cbcf9b7ccbd2e39c0f8e44733b8465094174f6d2da9e43f008b46485"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-review-cdd4771d-fd2.png",
+      "sha256": "c14f94405db93f02a71ba9f164437e248c77357f7d997e866dca13dda4ecd6b2"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-fresh-auth-required-cdd4771d-fd2.png",
+      "sha256": "9b379f4b27f9a3034b9bc538cdc5a7f844e6e7f84c110b0721b6e8e4898a8d0e"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-saved-cdd4771d-fd2.png",
+      "sha256": "6168eb5cf8a5a2f10ac9f6817e7ccb6e1275d4f47f5d52c946603e34da0ced3b"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-stale-draft-cdd4771d-fd2.png",
+      "sha256": "3821dbeef4f66a57074deaefecc63cebde5b8507246b9b1a5e35b7a44a861c7e"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-compare-cdd4771d-fd2.png",
+      "sha256": "c9545c27368014ee0e24a2d5a9ba855cbcc4e03ca8e25f64f16be7d8e2d89884"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-transport-recovery-cdd4771d-fd2.png",
+      "sha256": "6c94eeb2d4fbf8f761a2d04243a34399a2e7c274aec67140224f4274a42c00a0"
+    },
+    {
+      "file": "evidence/organization-profile/fr-organization-profile-recovered-cdd4771d-fd2.png",
+      "sha256": "5f9432a7962050de426ad0abb4a2a403c64053d5c10c03f1a28f3536a2734ad8"
+    }
+  ],
+  "liveEmailsSent": 0,
+  "productionMutations": 0,
+  "migrations": 0,
+  "currencyMigrationImplemented": false,
+  "completeWorkflowVerified": false
+}

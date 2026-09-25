@@ -1,0 +1,69 @@
+{
+  "at": "2026-09-13T11:17:46.918Z",
+  "scope": "Owned PostgreSQL; synthetic provider statements and setup only, no provider authentication or professional approval evidence. Service-only import/review helper; no browser claim.",
+  "sourcesBefore": {
+    "services/payments/provider-operations.service.ts": "c17e8e71302fb76f809650d654a4e2cf32d66cbb23298ccca542a889231ac6d6",
+    "services/payments/provider-operation-evidence.ts": "69b47823cdcbd13cc962ec0c00f412b5fdd8e2067da18510c75b50122803f3b9",
+    "services/payments/statement-import.service.ts": "1e66cd632527ebdb0b71277c9db98c17184c154ac2921cdc2699f6c9ce18da33",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "checks": [
+    {
+      "name": "concurrent import, unsigned handoff, exact replay and denied authority/tenant/changed content",
+      "passed": true,
+      "elapsedMs": 879,
+      "result": {
+        "intentId": "71be27c1-275b-46a2-bab5-7eef787f8f8c",
+        "fileHash": "6bed05f029cf349c0fe5f69ad78ab5dcb56431cac02d798247f1acf770de33c3",
+        "businessDate": "2026-09-13T00:00:00.000Z",
+        "stage": "REVIEW_REQUIRED",
+        "statementFileId": "cmtzpznfs000fma0gppyelmty",
+        "runId": "cmtzpznlv000sma0gnhe8y61s",
+        "currentStatus": "READY_FOR_SIGNOFF",
+        "reviewPath": "/dashboard/finance/reconciliation?reviewRun=cmtzpznlv000sma0gnhe8y61s",
+        "signingPerformed": false
+      },
+      "state": {
+        "files": 1,
+        "runs": 1,
+        "signed": 0,
+        "journals": 0
+      }
+    },
+    {
+      "name": "actual retained import after injected run failure and safe retry",
+      "passed": true
+    },
+    {
+      "name": "recovered committed reconciliation after injected response loss",
+      "passed": true
+    },
+    {
+      "name": "concurrent duplicate rejection retains exactly one exception without import",
+      "passed": true
+    },
+    {
+      "name": "new-work stop denies new import while retained duplicate evidence remains readable",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "sourcesAfter": {
+    "services/payments/provider-operations.service.ts": "c17e8e71302fb76f809650d654a4e2cf32d66cbb23298ccca542a889231ac6d6",
+    "services/payments/provider-operation-evidence.ts": "69b47823cdcbd13cc962ec0c00f412b5fdd8e2067da18510c75b50122803f3b9",
+    "services/payments/statement-import.service.ts": "1e66cd632527ebdb0b71277c9db98c17184c154ac2921cdc2699f6c9ce18da33",
+    "services/reconciliation/payment-reconciliation-run.service.ts": "a8ed1c0ef0d1e03c9ce396b0c2fcace290296229faf67ab05cca3a69d0403656",
+    "services/modules/module-admission.service.ts": "962c8354e384d0eb0ea5608d867e1a79e7636bc35f03e3dfa90bbd30bf638a2b",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d"
+  },
+  "sourceStable": true,
+  "organizations": [
+    "workflow_provider_review_5d85a27d-68ef-431c-ae20-05c1e8131a38_normal",
+    "workflow_provider_review_5d85a27d-68ef-431c-ae20-05c1e8131a38_foreign",
+    "workflow_provider_review_5d85a27d-68ef-431c-ae20-05c1e8131a38_partial",
+    "workflow_provider_review_5d85a27d-68ef-431c-ae20-05c1e8131a38_lost",
+    "workflow_provider_review_5d85a27d-68ef-431c-ae20-05c1e8131a38_duplicate"
+  ]
+}

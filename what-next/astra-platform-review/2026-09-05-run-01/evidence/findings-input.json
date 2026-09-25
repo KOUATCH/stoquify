@@ -1,0 +1,702 @@
+[
+  {
+    "id": "F01",
+    "domain": "IAM",
+    "severity": "high",
+    "title": "RBAC accepted cookie-cached sessions after revocation",
+    "status": "verified",
+    "sourceRefs": [
+      {
+        "path": "lib/security/rbac.ts",
+        "needle": "async function getBetterAuthSession"
+      },
+      {
+        "path": "lib/auth.ts",
+        "needle": "cookieCache"
+      }
+    ],
+    "observedBehavior": "The shared RBAC session lookup did not bypass Better Auth's five-minute cookie cache. The new revoked-session regression failed before the correction.",
+    "impact": "A holder of an otherwise valid cached session could retain ordinary access after its backing session was revoked, until cache expiry. Fresh-auth paths had additional checks.",
+    "correction": "Force disableCookieCache:true at the shared RBAC boundary. Current user, organization and permission checks still apply.",
+    "acceptance": "Revoked authority returns no RBAC context before user lookup; active sessions still load current permissions; authority failure denies access.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "The shared RBAC session lookup did not bypass Better Auth's five-minute cookie cache. The new revoked-session regression failed before the correction.",
+    "alternativesAndTradeoffs": "A shorter cookie cache reduces the revocation window but does not remove it. A live authority lookup closes that window at the cost of a session-store read on protected access.",
+    "dependencies": [],
+    "effortEstimate": "implemented",
+    "changeRisk": "low; adds a live session-store read and therefore latency/load",
+    "rollback": "If session-store latency becomes unacceptable, optimize the live lookup or introduce verified invalidation; do not restore cached authority for revoked sessions.",
+    "relatedBlockers": [
+      "X01"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/regression-before-fixes-tests.json",
+      "evidence/corrected-security-finance-tests.json"
+    ],
+    "references": [
+      "https://better-auth.com/docs/concepts/session-management"
+    ],
+    "prerequisites": "A previously issued valid cached session is presented after its backing record is revoked.",
+    "affectedAssets": "Tenant data and ordinary authenticated operations."
+  },
+  {
+    "id": "F02",
+    "domain": "Storage/privacy",
+    "severity": "high",
+    "title": "Tenant photo uploads also have a public delivery path",
+    "status": "partially_verified",
+    "sourceRefs": [
+      {
+        "path": "actions/storage/photo-upload-actions.ts",
+        "needle": "async function savePhotoLocally"
+      },
+      {
+        "path": "actions/storage/storage-config-actions.ts",
+        "needle": "function buildLocalStoragePath"
+      },
+      {
+        "path": "app/api/uploads/[...path]/route.ts",
+        "needle": "\"Cache-Control\""
+      },
+      {
+        "path": "components/FormInputs/EnhancedImageUploadButton.tsx",
+        "needle": "src={imageUrl"
+      }
+    ],
+    "observedBehavior": "The upload action writes public/uploads/<organizationId>/ and returns /uploads/...; those static URLs bypass the guarded /api/uploads handler. The API separately advertised shared caching.",
+    "impact": "Anyone with a static asset URL may access tenant photos where the host serves that public directory. No deployed exposure or access history was inspected.",
+    "correction": "Implemented private, no-store for API responses. Remaining package P02 moves assets to private versioned storage, supplies authenticated delivery and closes the legacy public and optimized-image paths.",
+    "acceptance": "API cache regression passes. Full closure additionally requires anonymous/foreign-tenant denial on both legacy and new URLs, authorized rendering/deletion, cache purge and migration hash reconciliation.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "The upload action writes public/uploads/<organizationId>/ and returns /uploads/...; those static URLs bypass the guarded /api/uploads handler. The API separately advertised shared caching.",
+    "alternativesAndTradeoffs": "A private filesystem is simplest for one instance; private object storage supports multiple replicas and managed retention. Both require migration of stored references and image delivery.",
+    "dependencies": [
+      "Private storage and legacy asset migration"
+    ],
+    "effortEstimate": "3–5 engineering days including delivery consumers and migration verification; shared P02 estimate with F15",
+    "changeRisk": "medium",
+    "rollback": "Keep copied originals private and switch to the previous authenticated delivery adapter on failure. Do not restore public URLs as a security rollback.",
+    "relatedBlockers": [
+      "X01",
+      "B09"
+    ],
+    "milestoneUnlocked": "API cache defect corrected; public storage exposure remains a pilot/production blocker.",
+    "evidence": [
+      "evidence/regression-before-fixes-tests.json",
+      "evidence/corrected-security-finance-tests.json"
+    ],
+    "references": [
+      "https://nextjs.org/docs/pages/api-reference/file-conventions/public-folder"
+    ],
+    "prerequisites": "The deployment serves public/uploads and an unauthorized person obtains an asset URL.",
+    "affectedAssets": "Uploaded tenant photos and related organization metadata."
+  },
+  {
+    "id": "F03",
+    "domain": "Dependencies/release",
+    "severity": "critical",
+    "title": "Installed and CI Next.js versions precede the current security patch",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "package.json",
+        "needle": "\"next\":"
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "needle": "npm ci"
+      },
+      {
+        "path": "next.config.mjs",
+        "needle": "images:"
+      }
+    ],
+    "observedBehavior": "Installed/pnpm Next.js is 15.5.23; npm CI selects 15.5.18. The vendor August 25 release fixes two critical issues in 15.5.24. Local and CI dependency graphs also differ for React and Better Auth.",
+    "impact": "The application can be built with a different and older security posture than the one tested locally. AVIF image optimization is an exposure candidate; the Windows issue additionally requires both routers. Exploitability and production topology are unverified.",
+    "correction": "P01: update Next.js and its lint companion to the verified patched 15.5 line, reconcile the active lockfiles in an isolated install and bind CI evidence to that exact graph.",
+    "acceptance": "Frozen installs resolve the intended patched version; dependency graph diff is reviewed; build, authentication, optimized images and key routes pass on the actual target OS.",
+    "confidence": "confirmed version/advisory mismatch; conditional application exploitability",
+    "rootCause": "Installed/pnpm Next.js is 15.5.23; npm CI selects 15.5.18. The vendor August 25 release fixes two critical issues in 15.5.24. Local and CI dependency graphs also differ for React and Better Auth.",
+    "alternativesAndTradeoffs": "A patched maintenance release is a smaller compatibility change than a major framework upgrade. A temporary feature restriction can reduce exposure only after actual affected deployment paths are established.",
+    "dependencies": [
+      "Reproducible isolated dependency install and build"
+    ],
+    "effortEstimate": "1–2 days; separate from a framework major upgrade",
+    "changeRisk": "medium",
+    "rollback": "Retain the previous lock graph for diagnosis. On incompatibility, withhold deployment or use a separately verified safe candidate; do not silently revert to an affected release.",
+    "relatedBlockers": [
+      "B01",
+      "B09"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/dependency-versions.json"
+    ],
+    "references": [
+      "https://nextjs.org/blog/august-2026-security-release"
+    ],
+    "prerequisites": "Affected framework or image-processing functionality must be reachable; the Windows route advisory additionally has vendor-specific router/configuration conditions. No exploit was reproduced.",
+    "affectedAssets": "Application runtime, host process and data accessible to that process."
+  },
+  {
+    "id": "F04",
+    "domain": "Imports/supply chain",
+    "severity": "high",
+    "title": "Spreadsheet import uses vulnerable SheetJS parser versions",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "components/dashboard/Tables/TableHeader.tsx",
+        "needle": "XLSX.read"
+      },
+      {
+        "path": "components/dashboard/Tables/ModalTableheader.tsx",
+        "needle": "XLSX.read"
+      },
+      {
+        "path": "package.json",
+        "needle": "\"xlsx\":"
+      }
+    ],
+    "observedBehavior": "Both installed and npm-locked xlsx are 0.18.5. Browser import handlers read selected workbooks with XLSX.read. Vendor advisories cover prototype pollution through 0.19.2 and ReDoS through 0.20.1.",
+    "impact": "A crafted workbook supplied to a user can affect the browser import workflow. Export-only call sites are not established as affected by the prototype-pollution advisory. No malicious workbook was executed.",
+    "correction": "P01: use a verified official patched distribution (at least 0.20.2 for these advisories) or a maintained replacement. Pin its integrity; bound file/row sizes and isolate parsing from the main UI thread.",
+    "acceptance": "Representative Excel files retain dates, decimals and headers; malformed and over-budget input is rejected; independently reviewed parser regression fixtures pass.",
+    "confidence": "confirmed affected version and first-party parser use; deployed reachability not exercised",
+    "rootCause": "Both installed and npm-locked xlsx are 0.18.5. Browser import handlers read selected workbooks with XLSX.read. Vendor advisories cover prototype pollution through 0.19.2 and ReDoS through 0.20.1.",
+    "alternativesAndTradeoffs": "The official patched SheetJS distribution minimizes API changes; a replacement parser changes import behavior and needs compatibility fixtures. Worker isolation limits UI impact but does not replace the parser patch.",
+    "dependencies": [],
+    "effortEstimate": "1–3 engineering days including focused verification; estimate, not a commitment",
+    "changeRisk": "medium",
+    "rollback": "Temporarily disable affected spreadsheet import or retain the last verified safe parser; preserve uploaded inputs privately for retry.",
+    "relatedBlockers": [
+      "B01",
+      "B09"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/dependency-versions.json"
+    ],
+    "references": [
+      "https://cdn.sheetjs.com/advisories/CVE-2023-30533",
+      "https://cdn.sheetjs.com/advisories/CVE-2024-22363"
+    ],
+    "prerequisites": "A user selects an adversarial workbook for the reachable browser import path.",
+    "affectedAssets": "Import integrity, browser responsiveness and data processed in that session."
+  },
+  {
+    "id": "F05",
+    "domain": "Finance/contracts",
+    "severity": "medium",
+    "title": "Finance query and export contracts prevented type checking",
+    "status": "verified",
+    "sourceRefs": [
+      {
+        "path": "components/finance/PaymentReconciliationWorkbench.tsx",
+        "needle": "const canonicalFilters"
+      },
+      {
+        "path": "services/accounting/finance-statement-export.service.ts",
+        "needle": "const expectedContentTypeByFormat"
+      },
+      {
+        "path": "services/accounting/finance-statement-export.service.ts",
+        "needle": "const watermarkId"
+      }
+    ],
+    "observedBehavior": "Baseline type checking found four errors: Date[] filters supplied to string[] contracts, missing export audit watermark, and JSON omitted from the MIME mapping.",
+    "impact": "Custom-date table state and export fingerprints were inconsistent with the shared query contract. JSON export completion and audit context were incomplete.",
+    "correction": "Serialize valid dates once to ISO strings for both table and export queries, add the JSON MIME mapping and persist a tenant/request-bound watermark identifier in audit and job metadata.",
+    "acceptance": "Repository type check passes; finance workbench tests and CSV/JSON worker-lease tests pass; export audit and durable job metadata contain the same watermark.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "Baseline type checking found four errors: Date[] filters supplied to string[] contracts, missing export audit watermark, and JSON omitted from the MIME mapping.",
+    "alternativesAndTradeoffs": "A shared canonical filter map keeps table and export queries aligned. Type assertions would only hide the mismatch. A correlation identifier supports audit binding; physical watermark rendering remains a separate contract.",
+    "dependencies": [],
+    "effortEstimate": "implemented",
+    "changeRisk": "low; no migration",
+    "rollback": "Revert only the changed filter/MIME/metadata logic if behavior regresses, retain queued export records and keep release blocked until the contract is repaired.",
+    "relatedBlockers": [
+      "B01"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/baseline-typecheck.log",
+      "evidence/final-typecheck.json",
+      "evidence/corrected-security-finance-tests.json"
+    ],
+    "limits": "This binds an audit identifier. It does not establish that a configured renderer embeds it into every exported file; renderer/store/download/retention readiness remains separate.",
+    "prerequisites": "A date-filtered finance query or declared JSON export is compiled/processed.",
+    "affectedAssets": "Finance query consistency and export evidence."
+  },
+  {
+    "id": "F06",
+    "domain": "Gates/API coverage",
+    "severity": "high",
+    "title": "API inventory reported ready with unclassified endpoints",
+    "status": "verified",
+    "sourceRefs": [
+      {
+        "path": "scripts/api-route-guard-inventory.js",
+        "needle": "function detectIssues"
+      },
+      {
+        "path": "scripts/api-route-guard-inventory.js",
+        "needle": "function classifyRoute"
+      }
+    ],
+    "observedBehavior": "The previous inventory could report zero issues while six routes had unclassified guards and review-required module applicability. Every /api/auth/* route was broadly labeled public.",
+    "impact": "A green static report could be interpreted as coverage of routes that the scanner had not understood.",
+    "correction": "Unknown classification and module applicability now produce findings. The public Better Auth exception is limited to its exact catch-all route, and the authenticated permissions route is recognized.",
+    "acceptance": "Unknown routes, including a new auth-prefix route, fail the gate; the protected claims route remains correctly classified; all 18 inventory tests pass.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "The previous inventory could report zero issues while six routes had unclassified guards and review-required module applicability. Every /api/auth/* route was broadly labeled public.",
+    "alternativesAndTradeoffs": "Exact delegated-service mappings preserve public signed-link behavior while proving protection. Requiring ordinary sessions on every endpoint would break legitimate public links; broad directory exemptions hide new routes.",
+    "dependencies": [],
+    "effortEstimate": "implemented",
+    "changeRisk": "low code change; existing fail-mode gate now exposes six pending endpoint reviews",
+    "rollback": "Keep unknown routes blocked. If a classification is incorrect, repair its exact mapping with a negative test instead of suppressing observations.",
+    "relatedBlockers": [
+      "X01",
+      "B09"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/critical-domain-tests.json",
+      "evidence/api-inventory-current.json"
+    ],
+    "limits": "The current result is blocked with 12 observations across six routes. These are coverage gaps, not 12 demonstrated application vulnerabilities. Exact delegated-service mappings and negative tests are specified in P03.",
+    "prerequisites": "A route lacks recognized guard/module classification, including new routes under the auth prefix.",
+    "affectedAssets": "Release coverage claims and missed access-control review."
+  },
+  {
+    "id": "F07",
+    "domain": "Authentication UX",
+    "severity": "high",
+    "title": "HTTPS session cookie was ignored by dashboard middleware",
+    "status": "verified",
+    "sourceRefs": [
+      {
+        "path": "middleware.ts",
+        "needle": "function isAuthenticated"
+      }
+    ],
+    "observedBehavior": "The optimistic routing check recognized only better-auth.session_token, while Better Auth uses the __Secure- prefix for HTTPS.",
+    "impact": "An otherwise signed-in HTTPS user could be redirected to login before reaching server authorization.",
+    "correction": "Recognize both default cookie names. The shared server RBAC boundary still verifies the live session and permissions.",
+    "acceptance": "Both supported cookie names reach server authorization; missing and unrelated cookies redirect to localized login with the original callback.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "The optimistic routing check recognized only better-auth.session_token, while Better Auth uses the __Secure- prefix for HTTPS.",
+    "alternativesAndTradeoffs": "Recognizing the configured secure cookie preserves HTTPS behavior. Performing full session validation in middleware would duplicate the authoritative server check and add deployment coupling.",
+    "dependencies": [],
+    "effortEstimate": "implemented",
+    "changeRisk": "low; cookie presence remains routing-only",
+    "rollback": "Preserve HTTPS recognition while correcting routing behavior; do not use cookie presence as permission or move authority away from the server.",
+    "relatedBlockers": [
+      "X04"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/middleware-routing-verified.json"
+    ],
+    "prerequisites": "The authentication provider issues its default __Secure- session cookie over HTTPS.",
+    "affectedAssets": "Availability of authenticated dashboard navigation."
+  },
+  {
+    "id": "F08",
+    "domain": "Observability",
+    "severity": "high",
+    "title": "Shared logger defaults to a silent sink",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "lib/logger.ts",
+        "needle": "let sink"
+      },
+      {
+        "path": "services/_shared/protect.ts",
+        "needle": "logger"
+      }
+    ],
+    "observedBehavior": "lib/logger.ts initializes an empty sink. No first-party non-test caller of setLoggerSink was found in lib, services, app or actions; there is no root instrumentation entry point.",
+    "impact": "Operational calls through this logger can disappear, undermining incident investigation. This does not mean database audit events or every other error logger are absent.",
+    "correction": "P04: install a server startup sink using the existing canonical redaction rules, structured correlation IDs and an approved transport; add delivery health and failure behavior.",
+    "acceptance": "A synthetic safe event from a protected operation reaches the configured sink and alert path; sensitive markers do not; transport failure is visible and does not corrupt a financial transaction.",
+    "confidence": "confirmed default behavior and searched initialization gap; deployed injection/transport unknown",
+    "rootCause": "lib/logger.ts initializes an empty sink. No first-party non-test caller of setLoggerSink was found in lib, services, app or actions; there is no root instrumentation entry point.",
+    "alternativesAndTradeoffs": "A redacted structured stdout sink integrates with host collection; a dedicated transport provides explicit delivery control but adds failure handling. Choose based on the actual deployment.",
+    "dependencies": [
+      "Approved log destination, retention and responsible operator"
+    ],
+    "effortEstimate": "1–3 engineering days including focused verification; estimate, not a commitment",
+    "changeRisk": "medium",
+    "rollback": "Route to a validated redacted fallback and flag transport failure; retain transactional database audit records independently.",
+    "relatedBlockers": [
+      "B08"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "prerequisites": "An operation emits through lib/logger without a registered sink. Other loggers and database audit records are separate.",
+    "affectedAssets": "Operational detection, diagnosis and response evidence."
+  },
+  {
+    "id": "F09",
+    "domain": "Availability/abuse",
+    "severity": "medium",
+    "title": "Middleware rate limit has process-local unbounded key retention",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "middleware.ts",
+        "needle": "const rateLimitStore"
+      },
+      {
+        "path": "middleware.ts",
+        "needle": "function getClientIP"
+      }
+    ],
+    "observedBehavior": "Each new IP creates a Map entry; entries are not removed. The counter is per process and trusts forwarded IP headers without a verified proxy contract in this review.",
+    "impact": "Long-lived instances can accumulate keys, while multiple instances do not share a limit. Spoofing depends on ingress header sanitization, which was not tested.",
+    "correction": "P04: define trusted ingress identity, use a bounded local fallback with expiry and a shared limiter for sensitive operations; measure behavior across replicas.",
+    "acceptance": "Expired keys are reclaimed; configured limits hold across two workers; spoofed client-supplied headers cannot evade the trusted ingress limit.",
+    "confidence": "confirmed local structure; ingress bypass is an untested deployment hypothesis",
+    "rootCause": "Each new IP creates a Map entry; entries are not removed. The counter is per process and trusts forwarded IP headers without a verified proxy contract in this review.",
+    "alternativesAndTradeoffs": "An expiring bounded Map limits single-process memory; a shared limiter enforces cross-replica quotas but requires a reliable store and a clear failure policy. Ingress header trust must be explicit.",
+    "dependencies": [],
+    "effortEstimate": "1–3 engineering days including focused verification; estimate, not a commitment",
+    "changeRisk": "medium",
+    "rollback": "Use a bounded conservative local fallback during shared-store failure and alert the operator; retain trusted-ingress validation.",
+    "relatedBlockers": [
+      "B08"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "prerequisites": "Numerous distinct keys reach the process; cross-replica evasion or forwarded-header spoofing depends on deployment topology.",
+    "affectedAssets": "Runtime memory, fair-use limits and service availability."
+  },
+  {
+    "id": "F10",
+    "domain": "Accounting/analytics",
+    "severity": "high",
+    "title": "Historical analytics COGS depends on current item cost",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "services/analytics/financial-analytics.service.ts",
+        "needle": "const totalCogs"
+      },
+      {
+        "path": "services/analytics/financial-analytics.service.ts",
+        "needle": "item: { select: { nameEn"
+      },
+      {
+        "path": "prisma/schema.prisma",
+        "needle": "model SalesOrderLine"
+      }
+    ],
+    "observedBehavior": "Financial analytics computes historical COGS as sale-line quantity multiplied by the related item's current costPrice. SalesOrderLine has no immutable cost snapshot in the inspected schema.",
+    "impact": "Editing an item's cost can change reported historical margins without a new accounting event. This is an analytical read-model issue; this review does not establish ledger corruption.",
+    "correction": "P05: derive recognized COGS from the existing posted inventory valuation/ledger source for that sale and period. Show unavailable/unreconciled status when historical provenance is missing instead of inferring current cost.",
+    "acceptance": "Change an item's current cost after a posted sale; prior-period recognized COGS remains unchanged and reconciles to ledger/valuation evidence, including returns and partial deliveries.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "Financial analytics computes historical COGS as sale-line quantity multiplied by the related item's current costPrice. SalesOrderLine has no immutable cost snapshot in the inspected schema.",
+    "alternativesAndTradeoffs": "Posted valuation provides historical recognition truth. Snapshotting current cost could prevent future changes but cannot reconstruct missing historical cost or reliably handle returns.",
+    "dependencies": [
+      "Finance owner confirms recognized-cost and recognition-date semantics"
+    ],
+    "effortEstimate": "3–5 days plus representative reconciliation fixtures",
+    "changeRisk": "high for historical metric meaning; stage read-model replacement, do not rewrite journal history",
+    "rollback": "Keep the old calculation available only as a clearly labeled estimate while the new read model is disabled; never rewrite posted journals or claim estimates reconcile.",
+    "relatedBlockers": [
+      "B09"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "prerequisites": "An item cost changes after a sale and historical analytics are recalculated.",
+    "affectedAssets": "Historical margin, recognized COGS and operational decisions."
+  },
+  {
+    "id": "F11",
+    "domain": "X1 evidence/performance",
+    "severity": "medium",
+    "title": "Current X1 candidate has no approved authenticated capture",
+    "status": "awaiting_external_input",
+    "sourceRefs": [
+      {
+        "path": "tests/e2e/finance-x1-route-observation.ts",
+        "needle": "export function readFinanceX1Result"
+      },
+      {
+        "path": "scripts/finance-x1-evidence-preflight.ts",
+        "needle": "evaluateFinanceX1EvidencePreflight"
+      },
+      {
+        "path": "scripts/validate-finance-x1-evidence.ts",
+        "needle": "validateFinanceX1EvidenceManifest"
+      }
+    ],
+    "observedBehavior": "Fresh validation reports blocked-awaiting-approval, zero artifacts, missing product-budget approval, evidence authorization and authenticated matrix. Preflight also lacks run ID and approved storage state. The corrected measurement helper is versioned separately from old captures.",
+    "impact": "Old zero-row counts and 7.8–63.2s capture-workflow timings cannot establish current data absence or route latency. New source changes further invalidate any assumption of candidate binding.",
+    "correction": "P06: obtain the real human decisions, prepare the authorized fixture identity, generate a new run ID automatically and collect cold/warm version-2 measurements on the final candidate.",
+    "acceptance": "All 42 route/locale/viewport captures plus aggregation bind candidate, fixture, authorization and approved budgets; errors/loading never count as valid empty data; budget pass is evaluated separately from matrix completeness.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "Fresh validation reports blocked-awaiting-approval, zero artifacts, missing product-budget approval, evidence authorization and authenticated matrix. Preflight also lacks run ID and approved storage state. The corrected measurement helper is versioned separately from old captures.",
+    "alternativesAndTradeoffs": "A recognized external approval process can supply authentic records sooner; native decisions reduce future transcription. Local synthetic captures remain useful but cannot stand in for approved candidate evidence.",
+    "dependencies": [
+      "Product and evidence owners' real decisions",
+      "Approved external-accountant test identity"
+    ],
+    "effortEstimate": "1–2 engineering days after real approvals and test identity are available",
+    "changeRisk": "medium",
+    "rollback": "Retain old captures as historical, supersede invalid runs and recapture the affected candidate; never relabel stale or failed evidence.",
+    "relatedBlockers": [
+      "X04",
+      "FINANCE-X1"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/x1-evidence-current.json",
+      "evidence/x1-preflight-current.json",
+      "evidence/x1-matrix-list.log"
+    ],
+    "limits": "No fresh browser capture or database fixture query was run in this audit.",
+    "prerequisites": "Official finance evidence is requested without valid decisions, approved test identity and current bound captures.",
+    "affectedAssets": "Performance acceptance and release evidence integrity."
+  },
+  {
+    "id": "F12",
+    "domain": "Governance/records",
+    "severity": "medium",
+    "title": "Native approval register remains a blueprint",
+    "status": "proposed",
+    "sourceRefs": [
+      {
+        "path": "docs/approval-register/STOQUIFY_APPROVAL_REGISTER_BLUEPRINT_2026-09-03.md",
+        "needle": "First-time establishment"
+      },
+      {
+        "path": "services/governance/approval-providers/README.md",
+        "needle": "Mandatory controls"
+      }
+    ],
+    "observedBehavior": "The proposed native register models and approval route are absent. The provider contract and local simulator do not establish an operating native approval authority.",
+    "impact": "Users cannot yet obtain native issued approval IDs, verification references or durable signed-record links from that proposal.",
+    "correction": "P07 implements the blueprint in stages: verified owner establishment, scoped appointments, immutable request revisions/private artifacts, authenticated decisions, validity checks, then Copy X1 fields.",
+    "acceptance": "No prior register ID is required to start establishment; real authority and verification are required to activate it. Cross-tenant, self-approval, stale revision, replay, expiry and revocation tests pass; human decisions remain distinct from POL-004 automation.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "The proposed native register models and approval route are absent. The provider contract and local simulator do not establish an operating native approval authority.",
+    "alternativesAndTradeoffs": "A native register gives consistent tenant scope and automatic references; an existing recognized external register reduces implementation scope. First-time establishment needs real authority evidence, not an earlier system ID.",
+    "dependencies": [
+      "Owner authority evidence, establishment verifier, role appointments, signing/retention decisions"
+    ],
+    "effortEstimate": "multi-stage package; estimate after storage and identity choices",
+    "changeRisk": "medium",
+    "rollback": "Disable new decision issuance and preserve immutable signed records/events. A corrected version can supersede eligibility without deleting history.",
+    "relatedBlockers": [
+      "B10",
+      "FINANCE-X1"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/native-register-status.json"
+    ],
+    "limits": "No native register, signature or approval was created by this audit.",
+    "prerequisites": "Users need issued approval references while only blueprint documents/provider contracts exist.",
+    "affectedAssets": "Approval authority, signature evidence and gate eligibility."
+  },
+  {
+    "id": "F13",
+    "domain": "Ledger concurrency",
+    "severity": "medium",
+    "title": "Reversal numbers use count-plus-one allocation",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "services/accounting/posting.service.ts",
+        "needle": "async function nextEntryNumber"
+      },
+      {
+        "path": "services/accounting/posting.service.ts",
+        "needle": "export async function reverseJournalEntry"
+      },
+      {
+        "path": "prisma/schema.prisma",
+        "needle": "@@unique([organizationId, entryNumber])"
+      }
+    ],
+    "observedBehavior": "Reversal entry numbers are allocated by counting existing daily entries inside a default-isolation transaction. A tenant/entry-number unique constraint exists.",
+    "impact": "Concurrent reversals of different entries can select the same number and cause one transaction to fail. The unique constraint prevents this alone from proving duplicate entry numbers or double posting.",
+    "correction": "P05: reproduce with two real PostgreSQL transactions, then use a scoped sequence/counter or bounded conflict retry that preserves posting idempotency.",
+    "acceptance": "Concurrent independent reversals both complete with distinct numbers, or return an explicit retryable conflict with no partial journal, event or close-invalidation writes.",
+    "confidence": "source-supported race candidate; not reproduced against PostgreSQL",
+    "rootCause": "Reversal entry numbers are allocated by counting existing daily entries inside a default-isolation transaction. A tenant/entry-number unique constraint exists.",
+    "alternativesAndTradeoffs": "A scoped sequence allocates reliably but needs a database design; bounded conflict retry is smaller but must rerun the whole transaction and preserve idempotency. Reproduce the actual collision first.",
+    "dependencies": [
+      "Verified disposable PostgreSQL target"
+    ],
+    "effortEstimate": "1–3 engineering days including focused verification; estimate, not a commitment",
+    "changeRisk": "medium",
+    "rollback": "Stop the new allocator, retain all assigned numbers and use a verified transactional fallback. Never renumber or delete posted entries.",
+    "relatedBlockers": [
+      "B02"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "prerequisites": "Two independent reversals allocate the same tenant/date number concurrently; the unique constraint prevents duplicate persisted numbers, so the suspected failure is an aborted request.",
+    "affectedAssets": "Journal availability and atomic reversal/close-invalidation behavior."
+  },
+  {
+    "id": "F14",
+    "domain": "Agent runtime",
+    "severity": "medium",
+    "title": "Timeout rejects the caller without cancelling the operation",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "services/agents/agent-execution-control.service.ts",
+        "needle": "Promise.race"
+      },
+      {
+        "path": "services/agents/agent-runner.service.ts",
+        "needle": "input.executeTool"
+      }
+    ],
+    "observedBehavior": "withAgentExecutionTimeout races a timer against an operation and clears only the timer. Its contract carries no AbortSignal or deadline to the underlying operation.",
+    "impact": "A timed-out read can continue consuming resources. Current registered tools are constrained to read-only; this is not evidence of unauthorized financial writes.",
+    "correction": "P04: pass deadlines/cancellation to adapters that support them and fence any late persistence using run/lease state. Bound uncancellable reads independently.",
+    "acceptance": "A deliberately slow adapter is cancelled or bounded, late completion cannot change a terminal run, and timeout metrics agree with observed in-flight work.",
+    "confidence": "confirmed promise semantics; full adapter cancellation behavior not tested",
+    "rootCause": "withAgentExecutionTimeout races a timer against an operation and clears only the timer. Its contract carries no AbortSignal or deadline to the underlying operation.",
+    "alternativesAndTradeoffs": "Cancellation frees resources when supported; deadline-limited reads and lease fences bound uncancellable work. Racing a timer alone changes the caller response but cannot stop an adapter.",
+    "dependencies": [
+      "Adapter cancellation and database timeout contracts"
+    ],
+    "effortEstimate": "1–3 engineering days including focused verification; estimate, not a commitment",
+    "changeRisk": "medium",
+    "rollback": "Disable affected tools or enforce conservative deadlines while repairing cancellation; keep the terminal-state fence and attempt history.",
+    "relatedBlockers": [
+      "B08"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "prerequisites": "A tool adapter continues beyond its caller timeout. Inspected registered tools are read-only.",
+    "affectedAssets": "Compute/provider budget and truthful run status."
+  },
+  {
+    "id": "F15",
+    "domain": "Settings/storage",
+    "severity": "medium",
+    "title": "Storage configuration updates are not durable",
+    "status": "unresolved",
+    "sourceRefs": [
+      {
+        "path": "actions/storage/storage-config-actions.ts",
+        "needle": "export async function getStorageConfiguration"
+      },
+      {
+        "path": "actions/storage/storage-config-actions.ts",
+        "needle": "export async function updateStorageConfiguration"
+      }
+    ],
+    "observedBehavior": "The read path builds defaults and the update path returns a constructed configuration without a durable persistence write in the inspected implementation.",
+    "impact": "A settings change can appear successful and be lost on the next read; local/online selection and limits can diverge from the UI.",
+    "correction": "Include durable tenant-scoped configuration and revision checks in P02, with server-side validation and the existing fresh-auth permission boundary.",
+    "acceptance": "Change storage mode and size limit, then read through a new request/process and observe the same authorized revision; denied users cannot change it.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "The read path builds defaults and the update path returns a constructed configuration without a durable persistence write in the inspected implementation.",
+    "alternativesAndTradeoffs": "A tenant configuration model supports durable scoped settings. Environment-only settings are simpler but should be read-only in the UI rather than pretending to save tenant changes.",
+    "dependencies": [
+      "Storage backend configuration model and migration"
+    ],
+    "effortEstimate": "1–3 engineering days including focused verification; estimate, not a commitment",
+    "changeRisk": "medium; migrate defaults explicitly",
+    "rollback": "Retain configuration revisions, stop new writes and restore the last valid private backend revision; do not switch existing private assets to public delivery.",
+    "relatedBlockers": [
+      "B09"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "prerequisites": "A user saves storage settings and a later request re-reads defaults.",
+    "affectedAssets": "Storage control expectations, upload limits and configuration consistency."
+  },
+  {
+    "id": "F16",
+    "domain": "Diagnostic secret handling",
+    "severity": "high",
+    "title": "Database diagnostic printed credential-bearing URLs",
+    "status": "verified",
+    "sourceRefs": [
+      {
+        "path": "tmp-protocol-check.js",
+        "needle": "OK: database connection established"
+      },
+      {
+        "path": "tmp-protocol-check.js",
+        "needle": "ERR: database connection failed"
+      }
+    ],
+    "observedBehavior": "The local diagnostic interpolated the full database connection URL into success and failure logs; the failure also exposed the raw error message.",
+    "impact": "Running it with a credential-bearing URL could disclose credentials to terminal/log history. This audit did not run the diagnostic or establish a past leak.",
+    "correction": "Replace those messages with fixed success/failure text; do not output URL or raw driver errors.",
+    "acceptance": "Static inspection confirms both messages omit URL and driver error interpolation. Runtime diagnostic deliberately not executed.",
+    "confidence": "high: source inspected; deployment not tested",
+    "rootCause": "The local diagnostic interpolated the full database connection URL into success and failure logs; the failure also exposed the raw error message.",
+    "alternativesAndTradeoffs": "Fixed messages avoid credential leakage; a reviewed allowlisted diagnostic can expose safe error codes if troubleshooting needs more detail. Raw URLs or driver messages should not return.",
+    "dependencies": [],
+    "effortEstimate": "implemented",
+    "changeRisk": "low; reduces diagnostic detail",
+    "rollback": "Do not restore credential logging; add a reviewed masked diagnostic formatter if detail is needed.",
+    "relatedBlockers": [
+      "B04"
+    ],
+    "milestoneUnlocked": "Safer integration candidate; does not independently authorize pilot or production.",
+    "evidence": [
+      "evidence/static-candidates.json"
+    ],
+    "prerequisites": "Someone runs the local diagnostic with a credential-bearing connection URL and its output is retained or shared. No actual leaked value/history was inspected.",
+    "affectedAssets": "Database credentials and access to the referenced database."
+  },
+  {
+    "id": "F17",
+    "domain": "Frontend and verification",
+    "severity": "medium",
+    "title": "Finance presentation and responsive test contracts were out of sync",
+    "status": "verified",
+    "sourceRefs": [
+      {
+        "path": "app/[locale]/(dashboard)/dashboard/accounting/reports/financial-statements/financial-statement-lines-table.tsx",
+        "needle": "dashboard-table-toolbar"
+      },
+      {
+        "path": "components/finance/FinanceCommandCenterDashboard.tsx",
+        "needle": "dashboard-table-pagination"
+      },
+      {
+        "path": "components/dashboard/__tests__/TransactionHistoryWorkbenchShell.test.tsx",
+        "needle": "desktopAndMobileSelection"
+      },
+      {
+        "path": "components/DataTableComponents/__tests__/TableDateRangeAdoption.contract.test.ts",
+        "needle": "it.each(QUERY_SURFACES)"
+      }
+    ],
+    "observedBehavior": "A final drift-triggered recheck reproduced four failures: financial-statement controls and cash-flow pagination lacked shared presentation markers; the selection test assumed only one responsive checkbox; a global date-picker count rejected an additional valid picker.",
+    "impact": "Shared table spacing/control rules were not applied consistently, and stale tests blocked verification of legitimate responsive changes.",
+    "rootCause": "New and adapted table surfaces did not retain all shared classes; two tests coupled their expectations to old markup counts instead of current behavior.",
+    "correction": "Restore the existing shared toolbar/pagination classes. Scope the desktop selection action to its table, verify both desktop/mobile controls share state in both directions, and require the shared date picker separately in every named query surface.",
+    "alternativesAndTradeoffs": "Adding broad test exclusions or increasing the aggregate count would obscure individual missing integrations. Per-surface checks and cross-layout selection verify the intended contract while allowing additional responsive markup.",
+    "confidence": "High: four failures reproduced on an unchanged source snapshot; focused verification after correction is retained.",
+    "prerequisites": "The current working tree includes the newer responsive table implementations.",
+    "affectedAssets": "Finance presentation consistency and reliable local verification.",
+    "dependencies": [],
+    "effortEstimate": "Implemented during final verification",
+    "changeRisk": "Low: three existing CSS class bindings and focused test corrections; browser appearance still needs X1 proof.",
+    "acceptance": "All eight affected suites pass; every query surface uses the shared picker; desktop/mobile selection stays synchronized; table presentation scans detect no missing toolbar or pagination markers.",
+    "rollback": "Revert only the added class tokens if a verified visual regression occurs and repair the shared style contract. Preserve the behavior-based tests; do not reinstate arbitrary global counts.",
+    "relatedBlockers": [
+      "X04",
+      "FINANCE-X1"
+    ],
+    "milestoneUnlocked": "Reliable local finance verification; does not establish authenticated X1 capture or performance acceptance.",
+    "evidence": [
+      "evidence/concurrent-finance-recheck.json",
+      "evidence/concurrent-finance-recheck-source-binding.json",
+      "evidence/current-finance-verified.json"
+    ],
+    "limits": "The finance dashboard was also changed by another concurrent workstream. Only the added pagination class is attributed to this audit. JSDOM does not establish viewport CSS or screen-reader behavior."
+  }
+]

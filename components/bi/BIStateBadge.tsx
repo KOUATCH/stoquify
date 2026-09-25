@@ -1,11 +1,13 @@
 import { AlertTriangle, Ban, CheckCircle2, Clock3, EyeOff, Loader2, ShieldAlert } from "lucide-react"
 
+import { biLocale, biStateCopy, biSeverityCopy } from "@/lib/dashboard/bi-presentation"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import type { BIKpiState, BISeverity } from "@/services/bi/bi-contracts"
 
 type BIStateBadgeProps = {
   state: BIKpiState
+  locale?: string
   label?: string
   className?: string
 }
@@ -45,7 +47,7 @@ const severityClasses: Record<BISeverity, string> = {
 }
 
 function StateIcon({ state }: { state: BIKpiState }) {
-  if (state === "loading") return <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+  if (state === "loading") return <Loader2 className="h-3.5 w-3.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />
   if (state === "ready") return <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
   if (state === "stale" || state === "partial") return <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
   if (state === "redacted") return <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
@@ -56,20 +58,20 @@ function StateIcon({ state }: { state: BIKpiState }) {
   return <Ban className="h-3.5 w-3.5" aria-hidden="true" />
 }
 
-export function BIStateBadge({ state, label, className }: BIStateBadgeProps) {
+export function BIStateBadge({ state, label, className, locale = "en" }: BIStateBadgeProps) {
   return (
     <Badge variant="outline" className={cn("gap-1.5 rounded-md", stateClasses[state], className)}>
       <StateIcon state={state} />
-      {label ?? stateLabels[state]}
+      {label ?? biStateCopy[biLocale(locale)][state]}
     </Badge>
   )
 }
 
-export function BISeverityBadge({ severity, className }: { severity: BISeverity; className?: string }) {
+export function BISeverityBadge({ severity, className, locale = "en" }: { severity: BISeverity; className?: string; locale?: string }) {
   return (
     <Badge variant="outline" className={cn("gap-1.5 rounded-md capitalize", severityClasses[severity], className)}>
       <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
-      {severity}
+      {biSeverityCopy[biLocale(locale)][severity]}
     </Badge>
   )
 }

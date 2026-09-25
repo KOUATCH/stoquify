@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOCAL_SIMULATION_AUTHENTICATED_EVIDENCE_FRAGMENT",
+  "authoritative": false,
+  "approvedForReleaseEvidence": false,
+  "releaseGate": "BLOCKED_EXTERNAL_APPROVAL_REQUIRED",
+  "status": "FAIL",
+  "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+  "viewport": "desktop",
+  "artifacts": [
+    {
+      "artifactId": "LOCAL-X1-20260905091534-FIXCHECK-desktop-en-cash-flow",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534-FIXCHECK/screenshots/desktop/en/cash-flow.png",
+      "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "en",
+      "viewport": "desktop",
+      "route": "/en/dashboard/finance/cash-flow",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:29:11.288Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 1440,
+        "measurementVersion": 2,
+        "renderedRowCount": 5,
+        "resultKind": "table-rows",
+        "navigationMs": 4212,
+        "usefulResultMs": 10807,
+        "authCheckMs": 7748,
+        "accessibilityMs": 1405,
+        "screenshotMs": 4531,
+        "captureElapsedMs": 25009,
+        "bodyOverflowPx": 0
+      }
+    },
+    {
+      "artifactId": "LOCAL-X1-20260905091534-FIXCHECK-desktop-fr-cash-flow",
+      "artifactPath": "what-next/evidence/finance-x1/local-simulation/LOCAL-X1-20260905091534-FIXCHECK/screenshots/desktop/fr/cash-flow.png",
+      "runId": "LOCAL-X1-20260905091534-FIXCHECK",
+      "organizationId": "rds_org_001",
+      "foreignIsolationProbeTenantId": "rds_org_002",
+      "personaRole": "external_accountant",
+      "locale": "fr",
+      "viewport": "desktop",
+      "route": "/fr/dashboard/finance/cash-flow",
+      "browser": "chromium",
+      "capturedAt": "2026-09-05T09:29:29.495Z",
+      "authenticated": true,
+      "authoritative": false,
+      "approvedForReleaseEvidence": false,
+      "checks": {
+        "routeLoaded": true,
+        "authorizationVerified": true,
+        "tenantIsolationVerified": true,
+        "redactionBoundaryVerified": true,
+        "layoutUsable": true,
+        "accessibilityReviewed": true
+      },
+      "measurements": {
+        "viewportWidthPx": 1440,
+        "measurementVersion": 2,
+        "renderedRowCount": 5,
+        "resultKind": "table-rows",
+        "navigationMs": 4929,
+        "usefulResultMs": 10265,
+        "authCheckMs": 928,
+        "accessibilityMs": 1407,
+        "screenshotMs": 3730,
+        "captureElapsedMs": 16830,
+        "bodyOverflowPx": 0
+      }
+    }
+  ]
+}

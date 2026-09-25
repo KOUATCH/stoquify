@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-09-24T03:28:17.296Z",
+  "method": "read-only information_schema comparison against generated Prisma scalar/enum columns; no record reads or writes, indexes and enum values not certified",
+  "results": [
+    {
+      "database": "stoquify_replay_next_20260830",
+      "checkedModels": 30,
+      "missingColumns": [
+        {
+          "model": "LedgerPostingBatch",
+          "table": "ledger_posting_batches",
+          "column": "postingCycle"
+        }
+      ]
+    },
+    {
+      "database": "stoquify_pos_audit_20260923_d1532fb1",
+      "checkedModels": 30,
+      "missingColumns": []
+    }
+  ]
+}

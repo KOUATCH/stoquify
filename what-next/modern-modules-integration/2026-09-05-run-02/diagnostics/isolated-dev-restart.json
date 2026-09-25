@@ -1,0 +1,18 @@
+{
+  "ownershipObservedAt": "2026-09-05T15:46:09.7749006Z",
+  "unifiedExecSession": 87013,
+  "address": "127.0.0.1",
+  "port": 3107,
+  "startupReadySeconds": 25.8,
+  "database": "stoquify_local_modern_modules_20260905_01",
+  "requiredIntegrationMigrationsReady": 4,
+  "exclusivelyOwnedFixtureCount": 5,
+  "processes": [
+    { "pid": 14224, "parentPid": 15800, "owner": "scripts/modern-modules-local-verification.js start" },
+    { "pid": 26804, "parentPid": 14224, "owner": "Next dev -H127.0.0.1 -p3107" },
+    { "pid": 30240, "parentPid": 26804, "owner": "Next start-server.js; actual3107 listener" }
+  ],
+  "mutationsOnRestart": "No migration, seed or fixture reset; normal application startup only",
+  "otherApplicationsTargeted": false,
+  "handoff": "Parent requested this owned preview remain running for final browser verification and review. Recheck process ownership before any later shutdown."
+}

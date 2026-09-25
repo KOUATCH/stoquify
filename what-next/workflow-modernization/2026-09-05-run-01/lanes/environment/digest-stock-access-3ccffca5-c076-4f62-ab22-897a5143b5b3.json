@@ -1,0 +1,271 @@
+{
+  "at": "2026-09-19T13:35:30.455Z",
+  "sourceBefore": {
+    "services/daily-habit/daily-habit-digest.service.ts": "dcdb2c9e9b980a6190d2ffbccb10ec16cf9a18fd08b4d8eb1fdd22842e1c90da",
+    "services/daily-habit/daily-habit-source-visibility.ts": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "5f6c1fb43fc8a896102917f70506e0d7d7685e2f0e56b92b135592d7526fa6c1",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx": "120b514da2a60e19681fdf35cf883643646ef9791939a726fa8efc2251e55d88",
+    "actions/itemsShow/getOrgItemsWithInventoryLevels.ts": "fdd735f2421e2a076f7d3b828494bb95fb11aa2029bddf9a63b5aa03dab49713"
+  },
+  "checks": [
+    {
+      "name": "explicit-empty",
+      "summary": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-explicit-empty-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-explicit-empty-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-explicit-empty-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-explicit-empty-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "active",
+      "summary": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-active-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-active-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-active-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-active-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "suspended",
+      "summary": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-suspended-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-suspended-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-suspended-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-suspended-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "expired",
+      "summary": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "future",
+      "summary": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "missing",
+      "summary": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "read-only",
+      "summary": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-read-only-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-read-only-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-read-only-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-read-only-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "read-only-flag",
+      "summary": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true
+        },
+        {
+          "locale": "fr",
+          "service": true
+        }
+      ]
+    },
+    {
+      "name": "stopped-new-work-retained-read",
+      "summary": true,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-stopped-new-work-retained-read-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-stopped-new-work-retained-read-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-stopped-new-work-retained-read-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-stopped-new-work-retained-read-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "summary-only",
+      "summary": true,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-summary-only-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-summary-only-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-summary-only-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-summary-only-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "details-only",
+      "summary": false,
+      "details": true,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-details-only-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-details-only-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-details-only-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-details-only-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    },
+    {
+      "name": "permission-revoked",
+      "summary": false,
+      "details": false,
+      "locales": [
+        {
+          "locale": "en",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-permission-revoked-en.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-permission-revoked-en-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        },
+        {
+          "locale": "fr",
+          "service": true,
+          "screenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-permission-revoked-fr.png",
+          "destinationScreenshot": "digest-stock-access-3ccffca5-c076-4f62-ab22-897a5143b5b3-permission-revoked-fr-destination.png",
+          "destinationVerified": true,
+          "browser": true
+        }
+      ]
+    }
+  ],
+  "noBusinessMutations": true,
+  "rawEvidenceUnchanged": true,
+  "passed": true,
+  "sourceAfter": {
+    "services/daily-habit/daily-habit-digest.service.ts": "dcdb2c9e9b980a6190d2ffbccb10ec16cf9a18fd08b4d8eb1fdd22842e1c90da",
+    "services/daily-habit/daily-habit-source-visibility.ts": "5419b7ec6d9f287b7db5eb6e375fcac210c3aed7896d6af484790c089c4799e7",
+    "services/modules/module-entitlement.service.ts": "e672098184a2e9a47ac538567fcaf208cfcbfdb06efb52c12fcc3a89e136995d",
+    "services/snapshots/inventory-cash-snapshot.service.ts": "8b78aaaf4376e8448e246131dadeb922ff45ddd266509d65cd4637c6da39d5b4",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-data-access.ts": "5f6c1fb43fc8a896102917f70506e0d7d7685e2f0e56b92b135592d7526fa6c1",
+    "app/[locale]/(dashboard)/dashboard/inventory/inventory-route-access.tsx": "120b514da2a60e19681fdf35cf883643646ef9791939a726fa8efc2251e55d88",
+    "actions/itemsShow/getOrgItemsWithInventoryLevels.ts": "fdd735f2421e2a076f7d3b828494bb95fb11aa2029bddf9a63b5aa03dab49713"
+  },
+  "sourceStable": true
+}

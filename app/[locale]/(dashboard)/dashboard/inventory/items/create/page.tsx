@@ -133,11 +133,13 @@ async function handleCreateItem(formData: FormData) {
     }
   }
 
-  revalidatePath("/dashboard/inventory/items")
+  const locale = pickLocale(await getLocale())
+  const destination = `/${locale}/dashboard/inventory/items`
+  revalidatePath(destination)
 
   return {
     success: true,
-    redirect: "/dashboard/inventory/items",
+    redirect: destination,
   }
 }
 

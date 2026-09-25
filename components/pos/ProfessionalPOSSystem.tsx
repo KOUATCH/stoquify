@@ -1,7 +1,14 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
+import { readPendingSale, removePendingSale, savePendingSale, type PendingSale } from "@/lib/pos/pending-sale"
+import { usePOSCheckoutLifecycle } from "@/hooks/posHooks/usePOSCheckoutLifecycle"
+import { retainLegacyPOSCheckoutAction } from "@/actions/pos/checkout.actions"
+import type { getPOSSaleCommitStatus } from "@/services/pos/pos.service"
 import { useLocale, useTranslations } from "next-intl"
+import { usePermissions } from "@/hooks/usePermissions"
+import { DashboardErrorState } from "@/components/dashboard/DashboardErrorState"
+import { DashboardRouteState } from "@/components/dashboard/DashboardRouteState"
 import {
   AlertTriangle,
   Banknote,
@@ -60,6 +67,7 @@ import {
   useAddPOSCartLine,
   useClosePOSShift,
   useCommitPOSSale,
+  usePOSSaleCommitStatus,
   useCurrentUserPOSShift,
   useOpenPOSShift,
   usePOSCatalog,
@@ -330,7 +338,7 @@ const posButtonActiveClass =
 const posButtonDangerClass =
   "rounded-lg border !border-[var(--dash-danger)]/45 !bg-[var(--dash-danger-soft)] !text-[#ffd4db] shadow-sm hover:!border-[var(--dash-danger)]/65 hover:!bg-[rgba(239,106,106,0.22)] hover:!text-white"
 const posButtonPrimaryClass =
-  "dashboard-button-primary rounded-lg !bg-none !text-white shadow-[0_18px_42px_rgba(47,125,246,0.28)] hover:!text-white disabled:!border-[var(--dash-border-subtle)] disabled:!bg-[rgba(24,38,45,0.72)] disabled:!text-[var(--dash-text-faint)]"
+  "dashboard-button-primary rounded-lg !text-white shadow-[0_18px_42px_rgba(47,125,246,0.28)] hover:!text-white disabled:!bg-none disabled:!border-[var(--dash-border-subtle)] disabled:!bg-[rgba(24,38,45,0.72)] disabled:!text-[var(--dash-text-faint)]"
 const posChipClass =
   "dashboard-filter-chip !border-[var(--dash-spruce)]/35 !bg-[var(--dash-spruce-soft)] !text-[#d9fffb]"
 const posCountChipClass =
@@ -359,7 +367,15 @@ function POSButton({ className, variant: _variant, ...buttonProps }: ButtonProps
 }
 
 export default function ProfessionalPOSSystem() {
+  const { user, organizationId } = usePermissions()
+  const scope = useRef({ actorId: user?.id, organizationId })
+  if (scope.current.actorId !== user?.id || organizationId) scope.current = { actorId: user?.id, organizationId }
+  return <POSWorkspace key={`${scope.current.actorId ?? "signed-out"}:${scope.current.organizationId ?? "unknown"}`} />
+}
+
+function POSWorkspace() {
   const t = useTranslations("pos")
+  const { user, organizationId, hasPermission } = usePermissions()
   const locale = useLocale()
   const notifications = useNotifications()
   const searchRef = useRef<HTMLInputElement>(null)
@@ -367,7 +383,22 @@ export default function ProfessionalPOSSystem() {
   const tenderAmountRef = useRef<HTMLInputElement>(null)
   const currentShiftDefaultAppliedRef = useRef(false)
   const previousCustomerLocationIdRef = useRef("")
-  const pendingCommitRef = useRef<{ salesOrderId: string; clientCommitId: string } | null>(null)
+  const [pendingCommit, setPendingCommit] = useState<PendingSale | null>(null)
+  const [pendingLoaded, setPendingLoaded] = useState(false)
+  const [pendingStorageError, setPendingStorageError] = useState(false)
+  const [commitRecovery, setCommitRecovery] = useState<Awaited<ReturnType<typeof getPOSSaleCommitStatus>> | null>(null)
+  const [commitRecoveryError, setCommitRecoveryError] = useState<"failed" | "cartMismatch" | null>(null)
+  const submissionInFlight = useRef(false)
+  const recoveryPanelRef = useRef<HTMLElement>(null)
+  const checkoutFooterRef = useRef<HTMLDivElement>(null)
+  const pendingCommitId = pendingCommit?.request.clientCommitId
+  const [reviewingChangedCart, setReviewingChangedCart] = useState(false)
+  const settledCommitIds = useRef(new Set<string>())
+  useEffect(() => {
+    if (!pendingLoaded || !pendingCommitId) return
+    recoveryPanelRef.current?.focus({ preventScroll: true })
+    recoveryPanelRef.current?.scrollIntoView?.({ block: "start", behavior: "instant" })
+  }, [pendingLoaded, pendingCommitId])
   const [selectedLocationId, setSelectedLocationId] = useState("")
   const [selectedTerminalId, setSelectedTerminalId] = useState("")
   const [selectedCategoryId, setSelectedCategoryId] = useState("")
@@ -377,6 +408,7 @@ export default function ProfessionalPOSSystem() {
   const [search, setSearch] = useState("")
   const [customerSearch, setCustomerSearch] = useState("")
   const [openingBalance, setOpeningBalance] = useState("0")
+  const [openShiftError, setOpenShiftError] = useState<string | null>(null)
   const [closingBalance, setClosingBalance] = useState("")
   const [varianceExplanation, setVarianceExplanation] = useState("")
   const [closeShiftError, setCloseShiftError] = useState<string | null>(null)
@@ -393,8 +425,13 @@ export default function ProfessionalPOSSystem() {
   const [isCustomerDialogOpen, setIsCustomerDialogOpen] = useState(false)
   const [isEndShiftDialogOpen, setIsEndShiftDialogOpen] = useState(false)
   const [touchMode, setTouchMode] = useState(false)
+  const [isOnline, setIsOnline] = useState(true)
   const [gridMode, setGridMode] = useState<"grid" | "list">("grid")
   const [quantityDrafts, setQuantityDrafts] = useState<Record<string, string>>({})
+  const [quantityErrors, setQuantityErrors] = useState<Record<string, boolean>>({})
+  const [cartAccessError, setCartAccessError] = useState(false)
+  const [saleAccessError, setSaleAccessError] = useState(false)
+  const previousCartQuantities = useRef<Record<string, string>>({})
 
   const locationsQuery = usePOSLocations()
   const locations = unwrap(locationsQuery.data, [])
@@ -419,7 +456,7 @@ export default function ProfessionalPOSSystem() {
   const customersQueryErrorCode = actionError(customersQuery.data)
   const customersQueryError = customersQueryErrorCode === "POS_LOCATION_UNAVAILABLE"
     ? t("customers.locationUnavailable")
-    : customersQueryErrorCode
+    : customersQuery.isError ? t("readState.failedMessage") : customersQueryErrorCode
   const catalogQuery = usePOSCatalog({
     locationId: selectedLocationId || undefined,
     search,
@@ -432,6 +469,21 @@ export default function ProfessionalPOSSystem() {
     sessionId: activeShift?.id,
   })
   const cart = unwrap(cartQuery.data, null)
+  const checkout = usePOSCheckoutLifecycle({ organizationId, actorId: user?.id, locationId: selectedLocationId, terminalId: selectedTerminalId, sessionId: activeShift?.id })
+  useEffect(() => {
+    if (!checkout.ready) setReviewingChangedCart(false)
+  }, [checkout.ready])
+  useEffect(() => {
+    const online = () => setIsOnline(true)
+    const offline = () => setIsOnline(false)
+    setIsOnline(navigator.onLine)
+    window.addEventListener("online", online)
+    window.addEventListener("offline", offline)
+    return () => { window.removeEventListener("online", online); window.removeEventListener("offline", offline) }
+  }, [])
+  const pendingAffectsRegister = Boolean(pendingCommit && pendingCommit.request.terminalId === selectedTerminalId)
+  const needsResume = Boolean(cart?.lines.length && checkout.acceptedCartId !== cart.id && !pendingAffectsRegister)
+  const canEditCart = checkout.ready && !checkout.busy && !needsResume && (!pendingAffectsRegister || (reviewingChangedCart && pendingCommit?.request.salesOrderId === cart?.id))
   const cartLineQuantitySnapshot = useMemo(
     () => cart?.lines.map((line) => `${line.id}:${line.quantity}:${line.stock?.quantityOnHand ?? ""}`).join("|") ?? "",
     [cart?.lines],
@@ -443,25 +495,67 @@ export default function ProfessionalPOSSystem() {
   const updateLine = useUpdatePOSCartLine()
   const removeLine = useRemovePOSCartLine()
   const commitSale = useCommitPOSSale()
+  const recoverCommit = usePOSSaleCommitStatus()
+  useEffect(() => {
+    if (!organizationId || !user?.id) return
+    let alive = true
+    void (async () => {
+      try {
+        const retained = readPendingSale(sessionStorage, organizationId, user.id)
+        if (alive) setPendingCommit(retained)
+        if (retained) {
+          const persisted = await retainLegacyPOSCheckoutAction(retained.request)
+          if (!persisted.success) throw new Error("Retained checkout could not be verified")
+        }
+        if (alive) setPendingStorageError(false)
+      } catch { if (alive) setPendingStorageError(true) }
+      finally { if (alive) setPendingLoaded(true) }
+    })()
+    return () => { alive = false }
+  }, [organizationId, user?.id])
+  useEffect(() => {
+    const request = checkout.snapshot?.pendingRequest
+    if (!request || !organizationId || !user?.id || settledCommitIds.current.has(request.clientCommitId)) return
+    setPendingCommit(current => current?.request.terminalId === selectedTerminalId ? current : { version: 1, organizationId, actorId: user.id, request })
+    setPendingStorageError(false)
+  }, [checkout.snapshot?.pendingRequest, organizationId, user?.id, selectedTerminalId])
+  useEffect(() => {
+    if (!pendingLoaded || !checkout.ready || !pendingCommit || submissionInFlight.current) return
+    let alive = true
+    void recoverCommit.mutateAsync(pendingCommit.request).then(response => {
+      if (!alive) return
+      if (!response?.success) { setCommitRecoveryError("failed"); return }
+      setCommitRecoveryError(null)
+      setCommitRecovery(response.data)
+      if (response.data.kind === "NOT_COMMITTED" && organizationId && user?.id) {
+        removePendingSale(sessionStorage, organizationId, user.id)
+        settledCommitIds.current.add(pendingCommit.request.clientCommitId)
+        setPendingCommit(null); setPendingStorageError(false)
+      }
+    }).catch(() => { if (alive) setCommitRecoveryError("failed") })
+    return () => { alive = false }
+    // Check once when an attempt becomes recoverable, including reconnect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingLoaded, checkout.ready, pendingCommitId, checkout.snapshot?.settled])
   const receiptTokenCapabilityQuery = usePublicReceiptTokenManagementCapability()
   const receiptTokenCapabilityError = actionError(receiptTokenCapabilityQuery.data)
   const receiptTokenCapabilityUnavailableError = receiptTokenCapabilityQuery.isError
     ? toErrorMessage(receiptTokenCapabilityQuery.error, t("receipt.tokens.historyCapabilityUnavailable"))
     : null
   const canManageReceiptTokens =
-    receiptTokenCapabilityQuery.data?.success === true && receiptTokenCapabilityQuery.data.data.canManageReceiptTokens
+    !receiptTokenCapabilityQuery.isError && !receiptTokenCapabilityQuery.isLoading && receiptTokenCapabilityQuery.data?.success === true && receiptTokenCapabilityQuery.data.data.canManageReceiptTokens
   const receiptTokensQuery = usePublicReceiptAccessTokens(canManageReceiptTokens ? lastSale?.saleId : undefined)
   const receiptTokens = unwrap<ReceiptTokenControlItem[]>(receiptTokensQuery.data, [])
   const receiptHistorySalesQuery = usePublicReceiptSalesSearch(canManageReceiptTokens ? receiptHistorySearchQuery : null)
   const receiptHistorySales = unwrap<ReceiptTokenSaleSearchItem[]>(receiptHistorySalesQuery.data, [])
-  const receiptHistorySalesError = actionError(receiptHistorySalesQuery.data)
+  const receiptHistorySalesError = receiptHistorySalesQuery.isError ? t("readState.failedMessage") : actionError(receiptHistorySalesQuery.data)
   const receiptHistoryTokensQuery = usePublicReceiptAccessTokens(
     canManageReceiptTokens ? receiptHistorySaleId || undefined : undefined,
   )
   const receiptHistoryTokens = unwrap<ReceiptTokenControlItem[]>(receiptHistoryTokensQuery.data, [])
   const revokeReceiptToken = useRevokePublicReceiptAccessToken()
   const revokePendingTokenId = (revokeReceiptToken.variables as { tokenId?: string } | undefined)?.tokenId ?? null
-  const receiptHistoryError = actionError(receiptHistoryTokensQuery.data)
+  const receiptHistoryError = receiptHistoryTokensQuery.isError ? t("readState.failedMessage") : actionError(receiptHistoryTokensQuery.data)
 
   const selectedLocation = locations.find((location) => location.id === selectedLocationId)
   const selectedTerminal = terminals.find((terminal) => terminal.id === selectedTerminalId)
@@ -577,15 +671,12 @@ export default function ProfessionalPOSSystem() {
   }, [cart?.lines.length, selectedLocationId, selectedTerminalId])
 
   useEffect(() => {
-    const nextDrafts: Record<string, string> = {}
-    cart?.lines.forEach((line) => {
-      const onHand = Number(line.stock?.quantityOnHand)
-      const maxQuantity = line.stock?.trackInventory === false || !Number.isFinite(onHand)
-        ? null
-        : Math.max(0, onHand)
-      nextDrafts[line.id] = String(maxQuantity !== null && line.quantity > maxQuantity ? maxQuantity : line.quantity)
-    })
-    setQuantityDrafts(nextDrafts)
+    const persisted = Object.fromEntries((cart?.lines ?? []).map(line => [line.id, String(line.quantity)]))
+    const previous = previousCartQuantities.current
+    setQuantityDrafts(current => Object.fromEntries(Object.entries(persisted).map(([id, value]) => [
+      id, current[id] !== undefined && current[id] !== previous[id] ? current[id] : value,
+    ])))
+    previousCartQuantities.current = persisted
   }, [cart?.lines, cartLineQuantitySnapshot])
 
   useEffect(() => {
@@ -656,8 +747,15 @@ export default function ProfessionalPOSSystem() {
   } else if (isTenderShort) {
     tenderBlocker = t("tender.shortPayment", { amount: money.format(balancePreview) })
   }
-  const saleBlocker = tenderBlocker || receiptBlocker
-  const canCommitSale = hasCartLines && !commitSale.isPending && tenderPreview.totalTendered > 0 && !saleBlocker
+  const hasUnconfirmedQuantity = (cart?.lines ?? []).some(line =>
+    quantityErrors[line.id] || (quantityDrafts[line.id] !== undefined && (quantityDrafts[line.id].trim() === "" || Number(quantityDrafts[line.id]) !== line.quantity)),
+  )
+  const saleBlocker = hasUnconfirmedQuantity ? t("notifications.quantityPendingMessage") : tenderBlocker || receiptBlocker
+  const needsSaleRecovery = pendingStorageError || Boolean(pendingAffectsRegister && !(reviewingChangedCart && cart?.id === pendingCommit?.request.salesOrderId))
+  const isRecoveryCartReviewed = reviewingChangedCart && pendingAffectsRegister && cart?.id === pendingCommit?.request.salesOrderId && !needsSaleRecovery && !commitRecoveryError && checkout.ready && !checkout.busy && !recoverCommit.isPending && ["NOT_FOUND", "CART_CHANGED", "CART_REVIEW_REQUIRED"].includes(commitRecovery?.kind ?? "")
+  const canCommitSale = canSell && checkout.ready && !checkout.busy && !needsResume && pendingLoaded && !pendingStorageError && (!pendingAffectsRegister || (reviewingChangedCart && cart?.id === pendingCommit?.request.salesOrderId)) && hasCartLines && !commitSale.isPending && !updateLine.isPending && !addLine.isPending && !removeLine.isPending && !hasUnconfirmedQuantity && tenderPreview.totalTendered > 0 && !saleBlocker
+  const lifecycleError = checkout.error ? t(`lifecycle.errors.${["POS_CHECKOUT_OWNED_ELSEWHERE", "POS_CHECKOUT_OWNERSHIP_REQUIRED", "POS_CHECKOUT_RECOVERY_REQUIRED", "POS_CHECKOUT_OFFLINE_PENDING", "POS_CHECKOUT_SHIFT_UNAVAILABLE", "POS_CHECKOUT_STOCK_CHANGED", "POS_CHECKOUT_PARK_FIRST", "POS_CHECKOUT_BROWSER_UNSUPPORTED"].includes(checkout.error) ? checkout.error : "POS_CHECKOUT_CONNECTION_LOST"}`) : null
+  const chargeBlocker = !canSell ? t("notifications.openShiftRequiredMessage") : lifecycleError || (!checkout.ready ? t("lifecycle.connecting") : needsResume ? t("lifecycle.resumeRequired") : saleBlocker || (!hasCartLines ? t("lifecycle.empty") : !canCommitSale && !needsSaleRecovery ? t("lifecycle.saving") : null))
   const currentCustomerLabel = selectedCustomer?.name || cart?.customer?.name || t("cart.walkIn")
   const onAccountAmountPreview = tenderPreview.tenders
     .filter((line) => line.method === "ON_ACCOUNT")
@@ -667,8 +765,10 @@ export default function ProfessionalPOSSystem() {
   const projectedCustomerBalance = customerCurrentBalance + onAccountAmountPreview
   const isCustomerCreditRisk = customerCreditLimit !== null && projectedCustomerBalance > customerCreditLimit
   const expectedCloseBalance = activeShift?.cashDrawer?.currentBalance ?? activeShift?.expectedBalance ?? 0
+  const shiftBalancePattern = cashFractionDigits === 0 ? /^\d{1,12}$/ : /^\d{1,12}(?:\.\d{1,2})?$/
+  const hasValidOpeningBalance = shiftBalancePattern.test(openingBalance.trim())
   const closingBalanceInput = closingBalance.trim()
-  const hasValidCloseBalance = /^\d{1,12}(?:\.\d{1,2})?$/.test(closingBalanceInput)
+  const hasValidCloseBalance = shiftBalancePattern.test(closingBalanceInput)
   const parsedCloseBalance = hasValidCloseBalance ? Number(closingBalanceInput) : null
   const closeVariance = parsedCloseBalance === null
     ? null
@@ -678,11 +778,19 @@ export default function ProfessionalPOSSystem() {
   const hardwareStatuses = [
     { label: t("hardware.scanner"), value: canSell ? t("hardware.ready") : t("hardware.waiting"), ready: canSell },
     { label: t("hardware.drawer"), value: activeShift?.cashDrawer?.isOpen ? t("hardware.open") : t("hardware.closed"), ready: !!activeShift?.cashDrawer?.isOpen },
-    { label: t("hardware.printer"), value: receiptChannel === "PRINT" ? t("hardware.selected") : t("hardware.standby"), ready: true },
-    { label: t("hardware.network"), value: t("hardware.online"), ready: true },
+    { label: t("hardware.printer"), value: t("hardware.notConfigured"), ready: false },
+    { label: t("hardware.network"), value: t(isOnline ? "hardware.online" : "hardware.offline"), ready: isOnline },
   ]
 
+  function setExactClosingBalance() {
+    setClosingBalance(expectedCloseBalance.toFixed(cashFractionDigits))
+    setVarianceExplanation("")
+    setCloseShiftError(null)
+  }
+
   async function handleOpenShift() {
+    if (openShift.isPending || !hasValidOpeningBalance) return
+    setOpenShiftError(null)
     if (!selectedLocationId || !selectedTerminalId) {
       notifications.warning(t("notifications.setupRequiredTitle"), t("notifications.setupRequiredMessage"), { category: "pos" })
       return
@@ -710,7 +818,11 @@ export default function ProfessionalPOSSystem() {
 
       notifications.removeNotification(pendingId)
       if (error) {
-        notifications.error(t("notifications.openShiftErrorTitle"), error, { category: "pos", priority: "high" })
+        const message = "code" in response && response.code === "MODULE_NEW_WORK_STOPPED"
+          ? t("notifications.openShiftStopped")
+          : "code" in response && response.code === "POS_SHIFT_ENTITLEMENT_UNAVAILABLE"
+            ? t("notifications.openShiftEntitlementUnavailable") : t("notifications.openShiftUnconfirmed")
+        setOpenShiftError(message)
         return
       }
 
@@ -725,11 +837,8 @@ export default function ProfessionalPOSSystem() {
       )
     } catch (error) {
       notifications.removeNotification(pendingId)
-      notifications.error(
-        t("notifications.openShiftErrorTitle"),
-        toErrorMessage(error, t("notifications.genericError")),
-        { category: "pos", priority: "high" },
-      )
+      const message = t("notifications.openShiftUnconfirmed")
+      setOpenShiftError(message)
     }
   }
 
@@ -783,6 +892,7 @@ export default function ProfessionalPOSSystem() {
   }
 
   async function handleAddItem(itemId: string) {
+    if (!canEditCart) return
     const item = (catalog.items as CatalogItem[]).find((catalogItem) => catalogItem.id === itemId)
     const itemName = item ? localizedName(item, locale) : t("catalog.item")
 
@@ -793,6 +903,7 @@ export default function ProfessionalPOSSystem() {
 
     try {
       const response = await addLine.mutateAsync({
+        checkoutLeaseId: checkout.leaseId,
         locationId: selectedLocationId,
         terminalId: selectedTerminalId,
         sessionId: activeShift.id,
@@ -802,11 +913,14 @@ export default function ProfessionalPOSSystem() {
       const error = actionError(response)
 
       if (error) {
+        if ("code" in response && response.code === "POS_CART_WRITE_UNAVAILABLE") { setCartAccessError(true); return }
         notifications.error(t("notifications.addItemErrorTitle"), error, { category: "inventory", priority: "high" })
         return
       }
 
       setRecentItemIds((current) => [itemId, ...current.filter((id) => id !== itemId)].slice(0, 12))
+      if (response.success && response.data) checkout.acceptCart(response.data.id)
+      setCartAccessError(false)
       notifications.success(t("notifications.addItemSuccessTitle"), t("notifications.addItemSuccessMessage", { item: itemName }), {
         category: "pos",
         duration: 2500,
@@ -821,39 +935,34 @@ export default function ProfessionalPOSSystem() {
     }
   }
 
-  function getCartLineQuantityOnHand(line: {
+  function getCartLineAvailableQuantity(line: {
     itemId: string
-    stock?: { trackInventory?: boolean | null; quantityOnHand?: number | null }
+    stock?: { trackInventory?: boolean | null; quantityAvailable?: number | null }
   }) {
     const catalogItem = catalogItemsById.get(line.itemId)
     if (line.stock?.trackInventory === false || catalogItem?.trackInventory === false) return null
 
-    const cartLineOnHand = Number(line.stock?.quantityOnHand)
+    const cartLineOnHand = Number(line.stock?.quantityAvailable)
     if (Number.isFinite(cartLineOnHand)) return Math.max(0, cartLineOnHand)
 
-    const catalogOnHand = Number(catalogItem?.stock.quantityOnHand)
+    const catalogOnHand = Number(catalogItem?.stock.quantityAvailable)
     return Number.isFinite(catalogOnHand) ? Math.max(0, catalogOnHand) : null
   }
 
-  function clampCartLineQuantity(
-    line: { itemId: string; stock?: { trackInventory?: boolean | null; quantityOnHand?: number | null } },
-    quantity: number,
-  ) {
-    const quantityOnHand = getCartLineQuantityOnHand(line)
-    return quantityOnHand !== null && quantity > quantityOnHand ? quantityOnHand : quantity
-  }
-
   async function handleQuantity(lineId: string, quantity: number) {
+    if (!canEditCart) return
     if (!cart) return
     const line = cart.lines.find((cartLine) => cartLine.id === lineId)
-    const nextQuantity = line ? clampCartLineQuantity(line, quantity) : quantity
+    const nextQuantity = quantity
     if (line && line.quantity === nextQuantity) {
+      setQuantityErrors(current => ({ ...current, [lineId]: false }))
       setQuantityDrafts((current) => ({ ...current, [lineId]: String(nextQuantity) }))
       return
     }
 
     try {
       const response = await updateLine.mutateAsync({
+        checkoutLeaseId: checkout.leaseId,
         salesOrderId: cart.id,
         lineId,
         quantity: nextQuantity,
@@ -861,10 +970,9 @@ export default function ProfessionalPOSSystem() {
       const error = actionError(response)
 
       if (error) {
-        if (line) {
-          setQuantityDrafts((current) => ({ ...current, [lineId]: String(line.quantity) }))
-        }
-        notifications.error(t("notifications.quantityErrorTitle"), error, { category: "pos", priority: "high" })
+        setQuantityErrors(current => ({ ...current, [lineId]: true }))
+        if ("code" in response && response.code === "POS_CART_WRITE_UNAVAILABLE") { setCartAccessError(true); return }
+        notifications.error(t("notifications.quantityErrorTitle"), t("notifications.quantityNotSavedMessage"), { category: "pos", priority: "high" })
         return
       }
 
@@ -873,6 +981,8 @@ export default function ProfessionalPOSSystem() {
         : null
       const persistedQuantity = Number(updatedLine?.quantity ?? nextQuantity)
 
+      setQuantityErrors(current => ({ ...current, [lineId]: false }))
+      setCartAccessError(false)
       setQuantityDrafts((current) => ({ ...current, [lineId]: String(persistedQuantity) }))
       notifications.info(
         t("notifications.quantitySuccessTitle"),
@@ -885,12 +995,10 @@ export default function ProfessionalPOSSystem() {
     } catch (error) {
       notifications.error(
         t("notifications.quantityErrorTitle"),
-        toErrorMessage(error, t("notifications.genericError")),
+        t("notifications.quantityNotSavedMessage"),
         { category: "pos", priority: "high" },
       )
-      if (line) {
-        setQuantityDrafts((current) => ({ ...current, [lineId]: String(line.quantity) }))
-      }
+      setQuantityErrors(current => ({ ...current, [lineId]: true }))
     }
   }
 
@@ -903,32 +1011,34 @@ export default function ProfessionalPOSSystem() {
     const parsedQuantity = Number(draftValue)
 
     if (draftValue.trim() === "" || !Number.isFinite(parsedQuantity) || parsedQuantity < 0) {
-      setQuantityDrafts((current) => ({ ...current, [lineId]: String(line.quantity) }))
+      setQuantityErrors(current => ({ ...current, [lineId]: true }))
       return
     }
 
-    const nextQuantity = clampCartLineQuantity(line, parsedQuantity)
-    setQuantityDrafts((current) => ({ ...current, [lineId]: String(nextQuantity) }))
-    await handleQuantity(lineId, nextQuantity)
+    await handleQuantity(lineId, parsedQuantity)
   }
 
   async function handleRemove(lineId: string) {
+    if (!canEditCart) return
     if (!cart) return
     const line = cart.lines.find((cartLine) => cartLine.id === lineId)
     const itemName = line ? (locale === "fr" ? line.nameFr || line.nameEn : line.nameEn) : t("catalog.item")
 
     try {
       const response = await removeLine.mutateAsync({
+        checkoutLeaseId: checkout.leaseId,
         salesOrderId: cart.id,
         lineId,
       })
       const error = actionError(response)
 
       if (error) {
+        if ("code" in response && response.code === "POS_CART_WRITE_UNAVAILABLE") { setCartAccessError(true); return }
         notifications.error(t("notifications.removeItemErrorTitle"), error, { category: "pos", priority: "high" })
         return
       }
 
+      setCartAccessError(false)
       notifications.info(t("notifications.removeItemSuccessTitle"), t("notifications.removeItemSuccessMessage", { item: itemName }), {
         category: "pos",
         duration: 2500,
@@ -952,13 +1062,60 @@ export default function ProfessionalPOSSystem() {
     setReceiptChannel(channel)
   }
 
-  async function handleCommitSale() {
-    if (!cart || !activeShift) return
-    if (!canCommitSale) {
+  async function handleRecoverCommit() {
+    if (!pendingCommit || recoverCommit.isPending || commitSale.isPending) return
+    setCommitRecoveryError(null)
+    setCommitRecovery(null)
+    setReviewingChangedCart(false)
+    try {
+      const response = await recoverCommit.mutateAsync(pendingCommit.request)
+      if (!response.success) { setCommitRecoveryError("failed"); return }
+      setCommitRecovery(response.data)
+    } catch { setCommitRecoveryError("failed") }
+  }
+
+  async function reviewChangedCart() {
+    if (!pendingCommit || !["NOT_FOUND", "CART_CHANGED", "CART_REVIEW_REQUIRED"].includes(commitRecovery?.kind ?? "") || commitSale.isPending) return
+    setCommitRecoveryError(null)
+    try {
+      const resumed = await checkout.command("RESUME", pendingCommit.request.salesOrderId)
+      if (!resumed) { setCommitRecoveryError("failed"); return }
+      const result = await cartQuery.refetch()
+      const refreshed = unwrap(result.data, null)
+      if (result.isError || !refreshed) { setCommitRecoveryError("failed"); return }
+      if (refreshed.id !== pendingCommit.request.salesOrderId) { setCommitRecoveryError("cartMismatch"); return }
+      setReviewingChangedCart(true)
+    } catch { setCommitRecoveryError("failed") }
+  }
+
+  function clearPendingCommit() {
+    if (!organizationId || !user?.id) return
+    try {
+      removePendingSale(sessionStorage, organizationId, user.id)
+      if (pendingCommit) settledCommitIds.current.add(pendingCommit.request.clientCommitId)
+      setPendingCommit(null); setCommitRecovery(null); setPendingStorageError(false); setSaleAccessError(false)
+      setReviewingChangedCart(false)
+      void checkout.refresh()
+    } catch { setPendingStorageError(true) }
+  }
+
+  async function handleCartLifecycle(command: "RESUME" | "PARK", salesOrderId: string) {
+    const result = await checkout.command(command, salesOrderId)
+    if (!result) return
+    setTenderLines([createTenderLine()]); setSelectedCustomerId(""); setReceiptChannel("NONE")
+    setReceiptDestination(""); setWhatsAppCustomerOptInConfirmed(false)
+    setQuantityDrafts({}); setQuantityErrors({})
+  }
+
+  async function handleCommitSale(retryPending = false) {
+    if (!checkout.ready || checkout.busy) return
+    if (submissionInFlight.current || commitSale.isPending || recoverCommit.isPending || pendingStorageError) return
+    if (retryPending ? !pendingCommit || reviewingChangedCart || commitRecovery?.kind !== "NOT_FOUND" : !cart || !activeShift || !canCommitSale) {
       notifications.warning(t("notifications.saleBlockedTitle"), saleBlocker || t("notifications.saleBlockedMessage"), { category: "pos" })
       return
     }
 
+    submissionInFlight.current = true
     const pendingId = notifications.info(
       t("notifications.salePendingTitle"),
       t("notifications.salePendingMessage", {
@@ -973,36 +1130,48 @@ export default function ProfessionalPOSSystem() {
     )
 
     try {
-      const clientCommitId = pendingCommitRef.current?.salesOrderId === cart.id
-        ? pendingCommitRef.current.clientCommitId
-        : `pos:${globalThis.crypto.randomUUID()}`
-      pendingCommitRef.current = { salesOrderId: cart.id, clientCommitId }
-      const response = await commitSale.mutateAsync({
-        clientCommitId,
-        salesOrderId: cart.id,
+      if (!organizationId || !user?.id) throw new Error("Current cashier scope is unavailable")
+      const request = retryPending && pendingCommit ? pendingCommit.request : {
+        clientCommitId: reviewingChangedCart && pendingCommit ? pendingCommit.request.clientCommitId : `pos:${globalThis.crypto.randomUUID()}`,
+        salesOrderId: cart!.id,
+        expectedCartRevision: cart!.revision,
         locationId: selectedLocationId,
         terminalId: selectedTerminalId,
-        sessionId: activeShift.id,
+        sessionId: activeShift!.id,
         customerId: selectedCustomer?.id || undefined,
         tenders: tenderPreview.tenders,
         receipt: {
-          channel: "NONE",
-          locale: locale === "fr" ? "FR" : "EN",
+          channel: "NONE" as const,
+          locale: locale === "fr" ? "FR" as const : "EN" as const,
         },
-      })
+      }
+      let retained: PendingSale
+      try { retained = savePendingSale(sessionStorage, { version: 1, organizationId, actorId: user.id, request }) }
+      catch { setPendingStorageError(true); notifications.removeNotification(pendingId); return }
+      setPendingCommit(retained); setCommitRecovery(null); setSaleAccessError(false)
+      setReviewingChangedCart(false)
+      const response = await commitSale.mutateAsync({ ...retained.request, checkoutLeaseId: checkout.leaseId })
       const error = actionError(response)
-      const localizedError = error === "POS_CUSTOMER_LOCATION_MISMATCH"
+      const localizedError = error === "Review the current cart before confirming this sale"
+        ? t("recovery.reviewRequired")
+        : error === "POS_CHECKOUT_PRICES_CHANGED"
+        ? t("lifecycle.pricesChanged")
+        : error === "POS_CUSTOMER_LOCATION_MISMATCH"
         ? t("customers.locationMismatch")
         : error
 
       notifications.removeNotification(pendingId)
+      if (!response.success && response.code === "FORBIDDEN") {
+        setSaleAccessError(true)
+        return
+      }
       if (localizedError || !response.success) {
         notifications.error(t("notifications.saleErrorTitle"), localizedError || t("notifications.genericError"), { category: "sales", priority: "high" })
         return
       }
 
       setLastSale(response.data)
-      pendingCommitRef.current = null
+      clearPendingCommit()
       setTenderLines([createTenderLine()])
       setReceiptChannel("NONE")
       setReceiptDestination("")
@@ -1055,6 +1224,8 @@ export default function ProfessionalPOSSystem() {
         toErrorMessage(error, t("notifications.genericError")),
         { category: "sales", priority: "high" },
       )
+    } finally {
+      submissionInFlight.current = false
     }
   }
 
@@ -1180,6 +1351,23 @@ export default function ProfessionalPOSSystem() {
     notifications.warning(t("featureGates.title"), t("featureGates.message", { feature }), { category: "pos", duration: 7000 })
   }
 
+  const requiredReads = [locationsQuery, currentUserShiftQuery,
+    ...(selectedLocationId ? [terminalsQuery, catalogQuery] : []),
+    ...(selectedTerminalId ? [activeShiftQuery, cartQuery] : []),
+  ]
+  const failedReads = requiredReads.filter(query => query.isError)
+  if (failedReads.length) return <DashboardErrorState
+    locale={locale === "fr" ? "fr" : "en"}
+    title={t("readState.failedTitle")}
+    message={t("readState.failedMessage")}
+    reset={() => { void Promise.all(failedReads.map(query => query.retryRead())) }}
+  />
+  if (requiredReads.some(query => query.isLoading)) return <DashboardRouteState
+    kind="loading" locale={locale === "fr" ? "fr" : "en"}
+    title={t("readState.loadingTitle")} message={t("readState.loadingMessage")}
+    primaryHref={`/${locale}/dashboard`}
+  />
+
   return (
     <div className={cn("dashboard-landing-theme dark min-h-screen overflow-x-hidden text-[var(--dash-text)]", touchMode && "text-base")}>
       <header className="dashboard-landing-content sticky top-16 z-20 border-b border-[var(--dash-border-subtle)] bg-[rgba(20,33,41,0.92)] px-4 py-3 text-white shadow-[0_18px_42px_rgba(5,12,16,0.22)] backdrop-blur-xl lg:top-[68px]">
@@ -1241,9 +1429,61 @@ export default function ProfessionalPOSSystem() {
           </div>
         </div>
       </header>
+      {activeShift && (!checkout.ready || checkout.error || needsResume || checkout.snapshot?.settled || (!pendingCommit && commitRecovery?.kind === "NOT_COMMITTED") || checkout.snapshot?.parked.length || checkout.snapshot?.historicalRequests?.length || checkout.snapshot?.recoveredSales?.length) ? <section aria-label={t("lifecycle.title")} className="mx-4 mb-3 mt-20 space-y-2 rounded-lg border border-[var(--dash-border-subtle)] bg-[var(--dash-surface)] p-3 text-sm">
+        <h2 className="font-semibold">{t("lifecycle.title")}</h2>
+        {lifecycleError ? <p role="alert">{lifecycleError}</p> : !checkout.ready ? <p role="status">{t("lifecycle.connecting")}</p> : null}
+        {checkout.snapshot?.settled || (!pendingCommit && commitRecovery?.kind === "NOT_COMMITTED") ? <p role="status">{t("lifecycle.settled")}</p> : null}
+        {checkout.snapshot?.recoveredSales?.map(sale => <p key={sale.salesOrderId} role="status">{t("lifecycle.recorded", { number: sale.orderNumber, amount: money.format(sale.total) })}</p>)}
+        {needsResume ? <p>{t("lifecycle.resumeRequired")}</p> : null}
+        <div className="flex flex-wrap gap-2">
+          {needsResume && cart ? <>
+            <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy} onClick={() => handleCartLifecycle("RESUME", cart.id)}>{t("lifecycle.resume")}</POSButton>
+            <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy} onClick={() => handleCartLifecycle("PARK", cart.id)}>{t("lifecycle.startNew")}</POSButton>
+          </> : null}
+          {checkout.error ? <POSButton className={posButtonClass} onClick={() => checkout.refresh()}>{t("lifecycle.retry")}</POSButton> : null}
+          {checkout.snapshot?.parked.map(parked => <POSButton key={parked.id} className={posButtonClass} disabled={!checkout.ready || checkout.busy || hasCartLines || pendingAffectsRegister} onClick={() => handleCartLifecycle("RESUME", parked.id)}>{t("lifecycle.resumeParked", { number: parked.orderNumber })}</POSButton>)}
+          {checkout.snapshot?.historicalRequests?.map(request => <POSButton key={request.clientCommitId} className={posButtonClass} disabled={commitSale.isPending || pendingAffectsRegister} onClick={() => organizationId && user?.id && setPendingCommit({ version: 1, organizationId, actorId: user.id, request })}>{t("lifecycle.checkEarlier")}</POSButton>)}
+        </div>
+        {checkout.snapshot?.parked.length ? <p className="text-xs">{t("lifecycle.parkedPolicy")}</p> : null}
+      </section> : null}
+      {pendingCommit || pendingStorageError ? (
+        <section ref={recoveryPanelRef} tabIndex={-1} data-testid="pos-commit-recovery" aria-label={t(isRecoveryCartReviewed ? "recovery.reviewTitle" : "recovery.title")} className={cn("mx-4 mb-3 mt-20 scroll-mt-72 space-y-3 rounded-lg border p-4 text-[var(--dash-text)] outline-offset-4 focus-visible:outline focus-visible:outline-[var(--dash-brand)] md:scroll-mt-48", isRecoveryCartReviewed ? "border-[var(--dash-brand)] bg-[var(--dash-brand-soft)]" : "border-[var(--dash-warning)] bg-[var(--dash-warning-soft)]")}>
+          <h2 className="font-semibold">{t(isRecoveryCartReviewed ? "recovery.reviewTitle" : "recovery.title")}</h2>
+          {!isRecoveryCartReviewed ? <p className="text-sm">{t("recovery.explanation")}</p> : null}
+          {pendingStorageError ? <p role="alert">{t("recovery.storageError")}</p> : null}
+          {pendingCommit ? <p className="break-all text-xs">{t("recovery.reference", { reference: pendingCommit.request.clientCommitId })}</p> : null}
+          {commitRecoveryError ? <p role="alert">{t(`recovery.${commitRecoveryError}`)}</p> : null}
+          <div role="status" aria-live="polite">
+            {recoverCommit.isPending ? t("recovery.checking") : null}
+            {isRecoveryCartReviewed ? t("recovery.reviewReady") : null}
+            {!isRecoveryCartReviewed && commitRecovery?.kind === "NOT_FOUND" ? t("recovery.notFound") : null}
+            {commitRecovery?.kind === "PENDING" ? t("recovery.pending") : null}
+            {commitRecovery?.kind === "NOT_COMMITTED" ? t("recovery.notCommitted") : null}
+            {!isRecoveryCartReviewed && commitRecovery?.kind === "CART_CHANGED" ? t("recovery.cartChanged") : null}
+            {!isRecoveryCartReviewed && commitRecovery?.kind === "CART_REVIEW_REQUIRED" ? t("recovery.legacyReview") : null}
+            {commitRecovery?.kind === "RECORDED" ? (
+              <p>{t("recovery.recorded", { number: commitRecovery.orderNumber, amount: money.format(commitRecovery.total), status: t(`recovery.status.${commitRecovery.currentStatus}`) })}</p>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {isRecoveryCartReviewed ? <POSButton className={posButtonPrimaryClass} onClick={() => {
+              checkoutFooterRef.current?.focus({ preventScroll: true })
+              checkoutFooterRef.current?.scrollIntoView?.({ block: "center", behavior: "instant" })
+            }}>{t("recovery.continueCheckout")}</POSButton> : null}
+            <POSButton className={posButtonClass} disabled={!pendingCommit || recoverCommit.isPending || commitSale.isPending} onClick={handleRecoverCommit}>{t("recovery.check")}</POSButton>
+            {!reviewingChangedCart && commitRecovery?.kind === "NOT_FOUND" ? <POSButton className={posButtonClass} disabled={commitSale.isPending || recoverCommit.isPending || pendingStorageError} onClick={() => handleCommitSale(true)}>{t("recovery.retryOriginal")}</POSButton> : null}
+            {!reviewingChangedCart && commitRecovery?.kind === "NOT_FOUND" && pendingCommit?.request.salesOrderId === cart?.id ? <POSButton className={posButtonClass} disabled={!checkout.ready || checkout.busy || commitSale.isPending} onClick={reviewChangedCart}>{t("recovery.reviewCurrent")}</POSButton> : null}
+            {!reviewingChangedCart && commitRecovery?.kind === "CART_CHANGED" ? <POSButton className={posButtonClass} disabled={commitSale.isPending || recoverCommit.isPending || cartQuery.isFetching || pendingStorageError} onClick={reviewChangedCart}>{t("recovery.reviewChanged")}</POSButton> : null}
+            {!reviewingChangedCart && commitRecovery?.kind === "CART_REVIEW_REQUIRED" ? <POSButton className={posButtonClass} disabled={commitSale.isPending || recoverCommit.isPending || cartQuery.isFetching || pendingStorageError} onClick={reviewChangedCart}>{t("recovery.reviewCurrent")}</POSButton> : null}
+            {commitRecovery?.kind === "RECORDED" || commitRecovery?.kind === "NOT_COMMITTED" ? <POSButton className={posButtonClass} disabled={recoverCommit.isPending || commitSale.isPending} onClick={clearPendingCommit}>{t("recovery.acknowledge")}</POSButton> : null}
+          </div>
+        </section>
+      ) : null}
 
       <main className="dashboard-landing-content mx-auto flex min-h-[calc(100vh-132px)] w-full max-w-[112rem] flex-col gap-4 px-3 py-4 pb-12 sm:px-4 lg:px-5">
         <OfflineSyncStatusStrip
+          className="mt-20 scroll-mt-48"
+          access={{ organizationId, userId: user?.id, canRead: hasPermission("pos.transactions.read"), canReview: hasPermission("controls.manage") }}
           locationId={selectedLocationId || undefined}
           terminalId={selectedTerminalId || undefined}
           sessionId={activeShift?.id}
@@ -1320,7 +1560,14 @@ export default function ProfessionalPOSSystem() {
 
               {activeShift ? (
                 <div className="space-y-3">
-                  <div className="grid grid-cols-3 gap-2 text-sm">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className={cn("p-2", posInsetClass)}>
+                      <div className={cn("flex items-center gap-1.5 text-xs", posMutedTextClass)}>
+                        <Wallet className="h-3.5 w-3.5" />
+                        {t("shift.openingBalance")}
+                      </div>
+                      <div className="mt-1 font-semibold tabular-nums">{money.format(activeShift.openingBalance)}</div>
+                    </div>
                     <div className={cn("p-2", posInsetClass)}>
                       <div className={cn("flex items-center gap-1.5 text-xs", posMutedTextClass)}>
                         <Banknote className="h-3.5 w-3.5" />
@@ -1345,23 +1592,33 @@ export default function ProfessionalPOSSystem() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Input
                       value={closingBalance}
                       type="number"
-                      inputMode="decimal"
+                      inputMode={cashFractionDigits === 0 ? "numeric" : "decimal"}
                       min="0"
-                      max="999999999999.99"
+                      max={cashFractionDigits === 0 ? "999999999999" : "999999999999.99"}
                       step={cashFractionDigits === 0 ? "1" : "0.01"}
                       aria-label={t("shift.countedCash")}
+                      aria-describedby={cashFractionDigits === 0 ? "pos-closing-balance-hint" : undefined}
                       aria-invalid={closingBalanceInput !== "" && !hasValidCloseBalance}
                       onChange={(event) => {
                         setClosingBalance(event.target.value)
                         setCloseShiftError(null)
                       }}
                       placeholder={t("shift.closingPlaceholder")}
-                      className={posFieldClass}
+                      className={cn(posFieldClass, "min-w-0 flex-1 basis-32")}
                     />
+                    <POSButton
+                      type="button"
+                      variant="outline"
+                      className={posButtonClass}
+                      onClick={setExactClosingBalance}
+                      disabled={closeShift.isPending}
+                    >
+                      {t("shift.useExpectedCash")}
+                    </POSButton>
                     <POSButton
                       type="button"
                       variant="outline"
@@ -1372,6 +1629,7 @@ export default function ProfessionalPOSSystem() {
                       {t("shift.close")}
                     </POSButton>
                   </div>
+                  {cashFractionDigits === 0 ? <p id="pos-closing-balance-hint" className={cn("text-xs", posMutedTextClass)}>{t("shift.wholeCurrencyAmounts", { currency })}</p> : null}
                 </div>
               ) : selectedTerminalOccupied ? (
                 <div role="status" className={cn("rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900", "dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100")}>
@@ -1380,12 +1638,22 @@ export default function ProfessionalPOSSystem() {
                   })}
                 </div>
               ) : (
-                <div className="flex gap-2">
+                <div className="space-y-2">
+                <label htmlFor="pos-opening-balance" className={posLabelClass}>
+                  {t("shift.openingBalance")}
+                </label>
+                <div className="flex flex-wrap gap-2">
                   <Input
+                    id="pos-opening-balance"
                     value={openingBalance}
                     type="number"
+                    inputMode={cashFractionDigits === 0 ? "numeric" : "decimal"}
+                    aria-invalid={!hasValidOpeningBalance}
+                    aria-describedby={[cashFractionDigits === 0 ? "pos-opening-balance-hint" : "", openShiftError ? "pos-open-shift-error" : ""].filter(Boolean).join(" ") || undefined}
+                    disabled={openShift.isPending}
                     min="0"
-                    step="0.01"
+                    max={cashFractionDigits === 0 ? "999999999999" : "999999999999.99"}
+                    step={cashFractionDigits === 0 ? "1" : "0.01"}
                     onChange={(event) => setOpeningBalance(event.target.value)}
                     placeholder={t("shift.openingPlaceholder")}
                     className={posFieldClass}
@@ -1394,10 +1662,13 @@ export default function ProfessionalPOSSystem() {
                     type="button"
                     className={posButtonPrimaryClass}
                     onClick={handleOpenShift}
-                    disabled={!selectedTerminalId || selectedTerminalOccupied || openShift.isPending}
+                    disabled={!selectedTerminalId || selectedTerminalOccupied || openShift.isPending || !hasValidOpeningBalance}
                   >
                     {t("shift.openCta")}
                   </POSButton>
+                </div>
+                {cashFractionDigits === 0 ? <p id="pos-opening-balance-hint" className={cn("text-xs", posMutedTextClass)}>{t("shift.wholeCurrencyAmounts", { currency })}</p> : null}
+                {openShiftError ? <p id="pos-open-shift-error" role="alert" className="text-sm text-[var(--dash-danger)]">{openShiftError}</p> : null}
                 </div>
               )}
             </div>
@@ -1448,7 +1719,7 @@ export default function ProfessionalPOSSystem() {
                   <Printer className="h-4 w-4" />
                   {t("smart.receiptStatus")}
                 </POSButton>
-                <POSButton type="button" variant="outline" className={posButtonClass} onClick={() => handleBackendGatedFeature(t("smart.parkSale"))}>
+                <POSButton type="button" variant="outline" className={posButtonClass} disabled={!cart || !checkout.ready || checkout.busy || pendingAffectsRegister} onClick={() => cart && handleCartLifecycle("PARK", cart.id)}>
                   <PauseCircle className="h-4 w-4" />
                   {t("smart.parkSale")}
                 </POSButton>
@@ -1559,9 +1830,7 @@ export default function ProfessionalPOSSystem() {
                   const isFavorite = favoriteItemIds.includes(item.id)
                   const outOfStock = item.stock.status === "out"
                   const inCartQuantity = cartQuantitiesByItemId.get(item.id) ?? 0
-                  const displayedOnHand = item.trackInventory
-                    ? Math.max(0, Number(item.stock.quantityOnHand || 0) - inCartQuantity)
-                    : Number(item.stock.quantityOnHand || 0)
+                  const displayedOnHand = Number(item.stock.quantityOnHand || 0)
                   const categoryLabel = item.category ? localizedName(item.category, locale) : t("catalog.noCategory")
                   const brandLabel = item.brand ? localizedName(item.brand, locale) : t("catalog.noBrand")
 
@@ -1582,7 +1851,7 @@ export default function ProfessionalPOSSystem() {
                         title={outOfStock ? t("stock.out") : t("catalog.add")}
                         className="absolute inset-0 z-0 rounded-lg bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--dash-brand)] disabled:cursor-not-allowed"
                         onClick={() => handleAddItem(item.id)}
-                        disabled={outOfStock || addLine.isPending}
+                        disabled={!canEditCart || outOfStock || addLine.isPending}
                       />
                       <div className={cn("pointer-events-none relative z-[1]", gridMode === "grid" ? "space-y-3" : "flex min-w-0 gap-3")}>
                         <div
@@ -1691,7 +1960,7 @@ export default function ProfessionalPOSSystem() {
                           <POSButton
                             type="button"
                             onClick={() => handleAddItem(item.id)}
-                            disabled={outOfStock || addLine.isPending}
+                            disabled={!canEditCart || outOfStock || addLine.isPending}
                             title={outOfStock ? t("stock.out") : t("catalog.add")}
                             className={cn(
                               "pointer-events-auto min-w-0 flex-1 overflow-hidden px-3",
@@ -1715,8 +1984,8 @@ export default function ProfessionalPOSSystem() {
             </section>
           </div>
 
-          <aside className="min-h-0 min-w-0 xl:sticky xl:top-16 xl:h-[calc(100dvh-3.5rem)]">
-            <div className={cn("flex flex-col overflow-hidden xl:h-full xl:min-h-0", posSurfaceClass)}>
+          <aside className="min-w-0">
+            <div className={cn("flex flex-col", posSurfaceClass)}>
               <div className={cn("shrink-0 p-1.5", posPanelClass)}>
                 <div className="mb-1 flex flex-wrap items-center gap-2">
                   <UsersRound className={cn("h-4 w-4", posIconBrandClass)} />
@@ -1815,9 +2084,10 @@ export default function ProfessionalPOSSystem() {
                 </div>
               </div>
 
-              <ScrollArea
+              {cartAccessError ? <p role="alert" data-testid="pos-cart-access-error" className="mb-3 rounded-lg border border-[var(--dash-danger)] p-3 text-sm text-[var(--dash-danger)]">{t("notifications.cartWriteUnavailable")}</p> : null}
+              <div
                 data-testid="pos-cart-lines"
-                className="min-h-[18rem] xl:min-h-0 xl:flex-[3_1_20rem]"
+                className="shrink-0"
               >
                 <div className="p-2 pr-3">
                   {!cart || cart.lines.length === 0 ? (
@@ -1827,7 +2097,7 @@ export default function ProfessionalPOSSystem() {
                   ) : (
                     <div className="space-y-0.5">
                       {cart.lines.map((line) => {
-                        const quantityOnHand = getCartLineQuantityOnHand(line)
+                        const quantityOnHand = getCartLineAvailableQuantity(line)
 
                         return (
                         <div
@@ -1861,7 +2131,7 @@ export default function ProfessionalPOSSystem() {
                                 aria-label={t("cart.removeLine", {
                                   item: locale === "fr" ? line.nameFr || line.nameEn : line.nameEn,
                                 })}
-                                disabled={removeLine.isPending}
+                                disabled={!canEditCart || removeLine.isPending}
                                 onClick={() => handleRemove(line.id)}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -1884,14 +2154,12 @@ export default function ProfessionalPOSSystem() {
                                 max={quantityOnHand ?? undefined}
                                 step="1"
                                 value={quantityDrafts[line.id] ?? String(line.quantity)}
-                                disabled={updateLine.isPending}
+                                disabled={!canEditCart || updateLine.isPending || commitSale.isPending}
+                                aria-invalid={quantityErrors[line.id] || undefined}
+                                aria-describedby={quantityErrors[line.id] ? `pos-quantity-error-${line.id}` : undefined}
                                 onChange={(event) => {
                                   const { value } = event.target
-                                  const parsedQuantity = Number(value)
-                                  const nextValue = quantityOnHand !== null && Number.isFinite(parsedQuantity) && parsedQuantity > quantityOnHand
-                                    ? String(quantityOnHand)
-                                    : value
-                                  setQuantityDrafts((current) => ({ ...current, [line.id]: nextValue }))
+                                  setQuantityDrafts((current) => ({ ...current, [line.id]: value }))
                                 }}
                                 onBlur={() => {
                                   void commitQuantityDraft(line.id)
@@ -1915,18 +2183,19 @@ export default function ProfessionalPOSSystem() {
                               </div>
                             ) : null}
                           </div>
+                          {quantityErrors[line.id] ? <p id={`pos-quantity-error-${line.id}`} role="alert" className="mt-1 text-xs text-[var(--dash-warning)]">{t(cartAccessError ? "notifications.cartWriteDeniedLine" : "notifications.quantityNotSavedMessage")}</p> : null}
                         </div>
                         )
                       })}
                     </div>
                   )}
                 </div>
-              </ScrollArea>
+              </div>
 
               <div
                 data-testid="pos-payment-panel"
                 className={cn(
-                  "flex flex-col border-t bg-[rgba(12,20,24,0.36)] xl:min-h-[20rem] xl:flex-[2_1_24rem] xl:overflow-hidden",
+                  "flex shrink-0 flex-col border-t bg-[rgba(12,20,24,0.36)]",
                   posDividerClass,
                 )}
               >
@@ -1951,7 +2220,7 @@ export default function ProfessionalPOSSystem() {
 
                 <div
                   data-testid="pos-tender-scroll-region"
-                  className={cn("flex-1 border-t px-3 py-2 xl:min-h-0 xl:overflow-y-auto", posDividerClass)}
+                  className={cn("shrink-0 border-t px-3 py-2", posDividerClass)}
                 >
                   {lastSale ? (
                   <div className="mb-3 rounded-lg border border-[var(--dash-spruce)]/25 bg-[var(--dash-spruce-soft)] p-3 text-sm text-[#d9fffb]">
@@ -2023,7 +2292,12 @@ export default function ProfessionalPOSSystem() {
                         {lastSale.receipt.digitalReceiptUrl}
                       </div>
                     ) : null}
-                    {canManageReceiptTokens ? (
+                    {canManageReceiptTokens && receiptTokensQuery.isError ? (
+                      <div role="alert" className="mt-2 text-sm text-[var(--dash-warning)]">
+                        {t("readState.failedMessage")}
+                        <POSButton type="button" variant="outline" onClick={() => { void receiptTokensQuery.retryRead() }}>{t("readState.retry")}</POSButton>
+                      </div>
+                    ) : canManageReceiptTokens ? (
                       <ReceiptTokenControlStrip
                         tokens={receiptTokens}
                         isLoading={receiptTokensQuery.isFetching}
@@ -2082,10 +2356,11 @@ export default function ProfessionalPOSSystem() {
                               ref={index === 0 ? tenderAmountRef : undefined}
                               value={line.amount}
                               type="number"
+                              inputMode={cashFractionDigits === 0 ? "numeric" : "decimal"}
                               min="0"
-                              step="0.01"
+                              step={cashFractionDigits === 0 ? "1" : "0.01"}
                               onChange={(event) => updateTenderLine(line.id, { amount: event.target.value })}
-                              placeholder={index === 0 && tenderLines.length === 1 ? money.format(cartTotal) : "0.00"}
+                              placeholder={index === 0 && tenderLines.length === 1 ? money.format(cartTotal) : (cashFractionDigits === 0 ? "0" : "0.00")}
                               className={cn("mt-1", posFieldClass)}
                             />
                           </label>
@@ -2197,6 +2472,11 @@ export default function ProfessionalPOSSystem() {
                       {saleBlocker}
                     </div>
                   ) : null}
+                  {saleAccessError ? (
+                    <p role="alert" data-testid="pos-sale-access-error" className="rounded-lg border border-[var(--dash-danger)] px-3 py-2 text-sm text-[var(--dash-danger)]">
+                      {t("notifications.saleAccessUnavailable")}
+                    </p>
+                  ) : null}
                   </div>
 
                   <ReceiptTokenHistoryPanel
@@ -2207,7 +2487,7 @@ export default function ProfessionalPOSSystem() {
                     tokens={receiptHistoryTokens}
                     canManage={canManageReceiptTokens}
                     capabilityLoading={receiptTokenCapabilityQuery.isLoading}
-                    capabilityUnavailable={receiptTokenCapabilityQuery.isError}
+                    capabilityUnavailable={receiptTokenCapabilityQuery.isError && receiptTokenCapabilityQuery.readState !== "denied"}
                     capabilityErrorMessage={receiptTokenCapabilityError || receiptTokenCapabilityUnavailableError}
                     salesLoading={receiptHistorySalesQuery.isFetching}
                     isLoading={receiptHistoryTokensQuery.isFetching}
@@ -2224,7 +2504,34 @@ export default function ProfessionalPOSSystem() {
                   />
                 </div>
 
-                <div data-testid="pos-charge-footer" className={cn("shrink-0 border-t px-3 py-1", posDividerClass)}>
+                <div ref={checkoutFooterRef} tabIndex={-1} data-testid="pos-charge-footer" className={cn("shrink-0 border-t px-3 py-1 outline-offset-4 focus-visible:outline focus-visible:outline-[var(--dash-brand)]", posDividerClass)}>
+                  {chargeBlocker && !needsSaleRecovery ? <p id="pos-lifecycle-blocker" role="status" className="mb-2 text-sm">{chargeBlocker}</p> : null}
+                  {needsResume && cart && !needsSaleRecovery ? (
+                    <POSButton
+                      type="button"
+                      className={cn(posButtonClass, "mb-2 h-11 w-full", touchMode && "h-14")}
+                      disabled={!checkout.ready || checkout.busy}
+                      aria-describedby="pos-lifecycle-blocker"
+                      onClick={() => handleCartLifecycle("RESUME", cart.id)}
+                    >
+                      {t("lifecycle.resume")}
+                    </POSButton>
+                  ) : null}
+                  {needsSaleRecovery ? (
+                    <div className="mb-2 rounded-md border border-[var(--dash-warning)] bg-[var(--dash-warning-soft)] p-2 text-sm">
+                      <p id="pos-charge-blocker" role="status">{t("recovery.chargePaused")}</p>
+                      <POSButton
+                        type="button"
+                        className={cn(posButtonClass, "mt-2 w-full")}
+                        onClick={() => {
+                          recoveryPanelRef.current?.focus({ preventScroll: true })
+                          recoveryPanelRef.current?.scrollIntoView?.({ block: "start", behavior: "instant" })
+                        }}
+                      >
+                        {t("recovery.open")}
+                      </POSButton>
+                    </div>
+                  ) : null}
                   <div data-testid="pos-charge-summary" className="grid grid-cols-2 items-center gap-2 text-center text-xs tabular-nums">
                     <div className={cn("rounded-md border bg-[rgba(37,57,67,0.42)] px-2 py-1", posDividerClass)}>
                       <div className={posMutedTextClass}>{t("tender.paid")}</div>
@@ -2242,7 +2549,8 @@ export default function ProfessionalPOSSystem() {
                       type="button"
                       className={cn(posButtonPrimaryClass, "h-11 w-full justify-center rounded-md border text-base", posDividerClass, touchMode && "h-14")}
                       disabled={!canCommitSale}
-                      onClick={handleCommitSale}
+                      aria-describedby={needsSaleRecovery ? "pos-charge-blocker" : chargeBlocker ? "pos-lifecycle-blocker" : undefined}
+                      onClick={() => handleCommitSale()}
                     >
                       <CreditCard className="h-4 w-4" />
                       {t("charge.cta", { amount: money.format(cart?.total ?? 0) })}
@@ -2320,8 +2628,9 @@ export default function ProfessionalPOSSystem() {
 
           {activeShift ? (
             <div className="space-y-4">
-              <div className="grid gap-2 md:grid-cols-4">
+              <div className="grid gap-2 md:grid-cols-5">
                 {[
+                  [t("shift.openingBalance"), money.format(activeShift.openingBalance)],
                   [t("metrics.sessionSales"), money.format(activeShift.totalSales)],
                   [t("metrics.transactions"), activeShift.transactionCount],
                   [t("shift.expectedCash"), money.format(expectedCloseBalance)],
@@ -2349,25 +2658,39 @@ export default function ProfessionalPOSSystem() {
                 ))}
               </div>
 
-              <label className={posLabelClass}>
-                {t("shift.countedCash")}
-                <Input
-                  value={closingBalance}
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  max="999999999999.99"
-                  step={cashFractionDigits === 0 ? "1" : "0.01"}
-                  aria-invalid={closingBalanceInput !== "" && !hasValidCloseBalance}
-                  onChange={(event) => {
-                    setClosingBalance(event.target.value)
-                    setCloseShiftError(null)
-                  }}
-                  placeholder={money.format(expectedCloseBalance)}
-                  required
-                  className={cn("mt-1", posFieldClass)}
-                />
-              </label>
+              <p className="text-xs">{t("lifecycle.closePolicy")}</p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+                <label className={cn(posLabelClass, "min-w-0 flex-1")}>
+                  {t("shift.countedCash")}
+                  <Input
+                    value={closingBalance}
+                    type="number"
+                    inputMode={cashFractionDigits === 0 ? "numeric" : "decimal"}
+                    min="0"
+                    max={cashFractionDigits === 0 ? "999999999999" : "999999999999.99"}
+                    step={cashFractionDigits === 0 ? "1" : "0.01"}
+                    aria-describedby={cashFractionDigits === 0 ? "pos-close-shift-balance-hint" : undefined}
+                    aria-invalid={closingBalanceInput !== "" && !hasValidCloseBalance}
+                    onChange={(event) => {
+                      setClosingBalance(event.target.value)
+                      setCloseShiftError(null)
+                    }}
+                    placeholder={money.format(expectedCloseBalance)}
+                    required
+                    className={cn("mt-1", posFieldClass)}
+                  />
+                </label>
+                <POSButton
+                  type="button"
+                  variant="outline"
+                  className={posButtonClass}
+                  onClick={setExactClosingBalance}
+                  disabled={closeShift.isPending}
+                >
+                  {t("shift.useExpectedCash")}
+                </POSButton>
+              </div>
+              {cashFractionDigits === 0 ? <p id="pos-close-shift-balance-hint" className={cn("text-xs", posMutedTextClass)}>{t("shift.wholeCurrencyAmounts", { currency })}</p> : null}
 
               {needsVarianceExplanation && closeVariance !== null ? (
                 <div
@@ -2455,6 +2778,7 @@ export default function ProfessionalPOSSystem() {
             {customersQueryError ? (
               <div role="alert" className="rounded-lg border border-[var(--dash-danger)]/35 bg-[var(--dash-danger-soft)] px-3 py-2 text-sm text-[#ffd4db]">
                 {customersQueryError}
+                <POSButton type="button" variant="outline" onClick={() => { void customersQuery.retryRead() }}>{t("readState.retry")}</POSButton>
               </div>
             ) : null}
 

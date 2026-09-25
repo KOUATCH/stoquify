@@ -202,6 +202,7 @@ export interface ServerActionResult<T = unknown> {
     requestId?: string
     recoverable: boolean
     retryable: boolean
+    reason?: import("@/lib/modules/module-operation-error").ModuleOperationErrorReason
     fieldErrors?: Record<string, string[]>
     metadata?: Record<string, unknown>
     context?: Record<string, unknown>

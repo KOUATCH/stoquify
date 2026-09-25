@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-13T15:43:09.001Z",
+  "sourcesBefore": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/offline/OfflineConflictReview.tsx": "6c73f2bb0c11c98054de0c6d1387d99a10f8fc895b02ec4ad9eda85fa0e24df7",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "9f23d3f82fe4ceae28f204617128a2892020fd805741fe06f5d7e281891b1f6d",
+    "hooks/posHooks/useOfflineSync.ts": "ef8500fc35a7973579e11062ffdf00d756f1586d25937ecd1a4bc93131eac1a3",
+    "messages/en.json": "accdd3b7b1f46f2899b96a6e687812f074404a8fc94bb2ca5d24575ddd465031",
+    "messages/fr.json": "c66a64c980bcd44260e8c12916c530c3a42b91f5ba853b77a42d753504b5dc43"
+  },
+  "browser": [
+    {
+      "locale": "en",
+      "screenshots": [],
+      "pageErrors": []
+    }
+  ],
+  "scope": "Owned synthetic unresolved conflict; actual authentication, server actions, review audit and financial snapshots. Does not enable offline ingestion or replay.",
+  "error": "locator.click: Timeout 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Review conflicts', exact: true })\u001b[22m\n",
+  "sourcesAfter": {
+    "services/pos/offline-review.service.ts": "55da22f105c8d5ea9a349fe9b7dc4079dc5779337400ca753f1cedc4f85b7810",
+    "actions/pos/offline-review.actions.ts": "415624ff6b25ea7b7e7584f07685d708c08c24d43394ac15e2f1f6ebaa516e69",
+    "components/pos/offline/OfflineConflictReview.tsx": "6c73f2bb0c11c98054de0c6d1387d99a10f8fc895b02ec4ad9eda85fa0e24df7",
+    "components/pos/offline/OfflineSyncStatusStrip.tsx": "9f23d3f82fe4ceae28f204617128a2892020fd805741fe06f5d7e281891b1f6d",
+    "hooks/posHooks/useOfflineSync.ts": "ef8500fc35a7973579e11062ffdf00d756f1586d25937ecd1a4bc93131eac1a3",
+    "messages/en.json": "accdd3b7b1f46f2899b96a6e687812f074404a8fc94bb2ca5d24575ddd465031",
+    "messages/fr.json": "c66a64c980bcd44260e8c12916c530c3a42b91f5ba853b77a42d753504b5dc43"
+  },
+  "sourceStable": true
+}

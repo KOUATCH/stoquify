@@ -28,12 +28,14 @@ import {
   getSupplierManagementDataForOrg,
   removeSupplierForManagement,
   updateSupplierForManagement,
+  type SupplierCreationReceipt,
   type SupplierDetailAnalytics as SupplierServiceDetailAnalytics,
   type SupplierManagementData,
   type SupplierManagementRow,
 } from "@/services/supplier/supplier.service"
 
 export type SupplierManagementInput = SupplierCreateInput
+export type SupplierCreationResult = SupplierCreationReceipt & { cacheStatus: "invalidated" | "deferred" }
 export type SupplierDetailAnalytics = SupplierServiceDetailAnalytics & {
   apHistory: APHistoryResult
 }
@@ -64,7 +66,6 @@ const ACTIONABLE_ERROR_MESSAGES = new Set([
   "Organization is required",
   "You do not have access to this organization",
   "Supplier not found",
-  "Supplier was created but could not be reloaded",
   "Supplier was updated but could not be reloaded",
 ])
 
@@ -331,7 +332,7 @@ export async function prepareSupplierManagementExport(
 export async function createManagedSupplier(
   organizationId: string,
   input: SupplierManagementInput,
-): Promise<ActionResult<SupplierManagementRow>> {
+): Promise<ActionResult<SupplierCreationResult>> {
   try {
     const scopedOrganizationId = await assertOrganizationAccess(organizationId, SUPPLIER_PERMISSIONS.create)
     const parsed = parseCreateInput(input)
@@ -341,9 +342,13 @@ export async function createManagedSupplier(
     }
 
     const row = await createSupplierForManagement(scopedOrganizationId, parsed.data)
-    revalidateSupplierPaths()
-
-    return { success: true, data: row }
+    try {
+      revalidateSupplierPaths()
+      return { success: true, data: { ...row, cacheStatus: "invalidated" } }
+    } catch {
+      // Cache recovery must not invite a second insert after a successful commit.
+      return { success: true, data: { ...row, cacheStatus: "deferred" } }
+    }
   } catch (error) {
     return {
       success: false,
