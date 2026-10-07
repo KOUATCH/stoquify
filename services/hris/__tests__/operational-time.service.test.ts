@@ -109,6 +109,7 @@ describe("HRIS operational time management", () => {
           status: HrisTimeRequestStatus.REQUESTED,
           requestedMinutes: 480,
         }),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
         update: jest.fn(),
       },
       hrisLeaveBalanceEntry: {
@@ -131,6 +132,7 @@ describe("HRIS operational time management", () => {
 
     expect(client.hrisLeaveBalanceEntry.aggregate).not.toHaveBeenCalled()
     expect(client.hrisTimeRequest.update).not.toHaveBeenCalled()
+    expect(client.hrisTimeRequest.updateMany).not.toHaveBeenCalled()
   })
 
   it("commits canonical LEAVE_APPROVED evidence, request linkage, balance debit, audit, and applied status in one tenant-scoped transaction", async () => {
@@ -151,6 +153,7 @@ describe("HRIS operational time management", () => {
     const client = {
       hrisTimeRequest: {
         findFirst: jest.fn().mockResolvedValue(request),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
         update: jest.fn().mockImplementation(({ data }) => ({ ...request, ...data })),
       },
       hrisLeaveBalanceEntry: {
@@ -229,7 +232,7 @@ describe("HRIS operational time management", () => {
     })
   })
 
-  it("fails leave approval before persistence when canonical event creation fails", async () => {
+  it("propagates event persistence failure before finalization, debit or audit", async () => {
     mockRecordEvent.mockRejectedValue(new Error("event persistence failed"))
     const request = {
       id: "request-1",
@@ -248,6 +251,7 @@ describe("HRIS operational time management", () => {
     const client = {
       hrisTimeRequest: {
         findFirst: jest.fn().mockResolvedValue(request),
+        updateMany: jest.fn().mockResolvedValue({ count: 1 }),
         update: jest.fn(),
       },
       hrisLeaveBalanceEntry: {

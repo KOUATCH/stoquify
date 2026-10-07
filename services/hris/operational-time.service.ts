@@ -17,6 +17,7 @@ import { hasAnyRbacPermission } from "@/lib/security/rbac-permissions"
 import { db } from "@/prisma/db"
 import {
   BusinessRuleError,
+  ConflictError,
   ForbiddenError,
   NotFoundError,
 } from "@/services/_shared/action-errors"
@@ -560,6 +561,25 @@ export async function decideOperationalTimeRequest(
         "MISSING_DOCUMENT: Approval evidence is required.",
       )
     }
+    const approved = parsed.decision === "APPROVE"
+    // Own the pending transition before creating any decision effects. The
+    // transaction must abort on downstream errors, including for supplied tx clients.
+    const claimed = await tx.hrisTimeRequest.updateMany({
+      where: {
+        id: request.id,
+        organizationId: parsed.organizationId,
+        employeeId: parsed.employeeId,
+        status: HrisTimeRequestStatus.REQUESTED,
+      },
+      data: {
+        status: approved
+          ? HrisTimeRequestStatus.APPROVED
+          : HrisTimeRequestStatus.REJECTED,
+      },
+    })
+    if (claimed.count !== 1) {
+      throw new ConflictError("This time request has already been decided. Refresh before continuing.")
+    }
     if (
       request.type === HrisTimeRequestType.LEAVE
       && parsed.decision === "APPROVE"
@@ -579,7 +599,6 @@ export async function decideOperationalTimeRequest(
         )
       }
     }
-    const approved = parsed.decision === "APPROVE"
     const now = new Date()
     const decisionEvent = approved && request.type === HrisTimeRequestType.LEAVE
       ? await recordBusinessEventInTx(tx as unknown as BusinessEventTx, {
