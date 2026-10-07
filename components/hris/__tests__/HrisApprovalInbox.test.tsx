@@ -137,7 +137,7 @@ describe("HrisApprovalInboxView", () => {
     expect(screen.getByRole("dialog")).toBe(dialog)
     expect(within(dialog).getByLabelText("Decision reason")).toHaveValue("Evidence reviewed")
     expect(within(dialog).getByLabelText("Approval evidence hash")).toHaveValue("sha256:approval-evidence")
-    expect(within(dialog).getByRole("button", { name: "Approve" })).toBeEnabled()
+    await waitFor(() => expect(within(dialog).getByRole("button", { name: "Approve" })).toBeEnabled())
     expect(document.body.textContent).not.toContain("sensitive internal details")
     expect(mockRefresh).not.toHaveBeenCalled()
   })
