@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { boundedArray, MAX_POS_TENDERS } from "@/lib/validation/bounded-array"
 
 import { CAMEROON_PAYMENT_PROVIDER_CODES } from "@/services/regulatory/country-packs/cameroon.constants"
 import {
@@ -179,7 +180,7 @@ export const commitSaleSchema = z.object({
   terminalId: z.string().min(1, "Terminal is required"),
   sessionId: z.string().min(1, "Session is required"),
   customerId: z.string().min(1).optional(),
-  tenders: z.array(posTenderSchema).min(1, "At least one tender is required"),
+  tenders: boundedArray(z.array(posTenderSchema).min(1, "At least one tender is required"), MAX_POS_TENDERS),
   notes: z.string().trim().max(500).optional(),
   receipt: commitSaleReceiptSchema.optional(),
 })

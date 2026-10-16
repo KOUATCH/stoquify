@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { boundedArray, MAX_MANUAL_JOURNAL_LINES } from "@/lib/validation/bounded-array"
 
 import { protect } from "@/services/_shared/protect"
 import {
@@ -42,7 +43,7 @@ const createManualJournalEntrySchema = z.object({
   entryDate: z.coerce.date(),
   memo: z.string().trim().nullable().optional(),
   reference: z.string().trim().nullable().optional(),
-  lines: z.array(manualJournalLineSchema).min(2),
+  lines: boundedArray(z.array(manualJournalLineSchema).min(2), MAX_MANUAL_JOURNAL_LINES),
 })
 
 const journalEntryIdSchema = z.object({

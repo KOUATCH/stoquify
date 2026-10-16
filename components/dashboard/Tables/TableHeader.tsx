@@ -3,7 +3,7 @@
 import { notify } from "@/lib/notifications/notify"
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import * as XLSX from "xlsx";
+import { readSpreadsheet, SpreadsheetImportError } from "@/lib/imports/read-spreadsheet";
 
 import { createBulkCategories } from "@/actions/categories/createBulkCategories";
 import {
@@ -87,72 +87,60 @@ export default function TableHeader({
     setDate(item);
   };
 
-  function previewData() {
-    setPreview(true);
-    if (excelFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = e.target?.result;
-        if (data) {
-          const workbook = XLSX.read(data, { type: "binary" });
-          // SheetName
-          const sheetName = workbook.SheetNames[0];
-          // Worksheet
-          const workSheet = workbook.Sheets[sheetName];
-          // Json
-          const json = XLSX.utils.sheet_to_json(workSheet);
-          setJsonData(JSON.stringify(json, null, 2));
-        }
-      };
-      reader.readAsBinaryString(excelFile);
+  function selectExcelFile(file: File | null) {
+    setExcelFile(file);
+    setJsonData("");
+    setPreview(false);
+    setUploadSuccess(false);
+  }
+
+  async function previewData() {
+    if (!excelFile || loading) return;
+    setLoading(true);
+    setPreview(false);
+    setJsonData("");
+    setUploadSuccess(false);
+    try {
+      const json = await readSpreadsheet(excelFile);
+      setJsonData(JSON.stringify(json, null, 2));
+      setPreview(true);
+    } catch (error) {
+      notify.error(error instanceof SpreadsheetImportError ? error.message : "The spreadsheet could not be read.");
+    } finally {
+      setLoading(false);
     }
   }
-  function saveData() {
-    setPreview(false);
-    if (excelFile) {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const data = e.target?.result;
-        if (data) {
-          const workbook = XLSX.read(data, { type: "binary" });
-          // SheetName
-          const sheetName = workbook.SheetNames[0];
-          // Worksheet
-          const workSheet = workbook.Sheets[sheetName];
-          // Json
-          const json = XLSX.utils.sheet_to_json(workSheet);
-          setJsonData(JSON.stringify(json, null, 2));
 
-          try {
-            setLoading(true);
-            if (model === "category") {
-              const categories = json.map((item: any) => {
-                return {
-                  titleEn: item.Title,
-                  title: item.Title,
-                  slug: generateSlug(item.Title),
-                  descriptionEn: item.Description,
-                  description: item.Description,
-                  imageUrl: item.Image,
-                  parentId: item.mainCategoryId,
-                  isActive: true,
-                };
-              });
-              await createBulkCategories(categories);
-            }
-            setLoading(false);
-            setUploadSuccess(true);
-            // window.location.reload();
-            // notify.success("All Data Synced Successfully with No errors 👍");
-          } catch (error) {
-            setUploadSuccess(false);
-            setLoading(false);
-            notify.error("Something went wrong, Please Try again 😢");
-            console.log(error);
-          }
-        }
-      };
-      reader.readAsBinaryString(excelFile);
+  async function saveData() {
+    if (!excelFile || loading) return;
+    setLoading(true);
+    setPreview(false);
+    setJsonData("");
+    setUploadSuccess(false);
+    try {
+      const json = await readSpreadsheet(excelFile);
+      setJsonData(JSON.stringify(json, null, 2));
+      if (model === "category") {
+        const categories = json.map((item: any) => {
+          return {
+            titleEn: item.Title,
+            title: item.Title,
+            slug: generateSlug(item.Title),
+            descriptionEn: item.Description,
+            description: item.Description,
+            imageUrl: item.Image,
+            parentId: item.mainCategoryId,
+            isActive: true,
+          };
+        });
+        const result = await createBulkCategories(categories);
+        if (!result.success) throw new Error("Category import was not completed");
+      }
+      setUploadSuccess(true);
+    } catch (error) {
+      notify.error(error instanceof SpreadsheetImportError ? error.message : "The import could not be completed. Check the result before retrying.");
+    } finally {
+      setLoading(false);
     }
   }
   function handleExportData() {
@@ -209,7 +197,7 @@ export default function TableHeader({
                   <div className="h-60 w-full rounded-md border flex items-center justify-center">
                     <Button disabled className="items-center">
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Syncing Data Please wait ...
+                      Processing spreadsheet. Please wait ...
                     </Button>
                   </div>
                   {!loading && (
@@ -224,14 +212,14 @@ export default function TableHeader({
                         </Button>
                       ) : (
                         <Button
-                          onClick={previewData}
+                          disabled={loading} onClick={previewData}
                           variant={"outline"}
                           type="button"
                         >
                           Preview
                         </Button>
                       )}
-                      <Button onClick={saveData} type="button">
+                      <Button disabled={loading} onClick={saveData} type="button">
                         Save Data
                       </Button>
                     </DialogFooter>
@@ -318,10 +306,11 @@ export default function TableHeader({
                               <input
                                 id="dropzone-file"
                                 accept=".xls,.xlsx"
+                                disabled={loading}
                                 type="file"
                                 className="hidden"
                                 onChange={(e) =>
-                                  setExcelFile(
+                                  selectExcelFile(
                                     e.target.files ? e.target.files[0] : null
                                   )
                                 }
@@ -343,7 +332,7 @@ export default function TableHeader({
                                   </span>
                                 </div>
                               </div>
-                              <button onClick={() => setExcelFile(null)}>
+                              <button disabled={loading} onClick={() => selectExcelFile(null)}>
                                 <X className="text-slate-600 w-5 h-5" />
                               </button>
                             </div>
@@ -362,14 +351,14 @@ export default function TableHeader({
                           </Button>
                         ) : (
                           <Button
-                            onClick={previewData}
+                            disabled={loading} onClick={previewData}
                             variant={"outline"}
                             type="button"
                           >
                             Preview
                           </Button>
                         )}
-                        <Button onClick={saveData} type="button">
+                        <Button disabled={loading} onClick={saveData} type="button">
                           Save Data
                         </Button>
                       </DialogFooter>

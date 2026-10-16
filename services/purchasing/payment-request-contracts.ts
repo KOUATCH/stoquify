@@ -1,11 +1,12 @@
 import { z } from "zod"
+import { boundedArray, MAX_AP_BATCH_ENTRIES } from "@/lib/validation/bounded-array"
 const id = z.string().trim().min(1).max(191)
 const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => { const d = new Date(value + "T00:00:00Z"); return Number.isFinite(d.getTime()) && d.toISOString().slice(0, 10) === value }, "Invalid calendar date")
 const amount = z.string().regex(/^(?:0|[1-9]\d{0,9})(?:\.\d{1,2})?$/).refine(value => Number(value) > 0)
 export const paymentRequestDraftSchema = z.object({
   supplierId: id, bankAccountId: id, method: z.enum(["CASH", "CARD", "MOBILE_MONEY", "BANK_TRANSFER", "CREDIT", "STORE_CREDIT", "CHEQUE", "MIXED"]), paymentDate: date,
   documentReference: z.string().trim().max(1000).url().refine(value => /^https?:\/\//i.test(value)), documentSha256: z.string().regex(/^[a-f0-9]{64}$/),
-  notes: z.string().trim().max(1000).optional(), allocations: z.array(z.object({ supplierInvoiceId: id, amount }).strict()).min(1).max(100),
+  notes: z.string().trim().max(1000).optional(), allocations: boundedArray(z.array(z.object({ supplierInvoiceId: id, amount }).strict()).min(1).max(100), MAX_AP_BATCH_ENTRIES),
 }).strict().refine(value => new Set(value.allocations.map(row => row.supplierInvoiceId)).size === value.allocations.length, "Duplicate invoice allocations")
 export const paymentRequestCommandSchema = z.object({ draft: paymentRequestDraftSchema, expectedRevision: z.string().regex(/^[a-f0-9]{64}$/), idempotencyKey: z.string().min(8).max(128) }).strict()
 export const paymentRequestApprovalSchema = z.object({ paymentRequestId: id, expectedRevision: z.string().regex(/^[a-f0-9]{64}$/), idempotencyKey: z.string().min(8).max(128) }).strict()

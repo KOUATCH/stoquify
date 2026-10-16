@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { boundedArray, MAX_AP_BATCH_ENTRIES } from "@/lib/validation/bounded-array"
 
 const idSchema = z.string().trim().min(1)
 const hashSchema = z.string().trim().min(8).optional()
@@ -31,7 +32,7 @@ export const postSupplierInvoiceInputSchema = z.object({
   documentHash: hashSchema,
   evidenceHash: hashSchema,
   notes: z.string().trim().max(1000).optional(),
-  lines: z.array(supplierInvoiceLineInputSchema).min(1),
+  lines: boundedArray(z.array(supplierInvoiceLineInputSchema).min(1), MAX_AP_BATCH_ENTRIES),
 })
 
 export const approveSupplierInvoiceInputSchema = z.object({
@@ -107,7 +108,7 @@ export const approveSupplierPaymentInputSchema = z.object({
   documentHash: hashSchema,
   evidenceHash: hashSchema,
   notes: z.string().trim().max(1000).optional(),
-  allocations: z.array(supplierPaymentAllocationInputSchema).min(1),
+  allocations: boundedArray(z.array(supplierPaymentAllocationInputSchema).min(1), MAX_AP_BATCH_ENTRIES),
 })
 
 export const releaseSupplierPaymentInputSchema = z.object({
@@ -126,7 +127,7 @@ export const releaseSupplierPaymentInputSchema = z.object({
     .optional(),
   requestedById: idSchema.optional(),
   approvedById: idSchema.optional(),
-  allocations: z.array(supplierPaymentAllocationInputSchema).optional(),
+  allocations: boundedArray(z.array(supplierPaymentAllocationInputSchema), MAX_AP_BATCH_ENTRIES).optional(),
 })
 
 export type PostSupplierInvoiceInput = z.input<typeof postSupplierInvoiceInputSchema>
